@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>OpenAPI Support</name>
-	<version>9</version>
+	<version>10</version>
 	<status>alpha</status>
 	<description>Imports and spiders Open API definitions.</description>
 	<author>ZAP Core Team plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-		Update Swagger/OpenAPI parser (Issue 3479).<br>
-		Fix exception with ref parameters.<br>
+		Fallback to host of request URI (Issue 4271).<br>
 	]]>
 	</changes>
 	<extensions>

@@ -11,6 +11,12 @@
  * @author Max Gopey <gopeyx@gmail.com>
  */
 
+// Imports
+var HttpRequestHeader = Java.type("org.parosproxy.paros.network.HttpRequestHeader");
+var HttpHeader = Java.type("org.parosproxy.paros.network.HttpHeader");
+var URI = Java.type("org.apache.commons.httpclient.URI");
+var Pattern = Java.type("java.util.regex.Pattern");
+
 var debugMode = false;
 
 function getRequiredParamsNames(){
@@ -27,17 +33,6 @@ function getCredentialsParamsNames(){
 
 function authenticate(helper, paramsValues, credentials) {
     debugMode && print("---- Magento authentication script has started ----");
-    
-    // Enable Rhino behavior, in case ZAP is running on Java 8 (which uses Nashorn)
-    if (java.lang.System.getProperty("java.version").startsWith("1.8")) {
-        load("nashorn:mozilla_compat.js");
-    }
-    
-    // Imports
-    importClass(org.parosproxy.paros.network.HttpRequestHeader);
-    importClass(org.parosproxy.paros.network.HttpHeader);
-    importClass(org.apache.commons.httpclient.URI);
-    importClass(java.util.regex.Pattern);
     
     var loginUri = new URI(paramsValues.get("loginUrl"), false);
     
@@ -63,6 +58,7 @@ function authenticate(helper, paramsValues, credentials) {
     var post = helper.prepareMessage();
     post.setRequestHeader(new HttpRequestHeader(HttpRequestHeader.POST, loginUri, HttpHeader.HTTP10));
     post.setRequestBody(requestBody);
+    post.getRequestHeader().setContentLength(post.getRequestBody().length());
     helper.sendAndReceive(post);
 
     debugMode && print("---- Magento authentication script has finished ----\n");

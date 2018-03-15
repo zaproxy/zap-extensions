@@ -3,41 +3,36 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Context Options
+        Mga Opsyon sa Konteksto ng Kontrol sa Access
     </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Access Control Context Options</h1>
+<h1>Mga Opsyon sa Konteksto ng Kontrol sa Access</h1>
 
 <p>
-    The Access Control Context options are present as a panel for each Context when opening the Session Properties
-    dialog. This panel allows ZAP users to define the Access Rules for each User of each Context.
+    Ang mga opsyon sa Konteksto ng Kontrol sa Access ay naroon bilang isang panel para sa bawat Konteksto kapag nagbubukas sa diyalogo ng mga Katangian ng Sesyon. Ang panel na ito ay nagpapahintulot sa mga gumagamit na tukuyin ang mga Patakaran ng Access para sa bawat Gumagamit ng bawat Konteksto.
 </p>
 
 <p>
-    As mentioned on the <a href="concepts.html">concepts</a> page, ZAP is making use of the tree-based
-    structure of URLs. So, when configuring the access rules, only 1 rule needs to be set explicitly for an entire
-    subtree, while for the other nodes rules are inferred. Three possible values can be set for any node in Context for
-    each User:
+    Tulad ng nabanggit sa pahina ng <a href="concepts.html">konsepto</a>, ginagamit ng ZAP ang istraktura ng mga URL na nakabatay sa tree. Kaya, kapag nagsasaayos sa mga patakaran ng access, 1 patakaran lamang ang kinakailangang itakda para sa buong subtree, habang para sa ibang mga patakaran ng node ay nagpapahiwatig. Tatlong posibleng mga halaga ay maaaring itakda para sa anumang node sa Konteksto para sa bawat Gumagamit:
 </p>
 <ul>
-    <li><b>Allowed</b> - The rule for the node is <i>explicitly</i> set as Allowed</li>
-    <li><b>Denied</b> - The rule for the node is <i>explicitly</i> set as Denied</li>
-    <li><b>Inherited</b> - The rule for the node is inferred based on the closest parent with an explicitly set rule
+    <li><b>Pinahintulutan</b> - Ang patakaran para sa node ay <i>tahasan</i> na itinakda bilang Pinahintulutan</li>
+    <li><b>Tinanggihan</b> - Ang patakaran para sa node ay <i>tahasan</i> na itinakda bilang Tinanggihan</li>
+    <li><b>Minana</b> - Ang patakaran para sa node ay ipinapahiwatig batay sa pinakamalapit na magulang na may tahasang itinakdang patakaran
     </li>
 </ul>
 
-<p>By default, the rules for any node has an <i>Inherited</i> value and the root node has a value of <i>Unknown</i>.
-    Thus, for any node without a parent with an explicitly configured rule, the inferred rule will default to
-    <i>Unknown</i>.</p>
+<p>Bilang default, ang mga patakaran para sa anumang node ay may isang <i>Minana</i> na halaga at ang root na node ay may isang halaga na <i>Hindi Kilala</i>.
+    Sa gayon, para sa anumang node na walang isang parent na may tahasang isinaayos na patakaran, ang ipinahiwatig na patakaran ay magiging default sa <i>Hindi Kilala</i>.</p>
 
-<h2>See also</h2>
+<h2>Tingnan din</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="concepts.html">Access Control Testing concepts</a></td>
-        <td>for a short introduction to Access Control Testing</td>
+            <a href="concepts.html">Mga konsepto sa Pagsusuri ng Kontrol sa Access</a></td>
+        <td>para sa maiksing panimula sa Pagsusuri ng Kontrol sa Access</td>
     </tr>
 </table>
 

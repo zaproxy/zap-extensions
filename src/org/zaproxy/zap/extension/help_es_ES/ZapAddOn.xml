@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Help - Spanish</name>
-	<version>7</version>
-	<status>alpha</status>
+	<version>9</version>
+	<status>release</status>
 	<description>Spanish version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
 	<url>https://crowdin.com/project/owasp-zap-help</url>
-	<changes>Updated for 2.7.0</changes>
+	<changes>Updated with the latest files from crowdin, promoted to release</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>

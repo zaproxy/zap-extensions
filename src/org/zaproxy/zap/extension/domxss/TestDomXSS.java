@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -38,11 +39,13 @@ import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyServer;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -51,7 +54,7 @@ import org.zaproxy.zap.model.Vulnerability;
 import org.zaproxy.zap.utils.Stats;
 
 
-public class TestDomXSS extends AbstractAppPlugin {
+public class TestDomXSS extends AbstractAppParamPlugin {
 	private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
     private static Logger log = Logger.getLogger(TestDomXSS.class);
 
@@ -77,6 +80,12 @@ public class TestDomXSS extends AbstractAppPlugin {
         HASH_ALERT,
         QUERY_HASH_IMG_ALERT
     };
+    
+	private static final String IMG_ALERT = "<img src=\"random.gif\" onerror=alert(1)>";
+	private static final String SCRIPT_ALERT = "<script>alert(1)</script>";
+	private static final String JAVASCRIPT_ALERT = "javascript:alert(1)";
+
+	public static final String[] PARAM_ATTACK_STRINGS = { SCRIPT_ALERT, JAVASCRIPT_ALERT, IMG_ALERT };
 
 	private static Stack<WebDriverWrapper> freeFirefoxDrivers = new Stack<WebDriverWrapper>();
 	private static List<WebDriverWrapper> takenFirefoxDrivers = new ArrayList<WebDriverWrapper>();
@@ -86,6 +95,9 @@ public class TestDomXSS extends AbstractAppPlugin {
 
     private static ProxyServer proxy = null;
     private static int proxyPort = -1;
+    
+    private WebDriverWrapper driver;
+    private boolean vulnerable = false;
 
     @Override
     public int getId() {
@@ -181,7 +193,7 @@ public class TestDomXSS extends AbstractAppPlugin {
     	return proxy;
     }
    
-	private WebDriver getNewFirefoxDriver() {
+	private static WebDriver getNewFirefoxDriver() {
 		/*
 		 * TODO look at supporting other browsers
 		 * Notes:
@@ -198,7 +210,7 @@ public class TestDomXSS extends AbstractAppPlugin {
 
 	}
 
-	private WebDriverWrapper getFirefoxDriver() {
+	private static WebDriverWrapper getFirefoxDriver() {
 		WebDriverWrapper fxDriver;
 		try {
 			fxDriver = freeFirefoxDrivers.pop();
@@ -357,7 +369,7 @@ public class TestDomXSS extends AbstractAppPlugin {
 		return new ArrayList<WebElement>();
 	}
     
-    private void scanHelper(WebDriverWrapper driver, String attackVector, String url)
+    private void scanHelper(String attackVector, String url)
     		throws DomAlertException {
 		if (this.isStop()) {
 			return;
@@ -486,22 +498,17 @@ public class TestDomXSS extends AbstractAppPlugin {
 			attackVectors.add(ATTACK_STRINGS[i]);
 		}
 		
-		ArrayList<WebDriverWrapper> drivers = new ArrayList<WebDriverWrapper>();
-		
-		WebDriverWrapper fxDriver;
 		try {
-			fxDriver = this.getFirefoxDriver();
+			driver = TestDomXSS.getFirefoxDriver();
 		} catch (Exception e) {
 			getLog().warn("Skipping scanner, failed to start Firefox: " + e.getMessage());
 			getParent().pluginSkipped(this, Constant.messages.getString("domxss.skipped.reason.browsererror"));
 			return;
 		}
 
-		drivers.add(fxDriver);
-
 		try	{
 			for(String attackVector : attackVectors) {
-				if (scan(drivers, attackVector)) {
+				if (scan(attackVector, getBaseMsg().getRequestHeader().getURI().toString() + attackVector)) {
 					if (!Plugin.AlertThreshold.LOW.equals(
 							this.getAlertThreshold())) {
 						// Only report one issue per URL unless 
@@ -510,35 +517,33 @@ public class TestDomXSS extends AbstractAppPlugin {
 					}
 				}
 			}
+			super.scan();
 		} finally {
-			this.returnFirefoxDriver(fxDriver);
+			this.returnFirefoxDriver(driver);
 		}
 	}
 
-	public boolean scan(ArrayList<WebDriverWrapper> drivers, String attackVector) {
-    	HttpMessage msg = getBaseMsg();
-    	String url = msg.getRequestHeader().getURI().toString();
-    	String currURL = url + attackVector;
-    	
-    	for (WebDriverWrapper driver : drivers) {
-        	try {
-    			scanHelper(driver, attackVector, currURL);
-    		} catch (DomAlertException e) {
-    			String tagName = e.getTagName();
-    			String otherInfo = "";
-    			if (tagName != null) {
-    				otherInfo = "Tag name: " + tagName + 
-    						" Att name: " + e.getAttributeName() +
-    						" Att id: " + e.getAttributeId();
-    			}
-    			
-    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, 
-    					e.getUrl(), null, e.getAttack(), 
-    					otherInfo, null, msg);
-    			Stats.incCounter("domxss.attack." + attackVector);
-    			return true;
-			}
-    	}
+	public boolean scan(String attackVector, String currUrl) {
+    	HttpMessage msg = getNewMsg();
+
+        try {
+    		scanHelper(attackVector, currUrl);
+    	} catch (DomAlertException e) {
+    		String tagName = e.getTagName();
+    		String otherInfo = "";
+    		if (tagName != null) {
+    			otherInfo = "Tag name: " + tagName + 
+    					" Att name: " + e.getAttributeName() +
+    					" Att id: " + e.getAttributeId();
+    		}
+    		
+    		bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, 
+    				e.getUrl(), null, e.getAttack(), 
+    				otherInfo, null, msg);
+    		Stats.incCounter("domxss.attack." + attackVector);
+    		vulnerable = true;
+    		return true;
+		}
     	return false;
     }
      
@@ -573,6 +578,39 @@ public class TestDomXSS extends AbstractAppPlugin {
         		AlertThreshold.LOW, 
         		AlertThreshold.MEDIUM};
     }
+
+	@Override
+	public void scan(HttpMessage msg, NameValuePair originalParam) {
+		if (originalParam.getType() != NameValuePair.TYPE_QUERY_STRING) {
+			return; // Exit if it isn't a URL param
+		}
+		if (!vulnerable) {
+			super.scan(msg, originalParam);
+		}
+	}
+
+	@Override
+	public void scan(HttpMessage msg, String paramName, String attack) {
+		Stats.incCounter("domxss.scan.count");
+
+		for (String attackVector : PARAM_ATTACK_STRINGS) {
+			TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
+			for (HtmlParameter param : urlParams) {
+				if (param.getName().equals(paramName)) {
+					param.setValue(attackVector);
+				}
+			}
+			msg.setGetParams(urlParams); // setParameter and setEscapedParameter results in spaces being + vs %20 (or actual space)
+	
+			if (scan(attackVector, msg.getRequestHeader().getURI().toString())) {
+				if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+					// Only report one issue per URL unless
+					// Alert threshold is LOW
+					break;
+				}
+			}
+		}
+	}
 
 }
 

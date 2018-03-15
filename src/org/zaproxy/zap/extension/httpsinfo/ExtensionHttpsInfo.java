@@ -17,24 +17,30 @@
  */
 package org.zaproxy.zap.extension.httpsinfo;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.CardLayout;
+import java.awt.Component;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.view.TabbedPanel2;
 
-public class ExtensionHttpsInfo extends ExtensionAdaptor {
+public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChangedListener {
 
 	public static final String NAME = "ExtensionHttpsInfo";
 	public static final String ICON_PATH = "/org/zaproxy/zap/extension/httpsinfo/resources/icon.png";
@@ -46,9 +52,9 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 		DEPENDENCIES = Collections.unmodifiableList(dep);
 	}
 
-	private MenuEntry httpsEntry;
-	private List<HttpsInfoDialog> dialogues;
-	private boolean unloaded;
+	private MenuEntry httpsMenuEntry;
+	private AbstractPanel httpsInfoPanel;
+	private TabbedPanel2 httpsInfoTabsPanel;
 
 	public ExtensionHttpsInfo() {
 		super();
@@ -65,13 +71,6 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 	}
 
 	@Override
-	public void init() {
-		super.init();
-
-		dialogues = new ArrayList<>();
-	}
-
-	@Override
 	public boolean canUnload() {
 		return true;
 	}
@@ -79,12 +78,6 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 	@Override
 	public void unload() {
 		super.unload();
-		unloaded = true;
-
-		while (!dialogues.isEmpty()) {
-			// When disposed the dialogue is removed from the list
-			dialogues.get(0).dispose();
-		}
 	}
 
 	@Override
@@ -93,20 +86,35 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 
 		if (getView() != null) {
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgMenu());
+			extensionHook.getHookView().addStatusPanel(getHttpsInfoPanel());
+			extensionHook.addSessionListener(this);
 		}
-
 	}
 
 	private MenuEntry getPopupMsgMenu() {
-		if (httpsEntry == null) {
-			httpsEntry = new MenuEntry(this.getMessageString("httpsinfo.rightclick.menuitem"), this);
-			httpsEntry.setIcon(new ImageIcon(ExtensionHttpsInfo.class.getResource(ICON_PATH)));
+		if (httpsMenuEntry == null) {
+			httpsMenuEntry = new MenuEntry(Constant.messages.getString("httpsinfo.rightclick.menuitem"), this);
+			httpsMenuEntry.setIcon(new ImageIcon(ExtensionHttpsInfo.class.getResource(ICON_PATH)));
 		}
-		return httpsEntry;
+		return httpsMenuEntry;
 	}
-
-	public String getMessageString(String key) {
-		return Constant.messages.getString(key);
+	
+	protected TabbedPanel2 getHttpsInfoTabsPanel() {
+		if (httpsInfoTabsPanel == null) {
+			httpsInfoTabsPanel = new TabbedPanel2();
+		}
+		return httpsInfoTabsPanel;
+	}
+	
+	protected AbstractPanel getHttpsInfoPanel() {
+		if (httpsInfoPanel == null) {
+			httpsInfoPanel = new AbstractPanel();
+			httpsInfoPanel.setLayout(new CardLayout());
+			httpsInfoPanel.setName(Constant.messages.getString("httpsinfo.name"));
+			httpsInfoPanel.setIcon(new ImageIcon(ExtensionHttpsInfo.class.getResource(ICON_PATH)));
+			httpsInfoPanel.add(getHttpsInfoTabsPanel());
+		}
+		return httpsInfoPanel;
 	}
 
 	@Override
@@ -127,22 +135,49 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 			return null;
 		}
 	}
-
-	void showSslTlsInfo(String hostname, HttpMessage msg) {
-		HttpMessage baseMessage = msg;
-
-		if(unloaded)
-		{
-			return;
-		}
-
-		HttpsInfoDialog d = new HttpsInfoDialog(baseMessage);
-		dialogues.add(d);
-		d.addWindowListener(new WindowAdapter(){
-			@Override
-			public void windowClosed(WindowEvent e) {
-				dialogues.remove(e.getSource());
+	
+	protected int getTabIndex(String tabName) {
+		int idx = 0;
+		for (; idx < getHttpsInfoTabsPanel().getTabCount(); idx++) {
+			if (getHttpsInfoTabsPanel().getTabList().get(idx).getName().equals(tabName)) {
+				break;
 			}
-	});
+		}
+		return idx;
 	}
+	
+	protected void addTab(HttpMessage msg) {
+		String hostname = msg.getRequestHeader().getHostName();
+		String tabName = hostname + " - "
+				+ (getHttpsInfoTabsPanel().getTabCount() == 0 ? 0 : getHttpsInfoTabsPanel().getTabCount());
+
+		addTab(tabName, null, new HttpsInfoOutputPanel(msg), true, true,
+				getHttpsInfoTabsPanel().getTabCount() == 0 ? 0 : getHttpsInfoTabsPanel().getTabCount());
+
+		getHttpsInfoPanel().setTabFocus();
+		getHttpsInfoTabsPanel().setSelectedComponent(getHttpsInfoTabsPanel().getTabList().get(getTabIndex(tabName)));
+	}
+	
+	private void addTab(String title, Icon icon, Component c, boolean hideable, boolean visible, int index) {
+		getHttpsInfoTabsPanel().addTab(title, icon, c, hideable, visible, index);
+		getHttpsInfoTabsPanel().getTabList().get(index).setName(title);
+	}
+
+	@Override
+	public void sessionAboutToChange(Session arg0) {
+	}
+
+	@Override
+	public void sessionChanged(Session arg0) {
+		getHttpsInfoTabsPanel().removeAll();
+	}
+
+	@Override
+	public void sessionModeChanged(Mode arg0) {
+	}
+
+	@Override
+	public void sessionScopeChanged(Session arg0) {
+	}
+
 }

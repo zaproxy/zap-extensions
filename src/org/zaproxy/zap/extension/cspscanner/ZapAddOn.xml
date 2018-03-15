@@ -8,6 +8,8 @@
 	<changes>
 	<![CDATA[
 		Minor code changes to address deprecations.<br>
+		Upgrade to Salvation library to 2.4.0.<br>
+		Added support for checking if prefetch-src allows wildcard sources.<br>
 	]]>
 	</changes>
 	<extensions>

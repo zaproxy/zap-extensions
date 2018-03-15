@@ -6,4 +6,5 @@
 <map version="1.0">
 	<mapID target="simple-icon" url="contents/images/cake.png" />
     <mapID target="simple" url="contents/simple.html" />
+    <mapID target="simple.about" url="contents/about.html" />
 </map>

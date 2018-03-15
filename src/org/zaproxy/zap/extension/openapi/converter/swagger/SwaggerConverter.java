@@ -49,6 +49,7 @@ public class SwaggerConverter implements Converter {
     private RequestModelConverter requestConverter;
     private Generators generators;
     private final Scheme defaultScheme;
+    private final String defaultHost;
     private List<String> errors = new ArrayList<String> ();
 
     public SwaggerConverter(String defn, ValueGenerator valGen) {
@@ -56,8 +57,13 @@ public class SwaggerConverter implements Converter {
     }
 
     public SwaggerConverter(Scheme defaultScheme, String defn, ValueGenerator valueGenerator) {
+        this(defaultScheme, null, defn, valueGenerator);
+    }
+
+    public SwaggerConverter(Scheme defaultScheme, String defaultHost, String defn, ValueGenerator valueGenerator) {
         LOG.debug("Examining defn ");
         this.defaultScheme = defaultScheme;
+        this.defaultHost = defaultHost;
         generators = new Generators(valueGenerator);
         operationHelper = new OperationHelper();
         requestConverter = new RequestModelConverter();
@@ -102,16 +108,24 @@ public class SwaggerConverter implements Converter {
         }
         
         if (swagger != null) {
+            String host = swagger.getHost();
+            if (host == null) {
+                if (defaultHost == null || defaultHost.isEmpty()) {
+                    throw new SwaggerException("Default host required but not provided.");
+                }
+                host = defaultHost;
+            }
+
             generators.getModelGenerator().setDefinitions(swagger.getDefinitions());
             List<Scheme> schemes = swagger.getSchemes();
             if (schemes == null || schemes.isEmpty()) {
                 if (defaultScheme == null) {
                     throw new SwaggerException("Default scheme required but not provided.");
                 }
-                addOperations(swagger, defaultScheme, operations);
+                addOperations(swagger, defaultScheme, host, operations);
             } else {
                 for (Scheme scheme : swagger.getSchemes()) {
-                    addOperations(swagger, scheme, operations);
+                    addOperations(swagger, scheme, host, operations);
                 }
             }
         } else {
@@ -129,12 +143,12 @@ public class SwaggerConverter implements Converter {
         return errors;
     }
 
-    private void addOperations(Swagger swagger, Scheme scheme, List<OperationModel> operations) {
+    private void addOperations(Swagger swagger, Scheme scheme, String host, List<OperationModel> operations) {
         switch (scheme) {
         case HTTP:
         case HTTPS:
             for (Map.Entry<String, Path> entry : swagger.getPaths().entrySet()) {
-                String url = generators.getPathGenerator().getBasicURL(swagger, scheme, entry.getKey());
+                String url = generators.getPathGenerator().getBasicURL(scheme, host, swagger.getBasePath(), entry.getKey());
                 Path path = entry.getValue();
                 operations.addAll(operationHelper.getAllOperations(path, url));
             }

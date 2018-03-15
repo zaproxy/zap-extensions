@@ -13,18 +13,15 @@ function scan(ps, msg, src)
     wascId = 13
 
     url = msg.getRequestHeader().getURI().toString();
-    if (msg) 
-	{
-		headers = msg.getResponseHeader().getHeaders("Set-Cookie")
-		
-	  if (headers != null)
-		{
-		 re_noflag = /([Hh][Tt][Tt][Pp][Oo][Nn][Ll][Yy])/g
-    		 if (!(re_noflag.test(headers)))
-			{print("here");
-       	 	 ps.raiseAlert(alertRisk, alertReliability, alertTitle, alertDesc, url, '', '', '', alertSolution,headers, cweId, wascId, msg);
-			}
-		}  
-	 }
+    headers = msg.getResponseHeader().getHeaders("Set-Cookie")
+    
+    if (headers != null)
+    {
+        re_noflag = /([Hh][Tt][Tt][Pp][Oo][Nn][Ll][Yy])/g
+        if (!(re_noflag.test(headers)))
+        {
+            ps.raiseAlert(alertRisk, alertReliability, alertTitle, alertDesc, url, '', '', '', alertSolution,headers, cweId, wascId, msg);
+        }
+    }
     
 }

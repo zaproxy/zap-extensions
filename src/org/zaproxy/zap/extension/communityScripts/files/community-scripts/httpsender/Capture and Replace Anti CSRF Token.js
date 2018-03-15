@@ -9,10 +9,6 @@
 
 // REPLACE the values for the variables as applicable to your application.
 
-// The following handles differences in printing between Java 7's Rhino JS engine
-// and Java 8's Nashorn JS engine
-if (typeof println == 'undefined') this.println = print;
-
 // Regular expression for the request URI that returns CSRF token in response.
 // If the application under test returns csrf token in every response or in response to more than request, set a generic regex that matches with host name or domain name of the application.
 // REPLACE the value with RegEx for your application.
@@ -41,40 +37,40 @@ var cookieParamType = org.parosproxy.paros.network.HtmlParameter.Type.cookie;
 // REPLACE the value with the params to scan for CSRF token and replace with latest vaule.
 var parameterTypesList = [formParamType, urlParamType, cookieParamType];
 
-//println ("AntiCsrfTokenValue: " + org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("anti.csrf.token.value"))
+//print ("AntiCsrfTokenValue: " + org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("anti.csrf.token.value"))
 
 function sendingRequest(msg, initiator, helper) {
-    // println('sendingRequest called for url=' + msg.getRequestHeader().getURI().toString())
+    // print('sendingRequest called for url=' + msg.getRequestHeader().getURI().toString())
     var numberOfParameterTypes = parameterTypesList.length;
     for (var index=0; index < numberOfParameterTypes; index++) {
         if (parameterTypesList[index] != null && parameterTypesList[index] === formParamType) {
             var formParams = msg.getFormParams();
-            // println ("Form Params before update: " + formParams);
+            // print ("Form Params before update: " + formParams);
             var updatedFormParams = modifyParams(formParams);
-            // println ("Form Params after update: " + updatedFormParams);
+            // print ("Form Params after update: " + updatedFormParams);
             msg.setFormParams(updatedFormParams);
         } else if (parameterTypesList[index] != null && parameterTypesList[index] === urlParamType) {
             var urlParams = msg.getUrlParams();
-            // println ("Url Params before update: " + urlParams);
+            // print ("Url Params before update: " + urlParams);
             var updatedUrlParams = modifyParams(urlParams);
-            // println ("Url Params after update: " + updatedUrlParams);
+            // print ("Url Params after update: " + updatedUrlParams);
             msg.setGetParams(updatedUrlParams);
         } else if (parameterTypesList[index] != null && parameterTypesList[index] === cookieParamType) {
             var cookieParams = msg.getCookieParams();
-            // println ("Cookie Params before update: " + cookieParams);
+            // print ("Cookie Params before update: " + cookieParams);
             var updatedCookieParams = modifyParams(cookieParams);
-            // println ("Cookie Params after update: " + updatedCookieParams);
+            // print ("Cookie Params after update: " + updatedCookieParams);
             msg.setCookieParams(updatedCookieParams);
         }
     }
 }
 
 function responseReceived(msg, initiator, helper) {
-    // println('responseReceived called for url=' + msg.getRequestHeader().getURI().toString())
+    // print('responseReceived called for url=' + msg.getRequestHeader().getURI().toString())
     if (msg.getRequestHeader().getURI().toString().match(urlRegEx) != null) {
         var csrfTokenValue = msg.getResponseBody().toString().match(csrfTokenValueRegEx);
         if (csrfTokenValue != null && csrfTokenValue.length > matcherGroupNumber) {
-            println('Latest CSRF Token value: ' + csrfTokenValue[matcherGroupNumber]);
+            print('Latest CSRF Token value: ' + csrfTokenValue[matcherGroupNumber]);
             org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("anti.csrf.token.value", csrfTokenValue[matcherGroupNumber]);
         }
     }

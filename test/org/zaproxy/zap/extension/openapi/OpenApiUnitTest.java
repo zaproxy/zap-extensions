@@ -43,29 +43,19 @@ import org.zaproxy.zap.model.ValueGenerator;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import io.swagger.models.Scheme;
 
 public class OpenApiUnitTest extends ServerBasedTest {
+    
     @Test
     public void shouldExplorePetStoreJson() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
+        String defnName = "defn.json";
         
-        this.nano.addHandler(new NanoServerHandler(test) {
-            @Override
-            Response serve(IHTTPSession session) {
-                String response;
-                String uri = session.getUri();
-                if (uri.endsWith("defn.json")) {
-                    response = getHtml("PetStore_defn.json");
-                } else {
-                    // We dont actually care about the response in this test ;)
-                    response = getHtml("Blank.html");
-                }
-                return new Response(response);
-            }
-        });
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn.json"));
         
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
-        HttpMessage defnMsg = this.getHttpMessage(test + "defn.json");
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
         SwaggerConverter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
         // No parsing errors
         assertThat(converter.getErrorMessages(), is(empty()));
@@ -87,24 +77,12 @@ public class OpenApiUnitTest extends ServerBasedTest {
     @Test
     public void shouldExplorePetStoreYaml() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreYaml/";
+        String defnName = "defn.yaml";
         
-        this.nano.addHandler(new NanoServerHandler(test) {
-            @Override
-            Response serve(IHTTPSession session) {
-                String response;
-                String uri = session.getUri();
-                if (uri.endsWith("defn.yaml")) {
-                    response = getHtml("PetStore_defn.yaml");
-                } else {
-                    // We dont actually care about the response in this test ;)
-                    response = getHtml("Blank.html");
-                }
-                return new Response(response);
-            }
-        });
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn.yaml"));
         
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
-        HttpMessage defnMsg = this.getHttpMessage(test + "defn.yaml");
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
         SwaggerConverter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
         // No parsing errors
         assertThat(converter.getErrorMessages(), is(empty()));
@@ -126,6 +104,7 @@ public class OpenApiUnitTest extends ServerBasedTest {
     @Test
     public void shouldExplorePetStoreJsonOverrideHost() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
+        String defnName = "defn.json";
         String altHost = "localhost:8888";
         
         // Change port to check we use the new one
@@ -134,24 +113,11 @@ public class OpenApiUnitTest extends ServerBasedTest {
         nano.start();
 
         
-        this.nano.addHandler(new NanoServerHandler(test) {
-            @Override
-            Response serve(IHTTPSession session) {
-                String response;
-                String uri = session.getUri();
-                if (uri.endsWith("defn.json")) {
-                    response = getHtml("PetStore_defn.json");
-                } else {
-                    // We dont actually care about the response in this test ;)
-                    response = getHtml("Blank.html");
-                }
-                return new Response(response);
-            }
-        });
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn.json"));
         
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         requestor.setSiteOverride(altHost);
-        HttpMessage defnMsg = this.getHttpMessage(test + "defn.json");
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
         Converter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
         final Map<String, String> accessedUrls = new HashMap<String, String>();
         RequesterListener listener = new RequesterListener(){
@@ -168,26 +134,136 @@ public class OpenApiUnitTest extends ServerBasedTest {
     }
 
     @Test
+    public void shouldExplorePetStoreWithDefaultHost() throws NullPointerException, IOException, SwaggerException {
+        // Given
+        String test = "/PetStoreJson/";
+        String defnName = "defn.json";
+        String defaultHost = "localhost:9090";
+
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_no_host.json"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        Converter converter = new SwaggerConverter(
+                null,
+                defaultHost,
+                requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
+                null);
+        final Map<String, String> accessedUrls = new HashMap<>();
+        RequesterListener listener = new RequesterListener() {
+
+            @Override
+            public void handleMessage(HttpMessage message, int initiator) {
+                accessedUrls.put(
+                        message.getRequestHeader().getMethod() + " " + message.getRequestHeader().getURI().toString(),
+                        message.getRequestBody().toString());
+
+            }
+        };
+        requestor.addListener(listener);
+        // When
+        requestor.run(converter.getRequestModels());
+        // Then
+        checkPetStoreRequests(accessedUrls, defaultHost);
+    }
+
+    @Test(expected = SwaggerException.class)
+    public void shouldFailToExplorePetStoreWithoutHost() throws Exception {
+        // Given
+        String test = "/PetStoreJson/";
+        String defnName = "defn.json";
+        String defaultHost = null;
+
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_no_host.json"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        Converter converter = new SwaggerConverter(
+                null,
+                defaultHost,
+                requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
+                null);
+        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        RequesterListener listener = new RequesterListener() {
+
+            @Override
+            public void handleMessage(HttpMessage message, int initiator) {
+                accessedUrls.put(
+                        message.getRequestHeader().getMethod() + " " + message.getRequestHeader().getURI().toString(),
+                        message.getRequestBody().toString());
+
+            }
+        };
+        requestor.addListener(listener);
+        // When
+        requestor.run(converter.getRequestModels());
+        // Then = SwaggerException
+    }
+
+    @Test
+    public void shouldExplorePetStoreWithDefaultScheme() throws Exception {
+        // Given
+        String test = "/PetStoreJson/";
+        String defnName = "defn.json";
+        Scheme defaultScheme = Scheme.HTTP;
+
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_no_schemes.json"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + "defn.json");
+        Converter converter = new SwaggerConverter(
+                defaultScheme,
+                null,
+                requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
+                null);
+        final Map<String, String> accessedUrls = new HashMap<>();
+        RequesterListener listener = new RequesterListener() {
+
+            @Override
+            public void handleMessage(HttpMessage message, int initiator) {
+                accessedUrls.put(
+                        message.getRequestHeader().getMethod() + " " + message.getRequestHeader().getURI().toString(),
+                        message.getRequestBody().toString());
+
+            }
+        };
+        requestor.addListener(listener);
+        // When
+        requestor.run(converter.getRequestModels());
+        // Then
+        checkPetStoreRequests(accessedUrls, "localhost:9090");
+    }
+
+    @Test(expected = SwaggerException.class)
+    public void shouldFailToExplorePetStoreWithoutScheme() throws Exception {
+        // Given
+        String test = "/PetStoreJson/";
+        String defnName = "defn.json";
+        Scheme defaultScheme = null;
+
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_no_schemes.json"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        Converter converter = new SwaggerConverter(
+                defaultScheme,
+                null,
+                requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
+                null);
+        // When
+        converter.getRequestModels();
+        // Then = SwaggerException
+    }
+
+    @Test
     public void shouldExplorePetStoreYamlLoop() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreYamlLoop/";
+        String defnName = "defn.yaml";
         
-        this.nano.addHandler(new NanoServerHandler(test) {
-            @Override
-            Response serve(IHTTPSession session) {
-                String response;
-                String uri = session.getUri();
-                if (uri.endsWith("defn.yaml")) {
-                    response = getHtml("PetStore_defn_loop.yaml");
-                } else {
-                    // We dont actually care about the response in this test ;)
-                    response = getHtml("Blank.html");
-                }
-                return new Response(response);
-            }
-        });
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_loop.yaml"));
         
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
-        HttpMessage defnMsg = this.getHttpMessage(test + "defn.yaml");
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
         SwaggerConverter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
         requestor.run(converter.getRequestModels());
         
@@ -199,24 +275,11 @@ public class OpenApiUnitTest extends ServerBasedTest {
     @Test
     public void shouldUseValueGenerator() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
-        
-        this.nano.addHandler(new NanoServerHandler(test) {
-            @Override
-            Response serve(IHTTPSession session) {
-                String response;
-                String uri = session.getUri();
-                if (uri.endsWith("defn.json")) {
-                    response = getHtml("PetStore_defn.json");
-                } else {
-                    // We dont actually care about the response in this test ;)
-                    response = getHtml("Blank.html");
-                }
-                return new Response(response);
-            }
-        });
+        String defnName = "defn.json";
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn.json"));
         
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
-        HttpMessage defnMsg = this.getHttpMessage(test + "defn.json");
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
         
         ValueGenerator vg = new ValueGenerator(){
             @Override
@@ -376,4 +439,27 @@ public class OpenApiUnitTest extends ServerBasedTest {
         
     }
 
+    private static class DefnServerHandler extends NanoServerHandler {
+
+        private final String defnName;
+        private final String defnFileName;
+
+        public DefnServerHandler(String name, String defnName, String defnFileName) {
+            super(name);
+            this.defnName = defnName;
+            this.defnFileName = defnFileName;
+        }
+
+        @Override
+        Response serve(IHTTPSession session) {
+            String response;
+            if (session.getUri().endsWith(defnName)) {
+                response = getHtml(defnFileName);
+            } else {
+                // We dont actually care about the response in this handler ;)
+                response = getHtml("Blank.html");
+            }
+            return new Response(response);
+        }
+    }
 }

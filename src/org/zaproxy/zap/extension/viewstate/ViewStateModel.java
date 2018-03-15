@@ -294,7 +294,7 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
 				return msg.getRequestBody().toString();
 			}
 		} else {
-			return msg.getResponseHeader().toString() + msg.getResponseBody().toString();
+			return msg.getResponseBody().toString();
 		}
 	}
 	

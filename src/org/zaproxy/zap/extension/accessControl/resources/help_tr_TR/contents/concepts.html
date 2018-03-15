@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Erişim Kontrolu Testi
+    </title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Erişim Kontrolü Testi</h1>
+
+<p>
+    Bu eklenti, kullanıcıların bir web uygulamasında hangi bölümleri bazı kullanıcıların kullanabileceğini karşılaştırabilir, erişim denetimi yapabilir.    potansiyel erişim kontrolü sorunlarını belirleme ve tanımlama. Bu, erişim kurallarının yapılandırılmasına izin verir ve yetkisiz müşteriler tarafından erişilebilen bir web uygulamasının bölümlerini tanımlamaya yardımcı olmak için tam bir saldırı gerçekleştirir.
+</p>
+
+<p>
+    Bu eklenti ile ilgili açıklanması gereken iki ana konsept mevcut:<b>Erişim Kuralları</b>ve<b>test etmek
+    prosedür</b>.
+</p>
+
+<h3>Erişim Kuralları</h3>
+
+<p>
+    Erişim denetimiyle ilgili olası sorunları belirlemek için, ZAP web uygulamasının hangi bölümlerine hangi kullanıcı tarafından erişilmesi gerektiğini bilmelidir. ZAP'te bu kuralların adı: <i>Erişim kuralları</i> ve genellike şu anlamı vardır: "<i>SayfaA KullanıcıX tarafından erişilmeli/erişilmemelidir.</i>".
+</p>
+
+<p>Kurallar bir İçerik ve o İçeriğin her Kullanıcısı için yapılandırılmıştır, her Site Düğümü (web sayfası) aşağıdaki değerlerden biri ile ilişkilendirilecektir:</p>
+<ul>
+    <li><b>İzin verilen</b> - Kuralla ilgili olan Kullanıcı tarafından kaynak erişilebilirdir</li>
+    <li><b>Reddedildi</b> - kaynak, kuralın değindiği Kullanıcı tarafından <b>erişilmemelidir</b></li>
+    <li><b>Bilinmiyor</b> - kaynağın, kuralın bahsettiği Kullanıcı tarafından erişilip erişilmemesi hakkında <b>bir bilgi yok</b>
+    </li>
+</ul>
+
+<p>
+    Erişim kuralların tanımlatma aşamasını kolaylaştırmak için ZAP, ağaç tabanlı URL'lerin yapısını kullanmaktadır.
+    Kurallar analiz edilirken, eğer tanımlanmış belirli bir kural yoksa her düğüm ve URL'deki ana düğümüne bağlı eşleşen kuralları bulmak için çağrışım algoritmasi kullanıldı. Bu, erişim kurallarını yapılandırırken, diğer düğümler için kurallar çıkarsa da yalnızca bir alt ağacın tamamı için yalnızca 1 kuralın ayarlanması gerektiği anlamına gelir. Bunu hakkında
+    daha fazla detay Erişim Kontrolu <a href="contextOptions.html">Bağlam seçenekleri</a> yardım sayfasında bulunabilir.</td>
+</p>
+
+<h3>Test etme prosedürü</h3>
+
+<p> Bir bütün olarak, bir web uygulaması için erişim denetimi sınamasını tam olarak gerçekleştirmek için bir sonraki adımlar    takip edin:</p>
+<ul>
+    <li>test kullanıcılarını ve kimlik doğrulamayı tanımlar;
+    </li>
+    <li>test edici ZAP'in dığrulanmamış istekleri nasıl belirleyebileceğini tanımlar (Oturum Özelliklerinde
+        Doğrulama paneli üzerinden);
+    </li>
+    <li>web uygulaması manuel olarak yada örümcek aracılığıyla araştırılır;</li>
+    <li>test eden kiş, Durum ile ilişkili Kullanıcıların her biri için Erişim Kurallarını tanımlar ve temelde ZAP'e web uygulamasının hangi bölümlerine hangi kullanıcıların erişebileceğini bildirir;
+    </li>
+    <li>web uygulamasının her URL'sine her kullanıcı açısından erişmeyi deneyerek ZAP tarafından bir 'saldırı' yapılır;
+    </li>
+    <li>karşılık gelen Durum Sekmesinde, hangi sayfaların hangi kullanıcılar tarafından başarıyla erişildiğini ve erişim kurallarının takip edilmediği durumları gösteren sonuçlar görüntülenir.
+    </li>
+</ul>
+
+<h2>Ayrıca bakınız</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="tab.html">Erişim Kontrolü Test Sekmesi</a></td>
+        <td>eklenti tarafından kullanılan durum sekmesinin bir açıklaması için</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="contextOptions.html">Erişim Kontrolu Bağlam seçenekleri</a></td>
+        <td>ilişkili bağlam seçenekleri konusunda öğrenmek için</td>
+    </tr>
+</table>
+
+</body>
+</html>

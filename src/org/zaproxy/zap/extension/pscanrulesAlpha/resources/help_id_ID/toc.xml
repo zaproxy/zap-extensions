@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Passive Scan Rules - alpha" image="pscanalpha-icon" target="pscanalpha"/>
+	<tocitem text="Paduan Pengguna ZAP" tocid="toplevelitem">
+		<tocitem text="Tambahan" tocid="addons">
+			<tocitem text="Aturan Pindai Pasif - alfa" image="pscanalpha-icon" target="pscanalpha"/>
 		</tocitem>
 	</tocitem>
 </toc>

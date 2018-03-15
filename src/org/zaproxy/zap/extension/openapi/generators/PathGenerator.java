@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 
 import io.swagger.models.Scheme;
-import io.swagger.models.Swagger;
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.Parameter;
 
@@ -36,12 +35,21 @@ public class PathGenerator {
         this.dataGenerator = dataGenerator;
     }
 
-    public String getBasicURL(Swagger swagger, Scheme scheme, String argument) {
-        String url = scheme.toString().toLowerCase() + "://" + swagger.getHost();
-        if (swagger.getBasePath() != null && swagger.getBasePath().length() > 1) {
-            url += swagger.getBasePath();
+    /**
+     * Gets the URL to access an endpoint.
+     *
+     * @param scheme the scheme, for example, {@code https}.
+     * @param host the host ({@code hostname[:port]}).
+     * @param basePath the base path (for example, {@code /PetStore}) or {@code null} if none.
+     * @param endpoint the path of the endpoint (for example, {@code /pet}), must not be null.
+     * @return the URL to access the endpoint.
+     */
+    public String getBasicURL(Scheme scheme, String host, String basePath, String endpoint) {
+        String url = scheme.toString().toLowerCase() + "://" + host;
+        if (basePath != null && basePath.length() > 1) {
+            url += basePath;
         }
-        url += argument;
+        url += endpoint;
         return url;
     }
 

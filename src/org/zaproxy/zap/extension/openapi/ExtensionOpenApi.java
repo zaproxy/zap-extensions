@@ -31,6 +31,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -166,8 +167,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         requestor.addListener(new HistoryPersister());
         try {
             return importOpenApiDefinition(
-                    Scheme.forValue(uri.getScheme().toLowerCase()), requestor.getResponseBody(uri), 
-                    siteOverride, initViaUi);
+                    Scheme.forValue(uri.getScheme().toLowerCase()), uri.getAuthority(),
+                    requestor.getResponseBody(uri), siteOverride, initViaUi);
         } catch (IOException e) {
             if (initViaUi) {
                 View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.io.error"));
@@ -185,7 +186,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public List<String> importOpenApiDefinition(final File file, boolean initViaUi) {
         try {
-            return importOpenApiDefinition((Scheme)null, FileUtils.readFileToString(file), null, initViaUi);
+            return importOpenApiDefinition(null, null, FileUtils.readFileToString(file), null, initViaUi);
         } catch (IOException e) {
             if (initViaUi) {
                 View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.io.error"));
@@ -197,7 +198,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         return null;
     }
 
-    private List<String> importOpenApiDefinition(final Scheme defaultScheme, final String defn, 
+    private List<String> importOpenApiDefinition(final Scheme defaultScheme, final String defaultHost, final String defn, 
             final String hostOverride, final boolean initViaUi) {
         final List<String> errors = new ArrayList<String>();
         Thread t = new Thread(THREAD_PREFIX + threadId++) {
@@ -208,7 +209,11 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
                     requestor.setSiteOverride(hostOverride);
                     requestor.addListener(new HistoryPersister());
-                    SwaggerConverter converter = new SwaggerConverter(defaultScheme, defn, getValueGenerator());
+                    SwaggerConverter converter = new SwaggerConverter(
+                            defaultScheme,
+                            StringUtils.isNotEmpty(hostOverride) ? hostOverride : defaultHost,
+                            defn,
+                            getValueGenerator());
                     errors.addAll(requestor.run(converter.getRequestModels()));
                     // Needs to be called after converter.getRequestModels() to get loop errors
                     errors.addAll(converter.getErrorMessages());

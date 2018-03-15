@@ -1,11 +1,15 @@
 <zapaddon>
 	<name>ViewState</name>
-	<version>1</version>			<!-- Integer than increments with each (released) change -->
+	<version>2</version>			<!-- Integer than increments with each (released) change -->
 	<status>alpha</status>			<!-- alpha/beta/release -->
 	<description>ASP/JSF ViewState Decoder and Editor</description>
 	<author>Calum Hutton</author>
 	<url/>							
-	<changes/>					
+	<changes>
+	<![CDATA[
+	Maintenance changes.<br>
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.viewstate.ExtensionHttpPanelViewStateView</extension>	
 	</extensions>				

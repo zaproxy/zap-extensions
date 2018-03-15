@@ -150,19 +150,19 @@ public abstract class ServerBasedTest extends ScannerTestUtils {
         return msg;
     }
     
-    public String getHtml(String name) {
-        return this.getHtml(name, (Map<String, String>)null);
+    public static String getHtml(String name) {
+        return getHtml(name, (Map<String, String>)null);
     }
 
-    public String getHtml(String name, String[][] params) {
+    public static String getHtml(String name, String[][] params) {
         Map<String, String> map = new HashMap<String, String>();
         for (int i=0; i < params.length; i++) {
             map.put(params[i][0], params[i][1]);
         }
-        return this.getHtml(name, map);
+        return getHtml(name, map);
     }
 
-    public String getHtml(String name, Map<String, String> params) {
+    public static String getHtml(String name, Map<String, String> params) {
         String fileName = BASE_RESOURCE_DIR + "/" + name;
         try {
             String html = FileUtils.readFileToString(new File(fileName));

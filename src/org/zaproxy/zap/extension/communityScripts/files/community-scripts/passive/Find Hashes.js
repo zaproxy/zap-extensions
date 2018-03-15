@@ -45,9 +45,6 @@ function scan(ps, msg, src)
     vbull = /(([0-9a-zA-Z]{32}):(S{3,32}))/g //vbulletin
     md45 = /([a-f0-9]{32})/g //md4 and md5 and a bunch of others like tiger
 	
-    if (msg) 
-	
-      {        
 	if (wordpress.test(body)) 
 	  {
 	    wordpress.lastIndex = 0
@@ -147,6 +144,5 @@ function scan(ps, msg, src)
 	      }
 	    ps.raiseAlert(alertRisk[1], alertReliability[1], alertTitle[8], alertDesc[8], url, '', '', foundmd45.toString(), alertSolution[0], '', cweId[0], wascId[0], msg);
 	  }
-     }
 
 }

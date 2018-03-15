@@ -3,84 +3,69 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Testing
+        访问控制测试
     </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Access Control Testing</h1>
+<h1>访问控制测试</h1>
 
 <p>
-    This add-on enables users to compare which parts of a web-application are available to some users, do access control
-    testing and identify potential access control issues. It allows configuration of access rules and conducts a full
-    attack aimed to help identify sections of a web application which are accessible by unauthorized clients.
+    这个插件使用户能够比较Web应用程序（Web-application）的哪些部分可用于某些用户，进行访问控制测试并识别潜在的访问控制问题。 它允许配置访问规则，并进行全面攻击，目的是帮助识别Web应用程序中可被未经授权的客户端访问的部分。
 </p>
 
 <p>
-    There are two main concepts related to this add-on that should be explained: the <b>Access Rules</b> and the <b>testing
-    procedure</b>.
+    与这个插件相关的两个主要概念解释如下： <b>访问规则</b>和<b>测试过程</b>.
 </p>
 
-<h3>Access Rules</h3>
+<h3>访问规则</h3>
 
 <p>
-    In order to identify potential access control issues, ZAP needs to know which parts of the web application are
-    supposed to be accessed by which user. In ZAP, the name for these rules is: <i>Access Rules</i> and generally have
-    the meaning: "<i>PageA should/shouldn't be accessed by UserX</i>".
+    为了确定潜在的访问控制问题，ZAP需要知道Web应用程序的哪些部分应该由哪个用户访问。 在 ZAP 中，这些规则的名称是： <i>访问规则</i>，通常具有以下含义： “<i>PageA应该/不应该由UserX访问</i>”。
 </p>
 
-<p>The rules are configured for a Context and, for each User of that Context, each Site Node (web page) will be
-    associated to one of the following values:</p>
+<p>规则是为上下文配置的，对于该上下文的每个用户，每个站点节点（Web页面）将与下列值之一相关联：</p>
 <ul>
-    <li><b>Allowed</b> - the resource <b>can</b> be accessed by the User to which the rule refers</li>
-    <li><b>Denied</b> - the resource <b>should not</b> be accessed by the User to which the rule refers</li>
-    <li><b>Unknown</b> - there is <b>no information</b> regarding whether the resource should or shouldn't be accessible
-        to the User to which the rule refers
+    <li><b>允许</b>-该规则所引用的用户<b>可以</b>访问该资源。</li>
+    <li><b>拒绝</b>-该规则所引用的用户<b>不应该</b>访问该资源</li>
+    <li><b>未知</b>-对于该规则所引用的用户应该或不应该访问该资源，<b>无明确信息</b>进行说明。
     </li>
 </ul>
 
 <p>
-    In order to simplify the access rules definition process, ZAP is making use of the tree-based structure of URLs.
-    When analyzing the rules, an inference algorithm is used to detect the matching rules for each node based on its
-    parent in the URL if no particular rules are defined. This means that, when configuring the access rules, only 1
-    rule needs to be set explicitly for an entire subtree, while for the other nodes rules are inferred. More details
-    about this can be found on the Access Control <a href="contextOptions.html">Context options</a> help page.</td>
+    为了简化访问规则的定义过程，ZAP利用了基于树的URL结构。
+    在分析规则时，如果没有定义特定的规则，推理算法将根据URL中的父节点检测每个节点的匹配规则。 这意味着，在配置访问规则时，只需要为整个子树显式设置一个规则，而对于其它节点规则则可以进行推断得出 有关详细信息，请参阅访问控制<a href="contextOptions.html">上下文选项</a>帮助页面。</td>
 </p>
 
-<h3>Testing procedure</h3>
+<h3>测试过程</h3>
 
-<p> As a whole, in order to fully perform access control testing for a web application, the next steps should be
-    followed:</p>
+<p> 作为一个整体，为了充分执行Web应用程序的访问控制测试，请您遵循如下所示的步骤：</p>
 <ul>
-    <li>the tester defines set of Users and how they authenticate;
+    <li>测试人员定义一组用户以及他们如何进行身份验证；
     </li>
-    <li>the tester defines how ZAP can identify un-authorized requests (via the Authorization panel in the Session
-        Properties);
+    <li>测试人员定义ZAP如何识别未经授权的请求（通过会话属性中的授权面板）；
     </li>
-    <li>the web-application is explored either manually or via the Spider;</li>
-    <li>the tester define the Access Rules for each of the Users associated to the Context, basically letting ZAP know
-        which parts of the web application are supposed to be accessed by which users;
+    <li>Web应用程序的探索要么手动要么通过Spider；</li>
+    <li>测试人员定义与上下文相关的每个用户的访问规则，让ZAP基本上知道Web应用程序的哪些部分应该被哪些用户访问；
     </li>
-    <li>an ‘attack’ is performed by ZAP by trying to access every URL of the web-app from the perspective of every
-        user;
+    <li>ZAP通过尝试从每个用户的角度访问Web应用程序的每个URL来执行“攻击”；
     </li>
-    <li>in the corresponding Status Tab, the results are displayed, showing which pages were accessed successfully by
-        which users and marking the cases where the access rules where not followed.
+    <li>在相应的“状态”选项卡中，显示结果，显示哪些用户成功访问哪些页面，并标记未遵循访问规则的情况。
     </li>
 </ul>
 
-<h2>See also</h2>
+<h2>请参阅</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="tab.html">Access Control Testing Tab</a></td>
-        <td>for a description of the status tab used by the add-on</td>
+            <a href="tab.html">访问控制测试选项卡</a></td>
+        <td>了解加载项使用的状态标签的说明</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="contextOptions.html">Access Control Context options</a></td>
-        <td>to learn about the related context options</td>
+            <a href="contextOptions.html">访问控制上下文选项</a></td>
+        <td>了解相关的上下文选项</td>
     </tr>
 </table>
 

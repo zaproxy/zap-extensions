@@ -21,6 +21,7 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,9 +65,11 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
 			return testUsers;
 		}
 		
-		List<User> usersList = null;
-		extUserMgmt = getExtensionUserManagement();
-		usersList = new ArrayList<User>();
+		if (getExtensionUserManagement() == null) {
+			return Collections.emptyList();
+		}
+
+		List<User> usersList = new ArrayList<>();
 
 		for (Context context : Model.getSingleton().getSession().getContexts()) {
 			usersList.addAll(extUserMgmt.getContextUserAuthManager(context.getIndex()).getUsers());
@@ -175,7 +178,7 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
 
 	protected ExtensionUserManagement getExtensionUserManagement() {
 		if (extUserMgmt == null) {
-			return Control.getSingleton().getExtensionLoader().getExtension(ExtensionUserManagement.class);
+			extUserMgmt = Control.getSingleton().getExtensionLoader().getExtension(ExtensionUserManagement.class);
 		}
 		return extUserMgmt;
 	}

@@ -2,39 +2,37 @@
 <html>
 <head>
 <title>
-HTTPS Info Add-on
+HTTPS信息加载项
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>HTTPS Info Add-on</h1>
+<h1>HTTPS信息加载项</h1>
 
 <p>
-The HTTPS Info add-on is accessed via the context menu within the Sites Tree or History table. 
-It displays a dialog in which various summary information is displayed
-regarding the target server's HTTPS certificate, and the offered SSL/TLS cipher suites.
+通过站点数或者历史记录表中的上下文菜单访问HTTPS信息加载项。 
+它显示一个对话框，其中显示了有关目标服务器的HTTPS证书以及所提供的SSL/TLS密码套件的各种摘要信息。
 </p>
 
 <p>
-This add-on leverages another OWASP project: 
-<a href="https://www.owasp.org/index.php/OWASP_DeepViolet_TLS/SSL_Scanner">Deep Violet</a> 
-to perform it's certificate and cipher suite information gathering.
+此附件利用另一个OWASP项目： 
+<a href="https://www.owasp.org/index.php/OWASP_DeepViolet_TLS/SSL_Scanner">深紫</a>
+来执行它的证书和密码套件信息收集。
 </p>
 
-<h2>General</h2>
-The top portion of the dialog is devoted to general details of the SSL/TLS certificate presented by the server. Such as:
+<h2>综合</h2>
+对话框的顶部部分专门介绍由服务器提供的SSL/TLS证书的一般详细信息。如：
 <ul>
-<li>Subject DN</li>
-<li>Signing Algorithm</li>
-<li>Certificate Fingerprint</li>
-<li>Issuer DN</li>
-<li>Validity Dates</li>
-<li>Self-signed Status</li>
-<li>etc.</li>
+<li>主题DN</li>
+<li>签名算法</li>
+<li>证书指纹</li>
+<li>发行人DN</li>
+<li>生效日期</li>
+<li>自签名状态</li>
+<li>等等。</li>
 </ul>
 
-<h2>Cipher Suites</h2>
-The bottom portion of the dialog is devoted to enumeration/listing of the specific Cipher Suites the 
-target server offers, grouped by handshake protocol (SSLv2, SSLv3, TLSv1, TLSv1.1, etc.).
+<h2>密钥套件</h2>
+对话框的底部部分用于枚举/列出目标服务器提供的特定密码套件，按握手协议（SSlv2，SSLv3，TLSv1，TLSv1.1等）分组。
 
 </body>
 </html>

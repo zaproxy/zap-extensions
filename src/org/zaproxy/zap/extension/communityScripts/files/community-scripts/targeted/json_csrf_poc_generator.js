@@ -23,7 +23,7 @@ function invokeWith(msg) {
 	if(body.length()!=0)
 	if(!isJson(body)){	
 	if(ismultipart(msg.getRequestHeader())){
-		type 	=  msg.getRequestHeader().getHeader(org.parosproxy.paros.network.HttpRequestHeader.CONTENT_TYPE);
+		type 	=  msg.getRequestHeader().getHeader(org.parosproxy.paros.network.HttpHeader.CONTENT_TYPE);
 		delim 	=  type.substring(type.search("=")+1,type.length());
 		h = body.split("--"+delim);
 		k=0;
@@ -90,7 +90,7 @@ function isJson(str)
 }
 
 function ismultipart(header){
-	type = header.getHeader(org.parosproxy.paros.network.HttpRequestHeader.CONTENT_TYPE);
+	type = header.getHeader(org.parosproxy.paros.network.HttpHeader.CONTENT_TYPE);
 	if(type == null )
 		return false;
 	if(type.contains("multipart/form-data"))

@@ -49,8 +49,9 @@ public class OpenApiSpider extends SpiderParser {
     public boolean parseResource(HttpMessage message, Source source, int depth) {
         try {
             Scheme defaultScheme = Scheme.forValue(message.getRequestHeader().getURI().getScheme().toLowerCase());
-            Converter converter = new SwaggerConverter(defaultScheme, message.getResponseBody().toString(),
-                    this.getValueGenerator());
+            Converter converter = new SwaggerConverter(defaultScheme,
+                    message.getRequestHeader().getURI().getAuthority(),
+                    message.getResponseBody().toString(), this.getValueGenerator());
             requestor.run(converter.getRequestModels());
         } catch (Exception e) {
             log.debug(e.getMessage(), e);

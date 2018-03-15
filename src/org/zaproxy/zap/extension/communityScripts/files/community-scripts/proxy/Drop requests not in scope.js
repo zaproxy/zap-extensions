@@ -1,6 +1,4 @@
 // This script drops ALL requests that are out of scope
-// Note that it requires the change https://code.google.com/p/zaproxy/source/detail?r=5872
-// which is in the trunk, the 2.4 branch and the latest weekly release
 
 function proxyRequest(msg) {
 

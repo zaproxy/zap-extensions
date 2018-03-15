@@ -12,7 +12,6 @@
 	<property name="temp" location="temp" />
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
-	<property name="status" value="alpha" />
 	<property name="versions.file" location="${dist}/ZapVersions.xml" />
 	<property name="wiki.dir" location="../../zap-extensions-wiki" />
 	<property name="wiki.zapcorehelp.dir" location="../../zap-core-help-wiki" />
@@ -203,8 +202,10 @@
 		<sequential>
 			<local name="zapaddon.version" />
 			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+			<local name="zapaddon.status" />
+			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
 			<local name="file" />
-			<property name="file" value="@{addonid}-${status}-${zapaddon.version}.zap" />
+			<property name="file" value="@{addonid}-${zapaddon.status}-${zapaddon.version}.zap" />
 
 			<generatejavahelpsearchindexes jhalljar="${build.lib.dir}/jhall.jar"
 				helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
@@ -271,7 +272,7 @@
 			</tstamp>
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-				addonid="@{addonid}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				addonid="@{addonid}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 				url="${zap.download.url}/${file}" />
 
 		</sequential>
@@ -284,8 +285,10 @@
 				<sequential>
 					<local name="zapaddon.version" />
 					<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+					<local name="zapaddon.status" />
+					<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
 					<local name="file" />
-					<property name="file" value="@{addonid}-${status}-${zapaddon.version}.zap" />
+					<property name="file" value="@{addonid}-${zapaddon.status}-${zapaddon.version}.zap" />
 
 					<local name="addon.libs.zip" />
 					<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
@@ -336,7 +339,7 @@
 					</tstamp>
 
 					<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-						addonid="@{addonid}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+						addonid="@{addonid}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 						url="${zap.download.url}/${file}" />
 
 				</sequential>
@@ -348,8 +351,10 @@
 		<sequential>
 			<local name="zapaddon.version" />
 			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
+			<local name="zapaddon.status" />
+			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
 			<local name="file" />
-			<property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
+			<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
 
 			<local name="addon.libs.zip" />
 			<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
@@ -383,7 +388,7 @@
 			</tstamp>
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 				url="${zap.download.url}/${file}" />
 
 		</sequential>
@@ -415,13 +420,15 @@
 		<build-addon name="help_ja_JP" />
 		<build-addon name="highlighter" />
 		<build-addon name="httpsinfo" addonid="httpsInfo" />
+		<build-imagelocationscanner-addon />
 		<build-addon name="importLogFiles" />
+		<build-addon name="jsonview"/>
 		<build-addon name="jxbrowser" />
 		<build-addon name="jxbrowserlinux64" />
 		<build-addon name="jxbrowsermacos" />
 		<build-addon name="jxbrowserwindows" />
 		<build-addon name="openapi" />
-		<build-pscanrulesalpha-addon />
+		<build-addon name="pscanrulesAlpha" />
 		<build-addon name="requester" />
 		<build-addon name="revisit" />
 		<build-addon name="saml" />
@@ -616,8 +623,53 @@
 		<generate-wiki addon="httpsinfo" />
 	</target>
 	
+	<macrodef name="build-imagelocationscanner-addon" description="Builds imagelocationscanner add-on">
+		<sequential>
+			<build-addon name="imagelocationscanner">
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="com/veggiespam/imagelocationscanner/**" />
+					</zipfileset>
+				</jar>
+			</build-addon>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="build-imagelocationscanner-addon-without-help-indexes" description="Builds imagelocationscanner add-on">
+		<sequential>
+			<build-addon-without-help-indexes name="imagelocationscanner">
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="com/veggiespam/imagelocationscanner/**" />
+					</zipfileset>
+				</jar>
+			</build-addon-without-help-indexes>
+		</sequential>
+	</macrodef>
+	
+	<target name="deploy-imagelocationscanner" depends="clean, compile" description="deploy the Image Location and Privacy scanner addon">
+		<build-imagelocationscanner-addon />
+		<deploy-addon name="imagelocationscanner" />
+	</target>
+
+	<target name="deploy-imagelocationscanner-without-help-indexes" depends="clean, compile" description="deploy the Image Location and Privacy scanner addon">
+		<!-- To facilitate quick Dev builds -->
+		<build-imagelocationscanner-addon-without-help-indexes />
+		<build-deploy-addon-without-help-indexes name="imagelocationscanner" />
+	</target>
+	
+	<target name="generate-wiki-imagelocationscanner" description="Generates the wiki of the Image Location and Privacy scanner addon">
+		<generate-wiki addon="imagelocationscanner" />
+	</target>
+	
 	<target name="deploy-importLogFiles" description="deploy the importLogFiles extension">
 		<build-deploy-addon name="importLogFiles" />
+	</target>
+	
+	<target name="deploy-jsonview" description="deploy the jsonview extension">
+		<build-deploy-addon name="jsonview" />
 	</target>
 
 	<target name="download-jxbrowser" depends="compile" description="download the jxbrowser files">
@@ -667,41 +719,13 @@
 		<build-deploy-addon name="onlineMenu" />
 	</target>
 
-	<macrodef name="build-pscanrulesalpha-addon" description="Builds passive scan rules add-on">
-		<sequential>
-			<build-addon name="pscanrulesAlpha">
-				<!-- Add the extra classes required -->
-				<jar jarfile="${dist}/${file}" update="true" compress="true">
-					<zipfileset dir="${build}" prefix="">
-						<include name="com/veggiespam/imagelocationscanner/**" />
-					</zipfileset>
-				</jar>
-			</build-addon>
-		</sequential>
-	</macrodef>
-
-	<macrodef name="build-pscanrulesalpha-addon-without-help-indexes" description="Builds passive scan rules add-on">
-		<sequential>
-			<build-addon-without-help-indexes name="pscanrulesAlpha">
-				<!-- Add the extra classes required -->
-				<jar jarfile="${dist}/${file}" update="true" compress="true">
-					<zipfileset dir="${build}" prefix="">
-						<include name="com/veggiespam/imagelocationscanner/**" />
-					</zipfileset>
-				</jar>
-			</build-addon-without-help-indexes>
-		</sequential>
-	</macrodef>
-
-	<target name="deploy-pscanrulesAlpha" depends="clean, compile" description="deploy the passive scan rules">
-		<build-pscanrulesalpha-addon />
-		<deploy-addon name="pscanrulesAlpha" />
+	<target name="deploy-pscanrulesAlpha" description="deploy the passive scan rules">
+		<build-deploy-addon name="pscanrulesAlpha" />
 	</target>
 
-	<target name="deploy-pscanrulesAlpha-without-help-indexes" depends="clean, compile" description="deploy the passive scan rules">
+	<target name="deploy-pscanrulesAlpha-without-help-indexes" description="deploy the passive scan rules">
 		<!-- To facilitate quick Dev builds -->
-		<build-pscanrulesalpha-addon-without-help-indexes />
-		<deploy-addon name="pscanrulesAlpha" />
+		<build-deploy-addon-without-help-indexes name="pscanrulesAlpha" />
 	</target>
 	
 	<target name="deploy-openapi" description="deploy the openapi add-on">
@@ -809,13 +833,13 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="accessControl-${status}-*.zap"/>
-				<include name="cspscanner-${status}-*.zap"/>
-				<include name="formhandler-${status}-*.zap"/>
-				<include name="jxbrowser*-${status}-*.zap"/>
-				<include name="openapi-${status}-*.zap"/>
-				<include name="sequence-${status}-*.zap"/>
-				<include name="soap-${status}-*.zap"/>
+				<include name="accessControl-*.zap"/>
+				<include name="cspscanner-*.zap"/>
+				<include name="formhandler-*.zap"/>
+				<include name="jxbrowser*-*.zap"/>
+				<include name="openapi-*.zap"/>
+				<include name="sequence-*.zap"/>
+				<include name="soap-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
@@ -824,7 +848,7 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="jxbrowser*-${status}-*.zap"/>
+				<include name="jxbrowser*-*.zap"/>
 			</fileset>
 		</copy>
 	</target>

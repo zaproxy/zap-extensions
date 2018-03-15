@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Custom Report" target="customreport"/>
+	<tocitem text="دليل المستخدم" tocid="toplevelitem">
+		<tocitem text="إضافات" tocid="addons">
+			<tocitem text="تقرير مخصص" target="customreport"/>
 		</tocitem>
 	</tocitem>
 </toc>

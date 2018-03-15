@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Help - Japanese</name>
-	<version>7</version>
-	<status>alpha</status>
+	<version>9</version>
+	<status>beta</status>
 	<description>Japanese version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
 	<url>https://crowdin.com/project/owasp-zap-help</url>
-	<changes>Updated for 2.7.0</changes>
+	<changes>Updated with the latest files from crowdin</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
