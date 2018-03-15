@@ -388,6 +388,7 @@
 		<build-addon name="directorylistv2_3_lc" />
 		<build-addon name="fuzzdb" />
 		<build-addon name="gettingStarted" />
+		<build-addon name="groovy" />
 		<build-addon name="help" />
 		<build-addon name="help_pt_BR" />
 		<build-addon name="onlineMenu" />
@@ -486,6 +487,19 @@
 
 	<target name="generate-wiki-gettingStarted" description="Generates the wiki of gettingStarted">
 		<generate-wiki-core addon="gettingStarted" />
+	</target>
+
+	<target name="deploy-groovy" description="deploy the groovy extension">
+		<build-deploy-addon name="groovy" />
+	</target>
+
+	<target name="deploy-groovy-without-help-indexes" description="deploy the groovy extension without help indexes">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="groovy" />
+	</target>
+
+	<target name="generate-wiki-groovy" description="Generates the wiki of groovy extension">
+		<generate-wiki addon="groovy" />
 	</target>
   
 	<target name="deploy-help" description="deploy the help extension">
@@ -658,3 +672,4 @@
     </target>
 
 </project>
+	
