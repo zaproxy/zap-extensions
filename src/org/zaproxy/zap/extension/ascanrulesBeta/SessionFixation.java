@@ -383,7 +383,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		//////////////////////////////////////////////////////////////////////
 	        		//Check 2: is the session cookie that was set accessible to Javascript?
 	        		//If so, alert this fact too
-	        		if ( ! cookieBack1.getFlags().contains("httponly"))  {
+	        		if ( ! cookieBack1.getFlags().contains("httponly") && loginUrl)  {
         				//pass the original param value here, not the new value, since we're displaying the session id exposed in the original message
 	        			String extraInfo = Constant.messages.getString("ascanbeta.sessionidaccessiblebyjavascript.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue());
 	        			String attack = Constant.messages.getString("ascanbeta.sessionidaccessiblebyjavascript.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());
@@ -391,21 +391,12 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			String vulndesc=Constant.messages.getString("ascanbeta.sessionidaccessiblebyjavascript.desc");
 	        			String vulnsoln=Constant.messages.getString("ascanbeta.sessionidaccessiblebyjavascript.soln");
 
-	        			//and figure out the risk, depending on whether it is a login page	        
-	        			int risk = Alert.RISK_LOW;
-	        			if (loginUrl) {
-	        				extraInfo += ("\n" + Constant.messages.getString("ascanbeta.sessionidaccessiblebyjavascript.alert.extrainfo.loginpage"));
-	        				//login page, so higher risk
-	        				risk = Alert.RISK_MEDIUM;
-	        			} else {
-	        				//not a login page.. lower risk
-	        				risk = Alert.RISK_LOW;
-	        			}
+        				extraInfo += ("\n" + Constant.messages.getString("ascanbeta.sessionidaccessiblebyjavascript.alert.extrainfo.loginpage"));
 	        			
 	        			//call bingo with some extra info, indicating that the alert is 
 	        			//not specific to Session Fixation, but has its own title and description (etc)
 	        			//the alert here is "Session id accessible in Javascript", or words to that effect.
-	        			bingo(risk, Alert.CONFIDENCE_MEDIUM, vulnname, vulndesc, 
+	        			bingo(Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, vulnname, vulndesc, 
 	        					getBaseMsg().getRequestHeader().getURI().getURI(),
 	        					currentHtmlParameter.getName(),  attack, 
 	        					extraInfo, vulnsoln, getBaseMsg());
@@ -551,6 +542,11 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			//Note: do NOT continue to the next field at this point.. 
 	        			//since we still need to check for Session Fixation.
 	        		}
+	        		
+	        		if (!loginUrl){
+        				//not a login page.. skip
+        				continue;
+        			}
 		        		
 	        		////////////////////////////////////////////////////////////////////////////////////////////
 	        		/// Message 2 - processing starts here
@@ -662,18 +658,11 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			String extraInfo = Constant.messages.getString("ascanbeta.sessionfixation.alert.cookie.extrainfo", currentHtmlParameter.getName(), cookieBack1.getValue(), (cookieBack2== null?"NULL": cookieBack2.getValue()));
 	        			String attack = Constant.messages.getString("ascanbeta.sessionfixation.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        			
-	        			//and figure out the risk, depending on whether it is a login page	        
-	        			int risk = Alert.RISK_LOW;
 	        			if (loginUrl) {
 	        				extraInfo += ("\n" + Constant.messages.getString("ascanbeta.sessionfixation.alert.cookie.extrainfo.loginpage"));
-	        				//login page, so higher risk
-	        				risk = Alert.RISK_MEDIUM;
-	        			} else {
-	        				//not a login page.. lower risk
-	        				risk = Alert.RISK_LOW;
 	        			}
 	        			
-	        			bingo(risk, Alert.CONFIDENCE_MEDIUM, msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, msg2Initial);
+	        			bingo(Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, msg2Initial);
 	        			logSessionFixation(msg2Initial, currentHtmlParameter.getType().toString(), currentHtmlParameter.getName());
 	        		}
 
