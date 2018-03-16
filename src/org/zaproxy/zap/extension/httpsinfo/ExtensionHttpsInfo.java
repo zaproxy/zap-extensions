@@ -101,7 +101,16 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
 	
 	protected TabbedPanel2 getHttpsInfoTabsPanel() {
 		if (httpsInfoTabsPanel == null) {
-			httpsInfoTabsPanel = new TabbedPanel2();
+			httpsInfoTabsPanel = new TabbedPanel2() {
+				private static final long serialVersionUID = -1422894398829082869L;
+
+				@Override
+				public void setVisible(Component component, boolean visible) {
+					if (!visible) {
+						removeTab((AbstractPanel) component);
+					}
+				}
+			};
 		}
 		return httpsInfoTabsPanel;
 	}
