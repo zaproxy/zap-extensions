@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+ - Add scan rule for MongoDB (Issue 3480).
 
 ### Fixed
 - Fix typo in request header used by Apache Range Header DoS.
