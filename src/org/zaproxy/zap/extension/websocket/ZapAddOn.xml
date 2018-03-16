@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Tweak About help page.<br>
+	Remove event consumers when the channel is closed.<br>
 	]]>
 	</changes>
 	<classnames>

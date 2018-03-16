@@ -22,8 +22,10 @@ package org.zaproxy.zap.extension.websocket;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.log4j.Logger;
@@ -177,9 +179,13 @@ public class WebSocketAPI extends ApiImplementor {
                             // Special case
                             String type = json.getString("type");
                             if ("register".equals(type)) {
-                                ZAP.getEventBus().registerConsumer(getEventConsumer(channelId), name);
+                                WebsocketEventConsumer ev = getEventConsumer(channelId);
+                                ev.addPublisherName(name);
+                                ZAP.getEventBus().registerConsumer(ev, name);
                             } else if ("unregister".equals(type)) {
-                                ZAP.getEventBus().unregisterConsumer(getEventConsumer(channelId), name);
+                                WebsocketEventConsumer ev = getEventConsumer(channelId);
+                                ev.removePublisherName(name);
+                                ZAP.getEventBus().unregisterConsumer(ev, name);
                             } else {
                                 throw new ApiException(ApiException.Type.BAD_TYPE, type);
                             }
@@ -228,6 +234,21 @@ public class WebSocketAPI extends ApiImplementor {
 
                 @Override
                 public void onStateChange(State state, WebSocketProxy proxy) {
+                    if (state != State.CLOSED) {
+                        return;
+                    }
+
+                    WebsocketEventConsumer consumer = evMap.remove(proxy.getChannelId());
+                    if (consumer == null) {
+                        return;
+                    }
+
+                    // TODO replace the loop with:
+                    // ZAP.getEventBus().unregisterConsumer(consumer);
+                    // once available in targeted ZAP version.
+                    for (String publisherName : consumer.getPublisherNames()) {
+                        ZAP.getEventBus().unregisterConsumer(consumer, publisherName);
+                    }
                 }
             };
 
@@ -265,15 +286,10 @@ public class WebSocketAPI extends ApiImplementor {
         return sent;
     }
 
-    private Map<Integer, EventConsumer> evMap = new HashMap<Integer, EventConsumer>();
+    private Map<Integer, WebsocketEventConsumer> evMap = new HashMap<Integer, WebsocketEventConsumer>();
 
-    private EventConsumer getEventConsumer(int channelId) {
-        EventConsumer ev = evMap.get(channelId);
-        if (ev == null) {
-            ev = new WebsocketEventConsumer(channelId);
-            evMap.put(channelId, ev);
-        }
-        return ev;
+    private WebsocketEventConsumer getEventConsumer(int channelId) {
+        return evMap.computeIfAbsent(channelId, key -> new WebsocketEventConsumer(key));
     }
 
     @Override
@@ -413,9 +429,23 @@ public class WebSocketAPI extends ApiImplementor {
     private class WebsocketEventConsumer implements EventConsumer {
 
         private int channelId;
+        private Set<String> publisherNames;
 
         protected WebsocketEventConsumer(int channelId) {
             this.channelId = channelId;
+            this.publisherNames = new HashSet<>();
+        }
+
+        public void addPublisherName(String name) {
+            publisherNames.add(name);
+        }
+
+        public void removePublisherName(String name) {
+            publisherNames.remove(name);
+        }
+
+        public Set<String> getPublisherNames() {
+            return publisherNames;
         }
 
         @Override
