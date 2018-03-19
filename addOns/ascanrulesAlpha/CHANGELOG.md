@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+ - Add dependency on Custom Payloads add-on. The payloads of the Test User Agent scanner are now customizable.
 
 - Maintenance changes.
 - Added XSLT Injection Scanner (issue 3572).
