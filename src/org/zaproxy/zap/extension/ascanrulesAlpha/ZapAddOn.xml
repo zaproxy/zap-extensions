@@ -10,6 +10,7 @@
 	Add .htaccess scanner (Issue 3972).<br>
 	Modified trace.axd scanner to leverage new AbstractAppFilePlugin component.<br>
 	Remove unnecessary help entry.<br>
+	Sorted help content alphabetically, adjusted names to match scan rules, and added missing entries.<br>
 	]]>
 	</changes>
 	<extensions>
