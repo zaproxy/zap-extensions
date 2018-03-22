@@ -602,7 +602,10 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         //httpMethod = httpMethod.toLowerCase().trim();
 
         //TODO:chose a body that exploits a vulnerability
-        String requestBody = "\"Dummy\":\"Message\"";
+        String randomKey = RandomStringUtils.random(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+        String randomValue = RandomStringUtils.random(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+
+        String requestBody = '"'+randomKey+"\":\""+randomValue+'"'; //"randomKey":"randomValue"
         if (httpMethod.equals(HttpRequestHeader.TRACK) || httpMethod.equals(HttpRequestHeader.TRACE) || httpMethod.equals(HttpRequestHeader.CONNECT)) {
             /* We have separate methods for them */
             return null;
