@@ -184,7 +184,6 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
     @Override
     public void init() {
         if(INSECURE_METHODS==null) {
-            System.out.println("init called");
             INSECURE_METHODS = new ArrayList<String>();
             /* Add the WEBDAV methods to the INSECURE methods */
             //INSECURE_METHODS.addAll(new LinkedList<String>(Arrays.asList(WEBDAV_METHODS)));
@@ -215,9 +214,10 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                 // doubt that it is real
                 // try the TRACK method
                 MessageAndEvidence maeTrack = testTraceOrTrack(this.getBaseMsg(), "TRACK");
+
                 if (maeTrack != null) {
                     bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString("ascanrules.insecurehttpmethod.detailed.name", "TRACK"),
-                            Constant.messages.getString("ascanrules.insecurehttpmethod.trace.exploitable.desc", "TRACK"), null, // originalMessage.getRequestHeader().getURI().getURI(),
+                            Constant.messages.getString("ascanrules.insecurehttpmethod.trace.exploitable.desc", "TRACK"), maeTrack.message.getRequestHeader().getURI().getURI(),  //originalMessage.getRequestHeader().getURI().getURI(),
                             null, // parameter being attacked: none.
                             "", // attack
                             Constant.messages.getString("ascanrules.insecurehttpmethod.trace.exploitable.extrainfo", maeTrack.evidence),
@@ -232,7 +232,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                 MessageAndEvidence maeTrace = testTraceOrTrack(this.getBaseMsg(), "TRACE");
                 if (maeTrace != null) {
                     bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString("ascanrules.insecurehttpmethod.detailed.name", "TRACE"),
-                            Constant.messages.getString("ascanrules.insecurehttpmethod.trace.exploitable.desc", "TRACE"), null, // originalMessage.getRequestHeader().getURI().getURI(),
+                            Constant.messages.getString("ascanrules.insecurehttpmethod.trace.exploitable.desc", "TRACE"), maeTrace.message.getRequestHeader().getURI().getURI(), // originalMessage.getRequestHeader().getURI().getURI(),
                             null, // parameter being attacked: none.
                             "", // attack
                             Constant.messages.getString("ascanrules.insecurehttpmethod.trace.exploitable.extrainfo", maeTrace.evidence),
@@ -265,9 +265,20 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                 for (String insecureMethod : INSECURE_METHODS) {
                     MessageAndEvidence mae = testHttpMethod(insecureMethod);
                     if (mae != null) {
+                        String exploitableDesc;
+                        if(Arrays.asList(WEBDAV_METHODS).contains(insecureMethod))
+                        {
+                            exploitableDesc = Constant.messages.getString("ascanrules.insecurehttpmethod.webdav.exploitable.desc",insecureMethod);
+                        }else
+                        {
+                            exploitableDesc= Constant.messages.getString("ascanrules.insecurehttpmethod."+insecureMethod.toLowerCase()+".exploitable.desc");
+                        }
                         DescriptionAndExtraInfo messages = getMessageForHttpMethod(insecureMethod);
-                        bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString("ascanrules.insecurehttpmethod.detailed.name", "CONNECT"),
-                                Constant.messages.getString("ascanrules.insecurehttpmethod.connect.exploitable.desc", "CONNECT"), null, // originalMessage.getRequestHeader().getURI().getURI(),
+                        bingo(Alert.RISK_MEDIUM,
+                                Alert.CONFIDENCE_MEDIUM,
+                                Constant.messages.getString("ascanrules.insecurehttpmethod.detailed.name", insecureMethod),
+                                exploitableDesc,
+                                getBaseMsg().getRequestHeader().getURI().getURI(),
                                 /* parameter being attacked: none */
                                 null,
                                 /* attack */
@@ -278,7 +289,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                                 messages.extraInfo,
                                 /* evidence, highlighted in the message */
                                 "evidence",
-                                this.getBaseMsg());
+                                mae.message);
                     }
                 }
             }
@@ -612,6 +623,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         }
         final HttpRequestHeader traceRequestHeader = this.getBaseMsg().getRequestHeader();
 
+
         traceRequestHeader.setMethod(httpMethod);
         traceRequestHeader.setVersion(HttpRequestHeader.HTTP11);
 
@@ -658,7 +670,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 
     private final DescriptionAndExtraInfo getMessageForHttpMethod(String httpMethod) {
 
-        httpMethod = httpMethod.toLowerCase().trim();
+        //httpMethod = httpMethod.toLowerCase().trim();
 
         final DescriptionAndExtraInfo messages = new DescriptionAndExtraInfo();
 
@@ -676,7 +688,10 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
             messages.description = Constant.messages.getString("ascanrules.insecurehttpmethod.put.exploitable.desc");
             messages.extraInfo = Constant.messages.getString("ascanrules.insecurehttpmethod.put.exploitable.extrainfo");
         }
-
+        if (httpMethod.equals(HttpRequestHeader.PATCH)) {
+            messages.description = Constant.messages.getString("ascanrules.insecurehttpmethod.patch.exploitable.desc");
+            messages.extraInfo = Constant.messages.getString("ascanrules.insecurehttpmethod.patch.exploitable.extrainfo");
+        }
         if (Arrays.asList(WEBDAV_METHODS).contains(httpMethod)) {
             messages.description = Constant.messages.getString("ascanrules.insecurehttpmethod.webdav.exploitable.desc");
             messages.extraInfo = Constant.messages.getString("ascanrules.insecurehttpmethod.webdav.exploitable.extrainfo");
