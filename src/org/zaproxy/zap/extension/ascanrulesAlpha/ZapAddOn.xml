@@ -1,16 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>21</version>
+	<version>22</version>
 	<status>alpha</status>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAscanrulesAlphaAscanalpha</url>
 	<changes>
 	<![CDATA[
-	Add .htaccess scanner (Issue 3972).<br>
-	Modified trace.axd scanner to leverage new AbstractAppFilePlugin component.<br>
-	Remove unnecessary help entry.<br>
-	Sorted help content alphabetically, adjusted names to match scan rules, and added missing entries.<br>
 	]]>
 	</changes>
 	<extensions>
