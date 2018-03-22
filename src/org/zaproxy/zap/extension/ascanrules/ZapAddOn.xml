@@ -32,6 +32,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRemoteFileInclude</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestServerSideInclude</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestSQLInjection</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.InsecureHTTPMethod</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
