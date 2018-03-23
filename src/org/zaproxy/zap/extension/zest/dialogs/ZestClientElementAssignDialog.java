@@ -33,6 +33,7 @@ import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
 public class ZestClientElementAssignDialog extends ZestClientElementDialog implements ZestDialog {
 
+	private static final String FIELD_VARIABLE = "zest.dialog.assign.label.variable";
 	private static final long serialVersionUID = 1L;
 
 	public ZestClientElementAssignDialog(ExtensionZest ext, Frame owner, Dimension dim) {
@@ -45,6 +46,7 @@ public class ZestClientElementAssignDialog extends ZestClientElementDialog imple
 		super.init(script, parent, child, req, client, add);
 		
 		this.addTextField(FIELD_ATTRIBUTE, ((ZestClientElementAssign)this.getClient()).getAttribute());
+		this.addTextField(FIELD_VARIABLE, ((ZestClientElementAssign)this.getClient()).getVariableName());
 
 		if (add) {
 			this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssign.add.title"));
@@ -58,11 +60,15 @@ public class ZestClientElementAssignDialog extends ZestClientElementDialog imple
 	@Override
 	public void saveFields() {
 		((ZestClientElementAssign)this.getClient()).setAttribute(this.getStringValue(FIELD_ATTRIBUTE));
+		((ZestClientElementAssign)this.getClient()).setVariableName(this.getStringValue(FIELD_VARIABLE));
 	}
 
 	@Override
 	public String validateFields() {
-		// Nothing else to do
+		if (!ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_VARIABLE))
+				&& !getScript().getZestScript().getVariableNames().contains(this.getStringValue(FIELD_VARIABLE))) {
+			return Constant.messages.getString("zest.dialog.assign.error.variable");
+		}
 		return super.validateFields();
 	}
 
