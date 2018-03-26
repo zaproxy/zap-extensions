@@ -9,6 +9,7 @@
 	<![CDATA[
 	Added input for Variable Name in Client Element Assign dialog.<br>
 	Allow to clear the Zest panel.<br>
+	Allow to access the options through Zest panel.<br>
 	]]>
 	</changes>
 	<dependencies>

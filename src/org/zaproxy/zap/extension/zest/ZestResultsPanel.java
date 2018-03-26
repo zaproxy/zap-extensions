@@ -25,7 +25,7 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-import javax.swing.ImageIcon;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -33,6 +33,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -81,11 +82,19 @@ public class ZestResultsPanel extends AbstractPanel {
 
 			JButton clearButton = new JButton(
 					Constant.messages.getString("zest.results.panel.button.clear"),
-					DisplayUtils.getScaledIcon(
-							new ImageIcon(ZestResultsPanel.class.getResource("/resource/icon/fugue/broom.png"))));
+					DisplayUtils.getScaledIcon(ZestResultsPanel.class.getResource("/resource/icon/fugue/broom.png")));
 			clearButton.addActionListener(e -> model.clear());
 
+			JButton optionsButton = new JButton(
+					DisplayUtils.getScaledIcon(ZestResultsPanel.class.getResource("/resource/icon/16/041.png")));
+			optionsButton.setToolTipText(Constant.messages.getString("zest.results.panel.button.options"));
+			optionsButton.addActionListener(
+					e -> Control.getSingleton().getMenuToolsControl().options(
+							Constant.messages.getString("zest.options.title")));
+			
 			toolBar.add(clearButton);
+			toolBar.add(Box.createHorizontalGlue());
+			toolBar.add(optionsButton);
 		}
 		return toolBar;
 	}
