@@ -66,6 +66,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.AbstractPersistentPayloadGeneratorUIPanel;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.ModifyPayloadsPanel;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.JCheckBoxTree;
 import org.zaproxy.zap.view.JCheckBoxTree.CheckChangeEvent;
@@ -418,6 +419,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
             if (payloadsPreviewTextArea == null) {
                 payloadsPreviewTextArea = new JTextArea(15, 10);
                 payloadsPreviewTextArea.setEditable(false);
+                payloadsPreviewTextArea.setFont(FontUtils.getFont("Monospaced"));
             }
             return payloadsPreviewTextArea;
         }
