@@ -9,6 +9,7 @@
 	<![CDATA[
 	Tweak help page.<br>
 	Ignore CFU HTTP messages.<br>
+	Allow to (explicitly) select Token Generator messages.<br>
 	]]>
 	</changes>
 	<extensions>
