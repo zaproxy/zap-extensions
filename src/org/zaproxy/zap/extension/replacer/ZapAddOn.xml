@@ -5,7 +5,12 @@
 	<description>Easy way to replace strings in requests and responses.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Tweak help page.</changes>
+	<changes>
+	<![CDATA[
+	Tweak help page.<br>
+	Ignore CFU HTTP messages.<br>
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.replacer.ExtensionReplacer</extension>
 	</extensions>
