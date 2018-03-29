@@ -104,7 +104,9 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                 	// Prompt for a WSDL file.
             		final JFileChooser chooser = new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
-            		FileNameExtensionFilter filter = new FileNameExtensionFilter("WSDL File", "wsdl", "wsdl");
+            		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            		        Constant.messages.getString("soap.topmenu.tools.importWSDL.filter.description"),
+            		        "wsdl");
             		chooser.setFileFilter(filter);
             	    int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
             	    if(rc == JFileChooser.APPROVE_OPTION) {

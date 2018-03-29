@@ -1,11 +1,15 @@
 <zapaddon>
 	<name>SOAP Scanner</name>
-	<version>3</version>
+	<version>4</version>
 	<status>alpha</status>
 	<description>Imports and scans WSDL files containing SOAP endpoints.</description>
 	<author>Alberto (albertov91) + ZAP Core team</author>
 	<url></url>
-	<changes>Added API, help and other minor code changes.</changes>
+	<changes>
+	<![CDATA[
+	Internationalise file filter description.<br>
+	]]>
+	</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.soap.ExtensionImportWSDL</extension>
 	</extensions>
