@@ -26,6 +26,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.log4j.Logger;
 import org.jwall.web.audit.AuditEvent;
 import org.jwall.web.audit.io.ModSecurity2AuditReader;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -43,6 +44,25 @@ import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 
 public class ExtensionImportLogFiles extends ExtensionAdaptor {
+
+    /**
+     * Logging options for the import
+     */
+    public static enum LogType {
+        ZAP("zap"),
+        MOD_SECURITY_2("modsec2");
+
+        private String i18nKey;
+
+        private LogType(String i18nKey) {
+            this.i18nKey = i18nKey;
+        }
+
+        @Override
+        public String toString() {
+            return Constant.messages.getString("importLogFiles.log.type." + i18nKey);
+        }
+    }
 
     private JMenuItem menuExample = null;
 
@@ -78,11 +98,6 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
         API.getInstance().removeApiImplementor(importLogAPI);
     }
 
-    /**
-     * Logging options for the import
-     */
-    public static final String[] logType = { "ZAP Logs", "ModSecurity2 Logs" };
-
     private JMenuItem getImportOption() {
         if (menuExample == null) {
             menuExample = new JMenuItem();
@@ -97,17 +112,19 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
                     JFrame main = view.getMainFrame();
                     JFileChooser fc = new JFileChooser();
                     fc.setAcceptAllFileFilterUsed(false);
-                    FileFilter filter = new FileNameExtensionFilter("TEXT File", "txt");
+                    FileFilter filter = new FileNameExtensionFilter(
+                            getMessageString("importLogFiles.choosefile.filter.description"),
+                            "txt");
                     fc.addChoosableFileFilter(filter);
 
-                    String logChoice = (String) JOptionPane.showInputDialog(
+                    LogType logChoice = (LogType) JOptionPane.showInputDialog(
                             main,
-                            "Log Type",
-                            "Select Log Type",
+                            getMessageString("importLogFiles.choosefile.message"),
+                            getMessageString("importLogFiles.choosefile.title"),
                             JOptionPane.QUESTION_MESSAGE,
                             null,
-                            logType,
-                            logType[0]);
+                            LogType.values(),
+                            LogType.ZAP);
 
                     if (logChoice != null) {
                         int openChoice = fc.showOpenDialog(main);
@@ -207,8 +224,8 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
      * @param newFile java.IO.File representation of the logfile, called from both the UI and from the API
      * @param logChoice type of logfile being imported
      */
-    public void processInput(File newFile, String logChoice) {
-        if (logChoice != null && logChoice == logType[0] /* ZAP log choice */) {
+    public void processInput(File newFile, LogType logChoice) {
+        if (logChoice == LogType.ZAP) {
             List<String> parsedText = readFile(newFile);
             try {
                 List<HttpMessage> messages = getHttpMessages(parsedText);
@@ -219,7 +236,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
             }
         }
 
-        else if (logChoice != null && logChoice == logType[1] /* ModSecurity2 Choice */) {
+        else if (logChoice == LogType.MOD_SECURITY_2) {
             try {
                 List<HttpMessage> messages = readModSecLogsFromFile(newFile);
                 List<HistoryReference> history = getHistoryRefs(messages);
