@@ -25,7 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,32 +125,23 @@ public class ZestZapUtils {
 		
 		if (za instanceof ZestScript) {
 			ZestScript zs = (ZestScript) za;
-			return indexStr + MessageFormat.format(
-					Constant.messages.getString("zest.element.script"),
-					zs.getTitle());
+			return indexStr + Constant.messages.getString("zest.element.script", zs.getTitle());
 		} else if (za instanceof ZestRequest) {
 			ZestRequest zr = (ZestRequest) za;
 			if (zr.getUrl() != null) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.request"),
-						zr.getMethod(), zr.getUrl());
+				return indexStr + Constant.messages.getString("zest.element.request", zr.getMethod(), zr.getUrl());
 			} else {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.request"),
-						zr.getMethod(), zr.getUrlToken());
+				return indexStr + Constant.messages.getString("zest.element.request", zr.getMethod(), zr.getUrlToken());
 			}
 		} else if (za instanceof ZestResponse) {
 			ZestResponse zr = (ZestResponse) za;
-			return indexStr + MessageFormat.format(
-					Constant.messages.getString("zest.element.response"),
-					zr.getStatusCode());
+			return indexStr + Constant.messages.getString("zest.element.response", zr.getStatusCode());
 
 		} else if (za instanceof ZestAssertion) {
 			ZestAssertion zas = (ZestAssertion) za;
-			return indexStr + MessageFormat.format(
-					Constant.messages.getString("zest.element.assert"),
-					toUiString((ZestElement) zas.getRootExpression(),
-							incParams, shadowLevel));
+			return indexStr + Constant.messages.getString(
+					"zest.element.assert",
+					toUiString((ZestElement) zas.getRootExpression(), incParams, shadowLevel));
 
 		} else if (za instanceof ZestConditional) {
 			ZestConditional zac = (ZestConditional) za;
@@ -172,30 +162,21 @@ public class ZestZapUtils {
 				return indexStr + Constant.messages
 						.getString("zest.element.conditional.else");
 //				if (zac.getRootExpression() != null) {
-//					return indexStr + MessageFormat
-//							.format(Constant.messages
-//									.getString("zest.element.conditional.else"),
-//									toUiString((ZestElement) zac
-//											.getRootExpression(), incParams,
-//											shadowLevel));
+//					return indexStr + Constant.messages.getString(
+//							"zest.element.conditional.else",
+//							toUiString((ZestElement) zac.getRootExpression(), incParams, shadowLevel));
 //				} else {
-//					return indexStr + MessageFormat.format(Constant.messages
-//							.getString("zest.element.conditional.else"), "");
+//					return indexStr + Constant.messages.getString("zest.element.conditional.else", "");
 //				}
 			}
 		} else if (za instanceof ZestExpressionAnd) {
-			return indexStr + MessageFormat
-					.format(Constant.messages
-							.getString("zest.element.expression.and"),
-							incParams);
+			return indexStr + Constant.messages.getString("zest.element.expression.and", incParams);
 		} else if (za instanceof ZestExpressionOr){
-			return indexStr + MessageFormat.format(Constant.messages.getString("zest.element.expression.or"), incParams);
+			return indexStr + Constant.messages.getString("zest.element.expression.or", incParams);
 		} else if (za instanceof ZestExpressionStatusCode) {
 			ZestExpressionStatusCode sca = (ZestExpressionStatusCode) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.expression.statuscode"), sca
-						.getCode());
+				return indexStr + Constant.messages.getString("zest.element.expression.statuscode", sca.getCode());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.statuscode.title");
@@ -203,9 +184,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestExpressionLength) {
 			ZestExpressionLength sla = (ZestExpressionLength) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.expression.length"), sla
-						.getVariableName(), sla.getLength(), sla.getApprox());
+				return indexStr + Constant.messages
+						.getString("zest.element.expression.length", sla.getVariableName(), sla.getLength(), sla.getApprox());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.length.title");
@@ -214,13 +194,9 @@ public class ZestZapUtils {
 			ZestExpressionResponseTime zhr = (ZestExpressionResponseTime) za;
 			if (incParams) {
 				if (zhr.isGreaterThan()) {
-					return indexStr + MessageFormat.format(Constant.messages
-							.getString("zest.element.expression.resptimegt"),
-							zhr.getTimeInMs());
+					return indexStr + Constant.messages.getString("zest.element.expression.resptimegt", zhr.getTimeInMs());
 				} else {
-					return indexStr + MessageFormat.format(Constant.messages
-							.getString("zest.element.expression.resptimelt"),
-							zhr.getTimeInMs());
+					return indexStr + Constant.messages.getString("zest.element.expression.resptimelt", zhr.getTimeInMs());
 				}
 			} else {
 				return indexStr + Constant.messages
@@ -232,13 +208,11 @@ public class ZestZapUtils {
 			ZestExpressionRegex zer = (ZestExpressionRegex) za;
 			if (incParams) {
 				if (zer.isInverse()) {
-					return indexStr + MessageFormat.format(Constant.messages
-							.getString("zest.element.expression.regex.exc"),
-							zer.getVariableName(), zer.getRegex());
+					return indexStr + Constant.messages
+							.getString("zest.element.expression.regex.exc", zer.getVariableName(), zer.getRegex());
 				} else {
-					return indexStr + MessageFormat.format(Constant.messages
-							.getString("zest.element.expression.regex.inc"),
-							zer.getVariableName(), zer.getRegex());
+					return indexStr + Constant.messages
+							.getString("zest.element.expression.regex.inc", zer.getVariableName(), zer.getRegex());
 				}
 			} else {
 				return indexStr + Constant.messages
@@ -248,9 +222,8 @@ public class ZestZapUtils {
 			// TODO case exact
 			ZestExpressionEquals zer = (ZestExpressionEquals) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.expression.equals"), zer
-						.getVariableName(), zer.getValue());
+				return indexStr
+						+ Constant.messages.getString("zest.element.expression.equals", zer.getVariableName(), zer.getValue());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.equals.title");
@@ -279,9 +252,7 @@ public class ZestZapUtils {
 			}
 
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.expression.url"), incStr,
-						excStr);
+				return indexStr + Constant.messages.getString("zest.element.expression.url", incStr, excStr);
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.url.title");
@@ -290,9 +261,7 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestExpressionIsInteger) {
 			ZestExpressionIsInteger zer = (ZestExpressionIsInteger) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.expression.isint"), zer
-						.getVariableName());
+				return indexStr + Constant.messages.getString("zest.element.expression.isint", zer.getVariableName());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.isint.title");
@@ -301,9 +270,11 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestExpressionClientElementExists) {
 			ZestExpressionClientElementExists sla = (ZestExpressionClientElementExists) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.expression.clientelement"), 
-						sla.getWindowHandle(), sla.getType(), sla.getElement());
+				return indexStr + Constant.messages.getString(
+						"zest.element.expression.clientelement",
+						sla.getWindowHandle(),
+						sla.getType(),
+						sla.getElement());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.clientelement.title");
@@ -325,10 +296,8 @@ public class ZestZapUtils {
 					vals.append(val);
 				}
 
-				return indexStr + MessageFormat
-						.format(Constant.messages
-								.getString("zest.element.loop.string"), zals
-								.getVariableName(), vals.toString());
+				return indexStr
+						+ Constant.messages.getString("zest.element.loop.string", zals.getVariableName(), vals.toString());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.loop.string.title");
@@ -337,9 +306,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestLoopFile) {
 			ZestLoopFile zalf = (ZestLoopFile) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.loop.file"), zalf
-						.getVariableName(), zalf.getFile().getName());
+				return indexStr + Constant.messages
+						.getString("zest.element.loop.file", zalf.getVariableName(), zalf.getFile().getName());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.loop.file.title");
@@ -347,9 +315,11 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestLoopInteger) {
 			ZestLoopInteger zali = (ZestLoopInteger) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.loop.integer"), zali
-						.getVariableName(), zali.getStart(), zali.getEnd(),
+				return indexStr + Constant.messages.getString(
+						"zest.element.loop.integer",
+						zali.getVariableName(),
+						zali.getStart(),
+						zali.getEnd(),
 						zali.getStep());
 			} else {
 				return indexStr + Constant.messages
@@ -358,10 +328,13 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestLoopClientElements) {
 			ZestLoopClientElements zalce = (ZestLoopClientElements) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.loop.clientElements"), 
-						zalce.getVariableName(), zalce.getWindowHandle(), 
-						zalce.getType(), zalce.getElement(), zalce.getAttribute());
+				return indexStr + Constant.messages.getString(
+						"zest.element.loop.clientElements",
+						zalce.getVariableName(),
+						zalce.getWindowHandle(),
+						zalce.getType(),
+						zalce.getElement(),
+						zalce.getAttribute());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.loop.clientElements.title");
@@ -369,9 +342,11 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestLoopRegex) {
 			ZestLoopRegex zalr = (ZestLoopRegex) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.loop.regex"), 
-						zalr.getVariableName(), zalr.getInputVariableName(), zalr.getRegex());
+				return indexStr + Constant.messages.getString(
+						"zest.element.loop.regex",
+						zalr.getVariableName(),
+						zalr.getInputVariableName(),
+						zalr.getRegex());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.loop.regex.title");
@@ -379,11 +354,11 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestAssignFieldValue) {
 			ZestAssignFieldValue zsa = (ZestAssignFieldValue) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.assign.field"), zsa
-						.getVariableName(), zsa.getFieldDefinition()
-						.getFormIndex(), zsa.getFieldDefinition()
-						.getFieldName());
+				return indexStr + Constant.messages.getString(
+						"zest.element.assign.field",
+						zsa.getVariableName(),
+						zsa.getFieldDefinition().getFormIndex(),
+						zsa.getFieldDefinition().getFieldName());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.assign.field.title");
@@ -392,9 +367,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestAssignRegexDelimiters) {
 			ZestAssignRegexDelimiters zsa = (ZestAssignRegexDelimiters) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.assign.regex"), zsa
-						.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
+				return indexStr + Constant.messages
+						.getString("zest.element.assign.regex", zsa.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.assign.regex.title");
@@ -403,9 +377,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestAssignStringDelimiters) {
 			ZestAssignStringDelimiters zsa = (ZestAssignStringDelimiters) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.assign.delstring"), zsa
-						.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
+				return indexStr + Constant.messages
+						.getString("zest.element.assign.delstring", zsa.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.assign.delstring.title");
@@ -414,9 +387,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestAssignRandomInteger) {
 			ZestAssignRandomInteger zsa = (ZestAssignRandomInteger) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.assign.rndint"), zsa
-						.getVariableName(), zsa.getMinInt(), zsa.getMaxInt());
+				return indexStr + Constant.messages
+						.getString("zest.element.assign.rndint", zsa.getVariableName(), zsa.getMinInt(), zsa.getMaxInt());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.assign.rndint.title");
@@ -425,9 +397,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestAssignString) {
 			ZestAssignString zsa = (ZestAssignString) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.assign.string"), zsa
-						.getVariableName(), zsa.getString());
+				return indexStr
+						+ Constant.messages.getString("zest.element.assign.string", zsa.getVariableName(), zsa.getString());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.assign.string.title");
@@ -436,9 +407,11 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestAssignReplace) {
 			ZestAssignReplace zsa = (ZestAssignReplace) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(Constant.messages
-						.getString("zest.element.assign.replace"), zsa
-						.getVariableName(), zsa.getReplace(), zsa.getReplacement());
+				return indexStr + Constant.messages.getString(
+						"zest.element.assign.replace",
+						zsa.getVariableName(),
+						zsa.getReplace(),
+						zsa.getReplacement());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.assign.replace.title");
@@ -447,9 +420,9 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestAssignCalc) {
 			ZestAssignCalc zsa = (ZestAssignCalc) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.assign.calc"), 
-						zsa.getVariableName(), 
+				return indexStr + Constant.messages.getString(
+						"zest.element.assign.calc",
+						zsa.getVariableName(),
 						zsa.getOperandA(),
 						calcOperationToLabel(zsa.getOperation()),
 						zsa.getOperandB());
@@ -461,10 +434,7 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestActionScan) {
 			ZestActionScan zsa = (ZestActionScan) za;
 			if (incParams) {
-				return indexStr + MessageFormat
-						.format(Constant.messages
-								.getString("zest.element.action.scan"), zsa
-								.getTargetParameter());
+				return indexStr + Constant.messages.getString("zest.element.action.scan", zsa.getTargetParameter());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.action.scan.title");
@@ -473,10 +443,7 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestActionFail) {
 			ZestActionFail zsa = (ZestActionFail) za;
 			if (incParams) {
-				return indexStr + MessageFormat
-						.format(Constant.messages
-								.getString("zest.element.action.fail"), zsa
-								.getMessage());
+				return indexStr + Constant.messages.getString("zest.element.action.fail", zsa.getMessage());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.action.fail.title");
@@ -489,9 +456,7 @@ public class ZestZapUtils {
 			ZestActionInvoke zsa = (ZestActionInvoke) za;
 			if (incParams) {
 				File f = new File(zsa.getScript());
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.action.invoke"), 
-						zsa.getVariableName(), f.getName());
+				return indexStr + Constant.messages.getString("zest.element.action.invoke", zsa.getVariableName(), f.getName());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.action.invoke.title");
@@ -499,10 +464,7 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestActionPrint) {
 			ZestActionPrint zsa = (ZestActionPrint) za;
 			if (incParams) {
-				return indexStr + MessageFormat
-						.format(Constant.messages
-								.getString("zest.element.action.print"), zsa
-								.getMessage());
+				return indexStr + Constant.messages.getString("zest.element.action.print", zsa .getMessage());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.action.print.title");
@@ -510,9 +472,7 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestActionSleep) {
 			ZestActionSleep zsa = (ZestActionSleep) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.action.sleep"), 
-						zsa.getMilliseconds());
+				return indexStr + Constant.messages.getString("zest.element.action.sleep", zsa.getMilliseconds());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.action.sleep.title");
@@ -525,9 +485,7 @@ public class ZestZapUtils {
 					comment = comment.substring(0, 30) + "...";
 					comment.replace("\n", " ");
 				}
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.comment"), 
-						comment);
+				return indexStr + Constant.messages.getString("zest.element.comment", comment);
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.comment.title");
@@ -535,9 +493,7 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestControlReturn) {
 			ZestControlReturn zsa = (ZestControlReturn) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.control.return"), 
-						zsa.getValue());
+				return indexStr + Constant.messages.getString("zest.element.control.return", zsa.getValue());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.control.return.title");
@@ -549,9 +505,11 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientAssignCookie) {
 			ZestClientAssignCookie zcl = (ZestClientAssignCookie) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientAssignCookie"), 
-						zcl.getWindowHandle(), zcl.getVariableName(), zcl.getCookieName());
+				return indexStr + Constant.messages.getString(
+						"zest.element.clientAssignCookie",
+						zcl.getWindowHandle(),
+						zcl.getVariableName(),
+						zcl.getCookieName());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientAssignCookie.title");
@@ -559,9 +517,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientLaunch) {
 			ZestClientLaunch zcl = (ZestClientLaunch) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientLaunch"), 
-						zcl.getWindowHandle(), zcl.getBrowserType(), zcl.getUrl());
+				return indexStr + Constant.messages
+						.getString("zest.element.clientLaunch", zcl.getWindowHandle(), zcl.getBrowserType(), zcl.getUrl());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientLaunch.title");
@@ -569,9 +526,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientElementAssign) {
 			ZestClientElementAssign zcl = (ZestClientElementAssign) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientElementAssign"), 
-						zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
+				return indexStr + Constant.messages
+						.getString("zest.element.clientElementAssign", zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientElementAssign.title");
@@ -579,9 +535,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientElementClear) {
 			ZestClientElementClear zcl = (ZestClientElementClear) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientElementClear"), 
-						zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
+				return indexStr + Constant.messages
+						.getString("zest.element.clientElementClear", zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientElementClear.title");
@@ -589,9 +544,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientElementClick) {
 			ZestClientElementClick zcl = (ZestClientElementClick) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientElementClick"), 
-						zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
+				return indexStr + Constant.messages
+						.getString("zest.element.clientElementClick", zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientElementClick.title");
@@ -599,9 +553,12 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientElementSendKeys) {
 			ZestClientElementSendKeys zcl = (ZestClientElementSendKeys) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientElementSendKeys"), 
-						zcl.getWindowHandle(), zcl.getType(), zcl.getElement(), zcl.getValue());
+				return indexStr + Constant.messages.getString(
+						"zest.element.clientElementSendKeys",
+						zcl.getWindowHandle(),
+						zcl.getType(),
+						zcl.getElement(),
+						zcl.getValue());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientElementSendKeys.title");
@@ -609,9 +566,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientElementSubmit) {
 			ZestClientElementSubmit zcl = (ZestClientElementSubmit) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientElementSubmit"), 
-						zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
+				return indexStr + Constant.messages
+						.getString("zest.element.clientElementSubmit", zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientElementSubmit.title");
@@ -627,9 +583,7 @@ public class ZestZapUtils {
 				} else {
 					frame = zcl.getFrameName();
 				}
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientSwitchToFrame"), 
-						zcl.getWindowHandle(), frame);
+				return indexStr + Constant.messages.getString("zest.element.clientSwitchToFrame", zcl.getWindowHandle(), frame);
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientSwitchToFrame.title");
@@ -637,9 +591,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientWindowHandle) {
 			ZestClientWindowHandle zcl = (ZestClientWindowHandle) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientWindowHandle"), 
-						zcl.getWindowHandle(), zcl.getUrl());
+				return indexStr
+						+ Constant.messages.getString("zest.element.clientWindowHandle", zcl.getWindowHandle(), zcl.getUrl());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientWindow.title");
@@ -647,9 +600,7 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientWindowClose) {
 			ZestClientWindowClose zcl = (ZestClientWindowClose) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientWindowClose"), 
-						zcl.getWindowHandle());
+				return indexStr + Constant.messages.getString("zest.element.clientWindowClose", zcl.getWindowHandle());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientWindowClose.title");
@@ -657,18 +608,15 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestClientWindowOpenUrl) {
 			ZestClientWindowOpenUrl zcl = (ZestClientWindowOpenUrl) za;
 			if (incParams) {
-				return indexStr + MessageFormat.format(
-						Constant.messages.getString("zest.element.clientWindowOpenUrl"), 
-						zcl.getWindowHandle(), zcl.getUrl());
+				return indexStr
+						+ Constant.messages.getString("zest.element.clientWindowOpenUrl", zcl.getWindowHandle(), zcl.getUrl());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientWindowOpenUrl.title");
 			}
 		}
 
-		return indexStr + MessageFormat.format(Constant.messages
-				.getString("zest.element.unknown"), za.getClass()
-				.getCanonicalName());
+		return indexStr + Constant.messages.getString("zest.element.unknown", za.getClass().getCanonicalName());
 	}
 
 	public static String toUiFailureString(ZestAssertion za, ZestRuntime runtime) {
@@ -704,15 +652,13 @@ public class ZestZapUtils {
 						.format(((double) (sla.getLength() - varLength) * 100)
 								/ sla.getLength());
 			}
-			return MessageFormat.format(
-					Constant.messages.getString("zest.fail.assert.length"),
-					sla.getVariableName(), sla.getLength(), varLength, strDiff);
+			return Constant.messages
+					.getString("zest.fail.assert.length", sla.getVariableName(), sla.getLength(), varLength, strDiff);
 		} else if (za.getRootExpression() instanceof ZestExpressionStatusCode) {
 			ZestExpressionStatusCode sca = (ZestExpressionStatusCode) za
 					.getRootExpression();
-			return MessageFormat.format(
-					Constant.messages.getString("zest.fail.assert.statuscode"),
-					sca.getCode(), runtime.getLastResponse().getStatusCode());
+			return Constant.messages
+					.getString("zest.fail.assert.statuscode", sca.getCode(), runtime.getLastResponse().getStatusCode());
 		} else if (za.getRootExpression() instanceof ZestExpressionRegex) {
 			ZestExpressionRegex zhr = (ZestExpressionRegex) za
 					.getRootExpression();
@@ -733,11 +679,9 @@ public class ZestZapUtils {
 
 	private static String getFailedAssertMessage(String varLocation, boolean inverse, Object... messageArgs) {
 		if (inverse) {
-			return MessageFormat.format(
-					Constant.messages.getString("zest.fail.assert." + varLocation + "regex.exc"),
-					messageArgs);
+			return Constant.messages.getString("zest.fail.assert." + varLocation + "regex.exc", messageArgs);
 		}
-		return MessageFormat.format(Constant.messages.getString("zest.fail.assert." + varLocation + "regex.inc"), messageArgs);
+		return Constant.messages.getString("zest.fail.assert." + varLocation + "regex.inc", messageArgs);
 	}
 
 	public static HttpMessage toHttpMessage(ZestRequest request,

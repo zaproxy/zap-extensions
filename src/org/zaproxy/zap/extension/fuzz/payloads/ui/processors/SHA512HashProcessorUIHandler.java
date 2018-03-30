@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 
 import javax.swing.JPanel;
 
@@ -78,8 +77,7 @@ public class SHA512HashProcessorUIHandler
 
         @Override
         public String getDescription() {
-            return MessageFormat
-                    .format(Constant.messages.getString("fuzz.payload.processor.sha512Hash.description"), getCharset().name());
+            return Constant.messages.getString("fuzz.payload.processor.sha512Hash.description", getCharset().name());
         }
 
         @Override

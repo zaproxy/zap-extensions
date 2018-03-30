@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 
 import javax.swing.JPanel;
 
@@ -78,9 +77,7 @@ public class URLDecodeProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return MessageFormat.format(
-                    Constant.messages.getString("fuzz.payload.processor.urlDecode.description"),
-                    getCharset().name());
+            return Constant.messages.getString("fuzz.payload.processor.urlDecode.description", getCharset().name());
         }
 
         @Override

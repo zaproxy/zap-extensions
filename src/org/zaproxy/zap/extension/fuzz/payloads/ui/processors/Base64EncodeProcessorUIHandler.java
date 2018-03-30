@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
@@ -94,10 +93,8 @@ public class Base64EncodeProcessorUIHandler implements
                     ? Constant.messages.getString("fuzz.payload.processor.base64Encode.description.breakLines")
                     : "";
 
-            return MessageFormat.format(
-                    Constant.messages.getString("fuzz.payload.processor.base64Encode.description.base"),
-                    getCharset().name(),
-                    breakLinesMessage);
+            return Constant.messages
+                    .getString("fuzz.payload.processor.base64Encode.description.base", getCharset().name(), breakLinesMessage);
         }
 
         @Override

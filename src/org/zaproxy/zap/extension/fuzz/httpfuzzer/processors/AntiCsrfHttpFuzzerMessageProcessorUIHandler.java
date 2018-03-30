@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 import javax.swing.GroupLayout;
@@ -139,7 +138,7 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return MessageFormat.format(Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.description"), antiCsrfToken.getName());
+            return Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.description", antiCsrfToken.getName());
         }
 
         @Override

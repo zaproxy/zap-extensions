@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,9 +77,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 				// Its been cleared - drop the request
 				if (View.isInitialised()) {
 					View.getSingleton().getOutputPanel().append(
-							MessageFormat.format(
-									Constant.messages.getString("zest.proxy.request.drop"), 
-									msg.getRequestHeader().getURI()));
+							Constant.messages.getString("zest.proxy.request.drop", msg.getRequestHeader().getURI()));
 				}
 				return;
 			}
@@ -121,9 +118,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 				// Its been cleared - drop the request
 				if (View.isInitialised()) {
 					View.getSingleton().getOutputPanel().append(
-							MessageFormat.format(
-									Constant.messages.getString("zest.proxy.response.drop"), 
-									msg.getRequestHeader().getURI()));
+							Constant.messages.getString("zest.proxy.response.drop", msg.getRequestHeader().getURI()));
 				}
 				return;
 			}

@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.zest.menu;
 
-import java.text.MessageFormat;
 import java.util.regex.Pattern;
 
 import javax.swing.JTree;
@@ -93,9 +92,8 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
 			if (pathEnd.lastIndexOf("/") > 0) {
 				pathEnd = pathEnd.substring(pathEnd.lastIndexOf("/")+1);
 			}
-			String title1 = MessageFormat.format(
-					Constant.messages.getString("zest.alert2script.script.name"),
-					uri.getHost(), pathEnd, this.lastAlert.getName());
+			String title1 = Constant.messages
+					.getString("zest.alert2script.script.name", uri.getHost(), pathEnd, this.lastAlert.getName());
 
 			String title2 = title1;
 			int i = 2;

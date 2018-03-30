@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -93,9 +92,7 @@ public class HttpFuzzerTask extends AbstractFuzzerTask<HttpMessage> {
                     getParent().increaseErrorCount(
                             getId(),
                             Constant.messages.getString("fuzz.httpfuzzer.error.source"),
-                            MessageFormat.format(
-                                    Constant.messages.getString("fuzz.httpfuzzer.error.message"),
-                                    e.getLocalizedMessage()));
+                            Constant.messages.getString("fuzz.httpfuzzer.error.message", e.getLocalizedMessage()));
                     return null;
                 }
 

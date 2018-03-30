@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -188,9 +187,8 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
                 if (!Files.isWritable(selectedFile.toPath())) {
                     JOptionPane.showMessageDialog(
                             this,
-                            MessageFormat.format(
-                                    Constant.messages
-                                            .getString("fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.message"),
+                            Constant.messages.getString(
+                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.message",
                                     selectedFile.getAbsolutePath()),
                             Constant.messages.getString("fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.title"),
                             JOptionPane.WARNING_MESSAGE);
@@ -211,9 +209,8 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
             } else if (!Files.isWritable(selectedFile.getParentFile().toPath())) {
                 JOptionPane.showMessageDialog(
                         this,
-                        MessageFormat.format(
-                                Constant.messages
-                                        .getString("fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.message"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.message",
                                 selectedFile.getParentFile().getAbsolutePath()),
                         Constant.messages.getString("fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.title"),
                         JOptionPane.WARNING_MESSAGE);

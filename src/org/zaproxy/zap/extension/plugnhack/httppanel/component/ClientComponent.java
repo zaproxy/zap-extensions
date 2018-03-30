@@ -18,7 +18,6 @@
 package org.zaproxy.zap.extension.plugnhack.httppanel.component;
 
 import java.awt.BorderLayout;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -152,7 +151,7 @@ public class ClientComponent implements HttpPanelComponentInterface, SearchableH
 		this.message = (ClientMessage) aMessage;
 		
 		informationLabel.setText(
-				MessageFormat.format(Constant.messages.getString("plugnhack.clientmsg"), 
+				Constant.messages.getString("plugnhack.clientmsg", 
 						SDF.format(message.getReceived()),
 						message.getClientId(),
 						message.getType()));

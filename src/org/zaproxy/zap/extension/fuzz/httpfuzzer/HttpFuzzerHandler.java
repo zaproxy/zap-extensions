@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -177,7 +176,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
         if (uri.length() > 30) {
             uri = uri.substring(0, 14) + ".." + uri.substring(uri.length() - 15, uri.length());
         }
-        return MessageFormat.format(Constant.messages.getString("fuzz.httpfuzzer.fuzzerNamePrefix"), uri);
+        return Constant.messages.getString("fuzz.httpfuzzer.fuzzerNamePrefix", uri);
     }
 
     @Override

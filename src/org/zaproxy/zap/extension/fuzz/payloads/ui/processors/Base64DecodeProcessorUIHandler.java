@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 
 import javax.swing.JPanel;
 
@@ -79,9 +78,7 @@ public class Base64DecodeProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return MessageFormat.format(
-                    Constant.messages.getString("fuzz.payload.processor.base64Decode.description"),
-                    getCharset().name());
+            return Constant.messages.getString("fuzz.payload.processor.base64Decode.description", getCharset().name());
         }
 
         @Override
