@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.websocket.fuzz;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -189,7 +188,7 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
             strBuilder.setLength(27);
             strBuilder.append("...");
         }
-        return MessageFormat.format(Constant.messages.getString("websocket.fuzzer.fuzzerNamePrefix"), strBuilder.toString());
+        return Constant.messages.getString("websocket.fuzzer.fuzzerNamePrefix", strBuilder.toString());
     }
 
     @Override

@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>31</version>
+	<version>32</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 1852: Fix reflected XSS false negative with poor quality HTML filtering.<br/>
-	Issue 1640: Fix reflected XSS false negative with double decoded output.<br/>
-	Issue 2290: Fix SQLi false negative with ODBC error message.<br/>
+	Maintenance changes.<br>
 	]]>
     </changes>
 	<extensions>

@@ -28,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -336,19 +335,19 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 		protected final boolean isValid(Path file) {
 			if (Files.notExists(file)) {
 				if (file.getParent() == null || !Files.isWritable(file.getParent())) {
-					reportError(MessageFormat.format(
-							Constant.messages.getString("quickstart.cmdline.quickout.error.dirNotWritable"),
+					reportError(
+							Constant.messages.getString("quickstart.cmdline.quickout.error.dirNotWritable",
 							file.getParent() == null ? file.toAbsolutePath() : file.getParent().toAbsolutePath().normalize()));
 					return false;
 				}
 			} else if (!Files.isRegularFile(file)) {
-				reportError(MessageFormat.format(
-						Constant.messages.getString("quickstart.cmdline.quickout.error.notAFile"),
+				reportError(
+						Constant.messages.getString("quickstart.cmdline.quickout.error.notAFile",
 						file.toAbsolutePath().normalize()));
 				return false;
 			} else if (!Files.isWritable(file)) {
-				reportError(MessageFormat.format(
-						Constant.messages.getString("quickstart.cmdline.quickout.error.fileNotWritable"),
+				reportError(
+						Constant.messages.getString("quickstart.cmdline.quickout.error.fileNotWritable",
 						file.toAbsolutePath().normalize()));
 				return false;
 			}
@@ -384,8 +383,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 			try {
 				saveReportTo(file);
 				View.getSingleton().showMessageDialog(
-						MessageFormat.format(
-								Constant.messages.getString("quickstart.cmdline.quickout.save.report.successful"),
+								Constant.messages.getString("quickstart.cmdline.quickout.save.report.successful",
 								file.toAbsolutePath().normalize()));
 			} catch (Exception e) {
 				reportError(Constant.messages.getString("quickstart.cmdline.quickout.error.save.report"));
@@ -425,8 +423,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 
 		@Override
 		public void saveReport(Path file) {
-			System.out.println(MessageFormat.format(
-					Constant.messages.getString("quickstart.cmdline.outputto"),
+			System.out.println(
+					Constant.messages.getString("quickstart.cmdline.outputto",
 					file.toAbsolutePath().toString()));
 
 			if (!isValid(file)) {
