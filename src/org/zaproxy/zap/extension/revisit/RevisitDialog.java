@@ -24,7 +24,6 @@ import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -110,9 +109,8 @@ public class RevisitDialog extends AbstractDialog {
 		this.endTime = endTime;
 
 		getHeader().setText(
-				MessageFormat.format(
-						Constant.messages.getString("revisit.dialog.header.site"),
-						ExtensionRevisit.getSiteForURL(sn.getHierarchicNodeName())));
+				Constant.messages
+						.getString("revisit.dialog.header.site", ExtensionRevisit.getSiteForURL(sn.getHierarchicNodeName())));
 		
 		Calendar startCal = Calendar.getInstance();
 		startCal.setTime(startTime);

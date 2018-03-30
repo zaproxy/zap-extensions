@@ -17,8 +17,6 @@
  */
 package org.zaproxy.zap.extension.simpleExample;
 
-import java.text.MessageFormat;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
@@ -51,9 +49,8 @@ public class RightClickMsgMenu extends PopupMenuItemHttpMessageContainer {
 		// This is where you do what you want to do.
 		// In this case we'll just show a popup message.
 		View.getSingleton().showMessageDialog(
-				MessageFormat.format(
-						Constant.messages.getString(ExtensionSimpleExample.PREFIX + ".popup.msg"),
-						msg.getRequestHeader().getURI().toString()));
+				Constant.messages
+						.getString(ExtensionSimpleExample.PREFIX + ".popup.msg", msg.getRequestHeader().getURI().toString()));
 	}
 
 	@Override

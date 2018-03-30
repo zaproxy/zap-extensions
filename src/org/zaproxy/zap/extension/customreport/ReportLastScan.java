@@ -29,7 +29,6 @@
 package org.zaproxy.zap.extension.customreport;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -273,8 +272,7 @@ public class ReportLastScan {
                 // others
                 if (report == null) {
                     view.showMessageDialog(
-                            MessageFormat.format(Constant.messages.getString("report.unknown.error"),
-                            new Object[]{file.getAbsolutePath()}));
+                            Constant.messages.getString("report.unknown.error", new Object[] { file.getAbsolutePath() }));
                     return;
                 }
 
@@ -283,8 +281,7 @@ public class ReportLastScan {
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     view.showMessageDialog(
-                            MessageFormat.format(Constant.messages.getString("report.complete.warning"),
-                            new Object[]{report.getAbsolutePath()}));
+                            Constant.messages.getString("report.complete.warning", new Object[] { report.getAbsolutePath() }));
                 }
             }
 

@@ -86,7 +86,7 @@ public class BigRedirectsScanner extends PluginPassiveScanner{
 			    				msg.getRequestHeader().getURI().toString(), //URI
 			    				"",	// Param
 			    				"", // Attack
-			    				MessageFormat.format(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"),
+			    				Constant.messages.getString(MESSAGE_PREFIX + "extrainfo",
 			    						responseLocationHeaderURILength, locationHeaderValue, 
 			    						predictedResponseSize, responseBodyLength), // Other info
 			    				getSolution(), //Solution

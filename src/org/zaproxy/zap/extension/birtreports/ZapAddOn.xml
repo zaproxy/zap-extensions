@@ -1,11 +1,15 @@
 <zapaddon>
         <name>birtreports</name>
-        <version>2</version>
+        <version>3</version>
         <status>alpha</status>
         <description>Alert reports using BIRT report API</description>
         <author>Johanna Curiel And Rauf Butt</author>
         <url/>
-	<changes>Updated for ZAP 2.4</changes>
+	<changes>
+    <![CDATA[
+    Maintenance changes.<br>
+    ]]>
+    </changes>
         <dependson>
                 <zapaddonid/>
         </dependson>
