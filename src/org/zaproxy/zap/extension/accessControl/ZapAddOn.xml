@@ -7,7 +7,7 @@
 	<url />
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
+	Dynamically unload the add-on.<br>
 	]]> 
 	</changes>
 	<dependson />

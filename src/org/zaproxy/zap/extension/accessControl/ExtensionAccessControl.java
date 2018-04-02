@@ -120,19 +120,35 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 		// Register this where needed
-		Model.getSingleton().addContextDataFactory(this);
+		extensionHook.addContextDataFactory(this);
 		extensionHook.addSessionListener(this);
 
 		if (getView() != null) {
 			ExtensionHookView viewHook = extensionHook.getHookView();
 			viewHook.addStatusPanel(getStatusPanel());
-			getView().addContextPanelFactory(this);
+			viewHook.addContextPanelFactory(this);
+		}
+	}
+
+	@Override
+	public void unload() {
+		super.unload();
+
+		if (statusPanel != null) {
+			statusPanel.unload();
+		}
+
+		discardContexts();
+
+		if (customScanDialog != null) {
+			customScanDialog.dispose();
+			customScanDialog = null;
 		}
 	}
 
 	@Override
 	public boolean canUnload() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -439,6 +455,9 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 	@Override
 	public void discardContexts() {
+		for (ContextAccessControlPanel panel : contextPanelsMap.values()) {
+			panel.unload();
+		}
 		this.contextPanelsMap.clear();
 		this.contextManagers.clear();
 		this.threadManager.stopAllScannerThreads();
@@ -447,7 +466,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 	@Override
 	public void discardContext(Context ctx) {
-		this.contextPanelsMap.remove(ctx.getIndex());
+		ContextAccessControlPanel panel = this.contextPanelsMap.remove(ctx.getIndex());
+		if (panel != null) {
+			panel.unload();
+		}
 		this.contextManagers.remove(ctx.getIndex());
 	}
 
