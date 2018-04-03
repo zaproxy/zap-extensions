@@ -20,6 +20,7 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiOther;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.importLogFiles.ExtensionImportLogFiles.LogType;
 
 ///This class extends the ImportLog functionality to the ZAP REST API 
 public class ImportLogAPI extends ApiImplementor {
@@ -51,8 +52,8 @@ public class ImportLogAPI extends ApiImplementor {
     // private static boolean DirAddedFilesChecked = false;
 
     // Get the existing logging repository for REST retrieval if it exists, if not create it.
-    private static String getLoggingStorageDirectory(String logType) {
-        if (logType == ExtensionImportLogFiles.logType[0]) {
+    private static String getLoggingStorageDirectory(LogType logType) {
+        if (logType == LogType.ZAP) {
             if (!ZapDirChecked) {
                 File directory = new File(ZAP_LOGS_DIR);
                 if (!directory.isDirectory()) {
@@ -156,7 +157,7 @@ public class ImportLogAPI extends ApiImplementor {
             String filename = "\\" + java.util.UUID.randomUUID().toString() + ".txt";
             try {
                 // TODO - this doesn't work as the source needs to be a local file
-                processLogs(filename, importer, ExtensionImportLogFiles.logType[1], trimmed);
+                processLogs(filename, importer, LogType.MOD_SECURITY_2, trimmed);
             } catch (Exception ex) {
                 // String errMessage = "Failed - " + ex.getMessage();
                 // return new ApiResponseElement("Parsing audit event log to ZAPs site tree", errMessage);
@@ -169,9 +170,9 @@ public class ImportLogAPI extends ApiImplementor {
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         ExtensionImportLogFiles importer = new ExtensionImportLogFiles();
         if (Import_Zap_Log_From_File.equals(name))
-            return processLogsFromFile(params.getString(PARAM_FILE), importer, ExtensionImportLogFiles.logType[0]);
+            return processLogsFromFile(params.getString(PARAM_FILE), importer, LogType.ZAP);
         if (Import_ModSec_Log_From_File.equals(name))
-            return processLogsFromFile(params.getString(PARAM_FILE), importer, ExtensionImportLogFiles.logType[1]);
+            return processLogsFromFile(params.getString(PARAM_FILE), importer, LogType.MOD_SECURITY_2);
         if (Import_Zap_HttpRequestResponsePair.equals(name)) {
             try {
                 List<HttpMessage> messages = importer.getHttpMessageFromPair(
@@ -190,7 +191,7 @@ public class ImportLogAPI extends ApiImplementor {
             String filename = "\\" + java.util.UUID.randomUUID().toString() + ".txt";
             try {
                 // TODO - this doesn't work as the source needs to be a local file
-                return processLogs(filename, importer, ExtensionImportLogFiles.logType[1], trimmed);
+                return processLogs(filename, importer, LogType.MOD_SECURITY_2, trimmed);
             } catch (Exception ex) {
                 String errMessage = "Failed - " + ex.getMessage();
                 return new ApiResponseElement("Parsing audit event log to ZAPs site tree", errMessage);
@@ -199,7 +200,7 @@ public class ImportLogAPI extends ApiImplementor {
         return new ApiResponseElement("Requested Method", "Failed - Method Not Found");
     }
 
-    public static ApiResponseElement processLogsFromFile(String filePath, ExtensionImportLogFiles importer, String logType) {
+    public static ApiResponseElement processLogsFromFile(String filePath, ExtensionImportLogFiles importer, LogType logType) {
         return processLogs(filePath, importer, logType, null);
     }
 
@@ -216,7 +217,7 @@ public class ImportLogAPI extends ApiImplementor {
     private static ApiResponseElement processLogs(
             String filePath,
             ExtensionImportLogFiles importer,
-            String logType,
+            LogType logType,
             String httpPOSTData) {
         // Not appending the file with client state info as REST should produce a resource based on the request indefinitely.
         String sourceFilePath = filePath;
