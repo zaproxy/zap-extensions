@@ -103,6 +103,12 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	}
 
 	@Override
+	public void unload() {
+		super.unload();
+		reset();
+	}
+
+	@Override
 	public void scanResultObtained(int contextId, AccessControlResultEntry result) {
 		getResultsModel(contextId).addEntry(new AccessControlResultsTableEntry(result));
 	}

@@ -256,6 +256,13 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 		return "accessControl.contextOptions";
 	}
 
+	/**
+	 * Unloads the panel, to detach it from core (persistent) classes.
+	 */
+	public void unload() {
+		getUsersComboBox().unload();
+	}
+
 	private static ExtensionUserManagement getUsersManagementExtension() {
 		if (usersExtension == null) {
 			usersExtension = Control.getSingleton().getExtensionLoader()
