@@ -20,7 +20,6 @@ package org.zaproxy.zap.extension.revisit;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -281,10 +280,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 					if (urlsFor404.length() == 0) {
 						msg.setResponseBody(Constant.messages.getString("revisit.404.nohistory"));
 					} else {
-						msg.setResponseBody(
-								MessageFormat.format(
-										Constant.messages.getString("revisit.404.history"),
-										urlsFor404.toString()));
+						msg.setResponseBody(Constant.messages.getString("revisit.404.history", urlsFor404.toString()));
 					}
 					
 					msg.getResponseHeader().setContentLength(msg.getResponseBody().length());

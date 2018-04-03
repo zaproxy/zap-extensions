@@ -36,7 +36,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -333,16 +332,14 @@ public class ReportLastScan {
 
                 if (!file.getParentFile().canWrite()) {
                     view.showMessageDialog(
-                            MessageFormat.format(Constant.messages.getString("report.write.error"),
-                            new Object[]{file.getAbsolutePath()}));
+                            Constant.messages.getString("report.write.error", new Object[] { file.getAbsolutePath() }));
                     return;
                 }
 
                 File report = generate(file.getAbsolutePath(), model, "xml/report.xml.xsl");
                 if (report == null) {
                     view.showMessageDialog(
-                            MessageFormat.format(Constant.messages.getString("report.unknown.error"),
-                            new Object[]{file.getAbsolutePath()}));
+                            Constant.messages.getString("report.unknown.error", new Object[] { file.getAbsolutePath() }));
                     return;
                 }
 
@@ -352,8 +349,7 @@ public class ReportLastScan {
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     view.showMessageDialog(
-                            MessageFormat.format(Constant.messages.getString("report.complete.warning"),
-                            new Object[]{report.getAbsolutePath()}));
+                            Constant.messages.getString("report.complete.warning", new Object[] { report.getAbsolutePath() }));
                 }
             }
         } catch (Exception e) {
@@ -370,9 +366,8 @@ public class ReportLastScan {
     		File birtfile = new File("resources/reportdesignfiles/xmloutput/xmloutputzap.xml");
     		File report = generate(birtfile.getAbsolutePath(), model, "xml/report.xml.xsl");
     		 if (report == null) {
-                 view.showMessageDialog(
-                         MessageFormat.format(Constant.messages.getString("report.unknown.error"),
-                         new Object[]{birtfile.getAbsolutePath()}));
+                view.showMessageDialog(
+                        Constant.messages.getString("report.unknown.error", new Object[] { birtfile.getAbsolutePath() }));
                  return;                 
                
              }

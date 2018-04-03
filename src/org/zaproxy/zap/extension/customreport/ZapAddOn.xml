@@ -1,13 +1,13 @@
 <zapaddon>
         <name>CustomReport</name>
-        <version>3</version>
+        <version>4</version>
         <status>alpha</status>
         <description>New HTML report module allows users to customize report content.</description>
         <author>Chienli Ma</author>
         <url></url>
         <changes>
         <![CDATA[
-        Minor code changes.<br>
+        Maintenance changes.<br>
         ]]>
         </changes>
         <dependson/>

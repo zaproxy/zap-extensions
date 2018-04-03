@@ -20,7 +20,6 @@
 
 package org.zaproxy.zap.extension.cspscanner;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -148,8 +147,7 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 			List<String> allowedWildcardSources = getAllowedWildcardSources(policyText, origin);
 			if (!allowedWildcardSources.isEmpty()) {
 				String allowedWildcardSrcs=allowedWildcardSources.toString().replace("[", "").replace("]", "");
-				String wildcardSrcDesc = MessageFormat
-						.format(Constant.messages.getString(MESSAGE_PREFIX + "wildcard.desc"), allowedWildcardSrcs);
+				String wildcardSrcDesc = Constant.messages.getString(MESSAGE_PREFIX + "wildcard.desc", allowedWildcardSrcs);
 				raiseAlert(msg, Constant.messages.getString(MESSAGE_PREFIX + "wildcard.name"), id, wildcardSrcDesc,
 						getHeaderField(msg, HTTP_HEADER_CSP).get(0), Alert.RISK_MEDIUM,
 						cspOptions.get(0));

@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Content Security Policy Scanner</name>
-	<version>5</version>
+	<version>6</version>
 	<status>alpha</status>
 	<description>Content Security Policy (CSP) Scanner</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-		Minor code changes to address deprecations.<br>
-		Upgrade to Salvation library to 2.4.0.<br>
-		Added support for checking if prefetch-src allows wildcard sources.<br>
+	Maintenance changes.<br>
 	]]>
 	</changes>
 	<extensions>

@@ -23,7 +23,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTextPane;
@@ -149,9 +148,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 			if (! f.exists()) {
 				// This is something the user should know, so show a warning dialog
 				View.getSingleton().showWarningDialog(
-						MessageFormat.format(
-								Constant.messages.getString(ExtensionSimpleExample.PREFIX + ".error.nofile"),
-								f.getAbsolutePath()));
+						Constant.messages.getString(ExtensionSimpleExample.PREFIX + ".error.nofile", f.getAbsolutePath()));
 				return;
 			}
 			// Quick way to read a small text file

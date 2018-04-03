@@ -20,7 +20,6 @@ package org.zaproxy.zap.extension.httpsinfo;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -221,9 +220,8 @@ public class HttpsInfoOutputPanel extends OutputPanel {
 	 */
 	private void checkProxyChainEnabled() {
 		if (Model.getSingleton().getOptionsParam().getConnectionParam().isUseProxyChain()) {
-			String warningMsg = MessageFormat.format(
-					Constant.messages.getString("httpsinfo.warn.outgoing.proxy.enabled"),
-					Constant.messages.getString("httpsinfo.name"));
+			String warningMsg = Constant.messages
+					.getString("httpsinfo.warn.outgoing.proxy.enabled", Constant.messages.getString("httpsinfo.name"));
 			View.getSingleton().showWarningDialog(warningMsg);
 		}
 	}
