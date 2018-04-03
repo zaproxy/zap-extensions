@@ -44,6 +44,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapTextArea;
 
@@ -211,6 +212,7 @@ public abstract class ModifyPayloadsPanel<T extends Payload, T2 extends PayloadG
         if (payloadsTextArea == null) {
             payloadsTextArea = new ZapTextArea(25, 25);
             payloadsTextArea.setEnabled(false);
+            payloadsTextArea.setFont(FontUtils.getFont("Monospaced"));
         }
         return payloadsTextArea;
     }
