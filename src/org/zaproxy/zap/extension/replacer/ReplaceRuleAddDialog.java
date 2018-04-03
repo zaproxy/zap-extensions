@@ -196,11 +196,9 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
                 this.setFieldValue(INIT_TYPE_PROXY_FIELD, rule.getInitiators().contains(HttpSender.PROXY_INITIATOR));
                 this.setFieldValue(INIT_TYPE_SPIDER_FIELD, rule.getInitiators().contains(HttpSender.SPIDER_INITIATOR));
                 this.setFieldValue(INIT_TYPE_SCANNER_FIELD, rule.getInitiators().contains(HttpSender.ACTIVE_SCANNER_INITIATOR));
-                // TODO HttpSender.FORCED_BROWSER_INITIATOR is 11, but not in the zap 2.5.0 jar :/
-                this.setFieldValue(INIT_TYPE_BRUTE_FIELD, rule.getInitiators().contains(11));
+                this.setFieldValue(INIT_TYPE_BRUTE_FIELD, rule.getInitiators().contains(HttpSender.FORCED_BROWSE_INITIATOR));
                 this.setFieldValue(INIT_TYPE_FUZZER_FIELD, rule.getInitiators().contains(HttpSender.FUZZER_INITIATOR));
-                this.setFieldValue(INIT_TYPE_SPIDER_AJAX_FIELD, rule.getInitiators().contains(10));
-                // TODO HttpSender.AJAX_SPIDER_INITIATOR is 10, but not in the zap 2.5.0 jar :/
+                this.setFieldValue(INIT_TYPE_SPIDER_AJAX_FIELD, rule.getInitiators().contains(HttpSender.AJAX_SPIDER_INITIATOR));
                 this.setFieldValue(INIT_TYPE_AUTH_FIELD, rule.getInitiators().contains(HttpSender.AUTHENTICATION_INITIATOR));
                 this.setFieldValue(
                         INIT_TYPE_AC_FIELD,
@@ -232,13 +230,13 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
                 initiators.add(HttpSender.ACTIVE_SCANNER_INITIATOR);
             }
             if (getBoolValue(INIT_TYPE_BRUTE_FIELD)) {
-                initiators.add(11); // TODO HttpSender.FORCED_BROWSE_INITIATOR
+                initiators.add(HttpSender.FORCED_BROWSE_INITIATOR); 
             }
             if (getBoolValue(INIT_TYPE_FUZZER_FIELD)) {
                 initiators.add(HttpSender.FUZZER_INITIATOR);
             }
             if (getBoolValue(INIT_TYPE_SPIDER_AJAX_FIELD)) {
-                initiators.add(10); // TODO HttpSender.AJAX_SPIDER_INITIATOR));
+                initiators.add(HttpSender.AJAX_SPIDER_INITIATOR);
             }
             if (getBoolValue(INIT_TYPE_AUTH_FIELD)) {
                 initiators.add(HttpSender.AUTHENTICATION_INITIATOR);
