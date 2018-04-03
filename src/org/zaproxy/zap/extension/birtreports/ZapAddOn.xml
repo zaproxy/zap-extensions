@@ -1,33 +1,18 @@
 <zapaddon>
-        <name>birtreports</name>
-        <version>3</version>
-        <status>alpha</status>
-        <description>Alert reports using BIRT report API</description>
-        <author>Johanna Curiel And Rauf Butt</author>
-        <url/>
-	<changes>
+    <name>birtreports</name>
+    <version>3</version>
+    <status>alpha</status>
+    <description>Alert reports using BIRT report API</description>
+    <author>Johanna Curiel And Rauf Butt</author>
+    <url/>
+    <changes>
     <![CDATA[
-    Maintenance changes.<br>
     ]]>
     </changes>
-        <dependson>
-                <zapaddonid/>
-        </dependson>
-        <extensions>
-                <extension>org.zaproxy.zap.extension.birtreports</extension>
-        </extensions>
-        <ascanrules>
-                <ascanrule/>
-        </ascanrules>
-        <pscanrules>
-                <pscanrule/>
-        </pscanrules>
-        <filters>
-                <filter/>
-        </filters>
-        <files>
-                <file/>
-        </files>
-        <not-before-version>2.4.0</not-before-version>
-        <not-from-version/>
+    <extensions/>
+    <ascanrules/>
+    <pscanrules/>
+    <files/>
+    <not-before-version>2.4.0</not-before-version>
+    <not-from-version/>
 </zapaddon>
