@@ -61,6 +61,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     protected static final String INIT_TYPE_AUTH_FIELD = "replacer.label.init.auth";
     protected static final String INIT_TYPE_AC_FIELD = "replacer.label.init.ac";
     protected static final String INIT_TYPE_USER_FIELD = "replacer.label.init.user";
+    protected static final String INIT_TYPE_TOKEN_GEN_FIELD = "replacer.label.init.tokengen";
 
     private ReplacerParam replacerParam;
     private ReplacerParamRule rule;
@@ -113,6 +114,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.addCheckBoxField(1, INIT_TYPE_AUTH_FIELD, false);
         this.addCheckBoxField(1, INIT_TYPE_AC_FIELD, false);
         this.addCheckBoxField(1, INIT_TYPE_USER_FIELD, false);
+        this.addCheckBoxField(1, INIT_TYPE_TOKEN_GEN_FIELD, false);
         this.addPadding(1);
 
         // Set before adding the listener so we don't get in a loop
@@ -152,6 +154,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         getField(INIT_TYPE_AUTH_FIELD).setEnabled(bool);
         getField(INIT_TYPE_AC_FIELD).setEnabled(bool);
         getField(INIT_TYPE_USER_FIELD).setEnabled(bool);
+        getField(INIT_TYPE_TOKEN_GEN_FIELD).setEnabled(bool);
     }
 
     public ReplacerParamRule getRule() {
@@ -204,6 +207,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
                         INIT_TYPE_AC_FIELD,
                         rule.getInitiators().contains(HttpSender.ACCESS_CONTROL_SCANNER_INITIATOR));
                 this.setFieldValue(INIT_TYPE_USER_FIELD, rule.getInitiators().contains(HttpSender.MANUAL_REQUEST_INITIATOR));
+                this.setFieldValue(INIT_TYPE_TOKEN_GEN_FIELD, rule.getInitiators().contains(HttpSender.TOKEN_GENERATOR_INITIATOR));
             }
         }
         setUpInitiatorFields();
@@ -246,6 +250,9 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
             }
             if (getBoolValue(INIT_TYPE_USER_FIELD)) {
                 initiators.add(HttpSender.MANUAL_REQUEST_INITIATOR);
+            }
+            if (getBoolValue(INIT_TYPE_TOKEN_GEN_FIELD)) {
+                initiators.add(HttpSender.TOKEN_GENERATOR_INITIATOR);
             }
         }
 
