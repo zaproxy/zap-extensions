@@ -17,7 +17,6 @@
  */
 package org.zaproxy.zap.extension.plugnhack.brk;
 
-import java.text.MessageFormat;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -119,7 +118,7 @@ public class ClientBreakpointMessage extends AbstractBreakPointMessage {
 
     @Override
     public String getDisplayMessage() {
-    	return MessageFormat.format(Constant.messages.getString("plugnhack.brk.display"), 
+    	return Constant.messages.getString("plugnhack.brk.display", 
     			messageType == null ? "*" : messageType,
     			client == null ? "*" : client,
     			getPayloadPattern() == null ? "" : getPayloadPattern());

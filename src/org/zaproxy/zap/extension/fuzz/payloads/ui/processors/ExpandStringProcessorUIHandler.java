@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
-import java.text.MessageFormat;
-
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
@@ -106,8 +104,8 @@ public class ExpandStringProcessorUIHandler implements
                     ? Constant.messages.getString("fuzz.payload.processor.expand.description.position.begin")
                     : Constant.messages.getString("fuzz.payload.processor.expand.description.position.end");
 
-            return MessageFormat.format(
-                    Constant.messages.getString("fuzz.payload.processor.expand.description"),
+            return Constant.messages.getString(
+                    "fuzz.payload.processor.expand.description",
                     Integer.valueOf(getLength()),
                     getValue(),
                     positionMessage);

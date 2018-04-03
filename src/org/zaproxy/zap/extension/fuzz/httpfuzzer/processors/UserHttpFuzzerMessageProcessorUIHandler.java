@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -128,8 +127,7 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return MessageFormat.format(
-                    Constant.messages.getString("fuzz.httpfuzzer.processor.userMessageProcessor.description"),
+            return Constant.messages.getString("fuzz.httpfuzzer.processor.userMessageProcessor.description",
                     user.getName(),
                     Integer.toString(user.getContextId()));
         }

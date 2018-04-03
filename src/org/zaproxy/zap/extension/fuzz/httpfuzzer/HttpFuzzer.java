@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -102,8 +101,8 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                 increaseErrorCount(
                         0,
                         Constant.messages.getString("fuzz.httpfuzzer.results.error.source.httpfuzzer"),
-                        MessageFormat.format(
-                                Constant.messages.getString("fuzz.httpfuzzer.results.error.message.failedSendOriginalMessage"),
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.results.error.message.failedSendOriginalMessage",
                                 e.getLocalizedMessage()));
             }
         }
@@ -186,8 +185,8 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                     errorsModel.addFuzzerError(
                             taskId,
                             Constant.messages.getString("fuzz.httpfuzzer.results.error.source.httpfuzzer"),
-                            MessageFormat.format(
-                                    Constant.messages.getString("fuzz.httpfuzzer.results.error.message.removedProcessorOnError"),
+                            Constant.messages.getString(
+                                    "fuzz.httpfuzzer.results.error.message.removedProcessorOnError",
                                     messageProcessor.getName()));
                     logger.warn("Error while executing a processor, it will not be called again:", e);
                     it.remove();
@@ -228,8 +227,8 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                     errorsModel.addFuzzerError(
                             taskId,
                             Constant.messages.getString("fuzz.httpfuzzer.results.error.source.httpfuzzer"),
-                            MessageFormat.format(
-                                    Constant.messages.getString("fuzz.httpfuzzer.results.error.message.removedProcessorOnError"),
+                            Constant.messages.getString(
+                                    "fuzz.httpfuzzer.results.error.message.removedProcessorOnError",
                                     messageProcessor.getName()));
                     logger.warn("Error while executing a processor, it will not be called again:", e);
                     it.remove();

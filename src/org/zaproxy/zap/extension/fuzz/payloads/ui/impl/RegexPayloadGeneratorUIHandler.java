@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.MessageFormat;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -106,14 +105,13 @@ public class RegexPayloadGeneratorUIHandler implements
         @Override
         public String getDescription() {
             StringBuilder descriptionBuilder = new StringBuilder(150);
-            String maxPayloadsDescription = (maxPayloads != 0) ? MessageFormat.format(
-                    Constant.messages.getString("fuzz.payloads.generator.regex.description.maxPayloads"),
-                    Integer.valueOf(maxPayloads)) : "";
+            String maxPayloadsDescription = (maxPayloads != 0)
+                    ? Constant.messages
+                            .getString("fuzz.payloads.generator.regex.description.maxPayloads", Integer.valueOf(maxPayloads))
+                    : "";
 
-            String message = MessageFormat.format(
-                    Constant.messages.getString("fuzz.payloads.generator.regex.description.base"),
-                    regex,
-                    maxPayloadsDescription);
+            String message = Constant.messages
+                    .getString("fuzz.payloads.generator.regex.description.base", regex, maxPayloadsDescription);
 
             descriptionBuilder.append(message);
 

@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
-import java.text.MessageFormat;
-
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -86,9 +84,7 @@ public class TrimStringProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return MessageFormat.format(
-                    Constant.messages.getString("fuzz.payload.processor.trim.description"),
-                    Integer.valueOf(getLength()));
+            return Constant.messages.getString("fuzz.payload.processor.trim.description", Integer.valueOf(getLength()));
         }
 
         @Override
