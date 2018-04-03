@@ -53,6 +53,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.FileStringPayloadGeneratorUIHandler.FileStringPayloadGeneratorUI;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
@@ -544,6 +545,7 @@ public class FileStringPayloadGeneratorUIHandler implements
             if (payloadsPreviewTextArea == null) {
                 payloadsPreviewTextArea = new JTextArea(5, 10);
                 payloadsPreviewTextArea.setEditable(false);
+                payloadsPreviewTextArea.setFont(FontUtils.getFont("Monospaced"));
             }
             return payloadsPreviewTextArea;
         }

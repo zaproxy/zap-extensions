@@ -42,6 +42,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessingException;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUIPanel;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 class PayloadPreviewPanel {
@@ -132,6 +133,7 @@ class PayloadPreviewPanel {
         if (currentPayloadsTextArea == null) {
             currentPayloadsTextArea = new JTextArea(20, 20);
             currentPayloadsTextArea.setEditable(false);
+            currentPayloadsTextArea.setFont(FontUtils.getFont("Monospaced"));
         }
         return currentPayloadsTextArea;
     }
@@ -140,6 +142,7 @@ class PayloadPreviewPanel {
         if (processedPayloadsTextArea == null) {
             processedPayloadsTextArea = new JTextArea(20, 20);
             processedPayloadsTextArea.setEditable(false);
+            processedPayloadsTextArea.setFont(FontUtils.getFont("Monospaced"));
         }
         return processedPayloadsTextArea;
     }

@@ -39,6 +39,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
@@ -291,6 +292,7 @@ public class NumberPayloadGeneratorAdapterUIHandler implements
             if (payloadsPreviewTextArea == null) {
                 payloadsPreviewTextArea = new JTextArea(15, 10);
                 payloadsPreviewTextArea.setEditable(false);
+                payloadsPreviewTextArea.setFont(FontUtils.getFont("Monospaced"));
             }
             return payloadsPreviewTextArea;
         }

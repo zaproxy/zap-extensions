@@ -38,6 +38,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultStringPayloadGeneratorUIHandler.DefaultStringPayloadGeneratorUI;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.StringUIUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 
@@ -209,6 +210,7 @@ public class DefaultStringPayloadGeneratorUIHandler implements
                 contentsTextArea = new ZapTextArea();
                 contentsTextArea.setColumns(25);
                 contentsTextArea.setRows(10);
+                contentsTextArea.setFont(FontUtils.getFont("Monospaced"));
             }
             return contentsTextArea;
         }
