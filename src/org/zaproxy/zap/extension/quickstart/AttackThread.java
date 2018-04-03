@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.text.MessageFormat;
 
 import javax.swing.SwingUtilities;
 
@@ -172,8 +171,7 @@ public class AttackThread extends Thread {
         } catch (Exception e) {
         	logger.error(e.getMessage(), e);
 			extension.notifyProgress(Progress.failed,
-					MessageFormat.format(
-							Constant.messages.getString("quickstart.progress.failed.reason"), e.getMessage()));
+							Constant.messages.getString("quickstart.progress.failed.reason", e.getMessage()));
 		}
 	}
 	
@@ -186,8 +184,7 @@ public class AttackThread extends Thread {
 		
 	        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
 				extension.notifyProgress(Progress.failed,
-						MessageFormat.format(
-								Constant.messages.getString("quickstart.progress.failed.code"),
+								Constant.messages.getString("quickstart.progress.failed.code",
 								msg.getResponseHeader().getStatusCode()));
 
 	            return null;
@@ -224,13 +221,11 @@ public class AttackThread extends Thread {
 					Constant.messages.getString("quickstart.progress.failed.badhost"));
 		} catch (URIException e) {
 			extension.notifyProgress(Progress.failed,
-					MessageFormat.format(
-							Constant.messages.getString("quickstart.progress.failed.reason"), e.getMessage()));
+							Constant.messages.getString("quickstart.progress.failed.reason", e.getMessage()));
 		} catch (Exception e1) {
         	logger.error(e1.getMessage(), e1);
 			extension.notifyProgress(Progress.failed,
-					MessageFormat.format(
-							Constant.messages.getString("quickstart.progress.failed.reason"), e1.getMessage()));
+							Constant.messages.getString("quickstart.progress.failed.reason", e1.getMessage()));
 			return null;
 		}
 		return startNode;

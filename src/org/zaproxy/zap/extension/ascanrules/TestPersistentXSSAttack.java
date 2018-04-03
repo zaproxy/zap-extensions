@@ -17,7 +17,6 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -137,9 +136,8 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
     	
     @Override
     public void scan(HttpMessage sourceMsg, String param, String value) {
-    	String otherInfo = MessageFormat.format(
-				Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"), 
-				sourceMsg.getRequestHeader().getURI().toString());
+        String otherInfo = Constant.messages
+                .getString(MESSAGE_PREFIX + "otherinfo", sourceMsg.getRequestHeader().getURI().toString());
     	
 		try {
 			Set<Integer> sinks = PersistentXSSUtils.getSinksIdsForSource(sourceMsg, param);
