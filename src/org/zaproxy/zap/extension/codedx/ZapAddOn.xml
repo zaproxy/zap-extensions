@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Code Dx Extension</name>
-	<version>5.0.1</version>
+	<version>6</version>
 	<status>alpha</status>
 	<description>Includes request and response data in XML reports and provides the ability to upload reports directly to a Code Dx server</description>
 	<author>Code Dx, Inc.</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Add an upload to Code Dx option.<br>
+	Increased default timeout value to 120 seconds for uploading a report. Added a null check when processing alert http messages. Made the timeout value configurable.<br>
 	]]>
 	</changes>
 	<extensions>
