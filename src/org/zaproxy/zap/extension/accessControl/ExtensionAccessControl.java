@@ -23,7 +23,9 @@ import java.awt.Dimension;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -151,6 +153,23 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		return true;
 	}
 
+	@Override
+	public List<String> getActiveActions() {
+		Collection<AccessControlScannerThread> scans = threadManager.getAllThreads();
+		if (scans.isEmpty()) {
+			return null;
+		}
+
+		String activeActionPrefix = Constant.messages.getString("accessControl.activeActionPrefix");
+		List<String> activeActions = new ArrayList<>(scans.size());
+		for (AccessControlScannerThread scan : scans) {
+			if (scan.isRunning()) {
+				activeActions.add(MessageFormat.format(activeActionPrefix, scan.getStartOptions().targetContext.getName()));
+			}
+		}
+		return activeActions;
+	}
+	
 	@Override
 	public String getAuthor() {
 		return Constant.ZAP_TEAM;
