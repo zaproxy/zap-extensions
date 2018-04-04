@@ -9,6 +9,7 @@
     <changes>
     <![CDATA[
     Enable the extensions for all DB types.<br>
+    Use Monospaced font in payload text areas.<br>
     ]]>
     </changes>
     <extensions>
