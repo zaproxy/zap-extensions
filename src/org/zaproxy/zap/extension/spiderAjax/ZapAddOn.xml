@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Ajax Spider</name>
-	<version>21</version>
+	<version>22</version>
 	<status>release</status>
 	<description>Allows you to spider sites that make heavy use of JavaScript using Crawljax</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
-	Reset API scan also when in daemon mode (Issue 4163).<br>
+	Maintenance changes.<br>
 	]]>
 	</changes>
 	<dependencies>
