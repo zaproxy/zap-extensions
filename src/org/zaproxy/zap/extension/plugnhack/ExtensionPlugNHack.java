@@ -230,7 +230,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        API.getInstance().registerApiImplementor(api);
+        extensionHook.addApiImplementor(api);
         extensionHook.addProxyListener(this);
         extensionHook.addSessionListener(this);
 
@@ -324,8 +324,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
         Database db = Model.getSingleton().getDb();
         db.removeDatabaseListener(clientTable);
         db.removeDatabaseListener(messageTable);
-
-        API.getInstance().removeApiImplementor(api);
     }
 
     private PopupMenuResend getPopupMenuResend() {
