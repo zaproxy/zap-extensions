@@ -37,7 +37,6 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -64,7 +63,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 
-        API.getInstance().registerApiImplementor(new SoapAPI(this));
+		extensionHook.addApiImplementor(new SoapAPI(this));
 
 	    if (getView() != null) {
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportLocalWSDL());
