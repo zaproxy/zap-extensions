@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Dynamically unload the add-on.<br>
+	Inform of running tests (e.g. on session change, add-on uninstall).<br>
 	]]> 
 	</changes>
 	<dependson />
