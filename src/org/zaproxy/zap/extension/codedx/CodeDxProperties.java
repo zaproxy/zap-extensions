@@ -43,11 +43,11 @@ public class CodeDxProperties {
 	
 	private static final Logger LOGGER = Logger.getLogger(CodeDxProperties.class);
 	
-	private static String PROP_FILE = "codedx.properties";
-	private static String KEY_SERVER = "serverUrl";
-	private static String KEY_API = "apiKey";
-	private static String KEY_SELECTED = "selectedId";
-	private static String KEY_TIMEOUT = "timeout";
+	private static final String PROP_FILE = "codedx.properties";
+	private static final String KEY_SERVER = "serverUrl";
+	private static final String KEY_API = "apiKey";
+	private static final String KEY_SELECTED = "selectedId";
+	private static final String KEY_TIMEOUT = "timeout";
 
 	private Properties prop;
 	

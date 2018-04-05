@@ -30,7 +30,7 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class ExtensionAlertHttp extends ExtensionAlert {
 	
-	private static final Logger logger = Logger.getLogger(ExtensionAlertHttp.class);
+	private static final Logger LOGGER = Logger.getLogger(ExtensionAlertHttp.class);
 
     public ExtensionAlertHttp() {
     }
@@ -57,7 +57,7 @@ public class ExtensionAlertHttp extends ExtensionAlert {
         HttpMessage message = alert.getMessage();
         
         if (message == null) {
-        	logger.error(Constant.messages.getString("codedx.error.httpMessage") + alert.getAlertId());
+        	LOGGER.warn(String.format(Constant.messages.getString("codedx.error.httpMessage"), alert.getAlertId()));
         	return httpMessage.toString();
         }
 
