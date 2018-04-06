@@ -8,6 +8,8 @@
 	<changes>
 	<![CDATA[
 	Help documentation improvements and cleanup.<br>
+	Prevent User Controlled HTML Attribute scanner from sometimes raising duplicate alerts.<br>
+	User Controlled HTML Attribute scanner now properly reports the parameter name in alerts.<br>
 	]]>
 	</changes>
 	<extensions>

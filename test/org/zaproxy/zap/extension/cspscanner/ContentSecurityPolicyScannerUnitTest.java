@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.cspscanner;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -37,8 +36,8 @@ public class ContentSecurityPolicyScannerUnitTest extends PassiveScannerTest {
         return new ContentSecurityPolicyScanner();
     }
 
-    @BeforeClass
-    public static void beforeClass() {
+    @Override
+    protected void setUpMessages() {
         mockMessages(new ExtensionContentSecurityPolicyScanner());
     }
 
