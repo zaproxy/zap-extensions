@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.tokengen;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -31,8 +32,12 @@ import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.params.HtmlParameterStats;
@@ -55,7 +60,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	private TokenParam tokenParam = null;;
 	private TokenOptionsPanel tokenOptionsPanel;
 	
-	private List<TokenGenerator> generators = new ArrayList<>();
+	private List<TokenGenerator> generators = Collections.emptyList();
 	private int runningGenerators = 0;
 	private CharacterFrequencyMap cfm = null; 
 	private boolean manuallyStopped = false;
@@ -80,6 +85,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
+	    extensionHook.addSessionListener(new SessionChangedListenerImpl());
 	    
 	    extensionHook.addOptionsParamSet(getTokenParam());
 
@@ -279,6 +285,22 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	}
 
 	public void startTokenGeneration(HttpMessage msg, int numGen, HtmlParameterStats htmlParameterStats) {
+		switch (Control.getSingleton().getMode()) {
+		case safe:
+			throw new IllegalStateException("Token generation is not allowed in Safe mode");
+		case protect:
+			if (!msg.isInScope()) {
+				throw new IllegalStateException(
+						"Token generation is not allowed with a message not in scope when in Protected mode: "
+								+ msg.getRequestHeader().getURI());
+			}
+			//$FALL-THROUGH$
+		case standard:
+		case attack:
+			// No problem
+			break;
+		}
+
 		this.cfm = new CharacterFrequencyMap();
 		log.debug("startTokenGeneration " + msg.getRequestHeader().getURI() + " # " + numGen);
 		this.getTokenPanel().scanStarted(numGen);
@@ -350,6 +372,46 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 			return new URL(Constant.ZAP_EXTENSIONS_PAGE);
 		} catch (MalformedURLException e) {
 			return null;
+		}
+	}
+
+	private class SessionChangedListenerImpl implements SessionChangedListener {
+
+		@Override
+		public void sessionChanged(Session session) {
+		}
+
+		@Override
+		public void sessionAboutToChange(Session session) {
+			stopTokenGeneration();
+			generators = Collections.emptyList();
+
+			if (tokenPanel != null) {
+				tokenPanel.reset();
+			}
+
+			if (analyseTokensDialog != null) {
+				analyseTokensDialog.setVisible(false);
+			}
+
+			if (genTokensDialog != null) {
+				genTokensDialog.setVisible(false);
+			}
+		}
+
+		@Override
+		public void sessionScopeChanged(Session session) {
+		}
+
+		@Override
+		public void sessionModeChanged(Mode mode) {
+			if (Mode.safe.equals(mode)) {
+				stopTokenGeneration();
+			} else if (Mode.protect.equals(mode)) {
+				if (!generators.isEmpty() && !generators.get(0).getHttpMessage().isInScope()) {
+					stopTokenGeneration();
+				}
+			}
 		}
 	}
 }

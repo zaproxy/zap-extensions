@@ -33,6 +33,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
@@ -141,6 +144,24 @@ public class GenerateTokensDialog extends AbstractDialog {
 								messages.getString("tokengen.generate.num.error"));
 						return;
 					}
+
+					Mode mode = Control.getSingleton().getMode();
+					if (Mode.safe.equals(mode)) {
+						View.getSingleton().showWarningDialog(
+								GenerateTokensDialog.this,
+								Constant.messages.getString("tokengen.generate.error.mode.safe"));
+						return;
+					} else if (Mode.protect.equals(mode)) {
+						if (!httpMessage.isInScope()) {
+							View.getSingleton().showWarningDialog(
+									GenerateTokensDialog.this,
+									Constant.messages.getString(
+											"tokengen.generate.error.mode.protected",
+											httpMessage.getRequestHeader().getURI()));
+							return;
+						}
+					}
+					
 					extension.startTokenGeneration(httpMessage, numGen, 
 							new HtmlParameterStats("", 
 									(String)getParamName().getSelectedItem(), 

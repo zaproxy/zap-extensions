@@ -87,6 +87,10 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 		this.httpMessage = httpMessage;
 	}
 
+	protected HttpMessage getHttpMessage() {
+		return httpMessage;
+	}
+
 	public void setTargetToken(HtmlParameterStats targetToken) {
 		this.targetToken = targetToken;
 	}
