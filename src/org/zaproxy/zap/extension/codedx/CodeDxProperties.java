@@ -47,7 +47,12 @@ public class CodeDxProperties {
 	private static final String KEY_SERVER = "serverUrl";
 	private static final String KEY_API = "apiKey";
 	private static final String KEY_SELECTED = "selectedId";
+	private static final String KEY_TIMEOUT = "timeout";
+
 	private Properties prop;
+	
+	public static final String DEFAULT_TIMEOUT_STRING = "120";
+	public static final int DEFAULT_TIMEOUT_INT = 120000;
 	
 	public String getServerUrl(){	
 		String text = getProperty(KEY_SERVER);
@@ -64,15 +69,24 @@ public class CodeDxProperties {
 		return getProperty(KEY_SELECTED);
 	}
 	
+	public String getTimeout() {
+		String timeout = getProperty(KEY_TIMEOUT);
+		if (timeout == null || timeout.isEmpty()) {
+			timeout = DEFAULT_TIMEOUT_STRING;
+		}
+		return timeout;
+	}
+	
 	private String getProperty(String key){
 		String value = prop.getProperty(key); 
 		return value == null ? "" : value;
 	}
 	
-	public void setProperties(String server, String api, String selectedId){
+	public void setProperties(String server, String api, String selectedId, String timeout){
 		prop.setProperty(KEY_SERVER, server);
 		prop.setProperty(KEY_API, api);
 		prop.setProperty(KEY_SELECTED, selectedId);
+		prop.setProperty(KEY_TIMEOUT, timeout);
 		saveProperties();
 	}
 	
@@ -105,5 +119,5 @@ public class CodeDxProperties {
 		} catch (IOException e) {
 			LOGGER.error("Error saving codedx.properties file: ", e);
 		}
-	}	
+	}
 }

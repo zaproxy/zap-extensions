@@ -68,6 +68,7 @@ public class UploadPropertiesDialog {
 	private JTextField serverUrl;
 	private JTextField apiKey;
 	private JComboBox<NameValuePair> projectBox;
+	private JTextField timeout;
 	private JDialog dialog;
 	
 	private ModifiedNameValuePair[] projectArr = new ModifiedNameValuePair[0];
@@ -82,10 +83,12 @@ public class UploadPropertiesDialog {
 		JPanel message = new JPanel(new GridBagLayout());
 		
 		serverUrl = labelTextField(Constant.messages.getString("codedx.settings.serverurl") + " ", message,
-				CodeDxProperties.getInstance().getServerUrl());
+				CodeDxProperties.getInstance().getServerUrl(), 30);
 		apiKey = labelTextField(Constant.messages.getString("codedx.settings.apikey") + " ", message,
-				CodeDxProperties.getInstance().getApiKey());
+				CodeDxProperties.getInstance().getApiKey(), 30);
 		projectBox = createProjectComboBox(message);
+		timeout = labelTextField(Constant.messages.getString("codedx.setting.timeout") + " ", message,
+				CodeDxProperties.getInstance().getTimeout(), 5);
 		
 		final JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null,
 				DIALOG_BUTTONS, null);
@@ -96,7 +99,12 @@ public class UploadPropertiesDialog {
 			public void run(){								
 				dialog.setVisible(true);
 				if (DIALOG_BUTTONS[0].equals(pane.getValue())) {
-					CodeDxProperties.getInstance().setProperties(serverUrl.getText(), apiKey.getText(), getProject().getValue());
+					String timeoutValue = timeout.getText();
+					if (!isStringNumber(timeoutValue)) {
+						timeoutValue = CodeDxProperties.DEFAULT_TIMEOUT_STRING;
+						error(Constant.messages.getString("codedx.error.timeout"));
+					}
+					CodeDxProperties.getInstance().setProperties(serverUrl.getText(), apiKey.getText(), getProject().getValue(), timeoutValue);
 					uploader.generateAndUploadReport();
 				}
 			}
@@ -118,13 +126,23 @@ public class UploadPropertiesDialog {
 		updateThread.start();
 	}
 	
-	private JTextField labelTextField(String label, Container cont, String base) {
+	private boolean isStringNumber(String value) {
+		for(int i = 0; i < value.length(); i++) {
+			char c = value.charAt(i);
+			if (!Character.isDigit(c)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private JTextField labelTextField(String label, Container cont, String base, int columns) {
 		createSettingsLabel(label, cont);
 		
-		JTextField textField = new JTextField(base, 30);
+		JTextField textField = new JTextField(base, columns);
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.WEST;
 		cont.add(textField, gbc);
 
 		return textField;

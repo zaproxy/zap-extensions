@@ -43,8 +43,6 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class CodeDxExtension extends ExtensionAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(CodeDxExtension.class);
-
-    private static final int TIMEOUT = 5000;
     
     // The name is public so that other extensions can access it
     public static final String NAME = "CodeDxExtension";
@@ -109,8 +107,8 @@ public class CodeDxExtension extends ExtensionAdaptor {
     }
     
     public CloseableHttpClient getHttpClient(String url) throws IOException, GeneralSecurityException{  
-        RequestConfig config = RequestConfig.custom().setConnectTimeout(TIMEOUT).setSocketTimeout(TIMEOUT)
-                .setConnectionRequestTimeout(TIMEOUT).build();
+        RequestConfig config = RequestConfig.custom().setConnectTimeout(getTimeout()).setSocketTimeout(getTimeout())
+                .setConnectionRequestTimeout(getTimeout()).build();
         return HttpClientBuilder.create()
                 .setSSLSocketFactory(SSLConnectionSocketFactoryFactory.getFactory(new URL(url).getHost(), this))
                 .setDefaultRequestConfig(config).build();
@@ -129,5 +127,14 @@ public class CodeDxExtension extends ExtensionAdaptor {
     @Override
     public URL getURL() {
         return null;
+    }
+    
+    private int getTimeout() {
+    	try {
+    		return Integer.parseInt(CodeDxProperties.getInstance().getTimeout()) * 1000;
+    	} catch (NumberFormatException e) {
+    		// If for some reason the saved timeout value can't be parsed as an int, we will return the default value of 120 seconds
+    		return CodeDxProperties.DEFAULT_TIMEOUT_INT;
+    	}
     }
 }

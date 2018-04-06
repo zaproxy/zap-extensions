@@ -20,12 +20,17 @@ package org.zaproxy.zap.extension.codedx;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.report.ReportGenerator;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class ExtensionAlertHttp extends ExtensionAlert {
+	
+	private static final Logger LOGGER = Logger.getLogger(ExtensionAlertHttp.class);
 
     public ExtensionAlertHttp() {
     }
@@ -48,11 +53,18 @@ public class ExtensionAlertHttp extends ExtensionAlert {
     private String getHTML(Alert alert) {
         // gets HttpMessage request and response data from each alert and removes illegal and special characters
         StringBuilder httpMessage = new StringBuilder();
+        
+        HttpMessage message = alert.getMessage();
+        
+        if (message == null) {
+        	LOGGER.warn(Constant.messages.getString("codedx.error.httpMessage", alert.getAlertId()));
+        	return httpMessage.toString();
+        }
 
-        String requestHeader = alert.getMessage().getRequestHeader().toString();
-        String requestBody = alert.getMessage().getRequestBody().toString();
-        String responseHeader = alert.getMessage().getResponseHeader().toString();
-        String responseBody = alert.getMessage().getResponseBody().toString();
+        String requestHeader = message.getRequestHeader().toString();
+        String requestBody = message.getRequestBody().toString();
+        String responseHeader = message.getResponseHeader().toString();
+        String responseBody = message.getResponseBody().toString();
 
         httpMessage.append("<requestdata>");
         httpMessage.append(ReportGenerator.entityEncode(requestHeader));
