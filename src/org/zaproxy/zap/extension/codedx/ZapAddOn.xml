@@ -7,7 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Increased default timeout value to 120 seconds for uploading a report. Added a null check when processing alert http messages. Made the timeout value configurable.<br>
+	Increased default timeout value to 120 seconds for uploading a report.<br> Added a null check when processing alert http messages. <br> Made the timeout value configurable.<br>
 	]]>
 	</changes>
 	<extensions>

@@ -57,7 +57,7 @@ public class ExtensionAlertHttp extends ExtensionAlert {
         HttpMessage message = alert.getMessage();
         
         if (message == null) {
-        	LOGGER.warn(String.format(Constant.messages.getString("codedx.error.httpMessage"), alert.getAlertId()));
+        	LOGGER.warn(Constant.messages.getString("codedx.error.httpMessage", alert.getAlertId()));
         	return httpMessage.toString();
         }
 
