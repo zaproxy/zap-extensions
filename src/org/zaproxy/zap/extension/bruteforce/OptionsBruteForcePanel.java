@@ -48,6 +48,7 @@ import org.zaproxy.zap.view.PositiveValuesSlider;
 
 public class OptionsBruteForcePanel extends AbstractParamPanel {
 
+	private static final String MESSAGE_PREFIX = "bruteforce.options.";
 	private ExtensionBruteForce extension = null;
 	private static final long serialVersionUID = 1L;
 	private JPanel panelPortScan = null;
@@ -70,7 +71,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 	 */
 	private void initialize() {
         this.setLayout(new CardLayout());
-        this.setName(Constant.messages.getString("bruteforce.options.title"));
+        this.setName(Constant.messages.getString(MESSAGE_PREFIX + "title"));
         this.setSize(314, 345);
         this.add(getPanelPortScan(), getPanelPortScan().getName());
 	}
@@ -84,110 +85,110 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 		if (panelPortScan == null) {
 
 			panelPortScan = new JPanel();
-			JLabel jLabel2 = new JLabel();
-			JLabel jLabel3 = new JLabel();
+			JLabel jLabelDefaultFile = new JLabel();
+			JLabel jLabelAddFile = new JLabel();
 			JLabel jLabelx = new JLabel();
 			JLabel jLabelExtensions = new JLabel();
 
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			GridBagConstraints gridBagConstraints5a = new GridBagConstraints();
-			GridBagConstraints gridBagConstraints5b = new GridBagConstraints();
-			GridBagConstraints gridBagConstraints6a = new GridBagConstraints();
-			GridBagConstraints gridBagConstraints6b = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsThreadsLable = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsThreadsSlider = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsDefaultFileLable = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsDefaultFlieList = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsAddFileLable = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsAddFileButton = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsX = new GridBagConstraints();
-			GridBagConstraints gridBagConstraintsBrowseFiles = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsBrowseFilesCheckBox = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsFileExtensionsLabel = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsFileExtensionsList = new GridBagConstraints();
 
-			GridBagConstraints checkBoxGridBagConstraints = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsRecursiveCheckBox = new GridBagConstraints();
 
 			panelPortScan.setLayout(new GridBagLayout());
 			panelPortScan.setSize(114, 132);
 			panelPortScan.setName(BruteForceParam.EMPTY_STRING);
-			jLabel2.setText(Constant.messages.getString("bruteforce.options.label.defaultfile"));
-			jLabel3.setText(Constant.messages.getString("bruteforce.options.label.addfile"));
-			jLabelExtensions.setText(Constant.messages.getString("bruteforce.options.label.fileextensions"));
+			jLabelDefaultFile.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.defaultfile"));
+			jLabelAddFile.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.addfile"));
+			jLabelExtensions.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.fileextensions"));
 		
-			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.gridy = 2;
-			gridBagConstraints3.ipadx = 0;
-			gridBagConstraints3.ipady = 0;
-			gridBagConstraints3.anchor = GridBagConstraints.NORTHWEST;
-			gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints3.insets = new Insets(2,2,2,2);
-			gridBagConstraints3.weightx = 1.0D;
-			gridBagConstraints3.gridwidth = 2;
+			gridBagConstraintsThreadsLable.gridx = 0;
+			gridBagConstraintsThreadsLable.gridy = 2;
+			gridBagConstraintsThreadsLable.ipadx = 0;
+			gridBagConstraintsThreadsLable.ipady = 0;
+			gridBagConstraintsThreadsLable.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsThreadsLable.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsThreadsLable.insets = new Insets(2,2,2,2);
+			gridBagConstraintsThreadsLable.weightx = 1.0D;
+			gridBagConstraintsThreadsLable.gridwidth = 2;
 			
-			gridBagConstraints4.gridx = 0;
-			gridBagConstraints4.gridy = 3;
-			gridBagConstraints4.weightx = 1.0;
-			gridBagConstraints4.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints4.ipadx = 0;
-			gridBagConstraints4.ipady = 0;
-			gridBagConstraints4.anchor = GridBagConstraints.NORTHWEST;
-			gridBagConstraints4.insets = new Insets(2,2,2,2);
-			gridBagConstraints4.gridwidth = 2;
+			gridBagConstraintsThreadsSlider.gridx = 0;
+			gridBagConstraintsThreadsSlider.gridy = 3;
+			gridBagConstraintsThreadsSlider.weightx = 1.0;
+			gridBagConstraintsThreadsSlider.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsThreadsSlider.ipadx = 0;
+			gridBagConstraintsThreadsSlider.ipady = 0;
+			gridBagConstraintsThreadsSlider.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsThreadsSlider.insets = new Insets(2,2,2,2);
+			gridBagConstraintsThreadsSlider.gridwidth = 2;
 			
-			checkBoxGridBagConstraints.gridx = 0;
-			checkBoxGridBagConstraints.gridy = 4;
-			checkBoxGridBagConstraints.weightx = 1.0;
-			checkBoxGridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			checkBoxGridBagConstraints.ipadx = 0;
-			checkBoxGridBagConstraints.ipady = 0;
-			checkBoxGridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-			checkBoxGridBagConstraints.insets = new Insets(2,2,2,2);
-			checkBoxGridBagConstraints.gridwidth = 2;
+			gridBagConstraintsRecursiveCheckBox.gridx = 0;
+			gridBagConstraintsRecursiveCheckBox.gridy = 4;
+			gridBagConstraintsRecursiveCheckBox.weightx = 1.0;
+			gridBagConstraintsRecursiveCheckBox.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsRecursiveCheckBox.ipadx = 0;
+			gridBagConstraintsRecursiveCheckBox.ipady = 0;
+			gridBagConstraintsRecursiveCheckBox.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsRecursiveCheckBox.insets = new Insets(2,2,2,2);
+			gridBagConstraintsRecursiveCheckBox.gridwidth = 2;
 
-			gridBagConstraints5a.gridx = 0;
-			gridBagConstraints5a.gridy = 5;
-			gridBagConstraints5a.weightx = 1.0;
-			gridBagConstraints5a.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints5a.ipadx = 0;
-			gridBagConstraints5a.ipady = 0;
-			gridBagConstraints5a.anchor = GridBagConstraints.NORTHWEST;
-			gridBagConstraints5a.insets = new Insets(2,2,2,2);
-			gridBagConstraints5a.gridwidth = 1;
+			gridBagConstraintsDefaultFileLable.gridx = 0;
+			gridBagConstraintsDefaultFileLable.gridy = 5;
+			gridBagConstraintsDefaultFileLable.weightx = 1.0;
+			gridBagConstraintsDefaultFileLable.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsDefaultFileLable.ipadx = 0;
+			gridBagConstraintsDefaultFileLable.ipady = 0;
+			gridBagConstraintsDefaultFileLable.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsDefaultFileLable.insets = new Insets(2,2,2,2);
+			gridBagConstraintsDefaultFileLable.gridwidth = 1;
 			
-			gridBagConstraints5b.gridx = 1;
-			gridBagConstraints5b.gridy = 5;
-			gridBagConstraints5b.weightx = 1.0;
-			gridBagConstraints5b.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints5b.ipadx = 0;
-			gridBagConstraints5b.ipady = 0;
-			gridBagConstraints5b.anchor = GridBagConstraints.NORTHWEST;
-			gridBagConstraints5b.insets = new Insets(2,2,2,2);
-			gridBagConstraints5b.gridwidth = 1;
+			gridBagConstraintsDefaultFlieList.gridx = 1;
+			gridBagConstraintsDefaultFlieList.gridy = 5;
+			gridBagConstraintsDefaultFlieList.weightx = 1.0;
+			gridBagConstraintsDefaultFlieList.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsDefaultFlieList.ipadx = 0;
+			gridBagConstraintsDefaultFlieList.ipady = 0;
+			gridBagConstraintsDefaultFlieList.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsDefaultFlieList.insets = new Insets(2,2,2,2);
+			gridBagConstraintsDefaultFlieList.gridwidth = 1;
 			
-			gridBagConstraints6a.gridx = 0;
-			gridBagConstraints6a.gridy = 6;
-			gridBagConstraints6a.weightx = 1.0;
-			gridBagConstraints6a.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints6a.ipadx = 0;
-			gridBagConstraints6a.ipady = 0;
-			gridBagConstraints6a.anchor = GridBagConstraints.NORTHWEST;
-			gridBagConstraints6a.insets = new Insets(2,2,2,2);
-			gridBagConstraints6a.gridwidth = 1;
+			gridBagConstraintsAddFileLable.gridx = 0;
+			gridBagConstraintsAddFileLable.gridy = 6;
+			gridBagConstraintsAddFileLable.weightx = 1.0;
+			gridBagConstraintsAddFileLable.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsAddFileLable.ipadx = 0;
+			gridBagConstraintsAddFileLable.ipady = 0;
+			gridBagConstraintsAddFileLable.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsAddFileLable.insets = new Insets(2,2,2,2);
+			gridBagConstraintsAddFileLable.gridwidth = 1;
 			
-			gridBagConstraints6b.gridx = 1;
-			gridBagConstraints6b.gridy = 6;
-			gridBagConstraints6b.weightx = 1.0;
-			gridBagConstraints6b.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints6b.ipadx = 0;
-			gridBagConstraints6b.ipady = 0;
-			gridBagConstraints6b.anchor = GridBagConstraints.NORTHWEST;
-			gridBagConstraints6b.insets = new Insets(2,2,2,2);
-			gridBagConstraints6b.gridwidth = 1;
+			gridBagConstraintsAddFileButton.gridx = 1;
+			gridBagConstraintsAddFileButton.gridy = 6;
+			gridBagConstraintsAddFileButton.weightx = 1.0;
+			gridBagConstraintsAddFileButton.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsAddFileButton.ipadx = 0;
+			gridBagConstraintsAddFileButton.ipady = 0;
+			gridBagConstraintsAddFileButton.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsAddFileButton.insets = new Insets(2,2,2,2);
+			gridBagConstraintsAddFileButton.gridwidth = 1;
 			
-			gridBagConstraintsBrowseFiles.gridx = 0;
-			gridBagConstraintsBrowseFiles.gridy = 7;
-			gridBagConstraintsBrowseFiles.weightx = 1.0;
-			gridBagConstraintsBrowseFiles.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraintsBrowseFiles.ipadx = 0;
-			gridBagConstraintsBrowseFiles.ipady = 0;
-			gridBagConstraintsBrowseFiles.anchor = GridBagConstraints.NORTHWEST;
-			gridBagConstraintsBrowseFiles.insets = new Insets(2,2,2,2);
-			gridBagConstraintsBrowseFiles.gridwidth = 2;
+			gridBagConstraintsBrowseFilesCheckBox.gridx = 0;
+			gridBagConstraintsBrowseFilesCheckBox.gridy = 7;
+			gridBagConstraintsBrowseFilesCheckBox.weightx = 1.0;
+			gridBagConstraintsBrowseFilesCheckBox.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsBrowseFilesCheckBox.ipadx = 0;
+			gridBagConstraintsBrowseFilesCheckBox.ipady = 0;
+			gridBagConstraintsBrowseFilesCheckBox.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsBrowseFilesCheckBox.insets = new Insets(2,2,2,2);
+			gridBagConstraintsBrowseFilesCheckBox.gridwidth = 2;
 			
 			gridBagConstraintsFileExtensionsLabel.gridx = 0;
 			gridBagConstraintsFileExtensionsLabel.gridy = 8;
@@ -219,14 +220,14 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			gridBagConstraintsX.gridwidth = 2;
 			
 			jLabelx.setText(BruteForceParam.EMPTY_STRING);
-			panelPortScan.add(getThreadsLabel(), gridBagConstraints3);
-			panelPortScan.add(getSliderThreadsPerScan(), gridBagConstraints4);
-			panelPortScan.add(getCheckBoxRecursive(), checkBoxGridBagConstraints);
-			panelPortScan.add(jLabel2, gridBagConstraints5a);
-			panelPortScan.add(getDefaultFileList(), gridBagConstraints5b);
-			panelPortScan.add(jLabel3, gridBagConstraints6a);
-			panelPortScan.add(getAddFileButton(), gridBagConstraints6b);
-			panelPortScan.add(getCheckBoxBrowseFiles(), gridBagConstraintsBrowseFiles);
+			panelPortScan.add(getThreadsLabel(), gridBagConstraintsThreadsLable);
+			panelPortScan.add(getSliderThreadsPerScan(), gridBagConstraintsThreadsSlider);
+			panelPortScan.add(getCheckBoxRecursive(), gridBagConstraintsRecursiveCheckBox);
+			panelPortScan.add(jLabelDefaultFile, gridBagConstraintsDefaultFileLable);
+			panelPortScan.add(getDefaultFileList(), gridBagConstraintsDefaultFlieList);
+			panelPortScan.add(jLabelAddFile, gridBagConstraintsAddFileLable);
+			panelPortScan.add(getAddFileButton(), gridBagConstraintsAddFileButton);
+			panelPortScan.add(getCheckBoxBrowseFiles(), gridBagConstraintsBrowseFilesCheckBox);
 			panelPortScan.add(jLabelExtensions, gridBagConstraintsFileExtensionsLabel);
 			panelPortScan.add(getTxtFileExtensions(), gridBagConstraintsFileExtensionsList);
 			panelPortScan.add(jLabelx, gridBagConstraintsX);
@@ -242,7 +243,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 	}
 
 	private void setThreadsLabelValue(int value) {
-		getThreadsLabel().setText(Constant.messages.getString("bruteforce.options.label.threads", value));
+		getThreadsLabel().setText(Constant.messages.getString(MESSAGE_PREFIX + "label.threads", value));
 	}
 
 	private JComboBox<ForcedBrowseFile> getDefaultFileList() {
@@ -270,7 +271,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 	private JCheckBox getCheckBoxRecursive() {
 		if (checkBoxRecursive == null) {
 			checkBoxRecursive = new JCheckBox();
-			checkBoxRecursive.setText(Constant.messages.getString("bruteforce.options.label.recursive"));
+			checkBoxRecursive.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.recursive"));
 			checkBoxRecursive.setSelected(BruteForceParam.DEFAULT_RECURSIVE);
 		}
 		return checkBoxRecursive;
@@ -353,7 +354,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 
 	private JButton getAddFileButton() {
 		if (addFileButton == null) {
-	        addFileButton = new JButton(Constant.messages.getString("bruteforce.options.button.addfile")); 
+	        addFileButton = new JButton(Constant.messages.getString(MESSAGE_PREFIX + "button.addfile")); 
 			addFileButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {    
@@ -361,7 +362,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 					fcCommand.setFileFilter( new FileFilter() {
 						@Override
 						public String getDescription() {
-							return Constant.messages.getString("bruteforce.options.title");
+							return Constant.messages.getString(MESSAGE_PREFIX + "title");
 						}
 						@Override
 						public boolean accept(File f) {
@@ -407,7 +408,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 	private JCheckBox getCheckBoxBrowseFiles() {
 		if (checkBoxBrowseFiles == null) {
 			checkBoxBrowseFiles = new JCheckBox();
-			checkBoxBrowseFiles.setText(Constant.messages.getString("bruteforce.options.label.browsefiles"));
+			checkBoxBrowseFiles.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.browsefiles"));
 			checkBoxBrowseFiles.setSelected(BruteForceParam.DEFAULT_BROWSE_FILES);
 			checkBoxBrowseFiles.addActionListener(new java.awt.event.ActionListener() { 
 				
