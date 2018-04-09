@@ -44,20 +44,14 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 	@Override
 	public void scan() {
 
-		HttpMessage msg = getBaseMsg();
-		try {
-			sendAndReceive(msg, false);
-		} catch (IOException io) {
-			log.debug("Blew up trying to do BASE request :(");
-		}
-
-		int baseResponseLength = msg.getResponseBody().length();
-		Set<HtmlParameter> cookies = msg.getCookieParams();
+		int baseResponseLength = getBaseMsg().getResponseBody().length();
+		Set<HtmlParameter> cookies = getBaseMsg().getCookieParams();
 
 		Set<String> cookiesThatMakeADifference = new HashSet<String>();
 		Set<String> cookiesThatDoNOTMakeADifference = new HashSet<String>();
 
 		boolean thereAreSlackCookies = false;
+		HttpMessage msg = getNewMsg();
 
 		for (HtmlParameter oneCookie : cookies) {
 			thereAreSlackCookies = repeatRequestWithoutOneCookie(msg, baseResponseLength, cookies,
