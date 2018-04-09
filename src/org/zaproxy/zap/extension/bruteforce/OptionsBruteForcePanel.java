@@ -58,6 +58,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 	private JCheckBox checkBoxBrowseFiles = null;
 	private ZapTextField txtFileExtensions = null;
 	private JLabel threadsLabel;
+	private ZapTextField txtFileExtensionsToMiss = null;
+	private ZapTextField txtFailCaseString = null;
 
 	public OptionsBruteForcePanel(ExtensionBruteForce extension) {
         super();
@@ -89,6 +91,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			JLabel jLabelAddFile = new JLabel();
 			JLabel jLabelx = new JLabel();
 			JLabel jLabelExtensions = new JLabel();
+			JLabel jLabelExtensionsToMiss = new JLabel();
+			JLabel jLabelFailCaseString = new JLabel();
 
 			GridBagConstraints gridBagConstraintsThreadsLable = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsThreadsSlider = new GridBagConstraints();
@@ -100,7 +104,10 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			GridBagConstraints gridBagConstraintsBrowseFilesCheckBox = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsFileExtensionsLabel = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsFileExtensionsList = new GridBagConstraints();
-
+			GridBagConstraints gridBagConstraintsExtensionsToMissLabel = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsExtensionsToMissList = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsFailCaseStringLabel = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsFailCaseString = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsRecursiveCheckBox = new GridBagConstraints();
 
 			panelPortScan.setLayout(new GridBagLayout());
@@ -109,6 +116,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			jLabelDefaultFile.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.defaultfile"));
 			jLabelAddFile.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.addfile"));
 			jLabelExtensions.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.fileextensions"));
+			jLabelExtensionsToMiss.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.extensionsToMiss"));
+			jLabelFailCaseString.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.failCaseString"));
 		
 			gridBagConstraintsThreadsLable.gridx = 0;
 			gridBagConstraintsThreadsLable.gridy = 2;
@@ -210,8 +219,48 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			gridBagConstraintsFileExtensionsList.insets = new Insets(2,2,2,2);
 			gridBagConstraintsFileExtensionsList.gridwidth = 1;			
 			
+			gridBagConstraintsExtensionsToMissLabel.gridx = 0;
+			gridBagConstraintsExtensionsToMissLabel.gridy = 9;
+			gridBagConstraintsExtensionsToMissLabel.weightx = 1.0;
+			gridBagConstraintsExtensionsToMissLabel.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsExtensionsToMissLabel.ipadx = 0;
+			gridBagConstraintsExtensionsToMissLabel.ipady = 0;
+			gridBagConstraintsExtensionsToMissLabel.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsExtensionsToMissLabel.insets = new Insets(2,2,2,2);
+			gridBagConstraintsExtensionsToMissLabel.gridwidth = 1;
+			
+			gridBagConstraintsExtensionsToMissList.gridx = 1;
+			gridBagConstraintsExtensionsToMissList.gridy = 9;
+			gridBagConstraintsExtensionsToMissList.weightx = 1.0;
+			gridBagConstraintsExtensionsToMissList.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsExtensionsToMissList.ipadx = 0;
+			gridBagConstraintsExtensionsToMissList.ipady = 0;
+			gridBagConstraintsExtensionsToMissList.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsExtensionsToMissList.insets = new Insets(2,2,2,2);
+			gridBagConstraintsExtensionsToMissList.gridwidth = 1;	
+			
+			gridBagConstraintsFailCaseStringLabel.gridx = 0;
+			gridBagConstraintsFailCaseStringLabel.gridy = 10;
+			gridBagConstraintsFailCaseStringLabel.weightx = 1.0;
+			gridBagConstraintsFailCaseStringLabel.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsFailCaseStringLabel.ipadx = 0;
+			gridBagConstraintsFailCaseStringLabel.ipady = 0;
+			gridBagConstraintsFailCaseStringLabel.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsFailCaseStringLabel.insets = new Insets(2,2,2,2);
+			gridBagConstraintsFailCaseStringLabel.gridwidth = 1;
+			
+			gridBagConstraintsFailCaseString.gridx = 1;
+			gridBagConstraintsFailCaseString.gridy = 10;
+			gridBagConstraintsFailCaseString.weightx = 1.0;
+			gridBagConstraintsFailCaseString.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsFailCaseString.ipadx = 0;
+			gridBagConstraintsFailCaseString.ipady = 0;
+			gridBagConstraintsFailCaseString.anchor = GridBagConstraints.NORTHWEST;
+			gridBagConstraintsFailCaseString.insets = new Insets(2,2,2,2);
+			gridBagConstraintsFailCaseString.gridwidth = 1;	
+			
 			gridBagConstraintsX.gridx = 0;
-			gridBagConstraintsX.gridy = 10;
+			gridBagConstraintsX.gridy = 11;
 			gridBagConstraintsX.anchor = GridBagConstraints.NORTHWEST;
 			gridBagConstraintsX.fill = GridBagConstraints.BOTH;
 			gridBagConstraintsX.insets = new Insets(2,2,2,2);
@@ -230,6 +279,10 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			panelPortScan.add(getCheckBoxBrowseFiles(), gridBagConstraintsBrowseFilesCheckBox);
 			panelPortScan.add(jLabelExtensions, gridBagConstraintsFileExtensionsLabel);
 			panelPortScan.add(getTxtFileExtensions(), gridBagConstraintsFileExtensionsList);
+			panelPortScan.add(jLabelExtensionsToMiss, gridBagConstraintsExtensionsToMissLabel);
+			panelPortScan.add(getTxtExtensionsToMiss(), gridBagConstraintsExtensionsToMissList);
+			panelPortScan.add(jLabelFailCaseString, gridBagConstraintsFailCaseStringLabel);
+			panelPortScan.add(getTxtFailCaseString(), gridBagConstraintsFailCaseString);
 			panelPortScan.add(jLabelx, gridBagConstraintsX);
 		}
 		return panelPortScan;
@@ -286,6 +339,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 		    getCheckBoxRecursive().setSelected(BruteForceParam.DEFAULT_RECURSIVE);
 		    getCheckBoxBrowseFiles().setSelected(BruteForceParam.DEFAULT_BROWSE_FILES);
 		    getTxtFileExtensions().setEnabled(BruteForceParam.DEFAULT_BROWSE_FILES);		    
+		    getTxtExtensionsToMiss().setText(BruteForceParam.DEFAULT_EXTENSIONS_TO_MISS);
+		    getTxtFailCaseString().setText(BruteForceParam.DEFAULT_FAIL_CASE_STRING);
 	    } else {
 		    getSliderThreadsPerScan().setValue(param.getThreadPerScan());
 		    getCheckBoxRecursive().setSelected(param.getRecursive());
@@ -293,14 +348,22 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 		    getCheckBoxBrowseFiles().setSelected(param.isBrowseFiles());
 		    getTxtFileExtensions().setEnabled(param.isBrowseFiles());
 		    getTxtFileExtensions().setText(param.getFileExtensions());		    
+		    getTxtExtensionsToMiss().setText(param.getExtensionsToMiss());
+		    getTxtFailCaseString().setText(param.getFailCaseString());
 	    }
 	    
 	    getTxtFileExtensions().discardAllEdits();
+	    getTxtExtensionsToMiss().discardAllEdits();	    
+	    getTxtFailCaseString().discardAllEdits();	    
 	}
 	
 	@Override
 	public void validateParam(Object obj) {
-	    // no validation needed
+	    String failCaseString = getTxtFailCaseString().getText();
+	    if (failCaseString.isEmpty()) {
+	    	throw new IllegalArgumentException(
+	    			Constant.messages.getString("bruteforce.options.error.failCaseString.invalid"));
+	    }
 	}
 	
 	@Override
@@ -323,6 +386,18 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 	   		param.setFileExtensions(getTxtFileExtensions().getText());
 	   	} else {
 	   		param.setFileExtensions(BruteForceParam.EMPTY_STRING);
+	   	}
+	   	
+	   	if (getTxtExtensionsToMiss().getText() != null) {
+	   		param.setExtensionsToMiss(getTxtExtensionsToMiss().getText());
+	   	} else {
+	   		param.setExtensionsToMiss(BruteForceParam.DEFAULT_EXTENSIONS_TO_MISS);
+	   	}
+	   	
+	   	if (getTxtFailCaseString().getText() != null) {
+	   		param.setFailCaseString(getTxtFailCaseString().getText());
+	   	} else {
+	   		param.setFailCaseString(BruteForceParam.DEFAULT_FAIL_CASE_STRING);
 	   	}
 	}
 	
@@ -427,8 +502,21 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 		}
 		return txtFileExtensions;
 	}	
-
 	
+	private ZapTextField getTxtExtensionsToMiss() {
+		if (txtFileExtensionsToMiss == null) {
+			txtFileExtensionsToMiss = new ZapTextField();
+		}
+		return txtFileExtensionsToMiss;
+	}	
+	
+	private ZapTextField getTxtFailCaseString() {
+		if (txtFailCaseString == null) {
+			txtFailCaseString = new ZapTextField();
+		}
+		return txtFailCaseString;
+	}	
+
     public int getThreadPerScan() {
     	return this.sliderThreadsPerScan.getValue();
     }
