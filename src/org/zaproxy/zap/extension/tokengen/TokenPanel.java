@@ -42,10 +42,12 @@ import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
@@ -79,6 +81,7 @@ public class TokenPanel extends AbstractPanel {
 	private JProgressBar progressBar = null;
 	private JButton loadButton = null;
 	private JButton saveButton = null;
+	private JButton optionsButton;
 
 	// Disabled
 	//private HttpPanel requestPanel = null;
@@ -227,6 +230,7 @@ public class TokenPanel extends AbstractPanel {
 			panelToolbar.add(getSaveButton(), gridBagConstraints10);
 
 			panelToolbar.add(t1, gridBagConstraintsx);
+			panelToolbar.add(getOptionsButton());
 		}
 		return panelToolbar;
 	}
@@ -307,6 +311,17 @@ public class TokenPanel extends AbstractPanel {
 			});
 		}
 		return saveButton;
+	}
+
+	private JButton getOptionsButton() {
+		if (optionsButton == null) {
+			optionsButton = new JButton(DisplayUtils.getScaledIcon(TokenPanel.class.getResource("/resource/icon/16/041.png")));
+			optionsButton.setToolTipText(Constant.messages.getString("tokengen.toolbar.button.options"));
+			optionsButton.addActionListener(
+					e -> Control.getSingleton().getMenuToolsControl().options(
+							Constant.messages.getString("tokengen.optionspanel.name")));
+		}
+		return optionsButton;
 	}
 
 	private JScrollPane getJScrollPane() {

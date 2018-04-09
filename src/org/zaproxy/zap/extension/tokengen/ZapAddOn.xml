@@ -8,7 +8,7 @@
 	<changes>
 	<![CDATA[
 	Inform of running test (e.g. on session change, add-on uninstall).<br>
-	Maintenance changes.<br>
+	Allow to configure the number of threads.<br>
 	]]>
 	</changes>
 	<extensions>
