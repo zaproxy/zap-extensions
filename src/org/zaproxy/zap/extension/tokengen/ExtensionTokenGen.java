@@ -53,6 +53,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	private AnalyseTokensDialog analyseTokensDialog = null;
 
 	private TokenParam tokenParam = null;;
+	private TokenOptionsPanel tokenOptionsPanel;
 	
 	private List<TokenGenerator> generators = new ArrayList<>();
 	private int runningGenerators = 0;
@@ -80,11 +81,15 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 	    
+	    extensionHook.addOptionsParamSet(getTokenParam());
+
 	    if (getView() != null) {
 	    	// Register our popup menu item, as long as we're not running as a daemon
 	    	extensionHook.getHookMenu().addPopupMenuItem(getPopupTokenGen());
 	        extensionHook.getHookView().addStatusPanel(getTokenPanel());
 	        this.getTokenPanel().setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
+
+	        extensionHook.getHookView().addOptionPanel(getTokenOptionsPanel());
 	    }
 	}
 	
@@ -135,6 +140,13 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 			tokenParam = new TokenParam();
 		}
 		return tokenParam;
+	}
+
+	private TokenOptionsPanel getTokenOptionsPanel() {
+		if (tokenOptionsPanel == null) {
+			tokenOptionsPanel = new TokenOptionsPanel();
+		}
+		return tokenOptionsPanel;
 	}
 
 	// TODO This method is also in ExtensionAntiCSRF - put into a helper class?
@@ -271,7 +283,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 		log.debug("startTokenGeneration " + msg.getRequestHeader().getURI() + " # " + numGen);
 		this.getTokenPanel().scanStarted(numGen);
 		
-		int numThreads = this.getTokenParam().getThreadPerScan();
+		int numThreads = this.getTokenParam().getThreadsPerScan();
 		this.manuallyStopped = false;
 		
 		generators = new ArrayList<>();

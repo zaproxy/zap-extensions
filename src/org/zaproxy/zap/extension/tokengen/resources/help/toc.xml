@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Token Generator" image="tokengen-icon" target="tokengen"/>
+			<tocitem text="Token Generator" image="tokengen-icon" target="tokengen">
+				<tocitem text="Options" target="tokengen.options" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

@@ -17,35 +17,70 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 
-public class TokenParam extends AbstractParam {
+/**
+ * Manages the options saved in the configuration file.
+ * <p>
+ * It allows to change, programmatically, the following options:
+ * <ul>
+ * <li>Number of threads for the token generation;</li>
+ * </ul>
+ */
+public class TokenParam extends VersionedAbstractParam {
 
-	private static final String THREADS_PER_SCAN = "tokengen.threadPerScan";
-		
-	private int threadPerScan = 20;
-	
+    protected static final int DEFAULT_THREADS_PER_SCAN = 5;
+
     /**
-     * @param rootElementName
+     * The version of the configurations. Used to keep track of configurations changes between releases, if updates are needed.
+     * <p>
+     * It only needs to be updated for configurations changes (not releases of the add-on).
      */
+    private static final int PARAM_CURRENT_VERSION = 1;
+
+    /**
+     * The base configuration key for all configurations.
+     */
+    private static final String PARAM_BASE_KEY = "tokengen";
+
+    private static final String THREADS_PER_SCAN = PARAM_BASE_KEY + ".threadsPerScan";
+
+    private int threadsPerScan = DEFAULT_THREADS_PER_SCAN;
+
     public TokenParam() {
     }
 
     @Override
-    protected void parse(){
-        
-		try {
-			setThreadPerScan(getConfig().getInt(THREADS_PER_SCAN, 1));
-		} catch (Exception e) {}
+    protected int getCurrentVersion() {
+        return PARAM_CURRENT_VERSION;
     }
 
-	public int getThreadPerScan() {
-		return threadPerScan;
-	}
+    @Override
+    protected String getConfigVersionKey() {
+        return PARAM_BASE_KEY + VERSION_ATTRIBUTE;
+    }
 
-	public void setThreadPerScan(int threadPerScan) {
-		this.threadPerScan = threadPerScan;
-        getConfig().setProperty(THREADS_PER_SCAN, Integer.toString(this.threadPerScan));
-	}
-	
+    @Override
+    protected void updateConfigsImpl(int fileVersion) {
+        // Nothing to update.
+    }
+
+    @Override
+    protected void parseImpl() {
+        setThreadsPerScanImpl(getConfig().getInt(THREADS_PER_SCAN, DEFAULT_THREADS_PER_SCAN));
+    }
+
+    private void setThreadsPerScanImpl(int threadsPerScan) {
+        this.threadsPerScan = threadsPerScan <= 0 ? DEFAULT_THREADS_PER_SCAN : threadsPerScan;
+    }
+
+    public int getThreadsPerScan() {
+        return threadsPerScan;
+    }
+
+    public void setThreadsPerScan(int threadsPerScan) {
+        setThreadsPerScanImpl(threadsPerScan);
+        getConfig().setProperty(THREADS_PER_SCAN, this.threadsPerScan);
+    }
+
 }
