@@ -41,9 +41,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
@@ -89,11 +88,12 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 		extensionHook.addOptionsParamSet(revealParam);
 		
 		if (getView() != null) {
-			View.getSingleton().addMainToolbarButton(getRevealButton());
-			View.getSingleton().addMainToolbarSeparator(getToolBarSeparator());
+			ExtensionHookView extensionHookView = extensionHook.getHookView();
+			extensionHookView.addMainToolBarComponent(getRevealButton());
+			extensionHookView.addMainToolBarComponent(getToolBarSeparator());
 		}
 
-		API.getInstance().registerApiImplementor(revealAPI);
+		extensionHook.addApiImplementor(revealAPI);
 	}
 
 	@Override
@@ -101,18 +101,6 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 		super.optionsLoaded();
 
 		setReveal(revealParam.isReveal());
-	}
-
-	@Override
-	public void unload() {
-		if (getView() != null) {
-			View.getSingleton().removeMainToolbarButton(getRevealButton());
-			View.getSingleton().removeMainToolbarSeparator(getToolBarSeparator());
-		}
-
-		API.getInstance().removeApiImplementor(revealAPI);
-
-		super.unload();
 	}
 
 	@Override

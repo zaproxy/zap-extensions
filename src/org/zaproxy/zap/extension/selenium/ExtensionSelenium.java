@@ -59,7 +59,6 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvider;
 
 /**
@@ -197,7 +196,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuOpenInBrowser(this));
         }
 
-        API.getInstance().registerApiImplementor(seleniumApi);
+        extensionHook.addApiImplementor(seleniumApi);
     }
 
     @Override
@@ -205,13 +204,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         return true;
     }
 
-    @Override
-    public void unload() {
-        super.unload();
-
-        API.getInstance().removeApiImplementor(seleniumApi);
-    }
-    
     @Override
     public void stop() {
         super.stop();

@@ -46,7 +46,6 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.model.Context;
@@ -110,7 +109,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 
-		API.getInstance().registerApiImplementor(ajaxSpiderApi);
+		extensionHook.addApiImplementor(ajaxSpiderApi);
 		extensionHook.addOptionsParamSet(getAjaxSpiderParam());
 
 		extensionHook.addSessionListener(new SpiderSessionChangedListener());
@@ -138,8 +137,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
             
             getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getSpiderPanel().getScanStatus().getCountLabel());
         }
-        
-        API.getInstance().removeApiImplementor(ajaxSpiderApi);
         
         super.unload();
     }
