@@ -59,7 +59,6 @@ public class TestUserAgent extends AbstractAppPlugin {
             I_PHONE_3
     };
 
-    private HttpMessage originalMsg;
     private int originalResponseBodyHash;
 
     @Override
@@ -103,11 +102,7 @@ public class TestUserAgent extends AbstractAppPlugin {
 
     @Override
     public void scan() {
-        setOriginalMessageAndResponseBodyHash();
-        if(originalMsg == null){
-            log.warn("Aborting due to empty original message leads to false positives");
-            return;
-        }
+        originalResponseBodyHash = getBaseMsg().getResponseBody().hashCode();
 
         for(String userAgent: USER_AGENTS){
             if (isStop()) {
@@ -115,32 +110,6 @@ public class TestUserAgent extends AbstractAppPlugin {
             }
             attack(userAgent);
         }
-    }
-
-    private void setOriginalMessageAndResponseBodyHash() {
-        originalMsg = getOriginalMessage();
-        if(originalMsg != null){
-            originalResponseBodyHash = originalMsg.getResponseBody().hashCode();
-        }
-    }
-
-    private HttpMessage getOriginalMessage(){
-        HttpMessage baseMsg = getBaseMsg();
-        if(baseMsg.getResponseHeader().isEmpty()){
-            return resendBaseMessage();
-        }
-        return baseMsg;
-    }
-
-    private HttpMessage resendBaseMessage(){
-        try {
-            HttpMessage newMsg = getNewMsg();
-            sendAndReceive(newMsg);
-            return newMsg;
-        }catch(IOException e){
-            log.warn(e.getMessage(), e);
-        }
-        return null;
     }
 
     private void attack(String userAgent){
@@ -172,7 +141,7 @@ public class TestUserAgent extends AbstractAppPlugin {
     }
 
     private boolean isStatusCodeDifferent(HttpMessage newMsg) {
-        return originalMsg.getResponseHeader().getStatusCode() != newMsg.getResponseHeader().getStatusCode();
+        return getBaseMsg().getResponseHeader().getStatusCode() != newMsg.getResponseHeader().getStatusCode();
     }
 
     private boolean isBodyDifferent(HttpMessage newMsg) {
