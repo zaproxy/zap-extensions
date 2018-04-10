@@ -27,6 +27,8 @@ import javax.swing.JComboBox;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.accessControl.ExtensionAccessControl;
@@ -117,6 +119,16 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 		if (usersSelectTable.getSelectedUsersCount() < 1) {
 			return Constant.messages.getString("accessControl.scanOptions.error.noUsers");
 		}
+
+		Mode mode = Control.getSingleton().getMode();
+		if (Mode.safe.equals(mode)) {
+			return Constant.messages.getString("accessControl.scanOptions.error.mode.safe");
+		} else if (Mode.protect.equals(mode)) {
+			if (!selectedContext.isInScope()) {
+				return Constant.messages.getString("accessControl.scanOptions.error.mode.protected", selectedContext.getName());
+			}
+		}
+		
 		return null;
 	}
 }

@@ -41,6 +41,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.Extension;
@@ -241,6 +242,22 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			throw new IllegalStateException("A scan is already running for context: " + contextId);
 		}
 
+		switch (Control.getSingleton().getMode()) {
+		case safe:
+			throw new IllegalStateException("Access control scan is not allowed in Safe mode.");
+		case protect:
+			if (!startOptions.targetContext.isInScope()) {
+				throw new IllegalStateException(
+						"Access control scan is not allowed with a context out of scope when in Protected mode: "
+								+ startOptions.targetContext.getName());
+			}
+			//$FALL-THROUGH$
+		case standard:
+		case attack:
+			// No problem
+			break;
+		}
+		
 		scannerThread = threadManager.recreateScannerThreadIfHasRun(contextId);
 		if (getView() != null) {
 			scannerThread.addScanListener(getStatusPanel());
@@ -292,6 +309,19 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 	@Override
 	public void sessionModeChanged(Mode mode) {
+		if (Mode.safe.equals(mode)) {
+			this.threadManager.stopAllScannerThreads();
+		} else if (Mode.protect.equals(mode)) {
+			for (AccessControlScannerThread scan : threadManager.getAllThreads()) {
+				if (scan.isRunning() && !scan.getStartOptions().targetContext.isInScope()) {
+					scan.stopScan();
+				}
+			}
+		}
+
+		if (statusPanel != null) {
+			statusPanel.sessionModeChanged(mode);
+		}
 	}
 
 	private Document generateLastScanXMLReport(int contextId) throws ParserConfigurationException {
