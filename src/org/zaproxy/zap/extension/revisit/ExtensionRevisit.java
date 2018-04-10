@@ -55,7 +55,6 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.model.ParameterParser;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
@@ -132,7 +131,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 	    					Constant.messages.getString(PREFIX + ".popup.disable.title"), false));
 	    }
 
-	    API.getInstance().registerApiImplementor(revisitAPI);
+	    extensionHook.addApiImplementor(revisitAPI);
 	}
 	
 	@Override
@@ -155,8 +154,6 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
 			removeRevisitIconSiteNodes();
 		}
-
-		API.getInstance().removeApiImplementor(revisitAPI);
 	}
 
 	private void removeRevisitIconSiteNodes() {

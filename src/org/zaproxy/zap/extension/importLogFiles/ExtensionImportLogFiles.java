@@ -39,7 +39,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 
@@ -79,7 +78,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         importLogAPI = new ImportLogAPI(null);
-        API.getInstance().registerApiImplementor(importLogAPI);
+        extensionHook.addApiImplementor(importLogAPI);
         if (getView() != null) {
             extensionHook.getHookMenu().addAnalyseMenuItem(getImportOption());
         }
@@ -89,13 +88,6 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-
-        API.getInstance().removeApiImplementor(importLogAPI);
     }
 
     private JMenuItem getImportOption() {
