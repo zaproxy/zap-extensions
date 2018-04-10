@@ -112,6 +112,17 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
         super.unload();
     }
 
+    @Override
+    public List<String> getActiveActions() {
+        if (runningGenerators == 0) {
+            return null;
+        }
+
+        List<String> activeActions = new ArrayList<>(1);
+        activeActions.add(Constant.messages.getString("tokengen.activeAction"));
+        return activeActions;
+    }
+
 	private TokenPanel getTokenPanel() {
 		if (tokenPanel == null) {
 			tokenPanel = new TokenPanel(this, this.getTokenParam());
