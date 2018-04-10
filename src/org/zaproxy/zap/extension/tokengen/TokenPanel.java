@@ -480,8 +480,12 @@ public class TokenPanel extends AbstractPanel {
 	}
 
 	public void reset() {
+		getJScrollPane().setViewportView(getInitialMessage());
 		resetTokenResultList();
+		getSaveButton().setEnabled(false);
 		getStopScanButton().setEnabled(false);
+		getPauseScanButton().setEnabled(false);
+		getPauseScanButton().setSelected(false);
 		getProgressBar().setEnabled(false);
 		getProgressBar().setValue(0);
 		
