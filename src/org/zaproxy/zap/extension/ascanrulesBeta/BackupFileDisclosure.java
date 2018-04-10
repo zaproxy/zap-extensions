@@ -263,9 +263,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 			if (log.isDebugEnabled()) log.debug("About to look for a backup for '"+ uri.getURI() + "', which returned "+ statusCode);
 			
 			//is it worth looking for a copy of the file?
-			//why do we even get a status code of 0? 
-			//eliminate it from our enquiries, because it causes nothing but false positives.			
-			if ( statusCode == HttpStatus.SC_NOT_FOUND || statusCode == 0 ) {
+			if ( statusCode == HttpStatus.SC_NOT_FOUND) {
 				if (log.isDebugEnabled())  log.debug ("The original file request was not successfuly retrieved (status = "+ statusCode +"), so there is not much point in looking for a backup of a non-existent file!");
 				return;
 			}
