@@ -38,14 +38,12 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportUrls extends ExtensionAdaptor {
@@ -75,18 +73,7 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
 	    }
 	    
 	    this.api = new ImportUrlsAPI(this);
-	    API.getInstance().registerApiImplementor(api);
-	}
-
-	@Override
-	public void unload() {
-		super.unload();
-		Control control = Control.getSingleton();
-		ExtensionLoader extLoader = control.getExtensionLoader();
-	    if (getView() != null) {
-	    	extLoader.removeToolsMenuItem(getMenuImportUrls());
-	    }
-		API.getInstance().removeApiImplementor(api);
+	    extensionHook.addApiImplementor(api);
 	}
 
 	private ZapMenuItem getMenuImportUrls() {
