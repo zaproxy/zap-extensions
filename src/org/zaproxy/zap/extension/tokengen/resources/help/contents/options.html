@@ -26,6 +26,18 @@
             <td align="center">5</td>
             <td>Key: <code>tokengen.threadsPerScan</code><br>Value: a non-negative integer.</td>
         </tr>
+        <tr>
+            <td>Request Delay (in milliseconds)</td>
+            <td>
+                The time to wait before sending each request, to avoid overloading the target server.
+                <p>
+                <strong>Note:</strong> Given the high number of requests sent during the Token
+                Generation increasing the delay might have a high impact on the time that the
+                generation will take to complete.
+            </td>
+            <td align="center">0</td>
+            <td>Key: <code>tokengen.requestDelayInMs</code><br>Value: a non-negative integer.</td>
+        </tr>
     </table>
 
 </BODY>

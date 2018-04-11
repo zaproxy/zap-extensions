@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -318,6 +319,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 			gen.setHttpMessage(msg);
 			gen.setNumberTokens(numGen / numThreads);	// TODO what about remainder?
 			gen.setTargetToken(htmlParameterStats);
+			gen.setRequestDelay(getTokenParam().getRequestDelayInMs(), TimeUnit.MILLISECONDS);
 			gen.execute();
 			this.runningGenerators++;
 		}
