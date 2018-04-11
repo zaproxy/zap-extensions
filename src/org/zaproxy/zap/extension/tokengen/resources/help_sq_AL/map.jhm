@@ -6,4 +6,5 @@
 <map version="1.0">
     <mapID target="tokengen-icon" url="contents/images/barcode.png" />
     <mapID target="tokengen" url="contents/tokengen.html" />
+    <mapID target="tokengen.options" url="contents/options.html" />
 </map>
