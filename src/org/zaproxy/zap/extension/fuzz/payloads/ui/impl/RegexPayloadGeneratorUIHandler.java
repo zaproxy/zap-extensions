@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JCheckBox;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -73,15 +74,18 @@ public class RegexPayloadGeneratorUIHandler implements
 
         private final String regex;
         private final int maxPayloads;
+        private boolean randomOrder;
         private final RegexPayloadGenerator payloadGenerator;
 
-        public RegexPayloadGeneratorUI(String regex, int maxPayloads) {
+        public RegexPayloadGeneratorUI(String regex, int maxPayloads, boolean randomOrder) {
             this.regex = regex;
             this.maxPayloads = maxPayloads;
+            this.randomOrder = randomOrder;
             this.payloadGenerator = new RegexPayloadGenerator(
                     regex,
                     maxPayloads,
-                    getMaximumForPayloadCalculation(maxPayloads));
+                    getMaximumForPayloadCalculation(maxPayloads),
+                    randomOrder);
         }
 
         public String getRegex() {
@@ -90,6 +94,10 @@ public class RegexPayloadGeneratorUIHandler implements
 
         public int getMaxPayloads() {
             return maxPayloads;
+        }
+
+        public boolean isRandomOrder() {
+            return randomOrder;
         }
 
         @Override
@@ -145,6 +153,7 @@ public class RegexPayloadGeneratorUIHandler implements
         private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 250;
 
         private static final String CONTENTS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.regex.label");
+        private static final String RANDOM_ORDER_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.regex.randomorder");
         private static final String MAX_PAYLOADS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.maxPayloads.label");
         private static final String MAX_PAYLOADS_FIELD_TOOL_TIP = Constant.messages.getString("fuzz.payloads.generator.regex.maxPayloads.tooltip");
 
@@ -155,6 +164,7 @@ public class RegexPayloadGeneratorUIHandler implements
 
         private ZapTextField regexTextField;
         private ZapNumberSpinner maxPayloadsNumberSpinner;
+        private JCheckBox randomOrderCheckbox;
 
         private JTextArea payloadsPreviewTextArea;
         private JButton payloadsPreviewGenerateButton;
@@ -188,6 +198,7 @@ public class RegexPayloadGeneratorUIHandler implements
                             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addComponent(getRegexTextField())
                                     .addComponent(getMaxPayloadsNumberSpinner())
+                                    .addComponent(getRandomOrderCheckbox())
                                     .addGroup(
                                             layout.createSequentialGroup()
                                                     .addComponent(getPayloadsPreviewGenerateButton())
@@ -203,6 +214,9 @@ public class RegexPayloadGeneratorUIHandler implements
                             layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(multilineLabel)
                                     .addComponent(getMaxPayloadsNumberSpinner()))
+                    .addGroup(
+                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(getRandomOrderCheckbox()))
                     .addGroup(
                             layout.createParallelGroup()
                                     .addComponent(getPayloadsPreviewGenerateButton())
@@ -253,6 +267,13 @@ public class RegexPayloadGeneratorUIHandler implements
                 maxPayloadsNumberSpinner.setToolTipText(MAX_PAYLOADS_FIELD_TOOL_TIP);
             }
             return maxPayloadsNumberSpinner;
+        }
+
+        private JCheckBox getRandomOrderCheckbox() {
+            if (randomOrderCheckbox == null) {
+                randomOrderCheckbox = new JCheckBox(RANDOM_ORDER_LABEL);
+            }
+            return randomOrderCheckbox;
         }
 
         private JButton getPayloadsPreviewGenerateButton() {
@@ -319,6 +340,7 @@ public class RegexPayloadGeneratorUIHandler implements
             oldGenerator = payloadGeneratorUI;
             getRegexTextField().setText(payloadGeneratorUI.getRegex());
             getMaxPayloadsNumberSpinner().setValue(payloadGeneratorUI.getMaxPayloads());
+            getRandomOrderCheckbox().setSelected(payloadGeneratorUI.isRandomOrder());
             setPreviewAndSaveButtonsEnabled(true);
         }
 
@@ -329,7 +351,8 @@ public class RegexPayloadGeneratorUIHandler implements
             }
             return new RegexPayloadGeneratorUI(
                     getRegexTextField().getText(),
-                    getMaxPayloadsNumberSpinner().getValue().intValue());
+                    getMaxPayloadsNumberSpinner().getValue().intValue(),
+                    getRandomOrderCheckbox().isSelected());
         }
 
         @Override
@@ -339,7 +362,8 @@ public class RegexPayloadGeneratorUIHandler implements
             }
             return new RegexPayloadGenerator(
                     getRegexTextField().getText(),
-                    getMaximumForPayloadPersistence(getMaxPayloadsNumberSpinner().getValue().intValue()));
+                    getMaximumForPayloadPersistence(getMaxPayloadsNumberSpinner().getValue().intValue()),
+                    getRandomOrderCheckbox().isSelected());
         }
 
         @Override
@@ -349,13 +373,15 @@ public class RegexPayloadGeneratorUIHandler implements
             getRegexTextField().discardAllEdits();
             getMaxPayloadsNumberSpinner().setValue(DEFAULT_MAX_PAYLOADS);
             getPayloadsPreviewTextArea().setText("");
+            getRandomOrderCheckbox().setSelected(false);
         }
 
         @Override
         public boolean validate() {
             if (oldGenerator != null) {
                 if (oldGenerator.getRegex().equals(getRegexTextField().getText())
-                        && oldGenerator.getMaxPayloads() == getMaxPayloadsNumberSpinner().getValue().intValue()) {
+                        && oldGenerator.getMaxPayloads() == getMaxPayloadsNumberSpinner().getValue().intValue()
+                        && oldGenerator.isRandomOrder() == getRandomOrderCheckbox().isSelected()) {
                     return true;
                 }
             }
