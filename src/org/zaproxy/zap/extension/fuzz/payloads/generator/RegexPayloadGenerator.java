@@ -57,19 +57,30 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
 
     private final int numberOfPayloads;
 
+    private final boolean randomOrder;
+
     public RegexPayloadGenerator(String regex) {
         this(regex, 0);
     }
 
     public RegexPayloadGenerator(String regex, int maxPayloads) {
-        this(regex, maxPayloads, maxPayloads);
+        this(regex, maxPayloads, maxPayloads, false);
+    }
+
+    public RegexPayloadGenerator(String regex, int maxPayloads, boolean randomOrder) {
+        this(regex, maxPayloads, maxPayloads, randomOrder);
     }
 
     public RegexPayloadGenerator(String regex, int maxPayloads, int limitCalculationPayloads) {
+        this(regex, maxPayloads, limitCalculationPayloads, false);
+    }
+
+    public RegexPayloadGenerator(String regex, int maxPayloads, int limitCalculationPayloads, boolean randomOrder) {
         validateValid(regex);
         this.generator = new Generex(regex);
         this.maxPayloads = maxPayloads;
         this.numberOfPayloads = calculateNumberOfPayloadsImpl(generator, limitCalculationPayloads);
+        this.randomOrder = randomOrder;
     }
 
     @Override
@@ -79,7 +90,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
 
     @Override
     public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
-        return new RegexIterator(generator, maxPayloads);
+        return new RegexIterator(generator, maxPayloads, randomOrder);
     }
 
     @Override
@@ -195,17 +206,23 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
 
         private final Generex generex;
         private final int maxPayloads;
+        private final boolean randomOrder;
         private Iterator iterator;
         private int count;
 
-        public RegexIterator(Generex generex, int maxPayloads) {
+        public RegexIterator(Generex generex, int maxPayloads, boolean randomOrder) {
             this.generex = generex;
             this.maxPayloads = maxPayloads;
+            this.randomOrder = randomOrder;
             reset();
         }
 
         @Override
         public boolean hasNext() {
+            if(randomOrder){
+                return count < maxPayloads;
+            }
+
             if (maxPayloads > 0 && count >= maxPayloads) {
                 return false;
             }
@@ -215,6 +232,10 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         @Override
         public DefaultPayload next() {
             count++;
+            if(randomOrder){
+                return new DefaultPayload(generex.random());
+            }
+
             return new DefaultPayload(iterator.next());
         }
 
