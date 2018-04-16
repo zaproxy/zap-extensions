@@ -112,7 +112,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
     //total number of basecases produced
     private int numberOfBaseCasesProduced = 0;
     //exts that are not to be added to the work queue if found by the HTML parser
-    public Vector extsToMiss = new Vector(10, 10);
+    public Vector<String> extsToMiss = new Vector<>(10, 10);
     //Vector to store all the html elements that are to be parsed.
     public Vector elementsToParse = new Vector(10, 10);
     //Used to store a string of what we are currently processing
@@ -186,15 +186,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
     // ZAP: Changed to public to allow it to be extended
     public Manager()
     {
-        //add the default file extentions for links to be process if found during a HTML parse
-        extsToMiss.addElement("jpg");
-        extsToMiss.addElement("gif");
-        extsToMiss.addElement("jpeg");
-        extsToMiss.addElement("ico");
-        extsToMiss.addElement("tiff");
-        extsToMiss.addElement("png");
-        extsToMiss.addElement("bmp");
-
         elementsToParse.addElement(new HTMLelementToParse("a", "href"));
         elementsToParse.addElement(new HTMLelementToParse("img", "src"));
         elementsToParse.addElement(new HTMLelementToParse("form", "action"));

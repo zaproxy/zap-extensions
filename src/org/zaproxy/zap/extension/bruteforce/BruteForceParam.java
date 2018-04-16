@@ -21,12 +21,16 @@ package org.zaproxy.zap.extension.bruteforce;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
+import com.sittinglittleduck.DirBuster.Config;
 
 public class BruteForceParam extends AbstractParam {
 
@@ -37,12 +41,16 @@ public class BruteForceParam extends AbstractParam {
 	private static final String RECURSIVE = "bruteforce.recursive";
 	private static final String BROWSE_FILES = "bruteforce.browsefiles";
 	private static final String FILE_EXTENSIONS = "bruteforce.fileextensions";
+	private static final String EXTENSIONS_TO_MISS = "bruteforce.extensionsToMiss";
+	private static final String FAIL_CASE_STRING = "bruteforce.failCaseString";
 	
 	public static final int DEFAULT_THREAD_PER_SCAN = 10;
 	public static final int MAXIMUM_THREADS_PER_SCAN = 200;
 	public static final boolean DEFAULT_RECURSIVE = true;
 	public static final boolean DEFAULT_BROWSE_FILES = false;
 	public static final String EMPTY_STRING = "";
+	public static final String DEFAULT_EXTENSIONS_TO_MISS = "jpg, gif, jpeg, ico, tiff, png, bmp";
+	public static final String DEFAULT_FAIL_CASE_STRING = Config.failCaseString;
 		
 	private int threadPerScan = DEFAULT_THREAD_PER_SCAN;
 	private boolean recursive = DEFAULT_RECURSIVE;
@@ -50,6 +58,8 @@ public class BruteForceParam extends AbstractParam {
 	private boolean browseFiles = DEFAULT_BROWSE_FILES;
 	// can't be null
 	private String fileExtensions = EMPTY_STRING;
+	private String extensionsToMiss = DEFAULT_EXTENSIONS_TO_MISS;
+	private String failCaseString = DEFAULT_FAIL_CASE_STRING;
 	
     public BruteForceParam() {
     }
@@ -61,6 +71,8 @@ public class BruteForceParam extends AbstractParam {
 			this.recursive = getConfig().getBoolean(RECURSIVE, DEFAULT_RECURSIVE);
 			this.browseFiles = getConfig().getBoolean(BROWSE_FILES, DEFAULT_BROWSE_FILES);
 			this.fileExtensions = getConfig().getString(FILE_EXTENSIONS, EMPTY_STRING);
+			this.extensionsToMiss = getConfig().getString(EXTENSIONS_TO_MISS, DEFAULT_EXTENSIONS_TO_MISS);
+			this.failCaseString = getConfig().getString(FAIL_CASE_STRING, DEFAULT_FAIL_CASE_STRING);
 		} catch (Exception e) {}
 		
 		try {
@@ -173,4 +185,64 @@ public class BruteForceParam extends AbstractParam {
 	    
     	return fileExtensionsList;	    
 	}
+
+	/**
+	 * @return {@code String} of comma-separated file-extensions that are ignored.
+	 * URIs ending with these extensions are ignored from making requests to the server.
+	 * {@link #DEFAULT_EXTENSIONS_TO_MISS} is returned by default
+	 */
+    String getExtensionsToMiss() {
+		return extensionsToMiss;
+	}
+
+	/**
+	 * Define a {@code String} of comma-separated file-extensions for 
+	 * resources to ignore
+	 * 
+	 * @param extensionsToMiss file-extensions string
+	 * @throws IllegalArgumentException if {@code extensionsToMiss} is
+	 * {@code null}
+	 */
+    void setExtensionsToMiss(String extensionsToMiss) {
+		if (extensionsToMiss == null) {			
+			throw new IllegalArgumentException("extensionsToMiss is null");
+		} 
+		
+		this.extensionsToMiss = extensionsToMiss;
+		getConfig().setProperty(EXTENSIONS_TO_MISS, extensionsToMiss);
+	}
+
+	/**
+	 * @return {@code Set} of file extensions that are ignored.
+	 * URIs ending with these extensions are ignored from making requests to the server.
+	 * By default returned {@code Set} will contain following extensions, 
+	 * {@link #DEFAULT_EXTENSIONS_TO_MISS}
+	 */
+    Set<String> getExtensionsToMissSet() {
+		if (extensionsToMiss.trim().equals(EMPTY_STRING)) {
+	    	return new HashSet<>();
+	    }
+		String[] tempArray = extensionsToMiss.replaceAll("\\s", 
+	    		EMPTY_STRING).split(",");
+		Set<String> tempSet = new HashSet<>(Arrays.asList(tempArray));
+		tempSet.remove(EMPTY_STRING);
+		return tempSet; 
+	}
+
+	String getFailCaseString() {
+		return failCaseString;
+	}
+
+	void setFailCaseString(String failCaseString) {
+		if(failCaseString == null) {
+	    	throw new IllegalArgumentException("failCaseString is null");
+	    }
+		if(failCaseString.isEmpty()) {
+			throw new IllegalArgumentException("failCaseString is empty");
+		}
+		Config.failCaseString = failCaseString;
+		this.failCaseString = failCaseString;	
+		getConfig().setProperty(FAIL_CASE_STRING, failCaseString);
+	}
+	
 }

@@ -99,6 +99,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
 	    } else {
 	    	extensions = Collections.emptyList();
 	    }
+	    manager.extsToMiss.addAll(bruteForceParam.getExtensionsToMissSet());
 	}
 
     public BruteForce (ScanTarget target, File file, BruteForceListenner listenner, BruteForceParam bruteForceParam, String directory) {
