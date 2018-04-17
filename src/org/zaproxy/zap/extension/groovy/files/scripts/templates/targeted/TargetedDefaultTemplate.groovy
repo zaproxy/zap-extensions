@@ -9,4 +9,6 @@ void invokeWith(HttpMessage msg){
 
 // Needed for debugging with the DebugWrapper script
 // Returns the function, that will be executed by the DebugWrapper script
-return { msg -> invokeWith(msg) }
+return [
+    invokeWith :  { msg -> invokeWith(msg) }
+]
