@@ -79,7 +79,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         validateValid(regex);
         this.generator = new Generex(regex);
         this.maxPayloads = maxPayloads;
-        this.numberOfPayloads = calculateNumberOfPayloadsImpl(generator, limitCalculationPayloads);
+        this.numberOfPayloads = calculateNumberOfPayloadsImpl(generator, limitCalculationPayloads, randomOrder);
         this.randomOrder = randomOrder;
     }
 
@@ -181,15 +181,41 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
      * @return the number of payloads that would be produced by the given regular expression
      * @throws IllegalArgumentException if the given {@code regex} is {@code null} or not valid
      * @see #DEFAULT_LIMIT_CALCULATION_PAYLOADS
+     * @see #calculateNumberOfPayloads(String, int, boolean)
      * @see #isInfinite(String, int)
      * @see #isValid(String)
      */
     public static int calculateNumberOfPayloads(String regex, int limit) {
-        validateValid(regex);
-        return calculateNumberOfPayloadsImpl(new Generex(regex), limit);
+        return calculateNumberOfPayloads(regex, limit, false);
     }
 
-    private static int calculateNumberOfPayloadsImpl(Generex generator, int limit) {
+    /**
+     * Calculates the number of payloads that the given regular expression would produce, limiting up to the given {@code limit}
+     * (if positive) and whether it's random.
+     * <p>
+     * If the payloads should be generated in random order the limit would be the number of payloads, otherwise, if the regular
+     * expression is infinite and no limit is provided it returns {@code DEFAULT_LIMIT_CALCULATION_PAYLOADS}.
+     *
+     * @param regex the regular expression that will be used to calculate the number of payloads generated
+     * @param limit if positive, the maximum number of payloads that are allowed, otherwise, negative or zero, for no limit
+     * @param randomOrder {@code true} if the payloads are generated randomly, {@code false} otherwise.
+     * @return the number of payloads that would be produced by the given regular expression
+     * @throws IllegalArgumentException if the given {@code regex} is {@code null} or not valid
+     * @see #DEFAULT_LIMIT_CALCULATION_PAYLOADS
+     * @see #calculateNumberOfPayloads(String, int)
+     * @see #isInfinite(String, int)
+     * @see #isValid(String)
+     */
+    public static int calculateNumberOfPayloads(String regex, int limit, boolean randomOrder) {
+        validateValid(regex);
+        return calculateNumberOfPayloadsImpl(new Generex(regex), limit, randomOrder);
+    }
+
+    private static int calculateNumberOfPayloadsImpl(Generex generator, int limit, boolean randomOrder) {
+        if (randomOrder) {
+            return Math.max(0, limit);
+        }
+
         long max = limit;
         if (max <= 0 || max == DEFAULT_LIMIT_CALCULATION_PAYLOADS) {
             if (isInfiniteImpl(generator, 0)) {

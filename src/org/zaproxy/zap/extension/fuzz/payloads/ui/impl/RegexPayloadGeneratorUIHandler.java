@@ -414,7 +414,17 @@ public class RegexPayloadGeneratorUIHandler implements
                 getRegexTextField().requestFocusInWindow();
                 return false;
             }
-            if (getMaxPayloadsNumberSpinner().getValue().intValue() == 0 && RegexPayloadGenerator.isInfinite(regex, 0)) {
+            if (getRandomOrderCheckbox().isSelected()) {
+                if (getMaxPayloadsNumberSpinner().getValue().intValue() == 0) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            Constant.messages.getString("fuzz.payloads.generator.regex.warnNoRandomPayloads.message"),
+                            Constant.messages.getString("fuzz.payloads.generator.regex.warnNoRandomPayloads.title"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                    getMaxPayloadsNumberSpinner().requestFocusInWindow();
+                    return false;
+                }
+            } else if (getMaxPayloadsNumberSpinner().getValue().intValue() == 0 && RegexPayloadGenerator.isInfinite(regex, 0)) {
                 if (JOptionPane.showConfirmDialog(
                         null,
                         Constant.messages.getString("fuzz.payloads.generator.regex.warnInfiniteRegex.message"),
@@ -438,10 +448,14 @@ public class RegexPayloadGeneratorUIHandler implements
         private int calculateNumberOfPayloads(String regex) {
             return RegexPayloadGenerator.calculateNumberOfPayloads(
                     regex,
-                    getMaximumForPayloadCalculation(getMaxPayloadsNumberSpinner().getValue().intValue()));
+                    getMaximumForPayloadCalculation(getMaxPayloadsNumberSpinner().getValue().intValue()),
+                    getRandomOrderCheckbox().isSelected());
         }
 
-        private static int getMaximumForPayloadPersistence(int limit) {
+        private int getMaximumForPayloadPersistence(int limit) {
+            if (getRandomOrderCheckbox().isSelected()) {
+                return limit;
+            }
             if (limit == 0) {
                 return MAX_NUMBER_PAYLOADS_PERSISTENCE;
             }
