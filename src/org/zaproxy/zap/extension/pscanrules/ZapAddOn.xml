@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>22</version>
+	<version>23</version>
 	<status>release</status>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Retired the password auto-complete passive scan rule (Issue 4215).<br>
+	Fix a typo in the description of Referer Exposes Session ID.<br>
 	]]>
 	</changes>
 	<extensions>
