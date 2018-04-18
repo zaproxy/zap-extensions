@@ -183,6 +183,7 @@ public class UserControlledHTMLAttributesScanner extends PluginPassiveScanner {
 	            for (String s: attrValue.split("[;=,]")) {
 	                if (s.equals(paramValue)) {
 	                    raiseAlert(msg, id, htmlElement, attribute, param, attrValue);
+	                    return; //Only need one alert
 	                }
 	            }
 	        }
@@ -235,7 +236,7 @@ public class UserControlledHTMLAttributesScanner extends PluginPassiveScanner {
 				getName());				    
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), "content-type", getExploitMessage(msg), 
+				.getURI().toString(), param.getName(), getExploitMessage(msg), 
 				getExtraInfoMessage(msg, htmlElement.getName(), 
 						htmlAttribute.getName(), param, userControlledValue),
 				getSolutionMessage(), getReferenceMessage(),  
