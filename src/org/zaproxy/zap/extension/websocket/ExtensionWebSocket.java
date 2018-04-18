@@ -389,7 +389,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 						SCRIPT_TYPE_WEBSOCKET_SENDER,
 						"websocket.script.type.websocketsender",
 						WEBSOCKET_SENDER_SCRIPT_ICON,
-						true,
 						true);
 				extensionScript.registerScriptType(websocketSenderSciptType);
 				webSocketSenderScriptListener = new WebSocketSenderScriptListener();

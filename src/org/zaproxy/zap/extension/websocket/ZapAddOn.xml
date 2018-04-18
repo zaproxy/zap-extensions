@@ -9,6 +9,7 @@
 	<![CDATA[
 	Tweak About help page.<br>
 	Remove event consumers when the channel is closed.<br>
+	Don't enable the sender scripts by default.<br>
 	]]>
 	</changes>
 	<classnames>
