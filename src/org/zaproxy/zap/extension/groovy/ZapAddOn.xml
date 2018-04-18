@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Add help.<br>
+	Added script templates.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -22,6 +23,18 @@
 		<file>scripts/templates/standalone/StandaloneDebugWrapper.groovy</file>
 		<file>scripts/templates/targeted/TargetedDefaultTemplate.groovy</file>
 		<file>scripts/templates/targeted/TargetedDebugWrapper.groovy</file>
+		<file>scripts/templates/variant/InputVectorDefaultTemplate.groovy</file>
+		<file>scripts/templates/proxy/ProxyDefaultTemplate.groovy</file>
+		<file>scripts/templates/passive/PassiveDefaultTemplate.groovy</file>
+		<file>scripts/templates/active/ActiveDefaultTemplate.groovy</file>
+		<file>scripts/templates/authentication/AuthenticationDefaultTemplate.groovy</file>
+		<file>scripts/templates/extender/ExtenderDefaultTemplate.groovy</file>
+		<file>scripts/templates/httpfuzzerprocessor/FuzzerHttpProcessorDefaultTemplate.groovy</file>
+		<file>scripts/templates/httpsender/HttpSenderDefaultTemplate.groovy</file>
+		<file>scripts/templates/payloadgenerator/PayloadGeneratorDefaultTemplate.groovy</file>
+		<file>scripts/templates/payloadprocessor/PayloadProcessorDefaultTemplate.groovy</file>
+		<file>scripts/templates/websocketsender/WebsockerSenderDefaultTemplate.groovy</file>
+		<file>scripts/templates/websocketfuzzerprocessor/WebsocketFuzzerProcessorDefaultTemplate.groovy</file>
 	</files>
 	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>

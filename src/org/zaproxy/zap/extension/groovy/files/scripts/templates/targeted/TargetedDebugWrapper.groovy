@@ -1,11 +1,13 @@
+import groovy.transform.Field
 import org.parosproxy.paros.Constant
 import org.zaproxy.zap.extension.script.ExtensionScript
 import org.parosproxy.paros.network.HttpMessage
 
 import java.nio.file.Paths
 
-void invokeWith(HttpMessage msg){
-    println("Start Debugging...")
+@Field final def wrappedScript = debug()
+
+def debug() {
     def relativeScriptFilePath = "scripts/targeted/TargetedDefaultTemplate.groovy"
 
     def scriptFilePath = Paths
@@ -14,8 +16,13 @@ void invokeWith(HttpMessage msg){
             .toString()
 
     def script = new File(scriptFilePath)
-    def scriptFunc = evaluate(script)
-    scriptFunc(msg)
+    def scriptFunctions = evaluate(script)
+    return scriptFunctions
+}
+
+void invokeWith(HttpMessage msg){
+    println("Start Debugging...")
+    wrappedScript.invokeWith(msg)
     println("End Debugging...")
 }
 
