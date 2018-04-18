@@ -7,6 +7,7 @@
 	<url />
 	<changes>
 	<![CDATA[
+	Respect the current mode and react to changes.<br>
 	Dynamically unload the add-on.<br>
 	Inform of running tests (e.g. on session change, add-on uninstall).<br>
 	]]> 
