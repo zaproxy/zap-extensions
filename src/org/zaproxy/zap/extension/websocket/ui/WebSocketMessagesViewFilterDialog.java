@@ -33,9 +33,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.JScrollPane;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
+import org.parosproxy.paros.view.View;
 
 /**
  * Filter WebSocket messages in {@link WebSocketPanel}. Show only specific ones.
@@ -117,7 +119,7 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
 		if (dialogPanel == null) {
 			dialogPanel = new JPanel();
 			dialogPanel.setLayout(new GridBagLayout());
-			dialogPanel.setPreferredSize(new Dimension(wsUiHelper.getDialogWidth() + 20, 280));
+			dialogPanel.setPreferredSize(new Dimension(wsUiHelper.getDialogWidth() + 20, 360));
 			
 			int y = 0;
 			
@@ -131,14 +133,25 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
 			GridBagConstraints constraints = wsUiHelper.getFieldConstraints(1, y++);
 			constraints.gridheight = 3;
 			y+=3;
-			dialogPanel.add(wsUiHelper.getOpcodeMultipleSelect(), constraints);
+
+			JScrollPane opcodeListScrollPane = wsUiHelper.getOpcodeMultipleSelect();
+			opcodeListScrollPane.setPreferredSize(new Dimension(wsUiHelper.getDialogWidth() - 200,120));
+			dialogPanel.add(opcodeListScrollPane, constraints);
 			
 			// add title for upcoming WebSocket specific options			
 			dialogPanel.add(wsUiHelper.getDirectionLabel(), wsUiHelper.getLabelConstraints(0, y));
 			dialogPanel.add(wsUiHelper.getOutgoingCheckbox(), wsUiHelper.getFieldConstraints(1, y++));
 
 			dialogPanel.add(wsUiHelper.getIncomingCheckbox(), wsUiHelper.getFieldConstraints(1, y++));
-			
+
+			// add pattern for bi-directional Websocket
+			dialogPanel.add(wsUiHelper.getPatternLabel(),wsUiHelper.getLabelConstraints(0,y));
+
+			dialogPanel.add(wsUiHelper.getPatternTextField(),wsUiHelper.getFieldConstraints(1,y++));
+			dialogPanel.add(wsUiHelper.getRegexCheckbox(),wsUiHelper.getFieldConstraints(1,y++));
+			dialogPanel.add(wsUiHelper.getInverseCheckbox(),wsUiHelper.getFieldConstraints(1,y++));
+			dialogPanel.add(wsUiHelper.getCaseIgnoreCheckbox(),wsUiHelper.getFieldConstraints(1,y++));
+
 			// add submit panel
 			dialogPanel.add(getActionsPanel(), wsUiHelper.getFieldConstraints(1, y));
 		}
@@ -173,9 +186,18 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
 			btnApply.addActionListener(new ActionListener() {
 
 				@Override
-				public void actionPerformed(ActionEvent e) {    
+				public void actionPerformed(ActionEvent e) {
 					filter.setOpcodes(wsUiHelper.getSelectedOpcodeIntegers());
 					filter.setDirection(wsUiHelper.getDirection());
+					if(filter.isValidPattern(wsUiHelper.getPattern(), wsUiHelper.getRegexCheckbox().isSelected())) {
+						filter.setPayloadFilter(wsUiHelper.getPattern(), wsUiHelper.getRegexCheckbox().isSelected(),
+								wsUiHelper.getCaseIgnoreCheckbox().isSelected(), wsUiHelper.getInverseCheckbox().isSelected());
+					}else{
+						// show popup
+						View.getSingleton().showWarningDialog(Constant.messages.getString("filter.replacedialog.invalidpattern"));
+						wsUiHelper.getPatternTextField().requestFocusInWindow();
+						return;
+					}
 				    exitResult = JOptionPane.OK_OPTION;
 				    WebSocketMessagesViewFilterDialog.this.dispose();
 				}
@@ -210,6 +232,9 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
 	    if (wsUiHelper.getDirection() == null) {
 	    	wsUiHelper.setDirection(null);
 	    }
+	    if(wsUiHelper.getPattern() == null){
+	    	wsUiHelper.setPattern(null);
+		}
 	    setVisible(true);
 	    return exitResult;
 	}
@@ -231,6 +256,11 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
 					exitResult = JOptionPane.NO_OPTION;
 					wsUiHelper.setSelectedOpcodes(null);
 					wsUiHelper.setDirection(null);
+					wsUiHelper.setPattern(null);
+					wsUiHelper.setInverseCheckbox(false);
+					wsUiHelper.setRegexCheckbox(true);
+					wsUiHelper.setCaseIgnoreCheckbox(false);
+
 					filter.reset();
 				}
 			});

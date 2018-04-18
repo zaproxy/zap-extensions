@@ -18,6 +18,8 @@
 package org.zaproxy.zap.extension.websocket.ui;
 
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
@@ -39,7 +41,14 @@ public class WebSocketMessagesViewFilter {
 	private Direction direction;
 	
 	private boolean isShowJustInScope = false;
-	
+
+	/**
+	 * Filter on specified pattern that has to match on the
+	 * {@link WebSocketMessageDTO#payload} or arbitrary payload if null.
+	 */
+
+	private WebSocketMessagesPayloadFilter payloadFilter;
+
 	public void setOpcodes(List<Integer> list) {
 		opcodeList = list;
 	}
@@ -53,6 +62,22 @@ public class WebSocketMessagesViewFilter {
 
 	public void setDirection(Direction direction) {
 		this.direction = direction;
+	}
+
+	/**
+	 * Setting and compiling the payload filter
+	 * @throws PatternSyntaxException Regex pattern don't follow the expected syntax
+	 */
+	public void setPayloadFilter(String stringPattern, boolean isRegex, boolean isIgnoreCase,boolean isInverted) throws PatternSyntaxException {
+		if(stringPattern == null || stringPattern.isEmpty()){
+			payloadFilter = null;
+		}else{
+			payloadFilter = new WebSocketMessagesPayloadFilter(stringPattern, isRegex, isIgnoreCase, isInverted);
+		}
+	}
+
+	public WebSocketMessagesPayloadFilter getPayloadFilter() {
+        return payloadFilter;
 	}
 
 	/**
@@ -76,12 +101,12 @@ public class WebSocketMessagesViewFilter {
 	public void reset() {
 		opcodeList = null;
 		direction = null;
+		payloadFilter = null;
 	}
 	
 	/**
 	 * Checks if the given entry is affected by this filter, i.e. is filtered
 	 * out.
-	 * 
 	 * @param message
 	 * @return True if the given entry is filtered out, false if valid.
 	 */
@@ -103,7 +128,11 @@ public class WebSocketMessagesViewFilter {
 				return true;
 			}
 		}
-		
+
+		if(payloadFilter != null && message.payload instanceof String && !payloadFilter.isMessageValidWithPattern(message)){
+            return true;
+            // binary messages are not affected by pattern
+		}
 		return false;
 	}
 
@@ -159,6 +188,16 @@ public class WebSocketMessagesViewFilter {
 			}
 		}
 
+		if (payloadFilter != null){
+			empty = false;
+			sb.append(Constant.messages.getString("websocket.filter.label.pattern"));
+			if (shouldIncludeValues) {
+				sb.append(": ").append(payloadFilter.getStringPayloadPattern() ).append(' ');
+			} else {
+				sb.append(" ");
+			}
+		}
+
 		sb.insert(0, " ");
 		
 		if (empty) {
@@ -171,5 +210,21 @@ public class WebSocketMessagesViewFilter {
 		sb.insert(0, Constant.messages.getString("websocket.filter.label.filter"));
 		
 		return sb.toString();
+	}
+	public boolean isValidPattern(String stringPattern, boolean regex){
+		if(stringPattern == null || stringPattern.isEmpty()){
+			return true;
+		}
+		try {
+			if (!regex) {
+				Pattern.compile(Pattern.quote(stringPattern));
+			} else {
+				Pattern.compile(stringPattern);
+			}
+			return true;
+		}catch (PatternSyntaxException e){
+			return false;
+		}
+
 	}
 }

@@ -176,32 +176,31 @@ public abstract class WebSocketBreakDialog extends AbstractDialog {
 			
 			JPanel panel = new JPanel();
 			panel.setLayout(new GridBagLayout());
-			
+			int y =0;
 			// description
 			JLabel description = new JLabel(Constant.messages.getString("websocket.brk.add.desc"));
 			description.setPreferredSize(new Dimension(wsUiHelper.getDialogWidth() - 30, 60));
-			panel.add(description, wsUiHelper.getDescriptionConstraints(0, 0));
+			panel.add(description, wsUiHelper.getDescriptionConstraints(0, y++));
 
 			// opcode restriction
-			panel.add(wsUiHelper.getOpcodeLabel(), wsUiHelper.getLabelConstraints(0, 1));
-			panel.add(wsUiHelper.getOpcodeSingleSelect(), wsUiHelper.getFieldConstraints(1, 1));
+			panel.add(wsUiHelper.getOpcodeLabel(), wsUiHelper.getLabelConstraints(0, y));
+			panel.add(wsUiHelper.getOpcodeSingleSelect(), wsUiHelper.getFieldConstraints(1, y++));
 			
 			// channel restriction
-			panel.add(wsUiHelper.getChannelLabel(), wsUiHelper.getLabelConstraints(0, 2));
-			panel.add(wsUiHelper.getChannelSingleSelect(), wsUiHelper.getFieldConstraints(1, 2));
+			panel.add(wsUiHelper.getChannelLabel(), wsUiHelper.getLabelConstraints(0, y));
+			panel.add(wsUiHelper.getChannelSingleSelect(), wsUiHelper.getFieldConstraints(1, y++));
 			
 			// payload restriction
-			panel.add(wsUiHelper.getPatternLabel(), wsUiHelper.getLabelConstraints(0, 3));
-			panel.add(wsUiHelper.getPatternTextField(), wsUiHelper.getFieldConstraints(1, 3));
-			
+			panel.add(wsUiHelper.getPatternLabel(), wsUiHelper.getLabelConstraints(0, y));
+			panel.add(wsUiHelper.getPatternTextField(), wsUiHelper.getFieldConstraints(1, y++));
 			// direction restriction
-			panel.add(wsUiHelper.getDirectionLabel(), wsUiHelper.getLabelConstraints(0, 4));
+			panel.add(wsUiHelper.getDirectionLabel(), wsUiHelper.getLabelConstraints(0, y));
 
 			// add checkbox for outgoing & incoming messages
-			panel.add(wsUiHelper.getOutgoingCheckbox(), wsUiHelper.getFieldConstraints(1, 4));
-			panel.add(wsUiHelper.getIncomingCheckbox(), wsUiHelper.getFieldConstraints(1, 5));
-			
-			jScrollPane.setViewportView(panel);			
+			panel.add(wsUiHelper.getOutgoingCheckbox(), wsUiHelper.getFieldConstraints(1, y++));
+			panel.add(wsUiHelper.getIncomingCheckbox(), wsUiHelper.getFieldConstraints(1, y++));
+
+			jScrollPane.setViewportView(panel);
 		}
 		return jScrollPane;
 	}

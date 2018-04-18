@@ -144,7 +144,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 		try {
 			synchronized (cachedRowCountSemaphore) {
 				if (cachedRowCount == null) {					
-					cachedRowCount = table.getMessageCount(getCriterionMessage(), getCriterionOpcodes(), getCriterianInScope());
+					cachedRowCount = table.getMessageCount(getCriterionMessage(), getCriterionOpcodes(), getCriterionInScope(), getCriterionPattern(), PAYLOAD_PREVIEW_LENGTH);
 				}
 				return cachedRowCount;
 			}
@@ -154,10 +154,10 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 		}
 	}
 
-	protected List<Integer> getCriterianInScope() {
-		if (filter.getShowJustInScope()) {
+	protected List<Integer> getCriterionInScope() {
+		if (filter != null && filter.getShowJustInScope()) {
 			List<Integer> inScopeChannelIds = new ArrayList<>();
-			
+
 			// iterate through channels, and derive channel-ids in scope
 			try {
 				for (WebSocketChannelDTO channel : table.getChannelItems()) {
@@ -175,6 +175,9 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 	}
 
 	protected WebSocketMessageDTO getCriterionMessage() {
+		if(filter == null){
+			return null;
+		}
 		WebSocketMessageDTO message = new WebSocketMessageDTO();
 		
 		if (activeChannelId != null) {
@@ -189,9 +192,13 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 	}
 
 	protected List<Integer> getCriterionOpcodes() {
-		return filter.getOpcodes();
+		return filter == null ? new ArrayList<>(0) : filter.getOpcodes();
 	}
-	
+
+	protected WebSocketMessagesPayloadFilter getCriterionPattern(){
+		return filter == null ? null : filter.getPayloadFilter();
+	}
+
 	@Override
 	public Object getRealValueAt(WebSocketMessageDTO message, int columnIndex) {
 		Object value = null;
@@ -251,7 +258,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 	@Override
 	protected List<WebSocketMessageDTO> loadPage(int offset, int length) {
 		try {
-			return table.getMessages(getCriterionMessage(), getCriterionOpcodes(), getCriterianInScope(), offset, length, PAYLOAD_PREVIEW_LENGTH);
+			return table.getMessages(getCriterionMessage(), getCriterionOpcodes(), getCriterionInScope(), getCriterionPattern(), offset, length, PAYLOAD_PREVIEW_LENGTH);
 		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 			return new ArrayList<>(0);
