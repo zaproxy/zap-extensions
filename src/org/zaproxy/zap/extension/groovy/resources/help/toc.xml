@@ -4,8 +4,8 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-    <tocitem tocid="toplevelitem">
-        <tocitem tocid="addons">
+    <tocitem text="ZAP User Guide" tocid="toplevelitem">
+        <tocitem text="Add Ons" tocid="addons">
             <tocitem text="Groovy Scripting" image="groovy.icon" target="groovy.intro">
                 <tocitem text="About" target="groovy.about" />
             </tocitem>
