@@ -8,7 +8,7 @@
 	<changes>
 	<![CDATA[
 	Update ChromeDriver to 2.36<br>
-	Update geckodriver to v0.20.0<br>
+	Update geckodriver to v0.20.1<br>
 	]]>
 	</changes>
 	<extensions/>
