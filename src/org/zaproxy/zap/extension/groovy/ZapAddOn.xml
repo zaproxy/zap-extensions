@@ -1,12 +1,13 @@
 <zapaddon>
 	<name>Groovy Scripting</name>
 	<version>3</version>
-	<status>alpha</status>
+	<status>beta</status>
 	<description>Allows Groovy to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
+	Promote to beta status.<br>
 	]]>
 	</changes>
 	<extensions>
