@@ -47,7 +47,7 @@
 	<classpathentry kind="lib" path="lib/jackson-coreutils-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-databind-2.8.9.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-dataformat-yaml-2.8.9.jar"/>
-	<classpathentry kind="lib" path="lib/salvation-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/salvation-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.3.jar"/>
 	<classpathentry kind="lib" path="lib/snakeyaml-1.12.jar"/>
 	<classpathentry kind="lib" path="lib/swagger-core-1.5.17.jar"/>

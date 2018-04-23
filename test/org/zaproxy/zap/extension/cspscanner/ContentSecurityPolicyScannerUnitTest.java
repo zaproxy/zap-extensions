@@ -71,7 +71,8 @@ public class ContentSecurityPolicyScannerUnitTest extends PassiveScannerTest {
         assertThat(alertsRaised.get(1).getName(), equalTo("CSP Scanner: Wildcard Directive"));
         assertThat(alertsRaised.get(1).getDescription(), equalTo(
                 "The following directives either allow wildcard sources (or ancestors), are not defined, or are overly broadly defined: \n"
-                + "frame-ancestor"));
+                + "script-src, style-src, img-src, connect-src, frame-src, frame-ancestor, font-src, media-src, object-src, manifest-src, "
+                + "worker-src, prefetch-src"));
         assertThat(alertsRaised.get(1).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
