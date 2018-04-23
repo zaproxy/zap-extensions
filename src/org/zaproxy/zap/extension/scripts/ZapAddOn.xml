@@ -11,6 +11,7 @@
 	Execute Targeted scripts in other thread than GUI thread.<br>
 	Clear highlighting syntax when a non-script node is selected.<br>
 	Warn of script changed by another program (post 2.7.0).<br>
+	Script console is disabled if script size > 1MB and highlight behavior is disabled if script size > 0.5MB.<br>
 	]]>
 	</changes>
 	<extensions>

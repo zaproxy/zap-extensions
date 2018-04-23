@@ -19,14 +19,18 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.KeyListener;
 
 import javax.swing.JScrollPane;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
 
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.extension.scripts.autocomplete.ScriptAutoCompleteKeyListener;
 import org.zaproxy.zap.utils.FontUtils;
@@ -34,11 +38,24 @@ import org.zaproxy.zap.utils.FontUtils;
 public class CommandPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = -947074835463140074L;
+	/**
+	 * Max amount of data(byte) before editor usage is disable
+	 */
+	private static final int EDITOR_SCRIPT_MAX_SIZE_THRESHOLD = 1_000_000;
+	/**
+	 * Max amount of data(byte) before highlight feature is deactivated
+	 */
+	private static final int HIGHLIGHT_SCRIPT_MAX_SIZE_THRESHOLD = 500_000;
 
 	private JScrollPane jScrollPane = null;
 	private SyntaxHighlightTextArea syntaxTxtArea = null;
 	private KeyListener listener = null;
 	private ScriptAutoCompleteKeyListener autocompleteListener;
+
+	private boolean largeScriptContentSet = false;
+	private String largeScriptContent = "";
+	private JPanel largeScriptPanel = new JPanel(new BorderLayout());
+	private JLabel largeScriptLabel = new JLabel();
 
 	/**
      * 
@@ -57,7 +74,7 @@ public class CommandPanel extends AbstractPanel {
         this.setName("ConsoleCommandPanel");
 
         this.add(getJScrollPane(), getJScrollPane().getName());
-			
+		largeScriptPanel.add(largeScriptLabel);	
 	}
 	/**
 	 * This method initializes jScrollPane	
@@ -97,22 +114,23 @@ public class CommandPanel extends AbstractPanel {
 	}
 	
 	public void setSyntax (String syntax) {
-		getTxtOutput().setSyntaxEditingStyle(syntax);
+		boolean highlightEnabled = getTxtOutput().getDocument().getLength() < HIGHLIGHT_SCRIPT_MAX_SIZE_THRESHOLD && !largeScriptContentSet;
+		getTxtOutput().setSyntaxEditingStyle(highlightEnabled ? syntax : SyntaxConstants.SYNTAX_STYLE_NONE);
 	}
 
 
 	public void clear() {
-	    getTxtOutput().setText("");
+		setCommandScriptContent("");
 	    getTxtOutput().discardAllEdits();
 	    setSyntax(SyntaxConstants.SYNTAX_STYLE_NONE);
 	}
 
 	public String getCommandScript() {
-		return getTxtOutput().getText();
+		return largeScriptContentSet ? largeScriptContent : getTxtOutput().getText();
 	}
-	
-	protected void appendToCommandScript (String str) {
-		getTxtOutput().append(str);
+
+	protected void setCommandScript(String str) {
+		setCommandScriptContent(str);
 		getTxtOutput().discardAllEdits();
 		getTxtOutput().requestFocus();
 	}
@@ -140,5 +158,24 @@ public class CommandPanel extends AbstractPanel {
             this.autocompleteListener.setEnabled(enable);
         }
     }
-	
+
+	private void setCommandScriptContent(String str) {
+		if (str.length() > EDITOR_SCRIPT_MAX_SIZE_THRESHOLD) {
+			getTxtOutput().setText("");
+			largeScriptContent = str;
+			largeScriptContentSet = true;
+		} else {
+			getTxtOutput().setText(str);
+			largeScriptContent = "";
+			largeScriptContentSet = false;
+		}
+		if (largeScriptContentSet) {
+			this.remove(getJScrollPane());
+			this.add(largeScriptPanel, largeScriptPanel.getName());
+			largeScriptLabel.setText(Constant.messages.getString("scripts.dialog.script.large.warning", largeScriptContent.length()));
+		} else {
+			this.remove(largeScriptPanel);
+			this.add(getJScrollPane(), getJScrollPane().getName());
+		}
+	}
 }

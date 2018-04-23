@@ -419,7 +419,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		if (commandPanel == null) {
 			commandPanel = new CommandPanel(getKeyListener());
 			commandPanel.setEditable(false);
-			commandPanel.appendToCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
+			commandPanel.setCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
 		}
 		return commandPanel;
 	}
@@ -458,7 +458,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		this.script = null;
 		getCommandPanel().setEditable(false);
         getCommandPanel().clear();
-        getCommandPanel().appendToCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
+        getCommandPanel().setCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
         setButtonsAllowRunScript(false);
         getScriptTitle().setText("");
 	}
@@ -495,7 +495,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	 */
 	private void updateCommandPanelState(ScriptWrapper script) {
         getCommandPanel().clear();
-        getCommandPanel().appendToCommandScript(script.getContents());
+        getCommandPanel().setCommandScript(script.getContents());
         getCommandPanel().setScriptType(script.getTypeName());
         getCommandPanel().setCommandCursorPosition(0);
         if (script.getType().hasCapability(ExtensionScriptsUI.CAPABILITY_EXTERNAL)) {
