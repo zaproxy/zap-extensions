@@ -569,6 +569,10 @@
 		<!-- To facilitate quick Dev builds -->
 		<build-deploy-addon-without-help-indexes name="cspscanner" />
 	</target>
+
+	<target name="generate-wiki-cspscanner" description="Generates the wiki for Content Security Policy Scanner">
+		<generate-wiki addon="cspscanner" />
+	</target>
 	
 	<target name="deploy-customreport" description="deploy the custom reporting extension">
 		<build-deploy-addon name="customreport" />
