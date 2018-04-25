@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Port Scanner</name>
-	<version>8</version>
+	<version>9</version>
 	<status>beta</status>
 	<description>Allows to port scan a target server</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Code changes for Java 9 (Issue 2602).<br>
-	Issue 3513: Options panel UI fixes.<br>
+	Update minimum ZAP version to 2.5.0.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -18,6 +17,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.5.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
