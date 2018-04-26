@@ -99,6 +99,7 @@
 				<exclude name="org/zaproxy/zap/extension/*/resources/help_*/**" />
 				<exclude name="org/zaproxy/zap/extension/*/resources/Messages_*.properties" />
 			</fileset>
+			<fileset dir="${test.src}/resources/" />
 		</copy>
 		<echo message="Running tests..." />
 		<junit printsummary="yes" haltonerror="true" failureproperty="TestsFailed">

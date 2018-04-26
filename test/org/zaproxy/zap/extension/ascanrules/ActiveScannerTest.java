@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,6 +42,8 @@ import org.apache.log4j.PatternLayout;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -60,7 +64,6 @@ import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
-//import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -85,9 +88,12 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
      */
     protected static final int NUMBER_MSGS_ATTACK_STRENGTH_HIGH = 24;
 
-    private static final String INSTALL_PATH = "test/resources/install";
-    private static final File HOME_DIR = new File("test/resources/home");
-    private static final String BASE_RESOURCE_DIR = "test/resources/org/zaproxy/zap/extension/ascanrules/";
+    private static final String BASE_RESOURCE_DIR = "/org/zaproxy/zap/extension/ascanrules/";
+
+    @ClassRule
+    public static TemporaryFolder zapDir = new TemporaryFolder();
+    private static String zapInstallDir;
+    private static String zapHomeDir;
 
     protected T rule;
     protected HostProcess parent;
@@ -111,7 +117,17 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
     protected HTTPDTestServer nano;
 
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws Exception {
+        File installDir = zapDir.newFolder("install");
+        Path langDir = Files.createDirectory(installDir.toPath().resolve("lang"));
+        Files.createFile(langDir.resolve("Messages.properties"));
+        Path xmlDir = Files.createDirectory(installDir.toPath().resolve("xml"));
+        Files.createFile(xmlDir.resolve("log4j.properties"));
+        Path configXmlPath = Files.createFile(xmlDir.resolve("config.xml"));
+        Files.write(configXmlPath, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><config></config>".getBytes(StandardCharsets.UTF_8));
+
+        zapInstallDir = installDir.getAbsolutePath();
+        zapHomeDir = zapDir.newFolder("home").getAbsolutePath();
     }
 
     public ActiveScannerTest() {
@@ -133,9 +149,8 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
 
     @Before
     public void setUp() throws Exception {
-        Constant.setZapInstall(INSTALL_PATH);
-        HOME_DIR.mkdirs();
-        Constant.setZapHome(HOME_DIR.getAbsolutePath());
+        Constant.setZapInstall(zapInstallDir);
+        Constant.setZapHome(zapHomeDir);
 
         File langDir = new File(Constant.getZapInstall(), "lang");
         ClassLoaderUtil.addFile(langDir.getAbsolutePath());
@@ -187,11 +202,13 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
                 countMessagesSent++;
             }
 
+            @Override
             public void notifyNewMessage(Plugin plugin) {
                 super.notifyNewMessage(plugin);
                 countMessagesSent++;
             }
 
+            @Override
             public void notifyNewMessage(Plugin plugin, HttpMessage msg) {
                 super.notifyNewMessage(plugin, msg);
                 httpMessagesSent.add(msg);
@@ -211,8 +228,7 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
     @After
     public void shutDown() throws Exception {
         nano.stop();
-        File dir = new File("test/resources/home");
-        FileUtils.deleteDirectory(dir);
+        FileUtils.deleteDirectory(new File(zapHomeDir));
     }
 
     protected abstract T createScanner();
@@ -261,7 +277,7 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
     }
 
     public String getHtml(String name, Map<String, String> params) {
-        File file = new File(BASE_RESOURCE_DIR + this.getClass().getSimpleName() + "/" + name);
+        File file = new File(getClass().getResource(BASE_RESOURCE_DIR + this.getClass().getSimpleName() + "/" + name).getPath());
         try {
             String html = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             if (params != null) {
