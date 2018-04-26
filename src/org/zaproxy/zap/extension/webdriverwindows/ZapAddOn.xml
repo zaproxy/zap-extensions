@@ -9,6 +9,7 @@
 	<![CDATA[
 	Update ChromeDriver to 2.36<br>
 	Update geckodriver to v0.20.1<br>
+	Update minimum ZAP version to 2.5.0.<br>
 	]]>
 	</changes>
 	<extensions/>
@@ -22,6 +23,6 @@
 		<file>webdriver/windows/64/geckodriver.exe</file>
 		<file>webdriver/windows/64/IEDriverServer.exe</file>
 	</files>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.5.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
