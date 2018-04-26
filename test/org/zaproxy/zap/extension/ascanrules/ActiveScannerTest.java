@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -161,7 +162,7 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
         Scanner parentScanner =
                 new Scanner(scannerParam, connectionParam, scanPolicy, ruleConfigParam);
 
-        int port = 9090;
+        int port = getRandomPort();
         nano = new HTTPDTestServer(port);
         nano.start();
         
@@ -199,6 +200,12 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
         };
         
         rule = createScanner();
+    }
+
+    private static int getRandomPort() throws IOException {
+        try (ServerSocket server = new ServerSocket(0)) {
+            return server.getLocalPort();
+        }
     }
     
     @After
