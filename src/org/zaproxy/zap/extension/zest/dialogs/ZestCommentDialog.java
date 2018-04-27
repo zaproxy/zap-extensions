@@ -66,8 +66,7 @@ public class ZestCommentDialog extends StandardFieldsDialog implements ZestDialo
 			this.setTitle(Constant.messages.getString("zest.dialog.comment.edit.title"));
 		}
 
-		ZestComment za = (ZestComment) comment;
-		this.addMultilineField(FIELD_COMMENT, za.getComment());
+		this.addMultilineField(FIELD_COMMENT, comment.getComment());
 	}
 
 	@Override

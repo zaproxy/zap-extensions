@@ -95,7 +95,7 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
                 		// Start by just supporting one at a time..
                 		return false;
                 	}
-                    ScriptNode node = (ScriptNode) extension.getSelectedZestNode();
+                    ScriptNode node = extension.getSelectedZestNode();
                     ZestElement elmt = ZestZapUtils.getElement(node);
             		this.setEnabled(false);
             		

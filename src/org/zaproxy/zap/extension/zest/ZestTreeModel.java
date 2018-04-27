@@ -237,7 +237,7 @@ public class ZestTreeModel {
 			if (ZestZapUtils.getShadowLevel(node) == 0) {
 				// Remove else node
 				parent.remove((ScriptNode) parent
-						.getChildAfter((ScriptNode) parent.getChildAfter(node)));
+						.getChildAfter(parent.getChildAfter(node)));
 				// Remove then node
 				parent.remove((ScriptNode) parent.getChildAfter(node));
 			}
@@ -270,7 +270,7 @@ public class ZestTreeModel {
 			}
 		} else if (parentZe instanceof ZestLoop<?>) {
 			ZestLoop<?> zl = (ZestLoop<?>) parentZe;
-			zl.getStatements().remove((ZestStatement) childZe);
+			zl.getStatements().remove(childZe);
 		} else if (parentZe instanceof ZestStructuredExpression) {
 			ZestStructuredExpression zse = (ZestStructuredExpression) parentZe;
 			zse.removeChildCondition((ZestExpressionElement) childZe);
@@ -304,7 +304,7 @@ public class ZestTreeModel {
 		if (node.getUserObject() instanceof ZestScriptWrapper) {
 			return (ZestScriptWrapper) node.getUserObject();
 		}
-		return this.getScriptWrapper((ScriptNode) node.getParent());
+		return this.getScriptWrapper(node.getParent());
 	}
 
 	public ScriptNode getScriptWrapperNode(ScriptNode node) {
@@ -314,7 +314,7 @@ public class ZestTreeModel {
 		if (node.getUserObject() instanceof ZestScriptWrapper) {
 			return node;
 		}
-		return this.getScriptWrapperNode((ScriptNode) node.getParent());
+		return this.getScriptWrapperNode(node.getParent());
 	}
 
 	public void update(ScriptNode node) {

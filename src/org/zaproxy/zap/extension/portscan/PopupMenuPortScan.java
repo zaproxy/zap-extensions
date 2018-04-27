@@ -62,7 +62,7 @@ public class PopupMenuPortScan extends PopupMenuItemSiteNodeContainer {
 	public void performAction(SiteNode node) {
 		// Loop up to get the top parent
 		while (node.getParent() != null && node.getParent().getParent() != null) {
-			node = (SiteNode) node.getParent();
+			node = node.getParent();
 		}
 		extension.portScanSite(node);
 	}

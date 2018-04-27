@@ -978,7 +978,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public void delete(ScriptNode node) {
-		ScriptNode parent = (ScriptNode) node.getParent();
+		ScriptNode parent = node.getParent();
 		this.getZestTreeModel().delete(node);
 		this.updated(parent);
 		this.display(parent, true);

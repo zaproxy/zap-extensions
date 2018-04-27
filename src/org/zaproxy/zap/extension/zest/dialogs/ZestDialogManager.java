@@ -170,7 +170,7 @@ public class ZestDialogManager extends AbstractPanel {
 							} else if (obj instanceof ZestExpression) {LinkedList<ScriptNode> nodes=new LinkedList<>();
 								nodes.add(sn);
 								showZestExpressionDialog(parent, nodes, null,
-										(ZestExpression) ((ZestExpression) obj), false, false, false);
+										(ZestExpression) obj, false, false, false);
 							} else if (obj instanceof ZestComment) {
 								showZestCommentDialog(parent, sn, null,
 										(ZestComment) obj, false);
