@@ -234,6 +234,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	 *
 	 * @param startOptions the start options
 	 */
+	@SuppressWarnings("fallthrough")
 	public void startScan(AccessControlScanStartOptions startOptions) {
 		int contextId = startOptions.targetContext.getIndex();
 		AccessControlScannerThread scannerThread = threadManager.getScannerThread(contextId);
@@ -251,7 +252,6 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 						"Access control scan is not allowed with a context out of scope when in Protected mode: "
 								+ startOptions.targetContext.getName());
 			}
-			//$FALL-THROUGH$
 		case standard:
 		case attack:
 			// No problem
