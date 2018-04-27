@@ -662,7 +662,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 	protected ScanTarget createScanTarget(SiteNode node) {
 		if (node != null) {
 			while (node.getParent() != null && node.getParent().getParent() != null) {
-				node = (SiteNode) node.getParent();
+				node = node.getParent();
 			}
 
 			HistoryReference hRef = node.getHistoryReference();
