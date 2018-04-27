@@ -495,7 +495,7 @@ public class AlertReportExportPDF {
         //Point2D.Float textInsertionPoint = new Point2D.Float(page.findMediaBox().getLowerLeftX() + marginPoints, page.findMediaBox().getUpperRightY() - marginPoints);
         Point2D.Float textInsertionPoint = getPageInitialInsertionPoint ();
                 
-        textInsertionPoint = addText (alertCategoryLabelFormatting, alert.getAlert(), textInsertionPoint);
+        textInsertionPoint = addText (alertCategoryLabelFormatting, alert.getName(), textInsertionPoint);
         
         textInsertionPoint = addText (alertLabelFormatting, labelDescription, textInsertionPoint);
         textInsertionPoint = addText (alertTextFormatting, getFieldAlertProperty(alert.getPluginId(),"description", alert.getDescription(), extensionExport),textInsertionPoint);

@@ -73,7 +73,7 @@ public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 					alerts.add(extension.getAlertsSelected(alertAllAlerts));
 					for (int j = 0; j < allAlerts.size(); j++) {
 						Alert alertToCompare= allAlerts.get(j);
-						if (alertAllAlerts.getAlert().equals(alertToCompare.getAlert())){
+						if (alertAllAlerts.getName().equals(alertToCompare.getName())){
 							allAlerts.remove(j);
 							j = 0;
 						}
