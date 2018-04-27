@@ -498,12 +498,16 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 		switch (this.getAttackStrength()) {
 		case LOW:
 			this.timeoutMs=1000;  //1 second
+			break;
 		case MEDIUM:
 			this.timeoutMs=3000; //3 seconds
+			break;
 		case HIGH:
 			this.timeoutMs=6000;  //6 seconds
+			break;
 		case INSANE:
 			this.timeoutMs=12000;  //12 seconds
+			break;
 		case DEFAULT:
 			this.timeoutMs=5000;  //5 seconds
 		}
