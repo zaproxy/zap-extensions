@@ -161,7 +161,7 @@ public class AlertFilterAPI extends ApiImplementor {
 		fields.put(PARAM_URL_IS_REGEX, Boolean.toString(af.isRegex()));
 		fields.put(PARAM_PARAMETER, af.getParameter());
 		fields.put(PARAM_ENABLED, Boolean.toString(af.isEnabled()));
-		ApiResponseSet response = new ApiResponseSet("alertFilter", fields);
+		ApiResponseSet<String> response = new ApiResponseSet<>("alertFilter", fields);
 		return response;
 	}
 }
