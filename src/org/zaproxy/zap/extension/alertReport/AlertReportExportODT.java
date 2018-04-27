@@ -279,7 +279,7 @@ public class AlertReportExportODT {
 		Border border = new Border(Color.BLACK, 0,
 				StyleTypeDefinitions.SupportedLinearMeasure.PT);
 		cell.setBorders(CellBordersType.NONE, border);
-		cell.setStringValue(alert.getAlert());
+		cell.setStringValue(alert.getName());
 		cell.setFont(fontTitleBold);
 		String color = Color.toSixDigitHexRGB("#87cefa");
 		cell.setCellBackgroundColor(Color.valueOf(color));

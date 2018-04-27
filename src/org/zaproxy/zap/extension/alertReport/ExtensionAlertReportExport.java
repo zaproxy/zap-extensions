@@ -244,7 +244,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 		List<Alert> alerts = new ArrayList<>();
 		for (int i = 0; i < alertsDB.size(); i++) {
 			Alert alert = alertsDB.get(i);
-			if (alertSelected.getAlert().equals(alert.getAlert()))
+			if (alertSelected.getName().equals(alert.getName()))
 				alerts.add(alert);
 		}
 		
