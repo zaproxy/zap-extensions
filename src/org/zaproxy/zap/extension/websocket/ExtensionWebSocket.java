@@ -91,6 +91,7 @@ import org.zaproxy.zap.extension.websocket.ui.PopupIncludeWebSocketContextMenu;
 import org.zaproxy.zap.extension.websocket.ui.ResendWebSocketMessageMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.SessionExcludeFromWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
+import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesPayloadFilter;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.component.WebSocketComponent;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.models.ByteWebSocketPanelViewModel;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.models.StringWebSocketPanelViewModel;
@@ -908,7 +909,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * If given channel is blacklisted, then nothing should be stored. Moreover
 	 * it should not appear in user interface, but messages should be forwarded.
 	 * 
-	 * @param wsProxy
+	 * @param channel
 	 * @return
 	 */
 	public boolean isChannelIgnored(WebSocketChannelDTO channel) {
@@ -952,8 +953,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * @return the specified messages
 	 * @throws DatabaseException
 	 */
-	public List<WebSocketMessageDTO> getWebsocketMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
-		return this.table.getMessages(criteria, opcodes, inScopeChannelIds, offset, limit, payloadPreviewLength);
+	public List<WebSocketMessageDTO> getWebsocketMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, WebSocketMessagesPayloadFilter payloadFilter, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
+		return this.table.getMessages(criteria, opcodes, inScopeChannelIds,payloadFilter, offset, limit, payloadPreviewLength);
 	}
 
 	public void recordMessage(WebSocketMessageDTO message) throws DatabaseException {

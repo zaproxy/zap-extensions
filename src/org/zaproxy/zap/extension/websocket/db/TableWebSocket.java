@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.ListIterator;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
@@ -45,6 +46,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
+import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesPayloadFilter;
 
 /**
  * Manages writing and reading WebSocket messages to the database.
@@ -211,35 +213,92 @@ public class TableWebSocket extends ParosAbstractTable {
 	 * @return number of message that fulfill given template
 	 * @throws SQLException
 	 */
-	public synchronized int getMessageCount(WebSocketMessageDTO criteria, List<Integer> opcodes) throws DatabaseException {
-		return getMessageCount(criteria, opcodes, null);
+	public synchronized int getMessageCount(WebSocketMessageDTO criteria, List<Integer> opcodes, int payloadLength) throws DatabaseException {
+		return getMessageCount(criteria, opcodes, null,null, payloadLength);
 	}
 	
 	/**
 	 * Prepares a {@link PreparedStatement} instance on the fly.
-	 * 
 	 * @param criteria
 	 * @param opcodes Null when all opcodes should be retrieved.
 	 * @param inScopeChannelIds 
 	 * @return number of message that fulfill given template
 	 * @throws DatabaseException
 	 */
-	public synchronized int getMessageCount(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds) throws DatabaseException {
-		try {
+	public synchronized int getMessageCount(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds,
+											WebSocketMessagesPayloadFilter payloadFilter, int payloadLength) throws DatabaseException {
+		if (payloadFilter != null) {
+			return countMessageWithPayloadFilter(criteria, opcodes, inScopeChannelIds, payloadFilter, payloadLength);
+		} else {
 			String query = "SELECT COUNT(m.message_id) FROM websocket_message AS m "
 					+ "LEFT OUTER JOIN websocket_message_fuzz f "
 					+ "ON m.message_id = f.message_id AND m.channel_id = f.channel_id "
 					+ "<where> ";
-			
-			PreparedStatement stmt = buildMessageCriteriaStatement(query, criteria, opcodes, inScopeChannelIds);
 			try {
-				return executeAndGetSingleIntValue(stmt);
-			} finally {
+				PreparedStatement stmt = buildMessageCriteriaStatement(query, criteria, opcodes, inScopeChannelIds);
+				try {
+					return executeAndGetSingleIntValue(stmt);
+				} finally {
+					stmt.close();
+				}
+			} catch (SQLException e) {
+				throw new DatabaseException(e);
+			}
+		}
+	}
+
+	/**
+	 * Filter out and count messages according to payloadFilter
+	 * @param criteria
+	 * @param opcodes Null when all opcodes should be retrieved.
+	 * @param inScopeChannelIds
+	 * @param payloadFilter  Null when all payloads should be retrieved.
+	 * @param payloadLength
+	 * @return number of message that fulfill given template
+	 * @throws DatabaseException
+	 */
+	private int countMessageWithPayloadFilter(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds,
+											  WebSocketMessagesPayloadFilter payloadFilter, int payloadLength) throws DatabaseException {
+		String query = "SELECT m.opcode, m.payload_utf8 FROM websocket_message AS m "
+				+ "LEFT OUTER JOIN websocket_message_fuzz f "
+				+ "ON m.message_id = f.message_id AND m.channel_id = f.channel_id "
+				+ "<where> ";
+		int count = 0;
+		try {
+			PreparedStatement stmt = buildMessageCriteriaStatement(query, criteria, opcodes, inScopeChannelIds);
+			stmt.execute();
+			ResultSet resultSet = stmt.getResultSet();
+			try {
+				while (resultSet.next()) {
+					String payload;
+					// read payload
+					if (resultSet.getInt("opcode") != WebSocketMessage.OPCODE_BINARY) {
+
+						if (payloadLength == -1) {
+							// load all characters
+							payload = resultSet.getString("payload_utf8");
+						} else {
+							Clob clob = resultSet.getClob("payload_utf8");
+							int length = Math.min(payloadLength, (int) clob.length());
+							payload = clob.getSubString(1, length);
+							clob.free();
+						}
+						if (payloadFilter.isStringValidWithPattern(payload)) {
+							count++;
+						}
+					}
+				}
+			}finally {
+				resultSet.close();
 				stmt.close();
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e){
 			throw new DatabaseException(e);
 		}
+
+		return count;
+
 	}
 
 	private int executeAndGetSingleIntValue(PreparedStatement stmt) throws SQLException {
@@ -255,7 +314,7 @@ public class TableWebSocket extends ParosAbstractTable {
 		}
 	}
 
-	public synchronized int getIndexOf(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds) 
+	public synchronized int getIndexOf(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds)
 			throws DatabaseException {
 		try {
 			String query = "SELECT COUNT(m.message_id) "
@@ -306,7 +365,7 @@ public class TableWebSocket extends ParosAbstractTable {
 	 * @return Messages that fulfill given template.
 	 * @throws DatabaseException
 	 */
-	public synchronized List<WebSocketMessageDTO> getMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
+	public synchronized List<WebSocketMessageDTO> getMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, WebSocketMessagesPayloadFilter payloadFilter, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
 		try {
 			String query = "SELECT m.message_id, m.channel_id, m.timestamp, m.opcode, m.payload_length, m.is_outgoing, "
 					+ "m.payload_utf8, m.payload_bytes, "
@@ -337,13 +396,33 @@ public class TableWebSocket extends ParosAbstractTable {
 				
 				stmt.execute();
 				
-				return buildMessageDTOs(stmt.getResultSet(), true, payloadPreviewLength);
+				return checkPayloadFilter( payloadFilter, buildMessageDTOs(stmt.getResultSet(), true, payloadPreviewLength));
 			} finally {
 				stmt.close();
 			}
 		} catch (SQLException e) {
 			throw new DatabaseException(e);
 		}
+	}
+
+	/**
+	 * Filter out messages according to payloadFilter
+	 * @param payloadFilter filter payload
+	 * @param webSocketMessageDTOs list of messages
+	 * @return only valid messages according to filter payload
+	 */
+	private List<WebSocketMessageDTO> checkPayloadFilter(WebSocketMessagesPayloadFilter payloadFilter, List<WebSocketMessageDTO> webSocketMessageDTOs){
+		if(payloadFilter == null || payloadFilter.getPayloadPattern() == null){
+			return  webSocketMessageDTOs;
+		}
+		ListIterator<WebSocketMessageDTO> iterator = webSocketMessageDTOs.listIterator();
+		while(iterator.hasNext()){
+			if(! payloadFilter.isMessageValidWithPattern(iterator.next())){
+				iterator.remove();
+			}
+		}
+		return webSocketMessageDTOs;
+
 	}
 	
 	private List<WebSocketMessageDTO> buildMessageDTOs(ResultSet rs, boolean interpretLiteralBytes) throws SQLException, DatabaseException {
@@ -353,13 +432,13 @@ public class TableWebSocket extends ParosAbstractTable {
 	 * 
 	 * @param rs
 	 * @param interpretLiteralBytes
-	 * @param payloadLength 
+	 * @param payloadLength
 	 * @return
 	 * @throws HttpMalformedHeaderException
 	 * @throws SQLException
 	 * @throws DatabaseException 
 	 */
-	private List<WebSocketMessageDTO> buildMessageDTOs(ResultSet rs, boolean interpretLiteralBytes, int payloadLength) 
+	private List<WebSocketMessageDTO> buildMessageDTOs(ResultSet rs, boolean interpretLiteralBytes, int payloadLength)
 			throws SQLException, DatabaseException {
 		ArrayList<WebSocketMessageDTO> messages = new ArrayList<>();
 		try {
@@ -444,7 +523,7 @@ public class TableWebSocket extends ParosAbstractTable {
 		return (WebSocketChannelDTO) channelCache.get(channelId);
 	}
 
-	private PreparedStatement buildMessageCriteriaStatement(String query, WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds) 
+	private PreparedStatement buildMessageCriteriaStatement(String query, WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds)
 			throws SQLException, DatabaseException {
 		ArrayList<String> where = new ArrayList<>();
 		ArrayList<Object> params = new ArrayList<>();
@@ -475,7 +554,6 @@ public class TableWebSocket extends ParosAbstractTable {
 			opcodeExpr.append(")");
 			where.add(opcodeExpr.toString());
 		}
-		
 		if (inScopeChannelIds != null) {
 			StringBuilder whereExpr = new StringBuilder("m.channel_id IN (");
 			int inScopeChannelCount = inScopeChannelIds.size();

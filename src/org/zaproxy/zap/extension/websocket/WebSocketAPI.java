@@ -48,6 +48,7 @@ import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
+import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesPayloadFilter;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 import org.zaproxy.zap.extension.websocket.utility.WebSocketUtils;
 import org.zaproxy.zap.model.StructuralNode;
@@ -334,6 +335,7 @@ public class WebSocketAPI extends ApiImplementor {
                 WebSocketMessageDTO criteria = new WebSocketMessageDTO();
                 List<Integer> opcodes = null;
                 List<Integer> inScopeChannelIds = null;
+                WebSocketMessagesPayloadFilter webSocketMessagesPayloadFilter = null;
                 int offset = this.getParam(params, PARAM_START, 0);
                 int limit = this.getParam(params, PARAM_COUNT, 0);
                 int payloadPreviewLength = this.getParam(params, PARAM_PAYLOAD_PREVIEW_LENGTH, 1024);
@@ -347,7 +349,7 @@ public class WebSocketAPI extends ApiImplementor {
                 }
 
                 List<WebSocketMessageDTO> messages = extension
-                        .getWebsocketMessages(criteria, opcodes, inScopeChannelIds, offset, limit, payloadPreviewLength);
+                        .getWebsocketMessages(criteria, opcodes, inScopeChannelIds, webSocketMessagesPayloadFilter, offset, limit, payloadPreviewLength);
                 for (WebSocketMessageDTO message : messages) {
                     resultList.addItem(wsMessageToResult(message, false));
                 }

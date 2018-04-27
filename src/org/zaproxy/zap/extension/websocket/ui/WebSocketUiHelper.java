@@ -43,7 +43,12 @@ public class WebSocketUiHelper {
 	private JComboBox<String> opcodeComboBox;
 	private JList<String> opcodeList;
 	private JScrollPane opcodeListScrollPane;
-	
+
+	private JCheckBox regexCheckbox;
+	private JCheckBox caseIgnoreCheckbox;
+	private JCheckBox inverseCheckbox;
+    private ZapTextField patternTextField;
+
 	private JList<WebSocketChannelDTO> channels;
 	private JScrollPane channelsScrollPane;
 	
@@ -53,10 +58,7 @@ public class WebSocketUiHelper {
 	private JCheckBox outgoingCheckbox;
 	private JCheckBox incomingCheckbox;
 	private JComboBox<String> directionComboBox;
-	
-	private ZapTextField patternTextField;
 
-	
 	// ************************************************************************
 	// ***** HELPER
 
@@ -448,6 +450,54 @@ public class WebSocketUiHelper {
 	}
 	
 	public String getPattern() {
-		return patternTextField.getText();
+		if(patternTextField.getText() == null || patternTextField.getText().equals("")) {
+			return null;
+		}else{
+			return patternTextField.getText();
+		}
 	}
+
+	public void setPattern(String pattern){
+        patternTextField.setText(pattern);
+	}
+
+	public void setInverseCheckbox(boolean inverse) {
+		this.inverseCheckbox.setSelected(inverse);
+	}
+
+	public JCheckBox getInverseCheckbox() {
+		if (inverseCheckbox == null) {
+			inverseCheckbox = new JCheckBox(Constant.messages.getString("websocket.filter.label.regex.inverse"));
+		}
+		return inverseCheckbox;
+	}
+
+	public void setCaseIgnoreCheckbox(boolean caseIgnore) {
+		this.caseIgnoreCheckbox.setSelected(caseIgnore);
+	}
+
+	public JCheckBox getCaseIgnoreCheckbox() {
+		if (caseIgnoreCheckbox == null) {
+			caseIgnoreCheckbox = new JCheckBox(Constant.messages.getString("websocket.filter.label.regex.ignore_case"));
+			caseIgnoreCheckbox.setSelected(false);
+		}
+		return caseIgnoreCheckbox;
+	}
+
+
+	public void setRegexCheckbox(boolean regex) {
+		this.regexCheckbox.setSelected(regex);
+	}
+
+	public JCheckBox getRegexCheckbox() {
+		if (regexCheckbox == null) {
+			regexCheckbox = new JCheckBox(Constant.messages.getString("websocket.filter.label.regex.regex"));
+			regexCheckbox.setSelected(true);
+		}
+		return regexCheckbox;
+
+	}
+	
+
+
 }
