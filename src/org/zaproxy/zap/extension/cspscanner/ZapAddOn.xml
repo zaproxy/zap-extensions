@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>Content Security Policy Scanner</name>
-	<version>6</version>
+	<version>7</version>
 	<status>beta</status>
 	<description>Content Security Policy (CSP) Scanner</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Maintenance changes.<br>
-	Salvation library upgraded to 2.5.0.<br>
-	Promote addon to Beta.<br>
 	]]>
 	</changes>
 	<extensions>
