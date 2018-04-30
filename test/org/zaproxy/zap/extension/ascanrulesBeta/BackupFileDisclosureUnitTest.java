@@ -83,7 +83,7 @@ public class BackupFileDisclosureUnitTest extends ActiveScannerTest<BackupFileDi
         }
 
         @Override
-        Response serve(IHTTPSession session) {
+        protected Response serve(IHTTPSession session) {
             return new Response(
                     Response.Status.FORBIDDEN,
                     "text/html",

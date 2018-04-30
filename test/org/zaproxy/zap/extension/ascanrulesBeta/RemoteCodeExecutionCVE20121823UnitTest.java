@@ -81,7 +81,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 consumeBody(session);
                 return new Response("Nothing echoed...");
             }
@@ -114,7 +114,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 consumeBody(session);
                 return new Response("Nothing echoed...");
             }
@@ -134,7 +134,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 consumeBody(session);
 
                 StringBuilder strBuilder = new StringBuilder("Nothing echoed...\n");

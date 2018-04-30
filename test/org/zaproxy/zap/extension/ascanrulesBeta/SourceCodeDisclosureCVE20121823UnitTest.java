@@ -139,7 +139,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
         nano.addHandler(new NanoServerHandler("shouldScanUrlsWithoutPath") {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 return new Response("No Source Code here!");
             }
         });
@@ -158,7 +158,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 return new Response("No Source Code here!");
             }
         });
@@ -177,7 +177,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 return new Response("No Source Code here!");
             }
         });
@@ -196,7 +196,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_TAGS);
                 return new Response("<html><body>" + encodedPhpCode + "</body></html>");
             }
@@ -222,7 +222,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_TAGS);
                 return new Response(
                         Response.Status.INTERNAL_ERROR,
@@ -246,7 +246,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_ECHO_TAG);
                 return new Response("<html><body>" + encodedPhpCode + "</body></html>");
             }
@@ -272,7 +272,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_ECHO_TAG);
                 return new Response(
                         Response.Status.INTERNAL_ERROR,
