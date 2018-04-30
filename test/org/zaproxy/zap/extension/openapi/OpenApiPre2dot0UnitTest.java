@@ -45,7 +45,7 @@ public class OpenApiPre2dot0UnitTest extends ServerBasedTest {
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String response;
                 String uri = session.getUri();
                 if (uri.endsWith("defn.json")) {
