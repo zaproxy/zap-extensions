@@ -23,9 +23,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -87,8 +89,6 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
      * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#HIGH AttackStrength.HIGH}, per parameter being scanned.
      */
     protected static final int NUMBER_MSGS_ATTACK_STRENGTH_HIGH = 24;
-
-    private static final String BASE_RESOURCE_DIR = "/org/zaproxy/zap/extension/ascanrules/";
 
     @ClassRule
     public static TemporaryFolder zapDir = new TemporaryFolder();
@@ -277,7 +277,7 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
     }
 
     public String getHtml(String name, Map<String, String> params) {
-        File file = new File(getClass().getResource(BASE_RESOURCE_DIR + this.getClass().getSimpleName() + "/" + name).getPath());
+        File file = getResourceFile(name);
         try {
             String html = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             if (params != null) {
@@ -289,6 +289,15 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
             return html;
         } catch (IOException e) {
             System.err.println("Failed to read file " + file.getAbsolutePath());
+            throw new RuntimeException(e);
+        }
+    }
+
+    private File getResourceFile(String name) {
+        try {
+            String resourcePath = getClass().getSimpleName() + "/" + name;
+            return Paths.get(getClass().getResource(resourcePath).toURI()).toFile();
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
