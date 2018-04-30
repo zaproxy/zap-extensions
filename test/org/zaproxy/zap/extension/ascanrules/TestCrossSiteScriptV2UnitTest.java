@@ -56,7 +56,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -89,7 +89,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -122,7 +122,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -155,7 +155,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -191,7 +191,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -224,7 +224,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -257,7 +257,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -290,7 +290,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -323,7 +323,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -356,7 +356,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -392,7 +392,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -425,7 +425,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String color = session.getParms().get("color");
                 String response;
                 if (color != null) {
@@ -461,7 +461,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String color = session.getParms().get("color");
                 String response;
                 if (color != null) {
@@ -495,7 +495,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String color = session.getParms().get("color");
                 String response;
                 if (color != null) {
@@ -530,7 +530,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -565,7 +565,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -600,7 +600,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
 
         NanoServerHandler handler = new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String url = session.getUri();
                 if (session.getQueryParameterString() != null) {
                     try {
@@ -643,7 +643,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
 
         NanoServerHandler handler = new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String url = session.getUri();
                 if (session.getQueryParameterString() != null) {
                     try {
@@ -682,7 +682,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
 
         NanoServerHandler handler = new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String url = session.getUri();
                 if (session.getQueryParameterString() != null) {
                     try {
@@ -720,7 +720,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
 
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -752,7 +752,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -789,7 +789,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -830,7 +830,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 String name = session.getParms().get("name");
                 String response;
                 if (name != null) {
@@ -865,7 +865,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
             	String sess = getBody(session);
                 String name = sess.split("=")[1];
                 String response;

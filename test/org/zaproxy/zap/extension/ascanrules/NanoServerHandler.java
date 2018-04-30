@@ -39,7 +39,7 @@ public abstract class NanoServerHandler {
         return name;
     }
     
-    abstract Response serve(IHTTPSession session);
+    protected abstract Response serve(IHTTPSession session);
 
     /**
      * Consumes the request body.
