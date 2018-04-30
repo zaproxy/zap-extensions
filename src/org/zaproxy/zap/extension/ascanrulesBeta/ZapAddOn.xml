@@ -9,6 +9,7 @@
 	<![CDATA[
 	Maintenance changes.<br>
 	Issue 1142: Logic and alert risk ratings modified.<br>
+	Correct timeout per attack strength in Heartbleed OpenSSL Vulnerability scanner.<br>
     ]]>
 	</changes>
 	<extensions>
