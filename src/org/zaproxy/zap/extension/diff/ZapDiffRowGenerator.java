@@ -372,7 +372,7 @@ public class ZapDiffRowGenerator {
   */
  public static LinkedList<String> wrapInTag(LinkedList<String> sequence, int startPosition,
          int endPosition, String tag, String cssClass) {
-     LinkedList<String> result = (LinkedList<String>) sequence.clone();
+     LinkedList<String> result = new LinkedList<>(sequence);
      StringBuilder tagBuilder = new StringBuilder();
      tagBuilder.append("<");
      tagBuilder.append(tag);
