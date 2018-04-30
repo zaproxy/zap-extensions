@@ -24,16 +24,15 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.swing.JMenuItem;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionBeanShell extends ExtensionAdaptor {
 
 	private BeanShellConsoleFrame beanShellConsoleDialog = null;
-	private JMenuItem menuBeanShell = null;
+	private ZapMenuItem menuBeanShell = null;
 	
     /**
      * 
@@ -75,10 +74,9 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
     }
 
 	   
-	private JMenuItem getMenuBeanShell() {
+	private ZapMenuItem getMenuBeanShell() {
 		if (menuBeanShell == null) {
-		    menuBeanShell = new JMenuItem();
-		    menuBeanShell.setText(Constant.messages.getString("beanshell.menu.title"));
+		    menuBeanShell = new ZapMenuItem("beanshell.menu.title");
 		    menuBeanShell.addActionListener(new java.awt.event.ActionListener() { 
 		    	@Override
 		    	public void actionPerformed(java.awt.event.ActionEvent e) {
