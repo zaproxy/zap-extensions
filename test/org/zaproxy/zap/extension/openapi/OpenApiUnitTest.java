@@ -451,7 +451,7 @@ public class OpenApiUnitTest extends ServerBasedTest {
         }
 
         @Override
-        Response serve(IHTTPSession session) {
+        protected Response serve(IHTTPSession session) {
             String response;
             if (session.getUri().endsWith(defnName)) {
                 response = getHtml(defnFileName);
