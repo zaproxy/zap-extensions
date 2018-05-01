@@ -285,6 +285,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 		this.showAnalyseTokensDialog(this.cfm);
 	}
 
+	@SuppressWarnings("fallthrough")
 	public void startTokenGeneration(HttpMessage msg, int numGen, HtmlParameterStats htmlParameterStats) {
 		switch (Control.getSingleton().getMode()) {
 		case safe:
@@ -295,7 +296,6 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 						"Token generation is not allowed with a message not in scope when in Protected mode: "
 								+ msg.getRequestHeader().getURI());
 			}
-			//$FALL-THROUGH$
 		case standard:
 		case attack:
 			// No problem
