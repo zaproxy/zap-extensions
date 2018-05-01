@@ -22,6 +22,9 @@ package org.zaproxy.zap.extension.bruteforce;
 import java.awt.EventQueue;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -107,6 +110,22 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     @Override
 	public boolean canUnload() {
     	return true;
+    }
+
+    @Override
+    public List<String> getActiveActions() {
+        if (getView() == null) {
+            return Collections.emptyList();
+        }
+
+        String activeActionPrefix = Constant.messages.getString("bruteforce.activeActionPrefix");
+        List<String> activeActions = new ArrayList<>();
+        for (BruteForce scan : getBruteForcePanel().getBruteForceScans()) {
+            if (scan.isAlive()) {
+                activeActions.add(MessageFormat.format(activeActionPrefix, scan.getScanTarget().toPlainString()));
+            }
+        }
+        return activeActions;
     }
 	
 	private BruteForceParam getBruteForceParam() {

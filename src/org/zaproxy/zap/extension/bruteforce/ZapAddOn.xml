@@ -11,6 +11,7 @@
 	One option allows the user to specify the file extensions to ignore.<br>
 	URIs ending with specified file extensions are ignored from making requests to the server.<br>
 	The other option allows the user to specify fail case string.<br>
+	Inform of running scans (e.g. on session change, add-on uninstall).<br>
 	]]>
 	</changes>
 	<extensions>
