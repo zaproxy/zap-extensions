@@ -219,7 +219,7 @@ public class TestSQLInjectionUnitTest extends ActiveScannerTest<TestSQLInjection
         }
 
         @Override
-        Response serve(IHTTPSession session) {
+        protected Response serve(IHTTPSession session) {
             String value = session.getParms().get(param);
             if (isValidValue(value)) {
                 return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(value));

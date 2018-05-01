@@ -185,7 +185,7 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
         nano.addHandler(new NanoServerHandler(filePath) {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, fileContent);
             }
         });
@@ -211,7 +211,7 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
         protected abstract String getDirs();
 
         @Override
-        Response serve(IHTTPSession session) {
+        protected Response serve(IHTTPSession session) {
             String value = session.getParms().get(param);
             if (attack.equals(value)) {
                 return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, getDirs());
@@ -279,7 +279,7 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
         }
 
         @Override
-        Response serve(IHTTPSession session) {
+        protected Response serve(IHTTPSession session) {
             String value = session.getParms().get(param);
             if (ArrayUtils.contains(existingFiles, value)) {
                 return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "File Found");

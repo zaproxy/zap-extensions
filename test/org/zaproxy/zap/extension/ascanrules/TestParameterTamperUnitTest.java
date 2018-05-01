@@ -59,7 +59,7 @@ public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameter
         nano.addHandler(new NanoServerHandler("/") {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "");
             }
         });
@@ -77,7 +77,7 @@ public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameter
         nano.addHandler(new NanoServerHandler("/") {
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "Default Response");
             }
         });
@@ -97,7 +97,7 @@ public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameter
             private boolean showDefaultResponse = true;
 
             @Override
-            Response serve(IHTTPSession session) {
+            protected Response serve(IHTTPSession session) {
                 if (showDefaultResponse) {
                     showDefaultResponse = false;
                     return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "Default Response");
@@ -218,7 +218,7 @@ public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameter
         }
 
         @Override
-        Response serve(IHTTPSession session) {
+        protected Response serve(IHTTPSession session) {
             if (count <= totalAttacks) {
                 count++;
                 return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "Default Response");
