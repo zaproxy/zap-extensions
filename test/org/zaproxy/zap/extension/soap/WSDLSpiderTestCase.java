@@ -27,7 +27,6 @@ public class WSDLSpiderTestCase {
 	
 	@Test
 	public void parseResourceTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		WSDLSpider.enable();
 		WSDLSpider spider = new WSDLSpider();
 		
 		/* Positive case. */
