@@ -14,8 +14,6 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.lang.GeoLocation;
 import com.drew.metadata.exif.GpsDirectory;
-import com.drew.metadata.xmp.XmpDirectory;
-import com.drew.metadata.xmp.XmpDescriptor;
 import com.drew.metadata.iptc.IptcDirectory;
 import com.drew.metadata.iptc.IptcDescriptor;
 import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
@@ -172,6 +170,7 @@ public class ILS {
 	/** 
 	 * @deprecated Use the HTML / Text calls directly or use boolean construct.
 	 */
+	@Deprecated
 	public static String scanForLocationInImage(byte[] data)   {
 		return scanForLocationInImageHTML(data);
 	}
