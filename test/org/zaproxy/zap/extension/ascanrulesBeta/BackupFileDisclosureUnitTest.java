@@ -20,10 +20,13 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -43,10 +46,73 @@ public class BackupFileDisclosureUnitTest extends ActiveScannerTest<BackupFileDi
             + "<p>You don't have permission to access " + PATH_TOKEN + "\n"
             + "on this server.</p>\n"
             + "</body></html>";
+    private static final String URL = "/dir/index.html";
 
     @Override
     protected BackupFileDisclosure createScanner() {
-        return new BackupFileDisclosure();
+        BackupFileDisclosure scanner = new BackupFileDisclosure();
+        scanner.setConfig(new ZapXmlConfiguration());
+        return scanner;
+    }
+
+    @Test
+    public void shouldSendReasonableNumberOfMessagesInLowStrength() throws Exception {
+        // Given
+        rule.setAttackStrength(Plugin.AttackStrength.LOW);
+        rule.init(getHttpMessage(URL), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_LOW)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldSendReasonableNumberOfMessagesInMediumStrength() throws Exception {
+        // Given
+        rule.setAttackStrength(Plugin.AttackStrength.MEDIUM);
+        rule.init(getHttpMessage(URL), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_MED)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldSendReasonableNumberOfMessagesInDefaultStrength() throws Exception {
+        // Given
+        rule.setAttackStrength(Plugin.AttackStrength.DEFAULT); // Same as MEDIUM.
+        rule.init(getHttpMessage(URL), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_MED)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldSendReasonableNumberOfMessagesInHighStrength() throws Exception {
+        // Given
+        rule.setAttackStrength(Plugin.AttackStrength.HIGH);
+        rule.init(getHttpMessage(URL), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_HIGH)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldSendReasonableNumberOfMessagesInInsaneStrength() throws Exception {
+        // Given
+        rule.setAttackStrength(Plugin.AttackStrength.INSANE);
+        rule.init(getHttpMessage(URL), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_INSANE)));
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test

@@ -22,7 +22,12 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.ServerSocket;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +43,8 @@ import org.apache.log4j.PatternLayout;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -59,15 +66,28 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public abstract class ActiveScannerTest<T extends AbstractPlugin> extends ScannerTestUtils {
 
-    private static final String INSTALL_PATH = "test/resources/install";
-    private static final File HOME_DIR = new File("test/resources/home");
-    private static final String BASE_RESOURCE_DIR = "test/resources/org/zaproxy/zap/extension/ascanrulesBeta/";
+    /**
+     * The recommended maximum number of messages that a scanner can send per page being
+     * scanned at {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#LOW AttackStrength.LOW}.
+     * @see <a href="https://github.com/zaproxy/zap-extensions/wiki/AddOnsBeta">https://github.com/zaproxy/zap-extensions/wiki/AddOnsBeta</a>
+     */
+    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_LOW = 36;// 6x6
+    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_MED = 72;// 6x12
+    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_HIGH = 144;// 6x24
+    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_INSANE = 500; //whatever
+
+   @ClassRule
+    public static TemporaryFolder zapDir = new TemporaryFolder();
+    private static String zapInstallDir;
+    private static String zapHomeDir;
 
     protected T rule;
     protected HostProcess parent;
+    protected ScannerParam scannerParam;
 
     /**
      * The alerts raised during the scan.
@@ -87,7 +107,17 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
     protected HTTPDTestServer nano;
 
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws Exception {
+        File installDir = zapDir.newFolder("install");
+        Path langDir = Files.createDirectory(installDir.toPath().resolve("lang"));
+        Files.createFile(langDir.resolve("Messages.properties"));
+        Path xmlDir = Files.createDirectory(installDir.toPath().resolve("xml"));
+        Files.createFile(xmlDir.resolve("log4j.properties"));
+        Path configXmlPath = Files.createFile(xmlDir.resolve("config.xml"));
+        Files.write(configXmlPath, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><config></config>".getBytes(StandardCharsets.UTF_8));
+
+        zapInstallDir = installDir.getAbsolutePath();
+        zapHomeDir = zapDir.newFolder("home").getAbsolutePath();
     }
 
     public ActiveScannerTest() {
@@ -109,9 +139,8 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
 
     @Before
     public void setUp() throws Exception {
-        Constant.setZapInstall(INSTALL_PATH);
-        HOME_DIR.mkdirs();
-        Constant.setZapHome(HOME_DIR.getAbsolutePath());
+        Constant.setZapInstall(zapInstallDir);
+        Constant.setZapHome(zapHomeDir);
 
         File langDir = new File(Constant.getZapInstall(), "lang");
         ClassLoaderUtil.addFile(langDir.getAbsolutePath());
@@ -132,12 +161,13 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
 
         ConnectionParam connectionParam = new ConnectionParam();
 
-        ScannerParam scannerParam = new ScannerParam();
+        scannerParam = new ScannerParam();
+        scannerParam.load(new ZapXmlConfiguration());
         RuleConfigParam ruleConfigParam = new RuleConfigParam();
         Scanner parentScanner =
                 new Scanner(scannerParam, connectionParam, scanPolicy, ruleConfigParam);
 
-        int port = 9090;
+        int port = getRandomPort();
         nano = new HTTPDTestServer(port);
         nano.start();
 
@@ -179,11 +209,16 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
         rule = createScanner();
     }
 
+    private static int getRandomPort() throws IOException {
+        try (ServerSocket server = new ServerSocket(0)) {
+            return server.getLocalPort();
+        }
+    }
+
     @After
     public void shutDown() throws Exception {
         nano.stop();
-        File dir = new File("test/resources/home");
-        FileUtils.deleteDirectory(dir);
+        FileUtils.deleteDirectory(new File(zapHomeDir));
     }
 
     protected abstract T createScanner();
@@ -232,7 +267,7 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
     }
 
     public String getHtml(String name, Map<String, String> params) {
-        File file = new File(BASE_RESOURCE_DIR + this.getClass().getSimpleName() + "/" + name);
+        File file = getResourceFile(name);
         try {
             String html = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             if (params != null) {
@@ -247,6 +282,15 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
             throw new RuntimeException(e);
         }
     }
+
+    private File getResourceFile(String name) {
+        try {
+            String resourcePath = getClass().getSimpleName() + "/" + name;
+            return Paths.get(getClass().getResource(resourcePath).toURI()).toFile();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+}
 
     /**
      * Returns a {@code TechSet} with the given technologies.
