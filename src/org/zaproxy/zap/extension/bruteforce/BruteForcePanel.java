@@ -30,6 +30,7 @@ import java.io.FilenameFilter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -817,6 +818,10 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 		siteModel.removeAllElements();
 		siteSelect.addItem(noSelectionScanTarget);
 		siteSelect.setSelectedIndex(0);
+	}
+
+	protected Collection<BruteForce> getBruteForceScans() {
+	    return bruteForceMap.values();
 	}
 
 	private void stopAllScans() {
