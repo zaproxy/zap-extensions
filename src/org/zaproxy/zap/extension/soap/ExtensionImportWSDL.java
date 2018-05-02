@@ -30,7 +30,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -38,7 +37,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
-import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportWSDL extends ExtensionAdaptor {
@@ -51,8 +49,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private ZapMenuItem menuImportUrlWSDL = null;
     private int threadId = 1;
 
-	private static final Logger log = Logger.getLogger(ExtensionImportWSDL.class);
 	private WSDLCustomParser parser = new WSDLCustomParser();
+	private WSDLSpider spiderParser;
 	
 	public ExtensionImportWSDL() {
 		super(NAME);
@@ -69,15 +67,11 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportLocalWSDL());
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrlWSDL());
 	        
-			/* Custom spider is added in order to explore not only WSDL files, but also their WSDL endpoints. */
-	        WSDLSpider.enable();
-			ExtensionSpider spider = (ExtensionSpider) Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.NAME);
-			SpiderParser customSpider = new WSDLSpider();
+			/* Custom spider parser is added in order to explore not only WSDL files, but also their WSDL endpoints. */
+			ExtensionSpider spider = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
 			if (spider != null){
-				spider.addCustomParser(customSpider);
-				log.info("Added custom WSDL spider.");
-			}else{
-				log.info("Custom WSDL spider could not be added.");
+				spiderParser = new WSDLSpider();
+				spider.addCustomParser(spiderParser);
 			}
 	    }
 	}
@@ -87,8 +81,10 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		super.unload();
 	    /* Destroys current ImportWSDL singleton instance. */
 	    ImportWSDL.destroy();
-	    /* Disables custom spider. */
-		WSDLSpider.disable();
+
+        if (spiderParser != null) {
+            Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class).removeCustomParser(spiderParser);
+        }
 	}
 
 	/* Menu option to import a local WSDL file. */
@@ -152,7 +148,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
 	@Override
 	public boolean canUnload() {
-		return false;
+		return true;
 	}
 
 	@Override

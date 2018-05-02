@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Internationalise file filter description.<br>
+	Dynamically unload the add-on.<br>
 	]]>
 	</changes>
 	<extensions>
