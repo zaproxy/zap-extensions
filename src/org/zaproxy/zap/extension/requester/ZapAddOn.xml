@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Requester</name>
 	<version>3</version>
+	<status>alpha</status>
 	<description>Request numbered panel.</description>
 	<author>Surikato</author>
 	<url></url>
