@@ -50,7 +50,6 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XPoweredByHeaderInfoLeakScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XAspNetVersionScanner</pscanrule>
 	</pscanrules>
-	<filters/>
 	<files>
 		<file>xml/example-pscan-file.txt</file>
 		<file>vulnerabilities.db</file>

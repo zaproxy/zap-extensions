@@ -17,7 +17,6 @@
 	</extensions>
 	<ascanrules></ascanrules>
 	<pscanrules></pscanrules>
-	<filters></filters>
 	<files></files>
 	<not-before-version>2.7.0</not-before-version>
 	<not-from-version></not-from-version>

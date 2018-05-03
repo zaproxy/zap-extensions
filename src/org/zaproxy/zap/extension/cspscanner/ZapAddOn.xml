@@ -16,7 +16,6 @@
 	<pscanrules>
 		<pscanrule>org.zaproxy.zap.extension.cspscanner.ContentSecurityPolicyScanner</pscanrule>
 	</pscanrules>
-	<filters/>
 	<files/>
 	<not-before-version>2.7.0</not-before-version>
 	<not-from-version></not-from-version>

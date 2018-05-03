@@ -15,7 +15,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>exportreport/merge.xml.xsl</file>
 		<file>exportreport/report.html.xsl</file>

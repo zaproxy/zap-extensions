@@ -35,7 +35,6 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HtAccessScanner</ascanrule>
 	</ascanrules>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>xml/example-ascan-file.txt</file>
 	</files>
