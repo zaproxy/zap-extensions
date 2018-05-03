@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
@@ -28,6 +29,7 @@ public class ImportWSDLTestCase {
 	
 	@Before
 	public void setUp() throws URIException, NullPointerException{
+		ImportWSDL.destroy();
 		/* Retrieves singleton instance. */
 		singleton = ImportWSDL.getInstance();
 		
@@ -48,6 +50,11 @@ public class ImportWSDLTestCase {
 		soapConfig.setParams(new HashMap<String,String>());
 		soapConfig.setPort(new Port());
 		soapConfig.setBindOp(new BindingOperation());
+	}
+	
+	@After
+	public void teardown() {
+		ImportWSDL.destroy();
 	}
 	
 	@Test
@@ -75,6 +82,7 @@ public class ImportWSDLTestCase {
 		/* There are no requests in singleton's list. Response should be null. */
 		assertNull(result);
 		
+		singleton.putAction(WSDL_KEY, TEST_OP);
 		/* Test request. */
 		singleton.putRequest(WSDL_KEY, testRequest);
 		result = singleton.getSourceSoapActions(testRequest);
