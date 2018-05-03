@@ -12,7 +12,6 @@
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>fuzzers/dirbuster/directory-list-lowercase-2.3-small.txt</file>
 		<file>fuzzers/dirbuster/directory-list-lowercase-2.3-medium.txt</file>

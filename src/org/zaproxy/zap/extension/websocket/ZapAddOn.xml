@@ -34,7 +34,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>scripts/templates/websocketfuzzerprocessor/Fuzzer WebSocket Processor default template.js</file>
 		<file>scripts/templates/websocketsender/WebsocketSender Default Template.js</file>

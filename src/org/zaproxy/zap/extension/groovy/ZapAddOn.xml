@@ -15,7 +15,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>scripts/templates/standalone/LoopThroughHistoryTable.groovy</file>
 		<file>scripts/templates/standalone/StandaloneDefaultTemplate.groovy</file>

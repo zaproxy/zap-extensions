@@ -16,7 +16,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<!-- Note: the declaration order of the file(s) is important in this add-on, see ExtensionCoreLanguages.postInstall() -->
 		<file>lang/ZAP_2.7.0_language_pack.2.zaplang</file>

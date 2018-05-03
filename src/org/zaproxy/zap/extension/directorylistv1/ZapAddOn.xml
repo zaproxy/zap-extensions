@@ -13,7 +13,6 @@
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>fuzzers/dirbuster/directory-list-1.0.txt</file>
 	</files>
