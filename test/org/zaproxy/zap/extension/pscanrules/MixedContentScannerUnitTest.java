@@ -32,7 +32,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class MixedContentScannerUnitTest extends PassiveScannerTest {
+public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContentScanner> {
 
     @Override
     protected MixedContentScanner createScanner() {

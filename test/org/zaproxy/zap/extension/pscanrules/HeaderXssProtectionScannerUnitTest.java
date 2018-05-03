@@ -28,7 +28,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class HeaderXssProtectionScannerUnitTest extends PassiveScannerTest {
+public class HeaderXssProtectionScannerUnitTest extends PassiveScannerTest<HeaderXssProtectionScanner> {
 
     @Override
     protected HeaderXssProtectionScanner createScanner() {

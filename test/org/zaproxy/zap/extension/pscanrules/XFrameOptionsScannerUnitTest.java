@@ -29,7 +29,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
+public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptionScanner> {
 
     private static final String BASE_RESOURCE_KEY = "pscanrules.xframeoptionsscanner.";
     private static final String NAME_HEADER_NOT_SET = BASE_RESOURCE_KEY + "missing.name";

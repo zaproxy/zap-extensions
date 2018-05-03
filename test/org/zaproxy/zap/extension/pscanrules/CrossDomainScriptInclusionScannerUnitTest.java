@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Context;
 
-public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTest {
+public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTest<CrossDomainScriptInclusionScanner> {
 
     @Override
     protected CrossDomainScriptInclusionScanner createScanner() {
@@ -90,7 +90,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((CrossDomainScriptInclusionScanner)rule).setModel(model);
+        rule.setModel(model);
         
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -121,7 +121,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((CrossDomainScriptInclusionScanner)rule).setModel(model);
+        rule.setModel(model);
         
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -150,7 +150,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((CrossDomainScriptInclusionScanner)rule).setModel(model);
+        rule.setModel(model);
         
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -185,7 +185,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((CrossDomainScriptInclusionScanner)rule).setModel(model);
+        rule.setModel(model);
         
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -221,7 +221,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((CrossDomainScriptInclusionScanner)rule).setModel(model);
+        rule.setModel(model);
         
         rule.setAlertThreshold(AlertThreshold.HIGH);
         
@@ -257,7 +257,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((CrossDomainScriptInclusionScanner)rule).setModel(model);
+        rule.setModel(model);
         
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
         
@@ -294,7 +294,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((CrossDomainScriptInclusionScanner)rule).setModel(model);
+        rule.setModel(model);
         
         rule.setAlertThreshold(AlertThreshold.LOW);
         

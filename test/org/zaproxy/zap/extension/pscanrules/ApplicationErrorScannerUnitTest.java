@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.equalTo;
@@ -31,12 +30,12 @@ import static org.junit.Assert.assertThat;
 import static org.parosproxy.paros.network.HttpStatusCode.*;
 
 @SuppressWarnings("Duplicates")
-public class ApplicationErrorScannerUnitTest extends PassiveScannerTest {
+public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<ApplicationErrorScanner> {
     private static final String URI = "https://www.example.com/test/";
     private static final String REQUEST_HEADER = format("GET %s HTTP/1.1", URI);
 
     @Override
-    protected PluginPassiveScanner createScanner() {
+    protected ApplicationErrorScanner createScanner() {
         return new ApplicationErrorScanner();
     }
 
