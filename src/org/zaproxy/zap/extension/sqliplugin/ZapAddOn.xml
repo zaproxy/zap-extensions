@@ -15,7 +15,6 @@
 		<ascanrule>org.zaproxy.zap.extension.sqliplugin.SQLInjectionPlugin</ascanrule>
 	</ascanrules>
 	<pscanrules/>
-	<filters/>
 	<files/>
 	<not-before-version>2.5.0</not-before-version>
 	<not-from-version/>

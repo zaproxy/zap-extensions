@@ -29,7 +29,6 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.ServletParameterPollutionScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.ViewstateScanner</pscanrule>
 	</pscanrules>
-	<filters/>
 	<files>
 		<file>xml/debug-error-messages.txt</file>
 		<file>xml/suspicious-comments.txt</file>

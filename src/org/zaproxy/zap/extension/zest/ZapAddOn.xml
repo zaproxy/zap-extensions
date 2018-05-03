@@ -24,7 +24,6 @@
 	<extensions>
 		<extension>org.zaproxy.zap.extension.zest.ExtensionZest</extension>
 	</extensions>
-	<filters/>
 	<files>
 		<file>scripts/templates/active/Active default template.zst</file>
 		<file>scripts/templates/authentication/Authentication default template.zst</file>

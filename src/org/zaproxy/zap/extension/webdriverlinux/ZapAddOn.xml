@@ -15,7 +15,6 @@
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>webdriver/linux/32/geckodriver</file>
 		<file>webdriver/linux/64/chromedriver</file>

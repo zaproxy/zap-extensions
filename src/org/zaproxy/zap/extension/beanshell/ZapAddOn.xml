@@ -15,7 +15,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>scripts/example.tree.bsh</file>
 	</files>
