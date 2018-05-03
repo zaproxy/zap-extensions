@@ -1,50 +1,34 @@
 package org.zaproxy.zap.extension.soap;
 
-import static org.junit.Assert.*;
-
-import java.net.URL;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.zaproxy.zap.extension.ScannerTestUtils;
 
-public class ExtensionImportWSDLTestCase {
+public class ExtensionImportWSDLTestCase extends ScannerTestUtils {
 
 	ExtensionImportWSDL extension;
 	
 	@Before
 	public void setUp() {
 		extension = new ExtensionImportWSDL();
+		mockMessages(extension);
 	}
 	
 	@Test
 	public void getAuthorTest(){
-		try{
-			String author = extension.getAuthor();
-			assertNotNull(author);
-		}catch(NullPointerException e){
-			fail("Author could not be retrieved. If this parameter is set externally (e.g. messages.properties file), ignore this result.");
-		}
+		assertNotNull(extension.getAuthor());
 	}
 	
 	@Test
 	public void getDescriptionTest(){
-		try{
-			String description = extension.getDescription();
-			assertNotNull(description);
-		}catch(NullPointerException e){
-			fail("Description could not be retrieved. If this parameter is set externally (e.g. messages.properties file), ignore this result.");
-		}
-		
+		assertNotNull(extension.getDescription());
 	}
 	
 	@Test
 	public void getURLTest(){
-		try{
-			URL url = extension.getURL();
-			assertNotNull(url);
-		}catch(NullPointerException e){
-			fail("URL could not be retrieved. If this parameter is set externally (e.g. messages.properties file), ignore this result.");
-		}
+		assertNotNull(extension.getURL());
 	}
 
 }

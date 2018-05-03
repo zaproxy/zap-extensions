@@ -52,7 +52,7 @@ public class WSDLCustomParser {
 	private static final Logger log = Logger.getLogger(WSDLCustomParser.class);;
 	private static int keyIndex = -1;
 	private ImportWSDL wsdlSingleton = ImportWSDL.getInstance();
-	private static SOAPMsgConfig lastConfig; // Only used for unit testing purposes.
+	private SOAPMsgConfig lastConfig; // Only used for unit testing purposes.
 	
 	public WSDLCustomParser(){
 
@@ -75,12 +75,12 @@ public class WSDLCustomParser {
 	}	
 	
 	/* Method called from external classes to import a WSDL file specifying content. */
-	public void extContentWSDLImport(final String content){
-		parseWSDLContent(content);
+	public boolean extContentWSDLImport(final String content){
+		return parseWSDLContent(content);
 	}
 	
-	public void extContentWSDLImport(final String content, final boolean sendMessages){
-		parseWSDLContent(content, sendMessages);
+	public boolean extContentWSDLImport(final String content, final boolean sendMessages){
+		return parseWSDLContent(content, sendMessages);
 	}
 	
 	/* Method called from external classes to import a WSDL file from an URL. */
@@ -524,7 +524,7 @@ public class WSDLCustomParser {
 		}	
 	}
 	
-	public static SOAPMsgConfig getLastConfig(){
+	SOAPMsgConfig getLastConfig(){
 		return lastConfig;
 	}
 }
