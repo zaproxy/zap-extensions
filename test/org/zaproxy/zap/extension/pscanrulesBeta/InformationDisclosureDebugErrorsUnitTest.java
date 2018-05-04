@@ -39,7 +39,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest {
+public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest<InformationDisclosureDebugErrors> {
 	private static final String URI = "https://www.example.com/";
 	private static final String DEFAULT_ERROR_MESSAGE = "Internal Server Error";
 	private static final List<String> DEBUG_ERRORS = Arrays.asList(
@@ -258,7 +258,7 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		try {
 			Path errorFile = testFolder.newFile("alternative-debug-error-messages.txt").toPath();
 			Files.write(errorFile, alternativeDebugErrors, Charset.forName("UTF-8"));
-			((InformationDisclosureDebugErrors)rule).setDebugErrorFile(errorFile);
+			rule.setDebugErrorFile(errorFile);
 		} catch (IOException e) {
 			throw new RuntimeException("Could not write alternative debug error messages file.", e);
 		}

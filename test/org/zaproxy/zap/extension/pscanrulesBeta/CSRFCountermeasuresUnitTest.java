@@ -34,10 +34,9 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
+public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCountermeasures> {
 
 	private ExtensionAntiCSRF extensionAntiCSRFMock;
 	private List<String> antiCsrfTokenNames;
@@ -52,10 +51,10 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 		extensionAntiCSRFMock = mock(ExtensionAntiCSRF.class);
 		when(extensionAntiCSRFMock.getAntiCsrfTokenNames()).thenReturn(antiCsrfTokenNames);
 
-		((CSRFCountermeasures)rule).setExtensionAntiCSRF(extensionAntiCSRFMock);
-		((CSRFCountermeasures)rule).setCsrfIgnoreList("");
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("");
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttValue("");
+		rule.setExtensionAntiCSRF(extensionAntiCSRFMock);
+		rule.setCsrfIgnoreList("");
+		rule.setCSRFIgnoreAttName("");
+		rule.setCSRFIgnoreAttValue("");
 		
 		HttpRequestHeader requestHeader = new HttpRequestHeader();
 		requestHeader.setURI(new URI("http://example.com", false));
@@ -65,7 +64,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	}
 	
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected CSRFCountermeasures createScanner() {
 		return new CSRFCountermeasures();
 	}
 	
@@ -188,7 +187,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	@Test
 	public void shouldNotRaiseAlertWhenFormIdIsOnCsrfIgnoreList() {
 		//Given
-		((CSRFCountermeasures)rule).setCsrfIgnoreList("ignoredName,otherName");
+		rule.setCsrfIgnoreList("ignoredName,otherName");
 
 		msg.setResponseBody("<html><head></head><body>"
 				+ "<form id=\"ignoredName\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
@@ -202,7 +201,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	@Test
 	public void shouldNotRaiseAlertWhenFormNameIsOnCsrfIgnoreList() {
 		//Given
-		((CSRFCountermeasures)rule).setCsrfIgnoreList("ignoredName,otherName");
+		rule.setCsrfIgnoreList("ignoredName,otherName");
 
 		msg.setResponseBody("<html><head></head><body>"
 				+ "<form name=\"otherName\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
@@ -216,7 +215,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	@Test
 	public void shouldRaiseInfoAlertWhenFormAttributeIsOnCsrfAttributeIgnoreList() {
 		//Given
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("data-no-csrf");
+		rule.setCSRFIgnoreAttName("data-no-csrf");
 
 		msg.setResponseBody("<html><head></head><body>"
 				+ "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
@@ -231,8 +230,8 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	@Test
 	public void shouldRaiseInfoAlertWhenFormAttributeAndValueMatchRuleConfig() {
 		//Given
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("data-no-csrf");
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttValue("data-no-csrf");
+		rule.setCSRFIgnoreAttName("data-no-csrf");
+		rule.setCSRFIgnoreAttValue("data-no-csrf");
 
 		msg.setResponseBody("<html><head></head><body>"
 				+ "<form name=\"someName\" data-no-csrf=\"data-no-csrf\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
@@ -247,7 +246,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	@Test
 	public void shouldRaiseLowAlertWhenFormAttributeAndRuleConfigMismatch() {
 		//Given
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("ignore");
+		rule.setCSRFIgnoreAttName("ignore");
 
 		msg.setResponseBody("<html><head></head><body>"
 				+ "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
@@ -262,7 +261,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	@Test
 	public void shouldNotRaiseAlertWhenThresholdHighAndMessageOutOfScope() throws URIException {
 		//Given
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("ignore");
+		rule.setCSRFIgnoreAttName("ignore");
 		HttpMessage msg = createScopedMessage(false);
 		//When
 		rule.setConfig(new ZapXmlConfiguration());
@@ -275,7 +274,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	@Test
 	public void shouldRaiseAlertWhenThresholdHighAndMessageInScope() throws URIException {
 		//Given
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("ignore");
+		rule.setCSRFIgnoreAttName("ignore");
 		HttpMessage msg = createScopedMessage(true);
 		//When
 		rule.setConfig(new ZapXmlConfiguration());
@@ -288,7 +287,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	@Test
 	public void shouldRaiseAlertWhenThresholdMediumAndMessageOutOfScope() throws URIException {
 		//Given
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("ignore");
+		rule.setCSRFIgnoreAttName("ignore");
 		HttpMessage msg = createScopedMessage(false);
 		//When
 		rule.setConfig(new ZapXmlConfiguration());
@@ -301,7 +300,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	@Test
 	public void shouldRaiseAlertWhenThresholdLowAndMessageOutOfScope() throws URIException {
 		//Given
-		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("ignore");
+		rule.setCSRFIgnoreAttName("ignore");
 		HttpMessage msg = createScopedMessage(false);
 		//When
 		rule.setConfig(new ZapXmlConfiguration());

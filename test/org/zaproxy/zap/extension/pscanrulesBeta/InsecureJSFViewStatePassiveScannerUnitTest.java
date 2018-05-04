@@ -29,16 +29,15 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InsecureJSFViewStatePassiveScannerUnitTest extends
-        PassiveScannerTest {
+        PassiveScannerTest<InsecureJSFViewStatePassiveScanner> {
 
     private static final String BASE_RESOURCE_KEY = "pscanbeta.insecurejsfviewstate.";
     private static final String INSECURE_JSF = BASE_RESOURCE_KEY + "name";
 
     @Override
-    protected PluginPassiveScanner createScanner() {
+    protected InsecureJSFViewStatePassiveScanner createScanner() {
         return new InsecureJSFViewStatePassiveScanner();
     }
 
