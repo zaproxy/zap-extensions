@@ -13,7 +13,7 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: localhost:9090
+host: localhost:@@@PORT@@@
 basePath: /PetStore
 tags:
 - name: "pet"

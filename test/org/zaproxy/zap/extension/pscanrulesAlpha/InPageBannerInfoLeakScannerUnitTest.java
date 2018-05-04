@@ -29,9 +29,8 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class InPageBannerInfoLeakScannerUnitTest extends PassiveScannerTest {
+public class InPageBannerInfoLeakScannerUnitTest extends PassiveScannerTest<InPageBannerInfoLeakScanner> {
 
 	private HttpMessage createMessage(String banner) throws URIException {
 		HttpRequestHeader requestHeader = new HttpRequestHeader();
@@ -45,7 +44,7 @@ public class InPageBannerInfoLeakScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected InPageBannerInfoLeakScanner createScanner() {
 		return new InPageBannerInfoLeakScanner();
 	}
 
@@ -90,7 +89,7 @@ public class InPageBannerInfoLeakScannerUnitTest extends PassiveScannerTest {
 		String jettyBanner = "Jetty://9.4z-SNAPSHOT";
 		HttpMessage msg = createMessage(jettyBanner);
 		msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
-		((InPageBannerInfoLeakScanner) rule).setAlertThreshold(AlertThreshold.LOW);
+		rule.setAlertThreshold(AlertThreshold.LOW);
 		// When
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 		// Then

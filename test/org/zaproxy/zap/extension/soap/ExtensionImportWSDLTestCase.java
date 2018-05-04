@@ -4,9 +4,9 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.zaproxy.zap.extension.ScannerTestUtils;
+import org.zaproxy.zap.testutils.TestUtils;
 
-public class ExtensionImportWSDLTestCase extends ScannerTestUtils {
+public class ExtensionImportWSDLTestCase extends TestUtils {
 
 	ExtensionImportWSDL extension;
 	

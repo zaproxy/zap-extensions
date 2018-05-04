@@ -40,12 +40,13 @@ import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerException;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import io.swagger.models.Scheme;
 
-public class OpenApiUnitTest extends ServerBasedTest {
+public class OpenApiUnitTest extends AbstractOpenApiTest {
     
     @Test
     public void shouldExplorePetStoreJson() throws NullPointerException, IOException, SwaggerException {
@@ -71,7 +72,7 @@ public class OpenApiUnitTest extends ServerBasedTest {
         requestor.addListener(listener);
         requestor.run(converter.getRequestModels());
         
-        checkPetStoreRequests(accessedUrls, "localhost:9090");
+        checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
     
     @Test
@@ -98,22 +99,17 @@ public class OpenApiUnitTest extends ServerBasedTest {
         requestor.addListener(listener);
         requestor.run(converter.getRequestModels());
         
-        checkPetStoreRequests(accessedUrls, "localhost:9090");
+        checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
     
     @Test
     public void shouldExplorePetStoreJsonOverrideHost() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
-        String altHost = "localhost:8888";
+        String altHost = "localhost:" + nano.getListeningPort();
         
         // Change port to check we use the new one
-        this.nano.stop();
-        nano = new HTTPDTestServer(8888);
-        nano.start();
-
-        
-        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn.json"));
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn.json", 9090));
         
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         requestor.setSiteOverride(altHost);
@@ -138,7 +134,7 @@ public class OpenApiUnitTest extends ServerBasedTest {
         // Given
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
-        String defaultHost = "localhost:9090";
+        String defaultHost = "localhost:" + nano.getListeningPort();
 
         this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_no_host.json"));
 
@@ -231,7 +227,7 @@ public class OpenApiUnitTest extends ServerBasedTest {
         // When
         requestor.run(converter.getRequestModels());
         // Then
-        checkPetStoreRequests(accessedUrls, "localhost:9090");
+        checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
     @Test(expected = SwaggerException.class)
@@ -328,7 +324,7 @@ public class OpenApiUnitTest extends ServerBasedTest {
         requestor.addListener(listener);
         requestor.run(converter.getRequestModels());
         
-        checkPetStoreRequestsValGen(accessedUrls, "localhost:9090");
+        checkPetStoreRequestsValGen(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
     private void checkPetStoreRequests(Map<String, String> accessedUrls, String host) {
@@ -439,22 +435,28 @@ public class OpenApiUnitTest extends ServerBasedTest {
         
     }
 
-    private static class DefnServerHandler extends NanoServerHandler {
+    private class DefnServerHandler extends NanoServerHandler {
 
         private final String defnName;
         private final String defnFileName;
+        private final String port;
 
         public DefnServerHandler(String name, String defnName, String defnFileName) {
+            this(name, defnName, defnFileName, nano.getListeningPort());
+        }
+
+        public DefnServerHandler(String name, String defnName, String defnFileName, int port) {
             super(name);
             this.defnName = defnName;
             this.defnFileName = defnFileName;
+            this.port = String.valueOf(port);
         }
 
         @Override
         protected Response serve(IHTTPSession session) {
             String response;
             if (session.getUri().endsWith(defnName)) {
-                response = getHtml(defnFileName);
+                response = getHtml(defnFileName, new String[][] { { "PORT", port } });
             } else {
                 // We dont actually care about the response in this handler ;)
                 response = getHtml("Blank.html");

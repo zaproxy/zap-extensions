@@ -27,9 +27,8 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class RetrievedFromCacheScannerUnitTest extends PassiveScannerTest {
+public class RetrievedFromCacheScannerUnitTest extends PassiveScannerTest<RetrievedFromCacheScanner> {
 
 	private static final String X_CACHE = "X-Cache";
 	private static final String AGE = "Age";
@@ -44,7 +43,7 @@ public class RetrievedFromCacheScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected RetrievedFromCacheScanner createScanner() {
 		return new RetrievedFromCacheScanner();
 	}
 
@@ -54,7 +53,7 @@ public class RetrievedFromCacheScannerUnitTest extends PassiveScannerTest {
 		// alerts
 
 		// Given
-		PluginPassiveScanner thisScanner = createScanner();
+		RetrievedFromCacheScanner thisScanner = createScanner();
 		// Then
 		assertThat(thisScanner.getName(), equalTo("Retrieved from Cache"));
 	}

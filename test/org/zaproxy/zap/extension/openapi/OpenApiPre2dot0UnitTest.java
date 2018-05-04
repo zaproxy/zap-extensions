@@ -34,11 +34,12 @@ import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerException;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 
-public class OpenApiPre2dot0UnitTest extends ServerBasedTest {
+public class OpenApiPre2dot0UnitTest extends AbstractOpenApiTest {
     @Test
     public void shouldExplorePetStore1_2() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStore_1_2_defn/";
@@ -49,7 +50,9 @@ public class OpenApiPre2dot0UnitTest extends ServerBasedTest {
                 String response;
                 String uri = session.getUri();
                 if (uri.endsWith("defn.json")) {
-                    response = getHtml("PetStore_1_2_defn.json");
+                    response = getHtml(
+                            "PetStore_1_2_defn.json",
+                            new String[][] { { "PORT", String.valueOf(nano.getListeningPort()) } });
                 } else {
                     // We dont actually care about the response in this test ;)
                     response = getHtml("Blank.html");
@@ -72,7 +75,7 @@ public class OpenApiPre2dot0UnitTest extends ServerBasedTest {
         requestor.addListener(listener);
         requestor.run(converter.getRequestModels());
         
-        checkPetStore2dot0Requests(accessedUrls, "localhost:9090");
+        checkPetStore2dot0Requests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
     private void checkPetStore2dot0Requests(Map<String, String> accessedUrls, String host) {

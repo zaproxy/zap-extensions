@@ -29,9 +29,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class DirectoryBrowsingScannerUnitTest extends PassiveScannerTest {
+public class DirectoryBrowsingScannerUnitTest extends PassiveScannerTest<DirectoryBrowsingScanner> {
 
 	private HttpMessage createMessage() throws URIException {
 		HttpRequestHeader requestHeader = new HttpRequestHeader();
@@ -45,7 +44,7 @@ public class DirectoryBrowsingScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected DirectoryBrowsingScanner createScanner() {
 		return new DirectoryBrowsingScanner();
 	}
 

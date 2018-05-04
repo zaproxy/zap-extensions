@@ -27,9 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class UsernameIdorScannerUnitTest extends PassiveScannerTest {
+public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdorScanner> {
 
 	private HttpMessage msg;
 
@@ -40,7 +39,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest {
 	@Before
 	public void before() throws URIException {
 
-		((UsernameIdorScanner) rule).setUsers("guest");
+		rule.setUsers("guest");
 
 		HttpRequestHeader requestHeader = new HttpRequestHeader();
 		requestHeader.setURI(new URI("http://example.com", false));
@@ -50,7 +49,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected UsernameIdorScanner createScanner() {
 		return new UsernameIdorScanner();
 	}
 

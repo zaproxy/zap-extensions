@@ -29,9 +29,8 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class ServerHeaderInfoLeakScannerUnitTest extends PassiveScannerTest {
+public class ServerHeaderInfoLeakScannerUnitTest extends PassiveScannerTest<ServerHeaderInfoLeakScanner> {
 
 	private static final String SERVER = "Server";
 
@@ -45,7 +44,7 @@ public class ServerHeaderInfoLeakScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected ServerHeaderInfoLeakScanner createScanner() {
 		return new ServerHeaderInfoLeakScanner();
 	}
 
@@ -55,7 +54,7 @@ public class ServerHeaderInfoLeakScannerUnitTest extends PassiveScannerTest {
 		// alerts
 
 		// Given
-		PluginPassiveScanner thisScanner = createScanner();
+		ServerHeaderInfoLeakScanner thisScanner = createScanner();
 		// Then
 		assertThat(thisScanner.getName(), equalTo("HTTP Server Response Header Scanner"));
 	}
@@ -100,7 +99,7 @@ public class ServerHeaderInfoLeakScannerUnitTest extends PassiveScannerTest {
 		String bareApacheHeader = "Apache";
 		HttpMessage msg = createMessage();
 		msg.getResponseHeader().addHeader(SERVER, bareApacheHeader);
-		((ServerHeaderInfoLeakScanner) rule).setAlertThreshold(AlertThreshold.LOW);
+		rule.setAlertThreshold(AlertThreshold.LOW);
 		// When
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 		// Then

@@ -28,9 +28,8 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class StrictTransportSecurityScannerUnitTest extends PassiveScannerTest {
+public class StrictTransportSecurityScannerUnitTest extends PassiveScannerTest<StrictTransportSecurityScanner> {
 
 	private static final String STS_HEADER = "Strict-Transport-Security";
 	private static final String HEADER_VALUE = "max-age=31536000";// 1 year
@@ -46,7 +45,7 @@ public class StrictTransportSecurityScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected StrictTransportSecurityScanner createScanner() {
 		return new StrictTransportSecurityScanner();
 	}
 
@@ -56,7 +55,7 @@ public class StrictTransportSecurityScannerUnitTest extends PassiveScannerTest {
 		// alerts
 
 		// Given
-		PluginPassiveScanner thisScanner = createScanner();
+		StrictTransportSecurityScanner thisScanner = createScanner();
 		// Then
 		assertThat(thisScanner.getName(), equalTo("Strict-Transport-Security Header Scanner"));
 	}
@@ -167,7 +166,7 @@ public class StrictTransportSecurityScannerUnitTest extends PassiveScannerTest {
 		HttpMessage msg = createMessage();
 		msg.getRequestHeader().setSecure(false);
 		msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
-		((StrictTransportSecurityScanner) rule).setAlertThreshold(AlertThreshold.LOW);
+		rule.setAlertThreshold(AlertThreshold.LOW);
 		// When
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 		// Then
@@ -181,7 +180,7 @@ public class StrictTransportSecurityScannerUnitTest extends PassiveScannerTest {
 		// Given
 		HttpMessage msg = createMessage();
 		msg.getRequestHeader().setSecure(false);
-		((StrictTransportSecurityScanner) rule).setAlertThreshold(AlertThreshold.LOW);
+		rule.setAlertThreshold(AlertThreshold.LOW);
 		// When
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 		// Then

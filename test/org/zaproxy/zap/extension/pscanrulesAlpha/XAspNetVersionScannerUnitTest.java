@@ -26,7 +26,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class XAspNetVersionScannerUnitTest extends PassiveScannerTest {
+public class XAspNetVersionScannerUnitTest extends PassiveScannerTest<XAspNetVersionScanner> {
 
     @Override
     protected XAspNetVersionScanner createScanner() {

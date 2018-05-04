@@ -30,9 +30,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class InsecureFormLoadScannerUnitTest extends PassiveScannerTest {
+public class InsecureFormLoadScannerUnitTest extends PassiveScannerTest<InsecureFormLoadScanner> {
 
 	private HttpMessage createMessage() throws URIException {
 		HttpRequestHeader requestHeader = new HttpRequestHeader();
@@ -46,7 +45,7 @@ public class InsecureFormLoadScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected InsecureFormLoadScanner createScanner() {
 		return new InsecureFormLoadScanner();
 	}
 
