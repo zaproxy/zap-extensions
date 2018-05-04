@@ -27,7 +27,6 @@ import java.util.Arrays;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.encoder.Base64;
@@ -123,7 +122,6 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest {
 	}
 	
 	@Test
-	@Ignore // Ignored due to Java compatibility issues (works in 8, fails in 7)
 	public void shouldNotRaiseAlertAsTheParametersDoNotHaveEmailsOrIps() {
 		msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"/wEPDwUJODczNjQ5OTk0D2QWAgIDD2QWAgIFDw8WAh4EVGV4dAUWSSBMb3ZlIERvdG5ldEN1cnJ5LmNvbWRkZMHbBY9JqBTvB5/6kXnY15AUSAwa\">");
 		
@@ -133,7 +131,6 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest {
 	}	
 	
 	@Test
-	@Ignore // Ignored due to Java compatibility issues (works in 8, fails in 7)
 	public void shouldRaiseAlertBecauseTheParametersDoesHaveEmail() {
 		String encodedViewstate = getViewstateWithText("test@test.com");
 		msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"" + encodedViewstate +  "\">");
@@ -151,7 +148,6 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest {
 	}	
 	
 	@Test
-	@Ignore // Ignored due to Java compatibility issues (works in 8, fails in 7)
 	public void shouldRaiseAlertBecauseTheParametersDoesHaveIP() {
 		String encodedViewstate = getViewstateWithText("127.0.0.1");
 		msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"" + encodedViewstate +  "\">");
