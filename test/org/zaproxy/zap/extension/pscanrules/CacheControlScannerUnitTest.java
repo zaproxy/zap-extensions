@@ -29,7 +29,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class CacheControlScannerUnitTest extends PassiveScannerTest {
+public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControlScanner> {
 
     @Override
     protected CacheControlScanner createScanner() {

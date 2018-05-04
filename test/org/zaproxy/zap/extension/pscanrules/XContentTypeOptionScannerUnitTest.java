@@ -30,7 +30,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class XContentTypeOptionScannerUnitTest extends PassiveScannerTest {
+public class XContentTypeOptionScannerUnitTest extends PassiveScannerTest<XContentTypeOptionsScanner> {
 
     @Override
     protected XContentTypeOptionsScanner createScanner() {

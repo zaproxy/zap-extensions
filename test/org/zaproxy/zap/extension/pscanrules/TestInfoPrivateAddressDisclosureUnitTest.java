@@ -28,13 +28,12 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class TestInfoPrivateAddressDisclosureUnitTest extends PassiveScannerTest {
+public class TestInfoPrivateAddressDisclosureUnitTest extends PassiveScannerTest<TestInfoPrivateAddressDisclosure> {
 	private static final String URI = "https://www.example.com/";
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected TestInfoPrivateAddressDisclosure createScanner() {
 		return new TestInfoPrivateAddressDisclosure();
 	}
 

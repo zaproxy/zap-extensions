@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class CookieSecureFlagScannerUnitTest extends PassiveScannerTest {
+public class CookieSecureFlagScannerUnitTest extends PassiveScannerTest<CookieSecureFlagScanner> {
 
     private Model model;
 
@@ -44,8 +44,8 @@ public class CookieSecureFlagScannerUnitTest extends PassiveScannerTest {
         ZapXmlConfiguration conf = new ZapXmlConfiguration();
         options.load(conf);
         when(model.getOptionsParam()).thenReturn(options);
-        ((CookieSecureFlagScanner)rule).setModel(model);
-        return (CookieSecureFlagScanner)rule;
+        rule.setModel(model);
+        return rule;
     }
 
     @Test
