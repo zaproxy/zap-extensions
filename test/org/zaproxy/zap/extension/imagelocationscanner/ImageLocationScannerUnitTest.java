@@ -27,23 +27,24 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.imagelocationscanner.ImageLocationScanner;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.extension.pscanrulesAlpha.PassiveScannerTest;
+import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-public class ImageLocationScannerUnitTest extends PassiveScannerTest {
+public class ImageLocationScannerUnitTest extends PassiveScannerTestUtils<ImageLocationScanner> {
 	private static final int PLUGIN_ID = ImageLocationScanner.PLUGIN_ID;
 	private static final String URI = "https://www.example.com/";
-	private static final String IMAGES_DIR = "test/resources/org/zaproxy/zap/extension/imagelocationscanner";
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected void setUpMessages() {
+		mockMessages(new ExtensionImageLocationScanner());
+	}
+
+	@Override
+	protected ImageLocationScanner createScanner() {
 		return new ImageLocationScanner();
 	}
 
@@ -135,7 +136,7 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 		msg.setResponseHeader(	"HTTP/1.1 200 OK\r\n"
 								+ "Content-Type: image/jpg\r\n"
 							);
-		msg.setResponseBody(Files.readAllBytes(Paths.get(IMAGES_DIR + "/" + filename )));
+		msg.setResponseBody(Files.readAllBytes(getResourcePath(filename)));
 
 		return msg;
 	}

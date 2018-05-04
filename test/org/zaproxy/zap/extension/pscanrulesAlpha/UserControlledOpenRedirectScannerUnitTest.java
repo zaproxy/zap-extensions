@@ -32,12 +32,11 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class UserControlledOpenRedirectScannerUnitTest extends PassiveScannerTest {
+public class UserControlledOpenRedirectScannerUnitTest extends PassiveScannerTest<UserControlledOpenRedirectScanner> {
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected UserControlledOpenRedirectScanner createScanner() {
 		return new UserControlledOpenRedirectScanner();
 	}
 

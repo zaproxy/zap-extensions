@@ -30,12 +30,11 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class UserControlledHTMLAttributesScannerUnitTest extends PassiveScannerTest {
+public class UserControlledHTMLAttributesScannerUnitTest extends PassiveScannerTest<UserControlledHTMLAttributesScanner> {
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected UserControlledHTMLAttributesScanner createScanner() {
 		return new UserControlledHTMLAttributesScanner();
 	}
 

@@ -31,9 +31,8 @@ import org.junit.Test;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class XChromeLoggerDataInfoLeakScannerUnitTest extends PassiveScannerTest {
+public class XChromeLoggerDataInfoLeakScannerUnitTest extends PassiveScannerTest<XChromeLoggerDataInfoLeakScanner> {
 
 	private static final String XCLD = "X-ChromeLogger-Data";
 	private static final String XCPD = "X-ChromePhp-Data";
@@ -57,7 +56,7 @@ public class XChromeLoggerDataInfoLeakScannerUnitTest extends PassiveScannerTest
 	}
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected XChromeLoggerDataInfoLeakScanner createScanner() {
 		return new XChromeLoggerDataInfoLeakScanner();
 	}
 

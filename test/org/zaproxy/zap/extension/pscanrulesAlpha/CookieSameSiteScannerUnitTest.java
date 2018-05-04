@@ -25,12 +25,11 @@ import org.junit.Test;
 
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class CookieSameSiteScannerUnitTest extends PassiveScannerTest {
+public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSameSiteScanner> {
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected CookieSameSiteScanner createScanner() {
 		return new CookieSameSiteScanner();
 	}
 

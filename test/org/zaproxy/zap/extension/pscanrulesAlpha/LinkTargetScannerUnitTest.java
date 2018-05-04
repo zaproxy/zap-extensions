@@ -34,18 +34,17 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class LinkTargetScannerUnitTest extends PassiveScannerTest {
+public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScanner> {
     
     private static final String HTML_CONTENT_TYPE = "text/html;charset=ISO-8859-1";
     private static final String TEXT_CONTENT_TYPE = "text/plain; charset=us-ascii";
 
     @Override
-    protected PluginPassiveScanner createScanner() {
-        PluginPassiveScanner scanner =  new LinkTargetScanner();
+    protected LinkTargetScanner createScanner() {
+        LinkTargetScanner scanner =  new LinkTargetScanner();
         scanner.setConfig(new ZapXmlConfiguration());
         return scanner;
     }
@@ -63,7 +62,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -82,7 +81,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -106,7 +105,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         contextList.add(context1);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contextList);
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -124,7 +123,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Model model = Mockito.mock(Model.class);
         Session session = Mockito.mock(Session.class);
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -143,7 +142,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Model model = Mockito.mock(Model.class);
         Session session = Mockito.mock(Session.class);
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -164,7 +163,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -184,7 +183,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -204,11 +203,11 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        ((LinkTargetScanner)rule).setAlertThreshold(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
         msg.setResponseBody("<html><a href=\"http://www.example2.com\" target=\"other\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
@@ -224,7 +223,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -251,7 +250,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -276,7 +275,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -301,7 +300,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -327,7 +326,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -346,7 +345,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -365,7 +364,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -389,7 +388,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -416,7 +415,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -440,7 +439,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -464,7 +463,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -488,7 +487,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner) rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -505,7 +504,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest {
         Model model = Mockito.mock(Model.class);
         Session session = Mockito.mock(Session.class);
         when(model.getSession()).thenReturn(session);
-        ((LinkTargetScanner)rule).setModel(model);
+        rule.setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

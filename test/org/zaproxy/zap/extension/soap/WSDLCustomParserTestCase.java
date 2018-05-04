@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -13,8 +12,9 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.testutils.TestUtils;
 
-public class WSDLCustomParserTestCase {
+public class WSDLCustomParserTestCase extends TestUtils {
 
 	private String wsdlContent;
 	private WSDLCustomParser parser;
@@ -27,7 +27,7 @@ public class WSDLCustomParserTestCase {
 		rootLogger.setLevel(Level.OFF);
 		
 		/* Gets test wsdl file and retrieves its content as String. */
-		Path wsdlPath = Paths.get(getClass().getResource("resources/test.wsdl").toURI());
+		Path wsdlPath = getResourcePath("resources/test.wsdl");
 		wsdlContent = new String(Files.readAllBytes(wsdlPath), StandardCharsets.UTF_8);
 
 		parser = new WSDLCustomParser();

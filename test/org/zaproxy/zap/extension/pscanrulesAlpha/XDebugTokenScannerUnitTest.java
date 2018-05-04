@@ -25,15 +25,14 @@ import static org.junit.Assert.assertThat;
 
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class XDebugTokenScannerUnitTest extends PassiveScannerTest {
+public class XDebugTokenScannerUnitTest extends PassiveScannerTest<XDebugTokenScanner> {
 	
 	private static final String X_DEBUG_TOKEN_HEADER = "X-Debug-Token";
 	private static final String X_DEBUG_TOKEN_LINK_HEADER = "X-Debug-Token-Link";
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected XDebugTokenScanner createScanner() {
 		return new XDebugTokenScanner();
 	}
 	

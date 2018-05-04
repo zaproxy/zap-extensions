@@ -30,14 +30,13 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 import net.htmlparser.jericho.Source;
 
-public class UserControlledCharsetScannerUnitTest extends PassiveScannerTest {
+public class UserControlledCharsetScannerUnitTest extends PassiveScannerTest<UserControlledCharsetScanner> {
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected UserControlledCharsetScanner createScanner() {
 		return new UserControlledCharsetScanner();
 	}
 

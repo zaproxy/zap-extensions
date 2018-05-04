@@ -33,12 +33,11 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class UserControlledCookieScannerUnitTest extends PassiveScannerTest {
+public class UserControlledCookieScannerUnitTest extends PassiveScannerTest<UserControlledCookieScanner> {
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected UserControlledCookieScanner createScanner() {
 		return new UserControlledCookieScanner();
 	}
 

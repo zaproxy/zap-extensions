@@ -25,15 +25,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
  * @author Vahid Rafiei (@vahid_r)
  */
-public class XPoweredByHeaderInfoLeakScannerUnitTest extends PassiveScannerTest {
+public class XPoweredByHeaderInfoLeakScannerUnitTest extends PassiveScannerTest<XPoweredByHeaderInfoLeakScanner> {
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected XPoweredByHeaderInfoLeakScanner createScanner() {
 		return new XPoweredByHeaderInfoLeakScanner();
 	}
 

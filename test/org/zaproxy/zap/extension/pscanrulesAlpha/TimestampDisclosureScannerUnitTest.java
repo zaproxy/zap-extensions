@@ -26,11 +26,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 import static org.junit.Assert.assertEquals;
 
-public class TimestampDisclosureScannerUnitTest extends PassiveScannerTest  {
+public class TimestampDisclosureScannerUnitTest extends PassiveScannerTest<TimestampDisclosureScanner> {
     private HttpMessage msg;
 
     @Before
@@ -43,7 +42,7 @@ public class TimestampDisclosureScannerUnitTest extends PassiveScannerTest  {
     }
 
     @Override
-    protected PluginPassiveScanner createScanner() {
+    protected TimestampDisclosureScanner createScanner() {
         return new TimestampDisclosureScanner();
     }
 

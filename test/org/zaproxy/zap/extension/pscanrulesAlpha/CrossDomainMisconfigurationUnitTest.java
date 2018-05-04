@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class CrossDomainMisconfigurationUnitTest extends PassiveScannerTest {
+public class CrossDomainMisconfigurationUnitTest extends PassiveScannerTest<CrossDomainMisconfiguration> {
 
     private static final String URI = "http://example.com/";
 

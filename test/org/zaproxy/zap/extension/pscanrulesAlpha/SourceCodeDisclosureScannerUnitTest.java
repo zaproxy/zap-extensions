@@ -24,12 +24,10 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-
-public class SourceCodeDisclosureScannerUnitTest extends PassiveScannerTest {
+public class SourceCodeDisclosureScannerUnitTest extends PassiveScannerTest<SourceCodeDisclosureScanner> {
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected SourceCodeDisclosureScanner createScanner() {
 		return new SourceCodeDisclosureScanner();
 	}
 
@@ -39,7 +37,7 @@ public class SourceCodeDisclosureScannerUnitTest extends PassiveScannerTest {
 		// alone in alerts
 
 		// Given
-		PluginPassiveScanner thisScanner = createScanner();
+		SourceCodeDisclosureScanner thisScanner = createScanner();
 		// Then
 		assertThat(thisScanner.getName(), equalTo("Source Code Disclosure"));
 	}

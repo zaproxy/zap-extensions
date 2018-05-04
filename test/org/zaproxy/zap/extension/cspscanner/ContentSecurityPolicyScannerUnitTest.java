@@ -26,13 +26,12 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.extension.pscanrulesAlpha.PassiveScannerTest;
+import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-public class ContentSecurityPolicyScannerUnitTest extends PassiveScannerTest {
+public class ContentSecurityPolicyScannerUnitTest extends PassiveScannerTestUtils<ContentSecurityPolicyScanner> {
 
     @Override
-    protected PluginPassiveScanner createScanner() {
+    protected ContentSecurityPolicyScanner createScanner() {
         return new ContentSecurityPolicyScanner();
     }
 

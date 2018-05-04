@@ -27,9 +27,8 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class XBackendServerInformationLeakUnitTest extends PassiveScannerTest {
+public class XBackendServerInformationLeakUnitTest extends PassiveScannerTest<XBackendServerInformationLeak> {
 
 	private static final String XBS_HEADER = "X-Backend-Server";
 	private static final String HEADER_VALUE = "developer1.webapp.scl3.mozilla.com";
@@ -44,7 +43,7 @@ public class XBackendServerInformationLeakUnitTest extends PassiveScannerTest {
 	}
 
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected XBackendServerInformationLeak createScanner() {
 		return new XBackendServerInformationLeak();
 	}
 

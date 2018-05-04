@@ -28,7 +28,6 @@ import static org.junit.Assert.assertThat;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +36,7 @@ import java.util.Collection;
  * @author Michael Kruglos (@michaelkruglos)
  */
 @RunWith(Parameterized.class)
-public class PiiScannerCreditCardUnitTest extends PassiveScannerTest {
+public class PiiScannerCreditCardUnitTest extends PassiveScannerTest<PiiScanner> {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
@@ -63,7 +62,7 @@ public class PiiScannerCreditCardUnitTest extends PassiveScannerTest {
     public String cardNumber;
 
     @Override
-    protected PluginPassiveScanner createScanner() {
+    protected PiiScanner createScanner() {
         return new PiiScanner();
     }
 
