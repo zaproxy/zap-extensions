@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Community Scripts</name>
-	<version>6</version>
+	<version>7</version>
 	<status>alpha</status>
 	<description>Useful ZAP scripts written by the ZAP community.</description>
 	<author>ZAP Community</author>
@@ -48,6 +48,13 @@
 		<file>community-scripts/passive/Find HTML Comments.js</file>
 		<file>community-scripts/passive/Find Hashes.js</file>
 		<file>community-scripts/passive/Find Internal IPs.js</file>
+		<file>community-scripts/passive/HUNT - Debug &amp; Logic Parameters.py</file>
+		<file>community-scripts/passive/HUNT - File Inclusion.py</file>
+		<file>community-scripts/passive/HUNT - IDOR.py</file>
+		<file>community-scripts/passive/HUNT - RCE.py</file>
+		<file>community-scripts/passive/HUNT - SQLi.py</file>
+		<file>community-scripts/passive/HUNT - SSRF.py</file>
+		<file>community-scripts/passive/HUNT - SSTI.py</file>
 		<file>community-scripts/passive/Mutliple Security Header Check.js</file>
 		<file>community-scripts/passive/README.md</file>
 		<file>community-scripts/passive/RPO.js</file>
@@ -101,8 +108,10 @@
 		<file>community-scripts/proxy/Show commented out in response body.zst</file>
 		<file>community-scripts/proxy/Useragent Replace.js</file>
 		<file>community-scripts/proxy/WAF_Bypass.js</file>
+		<file>community-scripts/proxy/dropCookiesSelectively.js</file>
 		<file>community-scripts/sequence/README.md</file>
 		<file>community-scripts/standalone/Active scan rule list.js</file>
+		<file>community-scripts/standalone/Loop through alerts.js</file>
 		<file>community-scripts/standalone/Loop through history table.js</file>
 		<file>community-scripts/standalone/Open Fortune 500 websites in a browser.zst</file>
 		<file>community-scripts/standalone/Persona Create Account.zst</file>
@@ -110,8 +119,10 @@
 		<file>community-scripts/standalone/Run report.js</file>
 		<file>community-scripts/standalone/Traverse sites tree.js</file>
 		<file>community-scripts/standalone/domainFinder.js</file>
+		<file>community-scripts/standalone/enableDebugLogging.js</file>
 		<file>community-scripts/standalone/extHistoryEnumerator.py</file>
 		<file>community-scripts/standalone/historySourceTagger.js</file>
+		<file>community-scripts/standalone/loadListInGlobalVariable.js</file>
 		<file>community-scripts/standalone/past_cookies_jar.py</file>
 		<file>community-scripts/standalone/window_creation_template.js</file>
 		<file>community-scripts/standalone/window_creation_template.py</file>
@@ -128,6 +139,8 @@
 		<file>community-scripts/targeted/search cvedetails using target server header.js</file>
 		<file>community-scripts/variant/JsonStrings.js</file>
 		<file>community-scripts/variant/README.md</file>
+		<file>community-scripts/variant/param_name_variant.js</file>
+		<file>community-scripts/websocketfuzzerprocessor/README.md</file>
 	</files>
 	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>

@@ -1,4 +1,6 @@
 // This script allow you to return 'fake' responses for any requests you like.
+// By setting the logic in proxyRequest(), the request will not be sent to the server.
+// By setting the logic in proxyResponse(), the request will be sent to the server.
 
 function proxyRequest(msg) {
 	// Change this test to match whatever requests you want to fake
@@ -18,6 +20,6 @@ function proxyRequest(msg) {
 }
 
 function proxyResponse(msg) {
-	// Dont need to do anything here
+	// Dont typically need to do anything here
 	return true
 }
