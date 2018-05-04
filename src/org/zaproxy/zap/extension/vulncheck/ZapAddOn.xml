@@ -17,7 +17,6 @@
 	<ascanrules/>
 	<pscanrules>
 	</pscanrules>
-	<filters></filters>
 	<files/>
 	<not-before-version>2.5.0</not-before-version>
 	<not-from-version></not-from-version>

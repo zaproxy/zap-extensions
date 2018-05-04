@@ -22,7 +22,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>scripts/templates/sequence/sequence.zst</file>
 	</files>

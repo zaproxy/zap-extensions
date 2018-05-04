@@ -17,7 +17,6 @@
 	<pscanrules>
 		<pscanrule>org.zaproxy.zap.extension.imagelocationscanner.ImageLocationScanner</pscanrule>
 	</pscanrules>
-	<filters/>
 	<files>
 		<file>licenses/metadata-extractor-license.txt</file>
 		<file>licenses/xmpcore-license.txt</file>

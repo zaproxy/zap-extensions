@@ -15,7 +15,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>example/ExampleFile.txt</file>
 	</files>

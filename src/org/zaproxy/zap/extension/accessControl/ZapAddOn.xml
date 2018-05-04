@@ -18,7 +18,6 @@
 	</extensions>
 	<ascanrules />
 	<pscanrules />
-	<filters />
 	<files>
 		<file>xml/reportAccessControl.html.xsl</file>
 	</files>

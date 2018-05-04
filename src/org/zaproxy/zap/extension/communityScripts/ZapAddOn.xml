@@ -15,7 +15,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>community-scripts/README.md</file>
 		<file>community-scripts/active/README.md</file>

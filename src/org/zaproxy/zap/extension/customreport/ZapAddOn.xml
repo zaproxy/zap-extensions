@@ -16,7 +16,6 @@
         </extensions>
         <ascanrules/>
         <pscanrules/>
-        <filters/>
         <files>
                 <file>xml/mergeAlertitems.xml.xsl</file>
                 <file>xml/report.concise.html.xsl</file>
