@@ -28,9 +28,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class CharsetMismatchScannerUnitTest extends PassiveScannerTest {
+public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMismatchScanner> {
     
     private static final String BASE_RESOURCE_KEY = "pscanbeta.charsetmismatch.";
     private static final String NO_MISMATCH_METACONTENTTYPE_MISSING = BASE_RESOURCE_KEY + "variant.no_mismatch_metacontenttype_missing";
@@ -50,7 +49,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest {
     }
     
     @Override
-    protected PluginPassiveScanner createScanner() {
+    protected CharsetMismatchScanner createScanner() {
         return new CharsetMismatchScanner();
     }
 

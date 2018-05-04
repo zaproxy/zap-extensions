@@ -33,9 +33,8 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class InsecureAuthenticationScanUnitTest extends PassiveScannerTest {
+public class InsecureAuthenticationScanUnitTest extends PassiveScannerTest<InsecureAuthenticationScan> {
 
     private static final String BASE_RESOURCE_KEY = "pscanbeta.authenticationcredentialscaptured.";
     private static final String ALERT_NAME = BASE_RESOURCE_KEY + "name";
@@ -49,7 +48,7 @@ public class InsecureAuthenticationScanUnitTest extends PassiveScannerTest {
     private final String pass = "admin";
 
     @Override
-    protected PluginPassiveScanner createScanner() {
+    protected InsecureAuthenticationScan createScanner() {
         return new InsecureAuthenticationScan();
     }
 

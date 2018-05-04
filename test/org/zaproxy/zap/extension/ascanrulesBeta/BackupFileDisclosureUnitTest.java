@@ -26,6 +26,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;

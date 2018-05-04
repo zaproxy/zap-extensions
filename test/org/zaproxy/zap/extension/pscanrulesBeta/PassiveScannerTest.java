@@ -19,52 +19,14 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.htmlparser.jericho.Source;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.ScannerTestUtils;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-public abstract class PassiveScannerTest extends ScannerTestUtils {
+public abstract class PassiveScannerTest<T extends PluginPassiveScanner> extends PassiveScannerTestUtils<T> {
 
-    protected PluginPassiveScanner rule;
-    protected PassiveScanThread parent;
-    protected List<Alert> alertsRaised;
-
-    @BeforeClass
-    public static void beforeClass() {
+    @Override
+    protected void setUpMessages() {
         mockMessages(new ExtensionPscanRulesBeta());
-    }
-
-    public PassiveScannerTest() {
-        super();
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        alertsRaised = new ArrayList<>();
-        parent = new PassiveScanThread(null, null, new ExtensionAlert(), null) {
-            @Override
-            public void raiseAlert(int arg0, Alert arg1) {
-                alertsRaised.add(arg1);
-            }
-        };
-        rule = createScanner();
-        rule.setParent(parent);
-    }
-
-    protected abstract PluginPassiveScanner createScanner();
-    
-    protected Source createSource(HttpMessage msg) {
-        return new Source(msg.getResponseBody().toString());
     }
 
 }

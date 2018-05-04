@@ -32,9 +32,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class ViewStateScannerUnitTest extends PassiveScannerTest {
+public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanner> {
 	
 	private HttpMessage msg;
 	private HttpRequestHeader header;
@@ -49,7 +48,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest {
 	}
 	
 	@Override
-	protected PluginPassiveScanner createScanner() {
+	protected ViewstateScanner createScanner() {
 		return new ViewstateScanner();
 	}
 	

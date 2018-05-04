@@ -28,7 +28,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ServletParameterPollutionScannerUnitTest extends PassiveScannerTest {
+public class ServletParameterPollutionScannerUnitTest extends PassiveScannerTest<ServletParameterPollutionScanner> {
 
     public static final String URI = "http://www.example.com/test/";
 
