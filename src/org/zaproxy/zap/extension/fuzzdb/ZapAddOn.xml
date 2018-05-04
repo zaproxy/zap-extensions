@@ -9,7 +9,6 @@
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>fuzzers/fuzzdb/README.md</file>
 		<file>fuzzers/fuzzdb/_copyright.txt</file>

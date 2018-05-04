@@ -11,7 +11,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>lang/ZAPGettingStartedGuide-2.7-es_ES.pdf</file>
 		<file>lang/ZAPGettingStartedGuide-2.7-fil_PH.pdf</file>
