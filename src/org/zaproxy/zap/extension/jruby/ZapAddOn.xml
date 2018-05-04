@@ -15,7 +15,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>scripts/templates/active/Active default template.rb</file>
 		<file>scripts/templates/authentication/Authentication default template.rb</file>

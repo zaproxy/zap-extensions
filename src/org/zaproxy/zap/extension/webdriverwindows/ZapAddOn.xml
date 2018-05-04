@@ -15,7 +15,6 @@
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>webdriver/windows/32/chromedriver.exe</file>
 		<file>webdriver/windows/32/geckodriver.exe</file>

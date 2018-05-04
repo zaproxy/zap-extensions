@@ -19,7 +19,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>scripts/templates/extender/Add api call.js</file>
 		<file>scripts/templates/extender/Add history record menu.js</file>

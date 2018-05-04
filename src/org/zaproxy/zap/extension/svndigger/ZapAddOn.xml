@@ -13,7 +13,6 @@
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
-	<filters/>
 	<files>
 		<file>dirbuster/svndigger/Licence.txt</file>
 		<file>dirbuster/svndigger/ReadMe.txt</file>
