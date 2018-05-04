@@ -76,6 +76,11 @@ This check looks for insecure HTTP pages that host HTTPS forms. The issue is tha
 <H2>HTTPS to HTTP Insecure Transition in Form Post</H2>
 This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
 
+<H2>In Page Banner Information Leak</H2>
+Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
+If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
+The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
+
 <H2>Insecure Component</H2>
 Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
 A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable. 
