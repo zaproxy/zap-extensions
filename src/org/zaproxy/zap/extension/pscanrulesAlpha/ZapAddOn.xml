@@ -10,6 +10,7 @@
 	Help documentation improvements and cleanup.<br>
 	Prevent User Controlled HTML Attribute scanner from sometimes raising duplicate alerts.<br>
 	User Controlled HTML Attribute scanner now properly reports the parameter name in alerts.<br>
+	Add In Page Banner Info Leak scanner (Issue 178).<br>
 	]]>
 	</changes>
 	<extensions>
@@ -28,6 +29,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ExampleSimplePassiveScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HashDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HeartBleedScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InPageBannerInfoLeakScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureComponentScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>
