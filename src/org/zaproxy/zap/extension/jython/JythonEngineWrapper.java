@@ -27,12 +27,17 @@ import javax.script.ScriptEngine;
 import javax.swing.ImageIcon;
 
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.python.core.Py;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 
 public class JythonEngineWrapper extends DefaultEngineWrapper {
 
-	public JythonEngineWrapper(ScriptEngine engine) {
+	private final JythonOptionsParam options;
+
+	public JythonEngineWrapper(JythonOptionsParam options, ScriptEngine engine) {
 		super(engine);
+
+		this.options = options;
 	}
 
 	@Override
@@ -57,4 +62,10 @@ public class JythonEngineWrapper extends DefaultEngineWrapper {
 		return false;
 	}
 
+	@Override
+	public ScriptEngine getEngine() {
+		ScriptEngine engine = super.getEngine();
+		Py.getSystemState().path.append(Py.newString(options.getModulePath()));
+		return engine;
+	}
 }

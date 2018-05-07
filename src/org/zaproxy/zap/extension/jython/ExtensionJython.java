@@ -30,22 +30,17 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.OptionsChangedListener;
-import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
-import org.python.core.Py;
-import org.python.google.common.base.Strings;
 import org.python.jsr223.PyScriptEngineFactory;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 
-public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedListener {
+public class ExtensionJython extends ExtensionAdaptor {
 
 	public static final String NAME = "ExtensionJython";
 	public static final ImageIcon PYTHON_ICON;
@@ -66,7 +61,6 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 
 	private ExtensionScript extScript = null;
 	private JythonOptionsParam jythonOptionsParam;
-	private String modulePath;
 	private CountDownLatch engineLoaderCDL;
 
 	public ExtensionJython() {
@@ -78,6 +72,7 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 
+		this.jythonOptionsParam = new JythonOptionsParam();
 
 		ScriptEngineManager mgr = new ScriptEngineManager();
 		
@@ -95,7 +90,7 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 					try {
 						LOGGER.info("Loading Jython engine...");
 						getExtScript().registerScriptEngineWrapper(
-								new JythonEngineWrapper(new PyScriptEngineFactory().getScriptEngine()));
+								new JythonEngineWrapper(jythonOptionsParam, new PyScriptEngineFactory().getScriptEngine()));
 						LOGGER.info("Jython engine loaded.");
 					} finally {
 						if (engineLoaderCDL != null) {
@@ -108,13 +103,10 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 			engineLoaderThread.start();
 		}
 		
-		this.jythonOptionsParam = new JythonOptionsParam();
 		extensionHook.addOptionsParamSet(this.jythonOptionsParam);
 		if (null != super.getView()) {
 			extensionHook.getHookView().addOptionPanel(new JythonOptionsPanel());
 		}
-		
-		extensionHook.addOptionsChangedListener(this);
 	}
 	
 	@Override
@@ -131,35 +123,6 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 			} finally {
 				engineLoaderCDL = null;
 			}
-		}
-	}
-
-	@Override
-	public void optionsLoaded() {
-		super.optionsLoaded();
-
-		this.modulePath = this.jythonOptionsParam.getModulePath();
-		if (!Strings.isNullOrEmpty(this.modulePath)) {
-			Py.getSystemState().path.add(this.modulePath);
-		}
-	}
-	
-	@Override
-	public void optionsChanged(OptionsParam optionsParam) {
-		if (StringUtils.equals(this.modulePath, this.jythonOptionsParam.getModulePath())) {
-			// not changed. nothing to do.
-			return;
-		}
-		
-		// remove the old path
-		if (!Strings.isNullOrEmpty(this.modulePath)) {
-			Py.getSystemState().path.remove(this.modulePath);
-		}
-
-		// add the new path
-		this.modulePath = this.jythonOptionsParam.getModulePath();
-		if (!Strings.isNullOrEmpty(this.modulePath)) {
-			Py.getSystemState().path.add(this.modulePath);
 		}
 	}
 
