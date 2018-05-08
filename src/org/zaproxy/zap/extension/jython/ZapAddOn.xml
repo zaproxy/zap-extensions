@@ -1,16 +1,12 @@
 <zapaddon>
 	<name>Python Scripting</name>
-	<version>10</version>
+	<version>11</version>
 	<status>beta</status>
 	<description>Allows Python to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Correctly set path module defined in the options and address UI hang (Issue 4651).<br>
-	Minor tweak in extender template.<br>
-	Add default template for Script Input Vector.<br>
-	Add help page for the options.<br>
 	]]>
 	</changes>
 	<extensions>
