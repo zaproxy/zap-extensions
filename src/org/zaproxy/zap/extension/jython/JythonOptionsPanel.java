@@ -82,7 +82,7 @@ public class JythonOptionsPanel extends AbstractParamPanel {
 
 	@Override
 	public String getHelpIndex() {
-		return null;
+		return "jython.options";
 	}
 
 	@Override
