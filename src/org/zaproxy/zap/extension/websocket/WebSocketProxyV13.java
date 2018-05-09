@@ -546,6 +546,7 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 				newPayload.put(ArrayUtils.subarray(payload.array(), 4, payload.limit()), 2, payload.limit() - 4);
 			}
 			newPayload.put(newCloseCodeByte, 0, 2);
+			newPayload.position(0);
 			
 			return newPayload;
 		}
