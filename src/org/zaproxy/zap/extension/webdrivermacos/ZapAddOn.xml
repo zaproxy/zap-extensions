@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>MacOS WebDrivers</name>
-	<version>5</version>
+	<version>6</version>
 	<status>beta</status>
 	<description>MacOS WebDrivers for Firefox and Chrome.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Update ChromeDriver to 2.36<br>
-	Update geckodriver to v0.20.1<br>
-	Update minimum ZAP version to 2.5.0.<br>
 	]]>
 	</changes>
 	<extensions/>
