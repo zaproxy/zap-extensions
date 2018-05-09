@@ -6,4 +6,5 @@
 <map version="1.0">
 	<mapID target="python-logo" url="contents/images/python.png" />
     <mapID target="jython" url="contents/jython.html" />
+    <mapID target="jython.options" url="contents/options.html" />
 </map>
