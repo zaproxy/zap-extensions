@@ -10,6 +10,7 @@
 	Tweak About help page.<br>
 	Remove event consumers when the channel is closed.<br>
 	Don't enable the sender scripts by default.<br>
+	Fix send of CLOSE messages with message editor (Issue 4657).<br>
 	]]>
 	</changes>
 	<classnames>
