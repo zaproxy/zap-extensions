@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Sequence</name>
-	<version>5</version>
+	<version>6</version>
 	<status>alpha</status>
 	<description>Gives the possibility of defining a sequence of requests to be scanned.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	Issue 2000 - Updated strings shown in active scan dialog with title caps.<br>
 	]]>
 	</changes>
 	<dependencies>
