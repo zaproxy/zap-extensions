@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Update for 2.7.0.<br>
+	Issue 2000 - Updated strings shown in context menu with title caps.<br>
 	]]>
 	</changes>
 	<extensions>
