@@ -60,59 +60,58 @@ public class HttpHandshakeBuilder {
         List<String> connectionParameters = new ArrayList<>();
         connectionParameters.add(CONNECTION_UPGRADE_PARAMETER);
         connectionParameters.add(CONNECTION_KEEP_ALIVE_PARAMETER);
-        addConnectionHeader(httpRequestHeader,connectionParameters);
+        setConnectionHeader(httpRequestHeader,connectionParameters);
         
-        addUpgradeHeader(httpRequestHeader);
-        addGeneratedWebSocketKey(httpRequestHeader);
-        addWebSocketVersion(httpRequestHeader,WEBSOCKET_VERSION_13);
+        setUpgradeHeader(httpRequestHeader);
+        setGeneratedWebSocketKey(httpRequestHeader);
+        setWebSocketVersion(httpRequestHeader,WEBSOCKET_VERSION_13);
         return httpRequestHeader;
     }
     
     /**
-     * Generates and add a Sec-WebSocket-key to {@code httpRequestHeader}
+     * Generates and sets a Sec-WebSocket-key to {@code httpRequestHeader}
      * @param httpRequestHeader the http request header
      */
-    public static void addGeneratedWebSocketKey(HttpRequestHeader httpRequestHeader){
-        httpRequestHeader.addHeader(SEC_WEB_SOCKET_KEY, null); //Remove if any
-        httpRequestHeader.addHeader(SEC_WEB_SOCKET_KEY, WebSocketUtils.generateSecWebSocketKey());
+    public static void setGeneratedWebSocketKey(HttpRequestHeader httpRequestHeader){
+        httpRequestHeader.setHeader(SEC_WEB_SOCKET_KEY, WebSocketUtils.generateSecWebSocketKey());
     }
     
     
     /**
-     * Generates and add a Sec-WebSocket-key to {@code httpRequestHeader}
+     * Generates and sets a Sec-WebSocket-key to {@code httpRequestHeader}
+     *
      * @param httpRequestHeader the http request header
      */
-    public static void addWebSocketKey(HttpRequestHeader httpRequestHeader, String websocketKey){
-        httpRequestHeader.addHeader(SEC_WEB_SOCKET_KEY, null); //Remove if any
-        httpRequestHeader.addHeader(SEC_WEB_SOCKET_KEY, websocketKey);
+    public static void setWebSocketKey(HttpRequestHeader httpRequestHeader, String websocketKey){
+        httpRequestHeader.setHeader(SEC_WEB_SOCKET_KEY, websocketKey);
     }
     
     /**
-     * Adds header  {@code Connection} to {@code httpRequestHeader}
+     * Sets header  {@code Connection} to {@code httpRequestHeader}
      * @param httpRequestHeader the http request header
      * @param connectionValues new parameters of http header {@code Connection}
      */
-    public static void addConnectionHeader(HttpRequestHeader httpRequestHeader, List<String> connectionValues){
+    public static void setConnectionHeader(HttpRequestHeader httpRequestHeader, List<String> connectionValues){
         if(!connectionValues.isEmpty()){
-            httpRequestHeader.addHeader(CONNECTION,String.join(",",connectionValues));
+            httpRequestHeader.setHeader(CONNECTION,String.join(",",connectionValues));
         }
     }
     
     /**
-     * Adds http header and parameter {@code Upgrade: websocket }
+     * Set http header and parameter {@code Upgrade: websocket }
      * @param httpRequestHeader the http header
      */
-    public static void addUpgradeHeader(HttpRequestHeader httpRequestHeader){
-        httpRequestHeader.addHeader(UPGRADE_HEADER,UPGRADE_PARAMETER);
+    public static void setUpgradeHeader(HttpRequestHeader httpRequestHeader){
+        httpRequestHeader.setHeader(UPGRADE_HEADER,UPGRADE_PARAMETER);
     }
     
     /**
-     * Adds {@code Sec-WebSocket-Version} header to {@code httpRequestHeader}
+     * Set {@code Sec-WebSocket-Version} header to {@code httpRequestHeader}
      * @param httpRequestHeader the http request header
      * @param wsVersion version of websocket
      */
-    public static void addWebSocketVersion(HttpRequestHeader httpRequestHeader, int wsVersion){
-        httpRequestHeader.addHeader(SEC_WEB_SOCKET_VERSION,String.valueOf(wsVersion));
+    public static void setWebSocketVersion(HttpRequestHeader httpRequestHeader, int wsVersion){
+        httpRequestHeader.setHeader(SEC_WEB_SOCKET_VERSION,String.valueOf(wsVersion));
     }
     
 }

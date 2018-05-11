@@ -52,7 +52,16 @@ public class HandshakeConfig {
         this.followRedirects = followRedirects;
         this.useSessionState = useSessionState;
     }
-    
+
+	/**
+	 * Creates a basic configuration for a handshake message
+	 *
+	 * @param httpMessage the http handshake message
+	 */
+	public HandshakeConfig(HttpMessage httpMessage){
+		this.httpMessage = httpMessage;
+	}
+
     public HttpMessage getHttpMessage() {
         return httpMessage;
     }
