@@ -34,6 +34,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.ContextIncludePanel;
+import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
 public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
 
@@ -133,5 +134,10 @@ public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
 			return false;
 		}
     	return true;
+    }
+
+    @Override
+    public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
+        View.getSingleton().getPopupList().remove(this);
     }
 }
