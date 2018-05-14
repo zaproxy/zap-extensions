@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 		Include exception message in warning dialog when a parse error occurs (Issue 4667).<br>
+		Open previously chosen directory when importing local file.<br>
 	]]>
 	</changes>
 	<extensions>

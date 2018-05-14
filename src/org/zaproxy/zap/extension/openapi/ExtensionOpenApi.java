@@ -124,6 +124,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     final JFileChooser chooser = new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
                     int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
                     if (rc == JFileChooser.APPROVE_OPTION) {
+                        Model.getSingleton().getOptionsParam().setUserDirectory(chooser.getCurrentDirectory());
                         importOpenApiDefinition(chooser.getSelectedFile(), true);
                     }
 
