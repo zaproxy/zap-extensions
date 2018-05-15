@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>OpenAPI Support</name>
-	<version>11</version>
+	<version>12</version>
 	<status>alpha</status>
 	<description>Imports and spiders Open API definitions.</description>
 	<author>ZAP Core Team plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-		Include exception message in warning dialog when a parse error occurs (Issue 4667).<br>
-		Open previously chosen directory when importing local file.<br>
 	]]>
 	</changes>
 	<extensions>
