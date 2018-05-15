@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
@@ -103,7 +104,7 @@ public class SwaggerConverter implements Converter {
                     this.errors.add(msg);
                 }
             } catch (IOException e) {
-                throw new SwaggerException("Failed to parse swagger defn " + defn, e);
+                throw new SwaggerException(Constant.messages.getString("openapi.swaggerconverter.parse.defn.exception", defn), e);
             }
         }
         
@@ -111,7 +112,7 @@ public class SwaggerConverter implements Converter {
             String host = swagger.getHost();
             if (host == null) {
                 if (defaultHost == null || defaultHost.isEmpty()) {
-                    throw new SwaggerException("Default host required but not provided.");
+                    throw new SwaggerException(Constant.messages.getString("openapi.swaggerconverter.default.host.exception"));
                 }
                 host = defaultHost;
             }
@@ -120,7 +121,7 @@ public class SwaggerConverter implements Converter {
             List<Scheme> schemes = swagger.getSchemes();
             if (schemes == null || schemes.isEmpty()) {
                 if (defaultScheme == null) {
-                    throw new SwaggerException("Default scheme required but not provided.");
+                    throw new SwaggerException(Constant.messages.getString("openapi.swaggerconverter.default.scheme.exception"));
                 }
                 addOperations(swagger, defaultScheme, host, operations);
             } else {
@@ -129,7 +130,7 @@ public class SwaggerConverter implements Converter {
                 }
             }
         } else {
-            throw new SwaggerException("Failed to parse swagger defn " + defn);
+            throw new SwaggerException(Constant.messages.getString("openapi.swaggerconverter.parse.defn.exception", defn));
         }
         return operations;
     }
