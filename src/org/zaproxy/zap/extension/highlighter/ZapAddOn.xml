@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix help related exception in the Highlighter panel.<br>
+	Correct resizing of Highlighter panel.<br>
 	Update minimum ZAP version to 2.5.0.<br>
 	]]>
 	</changes>
