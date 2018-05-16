@@ -6,7 +6,7 @@
 // and Java 8's Nashorn JS engine
 if (typeof println == 'undefined') this.println = print;
 
-var pluginid = 100001	// https://github.com/zaproxy/zaproxy/blob/develop/src/doc/scanners.md
+var pluginid = 100001	// https://github.com/zaproxy/zaproxy/blob/develop/docs/scanners.md
 
 var extensionAlert = org.parosproxy.paros.control.Control.getSingleton().getExtensionLoader().getExtension(
 		org.zaproxy.zap.extension.alert.ExtensionAlert.NAME)

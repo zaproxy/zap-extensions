@@ -59,7 +59,7 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 	public int getPluginId() {
 		/*
 		 * This should be unique across all active and passive rules.
-		 * The master list is https://github.com/zaproxy/zaproxy/blob/develop/src/doc/scanners.md
+		 * The master list is https://github.com/zaproxy/zaproxy/blob/develop/docs/scanners.md
 		 */
 		return 60000;
 	}
