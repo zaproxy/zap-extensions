@@ -655,9 +655,13 @@
 		<generate-wiki-core addon="tips" />
 	</target>
 
-	<target name="deploy-tokengen" depends="clean,compile" description="deploy the tokengen extension">
-		<build-tokengen-addon />
-		<deploy-addon name="tokengen" />
+	<target name="deploy-tokengen" description="deploy the tokengen extension">
+		<build-deploy-addon name="tokengen" />
+	</target>
+
+	<target name="deploy-tokengen-without-help-indexes" description="deploy the tokengen extension, without building help indexes">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="tokengen" />
 	</target>
 
 	<target name="deploy-zest" description="deploy the zest extension">
