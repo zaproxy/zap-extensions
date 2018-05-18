@@ -68,7 +68,8 @@ public class SwaggerConverter implements Converter {
         generators = new Generators(valueGenerator);
         operationHelper = new OperationHelper();
         requestConverter = new RequestModelConverter();
-        this.defn = defn;
+        // Remove BOM, if any. Swagger library checks the first char to decide if it should be parsed as JSON or YAML.
+        this.defn = defn.replace("\uFEFF", "");
     }
 
     public List<RequestModel> getRequestModels() throws SwaggerException {

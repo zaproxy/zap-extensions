@@ -7,6 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
+	Ignore BOM when parsing and don't rely on default character encoding (Issue 4676).<br>
 	]]>
 	</changes>
 	<extensions>
