@@ -187,7 +187,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public List<String> importOpenApiDefinition(final File file, boolean initViaUi) {
         try {
-            return importOpenApiDefinition(null, null, FileUtils.readFileToString(file), null, initViaUi);
+            return importOpenApiDefinition(null, null, FileUtils.readFileToString(file, "UTF-8"), null, initViaUi);
         } catch (IOException e) {
             if (initViaUi) {
                 View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.io.error"));
