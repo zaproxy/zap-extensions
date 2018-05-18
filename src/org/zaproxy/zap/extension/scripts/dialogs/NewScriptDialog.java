@@ -169,6 +169,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 			list.add("");
 		}
 		list.addAll(extension.getExtScript().getScriptingEngines());
+		// TODO Remove the following workaround once targeting core version that respects ScriptEngineWrapper.isVisible.
 		// Remove the null scripting engine - unfortunately there is no easy way to do this
 		// and ExtensionScript.LANG_ENGINE_SEP (" : ") is private
 		list.remove(" : " + NullScriptEngineWrapper.NAME);
