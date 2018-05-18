@@ -1,19 +1,12 @@
 <zapaddon>
-	<name>Token generation and analysis</name>
-	<version>12</version>
+	<name>Token Generation and Analysis</name>
+	<version>13</version>
 	<status>beta</status>
 	<description>Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Stop the test and clear the panel on session changes.<br>
-	Respect the current mode and react to changes.<br>
-	Inform of running test (e.g. on session change, add-on uninstall).<br>
-	Allow to configure the number of threads.<br>
-	Allow to delay the requests.<br>
-	Update minimum ZAP version to 2.6.0.<br>
-	Deletes the cookie in question before sending the request.<br>
 	]]>
 	</changes>
 	<extensions>
