@@ -20,7 +20,6 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import java.awt.EventQueue;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,6 +29,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
@@ -53,22 +53,14 @@ import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
-import com.google.re2j.PatternSyntaxException;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChangedListener, SiteMapListener {
+public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChangedListener, SiteMapListener, WappalyzerApplicationHolder {
 
 	public static final String NAME = "ExtensionWappalyzer";
-	
-	private static final String RESOURCE = "/org/zaproxy/zap/extension/wappalyzer/resources";
-	
+
+	public static final String RESOURCE = "/org/zaproxy/zap/extension/wappalyzer/resources";
+
 	public static final ImageIcon WAPPALYZER_ICON = new ImageIcon(
 			ExtensionWappalyzer.class.getResource( RESOURCE + "/wappalyzer.png"));
-	
-	private static final String FIELD_CONFIDENCE = "confidence:";
-	private static final String FIELD_VERSION = "version:";
 
 	private TechPanel techPanel = null;
 	private PopupMenuEvidence popupMenuEvidence = null;
@@ -112,165 +104,19 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		this.setOrder(201);
 		
 		try {
-			parseJson(getStringResource(RESOURCE + "/apps.json"));
+			WappalyzerJsonParser parser = new WappalyzerJsonParser();
+			WappalyzerData result = parser.parseDefaultAppsJson();
+			this.applications = result.getApplications();
+			this.categories = result.getCategories();
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void parseJson(String jsonStr) {
-		
-		try {
-			JSONObject json = JSONObject.fromObject(jsonStr);
-			
-			JSONObject cats = json.getJSONObject("categories");
-			
-			for (Object cat : cats.entrySet()) {
-				Map.Entry<String, JSONObject> mCat = (Map.Entry<String, JSONObject>) cat;
-				this.categories.put(mCat.getKey(), mCat.getValue().getString("name"));
-			}
-			
-			JSONObject apps = json.getJSONObject("apps");
-			for (Object entry : apps.entrySet()) {
-				Map.Entry<String, JSONObject> mApp = (Map.Entry<String, JSONObject>) entry;
-				
-				String appName = mApp.getKey();
-				JSONObject appData = mApp.getValue();
-				
-				Application app = new Application();
-				app.setName(appName);
-				app.setWebsite(appData.getString("website"));
-				app.setCategories(this.jsonToCategoryList(appData.get("cats")));
-				app.setHeaders(this.jsonToAppPatternMapList(appData.get("headers")));
-				app.setUrl(this.jsonToPatternList(appData.get("url")));
-				app.setHtml(this.jsonToPatternList(appData.get("html")));
-				app.setScript(this.jsonToPatternList(appData.get("script")));
-				app.setMetas(this.jsonToAppPatternMapList(appData.get("meta")));
-				app.setImplies(this.jsonToStringList(appData.get("implies")));
-				
-				URL icon = ExtensionWappalyzer.class.getResource( RESOURCE + "/icons/" + appName + ".png");
-				if (icon != null) {
-					app.setIcon(new ImageIcon(icon));
-				}
-				
-				this.applications.add(app);
-			}
-			
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
-		
-	}
-	
-	private List<String> jsonToStringList(Object json) {
-		List<String> list = new ArrayList<String>();
-		if (json instanceof JSONArray) {
-			for (Object obj : (JSONArray)json) {
-				list.add(obj.toString());
-			}
-		} else if (json != null) {
-			list.add(json.toString());
-		}
-		return list;
-	}
-	
-	private List<String> jsonToCategoryList(Object json) {
-		List<String> list = new ArrayList<String>();
-		if (json instanceof JSONArray) {
-			for (Object obj : (JSONArray)json) {
-				String category = this.categories.get(obj.toString());
-				if (category != null) {
-					list.add(category);
-				} else {
-					logger.error("Failed to find category for " + obj.toString());
-				}
-			}
-		}
-		return list;
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<Map<String, AppPattern>> jsonToAppPatternMapList(Object json) {
-		List<Map<String, AppPattern>> list = new ArrayList<Map<String, AppPattern>>();
-		AppPattern ap;
-		if (json instanceof JSONObject) {
-			for (Object obj : ((JSONObject)json).entrySet()) {
-				Map.Entry<String, String> entry = (Map.Entry<String, String>) obj;
-				try {
-					Map<String, AppPattern> map = new HashMap<String, AppPattern>();
-					ap = this.strToAppPattern(entry.getValue());
-					map.put(entry.getKey(), ap);
-					list.add(map);
-				} catch (NumberFormatException e) {
-					logger.error("Invalid field syntax " + entry.getKey() + " : " + entry.getValue(), e);
-				} catch (PatternSyntaxException e) {
-					logger.error("Invalid pattern syntax " + entry.getValue(), e);
-				}
-			}
-		} else if (json != null) {
-			logger.error("Unexpected header type for " + json.toString() + " " + json.getClass().getCanonicalName());
-		}
-		return list;
-	}
-
-	private List<AppPattern> jsonToPatternList(Object json) {
-		List<AppPattern> list = new ArrayList<AppPattern>();
-		if (json instanceof JSONArray) {
-			for (Object obj : ((JSONArray)json).toArray()) {
-				String objStr = obj.toString();
-				if (obj instanceof JSONArray) {
-					// Dereference it again
-					objStr = ((JSONArray)obj).getString(0);
-				}
-				try {
-					list.add(this.strToAppPattern(objStr));
-				} catch (PatternSyntaxException e) {
-					logger.error("Invalid pattern syntax " + objStr, e);
-				}
-			}
-		} else if (json != null) {
-			try {
-				list.add(this.strToAppPattern(json.toString()));
-			} catch (PatternSyntaxException e) {
-				logger.error("Invalid pattern syntax " + json.toString(), e);
-			}
-		}
-		return list;
-	}
-	
-	private AppPattern strToAppPattern(String str) {
-		AppPattern ap = new AppPattern();
-		String[] values = str.split("\\\\;");
-		String pattern = values[0];
-		for (int i=1; i < values.length; i++) {
-			try {
-				if (values[i].startsWith(FIELD_CONFIDENCE)) {
-					ap.setConfidence(Integer.parseInt(values[i].substring(FIELD_CONFIDENCE.length())));
-				} else if (values[i].startsWith(FIELD_VERSION)) {
-					ap.setVersion(values[i].substring(FIELD_VERSION.length()));
-				} else {
-					logger.error("Unexpected field: " + values[i]);
-				}
-			} catch (Exception e) {
-				logger.error("Invalid field syntax " + values[i], e);
-			}
-		}
-		if (pattern.indexOf(FIELD_CONFIDENCE) > 0) {
-			logger.warn("Confidence field in pattern?: " + pattern);
-		}
-		if (pattern.indexOf(FIELD_VERSION) > 0) {
-			logger.warn("Version field in pattern?: " + pattern);
-		}
-		ap.setPattern(pattern);
-		return ap;
 	}
 
 	@Override
 	public void init() {
 		super.init();
-
-		passiveScanner = new WappalyzerPassiveScanner();
+		passiveScanner = new WappalyzerPassiveScanner(this);
 	}
 	
 	@Override
@@ -348,30 +194,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	public String getUIName() {
 		return Constant.messages.getString("wappalyzer.name");
 	}
-	
-	private static String getStringResource(String resourceName) throws IOException {
-		InputStream in = null;
-		StringBuilder sb = new StringBuilder();
-		try {
-			in = ExtensionWappalyzer.class.getResourceAsStream(resourceName);
-			int numRead=0;
-            byte[] buf = new byte[1024];
-            while((numRead = in.read(buf)) != -1){
-            	sb.append(new String(buf, 0, numRead));
-            }
-            return sb.toString();
-			
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// Ignore
-				}
-			}
-		}
-	}
-	
+
 	public List<Application> getApplications() {
 		return this.applications;
 	}
@@ -389,24 +212,9 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		return model;
 	}
 
-	public void addApplicationsToSite(String site, Application app) {
-		this.getTechModelForSite(site).addApplication(app);
-		// Add implied apps
-		for (String imp : app.getImplies()) {
-			Application ia = this.getApplication(imp);
-			if (ia != null) {
-				this.addApplicationsToSite(site, ia);
-			}
-		}
-	}
+	public void addApplicationsToSite(String site, ApplicationMatch applicationMatch) {
 
-	private Application getApplication(String name) {
-		for (Application app : this.applications) {
-			if (name.equals(app.getName())) {
-				return app;
-			}
-		}
-		return null;
+		this.getTechModelForSite(site).addApplication(applicationMatch);
 	}
 	
 	public Application getSelectedApp() {
@@ -433,7 +241,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		return extSearch;
 	}
 
-	public void search (java.util.regex.Pattern p, ExtensionSearch.Type type) {
+	public void search (Pattern p, ExtensionSearch.Type type) {
 		ExtensionSearch extSearch = this.getExtensionSearch();
 		if (extSearch != null) {
 			extSearch.search(p.pattern(), type, true, false);
