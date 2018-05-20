@@ -397,6 +397,7 @@
 		<build-addon name="quickstart" />
 		<build-addon name="reveal" />
 		<build-addon name="saverawmessage" />
+		<build-addon name="savexmlmessage" />
 		<build-selenium-addon />
 		<build-spiderajax-addon />
 		<build-addon name="websocket" />
@@ -555,6 +556,10 @@
 		<build-deploy-addon name="saverawmessage" />
 	</target>
 
+	<target name="deploy-savexmlmessage" description="deploy the Save XML Message extension">
+		<build-deploy-addon name="savexmlmessage" />
+	</target>
+
 	<macrodef name="build-selenium-addon" description="Builds Selenium add-on">
 		<sequential>
 			<build-addon name="selenium">
@@ -631,6 +636,7 @@
 				<include name="quickstart-*.zap"/>
 				<include name="reveal-*.zap"/>
 				<include name="saverawmessage-*.zap"/>
+				<include name="savexmlmessage-*.zap"/>
 				<include name="selenium-*.zap"/>
 				<include name="spiderAjax-*.zap"/>
 				<include name="websocket-*.zap"/>
@@ -653,6 +659,7 @@
 				<include name="quickstart-*.zap"/>
 				<include name="reveal-*.zap"/>
 				<include name="saverawmessage-*.zap"/>
+				<include name="savexmlmessage-*.zap"/>
 				<include name="selenium-*.zap"/>
 				<include name="spiderAjax-*.zap"/>
 				<include name="websocket-*.zap"/>
