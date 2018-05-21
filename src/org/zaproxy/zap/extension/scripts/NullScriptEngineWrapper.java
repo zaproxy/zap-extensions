@@ -48,4 +48,9 @@ public class NullScriptEngineWrapper extends DefaultEngineWrapper {
 		return Collections.emptyList();
 	}
 
+	// TODO Uncomment the annotation once targeting newer core version.
+	// @Override
+	public boolean isVisible() {
+		return false;
+	}
 }
