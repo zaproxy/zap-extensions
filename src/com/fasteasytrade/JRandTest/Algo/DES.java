@@ -106,7 +106,7 @@ public class DES extends FileAlgoRandomStream {
 		//System.out.println("outAlgoBuffer length = " + outAlgoBuffer.length);
 
 		if (false) {
-			Set s = java.security.Security.getAlgorithms("Cipher");
+			Set<String> s = java.security.Security.getAlgorithms("Cipher");
 			Object[] o = s.toArray();
 			for (int i = 0; i < o.length; i++)
 				System.out.println(o[i].toString());

@@ -102,7 +102,7 @@ public class Base {
 	}
 
 	public double sqrt(int a) {
-		return Math.sqrt((double) a);
+		return Math.sqrt(a);
 	}
 
 	public double exp(double a) {
@@ -110,7 +110,7 @@ public class Base {
 	}
 
 	public double exp(int a) {
-		return Math.exp((double) a);
+		return Math.exp(a);
 	}
 
 	public double log(double a) {
@@ -355,7 +355,7 @@ public class Base {
 	public static double r2_double(double[] data) {
 		// k is the length
 		int k = data.length;
-		double n = (double) k - 1.0;
+		double n = k - 1.0;
 		double sumx = 0;
 		double sumsqx = 0;
 		double sumy = 0;
@@ -364,8 +364,8 @@ public class Base {
 		double p, p1;
 
 		for (int i = 1; i < k; i++) {
-			p = (double) (data[i]);
-			p1 = (double) (data[i - 1]);
+			p = data[i];
+			p1 = data[i - 1];
 			sumx += p;
 			sumsqx += p * p;
 			sumy += p1;
@@ -430,7 +430,7 @@ public class Base {
 
 		double result = 1 - Chisq(dgf, chi_fit);
 
-		double[] resultVec = { (double) dgf, chi_fit, result };
+		double[] resultVec = { dgf, chi_fit, result };
 		return resultVec;
 	}
 
@@ -463,9 +463,9 @@ public class Base {
 
 		OutputDestination od = null;
 
-		for (Enumeration e = vecOutputDestinations.elements(); e
+		for (Enumeration<OutputDestination> e = vecOutputDestinations.elements(); e
 				.hasMoreElements();) {
-			od = (OutputDestination) e.nextElement();
+			od = e.nextElement();
 			od.printf(s);
 		}
 
@@ -491,7 +491,7 @@ public class Base {
 		}
 	}
 
-	Vector vecOutputDestinations = new Vector();
+	Vector<OutputDestination> vecOutputDestinations = new Vector<>();
 
 	/**
 	 * register output destination in vector of output destinations. printf and

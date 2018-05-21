@@ -113,11 +113,11 @@ public class HttpGetUrlRandomStream implements RandomStream {
 			 */
 			System.out.println(" headers for url: " + url);
 			System.out.println(" lengthOfData = " + lengthOfData);
-			Map m = con.getHeaderFields();
-			Set s = m.keySet();
-			Iterator i = s.iterator();
+			Map<String, List<String>> m = con.getHeaderFields();
+			Set<String> s = m.keySet();
+			Iterator<String> i = s.iterator();
 			while (i.hasNext()) {
-				String x = (String) i.next();
+				String x = i.next();
 				Object o = m.get(x);
 				String y = null;
 				if (o instanceof String)
