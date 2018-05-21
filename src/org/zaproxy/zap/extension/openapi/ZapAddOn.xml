@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>OpenAPI Support</name>
-	<version>12</version>
+	<version>13</version>
 	<status>alpha</status>
 	<description>Imports and spiders Open API definitions.</description>
 	<author>ZAP Core Team plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Ignore BOM when parsing and don't rely on default character encoding (Issue 4676).<br>
 	]]>
 	</changes>
 	<extensions>
