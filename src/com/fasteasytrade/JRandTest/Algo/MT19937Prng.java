@@ -225,7 +225,7 @@ public class MT19937Prng extends Cipher {
 	 * generates a random number on [0,0x7fffffff]-interval
 	 */
 	long genrand_int31() {
-		return (long) (genrand_int32() >>> 1);
+		return genrand_int32() >>> 1;
 	}
 
 	/**

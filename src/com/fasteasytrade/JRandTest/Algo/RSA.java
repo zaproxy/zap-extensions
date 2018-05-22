@@ -117,7 +117,7 @@ public class RSA extends FileAlgoRandomStream {
 		}
 
 		if (outAlgoBufferIx == outAlgoBuffer.length) {
-			BigInteger z = (BigInteger) (algo.encrypt(algoBuffer).elementAt(0));
+			BigInteger z = algo.encrypt(algoBuffer).elementAt(0);
 			outAlgoBuffer = z.toByteArray();
 			outAlgoBufferIx = 0;
 		}

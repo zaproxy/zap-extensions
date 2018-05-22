@@ -112,7 +112,7 @@ public class RSACrypt extends Cipher {
 	/**
 	 * encrypt byte[] and returns vector of bigintegers.
 	 */
-	public Vector encrypt(byte[] message) {
+	public Vector<BigInteger> encrypt(byte[] message) {
 		return encrypt(message, message.length);
 	}
 	
@@ -125,13 +125,13 @@ public class RSACrypt extends Cipher {
 	 * byte 1 - 4 = random number
 	 * byte 5 .. getMessageLen-1 = data
 	 */
-	public Vector encrypt(byte[] message, int mlen) {
+	public Vector<BigInteger> encrypt(byte[] message, int mlen) {
 		if (mlen < 1)
 			return null;
 		int numMsgs = 1 + (mlen-1) / (getMessageLength() - 5);
 		int rest = mlen % (getMessageLength() - 5);
 		
-		Vector rslt = new Vector();
+		Vector<BigInteger> rslt = new Vector<>();
 		byte[] tmp = new byte[getMessageLength()];
 		int i,x ;
 		int j = 0;	// read from message buffer
@@ -170,10 +170,10 @@ public class RSACrypt extends Cipher {
 				break;		// End of encryption
 			
 			out.writeInt(len);	// write length of data
-			Vector vec = encrypt(buffer);
+			Vector<BigInteger> vec = encrypt(buffer);
 			if (vec.size() != 1)	// We expect 1 biginteger! 
 				throw new IOException("encrypt does not return a biginteger!");
-			write((BigInteger)vec.elementAt(0), out);	// write biginteger
+			write(vec.elementAt(0), out);	// write biginteger
 		}
 		
 		out.writeInt(-1);	// write "dummy" EOF - no more bigintegers
@@ -222,10 +222,10 @@ public class RSACrypt extends Cipher {
 				break;		// End of encryption
 			
 			write(len, out);	// write length of data
-			Vector vec = encrypt(buffer);
+			Vector<BigInteger> vec = encrypt(buffer);
 			if (vec.size() != 1)	// We expect 1 biginteger! 
 				throw new IOException("encrypt does not return a biginteger!");
-			write((BigInteger)vec.elementAt(0), out);	// write biginteger
+			write(vec.elementAt(0), out);	// write biginteger
 		}
 		
 		write(-1, out);		// write "dummy" EOF - no more bigintegers
@@ -420,9 +420,9 @@ public class RSACrypt extends Cipher {
 				"Sonnet 18, William Shakespeare\n"+
 				"";
 		byte[] mymsgb = mymsg.getBytes();
-		Vector v = rsa.encrypt( mymsgb );
+		Vector<BigInteger> v = rsa.encrypt( mymsgb );
 		for (int i = 0; i < v.size(); i++) {
-			BigInteger t = (BigInteger)v.elementAt(i);
+			BigInteger t = v.elementAt(i);
 			System.out.print(new String(rsa.decrypt(t).toByteArray()));
 		}
 	}

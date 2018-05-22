@@ -173,7 +173,7 @@ public class Squeeze extends Base
 		 */
 		for (i = 0; i < 43; ++i)
 		{
-			tmp = (double) (f[i] - Ef[i]) / sqrt(Ef[i]);
+			tmp = (f[i] - Ef[i]) / sqrt(Ef[i]);
 			chsq += tmp * tmp;
 			printf("\t% " + d4(tmp) + "  ");
 			if ((i + 1) % 6 == 0)
