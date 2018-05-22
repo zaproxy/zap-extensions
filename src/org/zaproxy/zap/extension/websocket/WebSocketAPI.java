@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Hex;
@@ -57,6 +58,7 @@ import org.zaproxy.zap.utils.ApiUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 public class WebSocketAPI extends ApiImplementor {
 
@@ -473,7 +475,17 @@ public class WebSocketAPI extends ApiImplementor {
                 jsonTarget.put("target.maxDepth", target.getMaxDepth());
                 json.put("event.target", jsonTarget);
             }
-            json.putAll(ev.getParameters());
+            // Can't use json.putAll as that performs auto json conversion, which we dont want
+            for ( Entry<String, String> entry : ev.getParameters().entrySet()) {
+                try {
+                    JSONSerializer.toJSON(entry.getValue());
+                    // Its valid JSON so escape
+                    json.put(entry.getKey(), "'" + entry.getValue() + "'");
+                } catch (JSONException e) {
+                    // Its not a valid JSON object so can add as is
+                    json.put(entry.getKey(), entry.getValue());
+                }
+            }
             try {
                 sendWebSocketMessage(channelId, false, json.toString());
             } catch (IOException e) {
