@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.view.HighlightSearchEntry;
@@ -48,31 +49,17 @@ public class HighlighterPanel extends AbstractPanel implements ActionListener {
 		this.setName("Highlighter");
 		
 		// mainPanel
-		mainPanel = new JPanel();
-	    mainPanel.setLayout(new GridBagLayout());
-	    GridBagConstraints c = new GridBagConstraints();
-	    this.add(mainPanel, BorderLayout.CENTER);
+		mainPanel = new JPanel(new BorderLayout());
+	    this.add(mainPanel);
 
 	    // 0: button panel
 	    initButtonPanel();
-		c.fill = GridBagConstraints.HORIZONTAL;
-	    c.gridx = 0;
-	    c.weightx = 1.0;
-	    c.gridy = 0;
-	    c.anchor = GridBagConstraints.PAGE_START;
-	    mainPanel.add(buttonPanel, c);
+	    mainPanel.add(buttonPanel, BorderLayout.PAGE_START);
 	    
 	    // 1: userPanel
-		userPanel = new JPanel(new GridBagLayout());
+		userPanel = new JPanel(new BorderLayout());
 		reinit();
-	    c.gridy = 1;
-	    mainPanel.add(userPanel, c);
-	    
-	    // 2: finishpanel
-	    JPanel finishPanel = new JPanel();
-	    c.weighty = 1.0;
-	    c.gridy = 2;
-	    mainPanel.add(finishPanel, c);
+	    mainPanel.add(new JScrollPane(userPanel));
 	}
 	
 	private void initButtonPanel() {
@@ -86,17 +73,10 @@ public class HighlighterPanel extends AbstractPanel implements ActionListener {
 	}
 	
 	private void reinit() {
-		GridBagConstraints c = new GridBagConstraints();
-		
-		c.fill = GridBagConstraints.HORIZONTAL;
-	    c.gridx = 0;
-	    c.weightx = 1.0;
-	    c.gridy = 0;
-	    c.anchor = GridBagConstraints.PAGE_START;
-		
 		userPanel.removeAll();
-		userPanel.add(initUserPanel(), c);
-		this.invalidate();
+		userPanel.add(initUserPanel(), BorderLayout.PAGE_START);
+		mainPanel.validate();
+		mainPanel.repaint();
 	}
 	
 	private JPanel initUserPanel() {
