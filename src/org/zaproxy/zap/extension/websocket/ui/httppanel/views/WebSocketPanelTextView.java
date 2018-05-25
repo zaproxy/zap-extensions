@@ -49,4 +49,10 @@ public class WebSocketPanelTextView extends HttpPanelTextView {
 		}
 		
 	}
+	
+	@Override
+	public void setEditable(boolean editable){
+		super.setEditable(editable);
+		((StringWebSocketPanelViewModel) getModel()).setEditable(editable);
+	}
 }

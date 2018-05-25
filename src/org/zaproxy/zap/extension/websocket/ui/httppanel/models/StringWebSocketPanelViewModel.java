@@ -28,27 +28,30 @@ public class StringWebSocketPanelViewModel extends AbstractWebSocketStringPanelV
 	
 	private static final Logger LOGGER = Logger.getLogger(StringWebSocketPanelViewModel.class);
 	private boolean isErrorMessage;
-
+	private boolean editable;
+    
     @Override
     public String getData() {
-    	String data;
+        String data;
         if (webSocketMessage == null || webSocketMessage.payload == null)  {
             data = "";
-        } else {
-	        try {
-				data = webSocketMessage.getReadablePayload();
-				isErrorMessage = false;
-			} catch (InvalidUtf8Exception e) {
-				isErrorMessage = true;
-				if (webSocketMessage.opcode.equals(WebSocketMessage.OPCODE_BINARY)) {
-					data = Constant.messages.getString("websocket.payload.unreadable_binary");
-				} else {
-					data = Constant.messages.getString("websocket.payload.invalid_utf8");
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("Unable to decode " + Arrays.toString((byte[]) webSocketMessage.payload) + " as UTF-8.", e);
-					}
-				}
-			}
+        }else if(editable){
+            try {
+                data = webSocketMessage.getReadablePayload();
+                isErrorMessage = false;
+            } catch (InvalidUtf8Exception e) {
+                isErrorMessage = true;
+                if (webSocketMessage.opcode.equals(WebSocketMessage.OPCODE_BINARY)) {
+                    data = Constant.messages.getString("websocket.payload.unreadable_binary");
+                } else {
+                    data = Constant.messages.getString("websocket.payload.invalid_utf8");
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Unable to decode " + Arrays.toString((byte[]) webSocketMessage.payload) + " as UTF-8.", e);
+                    }
+                }
+            }
+        }else {
+            data = webSocketMessage.getPayloadAsString();
         }
         return data;
     }
@@ -77,4 +80,11 @@ public class StringWebSocketPanelViewModel extends AbstractWebSocketStringPanelV
 			}
 		}
     }
+    
+	public void setEditable(boolean editableMessage) {
+		editable = editableMessage;
+		if(editableMessage){
+			fireDataChanged();
+		}
+	}
 }

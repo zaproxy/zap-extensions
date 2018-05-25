@@ -76,6 +76,12 @@ public class WebSocketSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTe
     protected WebSocketSyntaxHighlightTextArea createHttpPanelTextArea() {
         return new WebSocketSyntaxHighlightTextArea();
     }
+    
+    @Override
+    public void setEditable(boolean editable){
+        super.setEditable(editable);
+        ((StringWebSocketPanelViewModel) getModel()).setEditable(editable);
+    }
 
     @Override
     protected WebSocketSyntaxHighlightTextArea getHttpPanelTextArea() {
