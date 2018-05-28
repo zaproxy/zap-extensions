@@ -30,6 +30,7 @@
 // ZAP: 2017/11/10 Remove N/A from alert parameter.
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
@@ -157,17 +158,18 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
 
         TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
         
-        if (urlParams.isEmpty()) {
-    		return; //No params, no need to proceed
-    	}
         
         String uri = msg.getRequestHeader().getURI().toString();
+        boolean found = false;
         
         // The Session ID list from option param (panel)
         OptionsParam options = Model.getSingleton().getOptionsParam();
         HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
-	if(sessionOptions != null) {
-            List<String> sessionIds = sessionOptions.getDefaultTokensEnabled();
+        List<String> sessionIds = Collections.emptyList();
+        if (sessionOptions != null) {
+            sessionIds = sessionOptions.getDefaultTokensEnabled();
+        }
+	if(!urlParams.isEmpty()) {
             for (HtmlParameter param: urlParams) { //Iterate through the parameters
             	//If the parameter name is one of those on the Session Token list from the options panel
             	if (sessionIds.contains(param.getName().toLowerCase(Locale.ROOT))) { 
@@ -191,21 +193,49 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     	                        msg);
     	
     	                parent.raiseAlert(id, alert);
-    	                
-    	        	    // Now try to check if there exists a referer inside the content
-    	                // i.e.: There is an external link for which 
-    	                // a referer header would be passed including this session token
-    	                try {
-    	                    checkSessionIDExposure(msg, id);
-    	                } catch (URIException e) {
-    	                }
     	                // We don't break on this one.
     	                // There shouldn't be more than one per URL but bizarre things do happen.
     	                // Improbable doesn't mean impossible.
+    	                found = true;
             		}
             	}
             }
-        }     
+        }
+        if (!found && msg.getRequestHeader().getURI().getEscapedPath() != null) {
+            //Handle jsessionid like: http://tld.gtld/fred;jsessionid=1A530637289A03B07199A44E8D531427?foo=bar
+            Matcher jsessMatcher = null;
+            try {
+                jsessMatcher = Pattern.compile("jsessionid=[\\dA-Z]*", Pattern.CASE_INSENSITIVE).matcher(msg.getRequestHeader().getURI().getPath());
+            } catch (URIException e) {
+            }
+            if (jsessMatcher != null && jsessMatcher.find() && sessionIds.contains(jsessMatcher.group().split("=")[0].trim())) {
+                Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_HIGH, getName());
+                alert.setDetail(
+                        getDescription(),
+                        uri,
+                       "", // param
+                        "", // attack
+                        "", // otherinfo
+                        getSolution(),
+                        getReference(),
+                        jsessMatcher.group(), // evidence
+                        getCweId(), // CWE Id
+                        getWascId(), // WASC Id - Info leakage
+                        msg);
+            
+                parent.raiseAlert(id, alert);
+                found = true;
+            }
+        }
+        if (found) {
+	        // Now try to check if there exists a referer inside the content
+            // i.e.: There is an external link for which 
+            // a referer header would be passed including this session token
+            try {
+                checkSessionIDExposure(msg, id);
+            } catch (URIException e) {
+            }
+        }
     }
     
     // External link Response finder regex

@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix a typo in the description of Referer Exposes Session ID.<br>
+	Address false negative on jsessionid in URL Rewrite when preceded by a semi-colon and potentially followed by parameters (Issue 3008).<br>
 	]]>
 	</changes>
 	<extensions>
