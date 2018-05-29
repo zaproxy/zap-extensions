@@ -552,6 +552,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 	private JComboBox<ForcedBrowseFile> getFileSelect() {
 		if (fileSelect == null) {
 			fileSelect = new JComboBox<>();
+			fileSelect.addItemListener(e -> updateSiteSelection());
 			this.refreshFileList();
 		}
 		return fileSelect;
@@ -563,21 +564,18 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 			siteSelect.addItem(noSelectionScanTarget);
 			siteSelect.setSelectedIndex(0);
 
-			siteSelect.addActionListener(new java.awt.event.ActionListener() { 
-
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
-
-				    ScanTarget item = (ScanTarget) siteSelect.getSelectedItem();
-				    if (item != null && siteSelect.getSelectedIndex() > 0) {
-				        siteSelected(item, false);
-				    } else {
-				        siteSelected(null, false);
-				    }
-				}
-			});
+			siteSelect.addActionListener(e -> updateSiteSelection());
 		}
 		return siteSelect;
+	}
+
+	private void updateSiteSelection() {
+		ScanTarget item = (ScanTarget) siteSelect.getSelectedItem();
+		if (item != null && siteSelect.getSelectedIndex() > 0) {
+			siteSelected(item, false);
+		} else {
+			siteSelected(null, false);
+		}
 	}
 	
 	public void addSite(URI site) {
