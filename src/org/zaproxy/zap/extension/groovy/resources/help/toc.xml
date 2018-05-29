@@ -6,7 +6,7 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="Groovy Scripting" image="groovy.icon" target="groovy.intro">
+            <tocitem text="Groovy Support" image="groovy.icon" target="groovy.intro">
                 <tocitem text="About" target="groovy.about" />
             </tocitem>
         </tocitem>
