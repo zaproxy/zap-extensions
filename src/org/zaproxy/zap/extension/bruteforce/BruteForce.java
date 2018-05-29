@@ -74,7 +74,9 @@ public class BruteForce extends Thread implements BruteForceListenner {
 		this.onlyUnderDirectory = false;
 
 		this.tableModel = new BruteForceTableModel();
-		log.info("BruteForce : " + target.getURI() + "/" + directory + " threads: " + threads);
+		if (log.isDebugEnabled()) {
+			log.debug("BruteForce : " + target.getURI() + "/" + directory + " threads: " + threads);
+		}
 
 		manager = new DirBusterManager(this);
 		
