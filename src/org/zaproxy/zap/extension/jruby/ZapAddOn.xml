@@ -1,5 +1,5 @@
 <zapaddon>
-	<name>Ruby scripting</name>
+	<name>Ruby Scripting</name>
 	<version>7</version>
 	<status>beta</status>
 	<description>Allows Ruby to be used for ZAP scripting - templates included</description>
@@ -7,7 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Maintenance changes.<br>
+	Update the help to mention the bundled JRuby version.<br>
 	]]>
 	</changes>
 	<extensions>
