@@ -13,6 +13,7 @@
 	The other option allows the user to specify fail case string.<br>
 	Inform of running scans (e.g. on session change, add-on uninstall).<br>
 	Issue 2000 - Updated strings shown in attack menu with title caps.<br>
+	Enable start button on file selection.<br>
 	]]>
 	</changes>
 	<extensions>
