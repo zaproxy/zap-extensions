@@ -41,7 +41,7 @@ public class DirBusterManager extends Manager {
 	@Override
     public synchronized void foundError(URL url, String reason) {
     	super.foundError(url, reason);
-    	log.error("DirBusterManager.foundError " + url.toString() + " reason:" + reason);
+    	log.warn("DirBusterManager.foundError " + url.toString() + " reason:" + reason);
     }
 	
 	@Override
