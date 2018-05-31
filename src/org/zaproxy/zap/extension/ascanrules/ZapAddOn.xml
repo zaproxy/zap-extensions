@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Maintenance changes.<br>
+	Persistent XSS scanner upated to address various false negatives (Issue 4692).<br>
 	]]>
     </changes>
 	<extensions>

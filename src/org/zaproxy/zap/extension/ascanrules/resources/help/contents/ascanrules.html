@@ -52,7 +52,10 @@ If an XSS injection is located in a JSON response a LOW risk and LOW confidence 
 
 This rule starts by submitting a unique 'safe' value and then spiders the whole application to find all of the locations in which the value occurs.<br>
 It then performs a series of attacks in the same way that the 'reflected' version does but in this case checks all of the 
-target locations in other pages. 
+target locations in other pages.<br>
+Note: <br>
+This rule only scans HTTP PUT requests at LOW threshold.<br>
+If an XSS injection is located in a JSON response a LOW risk and LOW confidence alert is raised.<br>
 
 <H2>CRLF Injection</H2>
 
