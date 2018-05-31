@@ -448,30 +448,23 @@ HTTPMessageTransport.prototype.makeURL = function(message) {
 }
 
 HTTPMessageTransport.prototype.send = function(message) {
-  var xhr = new XMLHttpRequest();
-  var URL = this.makeURL(message);
-  xhr.open("GET", URL, true);
-  xhr.onload = function(){
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-      if(xhr.status == 200) {
-        var messages = JSON.parse(xhr.responseText).messages;
-        for(var idx = 0; idx < messages.length; idx++) {
-          if(this.receiver) {
-            this.receiver.forward(messages[idx]);
-          }
-        }
-      }
-      else {
-        console.log("Error loading page\n");
+  var url = this.makeURL(message);
+
+  var onSuccess = function(json) {
+    var messages = JSON.parse(json).messages;
+    for(var idx = 0; idx < messages.length; idx++) {
+      if(this.receiver) {
+        this.receiver.forward(messages[idx]);
       }
     }
   }.bind(this);
 
-  xhr.onerror = function(e) {
+  var onError = function(e) {
     console.log('Request to transport endpoint failed');
     console.log(e.target.status);
   };
-  xhr.send();
+
+  ajaxGet(url).then(onSuccess, onError);
 }
 const transports = {HTTPMessageTransport:HTTPMessageTransport};
 
@@ -508,19 +501,13 @@ function Probe(url, id) {
   };
 
   this.receiver.addListener(getActorsListener(messageClient, this.config));
-  // TODO: wrap with promise pixie dust
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
-  xhr.onload = function() {
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-      if (xhr.status == 200) {
-        var json = xhr.responseText;
-        var manifest = JSON.parse(json);
-        this.configure(manifest);
-      }
-    }
-  }.bind(this);
-  xhr.send();
+
+	var onSuccess = function(json) {
+		var manifest = JSON.parse(json);
+		this.configure(manifest);
+	}.bind(this);
+
+  ajaxGet(url).then(onSuccess);
 }
 
 Probe.prototype.configure = function(manifest) {
@@ -566,4 +553,24 @@ Probe.prototype.configure = function(manifest) {
       };
     }
   }
+}
+
+function ajaxGet(url) {
+  return new Promise(function(resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          resolve(xhr.responseText);
+        } else {
+          reject(Error(xhr.statusText));
+        }
+      }
+    };
+    xhr.onerror = function(e) {
+      reject(e);
+    };
+    xhr.open('GET', url, true);
+		xhr.send();
+  });
 }
