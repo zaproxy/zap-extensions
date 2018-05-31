@@ -215,9 +215,9 @@ function getActorsListener(messagePeer, clientConfig) {
     }
   }
 
-  function makeProxy(fn, pre, post) {
+  function makeProxy(fn, pre) {
     if(fn.isPnHProbeProxy) return fn;
-    //console.log('make proxy... '+fn);
+
     newFn = function(){
       var callInfo = pre ? pre(this, arguments) : arguments;
       var ret;
@@ -226,9 +226,10 @@ function getActorsListener(messagePeer, clientConfig) {
       } else {
         ret = fn.apply(this, callInfo.args);
       }
-        return post ? post(ret) : ret;
+      return ret;
     }
     newFn.isPnHProbeProxy = true;
+
     return newFn;
   }
 
@@ -450,8 +451,8 @@ HTTPMessageTransport.prototype.send = function(message) {
   var xhr = new XMLHttpRequest();
   var URL = this.makeURL(message);
   xhr.open("GET", URL, true);
-  xhr.onload = function(aEvt){
-    if (xhr.readyState == 4) {
+  xhr.onload = function(){
+    if (xhr.readyState == XMLHttpRequest.DONE) {
       if(xhr.status == 200) {
         var messages = JSON.parse(xhr.responseText).messages;
         for(var idx = 0; idx < messages.length; idx++) {
@@ -510,8 +511,8 @@ function Probe(url, id) {
   // TODO: wrap with promise pixie dust
   var xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
-  xhr.onload = function(aEvt) {
-    if (xhr.readyState == 4) {
+  xhr.onload = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
       if (xhr.status == 200) {
         var json = xhr.responseText;
         var manifest = JSON.parse(json);
