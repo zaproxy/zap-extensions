@@ -953,6 +953,22 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * @return the specified messages
 	 * @throws DatabaseException
 	 */
+	public List<WebSocketMessageDTO> getWebsocketMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
+		return this.table.getMessages(criteria, opcodes, inScopeChannelIds, offset, limit, payloadPreviewLength);
+	}
+
+	/**
+	 * Returns the specified messages
+	 * @param criteria the criteria to use for the messages to include
+	 * @param opcodes the opcodes to return, use null for any
+	 * @param inScopeChannelIds the channel ids for which messages should be included, use null for all
+	 * @param payloadFilter the payload filter
+	 * @param offset the offset of the first message
+	 * @param limit the number of messages to return
+	 * @param payloadPreviewLength the maximum size of the payload to include (for a preview)
+	 * @return the specified messages
+	 * @throws DatabaseException
+	 */
 	public List<WebSocketMessageDTO> getWebsocketMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, WebSocketMessagesPayloadFilter payloadFilter, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
 		return this.table.getMessages(criteria, opcodes, inScopeChannelIds,payloadFilter, offset, limit, payloadPreviewLength);
 	}
