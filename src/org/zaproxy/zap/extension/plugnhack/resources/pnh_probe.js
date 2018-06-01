@@ -24,23 +24,6 @@ EventUtils = {
       }
     }
   },
-  elementFromPath:function(path) {
-    var element;
-    for(idx in path) {
-      if(!element) {
-        if('string' === typeof path[idx]) {
-          // we've got a node with an id, start the path with that
-          element = document.getElementById(path[idx]);
-        } else {
-          // our start node is maybe a child of document
-          element = document.childNodes[path[idx]];
-        }
-      } else {
-        element = element.childNodes[path[idx]];
-      }
-    }
-    return element;
-  },
   makeEventJSON:function(evt) {
     var obj = {};
     for(key in evt) {
@@ -215,9 +198,9 @@ function getActorsListener(messagePeer, clientConfig) {
     }
   }
 
-  function makeProxy(fn, pre, post) {
+  function makeProxy(fn, pre) {
     if(fn.isPnHProbeProxy) return fn;
-    //console.log('make proxy... '+fn);
+
     newFn = function(){
       var callInfo = pre ? pre(this, arguments) : arguments;
       var ret;
@@ -226,9 +209,10 @@ function getActorsListener(messagePeer, clientConfig) {
       } else {
         ret = fn.apply(this, callInfo.args);
       }
-        return post ? post(ret) : ret;
+      return ret;
     }
     newFn.isPnHProbeProxy = true;
+
     return newFn;
   }
 
@@ -374,17 +358,6 @@ var messageClient = function () {
       }
       return receivers[name];
     },
-
-    getLocalReceivers:function() {
-      var localReceivers = [];
-      for(var idx=0; idx < receivers.length; idx++) {
-        var receiver = receivers[idx];
-        if(!receiver.remote) {
-          localReceivers[localReceivers.length] = receiver;
-        }
-      }
-      return localReceivers;
-    }
   };
   return messagePeer;
 }();
@@ -447,30 +420,23 @@ HTTPMessageTransport.prototype.makeURL = function(message) {
 }
 
 HTTPMessageTransport.prototype.send = function(message) {
-  var xhr = new XMLHttpRequest();
-  var URL = this.makeURL(message);
-  xhr.open("GET", URL, true);
-  xhr.onload = function(aEvt){
-    if (xhr.readyState == 4) {
-      if(xhr.status == 200) {
-        var messages = JSON.parse(xhr.responseText).messages;
-        for(var idx = 0; idx < messages.length; idx++) {
-          if(this.receiver) {
-            this.receiver.forward(messages[idx]);
-          }
-        }
-      }
-      else {
-        console.log("Error loading page\n");
+  var url = this.makeURL(message);
+
+  var onSuccess = function(json) {
+    var messages = JSON.parse(json).messages;
+    for(var idx = 0; idx < messages.length; idx++) {
+      if(this.receiver) {
+        this.receiver.forward(messages[idx]);
       }
     }
   }.bind(this);
 
-  xhr.onerror = function(e) {
+  var onError = function(e) {
     console.log('Request to transport endpoint failed');
     console.log(e.target.status);
   };
-  xhr.send();
+
+  ajaxGet(url).then(onSuccess, onError);
 }
 const transports = {HTTPMessageTransport:HTTPMessageTransport};
 
@@ -507,19 +473,13 @@ function Probe(url, id) {
   };
 
   this.receiver.addListener(getActorsListener(messageClient, this.config));
-  // TODO: wrap with promise pixie dust
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
-  xhr.onload = function(aEvt) {
-    if (xhr.readyState == 4) {
-      if (xhr.status == 200) {
-        var json = xhr.responseText;
-        var manifest = JSON.parse(json);
-        this.configure(manifest);
-      }
-    }
-  }.bind(this);
-  xhr.send();
+
+	var onSuccess = function(json) {
+		var manifest = JSON.parse(json);
+		this.configure(manifest);
+	}.bind(this);
+
+  ajaxGet(url).then(onSuccess);
 }
 
 Probe.prototype.configure = function(manifest) {
@@ -565,4 +525,24 @@ Probe.prototype.configure = function(manifest) {
       };
     }
   }
+}
+
+function ajaxGet(url) {
+  return new Promise(function(resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          resolve(xhr.responseText);
+        } else {
+          reject(Error(xhr.statusText));
+        }
+      }
+    };
+    xhr.onerror = function(e) {
+      reject(e);
+    };
+    xhr.open('GET', url, true);
+		xhr.send();
+  });
 }
