@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>Highlighter</name>
-	<version>7</version>
+	<version>8</version>
 	<status>alpha</status>
 	<description>Allows you to highlight strings in the request and response tabs.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Fix help related exception in the Highlighter panel.<br>
-	Correct resizing of Highlighter panel.<br>
-	Update minimum ZAP version to 2.5.0.<br>
 	]]>
 	</changes>
 	<extensions>
