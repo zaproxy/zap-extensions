@@ -24,23 +24,6 @@ EventUtils = {
       }
     }
   },
-  elementFromPath:function(path) {
-    var element;
-    for(idx in path) {
-      if(!element) {
-        if('string' === typeof path[idx]) {
-          // we've got a node with an id, start the path with that
-          element = document.getElementById(path[idx]);
-        } else {
-          // our start node is maybe a child of document
-          element = document.childNodes[path[idx]];
-        }
-      } else {
-        element = element.childNodes[path[idx]];
-      }
-    }
-    return element;
-  },
   makeEventJSON:function(evt) {
     var obj = {};
     for(key in evt) {
@@ -375,17 +358,6 @@ var messageClient = function () {
       }
       return receivers[name];
     },
-
-    getLocalReceivers:function() {
-      var localReceivers = [];
-      for(var idx=0; idx < receivers.length; idx++) {
-        var receiver = receivers[idx];
-        if(!receiver.remote) {
-          localReceivers[localReceivers.length] = receiver;
-        }
-      }
-      return localReceivers;
-    }
   };
   return messagePeer;
 }();
