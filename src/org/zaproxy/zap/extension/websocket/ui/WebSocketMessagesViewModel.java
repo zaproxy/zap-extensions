@@ -224,19 +224,11 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 			value = message.payloadLength;
 			break;
 		case 5:
-			try {
-				String preview = message.getReadablePayload();
-				if (preview.length() > PAYLOAD_PREVIEW_LENGTH) {
-					value = preview.substring(0, PAYLOAD_PREVIEW_LENGTH - 1) + "...";
-				} else {
-					value = preview;
-				}
-			} catch (InvalidUtf8Exception e) {
-				if (message.opcode.equals(WebSocketMessage.OPCODE_BINARY)) {
-					value = emphasize(Constant.messages.getString("websocket.payload.unreadable_binary"));
-				} else {
-					value = emphasize(Constant.messages.getString("websocket.payload.invalid_utf8"));
-				}
+			String preview = message.getPayloadAsString();
+			if (preview.length() > PAYLOAD_PREVIEW_LENGTH) {
+				value = preview.substring(0, PAYLOAD_PREVIEW_LENGTH - 1) + "...";
+			} else {
+				value = preview;
 			}
 			break;
 		}

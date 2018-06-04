@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.websocket;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
@@ -154,7 +155,7 @@ public class WebSocketMessageDTO implements Message {
 
 	/**
 	 * Assigns all values to given object.
-	 * 
+	 *
 	 * @param other
 	 */
 	public void copyInto(WebSocketMessageDTO other) {
@@ -183,7 +184,7 @@ public class WebSocketMessageDTO implements Message {
 	 * Returns content of {@link WebSocketMessageDTO#payload} directly if it is
 	 * of type {@link String}. Otherwise it tries to convert it.
 	 * @return readable representation of payload
-	 * @throws InvalidUtf8Exception 
+	 * @throws InvalidUtf8Exception
 	 */
 	public String getReadablePayload() throws InvalidUtf8Exception {
 		if (payload instanceof String) {
@@ -194,7 +195,23 @@ public class WebSocketMessageDTO implements Message {
 			return "";
 		}
 	}
-	
+
+	/**
+	 * Returns content of {@link WebSocketMessageDTO#payload} directly if it is
+	 * of type {@link String}. Otherwise tries to convert that by replacing unmapped
+	 * &amp; malformed characters.
+	 * @return readable representation of payload
+	 */
+	public String getPayloadAsString(){
+		if (payload instanceof String) {
+			return (String) payload;
+		} else if (payload instanceof byte[]){
+			return new String((byte[]) payload, StandardCharsets.UTF_8);
+		} else {
+			return "";
+		}
+	}
+
 	public boolean isForceIntercept() {
 		// Not currently supported for WebSockets
 		return false;
