@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Save XML Message</name>
-	<version>0.0.1</version>
+	<version>0.1.0</version>
 	<status>alpha</status>
 	<description>Allows to save content of HTTP messages as XML</description>
 	<author>thatsn0tmysite</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Initial release.<br>
 	]]>
 	</changes>
 	<extensions>
