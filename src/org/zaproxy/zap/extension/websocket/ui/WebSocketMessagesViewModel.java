@@ -23,17 +23,14 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
-import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketMessagePrimaryKey;
-import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 import org.zaproxy.zap.utils.PagingTableModel;
 
 /**
@@ -242,10 +239,6 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 			break;
 		}
 		return value;
-	}
-
-	private String emphasize(String message) {
-		return "<html><i>" + StringEscapeUtils.escapeXml(message) + "</i></html>";
 	}
 
 	@Override
