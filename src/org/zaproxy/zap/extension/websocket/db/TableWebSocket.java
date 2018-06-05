@@ -206,25 +206,34 @@ public class TableWebSocket extends ParosAbstractTable {
     }
 
     /**
-	 * Prepares a {@link PreparedStatement} instance on the fly.
+	 * Gets the number of messages for the given criteria and opcodes.
 	 * 
 	 * @param criteria
 	 * @param opcodes Null when all opcodes should be retrieved.
 	 * @return number of message that fulfill given template
 	 * @throws SQLException
 	 */
+	public synchronized int getMessageCount(WebSocketMessageDTO criteria, List<Integer> opcodes) throws DatabaseException {
+		return getMessageCount(criteria, opcodes, -1);
+	}
+
 	public synchronized int getMessageCount(WebSocketMessageDTO criteria, List<Integer> opcodes, int payloadLength) throws DatabaseException {
 		return getMessageCount(criteria, opcodes, null,null, payloadLength);
 	}
 	
 	/**
-	 * Prepares a {@link PreparedStatement} instance on the fly.
+	 * Gets the number of messages for the given criteria, opcodes, and channel IDs.
+	 * 
 	 * @param criteria
 	 * @param opcodes Null when all opcodes should be retrieved.
 	 * @param inScopeChannelIds 
 	 * @return number of message that fulfill given template
 	 * @throws DatabaseException
 	 */
+	public synchronized int getMessageCount(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds) throws DatabaseException {
+		return getMessageCount(criteria, opcodes, inScopeChannelIds, null, -1);
+	}
+
 	public synchronized int getMessageCount(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds,
 											WebSocketMessagesPayloadFilter payloadFilter, int payloadLength) throws DatabaseException {
 		if (payloadFilter != null) {
@@ -365,6 +374,10 @@ public class TableWebSocket extends ParosAbstractTable {
 	 * @return Messages that fulfill given template.
 	 * @throws DatabaseException
 	 */
+	public synchronized List<WebSocketMessageDTO> getMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
+		return getMessages(criteria, opcodes, inScopeChannelIds, null, offset, limit, payloadPreviewLength);
+	}
+
 	public synchronized List<WebSocketMessageDTO> getMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, WebSocketMessagesPayloadFilter payloadFilter, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
 		try {
 			String query = "SELECT m.message_id, m.channel_id, m.timestamp, m.opcode, m.payload_length, m.is_outgoing, "

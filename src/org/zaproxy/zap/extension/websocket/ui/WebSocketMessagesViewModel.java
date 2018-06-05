@@ -154,6 +154,15 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 		}
 	}
 
+	/**
+	 * @return the IDs of the channels in scope, or {@code null} for all.
+	 * @deprecated Use {@link #getCriterionInScope()} instead.
+	 */
+	@Deprecated
+	protected List<Integer> getCriterianInScope() {
+		return getCriterionInScope();
+	}
+
 	protected List<Integer> getCriterionInScope() {
 		if (filter != null && filter.getShowJustInScope()) {
 			List<Integer> inScopeChannelIds = new ArrayList<>();
