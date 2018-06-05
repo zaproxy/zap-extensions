@@ -13,6 +13,8 @@
 	Fix send of CLOSE messages with message editor (Issue 4657).<br>
 	Add missing error message.<br>
 	Fix removal of pop up menu items.<br>
+	Allow to filter by payload in WebSocket tab (Issue 1382).<br>
+	Show string representation of binary payloads in WebSocket tab and message panels.<br>
 	]]>
 	</changes>
 	<classnames>
