@@ -18,6 +18,7 @@
 		</addons>
 	</dependencies>
 	<bundle prefix="example">com.example.Messages</bundle> <!-- Optional, declares a resource bundle to be automatically added/removed by core. The prefix attribute is used to add the bundle to Constant.messages. -->
+	<helpset localetoken="%LC%">com.example.help%LC%.helpset</helpset>  <!-- Optional, declares a helpset to be automatically added/removed by core. The locale token is used to indicate where in the base name the locale might be present. -->
 	<extensions>				<!-- Optional, to be used if this addon includes extensions -->
 		<extension/>			<!-- Full class name of the extension - can be multiple of these -->
 	</extensions>
