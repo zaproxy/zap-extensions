@@ -468,6 +468,9 @@ public class WebSocketAPI extends ApiImplementor {
                 if (nodes != null) {
                     JSONArray jsonNodes = new JSONArray();
                     for (StructuralNode node : nodes) {
+                        if (node == null) {
+                            continue;
+                        }
                         jsonNodes.add(node.getURI().toString());
                     }
                     jsonTarget.put("target.nodes", jsonNodes);
