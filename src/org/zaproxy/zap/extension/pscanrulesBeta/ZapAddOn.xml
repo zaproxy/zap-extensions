@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>18</version>
+	<version>19</version>
 	<status>beta</status>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes to address deprecation.<br/>
-	At HIGH threshold only perform CSRF checks for in scope messages (Issue 1354).<br/>
-		Exclude JavaScript response types from the InformationDisclosureDebugErrors scanner unless threshold is Low (Issue 4210).<br/>
+	Fix typo and correct term in help page.<br>
 	]]>
 	</changes>
 	<extensions>
