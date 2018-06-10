@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 		Update the help to mention the bundled JxBrowser version.<br>
+		Updated to JxBrowser 6.20.<br>
 	]]>
 	</changes>
 	<dependencies/>

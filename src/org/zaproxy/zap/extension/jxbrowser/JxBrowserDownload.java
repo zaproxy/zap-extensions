@@ -36,7 +36,7 @@ public class JxBrowserDownload {
      */
     public static void main(String[] args) {
 
-        final String VERSION = "6.18";
+        final String VERSION = "6.20";
         final String repo = "zaproxy/zap-libs"; // Makes it easier for testing
 
         String baseDir = "";
