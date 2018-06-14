@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Wappalyzer - Technology Detection</name>
-	<version>11</version>
+	<version>12</version>
 	<status>alpha</status>
 	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes to address deprecations.<br>
-	Updated for latest contributions from main wappalyzer project.<br>
+	Switch to using re2j where possible - results in significant performance improvements.<br>
 	]]>
 	</changes>
 	<extensions>

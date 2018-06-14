@@ -30,8 +30,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
@@ -54,6 +52,8 @@ import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
+
+import com.google.re2j.PatternSyntaxException;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -262,7 +262,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		if (pattern.indexOf(FIELD_VERSION) > 0) {
 			logger.warn("Version field in pattern?: " + pattern);
 		}
-		ap.setPattern(Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
+		ap.setPattern(pattern);
 		return ap;
 	}
 
@@ -433,7 +433,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		return extSearch;
 	}
 
-	public void search (Pattern p, ExtensionSearch.Type type) {
+	public void search (java.util.regex.Pattern p, ExtensionSearch.Type type) {
 		ExtensionSearch extSearch = this.getExtensionSearch();
 		if (extSearch != null) {
 			extSearch.search(p.pattern(), type, true, false);
