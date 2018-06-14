@@ -91,7 +91,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
 
     // API for the specific challenge/response model
     // Should be a common object for all this plugin instances
-    private static XXEPluginAPI pluginApi = new XXEPluginAPI();
+    private static XXEPluginCallbackImplementor callbackImplementor = new XXEPluginCallbackImplementor();
     
     // Logger instance
     private static final Logger log = Logger.getLogger(XXEPlugin.class);
@@ -209,7 +209,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     
     @Override
     public void init() {
-        if (ChallengeCallbackAPI.getExtensionCallback() == null) {
+        if (ChallengeCallbackImplementor.getExtensionCallback() == null) {
             // The callback extension is not available, cant do anything :(
             getParent().pluginSkipped(this, Constant.messages.getString("ascanbeta.xxeplugin.nocallback"));
         }
@@ -247,7 +247,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                 msg.setRequestBody(payload);
                 
                 // Register the callback for future actions
-                pluginApi.registerCallback(challenge, this, msg);
+                callbackImplementor.registerCallback(challenge, this, msg);
 
                 // All we need has been done...            
                 sendAndReceive(msg);
@@ -412,7 +412,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     public void notifyCallback(String challenge, HttpMessage targetMessage) {
         if (challenge != null) {
             
-            String evidence = pluginApi.getCallbackUrl(challenge);            
+            String evidence = callbackImplementor.getCallbackUrl(challenge);            
             
             // Alert the vulnerability to the main core
             this.bingo(
@@ -434,7 +434,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
      */
     private String getCallbackAttackPayload(String challenge) {
         String message = ATTACK_HEADER + ATTACK_BODY;
-        return MessageFormat.format(message, pluginApi.getCallbackUrl(challenge));
+        return MessageFormat.format(message, callbackImplementor.getCallbackUrl(challenge));
     }
     
     /**
@@ -459,12 +459,12 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
      * @param extCallback
      */
     protected void setExtensionCallback(ExtensionCallback extCallback) {
-        ChallengeCallbackAPI.setExtensionCallback(extCallback);
+        ChallengeCallbackImplementor.setExtensionCallback(extCallback);
     }
 
     protected static void unload() {
-        if (ChallengeCallbackAPI.getExtensionCallback() != null) {
-            ChallengeCallbackAPI.getExtensionCallback().removeCallbackImplementor(pluginApi);
+        if (ChallengeCallbackImplementor.getExtensionCallback() != null) {
+            ChallengeCallbackImplementor.getExtensionCallback().removeCallbackImplementor(callbackImplementor);
         }
 
     }

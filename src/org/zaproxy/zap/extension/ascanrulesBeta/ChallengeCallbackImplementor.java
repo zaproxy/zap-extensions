@@ -41,13 +41,13 @@ import org.zaproxy.zap.extension.callback.ExtensionCallback;
  * 
  * @author yhawke (2014)
  */
-public abstract class ChallengeCallbackAPI implements CallbackImplementor {
+public abstract class ChallengeCallbackImplementor implements CallbackImplementor {
 
     // The default expiration time for each callback (in millisecs)
     private static final long CALLBACK_EXPIRE_TIME = 2 * 60 * 1000;
     
     // Internal logger
-    private static final Logger logger = Logger.getLogger(ChallengeCallbackAPI.class);
+    private static final Logger logger = Logger.getLogger(ChallengeCallbackImplementor.class);
     
     // The registered callbacks for this API
     // Use a synchronized collection 
@@ -59,7 +59,7 @@ public abstract class ChallengeCallbackAPI implements CallbackImplementor {
     /**
      * Default contructor
      */
-    public ChallengeCallbackAPI() {
+    public ChallengeCallbackImplementor() {
         if (getExtensionCallback() != null) {
             getExtensionCallback().registerCallbackImplementor(this);
         }

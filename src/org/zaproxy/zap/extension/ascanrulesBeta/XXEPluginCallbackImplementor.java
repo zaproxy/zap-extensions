@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
  * 
  * @author yhawke (2104)
  */
-public class XXEPluginAPI extends ChallengeCallbackAPI {
+public class XXEPluginCallbackImplementor extends ChallengeCallbackImplementor {
 
     // This is the default component name (common for all)
     private static final String PREFIX = "xxe";
