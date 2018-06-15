@@ -52,25 +52,25 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
             Application app = extension.getSelectedApp();
             if (app != null) {
             	for (AppPattern p : app.getUrl()) {
-            		this.addSubMenu("URL", p.getPattern(), ExtensionSearch.Type.URL);
+            		this.addSubMenu("URL", p.getJavaPattern(), ExtensionSearch.Type.URL);
             	}
             	for (Map<String,AppPattern> mp : app.getHeaders()) {
 					for (Map.Entry<String, AppPattern> entry : mp.entrySet()) {
-						Pattern p = Pattern.compile(entry.getKey() + ".*" + entry.getValue().getPattern().pattern());
+						Pattern p = Pattern.compile(entry.getKey() + ".*" + entry.getValue().getJavaPattern().pattern());
 	            		this.addSubMenu("HEAD", p, ExtensionSearch.Type.Header);
 					}
             	}
             	for (AppPattern p : app.getHtml()) {
-            		this.addSubMenu("HTML", p.getPattern(), ExtensionSearch.Type.Response);
+            		this.addSubMenu("HTML", p.getJavaPattern(), ExtensionSearch.Type.Response);
             	}
             	for (Map<String,AppPattern> mp : app.getMetas()) {
 					for (Map.Entry<String, AppPattern> entry : mp.entrySet()) {
-						Pattern p = Pattern.compile(entry.getKey() + ".*" + entry.getValue().getPattern().pattern());
+						Pattern p = Pattern.compile(entry.getKey() + ".*" + entry.getValue().getJavaPattern().pattern());
 						this.addSubMenu("META", p, ExtensionSearch.Type.Response);
 						}
 	            	}
             	for (AppPattern p : app.getScript()) {
-            		this.addSubMenu("SCRIPT", p.getPattern(), ExtensionSearch.Type.Response);
+            		this.addSubMenu("SCRIPT", p.getJavaPattern(), ExtensionSearch.Type.Response);
             	}
             }
         }

@@ -74,7 +74,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 					boolean found = false;
 					String url = msg.getRequestHeader().getURI().toString();
 					for (AppPattern p : app.getUrl()) {
-						if (p.getPattern().matcher(url).find()) {
+						if (p.findInString(url)) {
 							LOGGER.debug("WAPP URL matched " + app.getName());
 							found = true;
 							break;
@@ -85,7 +85,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 							for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
 								String header = msg.getResponseHeader().getHeader(entry.getKey());
 								if (header != null) {
-									if (entry.getValue().getPattern().matcher(header).find()) {
+									if (entry.getValue().findInString(header)) {
 										LOGGER.debug("WAPP header matched " + app.getName());
 										found = true;
 										break;
@@ -97,7 +97,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 					if (! found) {
 						String body = msg.getResponseBody().toString();
 						for (AppPattern p : app.getHtml()) {
-							if (p.getPattern().matcher(body).find()) {
+							if (p.findInString(body)) {
 								LOGGER.debug("WAPP body matched " + app.getName());
 								found = true;
 								break;
@@ -113,7 +113,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 									String content = metaElement.getAttributeValue("content");
 									if (name != null && content != null) {
 										if (name.equals(entry.getKey())
-												&& entry.getValue().getPattern().matcher(content).find()) {
+												&& entry.getValue().findInString(content)) {
 											LOGGER.debug("WAPP meta matched " + app.getName());
 											found = true;
 											break;
@@ -126,7 +126,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 					if (! found) {
 						String body = msg.getResponseBody().toString();
 						for (AppPattern p : app.getScript()) {
-							if (p.getPattern().matcher(body).find()) {
+							if (p.findInString(body)) {
 								LOGGER.debug("WAPP script matched " + app.getName());
 								found = true;
 								break;
