@@ -19,10 +19,13 @@
  */
 package org.zaproxy.zap.extension.scripts.dialogs;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 
-import javax.swing.JLabel;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -52,17 +55,27 @@ public class EditScriptDialog extends StandardFieldsDialog {
 		if (script != null) {
 			this.removeAllFields();
 			this.addTextField(FIELD_NAME, script.getName());
-			this.addReadOnlyField(FIELD_FILE, "", false);
+			this.addReadOnlyTextField(FIELD_FILE, "");
 			this.addMultilineField(FIELD_DESC, script.getDescription());
 			this.addCheckBoxField(FIELD_LOAD, script.isLoadOnStart());
 			if (script.getFile() != null) {
 				this.setFieldValue(FIELD_FILE, script.getFile().getAbsolutePath());
 				// Add tooltip in case file name is longer than the dialog
-				((JLabel)this.getField(FIELD_FILE)).setToolTipText(script.getFile().getAbsolutePath());
+				((JComponent)this.getField(FIELD_FILE)).setToolTipText(script.getFile().getAbsolutePath());
 			}
 		}
 
 		this.addPadding();
+	}
+
+	private void addReadOnlyTextField(String fieldLabel, String value) {
+		addTextField(fieldLabel, value);
+		JTextField textField = (JTextField) getField(FIELD_FILE);
+		textField.setEditable(false);
+		textField.setCursor(null);
+		textField.setBorder(null);
+		textField.setBackground(new Color(UIManager.getLookAndFeel().getDefaults().getColor("Label.background").getRGB()));
+		textField.setForeground(new Color(UIManager.getLookAndFeel().getDefaults().getColor("Label.foreground").getRGB()));
 	}
 	
 	@Override
