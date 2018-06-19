@@ -41,6 +41,7 @@
 		<file>community-scripts/httpsender/add_header_response.py</file>
 		<file>community-scripts/httpsender/change_request.py</file>
 		<file>community-scripts/httpsender/change_response.py</file>
+		<file>community-scripts/httpsender/inject_js_in_html_page.js</file>
 		<file>community-scripts/passive/CookieHTTPOnly.js</file>
 		<file>community-scripts/passive/Find Credit Cards.js</file>
 		<file>community-scripts/passive/Find Emails.js</file>
@@ -117,11 +118,15 @@
 		<file>community-scripts/standalone/README.md</file>
 		<file>community-scripts/standalone/Run report.js</file>
 		<file>community-scripts/standalone/Traverse sites tree.js</file>
+		<file>community-scripts/standalone/WebSocketExportToOrg.py</file>
+		<file>community-scripts/standalone/alertAndPluginDetails.js</file>
 		<file>community-scripts/standalone/domainFinder.js</file>
 		<file>community-scripts/standalone/enableDebugLogging.js</file>
+		<file>community-scripts/standalone/example_library.js</file>
 		<file>community-scripts/standalone/extHistoryEnumerator.py</file>
 		<file>community-scripts/standalone/historySourceTagger.js</file>
 		<file>community-scripts/standalone/loadListInGlobalVariable.js</file>
+		<file>community-scripts/standalone/load_function_example.js</file>
 		<file>community-scripts/standalone/past_cookies_jar.py</file>
 		<file>community-scripts/standalone/window_creation_template.js</file>
 		<file>community-scripts/standalone/window_creation_template.py</file>
