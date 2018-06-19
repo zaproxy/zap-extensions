@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>Replacer</name>
-	<version>6</version>
+	<version>7</version>
 	<status>beta</status>
 	<description>Easy way to replace strings in requests and responses.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Tweak help page.<br>
-	Ignore CFU HTTP messages.<br>
-	Allow to (explicitly) select Token Generator messages.<br>
 	]]>
 	</changes>
 	<extensions>
