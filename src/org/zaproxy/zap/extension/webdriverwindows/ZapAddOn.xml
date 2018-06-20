@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Windows WebDrivers</name>
-	<version>6</version>
+	<version>7</version>
 	<status>beta</status>
 	<description>Windows WebDrivers for Firefox, Chrome and IE.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-		Update ChromeDriver to 2.40<br>
 	]]>
 	</changes>
 	<extensions/>
