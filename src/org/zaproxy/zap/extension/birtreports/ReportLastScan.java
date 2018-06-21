@@ -74,9 +74,6 @@ import org.zaproxy.zap.extension.XmlReporterExtension;
 import org.zaproxy.zap.utils.XMLStringUtil;
 import org.zaproxy.zap.view.ScanPanel;
 
-import edu.stanford.ejalbert.BrowserLauncher;
-//birt jars
-
 public class ReportLastScan {
 
     private Logger logger = Logger.getLogger(ReportLastScan.class);
@@ -344,8 +341,9 @@ public class ReportLastScan {
                 }
 
                 try {
-                    BrowserLauncher bl = new BrowserLauncher();
-                    bl.openURLinBrowser("file://" + report.getAbsolutePath());
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop.getDesktop().open(report);
+                    }
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     view.showMessageDialog(
