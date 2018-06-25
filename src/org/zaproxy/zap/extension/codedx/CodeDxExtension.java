@@ -33,6 +33,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.report.ReportLastScan.ReportType;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.codedx.security.SSLConnectionSocketFactoryFactory;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -62,7 +63,7 @@ public class CodeDxExtension extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-
+        API.getInstance().registerApiImplementor(new CodeDxAPI(this));
         if (getView() != null) {
             extensionHook.getHookMenu().addReportMenuItem(getUploadMenu());
             extensionHook.getHookMenu().addReportMenuItem(getExportMenu());
@@ -112,6 +113,21 @@ public class CodeDxExtension extends ExtensionAdaptor {
         return HttpClientBuilder.create()
                 .setSSLSocketFactory(SSLConnectionSocketFactoryFactory.getFactory(new URL(url).getHost(), this))
                 .setDefaultRequestConfig(config).build();
+    }
+
+    public CloseableHttpClient getHttpClient(
+        String url,
+        String thumbprint,
+        boolean acceptPermanently
+    ) throws IOException, GeneralSecurityException{
+        RequestConfig config = RequestConfig.custom().setConnectTimeout(TIMEOUT).setSocketTimeout(TIMEOUT)
+                .setConnectionRequestTimeout(TIMEOUT).build();
+        return HttpClientBuilder.create()
+                .setSSLSocketFactory(
+                    SSLConnectionSocketFactoryFactory.getFactory(
+                        new URL(url).getHost(), this, thumbprint, acceptPermanently
+                    )
+                ).setDefaultRequestConfig(config).build();
     }
 
     @Override

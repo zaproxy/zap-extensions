@@ -46,8 +46,8 @@ import org.zaproxy.zap.extension.codedx.CodeDxExtension;
 
 public class SSLConnectionSocketFactoryFactory {
 
-	private static Map<String, SSLConnectionSocketFactory> factoriesByHost = new HashMap<>();
-	private static Map<String, ReloadableX509TrustManager> customTrustByHost = new HashMap<>();
+	private static Map<String, SSLConnectionSocketFactory> dialogFactoriesByHost = new HashMap<>();
+	private static Map<String, SSLConnectionSocketFactory> thumbprintFactoriesByHost = new HashMap<>();
 
 	/**
 	 * Returns a SSLConnectionSocketFactory for the given host. When a SSL
@@ -60,16 +60,52 @@ public class SSLConnectionSocketFactoryFactory {
 	 * 
 	 * @param host The host (URL component) that the socket factory will be used
 	 *             to connect to
-	 * @param cdx
+	 * @param extension
 	 * @return A socket factory for the given host
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	public static SSLConnectionSocketFactory getFactory(String host, CodeDxExtension extension) throws IOException, GeneralSecurityException {
-		SSLConnectionSocketFactory instance = factoriesByHost.get(host);
+	public static SSLConnectionSocketFactory getFactory(
+		String host,
+		CodeDxExtension extension
+	) throws IOException, GeneralSecurityException {
+		SSLConnectionSocketFactory instance = dialogFactoriesByHost.get(host);
 		if (instance == null) {
-			initializeFactory(host, extension);
-			return factoriesByHost.get(host);
+			initializeFactory(host, extension, null, false);
+			return dialogFactoriesByHost.get(host);
+		} else {
+			return instance;
+		}
+	}
+
+	/**
+	 * Returns a SSLConnectionSocketFactory for the given host. When a SSL
+	 * connection is created with the returned socket factory, if the server's
+	 * certificate appears to be invalid, the user will be prompted to either
+	 * reject temporarily accept, or permanently accept the certificate.
+	 * Permanently accepted certificates will be stored in a
+	 * <code>.truststore</code> file so the user won't need to prompted again
+	 * for the same host.
+	 *
+	 * @param host The host (URL component) that the socket factory will be used
+	 *             to connect to
+	 * @param extension
+	 * @param thumbprint Expected SHA1 thumbprint of an invalid certificate
+	 * @param acceptPermanently
+	 * @return A socket factory for the given host
+	 * @throws IOException
+	 * @throws GeneralSecurityException
+	 */
+	public static SSLConnectionSocketFactory getFactory(
+		String host,
+		CodeDxExtension extension,
+		String thumbprint,
+		boolean acceptPermanently
+	) throws IOException, GeneralSecurityException {
+		SSLConnectionSocketFactory instance = thumbprintFactoriesByHost.get(host);
+		if (instance == null) {
+			initializeFactory(host, extension, thumbprint, acceptPermanently);
+			return thumbprintFactoriesByHost.get(host);
 		} else {
 			return instance;
 		}
@@ -78,9 +114,10 @@ public class SSLConnectionSocketFactoryFactory {
 	/**
 	 * Determines the location for the <code>truststore</code> file for the
 	 * given host. Each {@link SSLConnectionSocketFactory} returned by
-	 * {@link #initializeFactory(String)} needs to have a file to store
-	 * user-accepted invalid certificates; these files will be stored in the
-	 * user's OS-appropriate "appdata" directory.
+	 * {@link #initializeFactory(String, CodeDxExtension, String, boolean)}
+	 * needs to have a file to store user-accepted invalid certificates;
+	 * these files will be stored in the user's OS-appropriate "appdata"
+	 * directory.
 	 * 
 	 * @param host A URL hostname, e.g. "www.google.com"
 	 * @return The file where the trust store for the given host should be
@@ -115,9 +152,9 @@ public class SSLConnectionSocketFactoryFactory {
 	
 	/**
 	 * Creates a new SSLConnectionSocketFactory with the behavior described in
-	 * {@link #getFactory(String)}. Instead of returning, this method registers
-	 * the factory instance to the <code>factoriesByHost<code> map, as well as
-	 * registering its <code>ExtraCertManager</code> to the
+	 * {@link #getFactory(String, CodeDxExtension)}. Instead of returning, this
+	 * method registers the factory instance to the <code>factoriesByHost<code>
+	 * map, as well as registering its <code>ExtraCertManager</code> to the
 	 * <code>certManagersByHost</code> map. The cert manager registration is
 	 * important in order to detect and purge trusted certificates on a per-host
 	 * basis.
@@ -127,7 +164,12 @@ public class SSLConnectionSocketFactoryFactory {
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	private static void initializeFactory(String host, CodeDxExtension extension) throws IOException, GeneralSecurityException {
+	private static void initializeFactory(
+		String host,
+		CodeDxExtension extension,
+		String thumbprint,
+		boolean acceptPermanently
+	) throws IOException, GeneralSecurityException {
 		// set up the certificate management
 		File managedKeyStoreFile = getTrustStoreForHost(host);
 		ExtraCertManager certManager = new SingleExtraCertManager(managedKeyStoreFile, "u9lwIfUpaN");
@@ -137,7 +179,12 @@ public class SSLConnectionSocketFactoryFactory {
 		HostnameVerifier defaultHostnameVerifier = new DefaultHostnameVerifier();
 
 		
-		InvalidCertificateStrategy invalidCertStrat = new InvalidCertificateDialogStrategy(defaultHostnameVerifier, host, extension);
+		InvalidCertificateStrategy invalidCertStrat;
+		if(thumbprint == null){
+			invalidCertStrat = new InvalidCertificateDialogStrategy(defaultHostnameVerifier, host, extension);
+		} else {
+			invalidCertStrat = new InvalidCertificateThumbprintStrategy(thumbprint, acceptPermanently);
+		}
 
 		/*
 		 * Set up a composite trust manager that uses the default trust manager
@@ -163,8 +210,11 @@ public class SSLConnectionSocketFactoryFactory {
 		SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, modifiedHostnameVerifier);
 		// Register the `factory` and the `customTrustManager` under the given
 		// `host`
-		factoriesByHost.put(host, factory);
-		customTrustByHost.put(host, customTrustManager);
+		if(thumbprint == null){
+			dialogFactoriesByHost.put(host, factory);
+		} else {
+			thumbprintFactoriesByHost.put(host, factory);
+		}
 	}
 
 	private static X509TrustManager getDefaultTrustManager() throws NoSuchAlgorithmException, KeyStoreException {
