@@ -21,6 +21,8 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -52,6 +54,14 @@ public class OptionDialog extends AbstractFrame{
         optiondialog.add(mainpane, BorderLayout.NORTH );
         optiondialog.add(buttonpane, BorderLayout.SOUTH );
         
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                extension.dialogClosed();
+            }
+        });
         this.setTitle(Constant.messages.getString("customreport.menu.title"));
         this.add(optiondialog);
         this.pack();
@@ -60,13 +70,7 @@ public class OptionDialog extends AbstractFrame{
 	
 	private JButton getCancelButton(){
 		JButton cancelbutton = new JButton(Constant.messages.getString("customreport.cancel"));
-		cancelbutton.addActionListener(
-				new ActionListener() {
-		            @Override
-		            public void actionPerformed(ActionEvent e) {
-		               extension.emitFrame();
-		            }
-		        });
+		cancelbutton.addActionListener(e -> dispose());
 		return cancelbutton;
 	}
 	
@@ -77,6 +81,7 @@ public class OptionDialog extends AbstractFrame{
 		            @Override
 		            public void actionPerformed(ActionEvent e) {
 		                extension.generateReport();
+		                dispose();
 		            }
 		        });
 		return generatebutton;

@@ -90,11 +90,11 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
                 menuCustomHtmlReport.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
-                    if (optionDialog != null) {
-                        optionDialog.requestFocusInWindow();
-                        return;
-                    }
-                	getNewOptionFrame();
+                    optionDialog = new OptionDialog(
+                            ExtensionCustomReport.this,
+                            getScopeTab(),
+                            getAlertsTab(getAlertTypes()),
+                            getAlertDetailsTab());
                 	optionDialog.setVisible(true);
                 	optionDialog.centerFrame();
                 }
@@ -102,12 +102,6 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
         }
         return menuCustomHtmlReport;
     }// zap menu item
-        
-        public void getNewOptionFrame(){
-        	//optionframe.setPreferredSize( new Dimension(530,320) );
-        	List<String> alertTypes = getAlertTypes();
-        	optionDialog = new OptionDialog(this, getScopeTab(),getAlertsTab( alertTypes ), getAlertDetailsTab() );
-        }
         
         private List<String> getAlertTypes() {
         	ExtensionAlert extAlert = (ExtensionAlert) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.NAME);
@@ -127,7 +121,6 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
             ReportLastScan report = new ReportLastScan();
             
 		    report.generateReport(this.getView(), this.getModel(), this  );
-		    this.emitFrame();
         }
 
 		private ScopePanel getScopeTab(){
@@ -219,9 +212,7 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
                 }
         }
 
-		public void emitFrame() {
-			optionDialog.setVisible(false);
-			optionDialog.dispose();
+		void dialogClosed() {
 			optionDialog = null;
 		}
 		
