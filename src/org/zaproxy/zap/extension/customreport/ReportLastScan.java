@@ -47,7 +47,6 @@ import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.XmlReporterExtension;
-import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.XMLStringUtil;
 import org.zaproxy.zap.view.ScanPanel;
@@ -78,21 +77,13 @@ public class ReportLastScan {
         report.append("<OWASPZAPReport version=\"").append(Constant.PROGRAM_VERSION).append("\" generated=\"").append(ReportGenerator.getCurrentDateTimeString()).append("\">\r\n");
         report.append("<reportname>").append(reportName).append("</reportname>\r\n");
         report.append("<reportdesc>").append(reportDescription).append("</reportdesc>\r\n");
-        siteXML(report, alertDescription, otherInfo, solution, reference, cweid, wascid, requestHeader, responseHeader, requestBody, responseBody);
+        siteXML(report, inScope, selectedAlerts, alertDescription, otherInfo, solution, reference, cweid, wascid, requestHeader, responseHeader, requestBody, responseBody);
         report.append("</OWASPZAPReport>");
-        
-        // parse and rewrite xml report
-        if (inScope){
-    		List<Context> contexts = model.getSession().getContexts();
-    		report = ReportParser.deleteNotInScope(contexts, report);
-        }
-        // delete unwanted alerts
-        report = ReportParser.selectExpectedAlerts( report, selectedAlerts);
         
         return report;
     }
 
-    private void siteXML(StringBuilder report, Boolean alertDescription, Boolean otherInfo, Boolean solution, Boolean reference, 
+    private void siteXML(StringBuilder report, Boolean inScope, List<String> selectedAlerts, Boolean alertDescription, Boolean otherInfo, Boolean solution, Boolean reference, 
     		Boolean cweid, Boolean wascid, Boolean requestHeader, Boolean responseHeader, Boolean requestBody, Boolean responseBody) {
         
     	SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
@@ -117,6 +108,11 @@ public class ReportLastScan {
             List<Alert> alerts = site.getAlerts();
             
             for (Alert alert : alerts) {
+                // Skip the alert if the report is inScope only and the alert isn't part of scope or the alert isn't selected
+                if (inScope && !alert.getHistoryRef().getSiteNode().isIncludedInScope() ||
+                        !selectedAlerts.contains(alert.getName())) {
+                    continue;
+                }
                
                	report.append("<alertitem>\r\n");
         		report.append("<pluginid>").append(alert.getPluginId()).append("</pluginid>\r\n");

@@ -580,6 +580,11 @@
 		<build-deploy-addon name="customreport" />
 	</target>
 
+	<target name="deploy-customreport-without-help-indexes" description="deploy the custom reporting extension">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="customreport" />
+	</target>
+
 	<target name="generate-wiki-customreport" description="Generates the wiki of custom reporting extension">
 		<generate-wiki addon="customreport" />
 	</target>
