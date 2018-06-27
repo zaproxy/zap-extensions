@@ -100,6 +100,12 @@ public class WebSocketMessageDTO implements Message {
 	protected static final FastDateFormat dateFormatter;
 	
 	/**
+	 * Marks this object as changed, indicating that frame headers have to
+	 * be built manually on forwarding.
+	 */
+	public boolean hasChanged;
+	
+	/**
 	 * Use the static initializer for setting up one date formatter for all
 	 * instances.
 	 */

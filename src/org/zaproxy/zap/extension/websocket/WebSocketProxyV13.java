@@ -334,6 +334,7 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 			opcode = message.opcode;
 			closeCode = (message.closeCode == null) ? -1 : message.closeCode;
 			direction = message.isOutgoing ? Direction.OUTGOING : Direction.INCOMING;
+			hasChanged = message.hasChanged;
 			
 			payload = ByteBuffer.allocate(0);
 			if (message.payload instanceof byte[]) {
