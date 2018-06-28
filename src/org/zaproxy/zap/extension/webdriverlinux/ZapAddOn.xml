@@ -7,6 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
+	Add help.<br>
 	]]>
 	</changes>
 	<extensions/>
@@ -17,6 +18,7 @@
 		<file>webdriver/linux/64/chromedriver</file>
 		<file>webdriver/linux/64/geckodriver</file>
 	</files>
+	<helpset localetoken="%LC%">org.zaproxy.zap.extension.webdriverlinux.resources.help%LC%.helpset</helpset>
 	<not-before-version>2.5.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
