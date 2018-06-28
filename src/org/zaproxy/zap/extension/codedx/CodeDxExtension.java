@@ -120,8 +120,8 @@ public class CodeDxExtension extends ExtensionAdaptor {
         String thumbprint,
         boolean acceptPermanently
     ) throws IOException, GeneralSecurityException{
-        RequestConfig config = RequestConfig.custom().setConnectTimeout(TIMEOUT).setSocketTimeout(TIMEOUT)
-                .setConnectionRequestTimeout(TIMEOUT).build();
+        RequestConfig config = RequestConfig.custom().setConnectTimeout(getTimeout()).setSocketTimeout(getTimeout())
+                .setConnectionRequestTimeout(getTimeout()).build();
         return HttpClientBuilder.create()
                 .setSSLSocketFactory(
                     SSLConnectionSocketFactoryFactory.getFactory(
