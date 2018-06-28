@@ -10,6 +10,7 @@
 	Maintenance changes.<br>
 	Issue 1142: Logic and alert risk ratings modified.<br>
 	Correct timeout per attack strength in Heartbleed OpenSSL Vulnerability scanner.<br>
+	Issue 174: Added further method checks to the Insecure HTTP Methods Scanner.<br>
     ]]>
 	</changes>
 	<extensions>
@@ -41,7 +42,7 @@
 	</ascanrules>
 	<pscanrules/>
 	<files/>
-	<not-before-version>2.6.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
 
