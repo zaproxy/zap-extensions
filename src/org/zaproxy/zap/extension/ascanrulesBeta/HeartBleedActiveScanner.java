@@ -793,12 +793,12 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 			if (read != -1 )
 				remainingtoread -= read;
 			else
-				throw new IOException ("Failed to read " + length +" bytes. Read " + new Integer (length - remainingtoread) + " bytes");
+				throw new IOException ("Failed to read " + length +" bytes. Read " + (length - remainingtoread) + " bytes");
 			currentTime = System.currentTimeMillis();
 		}
 		//did we time out?
 		if (currentTime >= timeoutTime)
-			throw new IOException ("Failed to read " + length +" bytes in "+ timeoutMs +"ms due to a timeout. Read " + new Integer (length - remainingtoread) + " bytes");
+			throw new IOException ("Failed to read " + length +" bytes in "+ timeoutMs +"ms due to a timeout. Read " + (length - remainingtoread) + " bytes");
 		return buffer;	
 	}
 	/**

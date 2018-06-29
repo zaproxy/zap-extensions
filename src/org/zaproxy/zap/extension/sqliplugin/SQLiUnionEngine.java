@@ -721,7 +721,7 @@ public class SQLiUnionEngine {
     private int orderByTechnique() {
         int found = -1;
         
-        if (orderByTest(1) && !orderByTest(new Integer(SQLiPayloadManager.randomInt()))) {
+        if (orderByTest(1) && !orderByTest(Integer.parseInt(SQLiPayloadManager.randomInt()))) {
             if (log.isDebugEnabled()) {
                 log.debug("ORDER BY technique seems to be usable. "
                         + "This should reduce the time needed "
