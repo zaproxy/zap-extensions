@@ -166,11 +166,7 @@ public class WebSocketAPI extends ApiImplementor {
                         return true;
                     }
                     try {
-                        if (message.opcode == WebSocketMessage.OPCODE_CLOSE) {
-                            return false;
-                        }
-                        if (message.opcode == WebSocketMessage.OPCODE_PING) {
-                            // TODO send PONG.
+                        if (WebSocketMessage.isControl(message.opcode)) {
                             return false;
                         }
                         JSONObject json = JSONObject.fromObject(message.getReadablePayload());
