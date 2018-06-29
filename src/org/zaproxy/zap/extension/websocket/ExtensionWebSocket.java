@@ -99,6 +99,7 @@ import org.zaproxy.zap.extension.websocket.ui.httppanel.views.WebSocketSyntaxHig
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadUtil;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadView;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargetPayloadViewModel;
+import org.zaproxy.zap.extension.websocket.utility.WebSocketUtils;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelComponentFactory;
@@ -588,9 +589,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			}
 			
 			// parse HTTP handshake
-			Map<String, String> wsExtensions = parseWebSocketExtensions(handshakeMessage);
-			String wsProtocol = parseWebSocketSubProtocol(handshakeMessage);
-			String wsVersion = parseWebSocketVersion(handshakeMessage);
+			Map<String, String> wsExtensions = WebSocketUtils.parseWebSocketExtensions(handshakeMessage);
+			String wsProtocol = WebSocketUtils.parseWebSocketSubProtocol(handshakeMessage);
+			String wsVersion = WebSocketUtils.parseWebSocketVersion(handshakeMessage);
 	
 			WebSocketProxy wsProxy = null;
 			
@@ -665,118 +666,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			logger.error("Adding WebSockets channel failed due to: '" + e.getClass() + "' " + e.getMessage(), e);
 			return;
 		}
-	}
-
-	/**
-	 * Parses the negotiated WebSockets extensions. It splits them up into name
-	 * and params of the extension. In future we want to look up if given
-	 * extension is available as ZAP extension and then use their knowledge to
-	 * process frames.
-	 * <p>
-	 * If multiple extensions are to be used, they can all be listed in a single
-	 * {@link WebSocketProtocol#HEADER_EXTENSION} field or split between multiple
-	 * instances of the {@link WebSocketProtocol#HEADER_EXTENSION} header field.
-	 * 
-	 * @param msg
-	 * @return Map with extension name and parameter string.
-	 */
-	private Map<String, String> parseWebSocketExtensions(HttpMessage msg) {
-		Vector<String> extensionHeaders = msg.getResponseHeader().getHeaders(
-				WebSocketProtocol.HEADER_EXTENSION);
-
-		if (extensionHeaders == null) {
-			return null;
-		}
-		
-		/*
-		 * From http://tools.ietf.org/html/rfc6455#section-4.3:
-		 *   extension-list = 1#extension
-      	 *   extension = extension-token *( ";" extension-param )
-         *   extension-token = registered-token
-         *   registered-token = token
-         *   extension-param = token [ "=" (token | quoted-string) ]
-         *    ; When using the quoted-string syntax variant, the value
-         *    ; after quoted-string unescaping MUST conform to the
-         *    ; 'token' ABNF.
-         *    
-         * e.g.:  	Sec-WebSocket-Extensions: foo
-         * 			Sec-WebSocket-Extensions: bar; baz=2
-		 *      is exactly equivalent to:
-		 * 			Sec-WebSocket-Extensions: foo, bar; baz=2
-		 * 
-		 * e.g.:	Sec-WebSocket-Extensions: deflate-stream
-		 * 			Sec-WebSocket-Extensions: mux; max-channels=4; flow-control, deflate-stream
-		 * 			Sec-WebSocket-Extensions: private-extension
-		 */
-		Map<String, String> wsExtensions = new LinkedHashMap<>();
-		for (String extensionHeader : extensionHeaders) {
-			for (String extension : extensionHeader.split(",")) {
-				String key = extension.trim();
-				String params = "";
-				
-				int paramsIndex = key.indexOf(";");
-				if (paramsIndex != -1) {
-					key = extension.substring(0, paramsIndex).trim();
-					params = extension.substring(paramsIndex + 1).trim();
-				}
-				
-				wsExtensions.put(key, params);
-			}
-		}
-		
-		/*
-		 * The interpretation of any extension parameters, and what constitutes
-		 * a valid response by a server to a requested set of parameters by a
-		 * client, will be defined by each such extension.
-		 * 
-		 * Note that the order of extensions is significant!
-		 */
-		
-		return wsExtensions;
-	}
-
-	/**
-	 * Parses negotiated protocols out of the response header.
-	 * <p>
-	 * The {@link WebSocketProtocol#HEADER_PROTOCOL} header is only allowed to
-	 * appear once in the HTTP response (but several times in the HTTP request).
-	 * 
-	 * A server that speaks multiple sub-protocols has to make sure it selects
-	 * one based on the client's handshake and specifies it in its handshake.
-	 * 
-	 * @param msg
-	 * @return Name of negotiated sub-protocol or null.
-	 */
-	private String parseWebSocketSubProtocol(HttpMessage msg) {
-		String subProtocol = msg.getResponseHeader().getHeader(
-				WebSocketProtocol.HEADER_PROTOCOL);
-		return subProtocol;
-	}
-
-	/**
-	 * The {@link WebSocketProtocol#HEADER_VERSION} header might not always
-	 * contain a number. Therefore I return a string. Use the version to choose
-	 * the appropriate processing class.
-	 * 
-	 * @param msg
-	 * @return Version of the WebSockets channel, defining the protocol.
-	 */
-	private String parseWebSocketVersion(HttpMessage msg) {
-		String version = msg.getResponseHeader().getHeader(
-				WebSocketProtocol.HEADER_VERSION);
-		
-		if (version == null) {
-			// check for requested WebSockets version
-			version = msg.getRequestHeader().getHeader(WebSocketProtocol.HEADER_VERSION);
-			
-			if (version == null) {
-				// default to version 13 if non is given, for whatever reason
-				logger.debug("No " + WebSocketProtocol.HEADER_VERSION + " header was provided - try version 13");
-				version = "13";
-			}
-		}
-		
-		return version;
 	}
 
 	/**
