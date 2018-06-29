@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.websocket.utility;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Random;
 
 import org.parosproxy.paros.extension.encoder.Encoder;
 
@@ -30,6 +31,9 @@ public final class WebSocketUtils {
 
     private static Encoder encoder = new Encoder();
 
+    /**
+     * Given a Sec-WebSocket-Key, Generate response key Sec-WebSocket-Accept
+     */
     public static String encodeWebSocketKey(String key) {
         String toEncode = key + WEB_SOCKET_GUID;
 
@@ -40,5 +44,15 @@ public final class WebSocketUtils {
             return null;
         }
     }
-
+    
+    /**
+     * Generate a Sec-WebSocket-key which is used in handshake request
+     * @return new Sec-WebSocket-key
+     */
+    public static String generateSecWebSocketKey() {
+        byte[] random = new byte[16];
+        Random rand = new Random();
+        rand.nextBytes(random);
+        return Base64.getEncoder().encodeToString(random);
+    }
 }
