@@ -543,7 +543,7 @@ public abstract class WebSocketProxy {
 			// control messages may interrupt non-control messages
 			// control messages are ALWAYS just one frame long
 			message = createWebSocketMessage(in, frameHeader);
-			if(Mode.CLIENT.equals(mode) && message.getOpcode() == WebSocketMessage.OPCODE_PING){
+			if (!Mode.PROXY.equals(mode) && message.getOpcode() == WebSocketMessage.OPCODE_PING) {
 				sendPongResponse(message);
 			}
 		} else {
@@ -673,20 +673,23 @@ public abstract class WebSocketProxy {
 	}
 	
 	/**
-	 * Sends an ougoing Pong response.
+	 * Sends a Pong response to the given Ping message.
+	 * <p>
+	 * If the Ping message is outgoing the Pong is incoming and vice versa.
+	 * 
 	 * @param webSocketMessage Ping message was get
 	 */
 	private void sendPongResponse(WebSocketMessage webSocketMessage){
 		WebSocketMessageDTO webSocketMessageDTO = webSocketMessage.getDTO();
 		webSocketMessageDTO.readableOpcode = WebSocketMessage.opcode2string(WebSocketMessage.OPCODE_PONG);
 		webSocketMessageDTO.opcode = WebSocketMessage.OPCODE_PONG;
-		webSocketMessageDTO.isOutgoing = true;
+		webSocketMessageDTO.isOutgoing = !webSocketMessageDTO.isOutgoing;
 		webSocketMessageDTO.hasChanged = true;
 		
 		try {
 			sendAndNotify(webSocketMessageDTO, Initiator.MANUAL_REQUEST);
 		} catch (IOException e) {
-			logger.warn(e.getStackTrace().toString());
+			logger.warn("Failed to send Pong response:", e);
 		}
 	}
 	
