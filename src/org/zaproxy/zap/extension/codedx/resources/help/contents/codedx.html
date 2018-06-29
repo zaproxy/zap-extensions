@@ -25,14 +25,14 @@ Uploads a report to Code Dx. Note that uploading an empty report with no alerts 
 <UL>
     <LI>filePath: Absolute path to the report file</LI>
     <LI>serverUrl: Code Dx server URL</LI>
-    <LI>apiKey: Code Dx API Key</LI>
+    <LI>codeDxApiKey: Code Dx API Key</LI>
     <LI>projectId: Code Dx Project ID</LI>
-    <LI>thumbprint: Optional SHA1 hash of an invalid certificate to make an exception for</LI>
+    <LI>fingerprint: Optional SHA1 hash of an invalid certificate to make an exception for</LI>
     <LI>acceptPermanently: Optional boolean for if the exception should be stored permanently in a truststore file.</LI>
 </UL>
 <I>Returns</I>
 <br>
-"OK" if the report is uploaded successfuly.
+"OK" if the report is uploaded successfully.
 
 <H3>generateAndUpload</H3>
 Generates a Code Dx report, saves it to a temporary file, uploads to Code Dx, then deletes the file.
@@ -40,14 +40,14 @@ Generates a Code Dx report, saves it to a temporary file, uploads to Code Dx, th
 <I>Parameters</I>
 <UL>
     <LI>serverUrl: Code Dx server URL</LI>
-    <LI>apiKey: Code Dx API Key</LI>
+    <LI>codeDxApiKey: Code Dx API Key</LI>
     <LI>projectId: Code Dx Project ID</LI>
-    <LI>thumbprint: Optional SHA1 hash of an invalid certificate to make an exception for</LI>
+    <LI>fingerprint: Optional SHA1 hash of an invalid certificate to make an exception for</LI>
     <LI>acceptPermanently: Optional boolean for if the exception should be stored permanently in a truststore file.</LI>
 </UL>
 <I>Returns</I>
 <br>
-"OK" if the report is uploaded successfuly.
+"OK" if the report is uploaded successfully.
 <br>
 "EMPTY" if the generated report is empty. The report will not be uploaded to Code Dx.
 

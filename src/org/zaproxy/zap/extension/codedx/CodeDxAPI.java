@@ -22,11 +22,11 @@ public class CodeDxAPI extends ApiImplementor {
 
 	private static final String ACTION_PARAM_FILE_PATH = "filePath";
 	private static final String ACTION_PARAM_SERVER_URL = "serverUrl";
-	private static final String ACTION_PARAM_API_KEY = "apiKey";
+	private static final String ACTION_PARAM_API_KEY = "codeDxApiKey";
 	private static final String ACTION_PARAM_PROJECT = "projectId";
 
 	// Optional
-	private static final String ACTION_PARAM_THUMBPRINT = "thumbprint";
+	private static final String ACTION_PARAM_FINGERPRINT = "fingerprint";
 	private static final String ACTION_PARAM_ACCEPT_PERM = "acceptPermanently";
 
 	private CodeDxExtension extension;
@@ -36,7 +36,7 @@ public class CodeDxAPI extends ApiImplementor {
 		this.addApiView(new ApiView(VIEW_GENERATE));
 
 		String[] optionalParams = new String[] {
-			ACTION_PARAM_THUMBPRINT,
+			ACTION_PARAM_FINGERPRINT,
 			ACTION_PARAM_ACCEPT_PERM
 		};
 
@@ -74,10 +74,10 @@ public class CodeDxAPI extends ApiImplementor {
 			String apiKey = params.getString(ACTION_PARAM_API_KEY);
 			String projectId = params.getString(ACTION_PARAM_PROJECT);
 
-			String thumbprint = this.getParam(params, ACTION_PARAM_THUMBPRINT, "");
+			String fingerprint = this.getParam(params, ACTION_PARAM_FINGERPRINT, "");
 			boolean acceptPermanently = this.getParam(params, ACTION_PARAM_ACCEPT_PERM, false);
 
-			uploadFile(reportFile, serverUrl, apiKey, projectId, thumbprint, acceptPermanently);
+			uploadFile(reportFile, serverUrl, apiKey, projectId, fingerprint, acceptPermanently);
 			return ApiResponseElement.OK;
 		}
 		else if(ACTION_GEN_UPLOAD.equals(name)) {
@@ -86,7 +86,7 @@ public class CodeDxAPI extends ApiImplementor {
 			String apiKey = params.getString(ACTION_PARAM_API_KEY);
 			String projectId = params.getString(ACTION_PARAM_PROJECT);
 
-			String thumbprint = this.getParam(params, ACTION_PARAM_THUMBPRINT, "");
+			String fingerprint = this.getParam(params, ACTION_PARAM_FINGERPRINT, "");
 			boolean acceptPermanently = this.getParam(params, ACTION_PARAM_ACCEPT_PERM, false);
 
 			StringBuilder report = new StringBuilder();
@@ -99,7 +99,7 @@ public class CodeDxAPI extends ApiImplementor {
 			try {
 				// Check report length before splitting to avoid splitting large reports for no reason
 				if(report.length() > 200 || report.toString().trim().split("\n").length > 2) 
-					uploadFile(reportFile, serverUrl, apiKey, projectId, thumbprint, acceptPermanently);
+					uploadFile(reportFile, serverUrl, apiKey, projectId, fingerprint, acceptPermanently);
 				else
 					return new ApiResponseElement("Result", "empty");
 			} finally {
@@ -130,13 +130,13 @@ public class CodeDxAPI extends ApiImplementor {
 		String serverUrl,
 		String apiKey,
 		String project,
-		String thumbprint,
+		String fingerprint,
 		boolean acceptPermanently
 	) throws ApiException {
 		if(serverUrl.endsWith("/"))
 			serverUrl = serverUrl.substring(0, serverUrl.length()-1);
 		try {
-			CloseableHttpClient client = extension.getHttpClient(serverUrl, thumbprint, acceptPermanently);
+			CloseableHttpClient client = extension.getHttpClient(serverUrl, fingerprint, acceptPermanently);
 			String err = UploadActionListener.uploadFile(client, reportFile, serverUrl, apiKey, project);
 			if(err != null) {
 				LOGGER.error(err);

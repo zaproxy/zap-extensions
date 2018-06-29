@@ -47,7 +47,7 @@ import org.zaproxy.zap.extension.codedx.CodeDxExtension;
 public class SSLConnectionSocketFactoryFactory {
 
 	private static Map<String, SSLConnectionSocketFactory> dialogFactoriesByHost = new HashMap<>();
-	private static Map<String, SSLConnectionSocketFactory> thumbprintFactoriesByHost = new HashMap<>();
+	private static Map<String, SSLConnectionSocketFactory> fingerprintFactoriesByHost = new HashMap<>();
 
 	/**
 	 * Returns a SSLConnectionSocketFactory for the given host. When a SSL
@@ -90,7 +90,7 @@ public class SSLConnectionSocketFactoryFactory {
 	 * @param host The host (URL component) that the socket factory will be used
 	 *             to connect to
 	 * @param extension
-	 * @param thumbprint Expected SHA1 thumbprint of an invalid certificate
+	 * @param fingerprint Expected SHA1 fingerprint of an invalid certificate
 	 * @param acceptPermanently
 	 * @return A socket factory for the given host
 	 * @throws IOException
@@ -99,13 +99,13 @@ public class SSLConnectionSocketFactoryFactory {
 	public static SSLConnectionSocketFactory getFactory(
 		String host,
 		CodeDxExtension extension,
-		String thumbprint,
+		String fingerprint,
 		boolean acceptPermanently
 	) throws IOException, GeneralSecurityException {
-		SSLConnectionSocketFactory instance = thumbprintFactoriesByHost.get(host);
+		SSLConnectionSocketFactory instance = fingerprintFactoriesByHost.get(host);
 		if (instance == null) {
-			initializeFactory(host, extension, thumbprint, acceptPermanently);
-			return thumbprintFactoriesByHost.get(host);
+			initializeFactory(host, extension, fingerprint, acceptPermanently);
+			return fingerprintFactoriesByHost.get(host);
 		} else {
 			return instance;
 		}
@@ -167,7 +167,7 @@ public class SSLConnectionSocketFactoryFactory {
 	private static void initializeFactory(
 		String host,
 		CodeDxExtension extension,
-		String thumbprint,
+		String fingerprint,
 		boolean acceptPermanently
 	) throws IOException, GeneralSecurityException {
 		// set up the certificate management
@@ -180,10 +180,10 @@ public class SSLConnectionSocketFactoryFactory {
 
 		
 		InvalidCertificateStrategy invalidCertStrat;
-		if(thumbprint == null){
+		if(fingerprint == null){
 			invalidCertStrat = new InvalidCertificateDialogStrategy(defaultHostnameVerifier, host, extension);
 		} else {
-			invalidCertStrat = new InvalidCertificateThumbprintStrategy(thumbprint, acceptPermanently);
+			invalidCertStrat = new InvalidCertificateFingerprintStrategy(fingerprint, acceptPermanently);
 		}
 
 		/*
@@ -210,10 +210,10 @@ public class SSLConnectionSocketFactoryFactory {
 		SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, modifiedHostnameVerifier);
 		// Register the `factory` and the `customTrustManager` under the given
 		// `host`
-		if(thumbprint == null){
+		if(fingerprint == null){
 			dialogFactoriesByHost.put(host, factory);
 		} else {
-			thumbprintFactoriesByHost.put(host, factory);
+			fingerprintFactoriesByHost.put(host, factory);
 		}
 	}
 

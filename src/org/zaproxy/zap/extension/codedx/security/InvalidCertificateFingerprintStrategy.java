@@ -4,13 +4,13 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 
-public class InvalidCertificateThumbprintStrategy implements InvalidCertificateStrategy {
+public class InvalidCertificateFingerprintStrategy implements InvalidCertificateStrategy {
 
-	private final String thumbprint;
+	private final String fingerprint;
 	private final boolean acceptPermanently;
 
-	public InvalidCertificateThumbprintStrategy(String thumbprint, boolean acceptPermanently) {
-		this.thumbprint = thumbprint.replaceAll("\\s", "");
+	public InvalidCertificateFingerprintStrategy(String fingerprint, boolean acceptPermanently) {
+		this.fingerprint = fingerprint.replaceAll("\\s", "");
 		this.acceptPermanently = acceptPermanently;
 	}
 
@@ -18,8 +18,8 @@ public class InvalidCertificateThumbprintStrategy implements InvalidCertificateS
 	public CertificateAcceptance checkAcceptance(Certificate cert, CertificateException certError) {
 		try {
 			byte[] encoded = InvalidCertificateDialogStrategy.getSHA1(cert.getEncoded());
-			String obsThumb = InvalidCertificateDialogStrategy.toHexString(encoded, "");
-			if(obsThumb.equalsIgnoreCase(thumbprint)){
+			String obsPrint = InvalidCertificateDialogStrategy.toHexString(encoded, "");
+			if(obsPrint.equalsIgnoreCase(fingerprint)){
 				if(acceptPermanently)
 					return CertificateAcceptance.ACCEPT_PERMANENTLY;
 				else

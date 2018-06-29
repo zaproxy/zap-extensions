@@ -44,7 +44,9 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class CodeDxExtension extends ExtensionAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(CodeDxExtension.class);
-    
+
+    private CodeDxAPI cdxAPIImpl;
+
     // The name is public so that other extensions can access it
     public static final String NAME = "CodeDxExtension";
 
@@ -63,12 +65,18 @@ public class CodeDxExtension extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        API.getInstance().registerApiImplementor(new CodeDxAPI(this));
+        cdxAPIImpl = new CodeDxAPI(this);
+        API.getInstance().registerApiImplementor(cdxAPIImpl);
         if (getView() != null) {
             extensionHook.getHookMenu().addReportMenuItem(getUploadMenu());
             extensionHook.getHookMenu().addReportMenuItem(getExportMenu());
         }
 
+    }
+
+    @Override
+    public void unload() {
+        API.getInstance().removeApiImplementor(cdxAPIImpl);
     }
 
     public ZapMenuItem getUploadMenu() {
@@ -117,7 +125,7 @@ public class CodeDxExtension extends ExtensionAdaptor {
 
     public CloseableHttpClient getHttpClient(
         String url,
-        String thumbprint,
+        String fingerprint,
         boolean acceptPermanently
     ) throws IOException, GeneralSecurityException{
         RequestConfig config = RequestConfig.custom().setConnectTimeout(getTimeout()).setSocketTimeout(getTimeout())
@@ -125,7 +133,7 @@ public class CodeDxExtension extends ExtensionAdaptor {
         return HttpClientBuilder.create()
                 .setSSLSocketFactory(
                     SSLConnectionSocketFactoryFactory.getFactory(
-                        new URL(url).getHost(), this, thumbprint, acceptPermanently
+                        new URL(url).getHost(), this, fingerprint, acceptPermanently
                     )
                 ).setDefaultRequestConfig(config).build();
     }
