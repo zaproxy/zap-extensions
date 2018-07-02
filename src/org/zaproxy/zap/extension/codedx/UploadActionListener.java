@@ -58,51 +58,31 @@ public class UploadActionListener implements ActionListener{
 	public void generateAndUploadReport(){
 		String error = null;
 		try {
-			
 			final StringBuilder report = new StringBuilder();
-			final File reportFile = generateReport(report);
-			
-			if(report.toString().trim().split("\n").length > 2){
+			final File reportFile = generateReportFile(extension, report);
+
+			// Check report length before splitting to avoid splitting large reports for no reason
+			if(report.length() > 200 || report.toString().trim().split("\n").length > 2){
 				Thread uploadThread = new Thread(){
 					@Override
 					public void run(){
-						String msg = null;
-						String err = null;
-
+						String err;
 						try{
-							HttpResponse response = sendData(reportFile);
-							StatusLine responseLine = null;
-							int responseCode = -1;
-							if(response != null){
-								responseLine = response.getStatusLine();
-								responseCode = responseLine.getStatusCode();
-							}
-							if(responseCode == 202){
-								msg = Constant.messages.getString("codedx.message.success");
-							} else if(responseCode == 400) {
-								err = Constant.messages.getString("codedx.error.unexpected") + "\n"
-										+ Constant.messages.getString("codedx.error.http.400");
-							} else if(responseCode == 403){
-								err = Constant.messages.getString("codedx.error.unsent") + " "
-										+ Constant.messages.getString("codedx.error.http.403");
-							} else if(responseCode == 404){
-								err = Constant.messages.getString("codedx.error.unsent") + " "
-										+ Constant.messages.getString("codedx.error.http.404");
-							} else if(responseCode == 415) {
-								err = Constant.messages.getString("codedx.error.unexpected") + "\n"
-										+ Constant.messages.getString("codedx.error.http.415");
-							} else if(response != null) {
-								err = Constant.messages.getString("codedx.error.unexpected")
-										+ Constant.messages.getString("codedx.error.http.other") + " " + responseLine;
-							}
+							err = uploadFile(
+								extension.getHttpClient(),
+								reportFile,
+								CodeDxProperties.getInstance().getServerUrl(),
+								CodeDxProperties.getInstance().getApiKey(),
+								prop.getProject().getValue()
+							);
 						} catch (IOException ex1){
 							err = Constant.messages.getString("codedx.error.unexpected");
 							LOGGER.error("Unexpected error while uploading report: ", ex1);
 						}
-						if(msg != null)
-							View.getSingleton().showMessageDialog(msg);
 						if(err != null)
 							View.getSingleton().showMessageDialog(err);
+						else
+							View.getSingleton().showMessageDialog(Constant.messages.getString("codedx.message.success"));
 						reportFile.delete();
 					}
 				};
@@ -117,20 +97,64 @@ public class UploadActionListener implements ActionListener{
 		if(error != null)
 			View.getSingleton().showWarningDialog(error);
 	}
+
+	public static String uploadFile(
+			CloseableHttpClient client,
+			File reportFile,
+			String serverUrl,
+			String apiKey,
+			String project
+	) throws IOException {
+		String err = null;
+		HttpResponse response = sendData(
+			client,
+			reportFile,
+			serverUrl,
+			apiKey,
+			project
+		);
+		StatusLine responseLine = null;
+		int responseCode = -1;
+		if(response != null){
+			responseLine = response.getStatusLine();
+			responseCode = responseLine.getStatusCode();
+		}
+		if(responseCode == 400) {
+			err = Constant.messages.getString("codedx.error.unexpected") + "\n"
+					+ Constant.messages.getString("codedx.error.http.400");
+		} else if(responseCode == 403){
+			err = Constant.messages.getString("codedx.error.unsent") + " "
+					+ Constant.messages.getString("codedx.error.http.403");
+		} else if(responseCode == 404){
+			err = Constant.messages.getString("codedx.error.unsent") + " "
+					+ Constant.messages.getString("codedx.error.http.404");
+		} else if(responseCode == 415) {
+			err = Constant.messages.getString("codedx.error.unexpected") + "\n"
+					+ Constant.messages.getString("codedx.error.http.415");
+		} else if(responseCode != 200 && responseCode != 202) {
+			err = Constant.messages.getString("codedx.error.unexpected");
+			if(response != null)
+				err += Constant.messages.getString("codedx.error.http.other") + " " + responseLine;
+		}
+		return err;
+	}
 	
-	private HttpResponse sendData(File report) throws IOException{
-		CloseableHttpClient client = extension.getHttpClient();
+	private static HttpResponse sendData(
+		CloseableHttpClient client,
+		File reportFile,
+		String serverUrl,
+		String apiKey,
+		String project
+	) throws IOException{
 		if(client == null)
 			return null;
-
 		try {
-			HttpPost post = new HttpPost(CodeDxProperties.getInstance().getServerUrl() + "/api/projects/"
-					+ prop.getProject().getValue() + "/analysis");
-			post.setHeader("API-Key", CodeDxProperties.getInstance().getApiKey());
+			HttpPost post = new HttpPost(serverUrl + "/api/projects/" + project + "/analysis");
+			post.setHeader("API-Key", apiKey);
 			
 			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 			builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-			builder.addPart("file", new FileBody(report));		
+			builder.addPart("file", new FileBody(reportFile));
 			
 			HttpEntity entity = builder.build();
 			post.setEntity(entity);
@@ -141,16 +165,20 @@ public class UploadActionListener implements ActionListener{
 			if (resEntity != null) {
 				EntityUtils.consume(resEntity);
 			}
-		
+			
 			return response;
 		} finally {
 			client.close();
 		}
 	}
 	
-	private File generateReport(StringBuilder report) throws Exception{
+	public static void generateReportString(CodeDxExtension extension, StringBuilder report) throws Exception {
 		ReportLastScanHttp saver = new ReportLastScanHttp();
 		saver.generate(report, extension.getModel());
+	}
+
+	public static File generateReportFile(CodeDxExtension extension, StringBuilder report) throws Exception{
+		generateReportString(extension, report);
 
 		File reportFile = File.createTempFile("codedx-zap-report", ".xml");
 		reportFile.deleteOnExit();
