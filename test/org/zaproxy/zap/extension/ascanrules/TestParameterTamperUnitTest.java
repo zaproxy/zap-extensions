@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.SimpleWebServer.newFixedLengthResponse;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -61,7 +62,7 @@ public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameter
 
             @Override
             protected Response serve(IHTTPSession session) {
-                return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "");
+                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "");
             }
         });
         rule.init(getHttpMessage("/?p=v"), parent);
@@ -79,7 +80,7 @@ public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameter
 
             @Override
             protected Response serve(IHTTPSession session) {
-                return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "Default Response");
+                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "Default Response");
             }
         });
         rule.init(getHttpMessage("/?p=v"), parent);
@@ -101,9 +102,9 @@ public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameter
             protected Response serve(IHTTPSession session) {
                 if (showDefaultResponse) {
                     showDefaultResponse = false;
-                    return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "Default Response");
+                    return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "Default Response");
                 }
-                return new Response(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
+                return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
             }
         });
         rule.init(getHttpMessage("/?p=v"), parent);
@@ -222,9 +223,9 @@ public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameter
         protected Response serve(IHTTPSession session) {
             if (count <= totalAttacks) {
                 count++;
-                return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "Default Response");
+                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "Default Response");
             }
-            return new Response(Response.Status.INTERNAL_ERROR, NanoHTTPD.MIME_HTML, error);
+            return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, NanoHTTPD.MIME_HTML, error);
         }
     }
 }

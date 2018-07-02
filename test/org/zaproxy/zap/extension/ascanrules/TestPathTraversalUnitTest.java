@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -187,7 +188,7 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
 
             @Override
             protected Response serve(IHTTPSession session) {
-                return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, fileContent);
+                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, fileContent);
             }
         });
         rule.init(getHttpMessage("GET", filePath, fileContent), parent);
@@ -213,11 +214,11 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
 
         @Override
         protected Response serve(IHTTPSession session) {
-            String value = session.getParms().get(param);
+            String value = getFirstParamValue(session,param);
             if (attack.equals(value)) {
-                return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, getDirs());
+                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, getDirs());
             }
-            return new Response(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
+            return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
         }
     }
 
@@ -281,11 +282,11 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
 
         @Override
         protected Response serve(IHTTPSession session) {
-            String value = session.getParms().get(param);
+            String value = getFirstParamValue(session,param);
             if (ArrayUtils.contains(existingFiles, value)) {
-                return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "File Found");
+                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "File Found");
             }
-            return new Response(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
+            return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
         }
     }
 }

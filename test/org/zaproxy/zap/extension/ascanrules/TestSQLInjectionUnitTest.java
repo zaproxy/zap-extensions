@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -221,11 +222,11 @@ public class TestSQLInjectionUnitTest extends ActiveScannerTest<TestSQLInjection
 
         @Override
         protected Response serve(IHTTPSession session) {
-            String value = session.getParms().get(param);
+            String value = getFirstParamValue(session,param);
             if (isValidValue(value)) {
-                return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(value));
+                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(value));
             }
-            return new Response(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
+            return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
         }
 
         private boolean isValidValue(String value) {

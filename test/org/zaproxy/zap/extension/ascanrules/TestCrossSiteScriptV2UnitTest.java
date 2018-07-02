@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -58,7 +59,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     response = getHtml("InputInParagraph.html",
@@ -66,7 +67,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -91,7 +92,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out suitable nasties
@@ -104,7 +105,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -124,7 +125,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     response = getHtml("InputInComment.html",
@@ -132,7 +133,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -157,7 +158,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out 'script' ignoring the case
@@ -167,7 +168,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -193,7 +194,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out suitable nasties
@@ -206,7 +207,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -226,7 +227,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     response = getHtml("InputInBody.html",
@@ -234,7 +235,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -259,7 +260,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     response = getHtml("InputInSpan.html",
@@ -267,7 +268,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -292,7 +293,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     response = getHtml("InputIsBody.html",
@@ -300,7 +301,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -325,7 +326,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     response = getHtml("InputOutsideHtmlTag.html",
@@ -333,7 +334,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -358,7 +359,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out 'script' ignoring the case
@@ -368,7 +369,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -394,7 +395,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out suitable nasties
@@ -407,7 +408,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -427,7 +428,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String color = session.getParms().get("color");
+                String color = getFirstParamValue(session,"color");
                 String response;
                 if (color != null) {
                     // Strip out < and >
@@ -437,7 +438,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -463,7 +464,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String color = session.getParms().get("color");
+                String color = getFirstParamValue(session,"color");
                 String response;
                 if (color != null) {
                     // Strip out suitable nasties
@@ -477,7 +478,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -497,7 +498,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String color = session.getParms().get("color");
+                String color = getFirstParamValue(session,"color");
                 String response;
                 if (color != null) {
                     // Strip out < and >
@@ -507,7 +508,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -532,7 +533,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out < and >
@@ -542,7 +543,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -567,7 +568,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out < and >
@@ -577,7 +578,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -615,7 +616,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 
                 String response = getHtml("ReflectedUrl.html",
                             new String[][] {{"url", url}});
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         };
 
@@ -658,7 +659,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 
                 String response = getHtml("ReflectedUrl.html",
                             new String[][] {{"url", url}});
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         };
 
@@ -697,7 +698,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 
                 String response = getHtml("ReflectedUrl.html",
                             new String[][] {{"url", url}});
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         };
 
@@ -722,14 +723,14 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     response = getHtml("example.json", new String[][] { { "name", name } });
                 } else {
                     response = getHtml("example.json");
                 }
-                Response resp = new Response(response);
+                Response resp = newFixedLengthResponse(response);
                 resp.setMimeType("application/json");
                 return resp;
             }
@@ -754,7 +755,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out 'script' ignoring the case
@@ -764,7 +765,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -791,7 +792,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out 'script' ignoring the case
@@ -806,7 +807,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -832,7 +833,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
             protected Response serve(IHTTPSession session) {
-                String name = session.getParms().get("name");
+                String name = getFirstParamValue(session,"name");
                 String response;
                 if (name != null) {
                     // Strip out 'script' ignoring the case
@@ -847,7 +848,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
@@ -882,7 +883,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         
