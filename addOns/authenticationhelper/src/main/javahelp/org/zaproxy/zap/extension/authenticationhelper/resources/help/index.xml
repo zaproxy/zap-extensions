@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+	<indexitem text="authenticationhelper" target="authenticationhelper.introduction" />
+	<indexitem text="authenticationhelper auto" target="authenticationhelper.auto" />
+	<indexitem text="authenticationhelper guide" target="authenticationhelper.guide" />
+	<indexitem text="authenticationhelper scan" target="authenticationhelper.scan" />
+	<indexitem text="authenticationhelper dialog" target="authenticationhelper.dialog" />
+	<indexitem text="authenticationhelper tab" target="authenticationhelper.tab" />
+	<indexitem text="authenticationhelper options" target="authenticationhelper.options" />
+</index>

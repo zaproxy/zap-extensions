@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Guided configuration</title>
+</head>
+<body>
+	<h1>Guided configuration</h1>
+	<img src="images/checklist.png" />
+	<p>
+		As we know, setting up authentication in ZAP is a multi-step process.
+		A checklist of required configurations with their current
+		configuration status(configured or not) is provided to assist manual
+		configuration. The checklist understands the current configuration
+		status and suggests you the next preferred step. Clicking the <img
+			src="images/gear.png" width="16" height="16" /> icon will open up
+		relevant properties dialog where the necessary configuration can be
+		done.
+	</p>
+	<p>
+		For each checklist item, its current configuration status is indicated
+		using an <em>Icon</em>.
+	</p>
+	<br>
+	<table border="1">
+		<thead>
+			<tr>
+				<th>Configuration Status</th>
+				<th>Icon</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Good</td>
+				<td align="center"><img src="images/tick-circle.png" /></td>
+				<td>Necessary conditions are met</td>
+			</tr>
+			<tr>
+				<td>Bad</td>
+				<td align="center"><img src="images/cross-circle.png" /></td>
+				<td>Necessary conditions not met</td>
+			</tr>
+			<tr>
+				<td>Minimal</td>
+				<td align="center"><img src="images/exclamation-circle.png" /></td>
+				<td>Minimum required conditions are met</td>
+			</tr>
+			<tr>
+				<td>Not validated yet</td>
+				<td align="center"><img src="images/question-white.png" /></td>
+				<td>The checks need to be rerun</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
