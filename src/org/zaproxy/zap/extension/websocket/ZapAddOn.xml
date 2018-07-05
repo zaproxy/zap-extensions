@@ -7,7 +7,8 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Fix an exception when dispatching events.
+	Fix an exception when dispatching events.<br>
+	Fix an exception while uninstalling the add-on with no GUI (Issue 4815).<br>
 	]]>
 	</changes>
 	<classnames>
