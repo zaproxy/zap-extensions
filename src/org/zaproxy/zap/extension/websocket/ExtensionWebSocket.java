@@ -116,6 +116,15 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		PersistentConnectionListener, SessionChangedListener, SiteMapListener {
     
 	private static final Logger logger = Logger.getLogger(ExtensionWebSocket.class);
+
+	/**
+	 * The script icon.
+	 * <p>
+	 * Lazily initialised.
+	 * 
+	 * @see #getScriptIcon()
+	 */
+	private static ImageIcon scriptIcon;
 	
 	public static final int HANDSHAKE_LISTENER = 10;
 	
@@ -128,12 +137,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Used to identify the type of Websocket sender scripts
 	 */
 	public static final String SCRIPT_TYPE_WEBSOCKET_SENDER = "websocketsender";
-
-	/**
-	 * Icon to be shown in script tab for sender scripts
-	 */
-	private static final ImageIcon WEBSOCKET_SENDER_SCRIPT_ICON = new ImageIcon(
-			ExtensionWebSocket.class.getResource("/org/zaproxy/zap/extension/websocket/resources/script-plug.png"));
 
 	/**
 	 * Used to shorten the time, a listener is started on a WebSocket channel.
@@ -382,18 +385,18 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 					httpSendEditor.addPersistentConnectionListener(this);
 				}
 			}
-			// setup sender script interface
-			ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-			if (extensionScript != null) {
-				websocketSenderSciptType = new ScriptType(
-						SCRIPT_TYPE_WEBSOCKET_SENDER,
-						"websocket.script.type.websocketsender",
-						WEBSOCKET_SENDER_SCRIPT_ICON,
-						true);
-				extensionScript.registerScriptType(websocketSenderSciptType);
-				webSocketSenderScriptListener = new WebSocketSenderScriptListener();
-				addAllChannelSenderListener(webSocketSenderScriptListener);
-			}
+		}
+		// setup sender script interface
+		ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+		if (extensionScript != null) {
+			websocketSenderSciptType = new ScriptType(
+					SCRIPT_TYPE_WEBSOCKET_SENDER,
+					"websocket.script.type.websocketsender",
+					getView() != null ? getScriptIcon() : null,
+					true);
+			extensionScript.registerScriptType(websocketSenderSciptType);
+			webSocketSenderScriptListener = new WebSocketSenderScriptListener();
+			addAllChannelSenderListener(webSocketSenderScriptListener);
 		}
 	}
 	
@@ -472,6 +475,21 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	@Override
 	public String getDescription() {
 		return Constant.messages.getString("websocket.desc");
+	}
+
+	/**
+	 * Gets the icon for scripts types.
+	 * <p>
+	 * Should be called/used only when in view mode.
+	 * 
+	 * @return the script icon, never {@code null}.
+	 */
+	private static ImageIcon getScriptIcon() {
+		if (scriptIcon == null) {
+			scriptIcon = new ImageIcon(
+					ExtensionWebSocket.class.getResource("/org/zaproxy/zap/extension/websocket/resources/script-plug.png"));
+		}
+		return scriptIcon;
 	}
 
 	/**
