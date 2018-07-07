@@ -19,7 +19,6 @@ public class FingerPrintingThread extends Thread{
 	public void run() {
 		try {
 			resultList = FastFingerprinter.filterResults(this.targetUrl, wtfpList, this.POrAOption);
-			this.finalize();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
