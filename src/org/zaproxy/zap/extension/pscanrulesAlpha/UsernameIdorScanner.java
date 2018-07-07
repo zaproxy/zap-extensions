@@ -129,7 +129,7 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
 				getOtherinfo(hashType, evidence), // Other info
 				getSolution(), // Solution
 				getReference(), // References
-				evidence, // Evidence - Return the Server Header info
+				evidence, // Evidence
 				284, // CWE-284: Improper Access Control
 				02, // WASC-02: Insufficient Authorization
 				msg); // HttpMessage

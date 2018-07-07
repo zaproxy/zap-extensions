@@ -72,7 +72,7 @@ public class XBackendServerInformationLeak extends PluginPassiveScanner{
 		    					"", // Other info
 		    					getSolution(), //Solution
 		    					getReference(), //References
-		    					xbsDirective,	// Evidence - Return the Server Header info
+		    					xbsDirective,	// Evidence
 		    					200, // CWE Id 
 		    					13,	// WASC Id 
 		    					msg); //HttpMessage
