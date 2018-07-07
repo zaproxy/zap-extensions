@@ -24,11 +24,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -420,9 +418,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		ExtensionLoader extLoader = control.getExtensionLoader();
 		
 		// clear up Breakpoints
-		ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
-		if (extBreak != null) {
-			extBreak.removeBreakpointsUiManager(getBrkManager());
+		if (brkManager != null) {
+			extLoader.getExtension(ExtensionBreak.class).removeBreakpointsUiManager(brkManager);
 		}
 		
 		// clear up manualrequest extension
