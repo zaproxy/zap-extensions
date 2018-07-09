@@ -554,6 +554,10 @@
 	<target name="deploy-codedx" description="deploy the codedx extension">
 		<build-deploy-addon name="codedx" />
 	</target>
+
+	<target name="generate-wiki-codedx" description="Generates the wiki for Code Dx add-on">
+		<generate-wiki addon="codedx" />
+	</target>
 	
 	<target name="deploy-communityScripts" description="deploy the communityScripts extension">
 		<build-deploy-addon name="communityScripts" />

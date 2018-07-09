@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Code Dx Extension</name>
-	<version>7</version>
+	<version>8</version>
 	<status>alpha</status>
 	<description>Includes request and response data in XML reports and provides the ability to upload reports directly to a Code Dx server</description>
 	<author>Code Dx, Inc.</author>
 	<url>https://www.codedx.com/</url>
 	<changes>
 	<![CDATA[
-	Update minimum ZAP version to 2.5.0.<br>
-	Add a ZAP API endpoints for generating and uploading Code Dx reports.<br>
 	]]>
 	</changes>
 	<extensions>
