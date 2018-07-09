@@ -36,7 +36,6 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-
 /**
  * An example ZAP extension which adds a top level menu item, a pop up menu item and a status panel.
  * <p>
@@ -64,6 +63,8 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
     private RightClickMsgMenu popupMsgMenuExample;
     private AbstractPanel statusPanel;
 
+    private SimpleExampleAPI api;
+
     private static final Logger LOGGER = Logger.getLogger(ExtensionSimpleExample.class);
 
     public ExtensionSimpleExample() {
@@ -73,6 +74,9 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+
+        this.api = new SimpleExampleAPI(this);
+        extensionHook.addApiImplementor(this.api);
 
         // As long as we're not running as a daemon
         if (getView() != null) {
