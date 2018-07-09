@@ -7,6 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
+	Register WebSocket Sender script type also in daemon mode.<br>
 	Fix an exception when dispatching events.<br>
 	Fix an exception while uninstalling the add-on with no GUI (Issue 4815).<br>
 	]]>
