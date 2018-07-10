@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.websocket;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -241,22 +242,25 @@ public class WebSocketAPI extends ApiImplementor {
                         return;
                     }
 
-                    WebsocketEventConsumer consumer = evMap.remove(proxy.getChannelId());
-                    if (consumer == null) {
-                        return;
-                    }
-
-                    // TODO replace the loop with:
-                    // ZAP.getEventBus().unregisterConsumer(consumer);
-                    // once available in targeted ZAP version.
-                    for (String publisherName : consumer.getPublisherNames()) {
-                        ZAP.getEventBus().unregisterConsumer(consumer, publisherName);
-                    }
+                    removeEventConsumer(evMap.remove(proxy.getChannelId()));
                 }
             };
 
         }
         return observer;
+    }
+
+    private void removeEventConsumer(WebsocketEventConsumer consumer) {
+        if (consumer == null) {
+            return;
+        }
+
+        // TODO replace the loop with:
+        // ZAP.getEventBus().unregisterConsumer(consumer);
+        // once available in targeted ZAP version.
+        for (String publisherName : consumer.getPublisherNames()) {
+            ZAP.getEventBus().unregisterConsumer(consumer, publisherName);
+        }
     }
 
     private boolean sendWebSocketMessage(int channelId, boolean outgoing, String message) throws IOException {
@@ -493,6 +497,9 @@ public class WebSocketAPI extends ApiImplementor {
             }
             try {
                 sendWebSocketMessage(channelId, false, json.toString());
+            } catch (SocketException e) {
+                LOG.debug("Failed to dispatch event:", e);
+                removeEventConsumer(this);
             } catch (IOException e) {
                 LOG.error(e.getMessage(), e);
             }
