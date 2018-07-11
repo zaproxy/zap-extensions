@@ -389,6 +389,7 @@
 		<build-addon name="directorylistv2_3" />
 		<build-addon name="directorylistv2_3_lc" />
 		<build-addon name="fuzzdb" />
+		<build-addon name="frontendscanner" />
 		<build-addon name="gettingStarted" />
 		<build-addon name="groovy" />
 		<build-addon name="help" />
@@ -478,6 +479,14 @@
 
 	<target name="deploy-directorylistv2_3_lc" description="deploys Directory List v2.3 lower case add-on">
 		<build-deploy-addon name="directorylistv2_3_lc" />
+	</target>
+
+	<target name="deploy-frontendscanner" description="Deploys the front-end scanner add-on">
+		<build-deploy-addon name="frontendscanner" />
+	</target>
+
+	<target name="generate-wiki-frontendscanner" description="Generates the wiki for the front-end Scanner.">
+		<generate-wiki-core addon="frontendscanner" />
 	</target>
 
 	<target name="deploy-fuzzdb" description="Deploys the FuzzDB add-on">

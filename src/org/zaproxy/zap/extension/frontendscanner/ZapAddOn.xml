@@ -1,0 +1,24 @@
+<zapaddon>
+	<name>Front-end Scanner</name>
+	<version>1</version>
+	<description>Scan modern web applications relying heavily on Javascript.</description>
+	<author>ZAP Dev Team</author>
+  <status>alpha</status>
+	<url></url>
+	<changes></changes>
+	<dependencies>
+	</dependencies>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.frontendscanner.ExtensionFrontEndScanner</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+		<file>frontendscanner/front-end-scanner.js</file>
+		<file>scripts/scripts/client-side-passive/scan-jwt-tokens.js</file>
+		<file>scripts/templates/client-side-passive/scan.js</file>
+	</files>
+	<not-before-version>2.7.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>
