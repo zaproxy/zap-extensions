@@ -31,7 +31,7 @@
 
 	<!-- Ant task to append ZapAddOn.xml files to ZapVersions.xml -->
 	<taskdef classpathref="build.classpath" resource="zapversionstasks.properties"/>
-	
+
 	<target name="clean">
 		<delete dir="${dist}" includeEmptyDirs="true" />
 		<delete dir="${build}" includeEmptyDirs="true" />
@@ -55,7 +55,7 @@
 
 	<target name="compile" depends="init" description="compile the source">
 		<echo message="Compiling the source..." />
-		
+
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="true" encoding="UTF-8"
 			excludes="org/zaproxy/zap/extension/*/files/**,org/zaproxy/zap/extension/*/resources/**">
@@ -329,7 +329,7 @@
 
 			</sequential>
 		</macrodef>
-	
+
 	<macrodef name="build-help-addon" description="build the specified addon">
 		<attribute name="name"/>
 		<element name="extra-actions" implicit="true" optional="true" />
@@ -381,9 +381,8 @@
 
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<delete file="${versions.file}"/>
-		
+
 		<!-- Keep in alphabetical order ;) -->
-		
 		<build-addon name="ascanrules" />
 		<build-addon name="coreLang" />
 		<build-addon name="directorylistv1" />
@@ -438,7 +437,7 @@
 			<deploy-addon name="@{name}" />
 		</sequential>
 	</macrodef>
-	
+
 	<macrodef name="build-deploy-help-addon" description="build and deploy the specified help addon">
 		<attribute name="name"/>
 		<sequential>
@@ -448,7 +447,7 @@
 			<deploy-addon name="@{name}" />
 		</sequential>
 	</macrodef>
-	
+
 	<target name="deploy-ascanrules" description="deploy the active scan rules">
 		<build-deploy-addon name="ascanrules" />
 	</target>
@@ -456,7 +455,7 @@
 	<target name="deploy-ascanrules-without-help-indexes" description="deploy the active scan rules">
 		<build-deploy-addon-without-help-indexes name="ascanrules" />
 	</target>
-	
+
 	<target name="generate-wiki-ascanrules" description="Generates the wiki of active scan rules">
 		<generate-wiki-core addon="ascanrules" />
 	</target>
@@ -505,7 +504,7 @@
 	<target name="generate-wiki-groovy" description="Generates the wiki of groovy extension">
 		<generate-wiki addon="groovy" />
 	</target>
-  
+
 	<target name="deploy-help" description="deploy the help extension">
 		<build-deploy-help-addon name="help" />
 	</target>
@@ -533,7 +532,7 @@
 	<target name="deploy-pscanrules-without-help-indexes" description="deploy the passive scan rules">
 		<build-deploy-addon-without-help-indexes name="pscanrules" />
 	</target>
-	
+
 	<target name="generate-wiki-pscanrules" description="Generates the wiki of passive scan rules">
 		<generate-wiki-core addon="pscanrules" />
 	</target>
@@ -553,7 +552,7 @@
 	<target name="generate-wiki-reveal" description="Generates the wiki of reveal">
 		<generate-wiki-core addon="reveal" />
 	</target>
-	
+
 	<target name="deploy-saverawmessage" description="deploy the Save Raw Message extension">
 		<build-deploy-addon name="saverawmessage" />
 	</target>
@@ -576,7 +575,7 @@
 			</build-addon>
 		</sequential>
 	</macrodef>
-	
+
 	<target name="deploy-selenium" depends="clean, compile" description="Deploys Selenium add-on">
 		<build-selenium-addon />
 		<deploy-addon name="selenium" />
@@ -615,7 +614,7 @@
 	<target name="generate-wiki-websockets" description="Generates the wiki of WebSockets">
 		<generate-wiki-core addon="websocket" />
 	</target>
-	
+
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
@@ -645,7 +644,6 @@
 			</fileset>
 		</copy>
 	</target>
-
 
 	<target name="deploy-release" description="deploy all of the extension to be included in a full release">
 		<antcall target="build-all" />
@@ -680,6 +678,4 @@
 			<classpath refid="classpath" />
 		</java>
     </target>
-
 </project>
-	
