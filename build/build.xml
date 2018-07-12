@@ -92,6 +92,7 @@
 				<pathelement location="${build}" />
 				<fileset dir="${dist.lib.dir}">
 					<include name="**/*.jar" />
+					<include name="**/*.zap" />
 				</fileset>
 				<fileset dir="${test.lib}">
 					<include name="**/*.jar" />
@@ -111,6 +112,8 @@
 			</fileset>
 			<fileset dir="${test.src}/resources/" />
 		</copy>
+		<!-- Required by core (<= 2.7.0) on Java 9+ -->
+		<touch file="${test.build}/Messages.properties" />
 		<echo message="Running tests..." />
 		<junit printsummary="yes" haltonerror="true" failureproperty="TestsFailed">
 			<classpath>
