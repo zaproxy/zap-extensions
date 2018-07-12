@@ -23,12 +23,15 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.ByteArrayInputStream;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -43,6 +46,15 @@ import fi.iki.elonen.NanoHTTPD.Response;
 public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<SourceCodeDisclosureWEBINF> {
 
     private static final String JAVA_LIKE_FILE_NAME_PATH = "/WEB-INF/classes/about/html.class";
+
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        // XXX Does not work with Java 9+ because of procyon-decompiler.
+        // Refs:
+        //  - https://github.com/zaproxy/zaproxy/issues/4038
+        //  - https://bitbucket.org/mstrobel/procyon/issues/320/java-9-sunmiscurlclasspath-and
+        assumeTrue(SystemUtils.IS_JAVA_1_8);
+    }
 
     @Override
     protected SourceCodeDisclosureWEBINF createScanner() {

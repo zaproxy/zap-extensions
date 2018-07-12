@@ -113,6 +113,8 @@
 				<exclude name="org/zaproxy/zap/extension/*/resources/Messages_*.properties" />
 			</fileset>
 		</copy>
+		<!-- Required by core (<= 2.7.0) on Java 9+ -->
+		<touch file="${test.build}/Messages.properties" />
 		<echo message="Running tests..." />
 		<junit printsummary="yes" haltonerror="true" failureproperty="TestsFailed">
 			<classpath>
