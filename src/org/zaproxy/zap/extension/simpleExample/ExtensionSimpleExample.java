@@ -45,147 +45,149 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class ExtensionSimpleExample extends ExtensionAdaptor {
 
-	// The name is public so that other extensions can access it
-	public static final String NAME = "ExtensionSimpleExample";
-	
-	// The i18n prefix, by default the package name - defined in one place to make it easier
-	// to copy and change this example
-	protected static final String PREFIX = "simpleExample";
+    // The name is public so that other extensions can access it
+    public static final String NAME = "ExtensionSimpleExample";
 
-	private static final String RESOURCE = "/org/zaproxy/zap/extension/simpleExample/resources";
-	
-	private static final ImageIcon ICON = new ImageIcon(
-			ExtensionSimpleExample.class.getResource( RESOURCE + "/cake.png"));
+    // The i18n prefix, by default the package name - defined in one place to make it easier
+    // to copy and change this example
+    protected static final String PREFIX = "simpleExample";
 
-	private static final String EXAMPLE_FILE = "example/ExampleFile.txt";
-	
-	private ZapMenuItem menuExample;
-	private RightClickMsgMenu popupMsgMenuExample;
-	private AbstractPanel statusPanel;
+    private static final String RESOURCE = "/org/zaproxy/zap/extension/simpleExample/resources";
+
+    private static final ImageIcon ICON = new ImageIcon(
+            ExtensionSimpleExample.class.getResource( RESOURCE + "/cake.png"));
+
+    private static final String EXAMPLE_FILE = "example/ExampleFile.txt";
+
+    private ZapMenuItem menuExample;
+    private RightClickMsgMenu popupMsgMenuExample;
+    private AbstractPanel statusPanel;
+
+    private SimpleExampleAPI api;
 
     private static final Logger LOGGER = Logger.getLogger(ExtensionSimpleExample.class);
 
     public ExtensionSimpleExample() {
         super(NAME);
     }
-	
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-	    super.hook(extensionHook);
-	    
-	    if (getView() != null) {
-	    	// Register our top menu item, as long as we're not running as a daemon
-	    	// Use one of the other methods to add to a different menu list
-	        extensionHook.getHookMenu().addToolsMenuItem(getMenuExample());
-	    	// Register our popup menu item
-	    	extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgMenuExample());
-	    	// Register a 
-	    	extensionHook.getHookView().addStatusPanel(getStatusPanel());
-	    }
 
-	}
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
 
-	@Override
-	public boolean canUnload() {
-		// The extension can be dynamically unloaded, all resources used/added can be freed/removed from core.
-		return true;
-	}
+        this.api = new SimpleExampleAPI(this);
+        extensionHook.addApiImplementor(this.api);
 
-	@Override
-	public void unload() {
-		super.unload();
+        // As long as we're not running as a daemon
+        if (getView() != null) {
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuExample());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgMenuExample());
+            extensionHook.getHookView().addStatusPanel(getStatusPanel());
+        }
+    }
 
-		// In this example it's not necessary to override the method, as there's nothing to unload
-		// manually, the components added through the class ExtensionHook (in hook(ExtensionHook))
-		// are automatically removed by the base unload() method.
-		// If you use/add other components through other methods you might need to free/remove them
-		// here (if the extension declares that can be unloaded, see above method).
-	}
+    @Override
+    public boolean canUnload() {
+        // The extension can be dynamically unloaded, all resources used/added can be freed/removed from core.
+        return true;
+    }
 
-	private AbstractPanel getStatusPanel() {
-		if (statusPanel == null) {
-			statusPanel = new AbstractPanel();
-			statusPanel.setLayout(new CardLayout());
-	        statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
-	        statusPanel.setIcon(ICON);
-	        JTextPane pane = new JTextPane();
-			pane.setEditable(false);
-			// Obtain (and set) a font with the size defined in the options
-			pane.setFont(FontUtils.getFont("Dialog", Font.PLAIN));
-			pane.setContentType("text/html");
-			pane.setText(Constant.messages.getString(PREFIX + ".panel.msg"));
-			statusPanel.add(pane);
-		}
-		return statusPanel;
-	}
+    @Override
+    public void unload() {
+        super.unload();
 
-	private ZapMenuItem getMenuExample() {
+        // In this example it's not necessary to override the method, as there's nothing to unload
+        // manually, the components added through the class ExtensionHook (in hook(ExtensionHook))
+        // are automatically removed by the base unload() method.
+        // If you use/add other components through other methods you might need to free/remove them
+        // here (if the extension declares that can be unloaded, see above method).
+    }
+
+    private AbstractPanel getStatusPanel() {
+        if (statusPanel == null) {
+            statusPanel = new AbstractPanel();
+            statusPanel.setLayout(new CardLayout());
+            statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
+            statusPanel.setIcon(ICON);
+            JTextPane pane = new JTextPane();
+            pane.setEditable(false);
+            // Obtain (and set) a font with the size defined in the options
+            pane.setFont(FontUtils.getFont("Dialog", Font.PLAIN));
+            pane.setContentType("text/html");
+            pane.setText(Constant.messages.getString(PREFIX + ".panel.msg"));
+            statusPanel.add(pane);
+        }
+        return statusPanel;
+    }
+
+    private ZapMenuItem getMenuExample() {
         if (menuExample == null) {
-        	menuExample = new ZapMenuItem(PREFIX + ".topmenu.tools.title");
+            menuExample = new ZapMenuItem(PREFIX + ".topmenu.tools.title");
 
-        	menuExample.addActionListener(new java.awt.event.ActionListener() {
+            menuExample.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent ae) {
-            		// This is where you do what you want to do.
-            		// In this case we'll just show a popup message.
-            		View.getSingleton().showMessageDialog(
-            				Constant.messages.getString(PREFIX + ".topmenu.tools.msg"));
-            		// And display a file included with the add-on in the Output tab
-            		displayFile(EXAMPLE_FILE);
+                    // This is where you do what you want to do.
+                    // In this case we'll just show a popup message.
+                    View.getSingleton().showMessageDialog(
+                            Constant.messages.getString(PREFIX + ".topmenu.tools.msg"));
+                    // And display a file included with the add-on in the Output tab
+                    displayFile(EXAMPLE_FILE);
                 }
             });
         }
         return menuExample;
     }
-	
-	private void displayFile (String file) {
-		if (! View.isInitialised()) {
-			// Running in daemon mode, shouldnt have been called
-			return;
-		}
-		try {
-			File f = new File(Constant.getZapHome(), file);
-			if (! f.exists()) {
-				// This is something the user should know, so show a warning dialog
-				View.getSingleton().showWarningDialog(
-						Constant.messages.getString(ExtensionSimpleExample.PREFIX + ".error.nofile", f.getAbsolutePath()));
-				return;
-			}
-			// Quick way to read a small text file
-			String contents = new String(Files.readAllBytes(f.toPath()));
-			// Write to the output panel
-			View.getSingleton().getOutputPanel().append(contents);
-			// Give focus to the Output tab
-			View.getSingleton().getOutputPanel().setTabFocus();
-		} catch (Exception e) {
-			// Something unexpected went wrong, write the error to the log
-			LOGGER.error(e.getMessage(), e);
-		}
-	}
 
-	private RightClickMsgMenu getPopupMsgMenuExample() {
-		if (popupMsgMenuExample  == null) {
-			popupMsgMenuExample = new RightClickMsgMenu(this, 
-					Constant.messages.getString(PREFIX + ".popup.title"));
-		}
-		return popupMsgMenuExample;
-	}
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    private void displayFile (String file) {
+        if (! View.isInitialised()) {
+            // Running in daemon mode, shouldnt have been called
+            return;
+        }
+        try {
+            File f = new File(Constant.getZapHome(), file);
+            if (! f.exists()) {
+                // This is something the user should know, so show a warning dialog
+                View.getSingleton().showWarningDialog(
+                        Constant.messages.getString(ExtensionSimpleExample.PREFIX + ".error.nofile", f.getAbsolutePath()));
+                return;
+            }
+            // Quick way to read a small text file
+            String contents = new String(Files.readAllBytes(f.toPath()));
+            // Write to the output panel
+            View.getSingleton().getOutputPanel().append(contents);
+            // Give focus to the Output tab
+            View.getSingleton().getOutputPanel().setTabFocus();
+        } catch (Exception e) {
+            // Something unexpected went wrong, write the error to the log
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString(PREFIX + ".desc");
-	}
+    private RightClickMsgMenu getPopupMsgMenuExample() {
+        if (popupMsgMenuExample == null) {
+            popupMsgMenuExample = new RightClickMsgMenu(this,
+                    Constant.messages.getString(PREFIX + ".popup.title"));
+        }
+        return popupMsgMenuExample;
+    }
 
-	@Override
-	public URL getURL() {
-		try {
-			return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString(PREFIX + ".desc");
+    }
+
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 }

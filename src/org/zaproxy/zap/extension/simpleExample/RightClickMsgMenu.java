@@ -31,9 +31,9 @@ import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
  */
 public class RightClickMsgMenu extends PopupMenuItemHttpMessageContainer {
 
-	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
-	private ExtensionSimpleExample extension;
+    private static final long serialVersionUID = 1L;
+    @SuppressWarnings("unused")
+    private ExtensionSimpleExample extension;
 
     public RightClickMsgMenu(ExtensionSimpleExample ext, String label) {
         super(label);
@@ -43,28 +43,27 @@ public class RightClickMsgMenu extends PopupMenuItemHttpMessageContainer {
          */
         this.extension = ext;
     }
-	
-	@Override
-	public void performAction(HttpMessage msg) {
-		// This is where you do what you want to do.
-		// In this case we'll just show a popup message.
-		View.getSingleton().showMessageDialog(
-				Constant.messages
-						.getString(ExtensionSimpleExample.PREFIX + ".popup.msg", msg.getRequestHeader().getURI().toString()));
-	}
 
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-		// This pop up menu item is enabled for all tabs/components that have just one
-		// message (selected, if it shows more than one and allows to selected them)
-		// You can examine the invoker if you wish to restrict this to specific tabs
-		return true;
-	}
+    @Override
+    public void performAction(HttpMessage msg) {
+        // This is where you do what you want to do.
+        // In this case we'll just show a popup message.
+        View.getSingleton().showMessageDialog(
+                Constant.messages
+                .getString(ExtensionSimpleExample.PREFIX + ".popup.msg", msg.getRequestHeader().getURI().toString()));
+    }
 
-	@Override
-	public boolean isSafe() {
-		// The action of menu item does not do any (potentially) unsafe operation, like starting a scan against a target.
-		return true;
-	}
-	
+    @Override
+    public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
+        // This pop up menu item is enabled for all tabs/components that have just one
+        // message (selected, if it shows more than one and allows to selected them)
+        // You can examine the invoker if you wish to restrict this to specific tabs
+        return true;
+    }
+
+    @Override
+    public boolean isSafe() {
+        // The action of menu item does not do any (potentially) unsafe operation, like starting a scan against a target.
+        return true;
+    }
 }
