@@ -1,16 +1,12 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>17</version>
+	<version>18</version>
 	<status>release</status>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Register WebSocket Sender script type also in daemon mode.<br>
-	Fix an exception when dispatching events.<br>
-	Fix an exception while uninstalling the add-on with no GUI (Issue 4815).<br>
-	Remove event consumers when channel is no longer in expected state.<br>
 	]]>
 	</changes>
 	<classnames>
