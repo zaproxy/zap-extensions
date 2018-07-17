@@ -1,19 +1,19 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.websocket;
 
@@ -105,23 +105,23 @@ import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
- 
+
 /**
  * The WebSockets-extension takes over after the HTTP based WebSockets handshake
  * is finished.
- * 
+ *
  * @author Robert Koch
  */
 public class ExtensionWebSocket extends ExtensionAdaptor implements
 		PersistentConnectionListener, SessionChangedListener, SiteMapListener {
-    
+	
 	private static final Logger logger = Logger.getLogger(ExtensionWebSocket.class);
-
+	
 	/**
 	 * The script icon.
 	 * <p>
 	 * Lazily initialised.
-	 * 
+	 *
 	 * @see #getScriptIcon()
 	 */
 	private static ImageIcon scriptIcon;
@@ -132,17 +132,17 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Name of this extension.
 	 */
 	public static final String NAME = "ExtensionWebSocket";
-
+	
 	/**
 	 * Used to identify the type of Websocket sender scripts
 	 */
 	public static final String SCRIPT_TYPE_WEBSOCKET_SENDER = "websocketsender";
-
+	
 	/**
 	 * Used to shorten the time, a listener is started on a WebSocket channel.
 	 */
 	private ExecutorService listenerThreadPool;
-
+	
 	/**
 	 * List of observers where each element is informed on all channel's
 	 * messages.
@@ -154,70 +154,70 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * messages.
 	 */
 	private List<WebSocketSenderListener> allChannelSenderListeners;
-
+	
 	/**
 	 * Contains all proxies with their corresponding handshake message.
 	 */
 	private Map<Integer, WebSocketProxy> wsProxies;
-
+	
 	/**
 	 * Database table.
 	 */
 	private TableWebSocket table;
-
+	
 	/**
 	 * Interface to database.
 	 */
 	private WebSocketStorage storage;
-
+	
 	/**
 	 * Different options in config.xml can change this extension's behavior.
 	 */
 	private OptionsParamWebSocket config;
-
+	
 	/**
 	 * Current mode of ZAP. Determines if "unsafe" actions are allowed.
 	 */
 	private Mode mode;
-
+	
 	/**
 	 * Messages for some {@link WebSocketProxy} on this list are just
 	 * forwarded, but not stored nor shown in UI.
 	 */
 	private List<Pattern> preparedIgnoredChannels;
-
+	
 	/**
 	 * Contains raw regex values, as they appear in the sessions dialogue.
 	 */
 	private List<String> ignoredChannelList;
-
+	
 	/**
 	 * Flag that controls if the WebSockets tab should be focused when a handshake message is received.
 	 * <p>
 	 * Current behaviour is to focus just once.
-	 * 
+	 *
 	 * @see #initView(ViewDelegate)
 	 * @see #onHandshakeResponse(HttpMessage, Socket, ZapGetMethod)
 	 */
 	private boolean focusWebSocketsTabOnHandshake;
 	
 	private WebSocketAPI api = new WebSocketAPI(this);
-
+	
 	/**
 	 * A {@link HttpSenderListener} implementation for removing Websocket extensions, such as compression.
 	 */
 	private HttpSenderListenerImpl httpSenderListener;
-
+	
 	/**
 	 * A {@link WebSocketSenderScriptListener} that runs user-provided Websocket sender scripts.
 	 */
 	private WebSocketSenderScriptListener webSocketSenderScriptListener;
-
+	
 	/**
 	 * Script type used to register Websocket sender scripts.
 	 */
 	private ScriptType websocketSenderSciptType;
-
+	
 	public ExtensionWebSocket() {
 		super(NAME);
 		
@@ -238,26 +238,26 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		preparedIgnoredChannels = new ArrayList<>();
 		ignoredChannelList = new ArrayList<>();
-
+		
 		mode = Control.getSingleton().getMode();
 	}
 	
 	@Override
 	public void initView(ViewDelegate view) {
 		super.initView(view);
-
+		
 		focusWebSocketsTabOnHandshake = true;
 	}
-
-    @Override
-    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+	
+	@Override
+	public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
 		table = new TableWebSocket();
 		db.addDatabaseListener(table);
 		try {
 			table.databaseOpen(db.getDatabaseServer());
-
+			
 			if (storage == null) {
-				storage = new WebSocketStorage(table);	
+				storage = new WebSocketStorage(table);
 				addAllChannelObserver(storage);
 			} else {
 				storage.setTable(table);
@@ -269,12 +269,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			}
 			
 			WebSocketProxy.setChannelIdGenerator(table.getMaxChannelId());
-
+			
 		} catch (SQLException e) {
 			logger.warn(e.getMessage(), e);
 		}
-    }
-
+	}
+	
 	/**
 	 * This method interweaves the WebSocket extension with the rest of ZAP.
 	 * <p>
@@ -301,10 +301,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		extensionHook.addSessionListener(this);
 		
 		extensionHook.addSiteMapListener(this);
-
+		
 		// setup configuration
 		extensionHook.addOptionsParamSet(config);
-
+		
 		HttpSender.addListener(httpSenderListener);
 		
 		try {
@@ -334,7 +334,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			
 			// add 'Exclude from WebSockets' menu item to WebSocket tab context menu
 			hookMenu.addPopupMenuItem(new ExcludeFromWebSocketsMenuItem(this));
-
+			
 			// setup Session Properties
 			sessionExcludePanel =  new SessionExcludeFromWebSocket(this, config);
 			getView().getSessionDialog().addParamPanel(new String[]{}, sessionExcludePanel, false);
@@ -348,7 +348,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				
 				// listen on new messages such that breakpoints can apply
 				addAllChannelObserver(new WebSocketProxyListenerBreak(this, wsBrkMessageHandler));
-
+				
 				// pop up to add the breakpoint
 				hookMenu.addPopupMenuItem(new PopupMenuAddBreakWebSocket(extBreak));
 				extBreak.addBreakpointsUiManager(getBrkManager());
@@ -373,7 +373,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				hookMenu.addToolsMenuItem(sendDialog.getMenuItem());
 				
 				resenderDialog = createReSendDialog(sender);
-
+				
 				// add 'Resend Message' menu item to WebSocket tab context menu
 				hookMenu.addPopupMenuItem(new ResendWebSocketMessageMenuItem(resenderDialog));
 				
@@ -410,7 +410,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		super.unload();
 		
 		HttpSender.removeListener(httpSenderListener);
-
+		
 		// close all existing connections
 		for (Entry<Integer, WebSocketProxy> wsEntry : wsProxies.entrySet()) {
 			WebSocketProxy wsProxy = wsEntry.getValue();
@@ -442,31 +442,31 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		if (table != null) {
 			getModel().getDb().removeDatabaseListener(table);
 		}
-
+		
 		if (getView() != null) {
 			getWebSocketPanel().unload();
-
+			
 			getView().getSessionDialog().removeParamPanel(sessionExcludePanel);
-
+			
 			clearupWebSocketsForWorkPanel();
-
+			
 			if (sendDialog != null) {
 				sendDialog.unload();
 			}
-
+			
 			if (resenderDialog != null) {
 				resenderDialog.unload();
 			}
 		}
-
+		
 		// unregister the WebSocket Sender script type and remove the listener
 		ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
 		if (extensionScript != null) {
-    		removeAllChannelSenderListener(webSocketSenderScriptListener);
-            extensionScript.removeScripType(websocketSenderSciptType);
-        }
+			removeAllChannelSenderListener(webSocketSenderScriptListener);
+			extensionScript.removeScripType(websocketSenderSciptType);
+		}
 	}
-
+	
 	@Override
 	public String getAuthor() {
 		return Constant.ZAP_TEAM;
@@ -476,12 +476,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	public String getDescription() {
 		return Constant.messages.getString("websocket.desc");
 	}
-
+	
 	/**
 	 * Gets the icon for scripts types.
 	 * <p>
 	 * Should be called/used only when in view mode.
-	 * 
+	 *
 	 * @return the script icon, never {@code null}.
 	 */
 	private static ImageIcon getScriptIcon() {
@@ -491,19 +491,19 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		return scriptIcon;
 	}
-
+	
 	/**
 	 * Add an observer that is attached to every channel connected in future.
-	 * 
+	 *
 	 * @param observer
 	 */
 	public void addAllChannelObserver(WebSocketObserver observer) {
 		allChannelObservers.add(observer);
 	}
-
+	
 	/**
 	 * Removes the given {@code observer}, that was attached to every channel connected.
-	 * 
+	 *
 	 * @param observer the observer to be removed
 	 * @throws IllegalArgumentException if the given {@code observer} is {@code null}.
 	 */
@@ -519,7 +519,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
 	/**
 	 * Add an sender listener that is attached to every channel connected in future.
-	 * 
+	 *
 	 * @param senderListener
 	 */
 	public void addAllChannelSenderListener(WebSocketSenderListener senderListener){
@@ -528,7 +528,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
 	/**
 	 * Removes the given {@code senderListener}, that was attached to every channel connected.
-	 * 
+	 *
 	 * @param senderListener the sender listener to be removed
 	 * @throws IllegalArgumentException if the given {@code senderListener} is {@code null}.
 	 */
@@ -541,12 +541,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			wsProxy.removeSenderListener(senderListener);
 		}
 	}
-
+	
 	@Override
 	public int getArrangeableListenerOrder() {
 		return HANDSHAKE_LISTENER;
 	}
-
+	
 	@Override
 	public boolean onHandshakeResponse(HttpMessage httpMessage, Socket inSocket, ZapGetMethod method) {
 		boolean keepSocketOpen = false;
@@ -574,18 +574,18 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		return keepSocketOpen;
 	}
-
+	
 	/**
 	 * Add an open channel to this extension after
 	 * HTTP handshake has been completed.
-	 * 
+	 *
 	 * @param handshakeMessage HTTP-based handshake.
 	 * @param localSocket Current connection channel from the browser to ZAP.
 	 * @param remoteSocket Current connection channel from ZAP to the server.
 	 * @param remoteReader Current {@link InputStream} of remote connection.
 	 */
 	public void addWebSocketsChannel(HttpMessage handshakeMessage, Socket localSocket, Socket remoteSocket, InputStream remoteReader) {
-		try {			
+		try {
 			HttpRequestHeader requestHeader = handshakeMessage.getRequestHeader();
 			String targetHost = requestHeader.getHostName();
 			int targetPort = requestHeader.getHostPort();
@@ -607,7 +607,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			Map<String, String> wsExtensions = WebSocketUtils.parseWebSocketExtensions(handshakeMessage);
 			String wsProtocol = WebSocketUtils.parseWebSocketSubProtocol(handshakeMessage);
 			String wsVersion = WebSocketUtils.parseWebSocketVersion(handshakeMessage);
-	
+			
 			WebSocketProxy wsProxy = null;
 			
 			if (localSocket == remoteSocket) {
@@ -682,11 +682,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			return;
 		}
 	}
-
+	
 	/**
 	 * Creates and returns a cached thread pool that should speed up
 	 * {@link WebSocketListener}.
-	 * 
+	 *
 	 * @return
 	 */
 	private ExecutorService getListenerThreadPool() {
@@ -695,11 +695,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		return listenerThreadPool;
 	}
-
+	
 	/**
 	 * Returns true if the WebSocket connection that followed the given
 	 * WebSocket handshake is already alive.
-	 * 
+	 *
 	 * @param handshakeRef
 	 * @return True if connection is still alive.
 	 */
@@ -715,10 +715,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Returns true if given channel id is connected.
-	 * 
+	 *
 	 * @param channelId
 	 * @return True if connection is still alive.
 	 */
@@ -730,17 +730,17 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		return false;
 	}
-
-    /**
+	
+	/**
 	 * Submitted list of strings will be interpreted as regular expression on
 	 * WebSocket channel URLs.
 	 * <p>
 	 * While connections to those excluded URLs will be established and messages
 	 * will be forwarded, nothing is stored nor can you view the communication
 	 * in the UI.
-	 * 
+	 *
 	 * @param ignoreList
-     * @throws WebSocketException 
+	 * @throws WebSocketException
 	 */
 	public void setChannelIgnoreList(List<String> ignoreList) throws WebSocketException {
 		preparedIgnoredChannels.clear();
@@ -751,7 +751,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				nonEmptyIgnoreList.add(regex);
 			}
 		}
-
+		
 		// ensure validity by compiling regular expression
 		// store them for better performance
 		for (String regex : nonEmptyIgnoreList) {
@@ -776,7 +776,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			applyChannelIgnoreList();
 		}
 	}
-
+	
 	public List<String> getChannelIgnoreList() {
 		return ignoredChannelList;
 	}
@@ -794,7 +794,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			}
 		}
 	}
-
+	
 	/**
 	 * Gets the channels that match the given {@code criteria}.
 	 *
@@ -808,11 +808,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		return Collections.emptyList();
 	}
-
+	
 	/**
 	 * If given channel is blacklisted, then nothing should be stored. Moreover
 	 * it should not appear in user interface, but messages should be forwarded.
-	 * 
+	 *
 	 * @param channel
 	 * @return
 	 */
@@ -834,7 +834,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		return doNotStore;
 	}
-
+	
 	/**
 	 * Returns the specific websocket message
 	 * @param messageId the message id
@@ -845,7 +845,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	public WebSocketMessageDTO getWebsocketMessage(int messageId, int channelId) throws DatabaseException {
 		return this.table.getMessage(messageId, channelId);
 	}
-
+	
 	/**
 	 * Returns the specified messages
 	 * @param criteria the criteria to use for the messages to include
@@ -860,7 +860,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	public List<WebSocketMessageDTO> getWebsocketMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
 		return this.table.getMessages(criteria, opcodes, inScopeChannelIds, offset, limit, payloadPreviewLength);
 	}
-
+	
 	/**
 	 * Returns the specified messages
 	 * @param criteria the criteria to use for the messages to include
@@ -876,11 +876,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	public List<WebSocketMessageDTO> getWebsocketMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, WebSocketMessagesPayloadFilter payloadFilter, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
 		return this.table.getMessages(criteria, opcodes, inScopeChannelIds,payloadFilter, offset, limit, payloadPreviewLength);
 	}
-
+	
 	public void recordMessage(WebSocketMessageDTO message) throws DatabaseException {
 		this.table.insertMessage(message);
 	}
-
+	
 	@Override
 	public void sessionChanged(final Session session) {
 		// TODO
@@ -897,13 +897,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			logger.error("Unable to retrieve current channelId value!", e);
 		}
 		*/
-
+		
 		List<String> ignoredList = new ArrayList<>();
 		try {
 			List<RecordSessionUrl> recordSessionUrls = Model.getSingleton()
 					.getDb().getTableSessionUrl()
 					.getUrlsForType(RecordSessionUrl.TYPE_EXCLUDE_FROM_WEBSOCKET);
-		
+			
 			for (RecordSessionUrl record  : recordSessionUrls) {
 				ignoredList.add(record.getUrl());
 			}
@@ -917,7 +917,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			}
 		}
 	}
-
+	
 	@Override
 	public void sessionAboutToChange(Session session) {
 		if (View.isInitialised()) {
@@ -934,23 +934,23 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			wsProxies.clear();
 		}
 	}
-
+	
 	@Override
 	public void sessionScopeChanged(Session session) {
 		// do nothing
 	}
-
+	
 	@Override
 	public void sessionModeChanged(Mode mode) {
 		this.mode = mode;
 	}
-
+	
 	/**
 	 * Returns false when either in {@link Mode#safe} or in {@link Mode#protect}
 	 * and the message's channel is not in scope. Call it if you want to do
 	 * "unsafe" actions like changing payloads, catch breakpoints, send custom
 	 * messages, etc.
-	 * 
+	 *
 	 * @param message
 	 * @return True if operation on message is not potentially dangerous.
 	 */
@@ -967,32 +967,32 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	public WebSocketStorage getStorage() {
 		return storage;
 	}
-
+	
 	/**
 	 * The {@link HttpSenderListener} responsible to apply the option {@link OptionsParamWebSocket#isRemoveExtensionsHeader()}.
 	 */
 	private class HttpSenderListenerImpl implements HttpSenderListener {
-
+		
 		private static final String SEC_WEBSOCKET_EXTENSIONS = "Sec-WebSocket-Extensions";
-
+		
 		@Override
 		public int getListenerOrder() {
 			return Integer.MAX_VALUE;
 		}
-
+		
 		@Override
 		public void onHttpRequestSend(HttpMessage msg, int initiator, HttpSender sender) {
 			if (config.isRemoveExtensionsHeader()) {
 				msg.getRequestHeader().setHeader(SEC_WEBSOCKET_EXTENSIONS, null);
 			}
 		}
-
+		
 		@Override
 		public void onHttpResponseReceive(HttpMessage msg, int initiator, HttpSender sender) {
 			// Nothing to do.
 		}
 	}
-
+	
 	/*
 	 * ************************************************************************
 	 * GUI specific code follows here now. It is accessed only by methods hook()
@@ -1000,18 +1000,18 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * All of this UI-related code is private and should not be accessible from
 	 * outside.
 	 */
-
-
+	
+	
 	/**
 	 * Displayed in the bottom area beside the History, Spider, etc. tabs.
 	 */
 	private WebSocketPanel panel;
-
+	
 	/**
 	 * Will be added to the hook view. 
 	 */
 	private OptionsWebSocketPanel optionsPanel;
-
+	
 	/**
 	 * Allows to set custom breakpoints, e.g.: for specific opcodes only.
 	 */
@@ -1026,19 +1026,19 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Send custom WebSocket messages.
 	 */
 	private ManualWebSocketSendEditorDialog sendDialog;
-
+	
 	/**
 	 * Resends custom WebSocket messages.
 	 */
 	private ManualWebSocketSendEditorDialog resenderDialog;
-
+	
 	private WebSocketPanel getWebSocketPanel() {
 		if (panel == null) {
 			panel = new WebSocketPanel(storage.getTable(), getBrkManager());
 		}
 		return panel;
 	}
-
+	
 	private WebSocketBreakpointsUiManagerInterface getBrkManager() {
 		if (brkManager == null) {
 			ExtensionBreak extBreak = (ExtensionBreak) Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.NAME);
@@ -1055,8 +1055,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		return optionsPanel;
 	}
-
-
+	
 	private void initializeWebSocketsForWorkPanel() {
 		// Add "HttpPanel" components and views.
 		HttpPanelManager manager = HttpPanelManager.getInstance();
@@ -1065,7 +1064,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		HttpPanelComponentFactory componentFactory = new WebSocketComponentFactory();
 		manager.addRequestComponentFactory(componentFactory);
 		manager.addResponseComponentFactory(componentFactory);
-
+		
 		// use same factory for request & response,
 		// as Hex payloads are accessed the same way
 		HttpPanelViewFactory viewFactory = new WebSocketHexViewFactory();
@@ -1076,12 +1075,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		HttpPanelDefaultViewSelectorFactory viewSelectorFactory = new HexDefaultViewSelectorFactory();
 		manager.addRequestDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
 		manager.addResponseDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
-
+		
 		// replace the normal Text views with the ones that use syntax highlighting
 		viewFactory = new SyntaxHighlightTextViewFactory();
 		manager.addRequestViewFactory(WebSocketComponent.NAME, viewFactory);
 		manager.addResponseViewFactory(WebSocketComponent.NAME, viewFactory);
-
+		
 		// support large payloads on incoming and outgoing messages
 		viewFactory = new WebSocketLargePayloadViewFactory();
 		manager.addRequestViewFactory(WebSocketComponent.NAME, viewFactory);
@@ -1100,7 +1099,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		manager.removeRequestComponents(WebSocketComponent.NAME);
 		manager.removeResponseComponentFactory(WebSocketComponentFactory.NAME);
 		manager.removeResponseComponents(WebSocketComponent.NAME);
-
+		
 		// use same factory for request & response,
 		// as Hex payloads are accessed the same way
 		manager.removeRequestViewFactory(WebSocketComponent.NAME, WebSocketHexViewFactory.NAME);
@@ -1109,11 +1108,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		// remove the default Hex view for binary-opcode messages
 		manager.removeRequestDefaultViewSelectorFactory(WebSocketComponent.NAME, HexDefaultViewSelectorFactory.NAME);
 		manager.removeResponseDefaultViewSelectorFactory(WebSocketComponent.NAME, HexDefaultViewSelectorFactory.NAME);
-
+		
 		// replace the normal Text views with the ones that use syntax highlighting
 		manager.removeRequestViewFactory(WebSocketComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
 		manager.removeResponseViewFactory(WebSocketComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
-
+		
 		// support large payloads on incoming and outgoing messages
 		manager.removeRequestViewFactory(WebSocketComponent.NAME, WebSocketLargePayloadViewFactory.NAME);
 		manager.removeResponseViewFactory(WebSocketComponent.NAME, WebSocketLargePayloadViewFactory.NAME);
@@ -1121,151 +1120,151 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		manager.removeRequestDefaultViewSelectorFactory(WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
 		manager.removeResponseDefaultViewSelectorFactory(WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
 	}
-
+	
 	/**
 	 * The component returned by this factory contain the normal text view
 	 * (without syntax highlighting).
 	 */
-    private static final class WebSocketComponentFactory implements HttpPanelComponentFactory {
-        
-        public static final String NAME = "WebSocketComponentFactory";
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-        
-        @Override
-        public HttpPanelComponentInterface getNewComponent() {
-            return new WebSocketComponent();
-        }
-
-        @Override
-        public String getComponentName() {
-            return WebSocketComponent.NAME;
-        }
-    }
+	private static final class WebSocketComponentFactory implements HttpPanelComponentFactory {
+		
+		public static final String NAME = "WebSocketComponentFactory";
+		
+		@Override
+		public String getName() {
+			return NAME;
+		}
+		
+		@Override
+		public HttpPanelComponentInterface getNewComponent() {
+			return new WebSocketComponent();
+		}
+		
+		@Override
+		public String getComponentName() {
+			return WebSocketComponent.NAME;
+		}
+	}
 	
 	private static final class WebSocketHexViewFactory implements HttpPanelViewFactory {
-        
-        public static final String NAME = "WebSocketHexViewFactory";
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-        
-        @Override
-        public HttpPanelView getNewView() {
+		
+		public static final String NAME = "WebSocketHexViewFactory";
+		
+		@Override
+		public String getName() {
+			return NAME;
+		}
+		
+		@Override
+		public HttpPanelView getNewView() {
 			return new HttpPanelHexView(new ByteWebSocketPanelViewModel(), false);
-        }
-
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-    }
+		}
+		
+		@Override
+		public Object getOptions() {
+			return null;
+		}
+	}
 	
 	private static final class HexDefaultViewSelector implements HttpPanelDefaultViewSelector {
-
-        public static final String NAME = "HexDefaultViewSelector";
-        
-        @Override
-        public String getName() {
-            return NAME;
-        }
-        
-        @Override
-        public boolean matchToDefaultView(Message aMessage) {
-        	// use hex view only when previously selected
+		
+		public static final String NAME = "HexDefaultViewSelector";
+		
+		@Override
+		public String getName() {
+			return NAME;
+		}
+		
+		@Override
+		public boolean matchToDefaultView(Message aMessage) {
+			// use hex view only when previously selected
 //            if (aMessage instanceof WebSocketMessageDTO) {
 //                WebSocketMessageDTO msg = (WebSocketMessageDTO)aMessage;
 //                
 //                return (msg.opcode == WebSocketMessage.OPCODE_BINARY);
 //            }
-            return false;
-        }
-
-        @Override
-        public String getViewName() {
-            return HttpPanelHexView.NAME;
-        }
-        
-        @Override
-        public int getOrder() {
-            return 20;
-        }
-    }
-
-    private static final class HexDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
-        
-        public static final String NAME = "HexDefaultViewSelectorFactory";
-        
-        private static HttpPanelDefaultViewSelector defaultViewSelector = null;
-        
-        private HttpPanelDefaultViewSelector getDefaultViewSelector() {
-            if (defaultViewSelector == null) {
-                createViewSelector();
-            }
-            return defaultViewSelector;
-        }
-        
-        private synchronized void createViewSelector() {
-            if (defaultViewSelector == null) {
-                defaultViewSelector = new HexDefaultViewSelector();
-            }
-        }
-        
-        @Override
-        public String getName() {
-            return NAME;
-        }
-        
-        @Override
-        public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
-            return getDefaultViewSelector();
-        }
-        
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-    }
-	
-    private static final class SyntaxHighlightTextViewFactory implements HttpPanelViewFactory {
-        
-        public static final String NAME = "SyntaxHighlightTextViewFactory";
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-        
-        @Override
-        public HttpPanelView getNewView() {
-            return new WebSocketSyntaxHighlightTextView(new StringWebSocketPanelViewModel());
-        }
-        
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-    }
-	
-	private static final class WebSocketLargePayloadViewFactory implements HttpPanelViewFactory {
+			return false;
+		}
 		
-		public static final String NAME = "WebSocketLargePayloadViewFactory";
-
+		@Override
+		public String getViewName() {
+			return HttpPanelHexView.NAME;
+		}
+		
+		@Override
+		public int getOrder() {
+			return 20;
+		}
+	}
+	
+	private static final class HexDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
+		
+		public static final String NAME = "HexDefaultViewSelectorFactory";
+		
+		private static HttpPanelDefaultViewSelector defaultViewSelector = null;
+		
+		private HttpPanelDefaultViewSelector getDefaultViewSelector() {
+			if (defaultViewSelector == null) {
+				createViewSelector();
+			}
+			return defaultViewSelector;
+		}
+		
+		private synchronized void createViewSelector() {
+			if (defaultViewSelector == null) {
+				defaultViewSelector = new HexDefaultViewSelector();
+			}
+		}
+		
 		@Override
 		public String getName() {
 			return NAME;
 		}
-
+		
+		@Override
+		public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
+			return getDefaultViewSelector();
+		}
+		
+		@Override
+		public Object getOptions() {
+			return null;
+		}
+	}
+	
+	private static final class SyntaxHighlightTextViewFactory implements HttpPanelViewFactory {
+		
+		public static final String NAME = "SyntaxHighlightTextViewFactory";
+		
+		@Override
+		public String getName() {
+			return NAME;
+		}
+		
+		@Override
+		public HttpPanelView getNewView() {
+			return new WebSocketSyntaxHighlightTextView(new StringWebSocketPanelViewModel());
+		}
+		
+		@Override
+		public Object getOptions() {
+			return null;
+		}
+	}
+	
+	private static final class WebSocketLargePayloadViewFactory implements HttpPanelViewFactory {
+		
+		public static final String NAME = "WebSocketLargePayloadViewFactory";
+		
+		@Override
+		public String getName() {
+			return NAME;
+		}
+		
 		@Override
 		public HttpPanelView getNewView() {
 			return new WebSocketLargePayloadView(new WebSocketLargetPayloadViewModel());
 		}
-
+		
 		@Override
 		public Object getOptions() {
 			return null;
@@ -1305,9 +1304,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			return null;
 		}
 	}
-
+	
 	private static final class WebSocketLargePayloadDefaultViewSelector implements HttpPanelDefaultViewSelector {
-
+		
 		public static final String NAME = "WebSocketLargePayloadDefaultViewSelector";
 		
 		@Override
@@ -1317,26 +1316,26 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		@Override
 		public boolean matchToDefaultView(Message aMessage) {
-		    return WebSocketLargePayloadUtil.isLargePayload(aMessage);
+			return WebSocketLargePayloadUtil.isLargePayload(aMessage);
 		}
-
+		
 		@Override
 		public String getViewName() {
 			return WebSocketLargePayloadView.NAME;
 		}
-        
-        @Override
-        public int getOrder() {
-        	// has to come before HexDefaultViewSelector
-            return 15;
-        }
+		
+		@Override
+		public int getOrder() {
+			// has to come before HexDefaultViewSelector
+			return 15;
+		}
 	}
-
+	
 	/**
 	 * This method initializes the dialog for crafting custom messages.
-	 * 
+	 *
 	 * @param sender
-	 * 
+	 *
 	 * @return
 	 */
 	private ManualWebSocketSendEditorDialog createManualSendDialog(WebSocketPanelSender sender) {
@@ -1347,25 +1346,25 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
 	/**
 	 * This method initializes the re-send WebSocket message dialog.
-	 * 
+	 *
 	 * @param sender
-	 * 
+	 *
 	 * @return
-	 */    
+	 */
 	private ManualWebSocketSendEditorDialog createReSendDialog(WebSocketPanelSender sender) {
 		ManualWebSocketSendEditorDialog	resendDialog = new ManualWebSocketSendEditorDialog(getWebSocketPanel().getChannelsModel(), sender, true, "websocket.manual_resend");
 		resendDialog.setTitle(Constant.messages.getString("websocket.manual_send.popup"));
 		return resendDialog;
 	}
-
+	
 	@Override
 	public void nodeSelected(SiteNode node) {
 		// do nothing
 	}
-
+	
 	@Override
 	public void onReturnNodeRendererComponent(SiteMapTreeCellRenderer component,
-			boolean leaf, SiteNode node) {
+											  boolean leaf, SiteNode node) {
 		if (leaf) {
 			HistoryReference href = component.getHistoryReferenceFromNode(node);
 			boolean isWebSocketNode = href != null && href.isWebSocketUpgrade();
@@ -1377,7 +1376,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			}
 		}
 	}
-
+	
 	private void setWebSocketIcon(boolean isConnected, boolean isIncluded, SiteMapTreeCellRenderer component) {
 		if (isConnected) {
 			if (isIncluded) {
