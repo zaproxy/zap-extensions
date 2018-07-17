@@ -73,7 +73,18 @@ public class HttpHandshakeBuilder {
      * @param httpRequestHeader the http request header
      */
     public static void addGeneratedWebSocketKey(HttpRequestHeader httpRequestHeader){
+        httpRequestHeader.addHeader(SEC_WEB_SOCKET_KEY, null); //Remove if any
         httpRequestHeader.addHeader(SEC_WEB_SOCKET_KEY, WebSocketUtils.generateSecWebSocketKey());
+    }
+    
+    
+    /**
+     * Generates and add a Sec-WebSocket-key to {@code httpRequestHeader}
+     * @param httpRequestHeader the http request header
+     */
+    public static void addWebSocketKey(HttpRequestHeader httpRequestHeader, String websocketKey){
+        httpRequestHeader.addHeader(SEC_WEB_SOCKET_KEY, null); //Remove if any
+        httpRequestHeader.addHeader(SEC_WEB_SOCKET_KEY, websocketKey);
     }
     
     /**
