@@ -7,64 +7,69 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 
-public class WSDLSpider extends SpiderParser{
+public class WSDLSpider extends SpiderParser {
 
 	private ImportWSDL importer = ImportWSDL.getInstance();
 	private WSDLCustomParser parser = new WSDLCustomParser();
-	
+
 	private static final Logger log = Logger.getLogger(WSDLSpider.class);
-	
+
 	@Override
 	public boolean parseResource(HttpMessage message, Source source, int depth) {
 		return parseResourceWSDL(message, source, depth, true);
 	}
-	
+
 	public boolean parseResourceWSDL(HttpMessage message, Source source, int depth, boolean sendRequests) {
-		if (message == null) return false;
+		if (message == null)
+			return false;
 		/* Only applied to wsdl files. */
 		log.info("WSDL custom spider called.");
-		if (!canParseResource(message)) return false;
-		if (importer == null){
+		if (!canParseResource(message))
+			return false;
+		if (importer == null) {
 			importer = ImportWSDL.getInstance();
-			if (importer == null) return false;
-		}	
+			if (importer == null)
+				return false;
+		}
 		/* New WSDL detected. */
 		log.info("WSDL spider has detected a new resource");
-		String content = getContentFromMessage(message);	
+		String content = getContentFromMessage(message);
 		/* Calls extension to parse it and to fill the sites tree. */
 		parser.extContentWSDLImport(content, sendRequests);
 		return true;
 	}
-	
-	public boolean canParseResource(final HttpMessage message){
-		try{
+
+	public boolean canParseResource(final HttpMessage message) {
+		try {
 			// Get the context (base url)
 			String baseURL = getURIfromMessage(message);
 			String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
-			if(baseURL.endsWith(".wsdl") || contentType.equals("text/xml") || contentType.equals("application/wsdl+xml")){
-				String content =  message.getResponseBody().toString();
-				if(parser.canBeWSDLparsed(content)) return true;
-				log.info("Content is not wsdl: "+content);
+			if (baseURL.endsWith(".wsdl") || contentType.equals("text/xml")
+					|| contentType.equals("application/wsdl+xml")) {
+				String content = message.getResponseBody().toString();
+				if (parser.canBeWSDLparsed(content))
+					return true;
+				log.info("Content is not wsdl: " + content);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			return false;
 		}
 		return false;
 	}
 
-	private String getURIfromMessage(final HttpMessage message){
+	private String getURIfromMessage(final HttpMessage message) {
 		if (message == null) {
 			return "";
 		} else {
-			try{
+			try {
 				return message.getRequestHeader().getURI().toString();
-			}catch(Exception e){
+			} catch (Exception e) {
 				return "";
 			}
 		}
 	}
-	
-	private String getContentFromMessage(final HttpMessage message){
+
+	private String getContentFromMessage(final HttpMessage message) {
 		if (message == null) {
 			return "";
 		} else {
@@ -73,11 +78,12 @@ public class WSDLSpider extends SpiderParser{
 	}
 
 	@Override
-	public boolean canParseResource(HttpMessage message, String path,
-			boolean wasAlreadyConsumed) {
+	public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
 		// Get the context (base url)
 		String baseURL = getURIfromMessage(message);
-		if(baseURL.endsWith(".wsdl")) return true;
-		else return false;
+		if (baseURL.endsWith(".wsdl"))
+			return true;
+		else
+			return false;
 	}
 }

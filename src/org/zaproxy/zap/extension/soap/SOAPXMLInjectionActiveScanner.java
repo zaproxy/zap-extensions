@@ -34,6 +34,7 @@ import org.parosproxy.paros.network.HttpMessage;
 
 /**
  * SOAP XML Injection Active Scanner
+ * 
  * @author Albertov91
  */
 public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
@@ -41,10 +42,7 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 	private static final String MESSAGE_PREFIX = "soap.soapxmlinjection.";
 
 	private static Logger log = Logger.getLogger(SOAPXMLInjectionActiveScanner.class);
-	
 
-	
-	
 	@Override
 	public int getId() {
 		return 90029;
@@ -66,7 +64,7 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 	public String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
-	
+
 	@Override
 	public String[] getDependency() {
 		return null;
@@ -83,8 +81,12 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 	}
 
 	/*
-	 * This method is called by the active scanner for each GET and POST parameter for every page 
-	 * @see org.parosproxy.paros.core.scanner.AbstractAppParamPlugin#scan(org.parosproxy.paros.network.HttpMessage, java.lang.String, java.lang.String)
+	 * This method is called by the active scanner for each GET and POST parameter
+	 * for every page
+	 * 
+	 * @see
+	 * org.parosproxy.paros.core.scanner.AbstractAppParamPlugin#scan(org.parosproxy.
+	 * paros.network.HttpMessage, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void scan(HttpMessage msg, String paramName, String paramValue) {
@@ -92,80 +94,104 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 			/* This scan is only applied to SOAP messages. */
 			final String request = new String(msg.getRequestBody().getBytes());
 			final String reqCharset = msg.getRequestBody().getCharset();
-			if (this.isStop()) return;
-			if(isSoapMessage(request,reqCharset)){
-				String paramValue2 = paramValue+"_modified";
-				String finalValue = paramValue+"</"+paramName+"><"+paramName+">"+paramValue2;
+			if (this.isStop())
+				return;
+			if (isSoapMessage(request, reqCharset)) {
+				String paramValue2 = paramValue + "_modified";
+				String finalValue = paramValue + "</" + paramName + "><" + paramName + ">" + paramValue2;
 				/* Request message that contains the modified value. */
-				HttpMessage modifiedMsg = craftAttackMessage(msg,paramName,paramValue2);
-				if (modifiedMsg == null) return;
+				HttpMessage modifiedMsg = craftAttackMessage(msg, paramName, paramValue2);
+				if (modifiedMsg == null)
+					return;
 				/* Request message that contains the XML code to be injected. */
-				HttpMessage attackMsg = craftAttackMessage(msg,paramName,finalValue);
+				HttpMessage attackMsg = craftAttackMessage(msg, paramName, finalValue);
 				final String escapedContent = new String(attackMsg.getRequestBody().getBytes());
 				final String unescapedContent = StringEscapeUtils.unescapeXml(escapedContent);
 				attackMsg.setRequestBody(unescapedContent);
 				/* Sends the modified request. */
-				if (this.isStop()) return;
+				if (this.isStop())
+					return;
 				sendAndReceive(modifiedMsg);
-				if (this.isStop()) return;
+				if (this.isStop())
+					return;
 				sendAndReceive(attackMsg);
-				if (this.isStop()) return;
+				if (this.isStop())
+					return;
 				/* Analyzes the response. */
 				final String response = new String(attackMsg.getResponseBody().getBytes());
 				final String resCharset = attackMsg.getResponseBody().getCharset();
 				final HttpMessage originalMsg = getBaseMsg();
-				if (this.isStop()) return;
-				if(!isSoapMessage(response,resCharset)){
-					/* Response has no SOAP format. It is still notified since it is an unexpected result. */
-					bingo(Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, null, null, finalValue,Constant.messages.getString(MESSAGE_PREFIX + "warn1"), attackMsg);
-				}else if(responsesAreEqual(modifiedMsg, attackMsg) && !(responsesAreEqual(originalMsg, modifiedMsg))){
-					/* The attack message has achieved the same result as the modified message, so XML injection attack worked. */
-					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, null, finalValue,Constant.messages.getString(MESSAGE_PREFIX + "warn2") , attackMsg);
+				if (this.isStop())
+					return;
+				if (!isSoapMessage(response, resCharset)) {
+					/*
+					 * Response has no SOAP format. It is still notified since it is an unexpected
+					 * result.
+					 */
+					bingo(Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, null, null, finalValue,
+							Constant.messages.getString(MESSAGE_PREFIX + "warn1"), attackMsg);
+				} else if (responsesAreEqual(modifiedMsg, attackMsg)
+						&& !(responsesAreEqual(originalMsg, modifiedMsg))) {
+					/*
+					 * The attack message has achieved the same result as the modified message, so
+					 * XML injection attack worked.
+					 */
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, null, finalValue,
+							Constant.messages.getString(MESSAGE_PREFIX + "warn2"), attackMsg);
 				}
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
-		}	
+		}
 	}
-	
+
 	/* Checks whether server response follows a SOAP message format. */
-	private boolean isSoapMessage(String content, String charset){
+	private boolean isSoapMessage(String content, String charset) {
 		SOAPMessage soapMsg = null;
-		if(content.length() <= 0) return false;
+		if (content.length() <= 0)
+			return false;
 		MessageFactory factory;
 		try {
 			factory = MessageFactory.newInstance();
-			soapMsg = factory.createMessage(
-			        new MimeHeaders(),
-			        new ByteArrayInputStream(content.getBytes(Charset
-			                .forName(charset))));
+			soapMsg = factory.createMessage(new MimeHeaders(),
+					new ByteArrayInputStream(content.getBytes(Charset.forName(charset))));
 			/* Content has been parsed correctly as SOAP content. */
-			if (soapMsg != null) return true;
-			else return false;
+			if (soapMsg != null)
+				return true;
+			else
+				return false;
 		} catch (Exception e) {
-			/* Error when trying to parse as SOAP content. It is considered as a non-SOAP message. */
+			/*
+			 * Error when trying to parse as SOAP content. It is considered as a non-SOAP
+			 * message.
+			 */
 			return false;
 		}
 	}
 
-	private HttpMessage craftAttackMessage(HttpMessage msg, String paramName, String finalValue){
+	private HttpMessage craftAttackMessage(HttpMessage msg, String paramName, String finalValue) {
 		/* Retrieves message configuration to craft a new one. */
 		ImportWSDL wsdlSingleton = ImportWSDL.getInstance();
 		SOAPMsgConfig soapConfig = wsdlSingleton.getSoapConfig(msg);
-		if (soapConfig == null) return null;
-		/* XML code injection. */		
+		if (soapConfig == null)
+			return null;
+		/* XML code injection. */
 		boolean isParamChanged = soapConfig.changeParam(paramName, finalValue);
 		/* Crafts the message. */
 		WSDLCustomParser parser = new WSDLCustomParser();
-		if(isParamChanged) return parser.createSoapRequest(soapConfig);
-		else return null;
+		if (isParamChanged)
+			return parser.createSoapRequest(soapConfig);
+		else
+			return null;
 	}
-	
-	private boolean responsesAreEqual(HttpMessage original, HttpMessage crafted){
+
+	private boolean responsesAreEqual(HttpMessage original, HttpMessage crafted) {
 		final String originalContent = new String(original.getResponseBody().getBytes());
 		final String craftedContent = new String(crafted.getResponseBody().getBytes());
-		if(originalContent.equals(craftedContent)) return true;
-		else return false;
+		if (originalContent.equals(craftedContent))
+			return true;
+		else
+			return false;
 	}
 
 	@Override

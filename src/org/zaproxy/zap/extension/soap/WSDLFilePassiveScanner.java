@@ -38,7 +38,7 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 	private static final String MESSAGE_PREFIX = "soap.wsdlfilepscan.";
 
 	private PassiveScanThread parent = null;
-	
+
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
 		// Only checking the response.
@@ -46,21 +46,23 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		if (isWsdl(msg)){
+		if (isWsdl(msg)) {
 			HttpResponseHeader header = msg.getResponseHeader();
 			String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
 			raiseAlert(msg, id, contentType);
 		}
 	}
-	
-	public boolean isWsdl(HttpMessage msg){
-		if(msg == null) return false;
+
+	public boolean isWsdl(HttpMessage msg) {
+		if (msg == null)
+			return false;
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
 			/* Alerts that a public WSDL file has been found. */
 			HttpResponseHeader header = msg.getResponseHeader();
 			String baseURL = msg.getRequestHeader().getURI().toString().trim();
 			String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
-			if(baseURL.endsWith(".wsdl") || contentType.equals("text/xml") || contentType.equals("application/wsdl+xml")){
+			if (baseURL.endsWith(".wsdl") || contentType.equals("text/xml")
+					|| contentType.equals("application/wsdl+xml")) {
 				return true;
 			}
 		}
@@ -68,22 +70,17 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String evidence) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, 
-		    	getName());
-		    	alert.setDetail(
-	    			this.getDescription(), 
-		    	    msg.getRequestHeader().getURI().toString(),
-		    	    "",	// Param, not relevant for this example vulnerability
-		    	    "", // Attack, not relevant for passive vulnerabilities
-		    	    this.getOtherInfo(),
-		    	    this.getSolution(), 
-		            this.getReference(), 
-					evidence,	// Evidence
-					0,	// CWE Id - return 0 if no relevant one
-		            13,	// WASC Id - Info leakage (return 0 if no relevant one)
-		            msg);
-	
-    	parent.raiseAlert(id, alert);
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getName());
+		alert.setDetail(this.getDescription(), msg.getRequestHeader().getURI().toString(), "", // Param, not relevant
+																								// for this example
+																								// vulnerability
+				"", // Attack, not relevant for passive vulnerabilities
+				this.getOtherInfo(), this.getSolution(), this.getReference(), evidence, // Evidence
+				0, // CWE Id - return 0 if no relevant one
+				13, // WASC Id - Info leakage (return 0 if no relevant one)
+				msg);
+
+		parent.raiseAlert(id, alert);
 	}
 
 	@Override
@@ -95,12 +92,12 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 	public int getPluginId() {
 		return 90030;
 	}
-	
+
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
-	
+
 	private String getDescription() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
 	}
