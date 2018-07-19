@@ -73,9 +73,11 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		initialize();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initialize() {
 		this.setShowByDefault(true);
 		this.setIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
+		// TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when targeting Java 10+
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
 		this.setLayout(new BorderLayout());

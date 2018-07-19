@@ -93,6 +93,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	 * This method initializes this class and its attributes
 	 * 
 	 */
+	@SuppressWarnings("deprecation")
 	private  void initialize() {
 		this.setLayout(new BorderLayout());
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
@@ -105,6 +106,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         					this.extension.getMessages().getString("spiderajax.panel.title"));
         
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				// TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when targeting Java 10+
 				KeyEvent.VK_J, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("spiderajax.panel.mnemonic"));
         

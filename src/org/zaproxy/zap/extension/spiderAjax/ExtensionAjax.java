@@ -188,12 +188,14 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		return popupMenuSpiderSite;
 	}
 
+	@SuppressWarnings("deprecation")
 	private ZapMenuItem getMenuItemCustomScan() {
 		if (menuItemCustomScan == null) {
 			menuItemCustomScan = new ZapMenuItem(
 					"spiderajax.menu.tools.label",
 					KeyStroke.getKeyStroke(
 							KeyEvent.VK_X,
+							// TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when targeting Java 10+
 							Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK,
 							false));
 			menuItemCustomScan.setEnabled(Control.getSingleton().getMode() != Mode.safe);
