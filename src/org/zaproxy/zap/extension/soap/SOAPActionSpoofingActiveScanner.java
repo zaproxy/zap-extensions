@@ -113,6 +113,12 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 				String[] soapActions = ImportWSDL.getInstance().getSourceSoapActions(originalMsg);
 
 				boolean endScan = false;
+				if (soapActions == null || soapActions.length == 0 ) {
+					// No actions to spoof
+					log.info("Skipping " + getName() + " because no actions were found. (URL: "
+							+ originalMsg.getRequestHeader().getURI().toString() + ")");
+					return;
+				}
 				for (int j = 0; j < soapActions.length && !endScan; j++) {
 					HttpMessage msg = getNewMsg();
 					/* Skips the original case. */
@@ -134,6 +140,10 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 						if (code > 0)
 							endScan = true;
 						raiseAlert(msg, code);
+					} else {
+						if (log.isDebugEnabled()) {
+							log.debug("Ignoring matching actions: " + currentHeader + " : " + soapActions[j]);
+						}
 					}
 					if (this.isStop())
 						return;

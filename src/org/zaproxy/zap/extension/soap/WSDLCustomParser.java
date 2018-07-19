@@ -17,6 +17,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.codehaus.groovy.runtime.metaclass.MissingPropertyExceptionNoStack;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -46,6 +47,7 @@ import com.predic8.wsdl.Service;
 import com.predic8.wsdl.WSDLParser;
 import com.predic8.wstool.creator.RequestCreator;
 import com.predic8.wstool.creator.SOARequestCreator;
+import com.predic8.xml.util.ResourceDownloadException;
 
 public class WSDLCustomParser {
 
@@ -142,6 +144,12 @@ public class WSDLCustomParser {
 			Definitions wsdl = parser.parse(path);
 			parseWSDL(wsdl, true);
 
+		} catch (ResourceDownloadException rde) {
+			String exMsg = Constant.messages.getString("soap.topmenu.tools.importWSDL.fail", file.getAbsolutePath());
+			log.warn(exMsg);
+			if (View.isInitialised()) {
+				View.getSingleton().showWarningDialog(exMsg);
+			}
 		} catch (Exception e) {
 			if (log != null)
 				log.error(e.getMessage(), e);
@@ -252,7 +260,9 @@ public class WSDLCustomParser {
 						HashMap<String, String> formParams = new HashMap<String, String>();
 						for (Part part : requestParts) {
 							Element element = part.getElement();
-							formParams.putAll(fillParameters(element, null));
+							if (element != null) {
+								formParams.putAll(fillParameters(element, null));
+							}
 						}
 						/* Connection test for each operation. */
 						/* Basic message creation. */

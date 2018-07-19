@@ -814,6 +814,10 @@
 		<build-deploy-addon name="soap" />
 	</target>
 
+	<target name="deploy-soap-without-help-indexes" description="deploy the SOAP scanning extension">
+		<build-deploy-addon-without-help-indexes name="soap" />
+	</target>
+
 	<target name="generate-wiki-soap" description="Generates the soap wiki">
 		<generate-wiki addon="soap" />
 	</target>
