@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Online menus</name>
-	<version>6</version>
+	<version>7</version>
 	<status>release</status>
 	<description>ZAP Online menu items</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsOnlineMenuOnlineMenu</url>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	Maintenance changes.<br>
 	]]>
 	</changes>
 	<extensions>

@@ -169,8 +169,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 	/**
 	 * Sets up the graphical representation of this tab.
 	 */
+	@SuppressWarnings("deprecation")
 	private void initializePanel() {
 		setName(Constant.messages.getString("websocket.panel.title"));
+		// TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when targeting Java 10+
 		setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		setMnemonic(Constant.messages.getChar("websocket.panel.mnemonic"));
 

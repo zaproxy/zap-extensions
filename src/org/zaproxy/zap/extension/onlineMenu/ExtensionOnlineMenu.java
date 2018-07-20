@@ -62,7 +62,9 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
 	    
 	    if (getView() != null) {
 			// Homepage
+			@SuppressWarnings("deprecation")
 			ZapMenuItem menuHomepage = new ZapMenuItem("onlineMenu.home",
+					// TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when targeting Java 10+
 					KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 			menuHomepage.setEnabled(DesktopUtils.canOpenUrlInBrowser());
 			menuHomepage.addActionListener(new java.awt.event.ActionListener() { 
