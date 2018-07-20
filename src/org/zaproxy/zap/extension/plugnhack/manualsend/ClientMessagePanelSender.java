@@ -18,8 +18,6 @@
 
 package org.zaproxy.zap.extension.plugnhack.manualsend;
 
-import javax.xml.ws.WebServiceException;
-
 import org.parosproxy.paros.extension.manualrequest.MessageSender;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -39,7 +37,7 @@ public class ClientMessagePanelSender implements MessageSender {
     }
     
     @Override
-    public void handleSendMessage(Message aMessage) throws WebServiceException {
+    public void handleSendMessage(Message aMessage) {
         this.extension.resend((ClientMessage)aMessage);
     }
     
