@@ -47,7 +47,7 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 
 	private static final String MESSAGE_PREFIX = "soap.soapactionspoofing.";
 
-	private static Logger log = Logger.getLogger(SOAPActionSpoofingActiveScanner.class);
+	private static final Logger LOG = Logger.getLogger(SOAPActionSpoofingActiveScanner.class);
 
 	public static final int INVALID_FORMAT = -3;
 	public static final int FAULT_CODE = -2;
@@ -115,7 +115,7 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 				boolean endScan = false;
 				if (soapActions == null || soapActions.length == 0 ) {
 					// No actions to spoof
-					log.info("Skipping " + getName() + " because no actions were found. (URL: "
+					LOG.info("Skipping " + getName() + " because no actions were found. (URL: "
 							+ originalMsg.getRequestHeader().getURI().toString() + ")");
 					return;
 				}
@@ -141,8 +141,8 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 							endScan = true;
 						raiseAlert(msg, code);
 					} else {
-						if (log.isDebugEnabled()) {
-							log.debug("Ignoring matching actions: " + currentHeader + " : " + soapActions[j]);
+						if (LOG.isDebugEnabled()) {
+							LOG.debug("Ignoring matching actions: " + currentHeader + " : " + soapActions[j]);
 						}
 					}
 					if (this.isStop())
@@ -150,7 +150,7 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -227,7 +227,7 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 				return SOAPACTION_EXECUTED;
 			}
 		} catch (IOException | SOAPException e) {
-			log.info("Exception thrown when scanning: ", e);
+			LOG.info("Exception thrown when scanning: ", e);
 			return INVALID_FORMAT;
 		}
 	}

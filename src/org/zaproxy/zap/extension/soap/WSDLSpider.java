@@ -1,3 +1,22 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2014 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.soap;
 
 import net.htmlparser.jericho.Source;
@@ -9,10 +28,9 @@ import org.zaproxy.zap.spider.parser.SpiderParser;
 
 public class WSDLSpider extends SpiderParser {
 
-	private ImportWSDL importer = ImportWSDL.getInstance();
 	private WSDLCustomParser parser = new WSDLCustomParser();
 
-	private static final Logger log = Logger.getLogger(WSDLSpider.class);
+	private static final Logger LOG = Logger.getLogger(WSDLSpider.class);
 
 	@Override
 	public boolean parseResource(HttpMessage message, Source source, int depth) {
@@ -23,16 +41,12 @@ public class WSDLSpider extends SpiderParser {
 		if (message == null)
 			return false;
 		/* Only applied to wsdl files. */
-		log.info("WSDL custom spider called.");
+		LOG.debug("WSDL custom spider called.");
 		if (!canParseResource(message))
 			return false;
-		if (importer == null) {
-			importer = ImportWSDL.getInstance();
-			if (importer == null)
-				return false;
-		}
+
 		/* New WSDL detected. */
-		log.info("WSDL spider has detected a new resource");
+		LOG.info("WSDL spider has detected a new resource");
 		String content = getContentFromMessage(message);
 		/* Calls extension to parse it and to fill the sites tree. */
 		parser.extContentWSDLImport(content, sendRequests);
@@ -49,7 +63,9 @@ public class WSDLSpider extends SpiderParser {
 				String content = message.getResponseBody().toString();
 				if (parser.canBeWSDLparsed(content))
 					return true;
-				log.info("Content is not wsdl: " + content);
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Content is not wsdl: " + content);
+				}
 			}
 		} catch (Exception e) {
 			return false;

@@ -1,3 +1,22 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2014 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.soap;
 
 import groovy.xml.MarkupBuilder;
@@ -51,7 +70,7 @@ import com.predic8.xml.util.ResourceDownloadException;
 
 public class WSDLCustomParser {
 
-	private static final Logger log = Logger.getLogger(WSDLCustomParser.class);;
+	private static final Logger LOG = Logger.getLogger(WSDLCustomParser.class);
 	private static int keyIndex = -1;
 	private ImportWSDL wsdlSingleton = ImportWSDL.getInstance();
 	private SOAPMsgConfig lastConfig; // Only used for unit testing purposes.
@@ -64,7 +83,7 @@ public class WSDLCustomParser {
 	public void extUrlWSDLImport(final String url, final String threadName) {
 		if (url == null || url.trim().length() <= 0)
 			return;
-		// log.debug("Importing WSDL file from URL: "+url);
+		// LOG.debug("Importing WSDL file from URL: "+url);
 		Thread t = new Thread() {
 			@Override
 			public void run() {
@@ -146,13 +165,12 @@ public class WSDLCustomParser {
 
 		} catch (ResourceDownloadException rde) {
 			String exMsg = Constant.messages.getString("soap.topmenu.tools.importWSDL.fail", file.getAbsolutePath());
-			log.warn(exMsg);
+			LOG.warn(exMsg);
 			if (View.isInitialised()) {
 				View.getSingleton().showWarningDialog(exMsg);
 			}
 		} catch (Exception e) {
-			if (log != null)
-				log.error(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -169,8 +187,7 @@ public class WSDLCustomParser {
 				try {
 					View.getSingleton().getOutputPanel().setTabFocus();
 				} catch (Exception e) {
-					if (log != null)
-						log.debug("Could not set tab focus on Output Panel.");
+					LOG.debug("Could not set tab focus on Output Panel.");
 				}
 			}
 			/* Sends a request to retrieve remote WSDL file's content. */
@@ -180,8 +197,7 @@ public class WSDLCustomParser {
 			try {
 				sender.sendAndReceive(httpRequest, true);
 			} catch (IOException e) {
-				if (log != null)
-					log.error("Unable to send WSDL request.", e);
+				LOG.error("Unable to send WSDL request.", e);
 				return;
 			}
 
@@ -189,7 +205,7 @@ public class WSDLCustomParser {
 			if (httpRequest.getResponseBody() != null) {
 				String content = httpRequest.getResponseBody().toString();
 				if (content == null || content.trim().length() <= 0) {
-					// if(log != null) log.warn("URL response from WSDL file request has no body
+					// LOG.warn("URL response from WSDL file request has no body
 					// content.");
 				} else {
 					// WSDL parsing.
@@ -197,8 +213,7 @@ public class WSDLCustomParser {
 				}
 			}
 		} catch (Exception e) {
-			if (log != null)
-				log.error("There was an error while parsing WSDL from URL. ", e);
+			LOG.error("There was an error while parsing WSDL from URL. ", e);
 		}
 	}
 
@@ -215,8 +230,7 @@ public class WSDLCustomParser {
 				parseWSDL(wsdl, sendMessages);
 				return true;
 			} catch (Exception e) {
-				if (log != null)
-					log.error("There was an error while parsing WSDL content. ", e);
+				LOG.error("There was an error while parsing WSDL content. ", e);
 				return false;
 			}
 		}
@@ -298,8 +312,7 @@ public class WSDLCustomParser {
 			return r.trim();
 		} catch (MissingPropertyExceptionNoStack e) {
 			// It has no style or transport property, so it is not a SOAP binding.
-			if (log != null)
-				log.info("No style or transport property detected", e);
+			LOG.info("No style or transport property detected", e);
 			return null;
 		}
 	}
@@ -311,8 +324,7 @@ public class WSDLCustomParser {
 			soapActionName = bindOp.getOperation().getSoapAction();
 		} catch (NullPointerException e) {
 			// SOAP Action not defined for this operation.
-			if (log != null)
-				log.info("No SOAP Action defined for this operation.", e);
+			LOG.info("No SOAP Action defined for this operation.", e);
 			return;
 		}
 		if (!soapActionName.trim().equals("")) {
@@ -396,17 +408,14 @@ public class WSDLCustomParser {
 			}
 			return formParams;
 		} catch (Exception e) {
-			if (log != null)
-				log.warn("There was an error when trying to parse element " + element.getName() + " from WSDL file.",
-						e);
+			LOG.warn("There was an error when trying to parse element " + element.getName() + " from WSDL file.",e);
 		}
 		return formParams;
 	}
 
 	private HashMap<String, String> addParameter(String path, String paramType, String value) {
 		HashMap<String, String> formParams = new HashMap<String, String>();
-		if (log != null)
-			log.debug("Detected parameter: " + path);
+		LOG.debug("Detected parameter: " + path);
 		if (paramType.contains(":")) {
 			String[] stringParts = paramType.split(":");
 			paramType = stringParts[stringParts.length - 1];
@@ -460,7 +469,7 @@ public class WSDLCustomParser {
 			Binding binding = port.getBinding();
 			creator.createRequest(binding.getPortType().getName(), bindOp.getName(), binding.getName());
 
-			// if(log != null) log.info("[ExtensionImportWSDL] "+writerSOAPReq);
+			// LOG.info("[ExtensionImportWSDL] "+writerSOAPReq);
 			/* HTTP Request. */
 			String endpointLocation = port.getAddress().getLocation().toString();
 			HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, false));
@@ -490,8 +499,7 @@ public class WSDLCustomParser {
 			wsdlSingleton.putConfiguration(httpRequest, soapConfig);
 			return httpRequest;
 		} catch (Exception e) {
-			if (log != null)
-				log.error("Unable to generate request for operation '" + bindOp.getName() + "'\n" + e.getMessage(), e);
+			LOG.error("Unable to generate request for operation '" + bindOp.getName() + "'\n" + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -514,10 +522,8 @@ public class WSDLCustomParser {
 		try {
 			sender.sendAndReceive(httpRequest, true);
 		} catch (IOException e) {
-			if (log != null)
-				log.error("Unable to communicate with SOAP server. Server may be not available.");
-			if (log != null)
-				log.debug("Trace:", e);
+			LOG.error("Unable to communicate with SOAP server. Server may be not available.");
+			LOG.debug("Trace:", e);
 		}
 		wsdlSingleton.putRequest(wsdlID, httpRequest);
 		persistMessage(httpRequest, opDisplayName);
@@ -533,13 +539,12 @@ public class WSDLCustomParser {
 			historyRef = new HistoryReference(Model.getSingleton().getSession(), HistoryReference.TYPE_ZAP_USER,
 					message);
 		} catch (Exception e) {
-			if (log != null)
-				log.warn(e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 			return;
 		}
 
-		final ExtensionHistory extHistory = (ExtensionHistory) Control.getSingleton().getExtensionLoader()
-				.getExtension(ExtensionHistory.NAME);
+		final ExtensionHistory extHistory = Control.getSingleton().getExtensionLoader()
+				.getExtension(ExtensionHistory.class);
 		if (extHistory != null) {
 			EventQueue.invokeLater(new Runnable() {
 				@Override
@@ -560,7 +565,7 @@ public class WSDLCustomParser {
 						String soapStringURI = soapURI.getPath();
 						soapURI.setPath(soapStringURI + opDisplayName);
 					} catch (URIException e) {
-						log.warn(e.getMessage(), e);
+						LOG.warn(e.getMessage(), e);
 					}
 					Model.getSingleton().getSession().getSiteTree().addPath(historyRef, message);
 				}
