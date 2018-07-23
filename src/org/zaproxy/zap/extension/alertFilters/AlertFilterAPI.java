@@ -66,7 +66,7 @@ public class AlertFilterAPI extends ApiImplementor {
 		super();
 		this.extension = extension;
 
-		this.addApiView(new ApiView(VIEW_ALERT_FILTER_LIST, null, new String[] { PARAM_CONTEXT_ID }));
+		this.addApiView(new ApiView(VIEW_ALERT_FILTER_LIST, new String[] { PARAM_CONTEXT_ID }));
 
 		this.addApiAction(new ApiAction(ACTION_ADD_ALERT_FILTER, 
 				new String[] { PARAM_CONTEXT_ID, PARAM_RULE_ID, PARAM_NEW_LEVEL },

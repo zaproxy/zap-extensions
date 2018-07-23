@@ -7,7 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Maintenance changes.<br>
+	Correct required state of an API parameter.<br>
 	]]>
     </changes>
 	<extensions>
