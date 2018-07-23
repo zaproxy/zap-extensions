@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
@@ -151,6 +152,11 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 
 	@Override
 	public void init() {		
+		// Does not work with Java 9+
+		// https://github.com/zaproxy/zaproxy/issues/4038
+		if (SystemUtils.isJavaVersionAtLeast(1.9f)) {
+			getParent().pluginSkipped(this, Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.skipJava9"));
+		}
 	}
 
 
