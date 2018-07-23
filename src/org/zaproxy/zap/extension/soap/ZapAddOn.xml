@@ -9,6 +9,7 @@
 	<![CDATA[
 	Internationalise file filter description.<br>
 	Dynamically unload the add-on.<br>
+	Various fixes (related to Issue 4832 and other testing).<br>
 	]]>
 	</changes>
 	<extensions>
