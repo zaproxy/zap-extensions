@@ -23,7 +23,20 @@ import java.io.IOException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
+import org.apache.commons.httpclient.URI;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketTestServer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
 
 /** Class with utility/helper methods for general tests for WebSockets */
 public abstract class WebSocketTestUtils extends TestUtils {
@@ -86,4 +99,23 @@ public abstract class WebSocketTestUtils extends TestUtils {
                 webSocketTestServer.getHostname(),
                 webSocketTestServer.getListeningPort());
     }
+
+    private List<HttpMessage> httpMessagesHistory;
+    
+    public HistoryReference getMockHistoryReference(final HttpMessage httpMessage) throws DatabaseException, HttpMalformedHeaderException {
+        if(httpMessagesHistory == null){
+            httpMessagesHistory = new ArrayList<>();
+        }
+        httpMessagesHistory.add(httpMessage);
+        final int index = httpMessagesHistory.size() - 1;
+        
+        HistoryReference historyReference = Mockito.mock(HistoryReference.class);
+        when(historyReference.getHistoryId()).thenAnswer((Answer<Integer>) invocationOnMock -> index);
+        
+        when(historyReference.getHttpMessage()).thenAnswer((Answer<HttpMessage>) invocationOnMock -> httpMessage);
+        when(historyReference.getURI()).thenAnswer( (Answer<URI>) invocationOnMock -> httpMessage.getRequestHeader().getURI());
+        
+        return historyReference;
+    }
+
 }
