@@ -11,6 +11,7 @@
 	<![CDATA[
 	Enable the extension for all DB types.<br>
 	Mention the configuration keys in the options help page.<br>
+	Tweak error message shown when failed to start/connect to the browser.<br>
 	]]>
 	</changes>
 	<extensions>
