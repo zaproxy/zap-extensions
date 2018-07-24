@@ -81,6 +81,7 @@ import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
+import org.zaproxy.zap.extension.websocket.treemap.WebSocketMap;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.OptionsWebSocketPanel;
@@ -403,6 +404,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		eventPublisher = new WebSocketEventPublisher(this);
 		this.addAllChannelSenderListener(eventPublisher);
+		
+		WebSocketMap webSocketMap = WebSocketMap.createTree();
+		addAllChannelObserver(webSocketMap.getWebSocketMapListener());
 	}
 	
 	@Override
