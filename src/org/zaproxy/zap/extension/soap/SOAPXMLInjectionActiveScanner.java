@@ -41,7 +41,7 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 
 	private static final String MESSAGE_PREFIX = "soap.soapxmlinjection.";
 
-	private static Logger log = Logger.getLogger(SOAPXMLInjectionActiveScanner.class);
+	private static final Logger LOG = Logger.getLogger(SOAPXMLInjectionActiveScanner.class);
 
 	@Override
 	public int getId() {
@@ -141,7 +141,7 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
