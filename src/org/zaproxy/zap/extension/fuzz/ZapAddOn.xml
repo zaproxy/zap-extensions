@@ -11,6 +11,7 @@
     Enable the extensions for all DB types.<br>
     Use Monospaced font in payload text areas.<br>
     Possibility to enforce a random order in the RegexPayloadGenerator.<br>
+    Make the default step in the Numberzz generator one.<br>
     ]]>
     </changes>
     <extensions>
