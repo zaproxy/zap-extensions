@@ -5,7 +5,12 @@
 	<description>Request numbered panel.</description>
 	<author>Surikato</author>
 	<url></url>
-	<changes>Minor code change to address deprecation.</changes>
+	<changes>
+	<![CDATA[
+	Maintenance changes.<br>
+	Change default accelerator for Requester tab.<br>
+	]]>
+	</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.requester.ExtensionRequester</extension>
 	</extensions>
