@@ -27,7 +27,6 @@ import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketTestServer;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 
 /**
  * Class with utility/helper methods for general tests for WebSockets
@@ -86,12 +85,6 @@ public abstract class WebSocketTestUtils extends TestUtils{
     public NanoWebSocketConnection getConnection(int channelID){
         return webSocketTestServer.getConnection(channelID);
     }
-
-	private static int getRandomPort() throws IOException {
-		try (ServerSocket server = new ServerSocket(0)) {
-			return server.getLocalPort();
-		}
-	}
 	
 	public int getListeningPort(){
 		return webSocketTestServer.getListeningPort();
