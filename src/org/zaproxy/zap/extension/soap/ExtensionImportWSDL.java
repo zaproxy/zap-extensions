@@ -95,7 +95,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	private ZapMenuItem getMenuImportLocalWSDL() {
 		if (menuImportLocalWSDL == null) {
 			menuImportLocalWSDL = new ZapMenuItem("soap.topmenu.tools.importWSDL",
-					KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+					KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 			menuImportLocalWSDL.setToolTipText(Constant.messages.getString("soap.topmenu.tools.importWSDL.tooltip"));
 
 			menuImportLocalWSDL.addActionListener(new java.awt.event.ActionListener() {
