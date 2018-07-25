@@ -45,7 +45,7 @@ public class RequesterPanel extends AbstractPanel {
         this.setName(Constant.messages.getString("requester.panel.title"));
 		this.setIcon(ExtensionRequester.REQUESTER_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
+				KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("requester.panel.mnemonic"));
 		this.setShowByDefault(true);
 		requesterNumberedTabbedPane = new RequesterNumberedTabbedPane();		
