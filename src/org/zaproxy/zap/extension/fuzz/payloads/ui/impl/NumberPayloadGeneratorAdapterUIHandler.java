@@ -148,7 +148,7 @@ public class NumberPayloadGeneratorAdapterUIHandler implements
 
             fromField = new ZapNumberSpinner(Integer.MIN_VALUE,0,Integer.MAX_VALUE);
             toField = new ZapNumberSpinner(Integer.MIN_VALUE,0,Integer.MAX_VALUE);
-            stepField = new ZapNumberSpinner(Integer.MIN_VALUE,0,Integer.MAX_VALUE);
+            stepField = new ZapNumberSpinner(Integer.MIN_VALUE,1,Integer.MAX_VALUE);
 
             JLabel fromLabel = new JLabel(PAYLOADS_FROM_LABEL);
             fromLabel.setLabelFor(fromField);
