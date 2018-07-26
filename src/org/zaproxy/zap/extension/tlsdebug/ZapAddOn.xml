@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Update minimum ZAP version to 2.5.0.<br>
+	Change default accelerator for TLS Debug tab.<br>
 	]]>
 	</changes>
 	<extensions>

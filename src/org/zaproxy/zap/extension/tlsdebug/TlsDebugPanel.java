@@ -77,8 +77,8 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
 	private void initialize() {
 
 		this.setIcon(TLSDEBUG_ICON);
-		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK, false));
 		this.setLayout(new BorderLayout());
 
 		JPanel panelContent = new JPanel(new GridBagLayout());
