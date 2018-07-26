@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Correct required state of an API parameter.<br>
+	Add description to API endpoints.<br>
 	]]>
     </changes>
 	<extensions>

@@ -66,15 +66,23 @@ public class AlertFilterAPI extends ApiImplementor {
 		super();
 		this.extension = extension;
 
-		this.addApiView(new ApiView(VIEW_ALERT_FILTER_LIST, new String[] { PARAM_CONTEXT_ID }));
+		ApiView alertFilterList = new ApiView(VIEW_ALERT_FILTER_LIST, new String[] { PARAM_CONTEXT_ID });
+		alertFilterList.setDescriptionTag("alertFilters.api.view.alertFilterList");
+		this.addApiView(alertFilterList);
 
-		this.addApiAction(new ApiAction(ACTION_ADD_ALERT_FILTER, 
+		ApiAction addAlertFilter = new ApiAction(
+				ACTION_ADD_ALERT_FILTER,
 				new String[] { PARAM_CONTEXT_ID, PARAM_RULE_ID, PARAM_NEW_LEVEL },
-				new String[] { PARAM_URL, PARAM_URL_IS_REGEX, PARAM_PARAMETER, PARAM_ENABLED}));
-		this.addApiAction(new ApiAction(ACTION_REMOVE_ALERT_FILTER, 
-				new String[] { PARAM_CONTEXT_ID, PARAM_RULE_ID, PARAM_NEW_LEVEL },
-				new String[] { PARAM_URL, PARAM_URL_IS_REGEX, PARAM_PARAMETER, PARAM_ENABLED}));
+				new String[] { PARAM_URL, PARAM_URL_IS_REGEX, PARAM_PARAMETER, PARAM_ENABLED });
+		addAlertFilter.setDescriptionTag("alertFilters.api.action.addAlertFilter");
+		this.addApiAction(addAlertFilter);
 
+		ApiAction removeAlertFilter = new ApiAction(
+				ACTION_REMOVE_ALERT_FILTER,
+				new String[] { PARAM_CONTEXT_ID, PARAM_RULE_ID, PARAM_NEW_LEVEL },
+				new String[] { PARAM_URL, PARAM_URL_IS_REGEX, PARAM_PARAMETER, PARAM_ENABLED });
+		removeAlertFilter.setDescriptionTag("alertFilters.api.action.removeAlertFilter");
+		this.addApiAction(removeAlertFilter);
 	}
 
 	@Override
