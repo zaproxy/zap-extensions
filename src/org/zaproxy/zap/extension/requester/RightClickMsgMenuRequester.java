@@ -34,9 +34,11 @@ public class RightClickMsgMenuRequester extends PopupMenuItemHttpMessageContaine
 	/**
      * @param label
      */
+    @SuppressWarnings("deprecation")
     public RightClickMsgMenuRequester(String label) {
         super(label);
         this.setAccelerator(KeyStroke.getKeyStroke(
+				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 				KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
     }
 	

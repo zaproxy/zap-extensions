@@ -74,10 +74,12 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
 		initialize();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initialize() {
 
 		this.setIcon(TLSDEBUG_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
+				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK, false));
 		this.setLayout(new BorderLayout());
 

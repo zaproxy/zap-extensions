@@ -252,9 +252,11 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public ZapMenuItem getMenuItem() {
 		if (menuItem == null) {
 			menuItem = new ZapMenuItem("menu.tools.manReq",
+					// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 					KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 			menuItem.addActionListener(new ActionListener() {
 				@Override

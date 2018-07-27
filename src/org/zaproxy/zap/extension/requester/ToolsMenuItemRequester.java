@@ -33,8 +33,10 @@ public class ToolsMenuItemRequester extends ZapMenuItem {
 	private static final long serialVersionUID = 1L;
 	private ExtensionRequester extension = null;   
 		
+    @SuppressWarnings("deprecation")
     public ToolsMenuItemRequester(ExtensionRequester extension) {
         super("requester", Constant.messages.getString("requester.toolsmenu.label"), KeyStroke.getKeyStroke(
+        		// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
         		KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         this.extension = extension;
         
