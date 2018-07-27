@@ -61,11 +61,13 @@ public class PortScanPanel extends ScanPanel implements ScanListenner {
      * @param portScanParam 
      * 
      */
+    @SuppressWarnings("deprecation")
     public PortScanPanel(ExtensionPortScan extension, PortScanParam portScanParam) {
     	// 'picture list' icon
         super("ports", new ImageIcon(PortScanPanel.class.getResource("/resource/icon/16/187.png")), extension, portScanParam);
         
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 				KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("ports.panel.mnemonic"));
     }

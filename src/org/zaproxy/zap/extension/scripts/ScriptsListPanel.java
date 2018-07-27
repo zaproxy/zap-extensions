@@ -118,11 +118,13 @@ public class ScriptsListPanel extends AbstractPanel {
 		initialize();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("scripts.list.panel.title"));
 		this.setIcon(ExtensionScriptsUI.ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 				KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("scripts.list.panel.mnemonic"));
 

@@ -100,12 +100,14 @@ public class TokenPanel extends AbstractPanel {
 	/**
 	 * This method initializes this
 	 */
+	@SuppressWarnings("deprecation")
 	private  void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName(extension.getMessages().getString("tokengen.panel.title"));
 		this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/fugue/barcode.png")));
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 				KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("tokengen.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());

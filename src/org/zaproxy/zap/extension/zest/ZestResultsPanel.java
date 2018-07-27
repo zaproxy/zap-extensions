@@ -62,11 +62,13 @@ public class ZestResultsPanel extends AbstractPanel {
 		initialize();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("zest.results.panel.title"));
 		this.setIcon(ExtensionZest.ZEST_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 				KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("zest.results.panel.mnemonic"));
 

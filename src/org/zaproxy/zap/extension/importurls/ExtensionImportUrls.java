@@ -76,9 +76,11 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
 	    extensionHook.addApiImplementor(api);
 	}
 
+	@SuppressWarnings("deprecation")
 	private ZapMenuItem getMenuImportUrls() {
         if (menuImportUrls == null) {
         	menuImportUrls = new ZapMenuItem("importurls.topmenu.tools.importurls",
+        			// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
         			KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         	menuImportUrls.setToolTipText(Constant.messages.getString("importurls.topmenu.tools.importurls.tooltip"));
 

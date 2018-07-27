@@ -98,9 +98,11 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		initialize();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initialize() {
 		this.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")));	// 'script' icon
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 				KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("scripts.panel.mnemonic"));
 		this.setLayout(new BorderLayout());

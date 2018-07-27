@@ -150,12 +150,14 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 	/**
 	 * This method initializes this
 	 */
+	@SuppressWarnings("deprecation")
 	private  void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName(Constant.messages.getString("bruteforce.panel.title"));
 		this.setIcon(new ImageIcon(BruteForcePanel.class.getResource(ExtensionBruteForce.HAMMER_ICON_RESOURCE)));
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 				KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("bruteforce.panel.mnemonic"));
 		this.add(getPanelCommand(), getPanelCommand().getName());
