@@ -37,6 +37,8 @@ public class NanoWebSocketTestServer extends NanoWSD {
     private final static String CLOSE_REASON_CANT_SENT = "Connection Lost";
     private final static String CLOSE_REASON_REQUIREMENT = "Requirement";
     
+    private boolean isSecure = false;
+    
     public NanoWebSocketTestServer(String hostname, int port) {
         super(hostname, port);
         connectionsList = new ArrayList<>();
@@ -102,4 +104,8 @@ public class NanoWebSocketTestServer extends NanoWSD {
     public NanoWebSocketConnection getConnection(int channelId){
         return connectionsList.get(channelId);
     }
+
+	public boolean isSecure(){
+    	return isSecure;
+	}
 }

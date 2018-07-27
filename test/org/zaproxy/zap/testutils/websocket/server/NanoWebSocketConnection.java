@@ -22,8 +22,11 @@ package org.zaproxy.zap.testutils.websocket.server;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoWSD;
+import fi.iki.elonen.NanoWSD.WebSocketFrame;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,8 +41,8 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
     private byte[] pingPayload;
     private Scheduling scheduling;
     private boolean pongReceived = true;
-    private Stack<NanoWSD.WebSocketFrame> incomingMessages;
-    private Stack<NanoWSD.WebSocketFrame> outgoingMessages;
+    private Stack<WebSocketFrame> incomingMessages;
+    private Stack<WebSocketFrame> outgoingMessages;
     
     public NanoWebSocketConnection(NanoHTTPD.IHTTPSession handshakeRequest){
         super(handshakeRequest);
@@ -76,11 +79,11 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
                 super.ping(pingPayload);
                 setPongReceived(false);
             }else {
-                onClose(NanoWSD.WebSocketFrame.CloseCode.AbnormalClosure, CLOSE_FROM_PING, false);
+                onClose(WebSocketFrame.CloseCode.AbnormalClosure, CLOSE_FROM_PING, false);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            onClose(NanoWSD.WebSocketFrame.CloseCode.AbnormalClosure, CLOSE_PAYLOAD, false);
+            onClose(WebSocketFrame.CloseCode.AbnormalClosure, CLOSE_PAYLOAD, false);
             return false;
         }
         return true;
@@ -91,15 +94,15 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
     }
     
     @Override
-    protected void onClose(NanoWSD.WebSocketFrame.CloseCode closeCode, String s, boolean b) { }
+    protected void onClose(WebSocketFrame.CloseCode closeCode, String s, boolean b) { }
     
     @Override
-    protected void onMessage(NanoWSD.WebSocketFrame webSocketFrame) {
+    protected void onMessage(WebSocketFrame webSocketFrame) {
         incomingMessages.push(webSocketFrame);
     }
     
     @Override
-    protected void onPong(NanoWSD.WebSocketFrame webSocketFrame) {
+    protected void onPong(WebSocketFrame webSocketFrame) {
         incomingMessages.push(webSocketFrame);
         setPongReceived(true);
     }
@@ -111,7 +114,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
         this.pingPayload = payload;
     }
     
-    public NanoWSD.WebSocketFrame popIncomingMessage(){
+    public WebSocketFrame popIncomingMessage(){
         return incomingMessages.pop();
     }
     
@@ -120,13 +123,17 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
      * @param messages Stack of the messages is going to be sent
      * @param messageInterval the interval of the messages
      */
-    public void setOutgoingMessageSchedule(Stack<NanoWSD.WebSocketFrame> messages, int messageInterval){
+    public void setOutgoingMessageSchedule(Stack<WebSocketFrame> messages, int messageInterval){
         if(scheduling == null){
             scheduling = new Scheduling();
         }
         outgoingMessages = messages;
         scheduling.messageScheduling(messageInterval);
     }
+    
+    public List<WebSocketFrame> getListOfIncomingMessages(){
+    	return new ArrayList<WebSocketFrame>(incomingMessages);
+	}
     
     class Scheduling {
         protected Timer pingTimer;
