@@ -29,6 +29,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
+import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 
@@ -141,6 +142,29 @@ public class BackupFileDisclosureUnitTest extends ActiveScannerTest<BackupFileDi
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldAlertIfBackupResponseIsNotEmptyAndIsDifferentStatusFromBogusRequest() throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(new NanoServerHandler(test) {
+
+            @Override
+            protected Response serve(IHTTPSession session) {
+                boolean isAlertUrl = session.getUri().contains("sitemap.xml.bak");
+                String content = isAlertUrl ? "<html></html>" : "";
+                Response.Status rs = isAlertUrl ? Response.Status.OK : Response.Status.NOT_FOUND;
+                Response resp = new Response(rs, NanoHTTPD.MIME_HTML, content);
+                return resp;
+            }
+        });
+        HttpMessage message = getHttpMessage(test + "sitemap.xml");
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
     }
 
     private static class ForbiddenResponseWithReqPath extends NanoServerHandler {
