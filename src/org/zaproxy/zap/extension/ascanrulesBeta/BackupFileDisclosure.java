@@ -295,6 +295,10 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 		return 34;  //Predictable Resource Location
 	}
 
+	private boolean isEmptyResponse(byte[] response) {
+		return response.length == 0;
+	}
+
 	/**
 	 * attempts to find a backup file for the given file
 	 * @param uri the URI of a file
@@ -499,12 +503,9 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 
 				//just to complicate things.. I have a test case which for the random file, does NOT give a 404 (so gives404s == false) 
 				//but for a "Copy of" file, actually gives a 404 (for some unknown reason). We need to handle this case.
-				if ( 	( gives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND) || 
-						(	(!gives404s) &&
-								nonexistfilemsg .getResponseHeader().getStatusCode() != requestStatusCode &&
-							(! Arrays.equals(disclosedData, nonexistfilemsgdata)) 
-						)
-					) {
+				if (!isEmptyResponse(disclosedData) && ((gives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND)
+						|| ((!gives404s) && nonexistfilemsg.getResponseHeader().getStatusCode() != requestStatusCode
+								&& (!Arrays.equals(disclosedData, nonexistfilemsgdata))))) {
 					bingo(	Alert.RISK_MEDIUM, 
 							Alert.CONFIDENCE_MEDIUM,
 							Constant.messages.getString("ascanbeta.backupfiledisclosure.name"),
@@ -541,12 +542,12 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 				sendAndReceive(requestmsg, false);
 				disclosedData = requestmsg.getResponseBody().getBytes();
 				int requestStatusCode = requestmsg.getResponseHeader().getStatusCode();
+				// If the response is empty it's probably not really a backup
 
-				if ( 	( parentgives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND) || 
-						(	(!parentgives404s) && 
-								nonexistparentmsg.getResponseHeader().getStatusCode() != requestStatusCode && 
-							(! Arrays.equals(disclosedData, nonexistparentmsgdata)))
-					) {
+				if (!isEmptyResponse(disclosedData)
+						&& ((parentgives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND) || ((!parentgives404s)
+								&& nonexistparentmsg.getResponseHeader().getStatusCode() != requestStatusCode
+								&& (!Arrays.equals(disclosedData, nonexistparentmsgdata))))) {
 					bingo(	Alert.RISK_MEDIUM, 
 							Alert.CONFIDENCE_MEDIUM,
 							Constant.messages.getString("ascanbeta.backupfiledisclosure.name"),
