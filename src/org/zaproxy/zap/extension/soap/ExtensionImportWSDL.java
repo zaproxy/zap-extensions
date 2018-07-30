@@ -92,9 +92,11 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	}
 
 	/* Menu option to import a local WSDL file. */
+	@SuppressWarnings("deprecation")
 	private ZapMenuItem getMenuImportLocalWSDL() {
 		if (menuImportLocalWSDL == null) {
 			menuImportLocalWSDL = new ZapMenuItem("soap.topmenu.tools.importWSDL",
+					// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 					KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 			menuImportLocalWSDL.setToolTipText(Constant.messages.getString("soap.topmenu.tools.importWSDL.tooltip"));
 
@@ -119,9 +121,11 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	}
 
 	/* Menu option to import a WSDL file from a given URL. */
+	@SuppressWarnings("deprecation")
 	private ZapMenuItem getMenuImportUrlWSDL() {
 		if (menuImportUrlWSDL == null) {
 			menuImportUrlWSDL = new ZapMenuItem("soap.topmenu.tools.importRemoteWSDL",
+					// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 					KeyStroke.getKeyStroke(KeyEvent.VK_J, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 			menuImportUrlWSDL
 					.setToolTipText(Constant.messages.getString("soap.topmenu.tools.importRemoteWSDL.tooltip"));

@@ -38,6 +38,7 @@ public class RequesterPanel extends AbstractPanel {
 	
 	private RequesterNumberedTabbedPane requesterNumberedTabbedPane = null; 
 
+	@SuppressWarnings("deprecation")
 	public RequesterPanel(ExtensionRequester extension) {
         super();
         this.setLayout(new GridLayout(1, 1));
@@ -45,6 +46,7 @@ public class RequesterPanel extends AbstractPanel {
         this.setName(Constant.messages.getString("requester.panel.title"));
 		this.setIcon(ExtensionRequester.REQUESTER_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 				KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("requester.panel.mnemonic"));
 		this.setShowByDefault(true);
