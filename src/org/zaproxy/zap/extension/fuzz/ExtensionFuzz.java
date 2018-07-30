@@ -386,9 +386,11 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         fuzzersController.stopAllScans();
     }
 
+    @SuppressWarnings("deprecation")
     private ZapMenuItem getMenuItemCustomScan() {
         if (menuItemCustomScan == null) {
             menuItemCustomScan = new ZapMenuItem("fuzz.menu.tools.fuzz",
+                    // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
                     KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK, false));
 
             menuItemCustomScan.addActionListener(new java.awt.event.ActionListener() {

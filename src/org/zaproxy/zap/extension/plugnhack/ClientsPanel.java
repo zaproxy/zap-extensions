@@ -98,11 +98,13 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 	/**
 	 * This method initializes this
 	 */
+	@SuppressWarnings("deprecation")
 	private void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(274, 251);
         this.setName(Constant.messages.getString("plugnhack.client.panel.title"));
 		this.setIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON);
+		// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("plugnhack.client.panel.mnemonic"));
 
