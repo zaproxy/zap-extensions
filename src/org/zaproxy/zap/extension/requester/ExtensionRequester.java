@@ -129,7 +129,14 @@ public class ExtensionRequester extends ExtensionAdaptor {
 	
 	@Override
 	public boolean canUnload() {
-		return false;
+		return true;
+	}
+
+	@Override
+	public void unload() {
+		if (getView() != null) {
+			getRequesterPanel().unload();
+		}
 	}
 
 	@Override

@@ -74,5 +74,11 @@ public abstract class NumberedTabbedPane extends JTabbedPane {
 		this.setSelectedIndex(index);
     }    
 		
+    void unload() {
+        int editorPanels = getTabCount() - 1;
+        for (int i = 0; i < editorPanels; i++) {
+            ((ManualHttpRequestEditorPanel) getComponentAt(i)).beforeClose();
+        }
+    }
 };
 
