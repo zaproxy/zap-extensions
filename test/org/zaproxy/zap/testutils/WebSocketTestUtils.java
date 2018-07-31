@@ -21,6 +21,8 @@
 
 package org.zaproxy.zap.testutils;
 
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketTestServer;
 
@@ -31,11 +33,13 @@ import java.io.IOException;
  */
 public abstract class WebSocketTestUtils extends TestUtils{
 
+	public static final int DEFAULT_TIMEOUT = 5000;
+
     /**
      * A WebSocket Test Server. The server is {@code null} if not started.
      */
     private NanoWebSocketTestServer webSocketTestServer;
-    
+
     /**
      * Starts a WebSocket Server on specific hostname and port.
      */
@@ -45,11 +49,21 @@ public abstract class WebSocketTestUtils extends TestUtils{
         }
         webSocketTestServer.start(timeout);
     }
-    
+	
+	/**
+	 * Starts a WebSocket Server on specific hostname and port.
+	 */
     public void startWebSocketServer(String hostname, int webSocketPort) throws IOException {
-        startWebSocketServer(hostname,webSocketPort,5000);
+        startWebSocketServer(hostname, webSocketPort, DEFAULT_TIMEOUT);
     }
-    
+	
+	/**
+	 * Start the Server at random port with standard timeout 5000
+	 */
+	public void startWebSocketServer(String hostname) throws IOException {
+		startWebSocketServer(hostname, 0, DEFAULT_TIMEOUT);
+	}
+
     
     public void stopWebSocketServer(){
         if(webSocketTestServer != null){
@@ -71,5 +85,20 @@ public abstract class WebSocketTestUtils extends TestUtils{
     public NanoWebSocketConnection getConnection(int channelID){
         return webSocketTestServer.getConnection(channelID);
     }
+	
+	public int getListeningPort(){
+		return webSocketTestServer.getListeningPort();
+	}
+	
+	public String getHostName(){
+		return webSocketTestServer.getHostname();
+	}
+	
+	public URI getServertUrl() throws URIException {
+    	return new URI(webSocketTestServer.isSecure() ? "https" : "http"
+				,null,webSocketTestServer.getHostname(),
+				webSocketTestServer.getListeningPort());
     
+	}
+	
 }
