@@ -1,18 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>24</version>
+	<version>25</version>
 	<status>beta</status>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Maintenance changes.<br>
-	Issue 1142: Logic and alert risk ratings modified.<br>
-	Correct timeout per attack strength in Heartbleed OpenSSL Vulnerability scanner.<br>
-	Issue 174: Added further method checks to the Insecure HTTP Methods Scanner.<br>
-	Skip "Source Code Disclosure - /WEB-INF folder" on Java 9+ (Issue 4038).<br>
-	BackupFileDisclosure - Handle empty "backup" responses.<br>
     ]]>
 	</changes>
 	<extensions>
