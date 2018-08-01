@@ -64,4 +64,7 @@ public class RequesterPanel extends AbstractPanel {
       	getRequesterNumberedTabbedPane().addTab(requestPane);      	
       }
   	
+    void unload() {
+        getRequesterNumberedTabbedPane().unload();
+    }
   	};

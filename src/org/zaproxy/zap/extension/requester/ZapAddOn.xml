@@ -9,6 +9,7 @@
 	<![CDATA[
 	Maintenance changes.<br>
 	Change default accelerator for Requester tab.<br>
+	Dynamically unload the add-on.<br>
 	]]>
 	</changes>
 	<extensions>
