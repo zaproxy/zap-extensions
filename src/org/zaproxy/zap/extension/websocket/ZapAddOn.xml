@@ -7,6 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
+	Allow to reopen WebSocket connection to (re)send messages (Issue 4290).
 	]]>
 	</changes>
 	<classnames>
