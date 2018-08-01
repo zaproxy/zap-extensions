@@ -49,10 +49,6 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
 	}
     private static Logger logger = Logger.getLogger(ExtensionHttpPanelViewStateView.class);
 	public static final String NAME = "ExtensionHttpPanelViewStateView";
-    private static HttpPanelViewStateView reqView;
-    private static HttpPanelViewStateView respView;
-    private static ViewStateModel reqModel;
-    private static ViewStateModel respModel;
 	
 	public ExtensionHttpPanelViewStateView() {
 		super(NAME);
@@ -115,9 +111,7 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
 		
 		@Override
 		public HttpPanelView getNewView() {
-			reqModel = new ViewStateModel(ViewStateModel.VS_ACTION_REQUEST, null);
-			reqView = new HttpPanelViewStateView(reqModel, false);
-			return reqView;
+			return new HttpPanelViewStateView(new ViewStateModel(ViewStateModel.VS_ACTION_REQUEST, null), false);
 		}
 
 		@Override
@@ -137,9 +131,7 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
 		
 		@Override
 		public HttpPanelView getNewView() {
-			respModel = new ViewStateModel(ViewStateModel.VS_ACTION_RESPONSE, null);
-			respView = new HttpPanelViewStateView(respModel, false);
-			return respView;
+			return new HttpPanelViewStateView(new ViewStateModel(ViewStateModel.VS_ACTION_RESPONSE, null), false);
 		}
 
 		@Override
