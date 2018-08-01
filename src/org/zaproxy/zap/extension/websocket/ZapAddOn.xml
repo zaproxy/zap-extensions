@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>18</version>
+	<version>19</version>
 	<status>release</status>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Allow to reopen WebSocket connection to (re)send messages (Issue 4290).
 	]]>
 	</changes>
 	<classnames>
