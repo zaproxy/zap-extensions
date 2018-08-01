@@ -206,6 +206,7 @@ public class ServerConnectionEstablisher {
         }
     }
     
+    //TODO State depends on the global state. That should be fixed if we want to refer also at the specifically state
     private HttpSender getDelegate(HandshakeConfig handshakeConfig) {
         if (delegate == null) {
             delegate = new HttpSender(Model.getSingleton().getOptionsParam()

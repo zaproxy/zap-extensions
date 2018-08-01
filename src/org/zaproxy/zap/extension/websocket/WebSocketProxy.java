@@ -36,6 +36,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.websocket.client.HandshakeConfig;
+import org.zaproxy.zap.extension.websocket.client.RequestOutOfScopeException;
+import org.zaproxy.zap.extension.websocket.client.ServerConnectionEstablisher;
 
 /**
  * Intercepts WebSocket communication and forwards frames. Code is inspired by
@@ -196,6 +200,11 @@ public abstract class WebSocketProxy {
 	 * When true allow the API to be accessed over this channel
 	 */
 	private boolean allowAPI = false;
+	
+	/**
+	 * Used to re-establish the current connection
+	 */
+	private ServerConnectionEstablisher serverEstablisher = null;
 	
 	/**
 	 * After loading another session, the channelCount should be initialized.
@@ -1001,4 +1010,52 @@ public abstract class WebSocketProxy {
 	public void setAllowAPI(boolean allowAPI) {
 		this.allowAPI = allowAPI;
 	}
+	
+	/**
+	 * Return an instance of {@link HandshakeConfig} which is used to establish a new WebSocket Connection
+	 * see {@link ServerConnectionEstablisher#send(HandshakeConfig)} and {@link WebSocketProxy#reEstablishConnection(HandshakeConfig)}
+	 * The {@link HandshakeConfig} includes the HttpHandshake of the current connection. In addition, the method adds the
+	 * {@link WebSocketObserver} and {@link WebSocketSenderListener}  of the current connection to HandshakeConfig
+	 *
+	 * @return the HandshakeConfig with the http handshake
+	 * @throws IllegalStateException if an error occurred while trying to retrieve the HTTP handshake from history
+	 */
+	public HandshakeConfig getHandShakeConfig(){
+		HandshakeConfig handshakeConfig;
+		try {
+			handshakeConfig = new HandshakeConfig(new HttpMessage(handshakeReference.getHttpMessage().getRequestHeader()));
+			for(WebSocketObserver webSocketObserver : observerList){
+				handshakeConfig.addChannelObserver(webSocketObserver);
+			}
+			
+			for(WebSocketSenderListener senderListener : senderListenerList ){
+				handshakeConfig.addChannelSenderListener(senderListener);
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException("An error occurred while trying to retrieve the HTTP handshake from history ", e);
+		}
+		return handshakeConfig;
+	}
+	
+	/**
+	 * Re-establish the current connection. Re-establishing by creating a new connection with
+	 * the existing Handshake.
+	 * {@link ServerConnectionEstablisher#send(HandshakeConfig)}
+	 *
+	 * @param handshakeConfig the handshake config
+	 * @return if everything goes well, will return the new instance of {@link WebSocketProxy}
+	 * @throws IOException if an I/O error occurred
+	 * @throws RequestOutOfScopeException if url it's out of scope. That also happened when ZAP runs to safe/protected mode
+	 */
+	public WebSocketProxy reEstablishConnection(HandshakeConfig handshakeConfig) throws IOException, RequestOutOfScopeException {
+		return getServerEstablisher().send(handshakeConfig);
+	}
+	
+	private ServerConnectionEstablisher getServerEstablisher(){
+		if(serverEstablisher == null){
+			serverEstablisher = new ServerConnectionEstablisher();
+		}
+		return serverEstablisher;
+	}
+	
 }

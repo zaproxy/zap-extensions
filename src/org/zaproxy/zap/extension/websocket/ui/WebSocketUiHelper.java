@@ -19,22 +19,30 @@ package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Dimension;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
+import org.zaproxy.zap.extension.websocket.utility.WebSocketUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 
 public class WebSocketUiHelper {
@@ -58,6 +66,13 @@ public class WebSocketUiHelper {
 	private JCheckBox outgoingCheckbox;
 	private JCheckBox incomingCheckbox;
 	private JComboBox<String> directionComboBox;
+	
+	private JCheckBox redirectionCheckBox;
+	private JCheckBox trackingSessionCheckBox;
+	private JCheckBox alwaysGenerateCheckBox;
+	private JButton generateWebSocketKeyButton;
+	private JLabel connectingLabel;
+	private ZapTextField webSocketKeyField;
 
 	// ************************************************************************
 	// ***** HELPER
@@ -252,6 +267,18 @@ public class WebSocketUiHelper {
         return channelsComboBox;
 	}
 
+	public void disableButtonsWhenComboBoxSelectedNull(JButton btnReopen, JButton btnReopenEdit){
+		channelsComboBox.addItemListener(itemEvent -> {
+            if(itemEvent.getStateChange() == ItemEvent.SELECTED && getSelectedChannelId() == null){
+                btnReopen.setEnabled(false);
+                btnReopenEdit.setEnabled(false);
+            }else if (!btnReopen.isEnabled()){
+                btnReopen.setEnabled(true);
+                btnReopenEdit.setEnabled(true);
+            }
+        });
+	}
+
 	/**
 	 * @return Null if '--All Channels--' is selected
 	 */
@@ -348,6 +375,10 @@ public class WebSocketUiHelper {
 			}
 			channelsList.setSelectedIndices(selectedIndices);
 		}
+	}
+
+	public void requestFocusChannelComboBox(){
+		channelsComboBox.requestFocus();
 	}
 
 	// ************************************************************************
@@ -497,7 +528,95 @@ public class WebSocketUiHelper {
 		return regexCheckbox;
 
 	}
+
+	//************************** MANUAL SEND DIALOG ***************************
 	
+	public JLabel getConnectingLabel(ImageIcon icon){
+		if(connectingLabel == null ){
+			connectingLabel = new JLabel(Constant.messages.getString("websocket.manual_send.adv_dialog.connecting"));
+			connectingLabel.setIcon(icon);
+		}
+		return connectingLabel;
+	}
+
+	public JCheckBox getRedirectionCheckBox() {
+		if (redirectionCheckBox  == null) {
+			redirectionCheckBox  = new JCheckBox(Constant.messages.getString("websocket.manual_send.adv_dialog.redirect"));
+		}
+		return redirectionCheckBox;
+	}
+	
+	public boolean isRedirection() {
+		if(redirectionCheckBox == null){  return false;  }
+		return redirectionCheckBox.isSelected();
+	}
 
 
+	public JCheckBox getTrackingSessionCheckBox() {
+		if (trackingSessionCheckBox  == null) {
+			trackingSessionCheckBox  = new JCheckBox(Constant.messages.getString("websocket.manual_send.adv_dialog.tracking_session"));
+		}
+		return trackingSessionCheckBox;
+	}
+
+	public boolean isTrackingSession(){
+		if(trackingSessionCheckBox == null){ return false; }
+		return trackingSessionCheckBox.isSelected();
+	}
+	
+	public ZapTextField getWebSocketKeyField() {
+		if (webSocketKeyField == null) {
+			webSocketKeyField = new ZapTextField();
+		}
+		return webSocketKeyField;
+	}
+
+	public void setSecWebSocketKeyField(String secWebSocketKey) {
+		if (webSocketKeyField == null) {
+			webSocketKeyField = new ZapTextField();
+		}
+		webSocketKeyField.setText(secWebSocketKey);
+	}
+
+	public JLabel getWebSocketKeyLabel(){
+		return new JLabel(Constant.messages.getString("websocket.manual_send.adv_dialog.websocket_key"));
+	}
+
+	public String getWebSocketKey() {
+		if(webSocketKeyField.getText().isEmpty()) {
+			return null;
+		}else{
+			return webSocketKeyField.getText();
+		}
+	}
+
+	public JButton getGenerateWebSocketKeyButton(){
+		if (generateWebSocketKeyButton == null){
+			generateWebSocketKeyButton = new JButton();
+			generateWebSocketKeyButton.setText(Constant.messages.getString("websocket.manual_send.adv_dialog.generate_key"));
+			generateWebSocketKeyButton.addActionListener(actionEvent -> {
+				webSocketKeyField.setText(WebSocketUtils.generateSecWebSocketKey());
+			});
+		}
+		return generateWebSocketKeyButton;
+	}
+
+	public JCheckBox getAlwaysGenerateCheckBox() {
+		if(alwaysGenerateCheckBox == null){
+			alwaysGenerateCheckBox = new JCheckBox(Constant.messages.getString("websocket.manual_send.adv_dialog.always_gen"));
+		}
+		alwaysGenerateCheckBox.setSelected(true);
+		return alwaysGenerateCheckBox;
+	}
+
+	public boolean isAlwaysGenerate(){
+		if(alwaysGenerateCheckBox == null){ return true; }
+		return alwaysGenerateCheckBox.isSelected();
+	}
+
+	public JComponent createVerticalSeparator() {
+		JSeparator x = new JSeparator(SwingConstants.VERTICAL);
+		x.setPreferredSize(new Dimension(20,20));
+		return x;
+	}
 }
