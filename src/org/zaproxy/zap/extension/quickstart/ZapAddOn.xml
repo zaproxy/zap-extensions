@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Enable the extensions for all DB types.<br>
+	Use default user agent when creating seeds for the spider.<br>
 	]]>
 	</changes>
 	<extensions>
