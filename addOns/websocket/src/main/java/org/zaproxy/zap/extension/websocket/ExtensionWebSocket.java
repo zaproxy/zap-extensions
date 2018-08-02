@@ -82,6 +82,9 @@ import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
 import org.zaproxy.zap.extension.websocket.treemap.WebSocketMap;
+import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketMapPanel;
+import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketMapUI;
+import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketNodeUI;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.OptionsWebSocketPanel;
@@ -106,7 +109,7 @@ import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
- 
+
 /**
  * The WebSockets-extension takes over after the HTTP based WebSockets handshake
  * is finished.
@@ -122,7 +125,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * The script icon.
 	 * <p>
 	 * Lazily initialised.
-	 * 
+	 *
 	 * @see #getScriptIcon()
 	 */
 	private static ImageIcon scriptIcon;
@@ -221,6 +224,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
 	private WebSocketEventPublisher eventPublisher;
 
+	
+	private WebSocketMap webSocketMap;
+	
 	public ExtensionWebSocket() {
 		super(NAME);
 		
@@ -310,6 +316,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 
 		HttpSender.addListener(httpSenderListener);
 		
+		webSocketMap = getWebSocketMap();
+		addAllChannelObserver(webSocketMap.getWebSocketMapListener());
+		
 		try {
 			setChannelIgnoreList(Model.getSingleton().getSession().getExcludeFromProxyRegexs());
 		} catch (WebSocketException e) {
@@ -388,6 +397,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 					httpSendEditor.addPersistentConnectionListener(this);
 				}
 			}
+			
+			//WebSocket Map Tree
+			hookView.addSelectPanel(getWebSocketMapPanel());
+			getWebSocketMap().addNodeObserver(getWebSocketMapUI());
 		}
 		// setup sender script interface
 		ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
@@ -492,7 +505,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Gets the icon for scripts types.
 	 * <p>
 	 * Should be called/used only when in view mode.
-	 * 
+	 *
 	 * @return the script icon, never {@code null}.
 	 */
 	private static ImageIcon getScriptIcon() {
@@ -1003,7 +1016,14 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			// Nothing to do.
 		}
 	}
-
+	
+	public WebSocketMap getWebSocketMap() {
+		if(webSocketMap == null){
+			webSocketMap = WebSocketMap.createTree();
+		}
+		return webSocketMap;
+	}
+	
 	/*
 	 * ************************************************************************
 	 * GUI specific code follows here now. It is accessed only by methods hook()
@@ -1042,6 +1062,27 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Resends custom WebSocket messages.
 	 */
 	private ManualWebSocketSendEditorDialog resenderDialog;
+	
+	/**
+	 *
+	 */
+	private WebSocketMapUI webSocketMapUI;
+	
+	private WebSocketMapPanel webSocketMapPanel;
+	
+	public WebSocketMapPanel getWebSocketMapPanel() {
+		if(webSocketMapPanel == null){
+			webSocketMapPanel = new WebSocketMapPanel(this, getWebSocketMapUI());
+		}
+		return webSocketMapPanel;
+	}
+	
+	private WebSocketMapUI getWebSocketMapUI(){
+		if(webSocketMapUI == null){
+			webSocketMapUI = new WebSocketMapUI(new WebSocketNodeUI(getWebSocketMap().getRoot()), getWebSocketMap(),getModel());
+		}
+		return webSocketMapUI;
+	}
 
 	private WebSocketPanel getWebSocketPanel() {
 		if (panel == null) {
