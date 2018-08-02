@@ -1,24 +1,36 @@
 package org.zaproxy.zap.extension.websocket.treemap.nodes;
 
-import org.apache.commons.httpclient.URI;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
-import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
+import org.zaproxy.zap.extension.websocket.WebSocketProxy;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 
 public class WebSocketFolderNode extends WebSocketTreeNode {
-    
-    private static final long serialVersionUID = 2311091007687312333L;
-    private List<HistoryReference> historyReferences;
+	
+	private Logger LOGGER = Logger.getLogger(WebSocketFolderNode.class);
+	
+    private HashMap<Integer, WebSocketProxy> connectionMap;
     
     public WebSocketFolderNode(WebSocketNodeType type, String nodeName, StructuralWebSocketNode parent) {
         super(type,parent, nodeName);
     }
     
     static public WebSocketFolderNode getRootFolderNode(){
-        return new WebSocketFolderNode(WebSocketNodeType.FOLDER_ROOT, Constant.messages.getString("websocket.treemap.close.root"), null);
+        WebSocketFolderNode root = new WebSocketFolderNode(WebSocketNodeType.FOLDER_ROOT, Constant.messages.getString("websocket.treemap.close.root"), null);
+        root.setNodeIndex(new int[]{0});
+        return root;
+    }
+    
+    static public WebSocketFolderNode getHostFolderNode(String nodeName, StructuralWebSocketNode parent, WebSocketProxy webSocketProxy){
+        WebSocketFolderNode hostNode = new WebSocketFolderNode(WebSocketNodeType.FOLDER_HOST, nodeName, parent);
+        hostNode.addChannel(webSocketProxy);
+        return hostNode;
     }
     
     static public WebSocketFolderNode getHandshakeFolderNode(WebSocketTreeNode parent){
@@ -56,37 +68,45 @@ public class WebSocketFolderNode extends WebSocketTreeNode {
         return message;
     }
     
+    public void addChannel(WebSocketProxy webSocketProxy) {
+        if(connectionMap == null){
+            connectionMap = new HashMap<>();
+        }
+        connectionMap.put(webSocketProxy.getChannelId(), webSocketProxy);
+    }
+    
     @Override
     public WebSocketMessageDTO getWebSocketMessageDTO() {
         return null;
     }
     
     @Override
-    public WebSocketChannelDTO getWebSocketChannelDTO() {
-        return null;
+    public HistoryReference getHandshakeRef() throws InvalidNodeActionException {
+        WebSocketTreeNode handshakeNode;
+        if(this.type == WebSocketNodeType.FOLDER_ROOT){
+            throw new InvalidNodeActionException("This is a root node, can not return handshake");
+        }else if (this.type == WebSocketNodeType.FOLDER_HOST){
+            handshakeNode = (WebSocketTreeNode) this.getFirstTypeTopDown(WebSocketNodeType.HANDSHAKE);
+        }else{
+            handshakeNode = (WebSocketTreeNode) this.getFirstTypeSibling(WebSocketNodeType.FOLDER_HANDSHAKES).getFirstTypeTopDown(WebSocketNodeType.HANDSHAKE);
+        }
+        if(handshakeNode == null){
+            throw new InvalidNodeActionException("I can't find HandshakeNode");
+        }
+        return handshakeNode.getHandshakeRef();
     }
     
     @Override
-    public List<HistoryReference> getHandshakeMessage() {
-        return null;
-    }
-	
-	@Override
-	public void setNodeName(String nodeName) {
-		this.nodeName = nodeName;
-	}
-	
-	@Override
-    public URI getURI() {
-        return null;
-    }
+    public boolean isConnected() {
+        if(connectionMap != null){
+            Iterator<Map.Entry<Integer, WebSocketProxy>> iterator = connectionMap.entrySet().iterator();
+            while(iterator.hasNext()){
+                if(iterator.next().getValue().isConnected()){
+                    return true;
+                }
+            }
     
-    @Override
-    public boolean isDataDriven() {
+        }
         return false;
-    }
-    
-    public void addInHistoryReferences(HistoryReference historyReference){
-        historyReferences.add(historyReference);
-    }
+	}
 }

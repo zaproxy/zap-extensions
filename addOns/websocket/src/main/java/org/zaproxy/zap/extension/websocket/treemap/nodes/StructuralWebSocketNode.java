@@ -17,9 +17,7 @@ public interface StructuralWebSocketNode{
     
     WebSocketMessageDTO getWebSocketMessageDTO();
     
-    WebSocketChannelDTO getWebSocketChannelDTO();
-    
-    List<HistoryReference> getHandshakeMessage();
+    HistoryReference getHandshakeRef() throws InvalidNodeActionException;
     
     List<StructuralWebSocketNode> getChildren();
     
@@ -27,23 +25,15 @@ public interface StructuralWebSocketNode{
 	
 	void setNodeName(String nodeName);
     
-    URI getURI();
-    
     boolean isRoot();
     
     boolean isLeaf();
     
-    boolean equals(StructuralWebSocketNode var1);
-    
     WebSocketNodeType getNodeType();
-    
-    boolean isDataDriven();
-    
-    boolean isSameAs(StructuralWebSocketNode var1);
     
     int getChildCount();
     
-    void addChild(StructuralWebSocketNode child);
+    boolean addChild(StructuralWebSocketNode child);
     
     boolean addParent(StructuralWebSocketNode parent);
     
@@ -53,9 +43,17 @@ public interface StructuralWebSocketNode{
     
     boolean removeChild(StructuralWebSocketNode structuralWebSocketNode);
     
+    StructuralWebSocketNode getFirstTypeSibling(WebSocketNodeType webSocketNodeType);
+    
     StructuralWebSocketNode getChildAt(int i);
     
     StructuralWebSocketNode getFirstTypeTopDown(WebSocketNodeType webSocketNodeType);
     
     StructuralWebSocketNode getFirstTypeBottomUp(WebSocketNodeType webSocketNodeType);
+    
+    void setNodeIndex(int[] nodeIndex);
+    
+    int[] getNodeIndex();
+    
+    boolean isConnected();
 }

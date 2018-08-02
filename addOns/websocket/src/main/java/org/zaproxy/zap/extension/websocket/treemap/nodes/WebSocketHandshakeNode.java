@@ -1,13 +1,15 @@
 package org.zaproxy.zap.extension.websocket.treemap.nodes;
 
-import org.apache.commons.httpclient.URI;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
-import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
-import java.util.List;
-
 public class WebSocketHandshakeNode  extends WebSocketTreeNode {
+    
+    private Logger LOGGER = Logger.getLogger(WebSocketHandshakeNode.class);
+    
     private HistoryReference handshakeReference;
     
     public WebSocketHandshakeNode(StructuralWebSocketNode parent, String nodeName, HistoryReference handshakeReference) {
@@ -21,27 +23,23 @@ public class WebSocketHandshakeNode  extends WebSocketTreeNode {
     }
     
     @Override
-    public WebSocketChannelDTO getWebSocketChannelDTO() {
-        return null;
+    public HistoryReference getHandshakeRef() {
+        return handshakeReference;
+    }
+    
+    public void addHandshakeRef(HistoryReference handshakeReference){
+        this.handshakeReference = handshakeReference;
+        try {
+            LOGGER.info("New Handshake: " + handshakeReference.getHttpMessage().toString());
+        } catch (HttpMalformedHeaderException e) {
+            e.printStackTrace();
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
-    public List<HistoryReference> getHandshakeMessage() {
-        return null;
-    }
-	
-	@Override
-	public void setNodeName(String nodeName) {
-		this.nodeName = nodeName;
-	}
-	
-	@Override
-    public URI getURI() {
-        return null;
-    }
-    
-    @Override
-    public boolean isDataDriven() {
+    public boolean isConnected() {
         return false;
     }
     
