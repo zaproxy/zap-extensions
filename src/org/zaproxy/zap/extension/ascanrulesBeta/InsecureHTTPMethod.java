@@ -168,11 +168,10 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
             // send an OPTIONS message, and see what the server reports. Do
             // not try any methods not listed in those results.
             HttpMessage optionsmsg = getNewMsg();
-            HttpRequestHeader optionsRequestHeader = this.getBaseMsg().getRequestHeader();
+            HttpRequestHeader optionsRequestHeader = optionsmsg.getRequestHeader();
             optionsRequestHeader.setMethod(HttpRequestHeader.OPTIONS);
             // OPTIONS is not supported in 1.0
             optionsRequestHeader.setVersion(HttpRequestHeader.HTTP11);
-            optionsmsg.setRequestHeader(optionsRequestHeader);
 
             sendAndReceive(optionsmsg, false); // do not follow redirects
 
