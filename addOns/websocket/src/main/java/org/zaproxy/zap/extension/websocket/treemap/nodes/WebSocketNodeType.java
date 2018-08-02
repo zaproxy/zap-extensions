@@ -47,4 +47,15 @@ public enum WebSocketNodeType {
         }
         return result;
     }
+    
+    public boolean isFolder(){
+        if(this == WebSocketNodeType.FOLDER_HOST ||
+                this == WebSocketNodeType.FOLDER_MESSAGES ||
+                this == WebSocketNodeType.FOLDER_CLOSE ||
+                this == WebSocketNodeType.FOLDER_CLOSE ||
+                this == WebSocketNodeType.FOLDER_ROOT){
+            return true;
+        }
+        return false;
+    }
 }
