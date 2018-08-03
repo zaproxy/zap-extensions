@@ -21,13 +21,17 @@
 
 package org.zaproxy.zap.extension.websocket.client;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
 import fi.iki.elonen.NanoWSD;
 import fi.iki.elonen.NanoWSD.WebSocketFrame;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static groovy.util.GroovyTestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
@@ -69,12 +73,12 @@ public class WebSocketProxyUnitTest extends WebSocketTestUtils {
 		
 		webSocketConnection.setPingScheduling(50,("1010").getBytes());
 		
-		Thread.sleep(250);
+		Thread.sleep(300);
 		
 		assertTrue(webSocketProxy.isConnected());
 		
 		List<WebSocketFrame> messages = webSocketConnection.getListOfIncomingMessages();
-		assertEquals(4, messages.size());
+		assertThat(messages, hasSize(greaterThanOrEqualTo(4)));
 		
 		for(WebSocketFrame message : messages){
 			assertEquals("1010", message.getTextPayload());
