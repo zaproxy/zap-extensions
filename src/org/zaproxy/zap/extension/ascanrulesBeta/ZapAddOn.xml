@@ -7,6 +7,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
+	Correct HTTP message usage in Insecure HTTP Method scanner.<br>
     ]]>
 	</changes>
 	<extensions>
