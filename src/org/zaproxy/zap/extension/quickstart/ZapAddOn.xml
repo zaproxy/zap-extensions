@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>24</version>
+	<version>25</version>
 	<status>release</status>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Enable the extensions for all DB types.<br>
-	Use default user agent when creating seeds for the spider.<br>
 	]]>
 	</changes>
 	<extensions>
