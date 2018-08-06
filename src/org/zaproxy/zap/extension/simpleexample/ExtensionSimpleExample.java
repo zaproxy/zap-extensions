@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.simpleExample;
+package org.zaproxy.zap.extension.simpleexample;
 
 import java.awt.CardLayout;
 import java.awt.Font;
@@ -52,10 +52,15 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
     // to copy and change this example
     protected static final String PREFIX = "simpleExample";
 
-    private static final String RESOURCE = "/org/zaproxy/zap/extension/simpleExample/resources";
+    /**
+     * Relative path (from add-on package) to load add-on resources.
+     * 
+     * @see Class#getResource(String)
+     */
+    private static final String RESOURCES = "resources";
 
     private static final ImageIcon ICON = new ImageIcon(
-            ExtensionSimpleExample.class.getResource( RESOURCE + "/cake.png"));
+            ExtensionSimpleExample.class.getResource(RESOURCES + "/cake.png"));
 
     private static final String EXAMPLE_FILE = "example/ExampleFile.txt";
 
@@ -69,6 +74,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 
     public ExtensionSimpleExample() {
         super(NAME);
+        setI18nPrefix(PREFIX);
     }
 
     @Override

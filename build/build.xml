@@ -438,7 +438,7 @@
 		<build-addon name="revisit" />
 		<build-addon name="saml" />
 		<build-addon name="sequence" />
-		<build-addon name="simpleExample" />
+		<build-addon name="simpleexample" />
 		<build-addon name="soap" />
 		<build-addon name="sse" />
 		<build-addon name="tlsdebug" />
@@ -794,8 +794,8 @@
         <generate-wiki addon="sse" />
     </target>
 
-    <target name="deploy-simpleExample" description="deploy the simple example extension">
-        <build-deploy-addon name="simpleExample" />
+    <target name="deploy-simpleexample" description="deploy the simple example add-on">
+        <build-deploy-addon name="simpleexample" />
     </target>
 
 	<target name="deploy-formhandler" description="deploy the form handling extension">
@@ -806,8 +806,8 @@
         <generate-wiki addon="formhandler" />
     </target>
 
-    <target name="generate-wiki-simpleExample" description="Generates the wiki of simple example extension">
-        <generate-wiki addon="simpleExample" />
+    <target name="generate-wiki-simpleexample" description="Generates the wiki of simple example add-on">
+        <generate-wiki addon="simpleexample" />
     </target>
     
     <target name="deploy-soap" description="deploy the SOAP scanning extension">
