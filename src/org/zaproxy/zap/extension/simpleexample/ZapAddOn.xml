@@ -11,7 +11,7 @@
 	]]>
 	</changes>
 	<extensions>
-		<extension>org.zaproxy.zap.extension.simpleExample.ExtensionSimpleExample</extension>
+		<extension>org.zaproxy.zap.extension.simpleexample.ExtensionSimpleExample</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
