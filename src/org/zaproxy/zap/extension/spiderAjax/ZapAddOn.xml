@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Ajax Spider</name>
-	<version>22</version>
+	<version>23</version>
 	<status>release</status>
 	<description>Allows you to spider sites that make heavy use of JavaScript using Crawljax</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
-	Maintenance changes.<br>
-	Add Export button to results table (Issue 4875).<br>
 	]]>
 	</changes>
 	<dependencies>
