@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Maintenance changes.<br>
+	Add Export button to results table (Issue 4875).<br>
 	]]>
 	</changes>
 	<dependencies>

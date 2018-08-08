@@ -44,6 +44,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
@@ -67,6 +68,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	private JButton stopScanButton;
 	private JButton startScanButton;
 	private JButton optionsButton = null;
+	private TableExportButton<HistoryReferencesTable> exportButton = null;
 	
 	private HistoryReferencesTable spiderResultsTable;
 	private AjaxSpiderResultsTableModel spiderResultsTableModel = new AjaxSpiderResultsTableModel();
@@ -290,7 +292,12 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		return optionsButton;
 	}
 	
-	
+	private TableExportButton<HistoryReferencesTable> getExportButton() {
+		if (exportButton == null) {
+			exportButton = new TableExportButton<HistoryReferencesTable>(getSpiderResultsTable());
+		}
+		return exportButton;
+	}
 	/**
 	 * 
 	 * @return the panel toolbar
@@ -362,6 +369,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 			panelToolbar.add(getStopScanButton(), gridBagConstraints2);
 			panelToolbar.add(filterStatus, gridBagConstraints3);
 			panelToolbar.add(foundLabel, gridBagConstraints4);
+			panelToolbar.add(getExportButton(), gridBagConstraints5);
 			panelToolbar.add(t1, gridBagConstraintsX);
 			panelToolbar.add(getOptionsButton(), gridBagConstraintsy);
 		}
