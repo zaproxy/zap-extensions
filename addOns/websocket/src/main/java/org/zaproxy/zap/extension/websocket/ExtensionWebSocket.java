@@ -81,6 +81,8 @@ import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
+import org.zaproxy.zap.extension.websocket.scanner.ascan.WebSocketActiveScanManager;
+import org.zaproxy.zap.extension.websocket.scanner.ascan.plugin.scripts.ScriptWebSocketMessageActivePlugin;
 import org.zaproxy.zap.extension.websocket.treemap.WebSocketMap;
 import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketMapPanel;
 import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketMapUI;
@@ -130,6 +132,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 */
 	private static ImageIcon scriptIcon;
 	
+	private static ImageIcon scriptActiveIcon;
+	
 	public static final int HANDSHAKE_LISTENER = 10;
 	
 	/**
@@ -141,6 +145,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Used to identify the type of Websocket sender scripts
 	 */
 	public static final String SCRIPT_TYPE_WEBSOCKET_SENDER = "websocketsender";
+	
+	public static final String SCRIPT_TYPE_WEBSOCKET_ACTIVE_MSG = "websocketactivemessage";
 
 	/**
 	 * Used to shorten the time, a listener is started on a WebSocket channel.
@@ -226,6 +232,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 
 	
 	private WebSocketMap webSocketMap;
+	
+	private WebSocketActiveScanManager webSocketActiveScanManager;
+	
+	private ScriptType webSocketActiveScriptType;
 	
 	public ExtensionWebSocket() {
 		super(NAME);
@@ -413,6 +423,18 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			extensionScript.registerScriptType(websocketSenderSciptType);
 			webSocketSenderScriptListener = new WebSocketSenderScriptListener();
 			addAllChannelSenderListener(webSocketSenderScriptListener);
+			
+			webSocketActiveScriptType = new ScriptType(
+					SCRIPT_TYPE_WEBSOCKET_ACTIVE_MSG,
+					"websocket.script.type.websocketactive",
+					getView() != null ? getScriptActiveScanIcon() : null,
+					true);
+			extensionScript.registerScriptType(webSocketActiveScriptType);
+			
+			ScriptWebSocketMessageActivePlugin scriptWebSocketMessageActivePlugin = new ScriptWebSocketMessageActivePlugin();
+			getWebSocketActiveScanManager().addPlugin(scriptWebSocketMessageActivePlugin);
+			getWebSocketActiveScanManager().setActiveScanEnabled(true);
+			getWebSocketActiveScanManager().setAllPluginEnabled(true);
 		}
 		
 		eventPublisher = new WebSocketEventPublisher(this);
@@ -420,6 +442,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		WebSocketMap webSocketMap = WebSocketMap.createTree();
 		addAllChannelObserver(webSocketMap.getWebSocketMapListener());
+	}
+	
+	public WebSocketActiveScanManager getWebSocketActiveScanManager(){
+		if(webSocketActiveScanManager == null){
+			webSocketActiveScanManager = new WebSocketActiveScanManager();
+		}
+		return webSocketActiveScanManager;
 	}
 	
 	@Override
@@ -514,6 +543,14 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 					ExtensionWebSocket.class.getResource("/org/zaproxy/zap/extension/websocket/resources/script-plug.png"));
 		}
 		return scriptIcon;
+	}
+	
+	private static ImageIcon getScriptActiveScanIcon() {
+		if (scriptActiveIcon == null) {
+			scriptActiveIcon = new ImageIcon(
+					ExtensionWebSocket.class.getResource("/resource/icon/16/093.png"));
+		}
+		return scriptActiveIcon;
 	}
 
 	/**

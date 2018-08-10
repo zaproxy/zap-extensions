@@ -35,6 +35,8 @@ public class WebSocketMapPanel extends AbstractPanel implements WebSocketObserve
 	private JButton addNewConnectionButton = null;
 	private JTree treeMap = null;
 	
+	private ScannerUIHelper scannerUIHelper;
+	
 	static {
 		disconnectIcon = new ImageIcon(WebSocketMapPanel.class.getResource("/resource/icon/fugue/plug-disconnect.png"));
 		connectIcon = new ImageIcon(WebSocketMapPanel.class.getResource("/resource/icon/fugue/plug-connect.png"));
@@ -58,6 +60,7 @@ public class WebSocketMapPanel extends AbstractPanel implements WebSocketObserve
 		this.extensionWebSocket = extensionWebSocket;
 		this.webSocketMapUI = webSocketMapUI;
 		initialize();
+		scannerUIHelper = new ScannerUIHelper();
 	}
 	
 	private void initialize(){
@@ -135,7 +138,7 @@ public class WebSocketMapPanel extends AbstractPanel implements WebSocketObserve
 				@Override
 				public void valueChanged(TreeSelectionEvent e) {
 
-//                    WebSocketTreeNode node = (WebSocketTreeNode) treeContext.getLastSelectedPathComponent();
+//                    WebSocketTreeNode node = (WebSocketTreeNode) treeMap.getLastSelectedPathComponent();
 //                    if (node == null) {
 //                        return;
 //                    }
@@ -168,6 +171,7 @@ public class WebSocketMapPanel extends AbstractPanel implements WebSocketObserve
 			// ZAP: Add custom tree cell renderer.
 			DefaultTreeCellRenderer renderer = new WebSocketMapTreeCellRender();
 			treeMap.setCellRenderer(renderer);
+			treeMap.setComponentPopupMenu(new ContextsCustomPopupMenu());
 			String deleteSiteNode = "zap.delete.sitenode";
 //            treeMap.getInputMap().put(getView().getDefaultDeleteKeyStroke(), deleteSiteNode);
 //            treeMap.getActionMap().put(deleteSiteNode, new AbstractAction() {
@@ -229,5 +233,62 @@ public class WebSocketMapPanel extends AbstractPanel implements WebSocketObserve
 	@Override
 	public void onStateChange(WebSocketProxy.State state, WebSocketProxy proxy) {
 	
+	}
+	
+	protected class ContextsCustomPopupMenu extends JPopupMenu {
+
+		private static final long serialVersionUID = 1L;
+		
+		private MainWebSocketPopupMenu popupMenu = null;
+		
+		private WebSocketNodeUI latestNode = null;
+		
+		private MainWebSocketPopupMenu getPopupMenu() {
+			if(popupMenu == null){
+				JMenuItem activeScan = scannerUIHelper.getActiveScanMenuItem();
+				
+				activeScan.addActionListener(actionEvent -> {
+					LOGGER.warn("Action Event: " + actionEvent.getActionCommand());
+					if(latestNode != null){
+						if(extensionWebSocket.getWebSocketActiveScanManager().startScan((WebSocketTreeNode) latestNode.getWebSocketNode(),true) == -1){
+							JOptionPane.showMessageDialog(this,
+									"Another Scan Running...");
+						};
+					}
+				});
+				
+				scannerUIHelper.addToMenu(activeScan);
+				popupMenu = scannerUIHelper.getWebSocketPopupMenu();
+			}
+			
+			return popupMenu;
+		}
+		
+		
+		@Override
+		public void show(Component invoker, int x, int y) {
+			// Select context list item on right click
+			latestNode = (WebSocketNodeUI) treeMap.getLastSelectedPathComponent();
+			TreePath tp = treeMap.getPathForLocation(x, y);
+			if ( tp != null ) {
+				boolean select = true;
+				// Only select a new item if the current item is not
+				// already selected - this is to allow multiple items
+				// to be selected
+				if (treeMap.getSelectionPaths() != null) {
+					for (TreePath t : treeMap.getSelectionPaths()) {
+						if (t.equals(tp)) {
+							select = false;
+							break;
+						}
+					}
+				}
+				if (select) {
+					treeMap.getSelectionModel().setSelectionPath(tp);
+				}
+			}
+			getPopupMenu().show(treeMap, x, y);
+		}
+		
 	}
 }
