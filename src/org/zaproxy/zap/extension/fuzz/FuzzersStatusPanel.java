@@ -53,7 +53,7 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
     private FuzzerListenerImpl fuzzerListener;
 
     public FuzzersStatusPanel(FuzzOptions fuzzerOptions, FuzzersController mainFuzzerScanController, Action fuzzerUIStarter) {
-        super("fuzz", FuzzerUIUtils.FUZZER_ICON, mainFuzzerScanController, fuzzerOptions);
+        super("fuzz", FuzzerUIUtils.FUZZER_ICON, mainFuzzerScanController);
 
         getNewScanButton().setAction(fuzzerUIStarter);
         mainFuzzerScanController.setFuzzerScansPanel(this);
