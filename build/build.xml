@@ -107,6 +107,7 @@
 		<echo message="Copying add-on resources..." />
 		<copy todir="${test.build}">
 			<fileset dir="${src}">
+				<include name="org/zaproxy/zap/extension/*/files/**" />
 				<include name="org/zaproxy/zap/extension/*/resources/**" />
 				<!-- Probably not needed but include (just) the main help files and Messages.properties -->
 				<exclude name="org/zaproxy/zap/extension/*/resources/help_*/**" />
@@ -133,6 +134,7 @@
 			<batchtest fork="yes" todir="${test.results.dir}">
 				<fileset dir="${test.build}">
 					<include name="**/*UnitTest.class"/>
+					<include name="**/VerifyScriptTemplates.class"/>
 					<exclude name="**/Abstract*Test.class"/>
 				</fileset>
 			</batchtest>
