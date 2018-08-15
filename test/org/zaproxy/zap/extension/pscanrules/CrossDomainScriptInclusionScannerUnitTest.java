@@ -210,6 +210,33 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
     }
 
     @Test
+    public void shouldIgnoreNonHtmlResponses() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/thing.js HTTP/1.1");
+        
+        msg.setResponseBody(
+                "/* ------------------------------------------------------------\n" + 
+                "Sample usage:\n" + 
+                "<script type=\"text/javascript\" src=\"http://code.jquery.com/jquery-1.8.2.min.js\"></script>\n" + 
+                "<script type=\"text/javascript\" src=\"http://code.jquery.com/ui/1.9.0/jquery-ui.js\"></script>\n" + 
+                "...\n" + 
+                "----------------------------------------------------------- */\n" + 
+                "function myFunction(p1, p2) {\n" + 
+                "    return p1 * p2;\n" +
+                "}\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n" +
+                "Server: Apache-Coyote/1.1\r\n" +
+                "Content-Type: application/javascript\r\n" +
+                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
     public void crossDomainScriptInContextHigh() throws HttpMalformedHeaderException {
         // Mock the model and session
         Model model = Mockito.mock(Model.class);

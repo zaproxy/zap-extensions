@@ -55,7 +55,7 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()){
+		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isHtml()){
 			List<Element> sourceElements = source.getAllElements(HTMLElementName.SCRIPT);
 			if (sourceElements != null) {
 				for (Element sourceElement : sourceElements) {
