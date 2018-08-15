@@ -407,7 +407,17 @@ public class CacheableScanner extends PluginPassiveScanner{
 								lifetimeFound = true;
 								lifetimesFound++;
 								//get the portion of the string after "maxage="
-								lifetime = Long.parseLong(directiveToken.substring("max-age=".length()));
+								// Split on comma and use 0th item in case there weren't spaces: 
+								// Cache-Control: max-age=7776000,private
+								try {
+									lifetime = Long.parseLong(directiveToken.split(",")[0].substring("max-age=".length()));
+								} catch (NumberFormatException nfe) {
+									lifetimeFound = false;
+									lifetimesFound--;
+									if (logger.isDebugEnabled()) {
+										logger.debug("Could not parse max-age to establish lifetime. Perhaps the value exceeds Long.MAX_VALUE or contains non-number characters:" + directiveToken);
+									}
+								}
 								freshEvidence = directiveToken;
 							}
 						}
