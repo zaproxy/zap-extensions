@@ -1,18 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>22</version>
+	<version>23</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Help documentation improvements and cleanup.<br>
-	Prevent User Controlled HTML Attribute scanner from sometimes raising duplicate alerts.<br>
-	User Controlled HTML Attribute scanner now properly reports the parameter name in alerts.<br>
-	Add In Page Banner Info Leak scanner (Issue 178).<br>
-	CacheableScanner: Handle max-age with comma but no space in directive (Issue 4924).<br>
-	Make the title for the "Reverse Tabnabbing" alert titlecaps.<br>
 	]]>
 	</changes>
 	<extensions>
