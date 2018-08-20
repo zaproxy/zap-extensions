@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.frontendscanner;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.Exception;
 import java.lang.String;
 import java.lang.StringBuilder;
@@ -60,6 +62,7 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.view.ZapMenuItem;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 
 /**
@@ -86,6 +89,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     private ZapMenuItem menuFrontEndScanner;
 
     private boolean frontEndScannerEnabled = false;
+
+    private ZapToggleButton frontEndScannerButton = null;
 
     private ScriptType activeScriptType;
     private ScriptType passiveScriptType;
@@ -128,8 +133,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         extensionHook.addProxyListener(this);
 
         if (getView() != null) {
-            // Register our top menu item, as long as we're not running as a daemon
-            extensionHook.getHookMenu().addToolsMenuItem(getFrontEndScannerMenuToggle());
+            getFrontEndScannerButton().setSelected(frontEndScannerEnabled);
+            extensionHook.getHookView().addMainToolBarComponent(getFrontEndScannerButton());
         }
 
         activeScriptType = new ScriptType(
@@ -170,25 +175,6 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
         this.extensionScript.removeScripType(activeScriptType);
         this.extensionScript.removeScripType(passiveScriptType);
-    }
-
-    private ZapMenuItem getFrontEndScannerMenuToggle() {
-        if (menuFrontEndScanner == null) {
-            menuFrontEndScanner = new ZapMenuItem(PREFIX + ".topmenu.tools.title");
-
-            menuFrontEndScanner.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent ae) {
-                    frontEndScannerEnabled = !frontEndScannerEnabled;
-
-                    String value = frontEndScannerEnabled ? "on" : "off";
-                    View.getSingleton().showMessageDialog(
-                        Constant.messages
-                            .getString(ExtensionFrontEndScanner.PREFIX + ".topmenu.tools.msg", value));
-                }
-            });
-        }
-        return menuFrontEndScanner;
     }
 
     @Override
@@ -331,6 +317,21 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         functionNames.add(functionName);
 
         return "function " + functionName + " (frontEndScanner) { " + javascriptCode + " };";
+    }
+
+    private ZapToggleButton getFrontEndScannerButton() {
+        if (this.frontEndScannerButton == null) {
+            this.frontEndScannerButton = new ZapToggleButton(createIcon(PSCAN_ICON));
+            this.frontEndScannerButton.setSelectedToolTipText(Constant.messages.getString(PREFIX + ".toolbar.button.on.tooltip"));
+            this.frontEndScannerButton.setToolTipText(Constant.messages.getString(PREFIX + ".toolbar.button.off.tooltip"));
+            this.frontEndScannerButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                     frontEndScannerEnabled = frontEndScannerButton.isSelected();
+                }
+            });
+        }
+        return this.frontEndScannerButton;
     }
 
     private ImageIcon createIcon(String path) {
