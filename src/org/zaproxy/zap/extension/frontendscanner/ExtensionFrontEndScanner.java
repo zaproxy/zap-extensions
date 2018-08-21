@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.frontendscanner;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.lang.Exception;
 import java.lang.String;
 import java.lang.StringBuilder;
+import java.awt.EventQueue;
+import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
@@ -55,13 +55,11 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.view.ZapMenuItem;
 import org.zaproxy.zap.view.ZapToggleButton;
 
 
@@ -86,16 +84,13 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     private static final String ASCAN_ICON = RESOURCE + "/client-side-ascan.png";
     private static final String PSCAN_ICON = RESOURCE + "/client-side-pscan.png";
 
-    private ZapMenuItem menuFrontEndScanner;
-
-    private boolean frontEndScannerEnabled = false;
-
     private ZapToggleButton frontEndScannerButton = null;
 
     private ScriptType activeScriptType;
     private ScriptType passiveScriptType;
     private ExtensionScript extensionScript;
 
+    private FrontEndScannerOptions options;
     private FrontEndScannerAPI api;
 
     private static final Logger LOGGER = Logger.getLogger(ExtensionFrontEndScanner.class);
@@ -118,7 +113,10 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     public void init() {
         super.init();
 
+        this.options = new FrontEndScannerOptions();
+
         this.api = new FrontEndScannerAPI();
+        this.api.addApiOptions(options);
 
         this.extensionScript = Control
             .getSingleton()
@@ -132,9 +130,14 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
         extensionHook.addProxyListener(this);
 
+        extensionHook.addOptionsParamSet(options);
+        extensionHook.addApiImplementor(api);
+
         if (getView() != null) {
-            getFrontEndScannerButton().setSelected(frontEndScannerEnabled);
             extensionHook.getHookView().addMainToolBarComponent(getFrontEndScannerButton());
+            options.addPropertyChangeListener(
+                    "enabled",
+                    e -> EventQueue.invokeLater(() -> getFrontEndScannerButton().setSelected((boolean) e.getNewValue())));
         }
 
         activeScriptType = new ScriptType(
@@ -153,6 +156,13 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
         this.extensionScript.registerScriptType(activeScriptType);
         this.extensionScript.registerScriptType(passiveScriptType);
+    }
+
+    @Override
+    public void optionsLoaded() {
+        if (getView() != null) {
+            EventQueue.invokeLater(() -> getFrontEndScannerButton().setSelected(options.isEnabled()));
+        }
     }
 
     @Override
@@ -203,7 +213,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
     @Override
     public boolean onHttpResponseReceive(HttpMessage msg) {
-        if (frontEndScannerEnabled && msg.getResponseHeader().isHtml()) {
+        if (options.isEnabled() && msg.getResponseHeader().isHtml()) {
             try {
                 String html = msg.getResponseBody().toString();
 
@@ -324,12 +334,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
             this.frontEndScannerButton = new ZapToggleButton(createIcon(PSCAN_ICON));
             this.frontEndScannerButton.setSelectedToolTipText(Constant.messages.getString(PREFIX + ".toolbar.button.on.tooltip"));
             this.frontEndScannerButton.setToolTipText(Constant.messages.getString(PREFIX + ".toolbar.button.off.tooltip"));
-            this.frontEndScannerButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                     frontEndScannerEnabled = frontEndScannerButton.isSelected();
-                }
-            });
+            this.frontEndScannerButton.addItemListener(e -> options.setEnabled(ItemEvent.SELECTED == e.getStateChange()));
         }
         return this.frontEndScannerButton;
     }
