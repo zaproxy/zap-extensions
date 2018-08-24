@@ -75,7 +75,7 @@ public class GenerateQuickStartLangFile {
 
         Properties props = new Properties();
         try {
-            props.load(new FileInputStream(defaultLangFile));
+            loadProperties(props, defaultLangFile);
             String enStr = props.getProperty(I18N_TAG);
             if (enStr == null) {
                 System.err.println("Failed to read the default tag: " + I18N_TAG);
@@ -92,7 +92,7 @@ public class GenerateQuickStartLangFile {
 
             for (File f : files) {
                 props.clear();
-                props.load(new FileInputStream(f));
+                loadProperties(props, f);
                 String i18nStr = props.getProperty(I18N_TAG);
                 // Just check the first line - some translations have different newlines
                 if (i18nStr != null && !enStr1stLine.equals(getFirstLine(i18nStr))) {
@@ -118,6 +118,12 @@ public class GenerateQuickStartLangFile {
         }
 
         return true;
+    }
+
+    private static void loadProperties(Properties props, File file) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            props.load(fis);
+        }
     }
 
     public static void main(String[] params) {
