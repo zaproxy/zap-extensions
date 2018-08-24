@@ -144,8 +144,8 @@ public class PiiScanner extends PluginPassiveScanner {
 
     private static List<String> getNumberSequences(String inputString, int minSequence) {
         String regexString = String.format("(?:\\d{%d,}[\\s]*)+", minSequence);
-        Pattern regex = Pattern.compile(regexString);
-        Matcher matcher = regex.matcher(inputString);
+        // Use RE2/J to avoid StackOverflowError when the response has many numbers.
+        com.google.re2j.Matcher matcher = com.google.re2j.Pattern.compile(regexString).matcher(inputString);
         List<String> result = new ArrayList<>();
         while (matcher.find()) {
             result.add(matcher.group().replaceAll("\\s+", ""));
