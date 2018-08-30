@@ -12,6 +12,7 @@
 	Allow to clear the Zest panel.<br>
 	Allow to access the options through Zest panel.<br>
 	Title caps adjustments (Issue 2000).<br>
+	Use selected text when adding assignments from the response.<br>
 	]]>
 	</changes>
 	<dependencies>
