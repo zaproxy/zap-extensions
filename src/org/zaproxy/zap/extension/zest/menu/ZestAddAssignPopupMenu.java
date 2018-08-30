@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.regex.Pattern;
 
 import org.mozilla.zest.core.v1.ZestAssignCalc;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
@@ -108,7 +107,7 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
                 	reCreateSubMenu(node.getParent(), 
                 			node,
                 			(ZestRequest) ZestZapUtils.getElement(node), 
-                			Pattern.quote(panel.getSelectedText()));
+                			panel.getSelectedText());
                 	return true;
                 }
 			}
@@ -118,12 +117,12 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
     }
 
     private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestStatement req, String text) {
-		createPopupAddActionMenu (parent, child, req, new ZestAssignString());
+		createPopupAddActionMenu (parent, child, req, new ZestAssignString(null, text));
 		createPopupAddActionMenu (parent, child, req, new ZestAssignFieldValue());
 		createPopupAddActionMenu (parent, child, req, new ZestAssignRegexDelimiters());
 		createPopupAddActionMenu (parent, child, req, new ZestAssignStringDelimiters());
 		createPopupAddActionMenu (parent, child, req, new ZestAssignRandomInteger());
-		createPopupAddActionMenu (parent, child, req, new ZestAssignReplace());
+		createPopupAddActionMenu (parent, child, req, new ZestAssignReplace(null, text, null, false, false));
 		createPopupAddActionMenu (parent, child, req, new ZestAssignCalc());
 	}
 
