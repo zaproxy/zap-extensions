@@ -184,8 +184,9 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestExpressionLength) {
 			ZestExpressionLength sla = (ZestExpressionLength) za;
 			if (incParams) {
+				String key = sla.isInverse() ? "zest.element.expression.length.inverse" : "zest.element.expression.length";
 				return indexStr + Constant.messages
-						.getString("zest.element.expression.length", sla.getVariableName(), sla.getLength(), sla.getApprox());
+						.getString(key, sla.getVariableName(), sla.getLength(), sla.getApprox());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.length.title");
@@ -222,8 +223,9 @@ public class ZestZapUtils {
 			// TODO case exact
 			ZestExpressionEquals zer = (ZestExpressionEquals) za;
 			if (incParams) {
+				String key = zer.isInverse() ? "zest.element.expression.equals.inverse" : "zest.element.expression.equals";
 				return indexStr
-						+ Constant.messages.getString("zest.element.expression.equals", zer.getVariableName(), zer.getValue());
+						+ Constant.messages.getString(key, zer.getVariableName(), zer.getValue());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.equals.title");
@@ -261,7 +263,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestExpressionIsInteger) {
 			ZestExpressionIsInteger zer = (ZestExpressionIsInteger) za;
 			if (incParams) {
-				return indexStr + Constant.messages.getString("zest.element.expression.isint", zer.getVariableName());
+				String key = zer.isInverse() ? "zest.element.expression.isint.inverse" : "zest.element.expression.isint";
+				return indexStr + Constant.messages.getString(key, zer.getVariableName());
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.isint.title");
