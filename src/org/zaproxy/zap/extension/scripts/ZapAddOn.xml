@@ -13,6 +13,7 @@
 	Warn of script changed by another program (post 2.7.0).<br>
 	Script console is disabled if script size > 1MB and highlight behavior is disabled if script size > 0.5MB.<br>
 	Allow to select the file path in the Edit Script dialogue.<br>
+	Allow to add selection listener to Scripts tree.<br>
 	]]>
 	</changes>
 	<extensions>

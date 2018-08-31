@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.TransferHandler;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeCellRenderer;
 
 import org.apache.log4j.Logger;
@@ -680,6 +681,24 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		if (View.isInitialised()) {
 			this.getScriptsPanel().getTree().removeMouseListener(l);
 		}
+	}
+
+	// TODO uncomment once available in targeted ZAP version.
+	// @Override
+	public void addSelectionListener(TreeSelectionListener tsl) {
+		if (getView() == null) {
+			return;
+		}
+		this.getScriptsPanel().getTree().addTreeSelectionListener(tsl);
+	}
+
+	// TODO uncomment once available in targeted ZAP version.
+	//@Override
+	public void removeSelectionListener(TreeSelectionListener tsl) {
+		if (getView() == null) {
+			return;
+		}
+		this.getScriptsPanel().getTree().removeTreeSelectionListener(tsl);
 	}
 
 	@Override
