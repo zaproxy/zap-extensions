@@ -22,10 +22,14 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
@@ -225,21 +229,42 @@ public class ZestDialogManager extends AbstractPanel {
 					}
 				} else {
 					// Single click
-					ScriptNode sn = scriptUI.getSelectedNode();
-					ZestElement ze = ZestZapUtils.getElement(sn);
-					if (ze == null) {
-						return;
-					}
-					if (ze instanceof ZestRequest) {
-						// Show the original request and response
-						extension.displayMessage((ZestRequest) ze);
-					}
+					displayHttpMessageOfSelectedNode();
 				}
 
 			}
 		};
 		this.scriptUI.addMouseListener(mouseListener);
 
+		// TODO remove reflection (and single click logic above, redundant) once available in targeted ZAP version.
+		// this.scriptUI.addSelectionListener(e -> displayHttpMessageOfSelectedNode());
+		Method addSelectionListenerMethod;
+		try {
+			addSelectionListenerMethod = ScriptUI.class.getDeclaredMethod("addSelectionListener", TreeSelectionListener.class);
+			addSelectionListenerMethod.invoke(this.scriptUI, new TreeSelectionListener() {
+
+				@Override
+				public void valueChanged(TreeSelectionEvent e) {
+					displayHttpMessageOfSelectedNode();
+				}
+			});
+		} catch (NoSuchMethodException ignore) {
+			// Ignore, older versions don't have the method.
+		} catch (Exception e) {
+			logger.debug("Failed to add tree selection listener.", e);
+		}
+	}
+
+	private void displayHttpMessageOfSelectedNode() {
+		ScriptNode sn = scriptUI.getSelectedNode();
+		ZestElement ze = ZestZapUtils.getElement(sn);
+		if (ze == null) {
+			return;
+		}
+		if (ze instanceof ZestRequest) {
+			// Show the original request and response
+			extension.displayMessage((ZestRequest) ze);
+		}
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
