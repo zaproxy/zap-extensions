@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
+	Display HTTP message also when request statement is selected with keyboard.<br>
 	Update Content-Length of proxied responses (Issue 4613).<br>
 	Added input for Variable Name in Client Element Assign dialog.<br>
 	Allow to clear the Zest panel.<br>
