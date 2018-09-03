@@ -14,6 +14,7 @@
 	Allow to access the options through Zest panel.<br>
 	Title caps adjustments (Issue 2000).<br>
 	Use selected text when adding assignments from the request/response.<br>
+	Show expression's inverse state in more tree nodes.<br>
 	]]>
 	</changes>
 	<dependencies>
