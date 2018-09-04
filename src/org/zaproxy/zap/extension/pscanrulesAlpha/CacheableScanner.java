@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import net.htmlparser.jericho.Source;
 
+import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -467,9 +468,10 @@ public class CacheableScanner extends PluginPassiveScanner{
 							} else {
 								//we have one expiry, and one date. Yippee.. Are they valid tough??
 								//both dates can be invalid, or have one of 3 formats, all of which MUST be supported!
-								Date expiresDate = DateUtil.parseDate( expiresHeader );
+								Date expiresDate = parseDate(expiresHeader);
+
 								if ( expiresDate != null) {
-									Date dateDate = DateUtil.parseDate( dateHeader );
+									Date dateDate = parseDate(dateHeader);
 									if ( dateDate != null) {
 										//calculate the lifetime = Expires - Date
 										lifetimeFound = true;
@@ -576,10 +578,20 @@ public class CacheableScanner extends PluginPassiveScanner{
 			}
 		}
 		catch (Exception e) {
-			logger.error("An error occurred while checking a URI for cacheability", e);
+			logger.error("An error occurred while checking a URI [ " + msg.getRequestHeader().getURI().toString() + " ] for cacheability", e);
 		}
 
 
+	}
+
+	private Date parseDate(String dateStr) {
+		Date newDate = null;
+		try {
+			newDate = DateUtil.parseDate(dateStr);
+		} catch(DateParseException dpe) {
+			// There was an error parsing the date, leave the var null
+		}
+		return newDate;
 	}
 
 	@Override

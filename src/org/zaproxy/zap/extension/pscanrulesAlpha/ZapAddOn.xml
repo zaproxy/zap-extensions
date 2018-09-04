@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix a stack overflow with PII Scanner.<br>
+	Fix a DateParseException in Cacheable Scanner (Issue 4969).<br>
 	]]>
 	</changes>
 	<extensions>
