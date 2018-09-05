@@ -10,6 +10,7 @@
 	Maintenance changes.<br>
 	Change default accelerator for Requester tab.<br>
 	Dynamically unload the add-on.<br>
+	Ensure use of title caps (Issue 2000).<br>
 	]]>
 	</changes>
 	<extensions>
