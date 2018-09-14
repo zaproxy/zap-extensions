@@ -175,6 +175,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 		}
     	switch (progress) {
     	case notstarted:
+    	case started:
     	case spider:
     	case ascan:
     		this.runningFromCmdLine = true;
