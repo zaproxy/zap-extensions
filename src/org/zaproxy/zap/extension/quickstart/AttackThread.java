@@ -44,7 +44,7 @@ import org.zaproxy.zap.model.Target;
 
 public class AttackThread extends Thread {
 	
-	public enum Progress {notstarted, spider, ascan, failed, complete, stopped }
+	public enum Progress {notstarted, started, spider, ascan, failed, complete, stopped }
 	
 	private ExtensionQuickStart extension;
 	private URL url;
@@ -66,15 +66,11 @@ public class AttackThread extends Thread {
 	public void run() {
 		stopAttack = false;
         try {
-    		SiteNode startNode = null;
-    		String urlString = url.toString();
-
-    		if (startNode == null) {
-    			startNode = this.accessNode(this.url);
-			}
+			extension.notifyProgress(Progress.started);
+			SiteNode startNode = this.accessNode(this.url);
 			
 			if (startNode == null) {
-				logger.debug("Failed to access URL " + urlString);
+				logger.debug("Failed to access URL " + url);
 				// Dont notify progress here - it will have been done where we know more about the problem
 				return;
 			}
