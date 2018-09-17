@@ -484,15 +484,18 @@ public class WebSocketAPI extends ApiImplementor {
                 jsonTarget.put("target.maxDepth", target.getMaxDepth());
                 json.put("event.target", jsonTarget);
             }
-            // Can't use json.putAll as that performs auto json conversion, which we dont want
-            for ( Entry<String, String> entry : ev.getParameters().entrySet()) {
-                try {
-                    JSONSerializer.toJSON(entry.getValue());
-                    // Its valid JSON so escape
-                    json.put(entry.getKey(), "'" + entry.getValue() + "'");
-                } catch (JSONException e) {
-                    // Its not a valid JSON object so can add as is
-                    json.put(entry.getKey(), entry.getValue());
+            
+            if (ev.getParameters() != null) {
+                // Can't use json.putAll as that performs auto json conversion, which we dont want
+                for ( Entry<String, String> entry : ev.getParameters().entrySet()) {
+                    try {
+                        JSONSerializer.toJSON(entry.getValue());
+                        // Its valid JSON so escape
+                        json.put(entry.getKey(), "'" + entry.getValue() + "'");
+                    } catch (JSONException e) {
+                        // Its not a valid JSON object so can add as is
+                        json.put(entry.getKey(), entry.getValue());
+                    }
                 }
             }
             try {
