@@ -668,7 +668,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
      */
     private static String insertUninitVar(String cmd){
         //get a random 1-10 lowercase letters long variable name
-        int randLength = ThreadLocalRandom.current().nextInt(1,11);
+        int randLength = ThreadLocalRandom.current().nextInt(1,3);
         byte[] array = new byte[randLength+1];
         //$xxxxxx
         array[0]='$';
@@ -676,17 +676,9 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             array[i]=(byte)ThreadLocalRandom.current().nextInt(97,123);
         }
         String generatedName = new String(array);
-        StringBuffer res = new StringBuffer(cmd);
-
+	    
         //insert variable before each space and '/' in the path
-        for(int i=0;i<res.length();++i){
-            if(res.charAt(i)==' '||res.charAt(i)=='/'){
-                res.insert(i,generatedName);
-                i+=randLength+1;
-            }
-        }
-
-        return res.toString();
+        return cmd.replaceAll("\\s","\\"+generatedName+" ").replaceAll("\\/","\\"+generatedName+"\\/");
     }
 
 
