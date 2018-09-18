@@ -389,6 +389,11 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 break;
 
             case HIGH:
+		// Up to around 24 requests / param / page 
+                targetCount = 12;
+                blindTargetCount = 12;
+                break;
+			
             case INSANE:
                 targetCount = Math.max(PS_PAYLOADS.size(), (Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size())));
                 blindTargetCount = Math.max(PS_BLIND_PAYLOADS.size(), (Math.max(NIX_BLIND_OS_PAYLOADS.size(), WIN_BLIND_OS_PAYLOADS.size())));
