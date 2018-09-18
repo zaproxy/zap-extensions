@@ -661,25 +661,24 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         return result / responseTimes.size();
     }
 	
-    /*Generate payload variants for uninitialized variable waf bypass
+    /**
+     *Generate payload variants for uninitialized variable waf bypass
      *https://www.secjuice.com/web-application-firewall-waf-evasion/
      *
      * @param cmd the cmd to insert uninitialized variable
      */
     private static String insertUninitVar(String cmd){
-        //get a random 1-10 lowercase letters long variable name
-        int randLength = ThreadLocalRandom.current().nextInt(1,3);
-        byte[] array = new byte[randLength+1];
-        //$xxxxxx
+        int varLength = ThreadLocalRandom.current().nextInt(1,3)+1;
+        char[] array = new char[varLength];
+        //$xx
         array[0]='$';
-        for(int i=1;i<randLength+1;++i){
-            array[i]=(byte)ThreadLocalRandom.current().nextInt(97,123);
+        for(int i=1;i<varLength;++i){
+            array[i]=(char)ThreadLocalRandom.current().nextInt(97,123);
         }
-        String generatedName = new String(array);
+        String var = new String(array);
 	    
         //insert variable before each space and '/' in the path
-	//$ need to be \\$ in replaceall
-        return cmd.replaceAll("\\s","\\"+generatedName+" ").replaceAll("\\/","\\"+generatedName+"\\/");
+        return cmd.replaceAll("\\s",Matcher.quoteReplacement(var+" ")).replaceAll("\\/",Matcher.quoteReplacement(var+"/"));
     }
 
 
