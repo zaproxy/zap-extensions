@@ -678,6 +678,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         String generatedName = new String(array);
 	    
         //insert variable before each space and '/' in the path
+	//$ need to be \\$ in replaceall
         return cmd.replaceAll("\\s","\\"+generatedName+" ").replaceAll("\\/","\\"+generatedName+"\\/");
     }
 
