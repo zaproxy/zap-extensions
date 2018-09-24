@@ -45,7 +45,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 
-public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSiteScriptV2> {
+public class TestCrossSiteScriptV2UnitTest extends ActiveScannerAppParamTest<TestCrossSiteScriptV2> {
 
     @Override
     protected TestCrossSiteScriptV2 createScanner() {

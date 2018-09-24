@@ -24,13 +24,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -41,73 +40,29 @@ import fi.iki.elonen.NanoHTTPD.Response;
 /**
  * Unit test for {@link TestPathTraversal}.
  */
-public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTraversal> {
+public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPathTraversal> {
+
+    @Override
+    protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
+        int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
+        switch (strength) {
+        case LOW:
+            return recommendMax + 4;
+        case MEDIUM:
+        default:
+            return recommendMax + 6;
+        case HIGH:
+            return recommendMax + 7;
+        case INSANE:
+            return recommendMax;
+        }
+    }
 
     @Override
     protected TestPathTraversal createScanner() {
         TestPathTraversal scanner = new TestPathTraversal();
         scanner.setConfig(new ZapXmlConfiguration());
         return scanner;
-    }
-
-    @Test
-    public void shouldSendReasonableNumberOfMessagesInLowStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.LOW);
-        rule.init(getHttpMessage("?p=v"), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_STRENGTH_LOW + 4)));
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
-    public void shouldSendReasonableNumberOfMessagesInMediumStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.MEDIUM);
-        rule.init(getHttpMessage("?p=v"), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM + 6)));
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
-    public void shouldSendReasonableNumberOfMessagesInDefaultStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.DEFAULT); // Same as MEDIUM.
-        rule.init(getHttpMessage("?p=v"), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM + 6)));
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
-    public void shouldSendReasonableNumberOfMessagesInHighStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.HIGH);
-        rule.init(getHttpMessage("?p=v"), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_STRENGTH_HIGH + 7)));
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
-    public void shouldSendReasonableNumberOfMessagesInInsaneStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.INSANE);
-        rule.init(getHttpMessage("?p=v"), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(75))); // No recommendation, use an arbitrary value.
-        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test

@@ -30,7 +30,7 @@ import org.zaproxy.zap.model.TechSet;
 /**
  * Unit test for {@link FormatString}.
  */
-public class FormatStringUnitTest extends ActiveScannerTest<FormatString> {
+public class FormatStringUnitTest extends ActiveScannerAppParamTest<FormatString> {
 
     @Override
     protected FormatString createScanner() {

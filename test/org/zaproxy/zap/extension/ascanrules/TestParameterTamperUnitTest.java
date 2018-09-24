@@ -37,7 +37,7 @@ import fi.iki.elonen.NanoHTTPD.Response;
 /**
  * Unit test for {@link TestParameterTamper}.
  */
-public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameterTamper> {
+public class TestParameterTamperUnitTest extends ActiveScannerAppParamTest<TestParameterTamper> {
 
     @Override
     protected TestParameterTamper createScanner() {

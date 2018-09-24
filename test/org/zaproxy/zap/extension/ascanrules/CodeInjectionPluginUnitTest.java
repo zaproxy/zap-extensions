@@ -24,13 +24,30 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /**
  * Unit test for {@link CodeInjectionPlugin}.
  */
-public class CodeInjectionPluginUnitTest extends ActiveScannerTest<CodeInjectionPlugin> {
+public class CodeInjectionPluginUnitTest extends ActiveScannerAppParamTest<CodeInjectionPlugin> {
+
+    @Override
+    protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
+        int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
+        switch (strength) {
+        case LOW:
+            return recommendMax + 2;
+        case MEDIUM:
+        default:
+            return recommendMax;
+        case HIGH:
+            return recommendMax;
+        case INSANE:
+            return recommendMax;
+        }
+    }
 
     @Override
     protected CodeInjectionPlugin createScanner() {
