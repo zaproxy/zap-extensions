@@ -167,12 +167,11 @@ public class Base64Disclosure extends PluginPassiveScanner {
 					//50% probability threshold (ie, "on balance of probability")
 					case HIGH:	probabilityThreshold = 0.50F; break;  
 					//25% probability threshold
-					case MEDIUM: 					
-					case DEFAULT: probabilityThreshold = 0.25F; break;	
+					case MEDIUM: probabilityThreshold = 0.25F; break;	
 					//10% probability threshold
 					case LOW: probabilityThreshold = 0.10F; break;		
 					//0% probability threshold (all structurally valid Base64 data is considered, regardless of how improbable  it is given character frequencies, etc)
-					case OFF: probabilityThreshold = 0.00F; break;		 
+					default:
 					}
 
 					//if the String is unlikely to be Base64, given the distribution of the characters

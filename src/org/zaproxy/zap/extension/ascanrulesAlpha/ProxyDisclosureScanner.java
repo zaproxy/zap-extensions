@@ -167,24 +167,12 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
 			MAX_FORWARDS_MAXIMUM=2;
 		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
 			MAX_FORWARDS_MAXIMUM=3;
-		} else if ( this.getAttackStrength() == AttackStrength.DEFAULT) {
-			MAX_FORWARDS_MAXIMUM=3;
 		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
 			MAX_FORWARDS_MAXIMUM=4;
 		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
 			MAX_FORWARDS_MAXIMUM=5;
 		}
 
-		//how thick a skin should we have as regards what we should consider an issue?
-		if ( this.getAlertThreshold() == AlertThreshold.LOW ) {
-
-		} else if ( this.getAlertThreshold() == AlertThreshold.MEDIUM ) {
-
-		} else if ( this.getAlertThreshold() == AlertThreshold.DEFAULT ) {
-
-		} else if ( this.getAlertThreshold() == AlertThreshold.HIGH ) {
-
-		}
 	}
 
 	/**
