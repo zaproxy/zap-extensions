@@ -471,7 +471,9 @@ public class TableEventStream extends ParosAbstractTable {
 						// proceed with insert
 						stmt = psInsertStream;
 						addIdOnSuccess = true;
-						logger.info("insert stream: " + stream.toString());
+						if (logger.isDebugEnabled()) {
+							logger.debug("insert stream: " + stream.toString());
+						}
 					}
 
 					Long startTs = stream.getStartTimestamp();
@@ -533,7 +535,9 @@ public class TableEventStream extends ParosAbstractTable {
 						throw new DatabaseException("stream not inserted: " + event.getStreamId());
 					}
 					
-					logger.info("insert event: " + event.toString());
+					if (logger.isDebugEnabled()) {
+						logger.debug("insert event: " + event.toString());
+					}
 
 					psInsertEvent.setInt(1, event.getId());
 					psInsertEvent.setInt(2, event.getStreamId());

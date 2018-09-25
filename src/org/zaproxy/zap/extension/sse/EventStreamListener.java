@@ -42,10 +42,8 @@ public class EventStreamListener implements Runnable {
 		} catch (Exception e) {
 			// includes SocketException
 			// no more reading possible
-			e.printStackTrace();
-			logger.info("Server-Sent Events server produced exception: " + e.getMessage(), e);
+			logger.warn("An exception occurred while reading Server-Sent Events: " + e.getMessage(), e);
 		} finally {
-			logger.info("Server-Sent Events server closed its connection - shutdown");
 			this.proxy.stop();
 		}
 	}

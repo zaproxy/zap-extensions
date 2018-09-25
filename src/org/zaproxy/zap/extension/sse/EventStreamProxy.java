@@ -85,7 +85,9 @@ public class EventStreamProxy {
 	
 	public void stop() {
 		try {
-			logger.info("Close Server-Sent Events stream #" + dataStreamObject.getId() + "!");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Close Server-Sent Events stream #" + dataStreamObject.getId());
+			}
 
 			listener.close(); // closes reader
 			writer.close();
@@ -93,8 +95,9 @@ public class EventStreamProxy {
 			notifyStateObservers(State.CLOSED);
 			dataStreamObject.setEndTimestamp(Calendar.getInstance().getTimeInMillis());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (logger.isDebugEnabled()) {
+				logger.debug("An exception occurred while stopping the proxy:", e);
+			}
 		}
 		//TODO close thread also?
 	}
@@ -178,7 +181,9 @@ public class EventStreamProxy {
 		sse.setStreamId(dataStreamObject.getId());
 		sse.finishData();
 		
-		logger.info("Processed Server-Sent Event" + sse.toString());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Processed Server-Sent Event" + sse.toString());
+		}
 		
 		boolean doForward = notifyObservers(sse);
 		if (doForward) {
@@ -194,7 +199,7 @@ public class EventStreamProxy {
 			writer.write(sse.getRawEvent()+"\n\n");
 			writer.flush();
 		} catch (IOException e) {
-			logger.error("forwarding event " + sse.toString() + " was not possible due to: " + e.getMessage(), e);
+			logger.warn("Forwarding event " + sse.toString() + " was not possible due to: " + e.getMessage(), e);
 			stop();
 		}
 	}
