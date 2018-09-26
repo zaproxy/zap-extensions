@@ -82,18 +82,6 @@ public class BackupFileDisclosureUnitTest extends ActiveScannerTest<BackupFileDi
     }
 
     @Test
-    public void shouldSendReasonableNumberOfMessagesInDefaultStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.DEFAULT); // Same as MEDIUM.
-        rule.init(getHttpMessage(URL), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_MED)));
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
     public void shouldSendReasonableNumberOfMessagesInHighStrength() throws Exception {
         // Given
         rule.setAttackStrength(Plugin.AttackStrength.HIGH);

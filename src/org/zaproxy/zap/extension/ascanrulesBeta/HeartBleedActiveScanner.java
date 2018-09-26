@@ -508,8 +508,7 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 		case INSANE:
 			this.timeoutMs=12000;  //12 seconds
 			break;
-		case DEFAULT:
-			this.timeoutMs=5000;  //5 seconds
+		default:
 		}
 	}
 

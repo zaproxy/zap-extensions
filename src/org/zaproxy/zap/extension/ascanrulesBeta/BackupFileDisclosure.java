@@ -213,12 +213,6 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 	@Override
 	public void init() {
 		switch (this.getAttackStrength()) {
-		case DEFAULT:
-			numExtensionsToTry=10;
-			numSuffixesToTry=3;
-			numPrefixesToTry=2;
-			doSwitchFileExtension=false;
-			break;
 		case LOW:
 			numExtensionsToTry=3;
 			numSuffixesToTry=2;
@@ -243,6 +237,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 			numPrefixesToTry=filePrefixes.size();
 			doSwitchFileExtension=true;
 			break;
+		default:
 		}
 	}
 
