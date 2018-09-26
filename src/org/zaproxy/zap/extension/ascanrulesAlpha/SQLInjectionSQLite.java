@@ -277,9 +277,6 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 		} else if ( this.getAlertThreshold() == AlertThreshold.MEDIUM ) {
 			parseDelayDifference = 200;
 			incrementalDelayIncreasesForAlert=2;
-		} else if ( this.getAlertThreshold() == AlertThreshold.DEFAULT ) {
-			parseDelayDifference = 200;
-			incrementalDelayIncreasesForAlert=2;
 		} else if ( this.getAlertThreshold() == AlertThreshold.HIGH ) {
 			parseDelayDifference = 400;
 			incrementalDelayIncreasesForAlert=3;

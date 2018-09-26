@@ -178,12 +178,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 		case LOW:
 			this.thresholdPercentage = 50;
 			break;
-		case OFF:
-			this.thresholdPercentage = 50;	// == LOW
-			break;
-		case DEFAULT:
-			this.thresholdPercentage = 75; // == medium
-			break;
+		default:
 		}
 	}
 	

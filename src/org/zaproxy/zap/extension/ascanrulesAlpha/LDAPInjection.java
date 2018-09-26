@@ -157,11 +157,6 @@ public class LDAPInjection extends AbstractAppParamPlugin {
         	case LOW:
         		this.matchThreshold = 40;
         		break;
-        	//this case cannot currently be selected in the GUI, so it doesn't make much sense. 
-        	//But hey. For now, make it the same as "LOW"
-        	case OFF:
-        		this.matchThreshold = 40;
-        		break;
         	default:
         		break;
         }
@@ -178,12 +173,10 @@ public class LDAPInjection extends AbstractAppParamPlugin {
 	        case MEDIUM:
 	        	this.andRequests=4;
 	        	break;
-	        case DEFAULT:
-	        	this.andRequests=4;
-	        	break;
 	        case LOW:
 	        	this.andRequests=2;
 	        	break;
+	        default:
 	        }
     }
 
