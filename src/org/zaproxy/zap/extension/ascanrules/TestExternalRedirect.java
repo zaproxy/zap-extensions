@@ -228,11 +228,6 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
                 targetCount = 9;
                 break;
                 
-            case DEFAULT:
-            	// This works out as a total of 9 reqs / param
-                targetCount = 9;
-    			break;
-
             case HIGH:
                 // This works out as a total of 15 reqs / param
                 targetCount = REDIRECT_TARGETS.length;

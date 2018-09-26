@@ -54,8 +54,8 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 				includeErrorRedirectResponses = true; break;
 			case HIGH:  
 			case MEDIUM: 					
-			case DEFAULT: 
-			case OFF: } 
+			default:
+		}
 		if (msg.getResponseBody().length() > 0) {
 			int responseStatus = msg.getResponseHeader().getStatusCode();
 			// If it's an error and we're not including error responses then just return without alerting
