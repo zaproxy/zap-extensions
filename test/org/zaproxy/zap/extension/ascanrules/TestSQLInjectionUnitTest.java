@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -39,7 +40,23 @@ import fi.iki.elonen.NanoHTTPD.Response;
 /**
  * Unit test for {@link TestSQLInjection}.
  */
-public class TestSQLInjectionUnitTest extends ActiveScannerTest<TestSQLInjection> {
+public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLInjection> {
+
+    @Override
+    protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
+        int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
+        switch (strength) {
+        case LOW:
+            return recommendMax + 1;
+        case MEDIUM:
+        default:
+            return recommendMax + 14;
+        case HIGH:
+            return recommendMax + 22;
+        case INSANE:
+            return recommendMax + 5;
+        }
+    }
 
     @Override
     protected TestSQLInjection createScanner() {

@@ -30,7 +30,7 @@ import org.zaproxy.zap.model.TechSet;
 /**
  * Unit test for {@link BufferOverflow}.
  */
-public class BufferOverflowUnitTest extends ActiveScannerTest<BufferOverflow> {
+public class BufferOverflowUnitTest extends ActiveScannerAppParamTest<BufferOverflow> {
 
     @Override
     protected BufferOverflow createScanner() {

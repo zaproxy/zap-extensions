@@ -30,7 +30,7 @@ import org.zaproxy.zap.model.TechSet;
 /**
  * Unit test for {@link TestServerSideInclude}.
  */
-public class TestServerSideIncludeUnitTest extends ActiveScannerTest<TestServerSideInclude> {
+public class TestServerSideIncludeUnitTest extends ActiveScannerAppParamTest<TestServerSideInclude> {
 
     @Override
     protected TestServerSideInclude createScanner() {

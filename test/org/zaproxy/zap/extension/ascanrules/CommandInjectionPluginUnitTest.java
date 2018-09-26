@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 
 import org.apache.commons.configuration.Configuration;
 import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -32,7 +33,23 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 /**
  * Unit test for {@link CommandInjectionPlugin}.
  */
-public class CommandInjectionPluginUnitTest extends ActiveScannerTest<CommandInjectionPlugin> {
+public class CommandInjectionPluginUnitTest extends ActiveScannerAppParamTest<CommandInjectionPlugin> {
+
+    @Override
+    protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
+        int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
+        switch (strength) {
+        case LOW:
+            return recommendMax + 6;
+        case MEDIUM:
+        default:
+            return recommendMax + 20;
+        case HIGH:
+            return recommendMax + 22;
+        case INSANE:
+            return recommendMax;
+        }
+    }
 
     @Override
     protected CommandInjectionPlugin createScanner() {
