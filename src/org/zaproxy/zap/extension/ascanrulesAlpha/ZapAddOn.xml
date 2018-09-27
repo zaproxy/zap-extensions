@@ -9,6 +9,7 @@
 	<![CDATA[
 	Update minimum ZAP version to 2.5.0.<br>
 	Maintenance changes.<br>
+	Add active scan rule for .env files.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -19,6 +20,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ElmahScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.EnvFileScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.GetForPostScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpOnlySite</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpoxyScanner</ascanrule>
