@@ -31,6 +31,10 @@ developers and other stakeholders it can also leak a significant amount of infor
 may be interested in.<br><br>
 The ELMAH scanner targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
 
+<H2>.env Information Leak</H2>
+Checks for web accessible .env files which may leak sensitive information 
+(such as usernames, passwords, API or APP keys, etc).
+
 <H2>Example Active Scanner: Denial of Service</H2>
 This implements a very simple example active scan rule.<br>
 For more details see: 
