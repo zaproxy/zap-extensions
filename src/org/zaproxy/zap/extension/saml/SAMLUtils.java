@@ -113,23 +113,32 @@ public class SAMLUtils {
      * @return whether the message has got a saml message within it
      */
     public static boolean hasSAMLMessage(HttpMessage message) {
+        return inspectMessage(message).hasSAMLMessage();
+    }
+
+    /**
+     * Check whether the httpMessage has a saml message in its parameters
+     *
+     * @param message The HttpMessage to be checked for
+     * @return the inspection result of the message
+     */
+    public static SAMLInspectionResult inspectMessage(HttpMessage message) {
         for (HtmlParameter parameter : message.getUrlParams()) {
-            if (parameter.getName().equals("SAMLRequest") && isNonEmptyValue(parameter.getValue())) {
-                return true;
-            }
-            if (parameter.getName().equals("SAMLResponse") && isNonEmptyValue(parameter.getValue())) {
-                return true;
+            if (isSAMLParameter(parameter)) {
+                return new SAMLInspectionResult(parameter);
             }
         }
         for (HtmlParameter parameter : message.getFormParams()) {
-            if (parameter.getName().equals("SAMLRequest") && isNonEmptyValue(parameter.getValue())) {
-                return true;
-            }
-            if (parameter.getName().equals("SAMLResponse") && isNonEmptyValue(parameter.getValue())) {
-                return true;
+            if (isSAMLParameter(parameter)) {
+                return new SAMLInspectionResult(parameter);
             }
         }
-        return false;
+        return SAMLInspectionResult.NOT_SAML;
+    }
+
+    private static boolean isSAMLParameter(HtmlParameter parameter) {
+        return (parameter.getName().equals("SAMLRequest") || parameter.getName().equals("SAMLResponse"))
+                && isNonEmptyValue(parameter.getValue());
     }
 
     private static boolean isNonEmptyValue(String param) {
