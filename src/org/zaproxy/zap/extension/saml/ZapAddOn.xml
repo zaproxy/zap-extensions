@@ -8,6 +8,8 @@
 	<changes>
 	<![CDATA[
 	Update minimum ZAP version to 2.5.0.<br>
+	Compressed SAMLMessage is not required<br>
+	Possibility to disable compression when sending<br>
 	]]>
 	</changes>
     <dependson/>

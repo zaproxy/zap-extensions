@@ -107,6 +107,24 @@ public class SAMLConfiguration implements AttributeListener {
         return configData.isAutoChangerEnabled();
     }
 
+     /**
+     * Get whether deflateOnSend is enabled
+     *
+     * @return <code>true</code> if enabled, <code>false</code> if disabled.
+     */
+    public boolean isDeflateOnSendEnabled() {
+        return configData.isDeflateOnSendEnabled();
+    }
+
+    /**
+     * Enable or disable deflate on send
+     *
+     * @param value <code>true</code> to enable deflate on send, <code>false</code> to disable it.
+     */
+    public void setDeflateOnSendEnabled(boolean value) {
+        configData.setDeflateOnSendEnabled(value);
+    }
+
     /**
      * Enable or disable automatic attribute value change at the passive scanner. If enabled the values of the
      * attributes will be changes as predefined, before the message is sent to the endpoint
