@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ns2:samlConfigData xmlns:ns2="org.zaproxy.zap.extension.saml">
     <autoChangerEnabled>true</autoChangerEnabled>
+    <deflateOnSendEnabled>true</deflateOnSendEnabled>
     <xswEnabled>false</xswEnabled>
     <AutoChangeAttributes/>
     <AllAttributes>

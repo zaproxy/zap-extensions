@@ -11,6 +11,7 @@ public class SAMLConfigData {
     private boolean autoChangerEnabled;
     private boolean xswEnabled;
     private boolean validationEnabled;
+    private boolean deflateOnSendEnabled = true;
 
     private Set<Attribute> availableAttributes;
 
@@ -30,6 +31,22 @@ public class SAMLConfigData {
      */
     public void setAutoChangerEnabled(boolean autoChangerEnabled) {
         this.autoChangerEnabled = autoChangerEnabled;
+    }
+
+    /**
+     * Get whether the deflateOnSend is enabled
+     * @return
+     */
+    public boolean isDeflateOnSendEnabled() {
+        return deflateOnSendEnabled;
+    }
+
+    /**
+     * Set deflateOnSend enabled/disabled
+     * @param deflateOnSendEnabled
+     */
+    public void setDeflateOnSendEnabled(boolean deflateOnSendEnabled) {
+        this.deflateOnSendEnabled = deflateOnSendEnabled;
     }
 
     /**

@@ -18,7 +18,7 @@ import java.util.zip.Inflater;
  * Contains some frequent methods related to decoding and encoding SAML messages
  */
 public class SAMLUtils {
-    private static final int MAX_INFLATED_SIZE = 5000;
+    private static final int MAX_INFLATED_SIZE = 100000;
 
     protected static final Logger log = Logger.getLogger(SAMLUtils.class);
 
@@ -61,24 +61,26 @@ public class SAMLUtils {
      * @throws SAMLException
      */
     public static String inflateMessage(byte[] data) throws SAMLException {
-        try {
-            Inflater inflater = new Inflater(true);
-            inflater.setInput(data);
-            byte[] xmlMessageBytes = new byte[MAX_INFLATED_SIZE];
-            int resultLength = inflater.inflate(xmlMessageBytes);
-
-            if (!inflater.finished()) {
-                throw new SAMLException("Out of space allocated for inflated data");
+       try{
+           byte[] out = data;
+           int length = data.length;
+            try {
+                Inflater inflater = new Inflater(true);
+                inflater.setInput(data);
+                byte[] xmlMessageBytes = new byte[MAX_INFLATED_SIZE];
+                int inflatedLength = inflater.inflate(xmlMessageBytes);
+                if (!inflater.finished()) {
+                    throw new SAMLException("Out of space allocated for inflated data ("+(MAX_INFLATED_SIZE/1000)+"kb)");
+                }
+                inflater.end();
+                out = xmlMessageBytes;
+                length = inflatedLength;
+            } catch (DataFormatException e) {
+                log.debug("Inflate SAML message failed - Invalid data format", e);
             }
-
-            inflater.end();
-
-            return new String(xmlMessageBytes, 0, resultLength,
-                    "UTF-8");
-        } catch (DataFormatException e) {
-            throw new SAMLException("Invalid data format", e);
+            return new String(out,0,length, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new SAMLException("Inflated data is not in valid encoding format", e);
+            throw new SAMLException("Data is not in valid encoding format", e);
         }
     }
 
@@ -91,16 +93,15 @@ public class SAMLUtils {
     public static byte[] deflateMessage(String message) throws SAMLException {
         try {
             Deflater deflater = new Deflater(Deflater.DEFLATED, true);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            DeflaterOutputStream deflaterOutputStream =
-                    new DeflaterOutputStream(byteArrayOutputStream,
-                            deflater);
-
-            deflaterOutputStream.write(message.getBytes());
-            deflaterOutputStream.close();
-
-            return byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
+            try(
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream, deflater)
+            ){
+                deflaterOutputStream.write(message.getBytes("UTF-8"));
+                deflaterOutputStream.finish();
+                return byteArrayOutputStream.toByteArray();
+            }
+        } catch (Exception e) {
             throw new SAMLException("Message Deflation failed", e);
         }
     }

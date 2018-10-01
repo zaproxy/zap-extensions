@@ -20,6 +20,7 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
     private JCheckBox chckbxEnablePassiveChanger;
     private JCheckBox chckbxRemoveMessageSignatures;
     private JCheckBox chckbxValidateAttributeValue;
+    private JCheckBox chckbxDeflateOnSend;
 
     private SAMLConfiguration configuration;
 
@@ -160,6 +161,11 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
         globalSettingsPanel.add(chckbxEnablePassiveChanger, gridBagConstraints);
 
         gridBagConstraints.gridy++;
+        chckbxDeflateOnSend = new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.deflateonsend"));
+        chckbxDeflateOnSend.setSelected(configuration.isDeflateOnSendEnabled());
+        globalSettingsPanel.add(chckbxDeflateOnSend, gridBagConstraints);
+
+        gridBagConstraints.gridy++;
         chckbxRemoveMessageSignatures = new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.removesign"));
         chckbxRemoveMessageSignatures.setSelected(configuration.getXSWEnabled());
         globalSettingsPanel.add(chckbxRemoveMessageSignatures, gridBagConstraints);
@@ -257,6 +263,7 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
 
     private boolean saveChanges(){
         configuration.setAutochangeEnabled(chckbxEnablePassiveChanger.isSelected());
+        configuration.setDeflateOnSendEnabled(chckbxDeflateOnSend.isSelected());
         configuration.setXSWEnabled(chckbxRemoveMessageSignatures.isSelected());
         configuration.setValidationEnabled(chckbxValidateAttributeValue.isSelected());
         return configuration.saveConfiguration();

@@ -223,7 +223,15 @@ public class SAMLMessage {
      */
     private void rebuildHttpMessage() {
         try {
-            String encodedSAMLMessage = SAMLUtils.b64Encode(SAMLUtils.deflateMessage(samlMessageString));
+            SAMLConfiguration configuration = SAMLConfiguration.getInstance();
+            byte[] messageToEncode;
+            if(configuration.isDeflateOnSendEnabled()){
+                messageToEncode = SAMLUtils.deflateMessage(samlMessageString);
+            }else{
+                messageToEncode = samlMessageString.getBytes("UTF-8");
+            }
+
+            String encodedSAMLMessage = SAMLUtils.b64Encode(messageToEncode);
             StringBuilder newParamBuilder = new StringBuilder();
             int paramIndex = 0;
 
