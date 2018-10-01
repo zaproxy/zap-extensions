@@ -101,7 +101,7 @@ public class WebSocketProxyUnitTest extends WebSocketTestUtils {
 		webSocketFrameStack.push(new NanoWSD.WebSocketFrame(WebSocketFrame.OpCode.Text,true,"Hello World-3"));
 		webSocketConnection.setOutgoingMessageSchedule(webSocketFrameStack,50);
 		
-		Thread.sleep(200);
+		Thread.sleep(210);
 		assertEquals(4,webSocketProxy.getIncrementedMessageCount());
 		
 	}
