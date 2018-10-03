@@ -1,0 +1,20 @@
+<zapaddon>
+	<name>All In One Notes</name>
+	<version>1</version>
+	<status>alpha</status>
+	<description>A simple extension to view all notes in one pane.</description>
+	<author>David Vassallo</author>
+	<url></url>
+	<changes>
+	<![CDATA[
+	First commit.<br>
+	]]>
+	</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.AllInOneNotes.ExtensionAllInOneNotes</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<not-before-version>2.6.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>
