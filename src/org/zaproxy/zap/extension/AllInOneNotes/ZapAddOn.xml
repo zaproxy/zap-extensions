@@ -7,7 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	First commit.<br>
+	Initial release.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -15,6 +15,6 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<not-before-version>2.6.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

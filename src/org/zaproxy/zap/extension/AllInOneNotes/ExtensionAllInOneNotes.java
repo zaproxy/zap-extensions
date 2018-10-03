@@ -22,8 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import javax.swing.*;
-
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
@@ -37,15 +35,18 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ZapMenuItem;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
 public class ExtensionAllInOneNotes extends ExtensionAdaptor {
 
-    private ZapMenuItem menuExample;
+    private ZapMenuItem menuReload;
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionAllInOneNotes";
-
-    // The i18n prefix, by default the package name - defined in one place to make it easier
-    // to copy and change this example
     protected static final String PREFIX = "allInOneNotes";
 
     /**
@@ -64,9 +65,8 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor {
     private static final Logger LOGGER = Logger.getLogger(ExtensionAllInOneNotes.class);
     private static ExtensionHookView hookView;
 
-    private static JButton reload = new JButton("Reload Notes");
+    private static JButton reload = new JButton(Constant.messages.getString(PREFIX + ".reload.button"));
     private static TableExportButton<JXTable> exportButton = null;
-
 
     public ExtensionAllInOneNotes() {
         super(NAME);
@@ -80,13 +80,15 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor {
         // As long as we're not running as a daemon
         if (getView() != null) {
 
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuReload());
+            hookView = extensionHook.getHookView();
+            hookView.addStatusPanel(getStatusPanel());
+
+            // TODO: supplement or remove reload with events to dynamicaly populate notes
             reload.addActionListener(l -> {
                 hookView.addStatusPanel(getStatusPanel());
             });
 
-            extensionHook.getHookMenu().addToolsMenuItem(getMenuExample());
-            hookView = extensionHook.getHookView();
-            hookView.addStatusPanel(getStatusPanel());
         }
     }
 
@@ -128,9 +130,8 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor {
                             String note = hr.getHttpMessage().getNote();
                             String[] tableRow = {String.valueOf(i), note};
                             notes.add(tableRow);
-                        } catch (HttpMalformedHeaderException e) {
-                        } catch (DatabaseException e) {
-                            e.printStackTrace();
+                        } catch (HttpMalformedHeaderException|DatabaseException e) {
+                            LOGGER.error(e.getMessage());
                         }
                     }
                 }
@@ -144,11 +145,9 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor {
         notesTable.setRowSelectionAllowed(true);
         notesTable.setAutoCreateRowSorter(true);
         notesTable.setColumnControlVisible(true);
+        notesTable.getSelectionModel().addListSelectionListener(new NotesTableSelectionHandler(notesTable, extHist));
 
         exportButton = new TableExportButton<>(notesTable);
-
-        tableSelectionModel = notesTable.getSelectionModel();
-        tableSelectionModel.addListSelectionListener(new NotesTableSelectionHandler(notesTable, extHist));
 
         JPanel buttonContainer = new JPanel();
         buttonContainer.setLayout(new BoxLayout(buttonContainer, BoxLayout.X_AXIS));
@@ -177,18 +176,16 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor {
         return statusPanel;
     }
 
-    private ZapMenuItem getMenuExample() {
-        if (menuExample == null) {
-            menuExample = new ZapMenuItem(PREFIX + ".topmenu.tools.reload");
+    private ZapMenuItem getMenuReload() {
+        if (menuReload == null) {
+            menuReload = new ZapMenuItem(PREFIX + ".topmenu.tools.reload");
 
-            menuExample.addActionListener( ae -> {
+            menuReload.addActionListener( ae -> {
                 hookView.addStatusPanel(getStatusPanel());
             });
         }
-        return menuExample;
+        return menuReload;
     }
-
-
 
     @Override
     public String getAuthor() {

@@ -20,7 +20,7 @@
 	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.7" />
 
 	<path id="build.classpath">
-		<fileset dir="${build.lib.dir}" includes="*.jar"/>
+		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
 	</path>
 
 	<!-- Ant task to generate the wiki -->
@@ -58,7 +58,7 @@
 
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="true" encoding="UTF-8"
-			   excludes="org/zaproxy/zap/extension/*/files/**,org/zaproxy/zap/extension/*/resources/**">
+			excludes="org/zaproxy/zap/extension/*/files/**,org/zaproxy/zap/extension/*/resources/**">
 			<compilerarg value="-Xlint:all"/>
 			<compilerarg value="-Xlint:-path"/>
 			<compilerarg value="-Xlint:-options"/>
@@ -134,7 +134,7 @@
 		<attribute name="addOn"/>
 		<sequential>
 			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.dir}"
-								prefixlinkimages="https://github.com/zaproxy/zap-extensions/wiki/images/" tocpadding="0" />
+				prefixlinkimages="https://github.com/zaproxy/zap-extensions/wiki/images/" tocpadding="0" />
 		</sequential>
 	</macrodef>
 
@@ -142,7 +142,7 @@
 		<attribute name="addOn"/>
 		<sequential>
 			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.zapcorehelp.dir}"
-								prefixlinkimages="https://github.com/zaproxy/zap-core-help/wiki/images/" tocpadding="0" />
+				prefixlinkimages="https://github.com/zaproxy/zap-core-help/wiki/images/" tocpadding="0" />
 		</sequential>
 	</macrodef>
 
@@ -160,12 +160,12 @@
 			<property name="version" value="${zapaddon.version}" />
 
 			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="@{baseDestDir}"
-						  helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
-						  srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="@{prefixLinkImages}"
-						  outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.md"
-						  helpfileextension=".html" wikifileextension=".md"
-						  srctocfile="toc.xml" srcmapfile="map.jhm"
-						  wikitocfilename="_SiderBar-${addOnCapitalised}" wikitocentryinitpadding="@{tocpadding}">
+				helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
+				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="@{prefixLinkImages}"
+				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.md"
+				helpfileextension=".html" wikifileextension=".md"
+				srctocfile="toc.xml" srcmapfile="map.jhm"
+				wikitocfilename="_SiderBar-${addOnCapitalised}" wikitocentryinitpadding="@{tocpadding}">
 
 				<!-- Default language is at root of dest dir -->
 				<helpdir src="help" dest="" />
@@ -197,7 +197,7 @@
 			<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
 
 			<generatejavahelpsearchindexes jhalljar="${build.lib.dir}/jhall.jar"
-										   helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
+				helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
 				<dirset dir="${src}/org/zaproxy/zap/extension/@{name}/resources/">
 					<include name="help" />
 					<include name="help_*_*" />
@@ -261,77 +261,77 @@
 			</tstamp>
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-								addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-								url="${zap.download.url}/${file}" />
+				addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				url="${zap.download.url}/${file}" />
 
 		</sequential>
 	</macrodef>
 
 	<macrodef name="build-addon-without-help-indexes" description="build the specified addon">
-		<attribute name="name"/>
-		<element name="extra-actions" implicit="true" optional="true" />
-		<sequential>
-			<local name="zapaddon.version" />
-			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
-			<local name="zapaddon.status" />
-			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
-			<local name="file" />
-			<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
+			<attribute name="name"/>
+			<element name="extra-actions" implicit="true" optional="true" />
+			<sequential>
+				<local name="zapaddon.version" />
+				<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+				<local name="zapaddon.status" />
+				<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+				<local name="file" />
+				<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
 
-			<local name="addon.libs.zip" />
-			<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
+				<local name="addon.libs.zip" />
+				<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
 
-			<delete file="${addon.libs.zip}" failonerror="true" />
-			<zip destfile="${addon.libs.zip}" whenempty="create">
-				<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" erroronmissingdir="false" />
-			</zip>
+				<delete file="${addon.libs.zip}" failonerror="true" />
+				<zip destfile="${addon.libs.zip}" whenempty="create">
+					<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" erroronmissingdir="false" />
+				</zip>
 
-			<jar jarfile="${dist}/${file}" update="true" compress="true">
-				<zipfileset dir="${build}" prefix="">
-					<include name="org/zaproxy/zap/extension/@{name}/**"/>
-				</zipfileset>
-				<zipfileset dir="${src}" prefix="">
-					<include name="org/zaproxy/zap/extension/@{name}/Messages*"/>
-				</zipfileset>
-				<zipfileset dir="${src}" prefix="">
-					<include name="org/zaproxy/zap/extension/@{name}/resources/**"/>
-				</zipfileset>
-				<zipfileset src="${addon.libs.zip}">
-					<exclude name="META-INF/*.DSA" />
-					<exclude name="META-INF/*.SF" />
-				</zipfileset>
-				<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
-			</jar>
-			<delete file="${addon.libs.zip}" />
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="org/zaproxy/zap/extension/@{name}/**"/>
+					</zipfileset>
+					<zipfileset dir="${src}" prefix="">
+						<include name="org/zaproxy/zap/extension/@{name}/Messages*"/>
+					</zipfileset>
+					<zipfileset dir="${src}" prefix="">
+						<include name="org/zaproxy/zap/extension/@{name}/resources/**"/>
+					</zipfileset>
+					<zipfileset src="${addon.libs.zip}">
+						<exclude name="META-INF/*.DSA" />
+						<exclude name="META-INF/*.SF" />
+					</zipfileset>
+					<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+				</jar>
+				<delete file="${addon.libs.zip}" />
 
-			<!-- Include add-on files -->
-			<jar jarfile="${dist}/${file}" update="true" compress="true">
-				<zipfileset dir="${src}/org/zaproxy/zap/extension/@{name}/files/" prefix="" erroronmissingdir="false" />
-			</jar>
+				<!-- Include add-on files -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${src}/org/zaproxy/zap/extension/@{name}/files/" prefix="" erroronmissingdir="false" />
+				</jar>
 
-			<!-- allow callers to do extra actions before generating the hash and determine the size of the file -->
-			<extra-actions />
+				<!-- allow callers to do extra actions before generating the hash and determine the size of the file -->
+				<extra-actions />
 
-			<local name="length" />
-			<length file="${dist}/${file}" property="length" />
+				<local name="length" />
+				<length file="${dist}/${file}" property="length" />
 
-			<local name="sha1hash" />
-			<checksum file="${dist}/${file}"  algorithm="SHA-1"  property="sha1hash"/>
+				<local name="sha1hash" />
+				<checksum file="${dist}/${file}"  algorithm="SHA-1"  property="sha1hash"/>
 
-			<local name="hash" />
-			<property name="hash"  value="SHA1:${sha1hash}"/>
+				<local name="hash" />
+				<property name="hash"  value="SHA1:${sha1hash}"/>
 
-			<local name="yyyymmdd" />
-			<tstamp>
-				<format property="yyyymmdd" pattern="yyyy-MM-dd"/>
-			</tstamp>
+				<local name="yyyymmdd" />
+				<tstamp>
+					<format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+				</tstamp>
 
-			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-								addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-								url="${zap.download.url}/${file}" />
+				<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
+					addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+					url="${zap.download.url}/${file}" />
 
-		</sequential>
-	</macrodef>
+			</sequential>
+		</macrodef>
 
 	<macrodef name="build-help-addon" description="build the specified addon">
 		<attribute name="name"/>
@@ -352,7 +352,7 @@
 				<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" />
 			</zip>
 
-			<jar jarfile="${dist}/${file}" update="true" compress="true">
+			 <jar jarfile="${dist}/${file}" update="true" compress="true">
 				<zipfileset src="${addon.libs.zip}" />
 				<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
 			</jar>
@@ -376,8 +376,8 @@
 			</tstamp>
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-								addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-								url="${zap.download.url}/${file}" />
+				addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				url="${zap.download.url}/${file}" />
 
 		</sequential>
 	</macrodef>
@@ -386,6 +386,7 @@
 		<delete file="${versions.file}"/>
 
 		<!-- Keep in alphabetical order ;) -->
+		<build-addon name="AllInOneNotes" />
 		<build-addon name="ascanrules" />
 		<build-addon name="coreLang" />
 		<build-addon name="directorylistv1" />
@@ -403,7 +404,6 @@
 		<build-addon name="reveal" />
 		<build-addon name="saverawmessage" />
 		<build-addon name="savexmlmessage" />
-		<build-addon name="AllInOneNotes" />
 		<build-selenium-addon />
 		<build-spiderajax-addon />
 		<build-addon name="websocket" />
@@ -415,7 +415,7 @@
 		<sequential>
 			<copy todir="${zap.plugin.dir}">
 				<fileset dir="${dist}">
-					<include name="@{name}-*.zap"/>
+				<include name="@{name}-*.zap"/>
 				</fileset>
 			</copy>
 		</sequential>
@@ -461,6 +461,10 @@
 		<build-deploy-addon-without-help-indexes name="ascanrules" />
 	</target>
 
+	<target name="deploy-allinonenotes" description="deploy the all in one notes add-on">
+		<build-deploy-addon name="AllInOneNotes" />
+	</target>
+
 	<target name="generate-wiki-ascanrules" description="Generates the wiki of active scan rules">
 		<generate-wiki-core addon="ascanrules" />
 	</target>
@@ -499,10 +503,6 @@
 
 	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
 		<build-deploy-addon name="gettingStarted" />
-	</target>
-
-	<target name="deploy-allinonenotes" description="deploy the all in one notes add-on">
-		<build-deploy-addon name="AllInOneNotes" />
 	</target>
 
 	<target name="generate-wiki-gettingStarted" description="Generates the wiki of gettingStarted">
@@ -635,7 +635,7 @@
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="*.zap"/>
+			<include name="*.zap"/>
 			</fileset>
 		</copy>
 	</target>
@@ -684,15 +684,15 @@
 		</copy>
 	</target>
 
-	<target name="generate-apis" description="generates the client APIs">
-		<path id="classpath">
-			<pathelement location="../bin" />
-			<pathelement location="./build" />
-			<fileset dir="../lib" includes="**/*.jar" />
-			<fileset dir="../../zaproxy/lib" includes="**/*.jar" />
-		</path>
+    <target name="generate-apis" description="generates the client APIs">
+        <path id="classpath">
+            <pathelement location="../bin" />
+            <pathelement location="./build" />
+            <fileset dir="../lib" includes="**/*.jar" />
+            <fileset dir="../../zaproxy/lib" includes="**/*.jar" />
+        </path>
 		<java classname="org.zaproxy.zap.extension.ApiGenerator" dir=".." fork="yes">
 			<classpath refid="classpath" />
 		</java>
-	</target>
+    </target>
 </project>
