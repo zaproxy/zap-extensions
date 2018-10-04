@@ -1,16 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>32</version>
+	<version>33</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Maintenance changes.<br>
-	Persistent XSS scanner updated to address various false negatives (Issue 4692).<br>
-	Command Injection plugin updated to include payloads for Uninitialized environment variable WAF bypass (Issue 4968).<br>
-	Correct Remote OS Command Injection to use the expected time in all time based payloads.<br>
 	]]>
     </changes>
 	<extensions>
