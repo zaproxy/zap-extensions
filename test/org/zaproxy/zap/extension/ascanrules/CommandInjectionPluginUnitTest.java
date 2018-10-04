@@ -19,16 +19,29 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
 import org.apache.commons.configuration.Configuration;
 import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
+
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 
 /**
  * Unit test for {@link CommandInjectionPlugin}.
@@ -145,6 +158,27 @@ public class CommandInjectionPluginUnitTest extends ActiveScannerAppParamTest<Co
         assertThat(rule.getTimeSleep(), is(equalTo(5)));
     }
 
+    @Test
+    public void shouldUseSpecifiedTimeInAllTimeBasedPayloads() throws Exception {
+        // Given
+        String sleepTime = "987";
+        PayloadCollectorHandler payloadCollector = new PayloadCollectorHandler(
+                "/",
+                "p",
+                v -> v.contains("sleep") || v.contains("timeout"));
+        nano.addHandler(payloadCollector);
+        rule.setConfig(configWithSleepRule(sleepTime));
+        rule.setAttackStrength(Plugin.AttackStrength.INSANE);
+        rule.init(getHttpMessage("?p=v"), parent);
+        // When
+        rule.scan();
+        // Then
+        for (String payload : payloadCollector.getPayloads()) {
+            assertThat(payload, not(containsString("{0}")));
+            assertThat(payload, containsString(sleepTime));
+        }
+    }
+
     private static Configuration configWithSleepRule(String value) {
         Configuration config = new ZapXmlConfiguration();
         // TODO Replace with RuleConfigParam.RULE_COMMON_SLEEP_TIME once available.
@@ -152,4 +186,31 @@ public class CommandInjectionPluginUnitTest extends ActiveScannerAppParamTest<Co
         return config;
     }
 
+    private static class PayloadCollectorHandler extends NanoServerHandler {
+
+        private final String param;
+        private final Predicate<String> valuePredicate;
+        private final List<String> payloads;
+
+        public PayloadCollectorHandler(String path, String param, Predicate<String> valuePredicate) {
+            super(path);
+
+            this.param = param;
+            this.valuePredicate = valuePredicate;
+            this.payloads = new ArrayList<>();
+        }
+
+        public List<String> getPayloads() {
+            return payloads;
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            String value = getFirstParamValue(session, param);
+            if (valuePredicate.test(value)) {
+                payloads.add(value);
+            }
+            return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "Content");
+        }
+    }
 }
