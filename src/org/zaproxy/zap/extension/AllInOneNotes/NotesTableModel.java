@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.AllInOneNotes;
 
 import org.parosproxy.paros.Constant;
-
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 import java.util.Vector;
@@ -31,18 +30,14 @@ public class NotesTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 555559948904951733L;
     private final Vector<String> columnNames;
     private static final int COLUMN_COUNT = 2;
-    private String[][] rowData;
+    private String[][] rowData = new String[0][];
 
-    public NotesTableModel(List<String[]> data){
+    public NotesTableModel(){
         super();
 
         columnNames = new Vector<>(COLUMN_COUNT);
         columnNames.add(Constant.messages.getString(PREFIX + ".columnHeaders.requestId"));
         columnNames.add(Constant.messages.getString(PREFIX + ".columnHeaders.noteContent"));
-        rowData = new String[data.size()][];
-        for (int i=0; i< data.size(); i++) {
-            rowData[i]= data.get(i);
-        }
     };
 
     @Override
@@ -67,5 +62,38 @@ public class NotesTableModel extends AbstractTableModel {
     public void setValueAt(Object value, int row, int col) {
         rowData[row][col] = value.toString();
         fireTableCellUpdated(row, col);
+    }
+
+    public void addRow(String[] newRow){
+
+        int prevRowCount = getRowCount();
+        String[][] tempRowData = new String[prevRowCount+1][];
+
+        for (int i=0; i< prevRowCount; i++) {
+            tempRowData[i]= rowData[i];
+        }
+
+        tempRowData[prevRowCount] = newRow;
+        rowData = tempRowData;
+        fireTableRowsInserted(prevRowCount, prevRowCount);
+
+    }
+
+    public void removeRow(int rowId){
+
+        int prevRowCount = getRowCount();
+        String[][] tempRowData = new String[prevRowCount-1][];
+
+        int counter = 0;
+        for (int i=0; i< prevRowCount; i++) {
+            if (i != rowId){
+                tempRowData[counter]= rowData[i];
+                counter++;
+            }
+        }
+
+        rowData = tempRowData;
+        fireTableRowsDeleted(rowId, rowId);
+
     }
 }

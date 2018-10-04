@@ -20,19 +20,21 @@ package org.zaproxy.zap.extension.AllInOneNotes;
 import java.awt.CardLayout;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.model.HistoryReferenceEventPublisher;
+import org.parosproxy.paros.model.Session;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ZapMenuItem;
 import javax.swing.BoxLayout;
@@ -40,9 +42,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
 
-public class ExtensionAllInOneNotes extends ExtensionAdaptor {
+public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionChangedListener{
 
     private ZapMenuItem menuReload;
     // The name is public so that other extensions can access it
@@ -60,12 +61,13 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor {
             ExtensionAllInOneNotes.class.getResource(RESOURCES + "/notepad.png"));
 
     private AbstractPanel statusPanel;
-    private ListSelectionModel tableSelectionModel;
+    protected static JXTable notesTable = new JXTable();
+    private static EventConsumerImpl eventConsumerImpl;
 
     private static final Logger LOGGER = Logger.getLogger(ExtensionAllInOneNotes.class);
     private static ExtensionHookView hookView;
 
-    private static JButton reload = new JButton(Constant.messages.getString(PREFIX + ".reload.button"));
+    private static JButton reload;
     private static TableExportButton<JXTable> exportButton = null;
 
     public ExtensionAllInOneNotes() {
@@ -74,9 +76,17 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor {
     }
 
     @Override
+    public void init(){
+        super.init();
+        reload = new JButton(Constant.messages.getString(PREFIX + ".reload.button"));
+        eventConsumerImpl = new EventConsumerImpl();
+        ZAP.getEventBus().registerConsumer(eventConsumerImpl, HistoryReferenceEventPublisher.getPublisher().getPublisherName());
+    }
+
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-
+        extensionHook.addSessionListener(this);
         // As long as we're not running as a daemon
         if (getView() != null) {
 
@@ -101,21 +111,39 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
+        // Unloading the event consumer
+        ZAP.getEventBus().unregisterConsumer(eventConsumerImpl, HistoryReferenceEventPublisher.getPublisher().getPublisherName());
+    }
 
-        // In this example it's not necessary to override the method, as there's nothing to unload
-        // manually, the components added through the class ExtensionHook (in hook(ExtensionHook))
-        // are automatically removed by the base unload() method.
-        // If you use/add other components through other methods you might need to free/remove them
-        // here (if the extension declares that can be unloaded, see above method).
+    @Override
+    public void sessionChanged(final Session session)  {
+        // session changed - extension should basically act as if "Reload" has been called and re-build the status panel
+        hookView.addStatusPanel(getStatusPanel());
+    }
+
+    @Override
+    public void sessionAboutToChange(Session session) {
+        //Left empty for now
+    }
+
+    @Override
+    public void sessionScopeChanged(Session session) {
+        //Left empty for now
+    }
+
+    @Override
+    public void sessionModeChanged(Control.Mode mode) {
+        //Left empty for now
     }
 
     private AbstractPanel getStatusPanel() {
 
+        NotesTableModel notesTableModel = new NotesTableModel();
+        notesTable.setModel(notesTableModel);
+
         ExtensionHistory extHist = (ExtensionHistory) org.parosproxy.paros.control.Control.getSingleton().
                 getExtensionLoader().getExtension(ExtensionHistory.NAME);
 
-
-        ArrayList<String[]> notes = new ArrayList<>();
 
         if (extHist != null) {
 
@@ -126,20 +154,12 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor {
                 HistoryReference hr = extHist.getHistoryReference(i);
                 if (hr != null) {
                     if (hr.hasNote()) {
-                        try {
-                            String note = hr.getHttpMessage().getNote();
-                            String[] tableRow = {String.valueOf(i), note};
-                            notes.add(tableRow);
-                        } catch (HttpMalformedHeaderException|DatabaseException e) {
-                            LOGGER.error(e.getMessage());
-                        }
+                        eventConsumerImpl.addRowToNotesTable(i);
                     }
                 }
             }
         }
 
-
-        JXTable notesTable = new JXTable(new NotesTableModel(notes));
         notesTable.setColumnSelectionAllowed(false);
         notesTable.setCellSelectionEnabled(false);
         notesTable.setRowSelectionAllowed(true);
