@@ -8,9 +8,9 @@
 	<changes>
 	<![CDATA[
 	Maintenance changes.<br>
-	Persistent XSS scanner upated to address various false negatives (Issue 4692).<br>
+	Persistent XSS scanner updated to address various false negatives (Issue 4692).<br>
 	Command Injection plugin updated to include payloads for Uninitialized environment variable WAF bypass (Issue 4968).<br>
-	Correct Remote OS Command Injection to use the expected time in all time based paylods.<br>
+	Correct Remote OS Command Injection to use the expected time in all time based payloads.<br>
 	]]>
     </changes>
 	<extensions>
