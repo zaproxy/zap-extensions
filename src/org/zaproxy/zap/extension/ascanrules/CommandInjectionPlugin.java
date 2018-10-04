@@ -19,7 +19,6 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -546,11 +545,12 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
         it = blindOsPayloads.iterator();
         
+        String timeSleepSecondsStr = String.valueOf(timeSleepSeconds);
         for(int i = 0; it.hasNext() && (i < blindTargetCount); i++) {
             HttpMessage msg = getNewMsg();
             payload = it.next();
             
-            paramValue = value + MessageFormat.format(payload, timeSleepSeconds);
+            paramValue = value + payload.replace("{0}", timeSleepSecondsStr);
             setParameter(msg, paramName, paramValue);
 
             if (log.isDebugEnabled()) {
