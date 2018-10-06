@@ -5,7 +5,7 @@
 
 <toc version="2.0">
 	<tocitem text="ZAP Panduan Pengguna" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+		<tocitem text="Add-On" tocid="addons">
 			<tocitem text="Teknologi Deteksi" image="addon.wappalyzer.icon" target="addon.wappalyzer.wappalyzer" />
 		</tocitem>
 	</tocitem>
