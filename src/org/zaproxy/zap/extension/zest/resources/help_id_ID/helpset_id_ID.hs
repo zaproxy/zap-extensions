@@ -26,7 +26,7 @@ Konteks | Permintaan Konteks</title>
 
   <view>
     <name>Search</name>
-    <label>Telusuri</label>
+    <label>Cari</label>
     <type>javax.help.SearchView</type>
     <data engine="com.sun.java.help.search.DefaultSearchEngine">
       JavaHelpSearch
