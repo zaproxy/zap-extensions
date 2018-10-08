@@ -386,7 +386,6 @@
 		<delete file="${versions.file}"/>
 
 		<!-- Keep in alphabetical order ;) -->
-		<build-addon name="AllInOneNotes" />
 		<build-addon name="ascanrules" />
 		<build-addon name="coreLang" />
 		<build-addon name="directorylistv1" />
@@ -459,10 +458,6 @@
 
 	<target name="deploy-ascanrules-without-help-indexes" description="deploy the active scan rules">
 		<build-deploy-addon-without-help-indexes name="ascanrules" />
-	</target>
-
-	<target name="deploy-allinonenotes" description="deploy the all in one notes add-on">
-		<build-deploy-addon name="AllInOneNotes" />
 	</target>
 
 	<target name="generate-wiki-ascanrules" description="Generates the wiki of active scan rules">
