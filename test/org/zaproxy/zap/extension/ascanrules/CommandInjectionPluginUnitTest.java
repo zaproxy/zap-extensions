@@ -34,6 +34,7 @@ import org.apache.commons.configuration.Configuration;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -181,8 +182,7 @@ public class CommandInjectionPluginUnitTest extends ActiveScannerAppParamTest<Co
 
     private static Configuration configWithSleepRule(String value) {
         Configuration config = new ZapXmlConfiguration();
-        // TODO Replace with RuleConfigParam.RULE_COMMON_SLEEP_TIME once available.
-        config.setProperty("rules.common.sleep", value);
+        config.setProperty(RuleConfigParam.RULE_COMMON_SLEEP_TIME, value);
         return config;
     }
 

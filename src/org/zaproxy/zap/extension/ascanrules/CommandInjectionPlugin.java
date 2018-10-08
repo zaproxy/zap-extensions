@@ -36,6 +36,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -53,7 +54,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 	/**
 	 * The name of the rule to obtain the time, in seconds, for time-based attacks.
 	 */
-	private static final String RULE_SLEEP_TIME = "rules.common.sleep";
+	private static final String RULE_SLEEP_TIME = RuleConfigParam.RULE_COMMON_SLEEP_TIME;
 
 	/**
 	 * Prefix for internationalised messages used by this rule
