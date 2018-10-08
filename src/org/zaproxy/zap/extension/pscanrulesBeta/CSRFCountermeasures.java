@@ -37,6 +37,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -317,7 +318,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 
     protected String getCSRFIgnoreList() {
     	if (csrfIgnoreList == null) {
-    		return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignorelist");
+    		return Model.getSingleton().getOptionsParam().getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_LIST);
     	}
     	return csrfIgnoreList;
     }
@@ -328,7 +329,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 
     protected String getCSRFIgnoreAttName() {
     	if (csrfAttIgnoreList == null) {
-    		return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignore.attname", null);	
+    		return Model.getSingleton().getOptionsParam().getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_ATT_NAME, null);	
     	}
         return csrfAttIgnoreList;
     }
@@ -339,7 +340,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
     
     protected String getCSRFIgnoreAttValue() {
     	if (csrfValIgnoreList == null) {
-    		return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignore.attvalue", null);
+    		return Model.getSingleton().getOptionsParam().getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_ATT_VALUE, null);
     	}
     	return csrfValIgnoreList;
     }
