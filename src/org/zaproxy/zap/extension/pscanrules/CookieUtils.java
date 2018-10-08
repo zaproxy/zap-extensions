@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
 /**
  * Utility class to extract/parse/check Set-Cookie header values.
@@ -171,7 +172,7 @@ class CookieUtils {
     public static Set<String> getCookieIgnoreList(Model model) {
         Set<String> ignoreList = new HashSet<String>();
         String ignoreConf = model.getOptionsParam().getConfig().
-                getString("rules.cookie.ignorelist");
+                getString(RuleConfigParam.RULE_COOKIE_IGNORE_LIST);
         if (ignoreConf != null && ignoreConf.length() > 0) {
             for (String str : ignoreConf.split(",")) {
                 String strTrim = str.trim();

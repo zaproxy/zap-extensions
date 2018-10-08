@@ -29,6 +29,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class CookieSecureFlagScannerUnitTest extends PassiveScannerTest<CookieSecureFlagScanner> {
@@ -127,7 +128,7 @@ public class CookieSecureFlagScannerUnitTest extends PassiveScannerTest<CookieSe
     
     @Test
     public void cookieOnIgnoreList() throws HttpMalformedHeaderException {
-        model.getOptionsParam().getConfig().setProperty("rules.cookie.ignorelist", "aaaa,test,bbb");
+        model.getOptionsParam().getConfig().setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,test,bbb");
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -146,7 +147,7 @@ public class CookieSecureFlagScannerUnitTest extends PassiveScannerTest<CookieSe
 
     @Test
     public void cookieNotOnIgnoreList() throws HttpMalformedHeaderException {
-        model.getOptionsParam().getConfig().setProperty("rules.cookie.ignorelist", "aaaa,bbb,ccc");
+        model.getOptionsParam().getConfig().setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,bbb,ccc");
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
