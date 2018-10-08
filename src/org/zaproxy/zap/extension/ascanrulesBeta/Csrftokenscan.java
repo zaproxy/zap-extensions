@@ -41,6 +41,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -145,7 +146,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	 */
 	@Override
 	public void init() {
-		String ignoreConf = getConfig().getString("rules.csrf.ignorelist");
+		String ignoreConf = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_LIST);
 		if (ignoreConf != null && ignoreConf.length() > 0) {
 			log.debug("Using ignore list: " + ignoreConf);
 			for (String str : ignoreConf.split(",")) {
@@ -155,8 +156,8 @@ public class Csrftokenscan extends AbstractAppPlugin {
 				}
 			}
 		}
-		ignoreAttName = getConfig().getString("rules.csrf.ignore.attname");
-		ignoreAttValue = getConfig().getString("rules.csrf.ignore.attvalue");
+		ignoreAttName = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_ATT_NAME);
+		ignoreAttValue = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_ATT_VALUE);
 	}
 
 	/**
