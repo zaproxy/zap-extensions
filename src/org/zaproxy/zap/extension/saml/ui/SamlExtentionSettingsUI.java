@@ -112,12 +112,18 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
                         "Do You want to save changes before exit?", SamlI18n.getMessage("saml.settings.messages" +
                         ".confirm"),
                         JOptionPane.YES_NO_CANCEL_OPTION);
+                boolean exit = false;
                 if (response == JOptionPane.YES_OPTION) {
                     saveChanges();
-                    SamlExtentionSettingsUI.this.setVisible(false);
+                    exit = true;
                 } else if(response==JOptionPane.NO_OPTION){
                     resetChanges();
-                    SamlExtentionSettingsUI.this.setVisible(false);
+                    exit = true;
+                }
+
+                if (exit) {
+                    setVisible(false);
+                    dispose();
                 }
             }
         });

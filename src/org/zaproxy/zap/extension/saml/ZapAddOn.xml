@@ -11,6 +11,7 @@
 	Compressed SAMLMessage is not required<br>
 	Possibility to disable compression when sending<br>
 	Added SAML Passive Scanner<br>
+	Dynamically unload the add-on.<br>
 	]]>
 	</changes>
     <dependson/>
