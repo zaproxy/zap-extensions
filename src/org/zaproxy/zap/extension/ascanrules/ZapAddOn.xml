@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>33</version>
+	<version>34</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
@@ -29,6 +29,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRemoteFileInclude</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestServerSideInclude</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestSQLInjection</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestServerSideTemplateInjection</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<files/>
