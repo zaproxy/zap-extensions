@@ -71,4 +71,9 @@ public class SAMLExtension extends ExtensionAdaptor {
             log.error("SAML Extension can't be loaded. Configuration not found or invalid",e);
         }
     }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 }
