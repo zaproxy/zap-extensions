@@ -7,7 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Fix an exception when dispatching events.
+	Fix exceptions when handling/dispatching events.<br>
 	]]>
 	</changes>
 	<classnames>
