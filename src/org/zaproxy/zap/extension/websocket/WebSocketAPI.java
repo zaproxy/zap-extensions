@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.websocket;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -255,11 +256,13 @@ public class WebSocketAPI extends ApiImplementor {
             return;
         }
 
-        // TODO replace the loop with:
+        // TODO replace the sync block and loop with:
         // ZAP.getEventBus().unregisterConsumer(consumer);
         // once available in targeted ZAP version.
-        for (String publisherName : consumer.getPublisherNames()) {
-            ZAP.getEventBus().unregisterConsumer(consumer, publisherName);
+        synchronized (consumer.getPublisherNames()) {
+            for (String publisherName : consumer.getPublisherNames()) {
+                ZAP.getEventBus().unregisterConsumer(consumer, publisherName);
+            }
         }
     }
 
@@ -293,7 +296,7 @@ public class WebSocketAPI extends ApiImplementor {
         return sent;
     }
 
-    private Map<Integer, WebsocketEventConsumer> evMap = new HashMap<Integer, WebsocketEventConsumer>();
+    private Map<Integer, WebsocketEventConsumer> evMap = Collections.synchronizedMap(new HashMap<>());
 
     private WebsocketEventConsumer getEventConsumer(int channelId) {
         return evMap.computeIfAbsent(channelId, key -> new WebsocketEventConsumer(key));
@@ -441,7 +444,7 @@ public class WebSocketAPI extends ApiImplementor {
 
         protected WebsocketEventConsumer(int channelId) {
             this.channelId = channelId;
-            this.publisherNames = new HashSet<>();
+            this.publisherNames = Collections.synchronizedSet(new HashSet<>());
         }
 
         public void addPublisherName(String name) {
