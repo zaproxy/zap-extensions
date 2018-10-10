@@ -42,6 +42,7 @@ import net.htmlparser.jericho.Source;
 
 public class LinkTargetScanner extends PluginPassiveScanner {
 
+    // TODO Replace "rules.domains.trusted" with RuleConfigParam.RULE_DOMAINS_TRUSTED once available.
     public static final String TRUSTED_DOMAINS_PROPERTY = "rules.domains.trusted";
     private static final String MESSAGE_PREFIX = "pscanalpha.linktarget.";
 
