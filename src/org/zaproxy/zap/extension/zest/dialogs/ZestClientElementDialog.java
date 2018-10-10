@@ -83,8 +83,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
 		this.addComboField(FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
 		this.addTextField(FIELD_ELEMENT, client.getElement());
 		
-		// Enable right click menus
-		this.addFieldListener(FIELD_ELEMENT, ZestZapUtils.stdMenuAdapter()); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_ELEMENT)); 
 	}
 
 	private List<String> getElementTypeFields() {

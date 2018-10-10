@@ -73,8 +73,7 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 		this.addTextField(FIELD_URL, client.getUrl());
 		this.addCheckBoxField(FIELD_REGEX, client.isRegex());
 		
-		// Enable right click menus
-		this.addFieldListener(FIELD_URL, ZestZapUtils.stdMenuAdapter()); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_URL)); 
 	}
 
 	@Override

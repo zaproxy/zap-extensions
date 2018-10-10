@@ -60,8 +60,8 @@ public class ZestParameterDialog extends StandardFieldsDialog implements ZestDia
 		this.addTextField(FIELD_PARAM_VALUE, value);
 		this.addPadding();
 		
-		this.addFieldListener(FIELD_PARAM_NAME, ZestZapUtils.stdMenuAdapter()); 
-		this.addFieldListener(FIELD_PARAM_VALUE, ZestZapUtils.stdMenuAdapter()); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_NAME));
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_VALUE));
 
 	}
 	

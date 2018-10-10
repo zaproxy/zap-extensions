@@ -175,8 +175,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
 		this.addComboField(ZestClientElementDialog.FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
 		this.addTextField(ZestClientElementDialog.FIELD_ELEMENT, loop.getElement());
 		
-		// Enable right click menus
-		this.addFieldListener(ZestClientElementDialog.FIELD_ELEMENT, ZestZapUtils.stdMenuAdapter()); 
+		ZestZapUtils.setMainPopupMenu(this.getField(ZestClientElementDialog.FIELD_ELEMENT));
 	}
 
 	private void drawLoopRegexDialog(ZestLoopRegex loop) {

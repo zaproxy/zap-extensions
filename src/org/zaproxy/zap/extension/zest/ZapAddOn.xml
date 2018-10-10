@@ -15,6 +15,7 @@
 	Title caps adjustments (Issue 2000).<br>
 	Use selected text when adding assignments from the request/response.<br>
 	Show expression's inverse state in more tree nodes.<br>
+	Allow to invoke the context menu in text fields also with keyboard.<br>
 	]]>
 	</changes>
 	<dependencies>
