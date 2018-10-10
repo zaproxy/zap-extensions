@@ -28,6 +28,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -158,9 +159,9 @@ public class SQLInjectionMsSQL extends AbstractAppParamPlugin {
 
 		// Read the sleep value from the configs
 		try {
-			this.sleep = this.getConfig().getInt("rules.common.sleep", DEFAULT_SLEEP_TIME);
+			this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_SLEEP_TIME);
 		} catch (ConversionException e) {
-			log.debug("Invalid value for 'rules.common.sleep': " + this.getConfig().getString("rules.common.sleep"));
+			log.debug("Invalid value for 'rules.common.sleep': " + this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
 		}
 		if ( log.isDebugEnabled() ) {
 			log.debug("Sleep set to " + sleep + " seconds");

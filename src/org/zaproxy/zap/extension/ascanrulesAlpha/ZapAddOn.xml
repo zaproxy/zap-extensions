@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAscanrulesAlphaAscanalpha</url>
 	<changes>
 	<![CDATA[
+	Update minimum ZAP version to 2.6.0.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -38,6 +39,6 @@
 	<files>
 		<file>xml/example-ascan-file.txt</file>
 	</files>
-	<not-before-version>2.5.0</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
