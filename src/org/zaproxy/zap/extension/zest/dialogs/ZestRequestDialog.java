@@ -135,10 +135,9 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		this.addMultilineField(0, FIELD_HEADERS, request.getHeaders());
 		this.addMultilineField(0, FIELD_BODY, request.getData());
 		
-		// Enable right click menus
-		this.addFieldListener(FIELD_URL, ZestZapUtils.stdMenuAdapter()); 
-		this.addFieldListener(FIELD_HEADERS, ZestZapUtils.stdMenuAdapter()); 
-		this.addFieldListener(FIELD_BODY, ZestZapUtils.stdMenuAdapter()); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_URL)); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_HEADERS));
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_BODY));
 
 		// Cookies tab
         List<JButton> buttons = new ArrayList<JButton>();

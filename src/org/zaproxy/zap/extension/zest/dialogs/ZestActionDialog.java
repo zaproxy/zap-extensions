@@ -132,14 +132,12 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 				this.addComboField(FIELD_PRIORITY, priorities, 
 						priorityToStr(ZestActionFail.Priority.valueOf(za.getPriority())));
 			}
-			// Enable right click menus
-			this.addFieldListener(FIELD_MESSAGE, ZestZapUtils.stdMenuAdapter()); 
+			ZestZapUtils.setMainPopupMenu(this.getField(FIELD_MESSAGE)); 
 
 		} else if (action instanceof ZestActionPrint) {
 			ZestActionPrint za = (ZestActionPrint) action;
 			this.addMultilineField(FIELD_MESSAGE, za.getMessage());
-			// Enable right click menus
-			this.addFieldListener(FIELD_MESSAGE, ZestZapUtils.stdMenuAdapter()); 
+			ZestZapUtils.setMainPopupMenu(this.getField(FIELD_MESSAGE)); 
 			
 		} else if (action instanceof ZestActionSleep) {
 			ZestActionSleep za = (ZestActionSleep) action;

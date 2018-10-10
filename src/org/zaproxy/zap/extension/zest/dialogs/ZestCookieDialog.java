@@ -65,11 +65,10 @@ public class ZestCookieDialog extends StandardFieldsDialog implements ZestDialog
 		this.addTextField(FIELD_PARAM_PATH, path);
 		this.addPadding();
 		
-		// Enable right click menus
-		this.addFieldListener(FIELD_PARAM_DOMAIN, ZestZapUtils.stdMenuAdapter()); 
-		this.addFieldListener(FIELD_PARAM_NAME, ZestZapUtils.stdMenuAdapter()); 
-		this.addFieldListener(FIELD_PARAM_VALUE, ZestZapUtils.stdMenuAdapter()); 
-		this.addFieldListener(FIELD_PARAM_PATH, ZestZapUtils.stdMenuAdapter()); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_DOMAIN)); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_NAME)); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_VALUE)); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_PATH)); 
 
 	}
 	

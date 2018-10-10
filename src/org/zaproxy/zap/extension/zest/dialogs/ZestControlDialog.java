@@ -72,8 +72,7 @@ public class ZestControlDialog extends StandardFieldsDialog implements ZestDialo
 		if (control instanceof ZestControlReturn) {
 			ZestControlReturn za = (ZestControlReturn) control;
 			this.addTextField(FIELD_VALUE, za.getValue());
-			// Enable right click menus
-			this.addFieldListener(FIELD_VALUE, ZestZapUtils.stdMenuAdapter());
+			ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
 		}
 		this.addPadding();
 	}

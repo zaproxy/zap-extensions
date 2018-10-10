@@ -144,8 +144,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 					assign.getVariableName(), true);
 			this.addTextField(FIELD_STRING, za.getString());
 			
-			// Enable right click menus
-			this.addFieldListener(FIELD_STRING, ZestZapUtils.stdMenuAdapter()); 
+			ZestZapUtils.setMainPopupMenu(this.getField(FIELD_STRING)); 
 
 		} else if (assign instanceof ZestAssignReplace) {
 			ZestAssignReplace za = (ZestAssignReplace) assign;
@@ -156,9 +155,8 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 			this.addCheckBoxField(FIELD_REGEX, za.isRegex());
 			this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
 
-			// Enable right click menus
-			this.addFieldListener(FIELD_REPLACE, ZestZapUtils.stdMenuAdapter()); 
-			this.addFieldListener(FIELD_REPLACEMENT, ZestZapUtils.stdMenuAdapter()); 
+			ZestZapUtils.setMainPopupMenu(this.getField(FIELD_REPLACE)); 
+			ZestZapUtils.setMainPopupMenu(this.getField(FIELD_REPLACEMENT)); 
 			
 		} else if (assign instanceof ZestAssignCalc) {
 			ZestAssignCalc za = (ZestAssignCalc) assign;
@@ -174,8 +172,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 					}, 
 					ZestZapUtils.calcOperationToLabel(za.getOperation()));
 			
-			// Enable right click menus
-			this.addFieldListener(FIELD_STRING, ZestZapUtils.stdMenuAdapter()); 
+			ZestZapUtils.setMainPopupMenu(this.getField(FIELD_STRING)); 
 
 		}
 		

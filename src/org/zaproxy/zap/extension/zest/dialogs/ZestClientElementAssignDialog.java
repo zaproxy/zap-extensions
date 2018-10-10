@@ -53,8 +53,7 @@ public class ZestClientElementAssignDialog extends ZestClientElementDialog imple
 		} else {
 			this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssign.edit.title"));
 		}
-		// Enable right click menus
-		this.addFieldListener(FIELD_ATTRIBUTE, ZestZapUtils.stdMenuAdapter()); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_ATTRIBUTE)); 
 	}
 
 	@Override

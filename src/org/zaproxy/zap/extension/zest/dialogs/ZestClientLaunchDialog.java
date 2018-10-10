@@ -116,8 +116,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
         
         this.addTableField(1, this.getParamsTable(), buttons);
 		
-		// Enable right click menus
-		this.addFieldListener(FIELD_URL, ZestZapUtils.stdMenuAdapter());
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_URL));
 	}
 	
 	private List<String[]> getCapabilities(ZestClientLaunch client) {

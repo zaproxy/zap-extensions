@@ -54,8 +54,7 @@ public class ZestClientElementSendKeysDialog extends ZestClientElementDialog imp
 			this.setTitle(Constant.messages.getString("zest.dialog.clientElementSendKeys.edit.title"));
 		}
 		
-		// Enable right click menus
-		this.addFieldListener(FIELD_VALUE, ZestZapUtils.stdMenuAdapter()); 
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE)); 
 
 	}
 

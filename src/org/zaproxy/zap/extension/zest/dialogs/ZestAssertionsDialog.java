@@ -105,8 +105,7 @@ public class ZestAssertionsDialog extends StandardFieldsDialog implements ZestDi
 			this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
 			this.addCheckBoxField(FIELD_INVERSE, za.isInverse());
 			
-			// Enable right click menus
-			this.addFieldListener(FIELD_VALUE, ZestZapUtils.stdMenuAdapter()); 
+			ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE)); 
 
 		} else if (assertion.getRootExpression() instanceof ZestExpressionRegex) {
 			ZestExpressionRegex za = (ZestExpressionRegex) assertion.getRootExpression();

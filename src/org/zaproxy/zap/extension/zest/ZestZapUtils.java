@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import java.awt.event.MouseAdapter;
+import java.awt.Component;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,6 +28,9 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -107,6 +110,8 @@ public class ZestZapUtils {
 	
 	// Only use for debugging for now, as the tree wont be fully updated if indexes change
 	private static boolean showIndexes = false;
+
+	private static JPopupMenu popupMenu;
 
 	public static String toUiString(ZestElement za) {
 		return toUiString(za, true, 0);
@@ -872,26 +877,26 @@ public class ZestZapUtils {
 		return 0;
 	}
 
-	public static MouseAdapter stdMenuAdapter() {
-		return new java.awt.event.MouseAdapter() {
-			@Override
-			public void mousePressed(java.awt.event.MouseEvent e) {
-				mouseAction(e);
-			}
+	// TODO remove once targeting core version that allows to set the pop up menu into the fields of StandardFieldsDialog.
+	public static void setMainPopupMenu(Component component) {
+		if (component instanceof JComponent) {
+			((JComponent) component).setComponentPopupMenu(getPopupMenu());
+		}
+	}
 
-			@Override
-			public void mouseReleased(java.awt.event.MouseEvent e) {
-				mouseAction(e);
-			}
+	private static JPopupMenu getPopupMenu() {
+		if (popupMenu == null) {
+			popupMenu = new JPopupMenu() {
 
-			public void mouseAction(java.awt.event.MouseEvent e) {
-				// right mouse button action
-				if (e.isPopupTrigger()) {
-					View.getSingleton().getPopupMenu()
-							.show(e.getComponent(), e.getX(), e.getY());
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void show(Component invoker, int x, int y) {
+					View.getSingleton().getPopupMenu().show(invoker, x, y);
 				}
-			}
-		};
+			};
+		}
+		return popupMenu;
 	}
 	
 	public static boolean isValidVariableName(String name) {

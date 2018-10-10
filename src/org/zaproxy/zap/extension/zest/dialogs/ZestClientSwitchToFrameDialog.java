@@ -84,8 +84,7 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
 		this.addNumberField(FIELD_FRAME_INDEX, -1, 1024, client.getFrameIndex());
 		this.addCheckBoxField(FIELD_PARENT_FRAME, client.isParent());
 		
-		// Enable right click menus
-		this.addFieldListener(FIELD_FRAME_NAME, ZestZapUtils.stdMenuAdapter());
+		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_FRAME_NAME));
 		
 		// Only allow one choice to be selected
 		this.addFieldListener(FIELD_FRAME_NAME, new ActionListener() {
