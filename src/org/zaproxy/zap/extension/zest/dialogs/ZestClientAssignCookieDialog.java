@@ -51,7 +51,7 @@ public class ZestClientAssignCookieDialog extends StandardFieldsDialog implement
 	private boolean add = false;
 
 	public ZestClientAssignCookieDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.clientWindow.add.title", dim);
+		super(owner, "zest.dialog.clientElementAssignCookie.add.title", dim);
 		this.extension = ext;
 	}
 
@@ -67,9 +67,9 @@ public class ZestClientAssignCookieDialog extends StandardFieldsDialog implement
 		this.removeAllFields();
 		
 		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindow.add.title"));
+			this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssignCookie.add.title"));
 		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindow.edit.title"));
+			this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssignCookie.edit.title"));
 		}
 
 		// Pull down of all the valid window ids
