@@ -2,7 +2,6 @@ package org.zaproxy.zap.extension.saml;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.control.ExtensionFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -184,7 +183,7 @@ public class SAMLConfiguration implements AttributeListener {
     public boolean saveConfiguration() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(ExtensionFactory.getAddOnLoader());
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             JAXBContext context = JAXBContext.newInstance(SAMLConfigData.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -209,7 +208,7 @@ public class SAMLConfiguration implements AttributeListener {
     private Object loadXMLObject(Class<?> clazz, File file) throws SAMLException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(ExtensionFactory.getAddOnLoader());
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             JAXBContext context = JAXBContext.newInstance(clazz);
             Unmarshaller unmarshaller = context.createUnmarshaller();
             return unmarshaller.unmarshal(file);
