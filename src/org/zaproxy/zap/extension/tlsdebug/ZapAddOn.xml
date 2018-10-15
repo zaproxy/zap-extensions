@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>TLS Debug</name>
-	<version>3</version>
+	<version>4</version>
 	<status>alpha</status>
 	<description>Provides a tab which allows to quickly debug a TLS/SSL connection</description>
 	<author>P.M.J. Roth</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Update minimum ZAP version to 2.5.0.<br>
-	Change default accelerator for TLS Debug tab.<br>
 	]]>
 	</changes>
 	<extensions>
