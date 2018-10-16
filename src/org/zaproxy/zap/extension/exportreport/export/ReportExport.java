@@ -59,7 +59,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
-import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.exportreport.filechooser.Utils;
 import org.zaproxy.zap.extension.exportreport.model.AlertItem;
@@ -232,7 +231,7 @@ final class ReportExport {
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(ExtensionFactory.getAddOnLoader());
+            Thread.currentThread().setContextClassLoader(ReportExport.class.getClassLoader());
             javax.xml.bind.JAXBContext jc = javax.xml.bind.JAXBContext.newInstance(Report.class);
             Marshaller jaxbMarshaller = jc.createMarshaller();
             jaxbMarshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
