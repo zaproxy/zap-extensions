@@ -17,6 +17,7 @@
 	Show expression's inverse state in more tree nodes.<br>
 	Correct dialogue titles of client statements.<br>
 	Allow to invoke the context menu in text fields also with keyboard.<br>
+	Correct fields' state in Switch To Frame dialogue.<br>
 	]]>
 	</changes>
 	<dependencies>

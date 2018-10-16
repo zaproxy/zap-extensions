@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
@@ -34,6 +37,8 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
+import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implements ZestDialog {
@@ -87,20 +92,33 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
 		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_FRAME_NAME));
 		
 		// Only allow one choice to be selected
-		this.addFieldListener(FIELD_FRAME_NAME, new ActionListener() {
+		((ZapTextField) getField(FIELD_FRAME_NAME)).getDocument().addDocumentListener(new DocumentListener() {
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (! isEmptyField(FIELD_FRAME_NAME)) {
+			public void insertUpdate(DocumentEvent e) {
+				checkFieldContent(e);
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				checkFieldContent(e);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				checkFieldContent(e);
+			}
+
+			private void checkFieldContent(DocumentEvent e) {
+				if (e.getDocument().getLength() > 0) {
 					setFieldValue(FIELD_FRAME_INDEX, -1);			
 				}
 			}});
-		this.addFieldListener(FIELD_FRAME_INDEX, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		((ZapNumberSpinner) getField(FIELD_FRAME_INDEX)).addChangeListener(e -> {
 				if (getIntValue(FIELD_FRAME_INDEX) >= 0) {
 					setFieldValue(FIELD_FRAME_NAME, "");			
 				}
-			}});
+			});
 		this.addFieldListener(FIELD_PARENT_FRAME, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
