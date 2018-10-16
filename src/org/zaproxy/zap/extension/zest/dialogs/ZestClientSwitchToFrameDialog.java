@@ -54,7 +54,7 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
 	private boolean add = false;
 
 	public ZestClientSwitchToFrameDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.clientWindow.add.title", dim);
+		super(owner, "zest.dialog.clientSwitchToFrame.add.title", dim);
 		this.extension = ext;
 	}
 
@@ -70,9 +70,9 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
 		this.removeAllFields();
 		
 		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindow.add.title"));
+			this.setTitle(Constant.messages.getString("zest.dialog.clientSwitchToFrame.add.title"));
 		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindow.edit.title"));
+			this.setTitle(Constant.messages.getString("zest.dialog.clientSwitchToFrame.edit.title"));
 		}
 
 		// Pull down of all the valid window ids

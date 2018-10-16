@@ -48,7 +48,7 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 	private boolean add = false;
 
 	public ZestClientWindowHandleDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.clientWindow.add.title", dim);
+		super(owner, "zest.dialog.clientWindowHandle.add.title", dim);
 		this.extension = ext;
 	}
 
@@ -64,9 +64,9 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 		this.removeAllFields();
 		
 		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindow.add.title"));
+			this.setTitle(Constant.messages.getString("zest.dialog.clientWindowHandle.add.title"));
 		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindow.edit.title"));
+			this.setTitle(Constant.messages.getString("zest.dialog.clientWindowHandle.edit.title"));
 		}
 
 		this.addTextField(FIELD_WINDOW_HANDLE, client.getWindowHandle());
