@@ -1,16 +1,12 @@
 <zapaddon>
 	<name>Requester</name>
-	<version>3</version>
+	<version>4</version>
 	<status>alpha</status>
 	<description>Request numbered panel.</description>
 	<author>Surikato</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Maintenance changes.<br>
-	Change default accelerator for Requester tab.<br>
-	Dynamically unload the add-on.<br>
-	Ensure use of title caps (Issue 2000).<br>
 	]]>
 	</changes>
 	<extensions>
