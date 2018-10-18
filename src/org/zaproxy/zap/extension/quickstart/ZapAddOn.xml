@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Notify when quick attack starts.<br>
+	Include expected status code in the error message.<br>
 	]]>
 	</changes>
 	<extensions>
