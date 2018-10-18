@@ -428,7 +428,7 @@ public class SpiderThread implements Runnable {
 
 			ExtensionSelenium extSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
 			EmbeddedBrowser embeddedBrowser = WebDriverBackedEmbeddedBrowser.withDriver(extSelenium.getWebDriver(
-					HttpSender.SPIDER_INITIATOR,
+					HttpSender.AJAX_SPIDER_INITIATOR,
 					providedBrowserId,
 					configuration.getProxyConfiguration().getHostname(),
 					configuration.getProxyConfiguration().getPort()), filterAttributes, crawlWaitEvent, crawlWaitReload);

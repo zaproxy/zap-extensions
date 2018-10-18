@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
+	Correct WebDriver requester ID.<br>
 	]]>
 	</changes>
 	<dependencies>
