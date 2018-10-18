@@ -54,12 +54,12 @@ public class BuiltInSingleWebDriverProvider implements SingleWebDriverProvider {
 
     @Override
     public WebDriver getWebDriver(int requester) {
-        return ExtensionSelenium.getWebDriver(browser);
+        return ExtensionSelenium.getWebDriver(requester, browser);
     }
 
     @Override
     public WebDriver getWebDriver(int requester, String proxyAddress, int proxyPort) {
-        return ExtensionSelenium.getWebDriver(browser, proxyAddress, proxyPort);
+        return ExtensionSelenium.getWebDriver(requester, browser, proxyAddress, proxyPort);
     }
 
     @Override
