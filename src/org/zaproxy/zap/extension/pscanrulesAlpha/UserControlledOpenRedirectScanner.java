@@ -130,7 +130,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 				getName());		
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), paramName, getExploitMessage(), 
+				.getURI().toString(), paramName, "", // No attack
 				getExtraInfoMessage(msg, paramName, paramValue, responseLocation),
 				getSolutionMessage(), getReferenceMessage(),  
 				"",	// No evidence
@@ -165,10 +165,6 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 
 	private String getReferenceMessage() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
-
-	private String getExploitMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "exploit");
 	}
 
 	private String getExtraInfoMessage(HttpMessage msg, String paramName,

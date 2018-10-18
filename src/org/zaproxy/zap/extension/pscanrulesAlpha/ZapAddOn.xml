@@ -9,6 +9,7 @@
 	<![CDATA[
 	Fix a stack overflow with PII Scanner.<br>
 	Fix a DateParseException in Cacheable Scanner (Issue 4969).<br>
+	Fix Open Redirect (10028) "Attack" should be Desc.<br>
 	]]>
 	</changes>
 	<extensions>
