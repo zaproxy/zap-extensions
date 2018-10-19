@@ -58,10 +58,13 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String DEFAULT_VALUE_URL_FIELD = "http://";
+
 	private ExtensionQuickStart extension;
 	private JButton attackButton = null;
 	private JButton stopButton = null;
 	private ZapTextField urlField = null;
+	private JButton selectButton;
 	private JLabel progressLabel = null;
 	private JPanel panelContent = null;
 	private JLabel lowerPadding = new JLabel("");
@@ -122,7 +125,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 				LayoutHelper.getGBC(0, ++panelY, 1, 0.0D, new Insets(5,5,5,5)));
 
 		JPanel urlSelectPanel = new JPanel(new GridBagLayout());
-		JButton selectButton = new JButton(Constant.messages.getString("all.button.select"));
+		selectButton = new JButton(Constant.messages.getString("all.button.select"));
 		selectButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(View.class.getResource("/resource/icon/16/094.png")))); // Globe icon
 		selectButton.addActionListener(new java.awt.event.ActionListener() { 
 			@Override
@@ -196,11 +199,15 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		case safe:
 		case protect:
 			this.getUrlField().setEditable(false);
+			this.getUrlField().setText(Constant.messages.getString("quickstart.field.url.disabled.mode"));
+			this.selectButton.setEnabled(false);
 			this.getAttackButton().setEnabled(false);
 			break;
 		case standard:
 		case attack:
 			this.getUrlField().setEditable(true);
+			this.getUrlField().setText(DEFAULT_VALUE_URL_FIELD);
+			this.selectButton.setEnabled(true);
 			this.getAttackButton().setEnabled(true);
 			break;
 		}
@@ -209,7 +216,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	private ZapTextField getUrlField () {
 		if (urlField == null) {
 			urlField = new ZapTextField();
-			urlField.setText("http://");
+			urlField.setText(DEFAULT_VALUE_URL_FIELD);
 		}
 		return urlField;
 	}

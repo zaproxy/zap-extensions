@@ -7,6 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
+	Inform when quick attack is disabled by the current mode (Issue 5069).<br>
 	Notify when quick attack starts.<br>
 	]]>
 	</changes>
