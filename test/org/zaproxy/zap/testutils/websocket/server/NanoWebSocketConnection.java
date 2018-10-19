@@ -43,6 +43,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
     private boolean pongReceived = true;
     private Stack<WebSocketFrame> incomingMessages;
     private Stack<WebSocketFrame> outgoingMessages;
+    private WebSocketFrameListener incomingListener;
     
     public NanoWebSocketConnection(NanoHTTPD.IHTTPSession handshakeRequest){
         super(handshakeRequest);
@@ -98,12 +99,19 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
     
     @Override
     protected void onMessage(WebSocketFrame webSocketFrame) {
+        receivedFrame(webSocketFrame);
+    }
+
+    private void receivedFrame(WebSocketFrame webSocketFrame) {
+        if (incomingListener != null) {
+            incomingListener.frameReceived(webSocketFrame);
+        }
         incomingMessages.push(webSocketFrame);
     }
     
     @Override
     protected void onPong(WebSocketFrame webSocketFrame) {
-        incomingMessages.push(webSocketFrame);
+        receivedFrame(webSocketFrame);
         setPongReceived(true);
     }
     
@@ -179,5 +187,12 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
         }
     }
     
+    public void addIncomingWebSocketFrameListener(WebSocketFrameListener listener) {
+        this.incomingListener = listener;
+    }
     
+    public interface WebSocketFrameListener {
+
+        void frameReceived(WebSocketFrame frame);
+    }
 }

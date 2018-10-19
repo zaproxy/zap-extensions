@@ -21,10 +21,7 @@
 
 package org.zaproxy.zap.extension.websocket.client;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import fi.iki.elonen.NanoWSD;
 import fi.iki.elonen.NanoWSD.WebSocketFrame;
@@ -39,8 +36,9 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy;
 import org.zaproxy.zap.testutils.WebSocketTestUtils;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
 
-import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class WebSocketProxyUnitTest extends WebSocketTestUtils {
 	
@@ -69,18 +67,16 @@ public class WebSocketProxyUnitTest extends WebSocketTestUtils {
 		HttpMessage handshakeRequest = new HttpMessage(HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
 		
 		WebSocketProxy webSocketProxy = establisher.send(new HandshakeConfig(handshakeRequest,false,false));
+		assertTrue(webSocketProxy.isConnected());
 		NanoWebSocketConnection webSocketConnection = super.getLastConnection();
 		
+		int numberExpectedIncomingMessages = 4;
+		CountDownLatch cdl = new CountDownLatch(numberExpectedIncomingMessages);
+		webSocketConnection.addIncomingWebSocketFrameListener(wf -> cdl.countDown());
 		webSocketConnection.setPingScheduling(50,("1010").getBytes());
+		assertTrue(cdl.await(2, TimeUnit.SECONDS));
 		
-		Thread.sleep(300);
-		
-		assertTrue(webSocketProxy.isConnected());
-		
-		List<WebSocketFrame> messages = webSocketConnection.getListOfIncomingMessages();
-		assertThat(messages, hasSize(greaterThanOrEqualTo(4)));
-		
-		for(WebSocketFrame message : messages){
+		for(WebSocketFrame message : webSocketConnection.getListOfIncomingMessages()){
 			assertEquals("1010", message.getTextPayload());
 			assertEquals("Pong", message.getOpCode().toString());
 		}
