@@ -246,7 +246,9 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 
 	@Override
 	public void sessionModeChanged(Mode mode) {
-		this.getQuickStartPanel().setMode(mode);
+		if (getView() != null) {
+			this.getQuickStartPanel().setMode(mode);
+		}
 	}
 
 	@Override
