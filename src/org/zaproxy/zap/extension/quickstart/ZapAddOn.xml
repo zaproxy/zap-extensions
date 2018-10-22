@@ -9,6 +9,7 @@
 	<![CDATA[
 	Inform when quick attack is disabled by the current mode (Issue 5069).<br>
 	Notify when quick attack starts.<br>
+	Include expected status code in the error message.<br>
 	]]>
 	</changes>
 	<extensions>
