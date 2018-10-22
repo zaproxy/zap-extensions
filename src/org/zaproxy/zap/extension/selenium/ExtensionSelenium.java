@@ -605,7 +605,19 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @see #getWebDriver(Browser, String, int)
      */
     public static WebDriver getWebDriver(Browser browser) {
-        return getWebDriverImpl(browser, null, -1);
+        return getWebDriver(-1, browser);
+    }
+
+    /**
+     * Gets a {@code WebDriver} for the given requester and {@code browser}.
+     *
+     * @param requester the ID of the component requesting the {@code WebDriver}.
+     * @param browser the target browser.
+     * @return the {@code WebDriver} to the given {@code browser}.
+     * @see #getWebDriver(Browser)
+     */
+    public static WebDriver getWebDriver(int requester, Browser browser) {
+        return getWebDriver(requester, browser, null, -1);
     }
 
     /**
@@ -620,9 +632,25 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @see #getWebDriver(Browser)
      */
     public static WebDriver getWebDriver(Browser browser, String proxyAddress, int proxyPort) {
+        return getWebDriver(-1, browser, proxyAddress, proxyPort);
+    }
+
+    /**
+     * Gets a {@code WebDriver} for the given requester and {@code browser} proxying through the given address and port.
+     *
+     * @param requester the ID of the component requesting the {@code WebDriver}.
+     * @param browser the target browser.
+     * @param proxyAddress the address of the proxy.
+     * @param proxyPort the port of the proxy.
+     * @return the {@code WebDriver} to the given {@code browser}, proxying through the given address and port.
+     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if {@code proxyPort} is not a valid
+     *             port number (between 1 and 65535).
+     * @see #getWebDriver(Browser)
+     */
+    public static WebDriver getWebDriver(int requester, Browser browser, String proxyAddress, int proxyPort) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
-        return getWebDriverImpl(browser, proxyAddress, proxyPort);
+        return getWebDriverImpl(requester, browser, proxyAddress, proxyPort);
     }
     
     private static void setCommonOptions(MutableCapabilities capabilities, String proxyAddress, int proxyPort) {
@@ -639,7 +667,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
     }
 
-    private static WebDriver getWebDriverImpl(Browser browser, String proxyAddress, int proxyPort) {
+    private static WebDriver getWebDriverImpl(int requester, Browser browser, String proxyAddress, int proxyPort) {
         switch (browser) {
         case CHROME:
             ChromeOptions chromeOptions = new ChromeOptions();
@@ -657,9 +685,14 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 firefoxOptions.setBinary(binaryPath);
             }
 
-            // Disable the captive checks/requests, mainly to avoid flooding
-            // the AJAX Spider results (those requests are out of scope).
-            firefoxOptions.addPreference("network.captive-portal-service.enabled", false);
+            if (requester == HttpSender.AJAX_SPIDER_INITIATOR) {
+                // Disable the captive checks/requests, mainly to avoid flooding
+                // the AJAX Spider results (those requests are out of scope).
+                firefoxOptions.addPreference("network.captive-portal-service.enabled", false);
+                // Disable JSON viewer, otherwise AJAX Spider will crawl it.
+                // https://developer.mozilla.org/en-US/docs/Tools/JSON_viewer
+                firefoxOptions.addPreference("devtools.jsonview.enabled", false);
+            }
 
             if (proxyAddress != null) {
                 // Some issues prevent the PROXY capability from being properly applied:
