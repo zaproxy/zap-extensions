@@ -805,6 +805,11 @@
 	<target name="deploy-formhandler" description="deploy the form handling extension">
 		<build-deploy-addon name="formhandler" />
 	</target>
+	
+	<target name="deploy-formhandler-without-help-indexes" description="deploy the form handling extension">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="formhandler" />
+	</target>
 
     <target name="generate-wiki-formhandler" description="Generates the wiki of form handling extension">
         <generate-wiki addon="formhandler" />

@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -50,7 +51,7 @@ class DialogAddField extends AbstractFormDialog {
     private static final String TEXT_NAME_REPEATED_DIALOG = Constant.messages.getString("formhandler.options.dialog.field.warning.name.repeated.text");
 
     private ZapTextField nameTextField;
-    private ZapTextField valueTextField;
+    private ZapTextField valueField;
     private JCheckBox enabledCheckBox;
 
     protected FormHandlerParamField field;
@@ -84,7 +85,7 @@ class DialogAddField extends AbstractFormDialog {
                 .addComponent(enabledLabel))
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(getNameTextField())
-                .addComponent(getValueTextField())
+                .addComponent(getValueField())
                 .addComponent(getEnabledCheckBox()))
         );
 
@@ -94,7 +95,7 @@ class DialogAddField extends AbstractFormDialog {
                 .addComponent(getNameTextField()))
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(valueLabel)
-                    .addComponent(getValueTextField()))
+                    .addComponent(getValueField()))
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(enabledLabel)
                 .addComponent(getEnabledCheckBox()))
@@ -124,15 +125,18 @@ class DialogAddField extends AbstractFormDialog {
         String fieldName = getNameTextField().getText().toLowerCase();
         for (FormHandlerParamField t : fields) {
             if (fieldName.equals(t.getName())) {
-                JOptionPane.showMessageDialog(this, TEXT_NAME_REPEATED_DIALOG,
-                        TITLE_NAME_REPEATED_DIALOG,
-                        JOptionPane.INFORMATION_MESSAGE);
+                showNameRepeatedDialog();
                 getNameTextField().requestFocusInWindow();
                 return false;
             }
         }
 
         return true;
+    }
+
+    protected void showNameRepeatedDialog() {
+        JOptionPane.showMessageDialog(this, TEXT_NAME_REPEATED_DIALOG, TITLE_NAME_REPEATED_DIALOG,
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -185,11 +189,15 @@ class DialogAddField extends AbstractFormDialog {
     }
 
     protected ZapTextField getValueTextField() {
-        if (valueTextField == null) {
-            valueTextField = new ZapTextField(25);
+        if (valueField == null) {
+            valueField = new ZapTextField(25);
         }
 
-        return valueTextField;
+        return valueField;
+    }
+
+    protected JComponent getValueField() {
+        return getValueTextField();
     }
 
     protected JCheckBox getEnabledCheckBox() {

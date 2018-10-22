@@ -27,6 +27,8 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.zaproxy.zap.extension.params.ExtensionParams;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 
@@ -39,6 +41,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
     private FormHandlerParam param;
 
     private OptionsFormHandlerPanel optionsFormHandlerPanel;
+    private PopupMenuAddFormhandlerParam popupMenuAddFormhandlerParam;
 
     public ExtensionFormHandler() {
         super(NAME);
@@ -49,13 +52,17 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(getParam());
-        ExtensionSpider extension = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
+        ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
+        ExtensionSpider extension = extLoader.getExtension(ExtensionSpider.class);
         if (extension != null){
             extension.setValueGenerator(new FormHandlerValueGenerator(getParam()));
         }
 
         if (getView() != null) {
             extensionHook.getHookView().addOptionPanel(getOptionsFormHandlerPanel());
+            if (extLoader.isExtensionEnabled(ExtensionParams.NAME)) {
+                extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAddFormhandlerParam());
+            }
         }
     }
 
@@ -99,6 +106,13 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
 
     public void removeFormHandlerFieldName(String field) {
         this.getParam().removeField(field);
+    }
+
+    private PopupMenuAddFormhandlerParam getPopupMenuAddFormhandlerParam() {
+        if (popupMenuAddFormhandlerParam == null) {
+            popupMenuAddFormhandlerParam = new PopupMenuAddFormhandlerParam();
+        }
+        return popupMenuAddFormhandlerParam;
     }
 
     @Override
