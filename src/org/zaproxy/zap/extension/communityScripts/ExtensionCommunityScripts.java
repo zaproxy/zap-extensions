@@ -73,10 +73,6 @@ public class ExtensionCommunityScripts extends ExtensionAdaptor {
 	}
 
 	@Override
-	public void postInstall() {
-	}
-	
-	@Override
 	public void postInit() {
 		addScripts();
 	}
