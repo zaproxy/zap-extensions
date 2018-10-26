@@ -1,11 +1,14 @@
 <zapaddon>
 	<name>Form Handler</name>
-	<version>2</version>
+	<version>3</version>
 	<status>alpha</status>
 	<description>This Form Handler Add-on allows a user to define field names and values to be used in a form's fields. Fields can be added, modified, enabled, and deleted for use in form fields.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Add context menu to params panel.</changes>
+	<changes>
+	<![CDATA[
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.formhandler.ExtensionFormHandler</extension>
 	</extensions>
