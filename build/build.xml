@@ -633,6 +633,11 @@
   	<target name="deploy-replacer" description="deploy the replacer extension">
   		<build-deploy-addon name="replacer"/>
 	</target>
+	
+	<target name="deploy-replacer-without-help-indexes" description="deploy the replacer extension, without building help indexes">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="replacer" />
+	</target>
 
 	<target name="generate-wiki-replacer" description="Generates the wiki of replacer">
 		<generate-wiki-core addon="replacer" />
