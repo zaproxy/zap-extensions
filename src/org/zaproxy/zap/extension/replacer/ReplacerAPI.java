@@ -73,9 +73,8 @@ public class ReplacerAPI extends ApiImplementor {
                                 PARAM_ENABLED,
                                 PARAM_MATCH_TYPE,
                                 PARAM_MATCH_REGEX,
-                                PARAM_MATCH_STRING,
-                                PARAM_REPLACEMENT },
-                        new String[] { PARAM_INITIATORS }));
+                                PARAM_MATCH_STRING},
+                        new String[] { PARAM_REPLACEMENT, PARAM_INITIATORS }));
 
         this.addApiAction(new ApiAction(ACTION_REMOVE_RULE, new String[] { PARAM_DESC }));
         this.addApiAction(new ApiAction(ACTION_SET_ENABLED, new String[] { PARAM_DESC, PARAM_BOOL }));
@@ -165,7 +164,7 @@ public class ReplacerAPI extends ApiImplementor {
                             type,
                             matchString,
                             matchRegex,
-                            params.getString(PARAM_REPLACEMENT),
+                            getParam(params, PARAM_REPLACEMENT, ""),
                             initiators,
                             enabled));
 
