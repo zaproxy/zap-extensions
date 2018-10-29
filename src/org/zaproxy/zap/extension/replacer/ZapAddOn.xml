@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Replacer</name>
-	<version>7</version>
+	<version>8</version>
 	<status>beta</status>
 	<description>Easy way to replace strings in requests and responses.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Maintenance changes.<br>
-	API, Replacement String should not be mandatory (Issue 5080).
 	]]>
 	</changes>
 	<extensions>
