@@ -735,14 +735,26 @@
 		<build-deploy-addon name="webdriverlinux" />
 	</target>
 
+	<target name="generate-wiki-webdriverlinux" description="Generates the wiki of webdriverlinux">
+		<generate-wiki-core addon="webdriverlinux" />
+	</target>
+
 	<target name="deploy-webdrivermacos" description="deploy the webdrivermacos extension">
 		<antcall target="download-webdrivers"/>
 		<build-deploy-addon name="webdrivermacos" />
 	</target>
 
+	<target name="generate-wiki-webdrivermacos" description="Generates the wiki of webdrivermacos">
+		<generate-wiki-core addon="webdrivermacos" />
+	</target>
+
 	<target name="deploy-webdriverwindows" description="deploy the webdriverwindows extension">
 		<antcall target="download-webdrivers"/>
 		<build-deploy-addon name="webdriverwindows" />
+	</target>
+
+	<target name="generate-wiki-webdriverwindows" description="Generates the wiki of webdriverwindows">
+		<generate-wiki-core addon="webdriverwindows" />
 	</target>
 
 	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
