@@ -32,7 +32,7 @@ public class HTTPDTestServer extends NanoHTTPD {
     private NanoServerHandler handler404 = new NanoServerHandler(""){
         @Override
         protected Response serve(IHTTPSession session) {
-            return new Response(
+            return newFixedLengthResponse(
                     Response.Status.NOT_FOUND, MIME_HTML, 
                     "<html><head><title>404</title></head><body>404 Not Found</body></html>");
         }};

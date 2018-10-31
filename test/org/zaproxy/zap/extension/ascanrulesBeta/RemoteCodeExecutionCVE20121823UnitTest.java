@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -84,7 +85,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
             @Override
             protected Response serve(IHTTPSession session) {
                 consumeBody(session);
-                return new Response("Nothing echoed...");
+                return newFixedLengthResponse("Nothing echoed...");
             }
         });
         HttpMessage message = getHttpMessage(test + "%7B+%25%24");
@@ -117,7 +118,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
             @Override
             protected Response serve(IHTTPSession session) {
                 consumeBody(session);
-                return new Response("Nothing echoed...");
+                return newFixedLengthResponse("Nothing echoed...");
             }
         });
         HttpMessage message = getHttpMessage(test);
@@ -142,7 +143,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
                 for (int i = 0; i < 50; i++) {
                     strBuilder.append(" response content...\n");
                 }
-                return new Response(strBuilder.toString());
+                return newFixedLengthResponse(strBuilder.toString());
             }
         });
         HttpMessage message = getHttpMessage(test);
@@ -241,9 +242,9 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
         @Override
         public Response serve(IHTTPSession session) {
             if (isAttackSuccessful(getBody(session))) {
-                return new Response(body);
+                return newFixedLengthResponse(body);
             }
-            return new Response("Nothing echoed...");
+            return newFixedLengthResponse("Nothing echoed...");
         }
 
         protected abstract boolean isAttackSuccessful(String requestBody);

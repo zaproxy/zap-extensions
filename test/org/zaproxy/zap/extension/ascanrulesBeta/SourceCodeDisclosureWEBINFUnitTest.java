@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -159,7 +160,7 @@ public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<Source
 
         @Override
         public Response serve(IHTTPSession session) {
-            return new Response(
+            return newFixedLengthResponse(
                     Response.Status.NOT_FOUND,
                     "text/html",
                     "<html><body><h1>404 Not Found</h1>\n<a href=\"/about.html\">About Page</a></body></html>");
@@ -190,7 +191,7 @@ public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<Source
 
         @Override
         public Response serve(IHTTPSession session) {
-            return new Response(Response.Status.OK, "application/class", new ByteArrayInputStream(JAVA_CLASS));
+            return newFixedLengthResponse(Response.Status.OK, "application/class", new ByteArrayInputStream(JAVA_CLASS), JAVA_CLASS.length);
         }
     }
 
@@ -202,7 +203,7 @@ public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<Source
 
         @Override
         public Response serve(IHTTPSession session) {
-            return new Response(
+            return newFixedLengthResponse(
                     Response.Status.NOT_FOUND,
                     "text/html",
                     "<html><body><h1>404 Not Found</h1>\nNot Found.</body></html>");
@@ -217,7 +218,7 @@ public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<Source
 
         @Override
         public Response serve(IHTTPSession session) {
-            return new Response(
+            return newFixedLengthResponse(
                     Response.Status.OK,
                     "text/html",
                     "<html><body><h1>Some Title</h1>\nSome content.</body></html>");

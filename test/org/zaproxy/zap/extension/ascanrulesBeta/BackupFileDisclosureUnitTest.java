@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
@@ -143,8 +144,7 @@ public class BackupFileDisclosureUnitTest extends ActiveScannerTest<BackupFileDi
                 boolean isAlertUrl = session.getUri().contains("sitemap.xml.bak");
                 String content = isAlertUrl ? "<html></html>" : "";
                 Response.Status rs = isAlertUrl ? Response.Status.OK : Response.Status.NOT_FOUND;
-                Response resp = new Response(rs, NanoHTTPD.MIME_HTML, content);
-                return resp;
+                return newFixedLengthResponse(rs, NanoHTTPD.MIME_HTML, content);
             }
         });
         HttpMessage message = getHttpMessage(test + "sitemap.xml");
@@ -163,7 +163,7 @@ public class BackupFileDisclosureUnitTest extends ActiveScannerTest<BackupFileDi
 
         @Override
         protected Response serve(IHTTPSession session) {
-            return new Response(
+            return newFixedLengthResponse(
                     Response.Status.FORBIDDEN,
                     "text/html",
                     FORBIDDEN_RESPONSE_WITH_REQUESTED_PATH.replace(PATH_TOKEN, session.getUri()));

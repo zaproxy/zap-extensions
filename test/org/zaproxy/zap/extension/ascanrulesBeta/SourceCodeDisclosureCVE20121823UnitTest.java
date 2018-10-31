@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -141,7 +142,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
 
             @Override
             protected Response serve(IHTTPSession session) {
-                return new Response("No Source Code here!");
+                return newFixedLengthResponse("No Source Code here!");
             }
         });
         HttpMessage message = getHttpMessage("");
@@ -160,7 +161,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
 
             @Override
             protected Response serve(IHTTPSession session) {
-                return new Response("No Source Code here!");
+                return newFixedLengthResponse("No Source Code here!");
             }
         });
         HttpMessage message = getHttpMessage(test + "%7B+%25%24");
@@ -179,7 +180,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
 
             @Override
             protected Response serve(IHTTPSession session) {
-                return new Response("No Source Code here!");
+                return newFixedLengthResponse("No Source Code here!");
             }
         });
         HttpMessage message = getHttpMessage(test);
@@ -199,7 +200,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
             @Override
             protected Response serve(IHTTPSession session) {
                 String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_TAGS);
-                return new Response("<html><body>" + encodedPhpCode + "</body></html>");
+                return newFixedLengthResponse("<html><body>" + encodedPhpCode + "</body></html>");
             }
         });
         HttpMessage message = getHttpMessage(test);
@@ -225,7 +226,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
             @Override
             protected Response serve(IHTTPSession session) {
                 String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_TAGS);
-                return new Response(
+                return newFixedLengthResponse(
                         Response.Status.INTERNAL_ERROR,
                         "text/html",
                         "<html><body>" + encodedPhpCode + "</body></html>");
@@ -249,7 +250,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
             @Override
             protected Response serve(IHTTPSession session) {
                 String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_ECHO_TAG);
-                return new Response("<html><body>" + encodedPhpCode + "</body></html>");
+                return newFixedLengthResponse("<html><body>" + encodedPhpCode + "</body></html>");
             }
         });
         HttpMessage message = getHttpMessage(test);
@@ -275,7 +276,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
             @Override
             protected Response serve(IHTTPSession session) {
                 String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_ECHO_TAG);
-                return new Response(
+                return newFixedLengthResponse(
                         Response.Status.INTERNAL_ERROR,
                         "text/html",
                         "<html><body>" + encodedPhpCode + "</body></html>");
