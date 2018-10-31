@@ -19,63 +19,41 @@
  */
 package org.zaproxy.zap.extension.groovy;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.junit.Test;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
 
 import groovy.lang.GroovyClassLoader;
 
-/** Verifies that the script templates are parsed without errors. */
-public class VerifyScriptTemplates {
+/** Verifies that the Groovy templates are parsed without errors. */
+public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
-    @Test
-    public void shouldParseTemplates() throws Exception {
-        // Given
-        List<Path> templates = getScriptTemplates(".groovy");
-        try (GroovyClassLoader groovyCl = new GroovyClassLoader()) {
-            for (Path template : templates) {
-                // When / Then
-                groovyCl.parseClass(template.toFile());
-            }
-        }
+    private static GroovyClassLoader groovyCl;
+
+    @BeforeClass
+    public static void setUp() {
+        groovyCl = new GroovyClassLoader();
     }
 
-    private static List<Path> getScriptTemplates(String extension) throws Exception {
-        String dirName = "files/scripts/templates";
-        URL dirPath = VerifyScriptTemplates.class.getResource(dirName);
-        assertThat("Directory " + dirName + " not found on the classpath.", dirPath, is(not(nullValue())));
+    @AfterClass
+    public static void teardown() throws IOException {
+        groovyCl.close();
+    }
 
-        List<Path> templates = new ArrayList<>();
-        Files.walkFileTree(Paths.get(dirPath.toURI()), new SimpleFileVisitor<Path>() {
+    @Override
+    protected String getScriptExtension() {
+        return ".groovy";
+    }
 
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                String fileName = file.getFileName().toString();
-                if (fileName.endsWith(extension) && !isExcluded(file)) {
-                    templates.add(file);
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        });
-
-        assertThat("No templates found in: " + dirPath, templates, is(not(empty())));
-
-        return templates;
+    @Override
+    protected void parseTemplate(Path template) throws Exception {
+        if (isExcluded(template)) {
+            return;
+        }
+        groovyCl.parseClass(template.toFile());
     }
 
     private static boolean isExcluded(Path template) {
