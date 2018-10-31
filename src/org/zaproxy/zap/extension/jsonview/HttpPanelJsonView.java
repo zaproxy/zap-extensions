@@ -18,18 +18,20 @@
 package org.zaproxy.zap.extension.jsonview;
 
 import java.awt.BorderLayout;
-
+import java.awt.Component;
 
 import net.sf.json.*;
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.*;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.request.RequestBodyStringHttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyStringHttpPanelViewModel;
 
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JComponent;
 
 public class HttpPanelJsonView implements HttpPanelView, HttpPanelViewModelListener {
@@ -55,6 +57,19 @@ public class HttpPanelJsonView implements HttpPanelView, HttpPanelViewModelListe
 		mainPanel.add(scrollPane, BorderLayout.CENTER);
 		this.model = model;
 		model.addHttpPanelViewModelListener(this);
+	
+		httpPanelJsonArea.setComponentPopupMenu(new JPopupMenu() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void show(Component invoker, int x, int y) {
+				if (!httpPanelJsonArea.isFocusOwner()) {
+					httpPanelJsonArea.requestFocusInWindow();
+				}
+				View.getSingleton().getPopupMenu().show(httpPanelJsonArea, x, y);
+			};
+		});
 	}
 
 	@Override
