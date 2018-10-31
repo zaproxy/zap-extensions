@@ -39,6 +39,8 @@ public class ApiGenerator {
 	private static final String JAVA_OUTPUT_DIR = "../zap-api-java/subprojects/zap-clientapi/src/main/java/org/zaproxy/clientapi/gen";
 
 	private static final String PYTHON_OUTPUT_DIR = "../zap-api-python/src/zapv2/";
+	
+	private static final String NODE_OUTPUT_DIR = "../zap-api-nodejs/src/";
 
 	public static List<ApiImplementor> getApiImplementors() {
 		List<ApiImplementor> list = new ArrayList<ApiImplementor>();
@@ -72,7 +74,7 @@ public class ApiGenerator {
 			JavaAPIGenerator japi = new JavaAPIGenerator(JAVA_OUTPUT_DIR, true);
 			japi.generateAPIFiles(getApiImplementors());
 
-			NodeJSAPIGenerator napi = new NodeJSAPIGenerator("../zaproxy/nodejs/api/zapv2", true);
+			NodeJSAPIGenerator napi = new NodeJSAPIGenerator(NODE_OUTPUT_DIR, true);
 			napi.generateAPIFiles(getApiImplementors());
 		
 			PhpAPIGenerator phapi = new PhpAPIGenerator("../zaproxy/php/api/zapv2/src/Zap", true);
