@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.jsonview;
 
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
 import org.zaproxy.zap.extension.search.SearchMatch;
 
@@ -30,6 +31,9 @@ public class HttpPanelJsonArea extends HttpPanelSyntaxHighlightTextArea {
 
 	public HttpPanelJsonArea() {
 		setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
+		addSyntaxStyle(
+				Constant.messages.getString("http.panel.view.syntaxtext.syntax.json"),
+				SyntaxConstants.SYNTAX_STYLE_JSON);
 		setCodeFoldingEnabled(true);
 	}
 
