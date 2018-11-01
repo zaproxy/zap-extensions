@@ -132,8 +132,20 @@ public class AccessControlScannerThread extends
 
 	@Override
 	protected void scan() {
+		try {
+			notifyScanStarted();
+			scanImpl();
+			log.debug("Access control scan succesfully completed.");
+		} catch (Exception e) {
+			log.error("An error occurred while scanning:", e);
+		} finally {
+			setScanProgress(getScanMaximumProgress());
+			setRunningState(false);
+			notifyScanFinished();
+		}
+	}
 
-		notifyScanStarted();
+	private void scanImpl() {
 
 		// Build the list of urls' which will be attacked
 		List<SiteNode> targetNodes = getTargetUrlsList();
@@ -184,12 +196,6 @@ public class AccessControlScannerThread extends
 			// Make sure we update the progress
 			setScanProgress(++progress);
 		}
-
-		// Setup the finished status properly
-		log.debug("Access control scan succesfully completed.");
-		setScanProgress(getScanMaximumProgress());
-		setRunningState(false);
-		notifyScanFinished();
 	}
 
 	/**
