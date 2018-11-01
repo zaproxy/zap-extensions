@@ -10,6 +10,7 @@
 	Respect the current mode and react to changes.<br>
 	Dynamically unload the add-on.<br>
 	Inform of running tests (e.g. on session change, add-on uninstall).<br>
+	Improve error handling during test.<br>
 	]]> 
 	</changes>
 	<dependson />
