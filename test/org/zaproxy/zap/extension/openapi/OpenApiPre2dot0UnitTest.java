@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -57,7 +58,7 @@ public class OpenApiPre2dot0UnitTest extends AbstractOpenApiTest {
                     // We dont actually care about the response in this test ;)
                     response = getHtml("Blank.html");
                 }
-                return new Response(response);
+                return newFixedLengthResponse(response);
             }
         });
         

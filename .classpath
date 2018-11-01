@@ -53,7 +53,8 @@
 	<classpathentry kind="lib" path="lib/swagger-core-1.5.17.jar"/>
 	<classpathentry kind="lib" path="lib/swagger-models-1.5.17.jar"/>
 	<classpathentry kind="lib" path="lib/swagger-parser-1.0.33.jar"/>
-	<classpathentry kind="lib" path="testlib/nanohttpd-webserver-2.1.1-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="testlib/nanohttpd-2.3.1.jar"/>
+	<classpathentry kind="lib" path="testlib/nanohttpd-webserver-2.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/swagger-compat-spec-parser-1.0.33.jar"/>
 	<classpathentry kind="lib" path="lib/msg-simple-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/btf-1.2.jar"/>
