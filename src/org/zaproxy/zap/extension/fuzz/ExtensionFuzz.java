@@ -60,6 +60,8 @@ import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.DefaultStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
+import org.zaproxy.zap.extension.fuzz.payloads.generator.JsonPayloadGenerator;
+import org.zaproxy.zap.extension.fuzz.payloads.generator.NumberPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.RegexPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.ScriptStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.ScriptStringPayloadGeneratorAdapter;
@@ -69,7 +71,6 @@ import org.zaproxy.zap.extension.fuzz.payloads.processor.ExpandStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.JavaScriptEscapeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.JavaScriptUnescapeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.MD5HashProcessor;
-import org.zaproxy.zap.extension.fuzz.payloads.generator.NumberPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PostfixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PrefixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.SHA1HashProcessor;
@@ -85,6 +86,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultEmptyPayloadGenera
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultEmptyPayloadGeneratorUIHandler.DefaultEmptyPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultStringPayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.FileStringPayloadGeneratorUIHandler;
+import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.JsonPayloadGeneratorAdapterUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.NumberPayloadGeneratorAdapterUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.RegexPayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.ScriptStringPayloadGeneratorAdapterUIHandler;
@@ -234,6 +236,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         payloadGeneratorsUIRegistry
                 .registerPayloadUI(DefaultEmptyPayloadGenerator.class, new DefaultEmptyPayloadGeneratorUIHandler());
         payloadGeneratorsUIRegistry.registerPayloadUI(NumberPayloadGenerator.class, new NumberPayloadGeneratorAdapterUIHandler());
+        payloadGeneratorsUIRegistry.registerPayloadUI(JsonPayloadGenerator.class, new JsonPayloadGeneratorAdapterUIHandler());
 
         PayloadProcessorUIHandlersRegistry payloadProcessorsUIRegistry = PayloadProcessorUIHandlersRegistry.getInstance();
         payloadProcessorsUIRegistry.registerProcessorUIHandler(

@@ -45,6 +45,7 @@
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.11.1.jar"/>
 	<classpathentry kind="lib" path="lib/generex-0.0.5-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/snodge-2.1.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/automaton-1.11-8.jar"/>
 	<classpathentry kind="lib" path="lib/commons-csv-1.1.jar"/>
 	<classpathentry kind="lib" path="testlib/nanohttpd-2.3.1.jar"/>
