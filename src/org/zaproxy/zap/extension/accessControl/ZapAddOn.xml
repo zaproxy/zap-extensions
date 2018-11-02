@@ -1,17 +1,12 @@
 <zapaddon>
 	<name>Access Control Testing</name>
-	<version>5</version>
+	<version>6</version>
 	<status>alpha</status>
 	<description>Adds a set of tools for testing access control in web applications.</description>
 	<author>ZAP Dev Team</author>
 	<url />
 	<changes>
 	<![CDATA[
-	Respect the current mode and react to changes.<br>
-	Dynamically unload the add-on.<br>
-	Inform of running tests (e.g. on session change, add-on uninstall).<br>
-	Improve error handling during test.<br>
-	Tweak alerts to use Other Info field instead of Attack/Evidence.<br>
 	]]> 
 	</changes>
 	<dependson />
