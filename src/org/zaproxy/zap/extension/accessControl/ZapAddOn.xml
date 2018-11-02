@@ -11,6 +11,7 @@
 	Dynamically unload the add-on.<br>
 	Inform of running tests (e.g. on session change, add-on uninstall).<br>
 	Improve error handling during test.<br>
+	Tweak alerts to use Other Info field instead of Attack/Evidence.<br>
 	]]> 
 	</changes>
 	<dependson />

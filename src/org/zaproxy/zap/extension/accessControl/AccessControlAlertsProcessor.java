@@ -88,13 +88,15 @@ public class AccessControlAlertsProcessor {
 		}
 		// @formatter:off
 		alert.setDetail(Vulnerabilities.getDescription(vulnerabilityAuthorization), result.getUri(), "", // Param
-				Constant.messages.getString("accessControl.alert.authorization.attack", result.getUser()
-						.getName()), // Attack
-				"", // Other info
+				"", // Attack
+				Constant.messages.getString(
+						"accessControl.alert.authorization.otherinfo",
+						result.getUser().getName(),
+						result.isRequestAuthorized(),
+						result.getAccessRule()),
 				Vulnerabilities.getSolution(vulnerabilityAuthorization), // Solution
 				Vulnerabilities.getReference(vulnerabilityAuthorization), // Reference
-				Constant.messages.getString("accessControl.alert.authorization.evidence",
-						result.isRequestAuthorized(), result.getAccessRule()), // Evidence
+				"", // Evidence
 				285, // CWE Id
 				2, // WASC Id
 				msg);
@@ -115,12 +117,14 @@ public class AccessControlAlertsProcessor {
 		// @formatter:off
 		alert.setDetail(Vulnerabilities.getDescription(vulnerabilityAuthentication), result.getUri(),
 				"", // Param
-				Constant.messages.getString("accessControl.alert.authentication.attack"), // Attack
-				"", // Other info
+				"", // Attack
+				Constant.messages.getString(
+						"accessControl.alert.authentication.otherinfo",
+						result.isRequestAuthorized(),
+						result.getAccessRule()),
 				Vulnerabilities.getSolution(vulnerabilityAuthentication), // Solution
 				Vulnerabilities.getReference(vulnerabilityAuthentication), // Reference
-				Constant.messages.getString("accessControl.alert.authentication.evidence",
-						result.isRequestAuthorized(), result.getAccessRule()), // Evidence
+				"", // Evidence
 				287, // CWE Id
 				1, // WASC Id
 				msg);
