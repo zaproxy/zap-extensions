@@ -30,6 +30,7 @@ import org.zaproxy.zap.extension.api.PhpAPIGenerator;
 import org.zaproxy.zap.extension.api.PythonAPIGenerator;
 import org.zaproxy.zap.extension.importLogFiles.ImportLogAPI;
 import org.zaproxy.zap.extension.openapi.OpenApiAPI;
+import org.zaproxy.zap.extension.soap.SoapAPI;
 
 public class ApiGenerator {
 
@@ -53,6 +54,7 @@ public class ApiGenerator {
 
 		list.add(new ImportLogAPI(null));
         list.add(new OpenApiAPI(null));
+        list.add(new SoapAPI(null));
 
 		return list;
 	}
