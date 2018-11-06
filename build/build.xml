@@ -45,6 +45,7 @@
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserlinux64/lib"  includeEmptyDirs="true" />
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowsermacos/lib"  includeEmptyDirs="true" />
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserwindows/lib"  includeEmptyDirs="true" />
+		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserwindows64/lib"  includeEmptyDirs="true" />
 	</target>
 
 	<target name="clean-files"  description="delete files downloaded by download-files">
@@ -432,6 +433,7 @@
 		<build-addon name="jxbrowserlinux64" />
 		<build-addon name="jxbrowsermacos" />
 		<build-addon name="jxbrowserwindows" />
+		<build-addon name="jxbrowserwindows64" />
 		<build-addon name="openapi" />
 		<build-addon name="pscanrulesAlpha" />
 		<build-addon name="requester" />
@@ -722,11 +724,16 @@
 		<build-deploy-addon name="jxbrowserwindows" />
 	</target>
 
+	<target name="deploy-jxbrowser-windows64" depends="download-jxbrowser" description="Deploys the JxBrowser Windows 64bits add-on">
+		<build-deploy-addon name="jxbrowserwindows64" />
+	</target>
+
 	<target name="deploy-jxbrowser-all" description="deploy all of the jxbrowser extensions">
 		<build-deploy-addon name="jxbrowser" />
 		<build-deploy-addon name="jxbrowserlinux64" />
 		<build-deploy-addon name="jxbrowsermacos" />
 		<build-deploy-addon name="jxbrowserwindows" />
+		<build-deploy-addon name="jxbrowserwindows64" />
 	</target>
 
 	<target name="generate-wiki-jxbrowser" description="Generates the wiki of jxbrowser Add-on">

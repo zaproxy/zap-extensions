@@ -1,23 +1,23 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Copyright 2017 The ZAP Development Team
- *  
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Copyright 2018 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package org.zaproxy.zap.extension.jxbrowserwindows;
+package org.zaproxy.zap.extension.jxbrowserwindows64;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,18 +37,18 @@ import org.zaproxy.zap.extension.jxbrowser.ZapBrowserFrame;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionJxBrowserWindows extends ExtensionAdaptor {
+public class ExtensionJxBrowserWindows64 extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionJxBrowserWindows";
+    public static final String NAME = "ExtensionJxBrowserWindows64";
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionJxBrowserWindows.class);
+    private static final Logger LOGGER = Logger.getLogger(ExtensionJxBrowserWindows64.class);
 
     private static final ImageIcon CHROMIUM_ICON = DisplayUtils.getScaledIcon(
             new ImageIcon(ExtensionJxBrowser.class.getResource(ExtensionJxBrowser.RESOURCES + "/chromium.png")));
 
     private JButton launchBrowserButton;
 
-    public ExtensionJxBrowserWindows() {
+    public ExtensionJxBrowserWindows64() {
         super(NAME);
     }
 
@@ -63,7 +63,7 @@ public class ExtensionJxBrowserWindows extends ExtensionAdaptor {
 
         if (getView() != null) {
 
-            if (Constant.isWindows() && !Utils.isOs64Bits()) {
+            if (Constant.isWindows() && Utils.isOs64Bits()) {
                 // Only show if we're running on the right platform
                 View.getSingleton().addMainToolbarButton(this.getLaunchBrowserButton());
     

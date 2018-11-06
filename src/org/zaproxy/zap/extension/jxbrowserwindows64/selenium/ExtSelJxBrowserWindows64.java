@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Copyright 2017 The ZAP Development Team
- * 
+ *
+ * Copyright 2018 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.jxbrowserwindows.selenium;
+package org.zaproxy.zap.extension.jxbrowserwindows64.selenium;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,11 +32,11 @@ import org.zaproxy.zap.extension.jxbrowser.Utils;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
 /**
- * An {@link org.parosproxy.paros.extension.Extension Extension} that installs a {@link JxBrowserProvider}, if in Windows 32bits.
+ * An {@link org.parosproxy.paros.extension.Extension Extension} that installs a {@link JxBrowserProvider}, if in Windows 64bits.
  */
-public class ExtSelJxBrowserWindows extends ExtensionAdaptor {
+public class ExtSelJxBrowserWindows64 extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtSelJxBrowserWindows";
+    public static final String NAME = "ExtSelJxBrowserWindows64";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES;
 
@@ -48,7 +48,7 @@ public class ExtSelJxBrowserWindows extends ExtensionAdaptor {
 
     private JxBrowserProvider webDriverProvider;
 
-    public ExtSelJxBrowserWindows() {
+    public ExtSelJxBrowserWindows64() {
         super(NAME);
     }
 
@@ -56,7 +56,7 @@ public class ExtSelJxBrowserWindows extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (Constant.isWindows() && !Utils.isOs64Bits()) {
+        if (Constant.isWindows() && Utils.isOs64Bits()) {
             webDriverProvider = new JxBrowserProvider();
 
             ExtensionSelenium extSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
