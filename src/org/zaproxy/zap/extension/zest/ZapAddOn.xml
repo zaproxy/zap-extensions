@@ -1,24 +1,12 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>28</version>
+	<version>29</version>
 	<status>beta</status>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Display HTTP message also when request statement is selected with keyboard.<br>
-	Update Content-Length of proxied responses (Issue 4613).<br>
-	Added input for Variable Name in Client Element Assign dialog.<br>
-	Allow to clear the Zest panel.<br>
-	Allow to access the options through Zest panel.<br>
-	Title caps adjustments (Issue 2000).<br>
-	Use selected text when adding assignments from the request/response.<br>
-	Show expression's inverse state in more tree nodes.<br>
-	Correct dialogue titles of client statements.<br>
-	Allow to invoke the context menu in text fields also with keyboard.<br>
-	Correct fields' state in Switch To Frame dialogue.<br>
-	Correct request conversion that dropped the topmost header (Issue 5100).<br>
 	]]>
 	</changes>
 	<dependencies>
