@@ -814,20 +814,7 @@ public class ZestZapUtils {
 	}
 
 	private static void setAllHeaders(ZestRequest req, HttpMessage msg) {
-		String[] headers = msg.getRequestHeader().getHeadersAsString()
-				.split(HttpHeader.CRLF);
-		StringBuilder sb = new StringBuilder();
-		boolean first = true;
-		for (String header : headers) {
-			if (first) {
-				// Drop the first one as this one will get added anyway
-				first = false;
-			} else {
-				sb.append(header);
-				sb.append(HttpHeader.CRLF);
-			}
-		}
-		req.setHeaders(sb.toString());
+		req.setHeaders(msg.getRequestHeader().getHeadersAsString());
 	}
 
 	private static String correctTokens(String str) {

@@ -18,6 +18,7 @@
 	Correct dialogue titles of client statements.<br>
 	Allow to invoke the context menu in text fields also with keyboard.<br>
 	Correct fields' state in Switch To Frame dialogue.<br>
+	Correct request conversion that dropped the topmost header (Issue 5100).<br>
 	]]>
 	</changes>
 	<dependencies>
