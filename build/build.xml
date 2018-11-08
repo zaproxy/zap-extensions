@@ -679,14 +679,13 @@
 		</copy>
 	</target>
 
-    <target name="generate-apis" description="generates the client APIs">
+    <target name="generate-apis" depends="compile" description="generates the client APIs">
         <path id="classpath">
-            <pathelement location="../bin" />
-            <pathelement location="./build" />
-            <fileset dir="../lib" includes="**/*.jar" />
-            <fileset dir="../../zaproxy/lib" includes="**/*.jar" />
+            <pathelement location="${build}" />
+            <pathelement location="${src}" />
+            <fileset dir="${dist.lib.dir}" includes="**/*.jar" />
         </path>
-		<java classname="org.zaproxy.zap.extension.ApiGenerator" dir=".." fork="yes">
+		<java classname="org.zaproxy.zap.extension.api.ApiGenerator" dir=".." fork="yes">
 			<classpath refid="classpath" />
 		</java>
     </target>
