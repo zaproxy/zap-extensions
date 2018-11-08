@@ -36,7 +36,7 @@ public class JxBrowserDownload {
      */
     public static void main(String[] args) {
 
-        final String VERSION = "6.20";
+        final String VERSION = "6.22";
         final String repo = "zaproxy/zap-libs"; // Makes it easier for testing
 
         String baseDir = "";
@@ -83,7 +83,11 @@ public class JxBrowserDownload {
 
         downloadLibrary(
                 "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-win32-" + VERSION + ".jar",
-                srcdir, "../jxbrowserwindows/lib/jxbrowser-win-" + VERSION + ".jar");
+                srcdir, "../jxbrowserwindows/lib/jxbrowser-win32-" + VERSION + ".jar");
+
+        downloadLibrary(
+                "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-win64-" + VERSION + ".jar",
+                srcdir, "../jxbrowserwindows64/lib/jxbrowser-win64-" + VERSION + ".jar");
         return;
     }
 
