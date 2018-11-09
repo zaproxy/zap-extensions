@@ -17,12 +17,17 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension;
+package org.zaproxy.zap.extension.api;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import org.zaproxy.zap.extension.api.AbstractAPIGenerator;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.JavaAPIGenerator;
 import org.zaproxy.zap.extension.api.NodeJSAPIGenerator;
@@ -35,6 +40,8 @@ import org.zaproxy.zap.extension.replacer.ReplacerAPI;
 public class ApiGenerator {
 
 	private static final String JAVA_OUTPUT_DIR = "../zap-api-java/subprojects/zap-clientapi/src/main/java/org/zaproxy/clientapi/gen";
+
+	private static final String PHP_OUTPUT_DIR = "../zaproxy/php/api/zapv2/src/Zap";
 
 	private static final String PYTHON_OUTPUT_DIR = "../zap-api-python/src/zapv2/";
 
@@ -63,26 +70,62 @@ public class ApiGenerator {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		try {
-			JavaAPIGenerator japi = new JavaAPIGenerator(JAVA_OUTPUT_DIR, true);
-			japi.generateAPIFiles(getApiImplementors());
+		List<ApiGeneratorWrapper> generators = Arrays.asList(
+				wrapper(JavaAPIGenerator.class, JAVA_OUTPUT_DIR),
+				wrapper(NodeJSAPIGenerator.class, NODE_OUTPUT_DIR),
+				wrapper(PhpAPIGenerator.class, PHP_OUTPUT_DIR),
+				wrapper(PythonAPIGenerator.class, PYTHON_OUTPUT_DIR)
+				// wrapper(WikiAPIGenerator.class, "../zaproxy-wiki")
+		);
+		getApiImplementors().forEach(api -> {
+			ResourceBundle bundle = ResourceBundle.getBundle(
+					api.getClass().getPackage().getName() + ".resources.Messages",
+					Locale.ENGLISH,
+					api.getClass().getClassLoader(),
+					ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES));
 
-			NodeJSAPIGenerator napi = new NodeJSAPIGenerator(NODE_OUTPUT_DIR, true);
-			napi.generateAPIFiles(getApiImplementors());
-		
-			PhpAPIGenerator phapi = new PhpAPIGenerator("../zaproxy/php/api/zapv2/src/Zap", true);
-			phapi.generateAPIFiles(getApiImplementors());
+			generators.forEach(generator -> generator.generate(api, bundle));
+		});
+	}
 
-			PythonAPIGenerator pyapi = new PythonAPIGenerator(PYTHON_OUTPUT_DIR, true);
-			pyapi.generateAPIFiles(getApiImplementors());
+	private static ApiGeneratorWrapper wrapper(Class<? extends AbstractAPIGenerator> clazz, String outputDir) {
+		return new ApiGeneratorWrapper(clazz, outputDir);
+	}
 
-			//WikiAPIGenerator wapi = new WikiAPIGenerator("../zaproxy-wiki", true);
-			//wapi.generateAPIFiles(getApiImplementors());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
+	private static class ApiGeneratorWrapper {
+
+		private final Class<? extends AbstractAPIGenerator> clazz;
+		private final String outputDir;
+
+		public ApiGeneratorWrapper(Class<? extends AbstractAPIGenerator> clazz, String outputDir) {
+			this.clazz = clazz;
+			this.outputDir = outputDir;
 		}
 
+		public void generate(ApiImplementor api, ResourceBundle bundle) {
+			AbstractAPIGenerator generator;
+			try {
+				generator = createInstance(bundle);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+
+			try {
+				generator.generateAPIFiles(Arrays.asList(api));
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		}
+
+		private AbstractAPIGenerator createInstance(ResourceBundle bundle) throws Exception {
+			try {
+				return clazz.getDeclaredConstructor(String.class, boolean.class, ResourceBundle.class)
+						.newInstance(outputDir, true, bundle);
+			} catch (NoSuchMethodException e) {
+				System.out.println("Defaulting to generator without ResourceBundle, no descriptions will be included.");
+				return clazz.getDeclaredConstructor(String.class, boolean.class).newInstance(outputDir, true);
+			}
+		}
 	}
 
 }
