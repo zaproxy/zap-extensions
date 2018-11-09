@@ -15,9 +15,13 @@
 			<addon>
 				<id>jxbrowser</id>
 			</addon>
+			<!--
+			Don't depend for the time being, the ChromeDriver provided no longer supports the Chromium version used by
+			JxBrowser. The JxBrowser add-on will bundle its own ChromeDriver.
 			<addon>
 				<id>webdriverlinux</id>
 			</addon>
+			-->
 		</addons>
 	</dependencies>
 	<extensions>
@@ -30,16 +34,15 @@
 						<id>selenium</id>
 						<semver><![CDATA[ >=2.0.0 & <3.0.0 ]]></semver>
 					</addon>
-					<addon>
-						<id>webdriverlinux</id>
-					</addon>
 				</addons>
 			</dependencies>
 		</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<files/>
+	<files>
+		<file>jxbrowser/webdriver/linux/chromedriver</file>
+	</files>
 	<not-before-version>2.7.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

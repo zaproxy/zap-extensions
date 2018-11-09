@@ -21,10 +21,14 @@ package org.zaproxy.zap.extension.jxbrowser;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class JxBrowserDownload {
 
@@ -34,7 +38,7 @@ public class JxBrowserDownload {
      * 
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         final String VERSION = "6.22";
         final String repo = "zaproxy/zap-libs"; // Makes it easier for testing
@@ -78,22 +82,41 @@ public class JxBrowserDownload {
                 srcdir, "../jxbrowserlinux64/lib/jxbrowser-linux64-" + VERSION + ".jar");
 
         downloadLibrary(
+                "https://github.com/" + repo + "/raw/master/files/jxbrowser/webdriver/linux/chromedriver",
+                srcdir, "../jxbrowserlinux64/files/jxbrowser/webdriver/linux/chromedriver");
+
+        downloadLibrary(
                 "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-mac-" + VERSION + ".jar",
                 srcdir, "../jxbrowsermacos/lib/jxbrowser-mac-" + VERSION + ".jar");
+
+        downloadLibrary(
+                "https://github.com/" + repo + "/raw/master/files/jxbrowser/webdriver/macos/chromedriver",
+                srcdir, "../jxbrowsermacos/files/jxbrowser/webdriver/macos/chromedriver");
 
         downloadLibrary(
                 "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-win32-" + VERSION + ".jar",
                 srcdir, "../jxbrowserwindows/lib/jxbrowser-win32-" + VERSION + ".jar");
 
         downloadLibrary(
+                "https://github.com/" + repo + "/raw/master/files/jxbrowser/webdriver/windows/chromedriver.exe",
+                srcdir, "../jxbrowserwindows/files/jxbrowser/webdriver/windows/chromedriver.exe");
+
+        downloadLibrary(
                 "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-win64-" + VERSION + ".jar",
                 srcdir, "../jxbrowserwindows64/lib/jxbrowser-win64-" + VERSION + ".jar");
+
+        Path win64Dir = createFile(srcdir, "../jxbrowserwindows64/files/jxbrowser/webdriver/windows/").toPath();
+        Files.createDirectories(win64Dir);
+        Files.copy(
+                createFile(srcdir, "../jxbrowserwindows/files/jxbrowser/webdriver/windows/chromedriver.exe").toPath(),
+                win64Dir.resolve("chromedriver.exe"),
+                StandardCopyOption.REPLACE_EXISTING);
+
         return;
     }
 
     private static void downloadLibrary(String urlStr, File baseDir, String destFile) {
-        File dest = new File(
-                baseDir, JxBrowserDownload.class.getPackage().getName().replace(".", "/") + "/" + destFile);
+        File dest = createFile(baseDir, destFile);
         if (dest.exists()) {
             System.out.println("Already exists: " + dest.getAbsolutePath());
             return;
@@ -112,5 +135,9 @@ public class JxBrowserDownload {
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    private static File createFile(File baseDir, String path) {
+        return new File(baseDir, JxBrowserDownload.class.getPackage().getName().replace(".", "/") + "/" + path);
     }
 }

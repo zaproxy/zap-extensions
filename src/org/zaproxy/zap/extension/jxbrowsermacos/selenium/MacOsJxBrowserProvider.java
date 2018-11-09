@@ -21,14 +21,20 @@ package org.zaproxy.zap.extension.jxbrowsermacos.selenium;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.nio.file.Paths;
 
 import org.openqa.selenium.WebDriverException;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.selenium.SingleWebDriverProvider;
 
 /**
  * A {@link SingleWebDriverProvider} for JxBrowser on MacOS.
  */
 public class MacOsJxBrowserProvider extends JxBrowserProvider {
+
+    public MacOsJxBrowserProvider() {
+        super(Paths.get(Constant.getZapHome(), "jxbrowser/webdriver/macos/chromedriver"));
+    }
 
     private Integer chromePort;
 
