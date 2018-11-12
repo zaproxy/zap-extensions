@@ -15,9 +15,13 @@
 			<addon>
 				<id>jxbrowser</id>
 			</addon>
+			<!--
+			Don't depend for the time being, the ChromeDriver provided no longer supports the Chromium version used by
+			JxBrowser. The JxBrowser add-on will bundle its own ChromeDriver.
 			<addon>
 				<id>webdrivermacos</id>
 			</addon>
+			-->
 		</addons>
 	</dependencies>
 	<extensions>
@@ -36,7 +40,9 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
-	<files/>
+	<files>
+		<file>jxbrowser/webdriver/macos/chromedriver</file>
+	</files>
 	<not-before-version>2.7.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

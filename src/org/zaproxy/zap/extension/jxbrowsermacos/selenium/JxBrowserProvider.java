@@ -21,13 +21,20 @@ package org.zaproxy.zap.extension.jxbrowsermacos.selenium;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -67,15 +74,19 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
 
     private static final String PROVIDER_ID = "jxbrowser";
 
+    private static final Logger LOGGER = Logger.getLogger(JxBrowserProvider.class);
+
     private final ProvidedBrowser providedBrowser;
+    private final Path webdriver;
     /* One ZapBrowserFrame per requesterId, so that tools like the Ajax Spider
      * don't interfere with other tools.
      */
     private Map<Integer, ZapBrowserFrame> requesterToZbf = new HashMap<Integer, ZapBrowserFrame>();
     private int chromePort;
 
-    public JxBrowserProvider() {
+    public JxBrowserProvider(Path webdriver) {
         this.providedBrowser = new ProvidedBrowserImpl();
+        this.webdriver = webdriver;
     }
 
     @Override
@@ -158,7 +169,13 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
             Browser browser = new Browser(new BrowserContext(contextParams));
             final BrowserPanel browserPanel = zbf.addNewBrowserPanel(isNotAutomated(requesterId), browser);
 
-            final ChromeDriverService service = new ChromeDriverService.Builder().usingAnyFreePort().build();
+            if (!ensureExecutable(webdriver)) {
+                throw new IllegalStateException("Failed to ensure WebDriver is executable.");
+            }
+            final ChromeDriverService service = new ChromeDriverService.Builder()
+                    .usingDriverExecutable(webdriver.toFile())
+                    .usingAnyFreePort()
+                    .build();
             service.start();
 
             DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -194,6 +211,30 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
         } catch (Exception e) {
             throw new WebDriverException(e);
         }
+    }
+
+    private static void setExecutable(Path file) throws IOException {
+        if (!SystemUtils.IS_OS_MAC && !SystemUtils.IS_OS_UNIX) {
+            return;
+        }
+
+        Set<PosixFilePermission> perms = Files.readAttributes(file, PosixFileAttributes.class).permissions();
+        if (perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
+            return;
+        }
+
+        perms.add(PosixFilePermission.OWNER_EXECUTE);
+        Files.setPosixFilePermissions(file, perms);
+    }
+
+    private static boolean ensureExecutable(Path driver) {
+        try {
+            setExecutable(driver);
+            return true;
+        } catch (IOException e) {
+            LOGGER.warn("Failed to set the bundled WebDriver executable:", e);
+        }
+        return false;
     }
 
     private void cleanUpBrowser(final int requesterId, final BrowserPanel browserPanel) {

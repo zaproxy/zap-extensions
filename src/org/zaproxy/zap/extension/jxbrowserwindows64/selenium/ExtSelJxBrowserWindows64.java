@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.jxbrowserwindows64.selenium;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,7 +58,8 @@ public class ExtSelJxBrowserWindows64 extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         if (Constant.isWindows() && Utils.isOs64Bits()) {
-            webDriverProvider = new JxBrowserProvider();
+            webDriverProvider = new JxBrowserProvider(
+                    Paths.get(Constant.getZapHome(), "jxbrowser/webdriver/windows/chromedriver.exe"));
 
             ExtensionSelenium extSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
             extSelenium.addWebDriverProvider(webDriverProvider);
