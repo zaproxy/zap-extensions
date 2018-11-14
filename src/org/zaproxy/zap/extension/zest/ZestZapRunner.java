@@ -21,6 +21,7 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
 	private static final int ZEST_HISTORY_REFERENCE_TYPE = HistoryReference.TYPE_ZEST_SCRIPT;
 	private static final int FAIL_ACTION_PLUGIN_ID = 50004;
+
+	private static Field fieldOutputWriter;
 	
 	private ExtensionZest extension;
 	private ZestScriptWrapper wrapper = null;
@@ -126,13 +129,25 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			this.target = null;
 			if (wrapper.getWriter() != null) {
 				super.setOutputWriter(wrapper.getWriter());
-			} else if (extension.getExtScript().getScriptUI() != null) {
-				super.setOutputWriter(extension.getExtScript().getScriptUI().getOutputWriter());
+			} else if (scriptUI != null && !hasOutputWriter()) {
+				super.setOutputWriter(scriptUI.getOutputWriter());
 			}
 			this.setDebug(this.wrapper.isDebug());
 			
 			return super.run(script, params);
     	}
+	}
+
+	private boolean hasOutputWriter() {
+		try {
+			if (fieldOutputWriter == null) {
+				fieldOutputWriter = ZestBasicRunner.class.getDeclaredField("outputWriter");
+				fieldOutputWriter.setAccessible(true);
+			}
+			return fieldOutputWriter.get(this) != null;
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			return false;
+		}
 	}
 
 	@Override
@@ -142,8 +157,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     	log.debug("Run script " + script.getTitle());
 		if (wrapper.getWriter() != null) {
 			super.setOutputWriter(wrapper.getWriter());
-		} else if (extension.getExtScript().getScriptUI() != null) {
-			super.setOutputWriter(extension.getExtScript().getScriptUI().getOutputWriter());
+		} else if (scriptUI != null && !hasOutputWriter()) {
+			super.setOutputWriter(scriptUI.getOutputWriter());
 		}
 		this.setDebug(this.wrapper.isDebug());
 		String result = super.run(script, target, params);

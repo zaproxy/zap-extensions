@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
+	Rely on script context writer for script output.<br>
 	]]>
 	</changes>
 	<dependencies>
