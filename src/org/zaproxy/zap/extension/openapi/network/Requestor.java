@@ -92,6 +92,7 @@ public class Requestor {
 
     public String getResponseBody(URI uri) throws NullPointerException, IOException {
         HttpMessage httpRequest = new HttpMessage(uri);
+        httpRequest.getRequestHeader().setHeader("Accept","application/json,*/*");
         sender.sendAndReceive(httpRequest, true);
         for (RequesterListener listener : listeners) {
             try {
