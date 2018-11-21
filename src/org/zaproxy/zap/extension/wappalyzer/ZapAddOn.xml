@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Switch to using re2j where possible - results in significant performance improvements.<br>
+	Added version information column to Wappalyzer Results<br>
 	]]>
 	</changes>
 	<extensions>

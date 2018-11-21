@@ -19,17 +19,11 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
@@ -38,15 +32,22 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 public class WappalyzerPassiveScanner implements PassiveScanner {
 
-	private ExtensionWappalyzer extension = null;
-	private List<Application> applications = null;
-
 	private static final Logger LOGGER = Logger.getLogger(WappalyzerPassiveScanner.class);
+	private WappalyzerApplicationHolder applicationHolder;
+	private Set<String> visitedSiteIdentifiers = new HashSet<>();
+	private ApplicationMatch appMatch;
+	private Application currentApp;
 
-	public WappalyzerPassiveScanner() {
+	public WappalyzerPassiveScanner(WappalyzerApplicationHolder applicationHolder) {
 		super();
+		this.applicationHolder = applicationHolder;
 	}
 	
 	@Override
@@ -61,104 +62,140 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		String siteIdentifier = getSiteIdentifier(msg);
+
+		if (!visitedSiteIdentifiers.add(siteIdentifier)) {
+			return;
+		}
+
+		long startTime = System.currentTimeMillis();
+		for (Application app : this.getApps()) {
+			this.currentApp = app;
+			checkAppMatches(msg, source);
+			if(appMatch != null) {
+				String site = msg.getRequestHeader().getHostName() + ":" + msg.getRequestHeader().getHostPort();
+				if(LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Adding " + app.getName() + " to " + site);
+				}
+				addApplicationsToSite(site, appMatch);
+				this.appMatch = null;
+			}
+			this.currentApp = null;
+		}
+
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Analyse took " + (System.currentTimeMillis() - startTime) + "ms");
+		}
+	}
+
+	private String getSiteIdentifier(HttpMessage msg){
+		SiteNode node = getSiteNode(msg);
+		if(node != null){
+			return node.getHierarchicNodeName() + "_" + node.getNodeName();
+		}
+		return msg.getRequestHeader().getURI().toString();
+	}
+
+	private SiteNode getSiteNode(HttpMessage msg) {
 		HistoryReference href = msg.getHistoryRef();
 		if (href == null) {
-			// Ignore
-		} else {
-			SiteNode node = href.getSiteNode();
-			if (node != null && node.getPastHistoryReference().size() == 0) {
-				// No previous references - scan this page
-				// we dont scan pages we've already seen for performance reasons
-				Date start = new Date();
-				for (Application app : this.getApps()) {
-					boolean found = false;
-					String url = msg.getRequestHeader().getURI().toString();
-					for (AppPattern p : app.getUrl()) {
-						if (p.findInString(url)) {
-							LOGGER.debug("WAPP URL matched " + app.getName());
-							found = true;
-							break;
-						}
-					}
-					if (! found) {
-						for (Map<String, AppPattern> sp : app.getHeaders()) {
-							for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
-								String header = msg.getResponseHeader().getHeader(entry.getKey());
-								if (header != null) {
-									if (entry.getValue().findInString(header)) {
-										LOGGER.debug("WAPP header matched " + app.getName());
-										found = true;
-										break;
-									}
-								}
-							}
-						}
-					}
-					if (! found) {
-						String body = msg.getResponseBody().toString();
-						for (AppPattern p : app.getHtml()) {
-							if (p.findInString(body)) {
-								LOGGER.debug("WAPP body matched " + app.getName());
-								found = true;
-								break;
-							}
-						}
-					}
-					if (! found) {
-						List<Element> metaElements = source.getAllElements(HTMLElementName.META);
-						for (Element metaElement : metaElements) {
-							for (Map<String, AppPattern> sp : app.getMetas()) {
-								for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
-									String name = metaElement.getAttributeValue("name");
-									String content = metaElement.getAttributeValue("content");
-									if (name != null && content != null) {
-										if (name.equals(entry.getKey())
-												&& entry.getValue().findInString(content)) {
-											LOGGER.debug("WAPP meta matched " + app.getName());
-											found = true;
-											break;
-										}
-									}
-								}
-							}
-						}
-					}
-					if (! found) {
-						String body = msg.getResponseBody().toString();
-						for (AppPattern p : app.getScript()) {
-							if (p.findInString(body)) {
-								LOGGER.debug("WAPP script matched " + app.getName());
-								found = true;
-								break;
-							}
-							
-						}
-					}
-					if (found) {
-						String site = msg.getRequestHeader().getHostName() + ":" + msg.getRequestHeader().getHostPort();
-						LOGGER.debug("WAPP adding " + app.getName() + " to " + site);
-						this.extension.addApplicationsToSite(site, app);
+			return null;
+		}
+		return href.getSiteNode();
+	}
+
+	private void addApplicationsToSite(String site, ApplicationMatch applicationMatch) {
+		applicationHolder.addApplicationsToSite(site, applicationMatch);
+		// Add implied apps
+		for (String imp : applicationMatch.getApplication().getImplies()) {
+			Application ia = applicationHolder.getApplication(imp);
+			if (ia != null) {
+				addApplicationsToSite(site, new ApplicationMatch(ia));
+			}
+		}
+	}
+
+	private void checkAppMatches(HttpMessage msg, Source source) {
+		checkUrlMatches(msg);
+		checkHeadersMatches(msg);
+		checkBodyMatches(msg);
+		checkMetaElementsMatches(source);
+		checkScriptMatches(msg);
+	}
+
+	private void checkScriptMatches(HttpMessage msg) {
+		String body = msg.getResponseBody().toString();
+		for (AppPattern p : currentApp.getScript()) {
+			addIfMatches(p, body);
+		}
+	}
+
+	private void checkMetaElementsMatches(Source source) {
+		List<Element> metaElements = source.getAllElements(HTMLElementName.META);
+		for (Element metaElement : metaElements) {
+			for (Map<String, AppPattern> sp : currentApp.getMetas()) {
+				for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
+					String name = metaElement.getAttributeValue("name");
+					String content = metaElement.getAttributeValue("content");
+					if (name != null && content != null && name.equals(entry.getKey())) {
+						AppPattern p = entry.getValue();
+						addIfMatches(p, content);
 					}
 				}
-					LOGGER.debug("WAPP took " + (new Date().getTime() - start.getTime()));
+			}
+		}
+	}
+
+	private void checkBodyMatches(HttpMessage msg) {
+		String body = msg.getResponseBody().toString();
+		for (AppPattern p : currentApp.getHtml()) {
+			addIfMatches(p, body);
+		}
+	}
+
+	private void checkHeadersMatches(HttpMessage msg) {
+		for (Map<String, AppPattern> sp : currentApp.getHeaders()) {
+			for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
+				String header = msg.getResponseHeader().getHeader(entry.getKey());
+				if (header != null) {
+					AppPattern p = entry.getValue();
+					addIfMatches(p, header);
+				}
+			}
+		}
+	}
+
+	private void checkUrlMatches(HttpMessage msg) {
+		String url = msg.getRequestHeader().getURI().toString();
+		for (AppPattern p : currentApp.getUrl()) {
+			addIfMatches(p, url);
+		}
+	}
+
+	private void addIfMatches(AppPattern appPattern, String content){
+		List<String> results = appPattern.findInString(content);
+		if (results != null) {
+			this.appMatch = getAppMatch();
+			// TODO may need to account for the wappalyzer spec in dealing with version info:
+			// https://www.wappalyzer.com/docs/specification
+			results.forEach(appMatch::addVersion);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(appPattern.getType() + " matched " + appMatch.getApplication().getName());
 			}
 		}
 	}
 
 	private List<Application> getApps() {
-		if (applications == null) {
-			applications = this.getExtension().getApplications();
-		}
-		return applications;
+		return applicationHolder.getApplications();
 	}
 
-	private ExtensionWappalyzer getExtension() {
-		if (extension == null) {
-			extension = (ExtensionWappalyzer) Control.getSingleton().getExtensionLoader().getExtension(ExtensionWappalyzer.NAME);
+	private ApplicationMatch getAppMatch() {
+		if (appMatch == null) {
+			appMatch = new ApplicationMatch(currentApp);
 		}
-		return extension;
+		return appMatch;
 	}
-	
+
 	@Override
 	public void setParent(PassiveScanThread parent) {
 		// Does not apply.

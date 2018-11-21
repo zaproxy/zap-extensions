@@ -30,7 +30,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscan.PassiveScanner;
 
 /**
  * Class with utility/helper methods for passive scanner tests ({@link org.zaproxy.zap.extension.pscan.PluginPassiveScanner
@@ -38,7 +38,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * 
  * @param <T> the type of the passive scanner.
  */
-public abstract class PassiveScannerTestUtils<T extends PluginPassiveScanner> extends TestUtils {
+public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends TestUtils {
 
     protected T rule;
     protected PassiveScanThread parent;

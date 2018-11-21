@@ -32,7 +32,7 @@ public class TechTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	
 	private final Vector<String> columnNames;
-	private List<Application> apps = new ArrayList<Application>();
+	private List<ApplicationMatch> apps = new ArrayList<ApplicationMatch>();
 
 	private int lastAddedRow;
 	private int lastEditedRow;
@@ -42,13 +42,14 @@ public class TechTableModel extends AbstractTableModel {
 		columnNames = new Vector<>();
 		columnNames.add(Constant.messages.getString("wappalyzer.table.header.icon"));
 		columnNames.add(Constant.messages.getString("wappalyzer.table.header.name"));
+		columnNames.add(Constant.messages.getString("wappalyzer.table.header.version"));
 		columnNames.add(Constant.messages.getString("wappalyzer.table.header.category"));
 		columnNames.add(Constant.messages.getString("wappalyzer.table.header.website"));
 		columnNames.add(Constant.messages.getString("wappalyzer.table.header.implies"));
 		// Dont currently support confidence
 		//columnNames.add(Constant.messages.getString("wappalyzer.table.header.confidence"));
 
-		apps = Collections.synchronizedList(new ArrayList<Application>());
+		apps = Collections.synchronizedList(new ArrayList<ApplicationMatch>());
 		
 		lastAddedRow = -1;
 		lastEditedRow = -1;
@@ -75,13 +76,14 @@ public class TechTableModel extends AbstractTableModel {
 		if (row >= apps.size()) {
 			return null;
 		}
-		Application app = apps.get(row);
+		ApplicationMatch app = apps.get(row);
 		switch (col) {
-		case 0: obj = app.getIcon(); break;
-		case 1:	obj = app.getName(); break;
-		case 2:	obj = categoriesToString (app.getCategories()); break;
-		case 3:	obj = app.getWebsite(); break;
-		case 4:	obj = listToString (app.getImplies()); break;
+		case 0: obj = app.getApplication().getIcon(); break;
+		case 1:	obj = app.getApplication().getName(); break;
+		case 2:	obj = app.getVersion(); break;
+		case 3:	obj = categoriesToString (app.getApplication().getCategories()); break;
+		case 4:	obj = app.getApplication().getWebsite(); break;
+		case 5:	obj = listToString (app.getApplication().getImplies()); break;
 		//case 5: obj = app.getConfidence(); break;
 		}
 		return obj;
@@ -116,15 +118,15 @@ public class TechTableModel extends AbstractTableModel {
 		return sb.toString();
 	}
 	
-	public Application getApplicationAtRow(int row) {
+	public ApplicationMatch getApplicationAtRow(int row) {
 		return apps.get(row);
 	}
 
-	public void addApplication(Application app) {
+	public void addApplication(ApplicationMatch app) {
 		lastAddedRow = -1;
 
 		for (int i = 0; i < apps.size(); i++) {
-			int cmp = app.getName().toLowerCase().compareTo(apps.get(i).getName().toLowerCase());
+			int cmp = app.getApplication().getName().toLowerCase().compareTo(apps.get(i).getApplication().getName().toLowerCase());
 			if (cmp < 0) {
 				apps.add(i, app);
 				this.fireTableRowsInserted(i, i);
@@ -134,6 +136,8 @@ public class TechTableModel extends AbstractTableModel {
 				
 			} else if (cmp == 0) {
 				// Already matches, so ignore
+				ApplicationMatch existing = apps.get(i);
+				existing.getVersions().addAll(app.getVersions());
 				lastAddedRow = i;
 				return;
 			}
@@ -168,7 +172,7 @@ public class TechTableModel extends AbstractTableModel {
 		case 2:	return String.class;
 		case 3:	return String.class;
 		case 4:	return String.class;
-		//case 5:	return String.class;
+		case 5:	return String.class;
 		}
 		return null;
 	}
@@ -177,7 +181,7 @@ public class TechTableModel extends AbstractTableModel {
 		apps.clear();
 	}
 
-	public List<Application> getApps() {
+	public List<ApplicationMatch> getApps() {
 		return apps;
 	}
 
