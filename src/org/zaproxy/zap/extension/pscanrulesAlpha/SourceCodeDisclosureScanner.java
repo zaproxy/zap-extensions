@@ -85,7 +85,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("public\\s+static\\s+void\\s+main\\s*\\(\\s*String\\s*\\[\\s*\\]\\s*[a-z0-9]+\\s*\\)\\s*\\{", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE), "Java");
 
 		//ASP
-		languagePatterns.put(Pattern.compile("On\\s*Error\\s*Resume\\s*Next", Pattern.CASE_INSENSITIVE), "ASP");
+		languagePatterns.put(Pattern.compile("On\\s+Error\\s+Resume\\s+Next", Pattern.CASE_INSENSITIVE), "ASP");
 		languagePatterns.put(Pattern.compile("Server.CreateObject\\s*\\(\\s*\"[a-z0-9.]+\"\\s*\\)", Pattern.CASE_INSENSITIVE), "ASP");
 		languagePatterns.put(Pattern.compile("Request.QueryString\\s*\\(\\s*\"[a-z0-9]+\"\\s*\\)", Pattern.CASE_INSENSITIVE), "ASP");
 		languagePatterns.put(Pattern.compile("If\\s*\\(\\s*Err.Number\\s*.+\\)\\s*Then", Pattern.CASE_INSENSITIVE), "ASP");
