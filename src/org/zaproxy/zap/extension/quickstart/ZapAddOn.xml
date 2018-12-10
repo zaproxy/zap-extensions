@@ -10,6 +10,7 @@
 	Inform when quick attack is disabled by the current mode (Issue 5069).<br>
 	Notify when quick attack starts.<br>
 	Include expected status code in the error message.<br>
+	Removed PnH code (Issue 5136).<br>
 	]]>
 	</changes>
 	<extensions>
@@ -24,19 +25,6 @@
 					<addon>
 						<id>selenium</id>
 						<semver>2.*</semver>
-					</addon>
-				</addons>
-			</dependencies>
-		</extension>
-		<extension v="1">
-			<classname>org.zaproxy.zap.extension.quickstart.pnh.ExtensionQuickStartPnH</classname>
-			<classnames>
-				<allowed>org.zaproxy.zap.extension.quickstart.pnh</allowed>
-			</classnames>
-			<dependencies>
-				<addons>
-					<addon>
-						<id>plugnhack</id>
 					</addon>
 				</addons>
 			</dependencies>
