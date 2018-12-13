@@ -1,16 +1,12 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>25</version>
+	<version>26</version>
 	<status>release</status>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Inform when quick attack is disabled by the current mode (Issue 5069).<br>
-	Notify when quick attack starts.<br>
-	Include expected status code in the error message.<br>
-	Removed PnH code (Issue 5136).<br>
 	]]>
 	</changes>
 	<extensions>
