@@ -19,6 +19,11 @@
  */
 package org.zaproxy.zap.testutils;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
+import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -38,7 +44,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * 
  * @param <T> the type of the passive scanner.
  */
-public abstract class PassiveScannerTestUtils<T extends PluginPassiveScanner> extends TestUtils {
+public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends TestUtils {
 
     protected T rule;
     protected PassiveScanThread parent;
@@ -55,12 +61,21 @@ public abstract class PassiveScannerTestUtils<T extends PluginPassiveScanner> ex
         alertsRaised = new ArrayList<>();
         parent = new PassiveScanThread(null, null, new ExtensionAlert(), null) {
             @Override
-            public void raiseAlert(int arg0, Alert arg1) {
-                alertsRaised.add(arg1);
+            public void raiseAlert(int id, Alert alert) {
+                defaultAssertions(alert);
+                alertsRaised.add(alert);
             }
         };
         rule = createScanner();
         rule.setParent(parent);
+    }
+
+    protected void defaultAssertions(Alert alert) {
+        if (rule instanceof PluginPassiveScanner) {
+            PluginPassiveScanner pps = (PluginPassiveScanner) rule;
+            assertThat(alert.getPluginId(), is(equalTo(pps.getPluginId())));
+        }
+        assertThat(alert.getAttack(), isEmptyOrNullString());
     }
 
     protected abstract T createScanner();
