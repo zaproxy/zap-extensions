@@ -203,8 +203,8 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 				getName());				    
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), param.getName(), getExploitMessage(msg), 
-				getExtraInfoMessage(msg, tag, attr, param, charset),
+				.getURI().toString(), param.getName(), "",
+				getExtraInfoMessage(tag, attr, param, charset),
 				getSolutionMessage(), getReferenceMessage(),  
 				"",	// No evidence
 				20,	// CWE-20: Improper Input Validation
@@ -240,13 +240,7 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 
-	// XXX Consider removing the parameter msg, it's never used.
-	private String getExploitMessage(HttpMessage msg) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "exploit");
-	}
-
-	// XXX Consider removing the parameter msg, it's never used.
-	private String getExtraInfoMessage(HttpMessage msg, String tag, String attr,
+	private static String getExtraInfoMessage(String tag, String attr,
 			HtmlParameter param, String charset) {        
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", 
         		tag, attr, param.getName(), param.getValue(), charset);        

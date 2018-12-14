@@ -161,7 +161,7 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 				getName());		
 		     
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), param.getName(), getExploitMessage(msg), 
+				.getURI().toString(), param.getName(), "",
 				getExtraInfoMessage(msg, param, cookie),
 				getSolutionMessage(), getReferenceMessage(),  
 				"",	// No evidence
@@ -198,18 +198,14 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 
-	private String getExploitMessage(HttpMessage msg) {
-        if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {      	        	
-        	return Constant.messages.getString(MESSAGE_PREFIX + "exploit.get");
-        } else if ("POST".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
-        	return Constant.messages.getString(MESSAGE_PREFIX + "exploit.post");
-        }
-        
-        return null;
-	}
-
 	private String getExtraInfoMessage(HttpMessage msg, HtmlParameter param, String cookie) {        
-        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", 
+        String introMessage = "";
+	    if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {                   
+	        introMessage = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.get");
+        } else if ("POST".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
+            introMessage = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.post");
+        }
+        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", introMessage,
         		msg.getRequestHeader().getURI().toString(), cookie, 
         		param.getName(), param.getValue());        
 	}

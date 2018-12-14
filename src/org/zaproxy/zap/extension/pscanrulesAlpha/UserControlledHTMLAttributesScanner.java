@@ -236,7 +236,7 @@ public class UserControlledHTMLAttributesScanner extends PluginPassiveScanner {
 				getName());				    
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), param.getName(), getExploitMessage(msg), 
+				.getURI().toString(), param.getName(), "", 
 				getExtraInfoMessage(msg, htmlElement.getName(), 
 						htmlAttribute.getName(), param, userControlledValue),
 				getSolutionMessage(), getReferenceMessage(),  
@@ -272,10 +272,6 @@ public class UserControlledHTMLAttributesScanner extends PluginPassiveScanner {
 
 	private String getReferenceMessage() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
-
-	private String getExploitMessage(HttpMessage msg) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "exploit");
 	}
 
 	private String getExtraInfoMessage(HttpMessage msg, String tag, String attr,

@@ -11,6 +11,7 @@
 	Fix a DateParseException in Cacheable Scanner (Issue 4969).<br>
 	Fix Open Redirect (10028) "Attack" should be Desc.<br>
         Fix false positive due to RxJS Observable method being mistaken for ASP source disclosure.<br>
+	Tweak User Controllable Charset and Cookie Poisoning to use Description/Other Info field instead of Attack (Issue 5149).<br>
 	]]>
 	</changes>
 	<extensions>

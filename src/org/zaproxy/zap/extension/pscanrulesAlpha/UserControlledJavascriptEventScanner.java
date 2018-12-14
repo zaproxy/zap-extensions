@@ -144,7 +144,7 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
 				getName());				    
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), param.getName(), getExploitMessage(msg), 
+				.getURI().toString(), param.getName(), "", 
 				getExtraInfoMessage(msg, htmlAttribute, param),
 				getSolutionMessage(), getReferenceMessage(),  
 				"",	// No evidence
@@ -179,10 +179,6 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
 
 	private String getReferenceMessage() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
-
-	private String getExploitMessage(HttpMessage msg) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "exploit");
 	}
 
 	private String getExtraInfoMessage(HttpMessage msg, Attribute htmlAttribute,
