@@ -26,7 +26,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscanrulesAlpha.PassiveScannerTest;
+import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
-public class WappalyzerPassiveScannerUnitTest extends PassiveScannerTest<WappalyzerPassiveScanner> {
+public class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
 
 	WappalyzerApplicationTestHolder defaultHolder;
 
