@@ -105,7 +105,7 @@ public class InsecureFormPostScanner extends PluginPassiveScanner {
 				getName());		
 		     
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), "", getExploitMessage(msg), 
+				.getURI().toString(), "", "", 
 				getExtraInfoMessage(msg, formElement),
 				getSolutionMessage(), getReferenceMessage(),  
 				"",	// No evidence
@@ -140,10 +140,6 @@ public class InsecureFormPostScanner extends PluginPassiveScanner {
 
 	private String getReferenceMessage() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
-
-	private String getExploitMessage(HttpMessage msg) {        
-        return Constant.messages.getString(MESSAGE_PREFIX + "exploit");
 	}
 
 	private String getExtraInfoMessage(HttpMessage msg, Element formElement) {		
