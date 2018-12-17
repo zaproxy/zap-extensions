@@ -175,7 +175,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 					alert.setDetail(Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.desc"), 
 							uri,
 							"",  //No specific parameter. It's in the header.
-							Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.alert.attack"),
+							"",
 							extraInfo, 
 							Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.soln"), 
 							Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.refs"), 

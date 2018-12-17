@@ -223,7 +223,7 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 	private void raiseAlert(HttpMessage msg, int id, String firstCharset, String secondCharset, MismatchType currentMismatch) {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_LOW,
 				getName() +" "+ getVariant(currentMismatch));//Compound name (to account for variant designations, and muitiple alerts on single URI)
-		alert.setDetail(getDescriptionMessage()+"\n\n"+getExploitMessage(), 
+		alert.setDetail(getDescriptionMessage(),
 				msg.getRequestHeader().getURI().toString(), //URI 
 				"", //Param
 				"", //Attack
@@ -262,10 +262,6 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 
 	private String getReferenceMessage() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
-
-	private String getExploitMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "exploit");
 	}
 
 	private String getExtraInfo(String firstCharset, String secondCharset, MismatchType mismatchType) {
