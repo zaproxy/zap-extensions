@@ -102,7 +102,7 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 
 	@Override
 	public String getDescription() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+		return "";
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 
 	@Override
 	public String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+		return "";
 	}
 
 	@Override

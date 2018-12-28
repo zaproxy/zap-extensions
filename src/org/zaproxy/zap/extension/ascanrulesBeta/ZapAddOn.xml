@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Correct HTTP message usage in Insecure HTTP Method scanner.<br>
+	Fix missing resource messages with Cross-Domain Misconfiguration scanner.<br>
     ]]>
 	</changes>
 	<extensions>
