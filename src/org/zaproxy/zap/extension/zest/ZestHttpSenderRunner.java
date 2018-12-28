@@ -29,11 +29,9 @@ import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestVariables;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.HttpSenderScript;
 import org.zaproxy.zap.extension.script.HttpSenderScriptHelper;
 
@@ -71,23 +69,12 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 
 			this.run(script.getZestScript(), req, params);
 			
-			String reqHeader = this.getVariable(ZestVariables.REQUEST_HEADER);
-			
-			if (reqHeader == null || reqHeader.length() == 0) {
-				// Its been cleared - drop the request
-				if (View.isInitialised()) {
-					View.getSingleton().getOutputPanel().append(
-							Constant.messages.getString("zest.proxy.request.drop", msg.getRequestHeader().getURI()));
-				}
-				return;
-			}
-
 			// Recreate the request from the variables
 			msg.setRequestHeader(
 					this.getVariable(ZestVariables.REQUEST_METHOD) + " " +
 						this.getVariable(ZestVariables.REQUEST_URL) + " " + 
 							msg.getRequestHeader().getVersion() + HttpHeader.CRLF + 
-								reqHeader);
+								getVariable(ZestVariables.REQUEST_HEADER));
 			
 			msg.setRequestBody(this.getVariable(ZestVariables.REQUEST_BODY));
 			msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
@@ -112,21 +99,12 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 
 			this.run(script.getZestScript(), req, params);
 			
-			String respHeader = this.getVariable(ZestVariables.RESPONSE_HEADER);
-			
-			if (respHeader == null || respHeader.length() == 0) {
-				// Its been cleared - drop the request
-				if (View.isInitialised()) {
-					View.getSingleton().getOutputPanel().append(
-							Constant.messages.getString("zest.proxy.response.drop", msg.getRequestHeader().getURI()));
-				}
-				return;
-			}
-			msg.setResponseHeader(respHeader);
+			msg.setResponseHeader(getVariable(ZestVariables.RESPONSE_HEADER));
 			
 			if (msg.getResponseHeader().isText()) {
 				// Dont currently support changing binary response body
 				msg.setResponseBody(this.getVariable(ZestVariables.RESPONSE_BODY));
+				msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
 			}
 
 		} catch (Exception e) {

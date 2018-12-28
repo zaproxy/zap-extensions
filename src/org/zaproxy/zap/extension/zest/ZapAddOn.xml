@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Rely on script context writer for script output.<br>
+	Correct message handling in HTTP Sender scripts.<br>
 	]]>
 	</changes>
 	<dependencies>
