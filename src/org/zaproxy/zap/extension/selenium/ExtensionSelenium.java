@@ -685,10 +685,12 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 firefoxOptions.setBinary(binaryPath);
             }
 
+            // Disable the captive checks/requests, mainly to avoid flooding
+            // the AJAX Spider results (those requests are out of scope) but
+            // also useful for other launched browsers.
+            firefoxOptions.addPreference("network.captive-portal-service.enabled", false);
+
             if (requester == HttpSender.AJAX_SPIDER_INITIATOR) {
-                // Disable the captive checks/requests, mainly to avoid flooding
-                // the AJAX Spider results (those requests are out of scope).
-                firefoxOptions.addPreference("network.captive-portal-service.enabled", false);
                 // Disable JSON viewer, otherwise AJAX Spider will crawl it.
                 // https://developer.mozilla.org/en-US/docs/Tools/JSON_viewer
                 firefoxOptions.addPreference("devtools.jsonview.enabled", false);
