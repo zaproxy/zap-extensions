@@ -350,55 +350,6 @@
 
 				</sequential>
 			</macrodef>
-	
-	<macrodef name="build-help-addon" description="build the specified addon">
-		<attribute name="name"/>
-		<element name="extra-actions" implicit="true" optional="true" />
-		<sequential>
-			<local name="zapaddon.version" />
-			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
-			<local name="zapaddon.status" />
-			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
-			<local name="file" />
-			<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
-
-			<local name="addon.libs.zip" />
-			<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
-
-			<delete file="${addon.libs.zip}" failonerror="true" />
-			<zip destfile="${addon.libs.zip}" whenempty="create">
-				<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" />
-			</zip>
-
-			 <jar jarfile="${dist}/${file}" update="true" compress="true">
-				<zipfileset src="${addon.libs.zip}" />
-				<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
-			</jar>
-			<delete file="${addon.libs.zip}" />
-
-			<!-- allow callers to do extra actions before generating the hash and determine the size of the file -->
-			<extra-actions />
-
-			<local name="length" />
-			<length file="${dist}/${file}" property="length" />
-
-			<local name="sha1hash" />
-			<checksum file="${dist}/${file}"  algorithm="SHA-1" property="sha1hash"/>
-
-			<local name="hash" />
-			<property name="hash" value="SHA1:${sha1hash}"/>
-
-			<local name="yyyymmdd" />
-			<tstamp>
-				<format property="yyyymmdd" pattern="yyyy-MM-dd"/>
-			</tstamp>
-
-			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-				addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-				url="${zap.download.url}/${file}" />
-
-		</sequential>
-	</macrodef>
 
 	<target name="build-all" depends="clean,compile,download-files" description="build all of the extensions">
 		<delete file="${versions.file}"/>
@@ -420,10 +371,6 @@
 		<build-addon name="domxss"/>
 		<build-addon name="exportreport" />
 		<build-addon name="formhandler" />
-		<build-addon name="help_bs_BA" />
-		<build-addon name="help_es_ES" />
-		<build-addon name="help_fr_FR" />
-		<build-addon name="help_ja_JP" />
 		<build-addon name="highlighter" />
 		<build-addon name="httpsinfo" addonid="httpsInfo" />
 		<build-imagelocationscanner-addon />
@@ -482,16 +429,6 @@
 
 			<build-addon-without-help-indexes name="@{name}" addonid="@{addonid}" />
 			<deploy-addon name="@{addonid}" />
-		</sequential>
-	</macrodef>
-	
-	<macrodef name="build-deploy-help-addon" description="build and deploy the specified help addon">
-		<attribute name="name"/>
-		<sequential>
-			<antcall target="clean" />
-
-			<build-help-addon name="@{name}" />
-			<deploy-addon name="@{name}" />
 		</sequential>
 	</macrodef>
 
@@ -619,14 +556,6 @@
 		<generate-wiki addon="exportreport" />
 	</target>
 
-	<target name="deploy-help-fr-FR" description="deploy the help_fr_FR add-on">
-		<build-deploy-help-addon name="help_fr_FR" />
-	</target>
-  
-	<target name="deploy-help-ja-JP" description="deploy the help_ja_JP add-on">
-		<build-deploy-help-addon name="help_ja_JP" />
-	</target>
-  
 	<target name="deploy-highlighter" description="deploy the highlighter extension">
 		<build-deploy-addon name="highlighter" />
 	</target>
