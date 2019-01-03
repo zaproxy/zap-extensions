@@ -26,6 +26,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
@@ -200,5 +201,73 @@ public class StrictTransportSecurityScannerUnitTest extends PassiveScannerTest<S
 		assertThat(alertsRaised.size(), equalTo(1));
 		assertThat(alertsRaised.get(0).getName(),
 				equalTo("Strict-Transport-Security Defined via META (Non-compliant with Spec)"));
+	}
+
+	@Test
+	public void shouldNotRaiseAlertIfThresholdNotLowRedirectSameDomain() throws URIException {
+		// Given
+		HttpMessage msg = createMessage();
+		msg.getResponseHeader().setStatusCode(301);
+		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://example.com/default/");
+		// When
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		// Then
+		assertThat(alertsRaised.size(), equalTo(0));
+	}
+
+	@Test
+	public void shouldRaiseAlertIfThresholdLowRedirectSameDomain() throws URIException {
+		// Given
+		HttpMessage msg = createMessage();
+		msg.getResponseHeader().setStatusCode(301);
+		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://example.com/default/");
+		rule.setAlertThreshold(AlertThreshold.LOW);
+		// When
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		// Then
+		assertThat(alertsRaised.size(), equalTo(1));
+		assertThat(alertsRaised.get(0).getName(),
+				equalTo("Strict-Transport-Security Header Not Set"));
+	}
+
+	@Test
+	public void shouldNotRaiseAlertIfThresholdNotLowRedirectRelativePath() throws URIException {
+		// Given
+		HttpMessage msg = createMessage();
+		msg.getResponseHeader().setStatusCode(301);
+		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "/default/");
+		// When
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		// Then
+		assertThat(alertsRaised.size(), equalTo(0));
+	}
+
+	@Test
+	public void shouldRaiseAlertIfThresholdLowRedirectRelativePath() throws URIException {
+		// Given
+		HttpMessage msg = createMessage();
+		msg.getResponseHeader().setStatusCode(301);
+		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "/default/");
+		rule.setAlertThreshold(AlertThreshold.LOW);
+		// When
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		// Then
+		assertThat(alertsRaised.size(), equalTo(1));
+		assertThat(alertsRaised.get(0).getName(),
+				equalTo("Strict-Transport-Security Header Not Set"));
+	}
+
+	@Test
+	public void shouldRaiseAlertIfThresholdNotLowRedirectCrossDomain() throws URIException {
+		// Given
+		HttpMessage msg = createMessage();
+		msg.getResponseHeader().setStatusCode(301);
+		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://other.com/default/");
+		// When
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		// Then
+		assertThat(alertsRaised.size(), equalTo(1));
+		assertThat(alertsRaised.get(0).getName(),
+				equalTo("Strict-Transport-Security Header Not Set"));
 	}
 }

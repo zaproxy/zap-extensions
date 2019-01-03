@@ -25,17 +25,20 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.HTMLElementName;
-import net.htmlparser.jericho.Source;
-
+import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 /**
  * Strict-Transport-Security Header Not Set passive scan rule 
@@ -104,7 +107,25 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 		if (msg.getRequestHeader().isSecure()){ //No point reporting missing for non-SSL resources
 			//Content available via both HTTPS and HTTP is a separate though related issue
 			if (stsOption == null) { // Header NOT found
+				boolean report = true;
+				if (! this.getAlertThreshold().equals(AlertThreshold.LOW) &&
+						HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())) {
+					// Only report https redirects to the same domain at low threshold
+					try {
+						String redirStr = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
+						URI srcUri = msg.getRequestHeader().getURI();
+						URI redirUri = new URI(redirStr, false);
+						if (redirUri.isRelativeURI() || (redirUri.getScheme().equalsIgnoreCase("https") && redirUri.getHost().equals(srcUri.getHost()) &&
+								redirUri.getPort() == srcUri.getPort())) {
+							report = false;
+						}
+					} catch (Exception e) {
+						// Ignore, so report the missing header
+					}
+				}
+				if (report) {
 					raiseAlert(VulnType.HSTS_MISSING, null, msg, id);
+				}
 			} else if (stsOption.size() > 1){//More than one header found
 				raiseAlert(VulnType.HSTS_MULTIPLE_HEADERS, null, msg, id);
 			} else { //Single HSTS header entry
