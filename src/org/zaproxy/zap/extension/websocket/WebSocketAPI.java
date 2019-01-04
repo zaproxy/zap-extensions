@@ -58,6 +58,7 @@ import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.utils.ApiUtils;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -167,18 +168,19 @@ public class WebSocketAPI extends ApiImplementor {
                         // Shouldnt happen, but just to be safe
                         return true;
                     }
+                    JSONObject json = null;
                     try {
                         if (WebSocketMessage.isControl(message.opcode)) {
                             return false;
                         }
-                        JSONObject json = JSONObject.fromObject(message.getReadablePayload());
+                        json = JSONObject.fromObject(message.getReadablePayload());
                         String component = json.getString("component");
                         String name = json.getString("name");
                         JSONObject params = null;
                         if (json.has("params")) {
                             params = json.getJSONObject("params");
                         }
-                        String response = null;
+                        JSON response = null;
 
                         if ("event".equals(component)) {
                             // Special case
@@ -202,11 +204,11 @@ public class WebSocketAPI extends ApiImplementor {
                             switch (reqType) {
                             case action:
                                 apiResp = impl.handleApiAction(name, params);
-                                response = apiResp.toJSON().toString();
+                                response = apiResp.toJSON();
                                 break;
                             case view:
                                 apiResp = impl.handleApiView(name, params);
-                                response = apiResp.toJSON().toString();
+                                response = apiResp.toJSON();
                                 break;
                             case other:
                             case pconn:
@@ -215,19 +217,19 @@ public class WebSocketAPI extends ApiImplementor {
                             }
                         }
                         if (response != null) {
-                            sendWebSocketMessage(proxy, response);
+                            optionalResponse(proxy, response, json);
                         }
                     } catch (JSONException e) {
                         LOG.warn(e.getMessage(), e);
                         try {
                             ApiException e2 = new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
-                            sendWebSocketMessage(proxy, e2.toString(Format.JSON, false));
+                            optionalResponse(proxy, e2, json);
                         } catch (IOException e1) {
                             LOG.error(e.getMessage(), e);
                         }
                     } catch (ApiException e) {
                         try {
-                            sendWebSocketMessage(proxy, e.toString(Format.JSON, false));
+                            optionalResponse(proxy, e, json);
                         } catch (IOException e1) {
                             LOG.error(e.getMessage(), e);
                         }
@@ -249,6 +251,31 @@ public class WebSocketAPI extends ApiImplementor {
 
         }
         return observer;
+    }
+    
+    private void optionalResponse(WebSocketProxy proxy, JSON response, JSONObject request) throws IOException {
+        if (request != null) {
+            String id = request.optString("id", "");
+            if (id.length() > 0) {
+                // Only send a response if they've specified an id in the call
+                sendWebSocketMessage(proxy, responseWrapper(response, id, request.optString("caller", "")).toString());
+            }
+        }
+    }
+
+    private void optionalResponse(WebSocketProxy proxy, ApiException ex, JSONObject request) throws IOException {
+        // Not ideal, but atm the core does not expose the exception in JSON format
+        optionalResponse(proxy, JSONObject.fromObject(ex.toString(Format.JSON, true)), request);
+    }
+
+    private JSON responseWrapper(JSON response, String id, String caller) {
+        JSONObject wrapper = new JSONObject();
+        wrapper.put("id", id);
+        if (caller.length() > 0) {
+            wrapper.put("caller", caller);
+        }
+        wrapper.put("response", response);
+        return wrapper;
     }
 
     private void removeEventConsumer(WebsocketEventConsumer consumer) {
