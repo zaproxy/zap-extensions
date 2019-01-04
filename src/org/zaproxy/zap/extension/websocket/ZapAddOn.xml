@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix exceptions when handling/dispatching events.<br>
+	Add wrapper to websocket API responses.<br>
 	]]>
 	</changes>
 	<classnames>
