@@ -13,6 +13,7 @@
 	Fix false positive due to RxJS Observable method being mistaken for ASP source disclosure.<br>
 	Tweak User Controllable Charset and Cookie Poisoning to use Description/Other Info field instead of Attack (Issue 5149).<br>
 	Only report missing STS header on redirects to HTTPS URLs on the same domain at Low threshold.<br>
+	Hash Disclosure (10097): Add threshold filtering and fix hash confidence levels.<br>
 	]]>
 	</changes>
 	<extensions>
