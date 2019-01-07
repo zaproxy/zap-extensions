@@ -198,6 +198,9 @@ public class WebSocketAPI extends ApiImplementor {
                             }
                         } else {
                             ApiImplementor impl = API.getInstance().getImplementors().get(component);
+                            if (impl == null) {
+                                throw new ApiException(ApiException.Type.NO_IMPLEMENTOR);
+                            }
                             RequestType reqType = RequestType.valueOf(json.getString("type"));
                             ApiResponse apiResp;
 

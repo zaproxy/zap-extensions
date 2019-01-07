@@ -9,6 +9,7 @@
 	<![CDATA[
 	Fix exceptions when handling/dispatching events.<br>
 	Add wrapper to websocket API responses.<br>
+	Fix exception when handling API request with no API implementor.<br>
 	]]>
 	</changes>
 	<classnames>
