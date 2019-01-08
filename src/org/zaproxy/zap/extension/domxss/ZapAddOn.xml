@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>DOM XSS Active scanner rule</name>
-	<version>7</version>
+	<version>8</version>
 	<status>alpha</status>
 	<description>DOM XSS Active scanner rule</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 2918: Added an option to attack URL parameters.<br>
 	]]>
     </changes>
 	<dependencies>
