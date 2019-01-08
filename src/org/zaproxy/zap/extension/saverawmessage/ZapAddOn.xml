@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Save Raw Message</name>
-	<version>4</version>
+	<version>5</version>
 	<status>release</status>
 	<description>Allows to save content of HTTP messages as binary</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
 	]]>
 	</changes>
 	<extensions>
