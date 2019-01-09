@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Invoke Applications</name>
-	<version>9</version>
+	<version>10</version>
 	<status>beta</status>
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Added additional parameter replacements of %msgid% and %header-*%<br>
 	]]>
 	</changes>
 	<extensions>
