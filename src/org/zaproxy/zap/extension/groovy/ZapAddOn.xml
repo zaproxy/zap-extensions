@@ -9,6 +9,7 @@
 	<![CDATA[
 	Promote to beta status.<br>
 	Change add-on name/description and update help.<br>
+	Start using Semantic Versioning.<br>
 	]]>
 	</changes>
 	<extensions>
