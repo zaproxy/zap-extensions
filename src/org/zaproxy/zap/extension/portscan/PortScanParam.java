@@ -28,8 +28,8 @@ public class PortScanParam extends AbstractParam {
 	private static final String TIMEOUT_IN_MS = "portscan.timeoutInMs";
 	private static final String USE_PROXY = "portscan.useProxy";
 		
-	public static final int DEFAULT_MAX_PORT = 9216;
-	public static final int DEFAULT_THREAD_PER_SCAN = 3;
+	public static final int DEFAULT_MAX_PORT = 10240;
+	public static final int DEFAULT_THREAD_PER_SCAN = 5;
 	public static final int DEFAULT_TIMEOUT_IN_MS = 100;
 	public static final boolean DEFAULT_USE_PROXY = true;
 		
