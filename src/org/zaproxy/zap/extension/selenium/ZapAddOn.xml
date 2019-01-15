@@ -13,6 +13,7 @@
 	Mention the configuration keys in the options help page.<br>
 	Tweak error message shown when failed to start/connect to the browser.<br>
 	Disable Firefox JSON viewer when used by AJAX Spider to prevent crawl.<br>
+	Prevent WebDriver process leak when closing ZAP.<br>
 	]]>
 	</changes>
 	<extensions>
