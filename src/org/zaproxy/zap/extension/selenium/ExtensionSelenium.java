@@ -210,7 +210,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         for (WebDriver wd : this.proxiedWebDrivers) {
             // Just to make sure
             try {
-                wd.close();
                 wd.quit();
             } catch (Exception ex) {
                 // Ignore - the user might well have already closed the browser
