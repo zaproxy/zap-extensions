@@ -13,6 +13,7 @@
     Possibility to enforce a random order in the RegexPayloadGenerator.<br>
     Make the default step in the Numberzz generator one.<br>
     Add json fuzzer.<br>
+    Add parameters to Fuzzer HTTP Processor script.<br>
     ]]>
     </changes>
     <extensions>

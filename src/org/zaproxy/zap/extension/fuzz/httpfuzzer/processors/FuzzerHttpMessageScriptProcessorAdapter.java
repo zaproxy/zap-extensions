@@ -19,6 +19,10 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
+import java.util.Collections;
+import java.util.Map;
+
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzResult;
@@ -37,10 +41,17 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 public class FuzzerHttpMessageScriptProcessorAdapter implements HttpFuzzerMessageProcessor {
 
     private final ScriptWrapper scriptWrapper;
+    private final Map<String, String> paramValues;
     private boolean initialised;
     private HttpFuzzerProcessorScript scriptProcessor;
 
     public FuzzerHttpMessageScriptProcessorAdapter(ScriptWrapper scriptWrapper) {
+        validateScriptWrapper(scriptWrapper);
+        this.scriptWrapper = scriptWrapper;
+        this.paramValues = Collections.emptyMap();
+    }
+
+    private static void validateScriptWrapper(ScriptWrapper scriptWrapper) {
         if (scriptWrapper == null) {
             throw new IllegalArgumentException("Parameter scriptWrapper must not be null.");
         }
@@ -48,7 +59,17 @@ public class FuzzerHttpMessageScriptProcessorAdapter implements HttpFuzzerMessag
             throw new IllegalArgumentException("Parameter scriptWrapper must wrap a script of type \""
                     + HttpFuzzerProcessorScript.TYPE_NAME + "\".");
         }
+    }
+
+    public FuzzerHttpMessageScriptProcessorAdapter(
+            ScriptWrapper scriptWrapper,
+            Map<String, String> paramValues) {
+        validateScriptWrapper(scriptWrapper);
+        if (paramValues == null) {
+            throw new IllegalArgumentException("Parameter paramValues must not be null.");
+        }
         this.scriptWrapper = scriptWrapper;
+        this.paramValues = paramValues;
     }
 
     @Override
@@ -58,23 +79,12 @@ public class FuzzerHttpMessageScriptProcessorAdapter implements HttpFuzzerMessag
 
     @Override
     public HttpMessage processMessage(HttpFuzzerTaskProcessorUtils utils, HttpMessage message) throws ProcessingException {
-        if (!initialised) {
-            initialise();
-            initialised = true;
-        }
-
-        if (scriptProcessor == null) {
-            throw new ProcessingException("Script '" + scriptWrapper.getName()
-                    + "' does not implement the expected interface (HttpFuzzerProcessorScript).");
-        }
+        initialiseIfNotInitialised();
 
         try {
+            utils.setParameters(paramValues);
             scriptProcessor.processMessage(utils, message);
         } catch (Exception e) {
-            // N.B. Catch exception (instead of ScriptException) since Nashorn throws RuntimeException.
-            // The same applies to all other script try-catch blocks.
-            // For example, when a variable or function is not defined it throws:
-            // jdk.nashorn.internal.runtime.ECMAException
             handleScriptException(e);
         }
         return message;
@@ -82,6 +92,18 @@ public class FuzzerHttpMessageScriptProcessorAdapter implements HttpFuzzerMessag
 
     @Override
     public boolean processResult(HttpFuzzerTaskProcessorUtils utils, HttpFuzzResult fuzzResult) throws ProcessingException {
+        initialiseIfNotInitialised();
+
+        try {
+            utils.setParameters(paramValues);
+            return scriptProcessor.processResult(utils, fuzzResult);
+        } catch (Exception e) {
+            handleScriptException(e);
+        }
+        return true;
+    }
+    
+    private void initialiseIfNotInitialised() throws ProcessingException {
         if (!initialised) {
             initialise();
             initialised = true;
@@ -91,17 +113,6 @@ public class FuzzerHttpMessageScriptProcessorAdapter implements HttpFuzzerMessag
             throw new ProcessingException("Script '" + scriptWrapper.getName()
                     + "' does not implement the expected interface (HttpFuzzerProcessorScript).");
         }
-
-        try {
-            return scriptProcessor.processResult(utils, fuzzResult);
-        } catch (Exception e) {
-            // N.B. Catch exception (instead of ScriptException) since Nashorn throws RuntimeException.
-            // The same applies to all other script try-catch blocks.
-            // For example, when a variable or function is not defined it throws:
-            // jdk.nashorn.internal.runtime.ECMAException
-            handleScriptException(e);
-        }
-        return true;
     }
 
     private void initialise() throws ProcessingException {
@@ -109,8 +120,27 @@ public class FuzzerHttpMessageScriptProcessorAdapter implements HttpFuzzerMessag
         if (extensionScript != null) {
             try {
                 scriptProcessor = extensionScript.getInterface(scriptWrapper, HttpFuzzerProcessorScript.class);
+                if (scriptProcessor != null) {
+                    validateRequiredParameters();
+                } else {
+                    extensionScript.handleFailedScriptInterface(
+                            scriptWrapper,
+                            Constant.messages.getString(
+                                    "fuzz.httpfuzzer.processor.scriptProcessor.warnNoInterface.message",
+                                    scriptWrapper.getName()));
+                }
             } catch (Exception e) {
                 handleScriptException(e);
+                throw new ProcessingException("Failed to instantiate the script processor:", e);
+            }
+        }
+    }
+
+    private void validateRequiredParameters() throws ProcessingException {
+        for (String requiredParamName : scriptProcessor.getRequiredParamsNames()) {
+            String value = paramValues.get(requiredParamName);
+            if(value == null || value.trim().isEmpty()){
+                throw new ProcessingException("Required parameter '" + requiredParamName + "' was not provided.");
             }
         }
     }
@@ -118,8 +148,7 @@ public class FuzzerHttpMessageScriptProcessorAdapter implements HttpFuzzerMessag
     private void handleScriptException(Exception cause) throws ProcessingException {
         ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
-            extensionScript.setError(scriptWrapper, cause);
-            extensionScript.setEnabled(scriptWrapper, false);
+            extensionScript.handleScriptException(scriptWrapper, cause);
         }
 
         throw new ProcessingException("Failed to process the payload:", cause);

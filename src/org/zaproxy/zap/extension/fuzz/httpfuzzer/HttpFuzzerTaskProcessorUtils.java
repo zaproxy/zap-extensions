@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -46,6 +47,7 @@ public class HttpFuzzerTaskProcessorUtils {
     private final ExtensionAlert extensionAlert;
     private HistoryReference historyReference;
     private String processorName;
+    private Map<String, String> parameters;
 
     protected HttpFuzzerTaskProcessorUtils(
             HttpFuzzer httpFuzzer,
@@ -181,6 +183,14 @@ public class HttpFuzzerTaskProcessorUtils {
             result.addCustomState(customStateKey, customState);
         }
         httpFuzzer.fuzzResultAvailable(result);
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> paramsMap) {
+        this.parameters = paramsMap;
     }
 
 }

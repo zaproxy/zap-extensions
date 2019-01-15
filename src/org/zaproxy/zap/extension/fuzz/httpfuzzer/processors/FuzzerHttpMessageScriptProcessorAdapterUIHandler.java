@@ -19,13 +19,16 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
+import java.awt.event.ItemEvent;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
@@ -36,6 +39,7 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.FuzzerHttpMessageScr
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
+import org.zaproxy.zap.view.DynamicFieldsPanel;
 import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
 
 public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
@@ -94,9 +98,14 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
             HttpFuzzerMessageProcessorUI<FuzzerHttpMessageScriptProcessorAdapter> {
 
         private final ScriptWrapper scriptWrapper;
+        private final Map<String, String> paramsValues;
 
-        public FuzzerHttpMessageScriptProcessorAdapterUI(ScriptWrapper scriptWrapper) {
+
+        public FuzzerHttpMessageScriptProcessorAdapterUI(
+                ScriptWrapper scriptWrapper,
+                Map<String, String> paramsValues) {
             this.scriptWrapper = scriptWrapper;
+            this.paramsValues = paramsValues;
         }
 
         public ScriptWrapper getScriptWrapper() {
@@ -120,12 +129,12 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
 
         @Override
         public FuzzerHttpMessageScriptProcessorAdapter getFuzzerMessageProcessor() {
-            return new FuzzerHttpMessageScriptProcessorAdapter(scriptWrapper);
+            return new FuzzerHttpMessageScriptProcessorAdapter(scriptWrapper, paramsValues);
         }
 
         @Override
         public FuzzerHttpMessageScriptProcessorAdapterUI copy() {
-            return new FuzzerHttpMessageScriptProcessorAdapterUI(scriptWrapper);
+            return new FuzzerHttpMessageScriptProcessorAdapterUI(scriptWrapper, paramsValues);
         }
     }
 
@@ -137,17 +146,31 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
 
         private final JPanel fieldsPanel;
         private final JComboBox<ScriptUIEntry> scriptComboBox;
+        private DynamicFieldsPanel scriptParametersPanel;
 
         public FuzzerHttpMessageScriptProcessorAdapterUIPanel(List<ScriptWrapper> scriptWrappers) {
             scriptComboBox = new JComboBox<>(new SortedComboBoxModel<ScriptUIEntry>());
+            addScriptsToScriptComboBox(scriptWrappers);
+            scriptComboBox.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    updateScriptParametersPanel((FuzzerProcessorScriptUIEntry) e.getItem());
+                }
+            });
+            scriptParametersPanel = new DynamicFieldsPanel(HttpFuzzerProcessorScript.EMPTY_PARAMS);
+            fieldsPanel = new JPanel();
+            setupFieldsPanel();
+        }
+
+        private void addScriptsToScriptComboBox(List<ScriptWrapper> scriptWrappers) {
             for (ScriptWrapper scriptWrapper : scriptWrappers) {
                 if (scriptWrapper.isEnabled()) {
-                    scriptComboBox.addItem(new ScriptUIEntry(scriptWrapper));
+                    scriptComboBox.addItem(new FuzzerProcessorScriptUIEntry(scriptWrapper));
                 }
             }
+            scriptComboBox.setSelectedIndex(-1);
+        }
 
-            fieldsPanel = new JPanel();
-
+        private void setupFieldsPanel() {
             GroupLayout layout = new GroupLayout(fieldsPanel);
             fieldsPanel.setLayout(layout);
             layout.setAutoCreateGaps(true);
@@ -155,11 +178,50 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
             JLabel scriptLabel = new JLabel(SCRIPT_FIELD_LABEL);
             scriptLabel.setLabelFor(scriptComboBox);
 
-            layout.setHorizontalGroup(layout.createSequentialGroup().addComponent(scriptLabel).addComponent(scriptComboBox));
+            JScrollPane parametersScrollPane = new JScrollPane(scriptParametersPanel);
 
-            layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(scriptLabel)
-                    .addComponent(scriptComboBox));
+            layout.setHorizontalGroup(
+                    layout.createParallelGroup()
+                            .addGroup(layout.createSequentialGroup().addComponent(scriptLabel).addComponent(scriptComboBox))
+                            .addComponent(parametersScrollPane));
+
+            layout.setVerticalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(scriptLabel)
+                                            .addComponent(scriptComboBox))
+                            .addComponent(parametersScrollPane));
+        }
+
+        private void updateScriptParametersPanel(FuzzerProcessorScriptUIEntry scriptUIEntry) {
+            String[] requiredParameters = HttpFuzzerProcessorScript.EMPTY_PARAMS;
+            String[] optionalParameters = HttpFuzzerProcessorScript.EMPTY_PARAMS;
+
+            if (scriptUIEntry != null) {
+                try {
+                    if (!scriptUIEntry.isDataLoaded()) {
+                        HttpFuzzerProcessorScript script = HttpFuzzerProcessorScriptProxy
+                                .create(scriptUIEntry.getScriptWrapper());
+                        scriptUIEntry.setParameters(script.getRequiredParamsNames(), script.getOptionalParamsNames());
+                    }
+                    requiredParameters = scriptUIEntry.getRequiredParameters();
+                    optionalParameters = scriptUIEntry.getOptionalParameters();
+                } catch (Exception ex) {
+                    scriptComboBox.setSelectedIndex(-1);
+                    scriptComboBox.removeItem(scriptUIEntry);
+                    showValidationMessageDialog(
+                            Constant.messages.getString(
+                                    "fuzz.httpfuzzer.processor.scriptProcessor.warnNoInterface.message",
+                                    scriptUIEntry.getScriptWrapper().getName()),
+                            Constant.messages.getString("fuzz.httpfuzzer.processor.scriptProcessor.warnNoInterface.title"));
+                }
+            }
+
+            scriptParametersPanel.setFields(requiredParameters, optionalParameters);
+
+            fieldsPanel.revalidate();
+            fieldsPanel.repaint();
         }
 
         @Override
@@ -169,32 +231,76 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
 
         @Override
         public void setFuzzerMessageProcessorUI(FuzzerHttpMessageScriptProcessorAdapterUI payloadProcessorUI) {
-            scriptComboBox.setSelectedItem(new ScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
+            scriptComboBox.setSelectedItem(new FuzzerProcessorScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
+            scriptParametersPanel.bindFieldValues(payloadProcessorUI.paramsValues);
         }
 
         @Override
         public FuzzerHttpMessageScriptProcessorAdapterUI getFuzzerMessageProcessorUI() {
-            return new FuzzerHttpMessageScriptProcessorAdapterUI(
-                    ((ScriptUIEntry) scriptComboBox.getSelectedItem()).getScriptWrapper());
+            FuzzerProcessorScriptUIEntry entry = (FuzzerProcessorScriptUIEntry) scriptComboBox.getSelectedItem();
+            return new FuzzerHttpMessageScriptProcessorAdapterUI(entry.getScriptWrapper(), scriptParametersPanel.getFieldValues());
         }
 
         @Override
         public void clear() {
             scriptComboBox.setSelectedIndex(-1);
+            scriptParametersPanel.clearFields();
         }
 
         @Override
         public boolean validate() {
             if (scriptComboBox.getSelectedIndex() == -1) {
-                JOptionPane.showMessageDialog(
-                        null,
-                        Constant.messages.getString("fuzz.httpfuzzer.processor.scriptProcessor.panel.warnNoScript.message"),
-                        Constant.messages.getString("fuzz.httpfuzzer.processor.scriptProcessor.panel.warnNoScript.title"),
-                        JOptionPane.INFORMATION_MESSAGE);
-                scriptComboBox.requestFocusInWindow();
+                showValidationMessageDialog(
+                        Constant.messages
+                        .getString("fuzz.httpfuzzer.processor.scriptProcessor.panel.warnNoScript.message"),
+                        Constant.messages
+                        .getString("fuzz.httpfuzzer.processor.scriptProcessor.panel.warnNoScript.title"));
+                return false;
+            }
+
+            try {
+                scriptParametersPanel.validateFields();
+            } catch (IllegalStateException ex) {
+                showValidationMessageDialog(ex.getMessage(),
+                        Constant.messages
+                        .getString("fuzz.httpfuzzer.processor.scriptProcessor.panel.warn.title"));
                 return false;
             }
             return true;
+        }
+
+        private void showValidationMessageDialog(Object message,String title){
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+            scriptComboBox.requestFocusInWindow();
+        }
+
+        private static class FuzzerProcessorScriptUIEntry extends ScriptUIEntry {
+
+            private String[] requiredParameters;
+            private String[] optionalParameters;
+            private boolean dataLoaded;
+
+            public FuzzerProcessorScriptUIEntry(ScriptWrapper scriptWrapper) {
+                super(scriptWrapper);
+            }
+
+            public boolean isDataLoaded() {
+                return dataLoaded;
+            }
+
+            public void setParameters(String[] requiredParameters, String[] optionalParameters) {
+                this.requiredParameters = requiredParameters;
+                this.optionalParameters = optionalParameters;
+                dataLoaded = true;
+            }
+
+            public String[] getRequiredParameters() {
+                return requiredParameters;
+            }
+
+            public String[] getOptionalParameters() {
+                return optionalParameters;
+            }
         }
     }
 }
