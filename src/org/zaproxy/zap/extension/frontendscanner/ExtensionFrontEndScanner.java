@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.UUID;
 
@@ -229,25 +230,26 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
                     int historyReferenceId = msg.getHistoryRef().getHistoryId();
 
-                    // 67000 is a lower estimate, made by counting the characters in
-                    //   * files/frontendscanner/front-end-scanner.js
-                    //   * files/scripts/scripts/client-side-passive/scan-jwt-token.js
-                    StringBuilder injectedContentBuilder = new StringBuilder(67000)
+                    // 65000 is an estimate, made by counting the characters in
+                    // files/frontendscanner/front-end-scanner.js
+                    StringBuilder injectedContentBuilder = new StringBuilder(65000)
                         .append("<script type='text/javascript'>")
-                        .append("var frontEndScanner=(function() {")
-                        .append("const HISTORY_REFERENCE_ID = " + historyReferenceId + ";")
-                        .append("const CALLBACK_ENDPOINT = '" + frontEndApiUrl + "';");
+                        .append("var frontEndScanner=(function() {");
 
-                    appendUserScriptsTo(injectedContentBuilder);
                     appendFrontEndScannerCodeTo(injectedContentBuilder);
 
                     injectedContentBuilder
                         .append("})();")
                         .append("</script>");
 
+                    String injectedContent = injectedContentBuilder.toString()
+                        .replace("<<HISTORY_REFERENCE_ID>>", Integer.toString(historyReferenceId))
+                        .replace("<<ZAP_CALLBACK_ENDPOINT>>", frontEndApiUrl);
+                    injectedContent = placeUserScriptsInto(injectedContent);
+
                     OutputDocument newResponseBody = new OutputDocument(document);
                     int insertPosition = head.getChildElements().get(0).getBegin();
-                    newResponseBody.insert(insertPosition, injectedContentBuilder.toString());
+                    newResponseBody.insert(insertPosition, injectedContent);
 
                     msg.getResponseBody()
                         .setBody(newResponseBody.toString());
@@ -282,20 +284,18 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         );
     }
 
-    private void appendUserScriptsTo(StringBuilder stringBuilder) throws IOException {
+    private String placeUserScriptsInto(String string) throws IOException {
         try {
-            List<String> passiveFunctionNames = new ArrayList<String>();
+              String functions = this.extensionScript
+                  .getScripts(ExtensionFrontEndScanner.SCRIPT_TYPE_CLIENT_PASSIVE)
+                  .stream()
+                  .filter(script -> script.isEnabled())
+                  .map(script -> script.getContents())
+                  .map(code -> "function (frontEndScanner) { " + code + " }")
+                  .collect(Collectors.joining(", "));
 
-            this.extensionScript
-                .getScripts(ExtensionFrontEndScanner.SCRIPT_TYPE_CLIENT_PASSIVE)
-                .stream()
-                .filter(script -> script.isEnabled())
-                .map(script -> script.getContents())
-                .map(code -> wrapInFunction(code, passiveFunctionNames))
-                .forEach(code -> stringBuilder.append(code));
-
-            stringBuilder
-                .append("const SCRIPTS = [ " + String.join(", ", passiveFunctionNames) + "];");
+            return string
+                .replace("'<<LIST_OF_PASSIVE_SCRIPTS>>'", '[' + functions + ']');
         } catch (UncheckedIOException e) {
             throw new IOException(e);
         }
@@ -308,25 +308,6 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-    }
-
-    /**
-     * Creates a javascript function containing the given code as body.
-     * <p>
-     * Has a side-effect: it updates the `passiveFunctionNames` List.
-     * </p>
-     *
-     * @param javascriptCode the javascript code that will be used as body of the returned function declaration
-     * @param functionNames an array storing the different functions that have been created, it will be updated by the call to this method
-     * @return the returned function declaration
-     */
-    private String wrapInFunction(String javascriptCode, List<String> functionNames) {
-        String id = Long.toString(Math.abs(UUID.randomUUID().getMostSignificantBits()));
-        String functionName = "f_" + id;
-
-        functionNames.add(functionName);
-
-        return "function " + functionName + " (frontEndScanner) { " + javascriptCode + " };";
     }
 
     private ZapToggleButton getFrontEndScannerButton() {
