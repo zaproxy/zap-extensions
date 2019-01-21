@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>JxBrowser (Mac OS)</name>
-	<version>9</version>
+	<version>10</version>
 	<status>alpha</status>
 	<description>An embedded browser based on Chromium, Mac OS specific </description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-		Updated to JxBrowser 6.22.2
 	]]>
 	</changes>
 	<dependencies>

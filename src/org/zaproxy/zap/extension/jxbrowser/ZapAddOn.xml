@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>JxBrowser (core)</name>
-	<version>11</version>
+	<version>12</version>
 	<status>alpha</status>
 	<description>An embedded browser based on Chromium, you must also install the relevant platform specific add-on</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-		Updated to JxBrowser 6.22.2
 	]]>
 	</changes>
 	<dependencies/>
