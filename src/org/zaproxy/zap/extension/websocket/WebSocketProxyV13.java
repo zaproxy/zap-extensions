@@ -598,6 +598,7 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 		@Override
 		public boolean forward(OutputStream out) throws IOException {
 			if (out == null) {
+				logger.warn("No output stream to forward message #" + getMessageId());
 				return false;
 			}
 			
