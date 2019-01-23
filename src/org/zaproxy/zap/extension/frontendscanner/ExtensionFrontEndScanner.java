@@ -25,10 +25,8 @@ import java.lang.StringBuilder;
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -37,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.UUID;
 
@@ -73,13 +70,12 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionFrontEndScanner";
 
-    private static final String SCRIPT_TYPE_CLIENT_ACTIVE = "client-side-active";
-    private static final String SCRIPT_TYPE_CLIENT_PASSIVE = "client-side-passive";
+    public static final String SCRIPT_TYPE_CLIENT_ACTIVE = "client-side-active";
+    public static final String SCRIPT_TYPE_CLIENT_PASSIVE = "client-side-passive";
 
     protected static final String PREFIX = "frontendscanner";
 
     private static final String RESOURCE = "/org/zaproxy/zap/extension/frontendscanner/resources";
-    private static final String FRONT_END_SCANNER = Constant.getZapHome() + "/frontendscanner/front-end-scanner.js";
     private static final String SCRIPTS_FOLDER = Constant.getZapHome() + "/scripts/scripts/";
 
     private static final String ASCAN_ICON = RESOURCE + "/client-side-ascan.png";
@@ -116,7 +112,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
         this.options = new FrontEndScannerOptions();
 
-        this.api = new FrontEndScannerAPI();
+        this.api = new FrontEndScannerAPI(this);
         this.api.addApiOptions(options);
 
         this.extensionScript = Control
@@ -230,22 +226,16 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
                     int historyReferenceId = msg.getHistoryRef().getHistoryId();
 
-                    // 65000 is an estimate, made by counting the characters in
-                    // files/frontendscanner/front-end-scanner.js
-                    StringBuilder injectedContentBuilder = new StringBuilder(65000)
-                        .append("<script type='text/javascript'>")
-                        .append("var frontEndScanner=(function() {");
+                    StringBuilder injectedContentBuilder = new StringBuilder(200)
+                        .append("<script src='")
+                        .append(frontEndApiUrl)
+                        .append("?action=getFile")
+                        .append("&filename=front-end-scanner.js")
+                        .append("&historyReferenceId=")
+                        .append(historyReferenceId)
+                        .append("'></script>");
 
-                    appendFrontEndScannerCodeTo(injectedContentBuilder);
-
-                    injectedContentBuilder
-                        .append("})();")
-                        .append("</script>");
-
-                    String injectedContent = injectedContentBuilder.toString()
-                        .replace("<<HISTORY_REFERENCE_ID>>", Integer.toString(historyReferenceId))
-                        .replace("<<ZAP_CALLBACK_ENDPOINT>>", frontEndApiUrl + "?action=createAlert");
-                    injectedContent = placeUserScriptsInto(injectedContent);
+                    String injectedContent = injectedContentBuilder.toString();
 
                     OutputDocument newResponseBody = new OutputDocument(document);
                     int insertPosition = head.getChildElements().get(0).getBegin();
@@ -277,37 +267,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         return DEPENDENCIES;
     }
 
-    private void appendFrontEndScannerCodeTo(StringBuilder stringBuilder) {
-        Path frontEndScannerPath = Paths.get(FRONT_END_SCANNER);
-        stringBuilder.append(
-            readFromFile(frontEndScannerPath)
-        );
-    }
-
-    private String placeUserScriptsInto(String string) throws IOException {
-        try {
-              String functions = this.extensionScript
-                  .getScripts(ExtensionFrontEndScanner.SCRIPT_TYPE_CLIENT_PASSIVE)
-                  .stream()
-                  .filter(script -> script.isEnabled())
-                  .map(script -> script.getContents())
-                  .map(code -> "function (frontEndScanner) { " + code + " }")
-                  .collect(Collectors.joining(", "));
-
-            return string
-                .replace("'<<LIST_OF_PASSIVE_SCRIPTS>>'", '[' + functions + ']');
-        } catch (UncheckedIOException e) {
-            throw new IOException(e);
-        }
-    }
-
-    private String readFromFile(Path file) throws UncheckedIOException {
-        try {
-            byte[] content = Files.readAllBytes(file);
-            return new String(content, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    protected ExtensionScript getExtensionScript() {
+        return this.extensionScript;
     }
 
     private ZapToggleButton getFrontEndScannerButton() {

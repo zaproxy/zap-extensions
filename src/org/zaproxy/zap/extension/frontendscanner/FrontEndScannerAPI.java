@@ -19,12 +19,26 @@
  */
 package org.zaproxy.zap.extension.frontendscanner;
 
-import org.parosproxy.paros.control.Control;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.model.StandardParameterParser;
@@ -37,11 +51,20 @@ import net.sf.json.JSONObject;
 
 public class FrontEndScannerAPI extends ApiImplementor {
 
+    private static final String DEFAULT_RESPONSE_HEADER =
+        "HTTP/1.1 200 OK\r\n" +
+        "Cache-Control: no-cache, no-store, must-revalidate\r\n" +
+        "X-Content-Type-Options: nosniff\r\n" +
+        "Content-Type: application/javascript; charset=UTF-8\r\n";
+    private static final String FRONT_END_SCANNER = Constant.getZapHome() + "/frontendscanner/front-end-scanner.js";
     private static final String PREFIX = "frontendscanner";
+    private static final Logger LOGGER = Logger.getLogger(ExtensionFrontEndScanner.class);
 
+    private ExtensionFrontEndScanner extension;
     private StandardParameterParser parameterParser;
 
-    public FrontEndScannerAPI() {
+    public FrontEndScannerAPI(ExtensionFrontEndScanner extension) {
+        this.extension = extension;
         this.parameterParser = new StandardParameterParser();
     }
 
@@ -70,6 +93,8 @@ public class FrontEndScannerAPI extends ApiImplementor {
             LOGGER.debug("action = " + action);
 
             switch (action) {
+                case "getFile":
+                    return getFileFromParameters(msg, parameters);
                 case "createAlert":
                     return createAlertFromMessage(msg);
                 default:
@@ -118,4 +143,88 @@ public class FrontEndScannerAPI extends ApiImplementor {
             throw new ApiException (ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
         }
     }
+
+    private String getFileFromParameters(HttpMessage msg, Map<String, String> parameters) throws ApiException, IOException {
+        String fileName = parameters.get("filename");
+        String historyReferenceId = parameters.get("historyReferenceId");
+        String host = msg.getRequestHeader().getHeader("host");
+
+        if (fileName == null) {
+            throw new ApiException (ApiException.Type.MISSING_PARAMETER, "fileName");
+        }
+        if (historyReferenceId == null) {
+            throw new ApiException (ApiException.Type.MISSING_PARAMETER, "historyReferenceId");
+        }
+        try {
+            // Prevent injection: it will fail if `historyReferenceId` is not an integer
+            Integer.parseInt(historyReferenceId);
+        } catch(NumberFormatException e) {
+            throw new ApiException (ApiException.Type.ILLEGAL_PARAMETER, "historyReferenceId");
+        }
+
+        LOGGER.debug("fileName = " + fileName);
+        LOGGER.debug("historyReferenceId = " + historyReferenceId);
+
+        if (!fileName.equals("front-end-scanner.js")) {
+            throw new ApiException (ApiException.Type.ILLEGAL_PARAMETER, "fileName");
+        }
+
+        String frontEndApiUrl = API
+            .getInstance()
+            .getCallBackUrl(this, "https://" + host);
+
+        // 65000 is an estimate, made by counting the characters in
+        // files/frontendscanner/front-end-scanner.js
+        StringBuilder injectedContentBuilder = new StringBuilder(65000)
+            .append("var frontEndScanner=(function() {");
+        appendFrontEndScannerCodeTo(injectedContentBuilder);
+        injectedContentBuilder.append("})();");
+
+        String injectedContent = injectedContentBuilder
+            .toString()
+            .replace("<<HISTORY_REFERENCE_ID>>", historyReferenceId)
+            .replace("<<ZAP_CALLBACK_ENDPOINT>>", frontEndApiUrl + "?action=createAlert");
+        injectedContent = placeUserScriptsInto(injectedContent);
+
+        msg.setResponseBody(injectedContent);
+        msg.setResponseHeader(DEFAULT_RESPONSE_HEADER);
+        msg.getResponseHeader().setContentLength(
+            msg.getResponseBody().length());
+
+        return msg.getResponseBody().toString();
+    }
+
+    private void appendFrontEndScannerCodeTo(StringBuilder stringBuilder) {
+        Path frontEndScannerPath = Paths.get(FRONT_END_SCANNER);
+        stringBuilder.append(
+            readFromFile(frontEndScannerPath)
+        );
+    }
+
+    private String readFromFile(Path file) throws UncheckedIOException {
+        try {
+            byte[] content = Files.readAllBytes(file);
+            return new String(content, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private String placeUserScriptsInto(String string) throws IOException {
+        try {
+              String functions = this.extension.getExtensionScript()
+                  .getScripts(ExtensionFrontEndScanner.SCRIPT_TYPE_CLIENT_PASSIVE)
+                  .stream()
+                  .filter(script -> script.isEnabled())
+                  .map(script -> script.getContents())
+                  .map(code -> "function (frontEndScanner) { " + code + " }")
+                  .collect(Collectors.joining(", "));
+
+            return string
+                .replace("'<<LIST_OF_PASSIVE_SCRIPTS>>'", '[' + functions + ']');
+        } catch (UncheckedIOException e) {
+            throw new IOException(e);
+        }
+    }
+
 }
