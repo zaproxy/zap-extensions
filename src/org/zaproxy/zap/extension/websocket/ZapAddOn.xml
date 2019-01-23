@@ -10,6 +10,7 @@
 	Fix exceptions when handling/dispatching events.<br>
 	Add wrapper to websocket API responses.<br>
 	Fix exception when handling API request with no API implementor.<br>
+	Correct output stream used in server mode.<br>
 	]]>
 	</changes>
 	<classnames>

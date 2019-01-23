@@ -402,9 +402,11 @@ public abstract class WebSocketProxy {
 		}
 		
 		try {
-			// use existing InputStream for remote socket,
-			// as it may already contain first WebSocket-frames
-			remoteListener = createListener(remoteSocket, remoteReader, "remote");
+			if (!isServerMode()) {
+				// use existing InputStream for remote socket,
+				// as it may already contain first WebSocket-frames
+				remoteListener = createListener(remoteSocket, remoteReader, "remote");
+			}
 			localListener = createListener(localSocket, "local");
 		} catch (WebSocketException e) {
 			shutdown();
@@ -416,7 +418,9 @@ public abstract class WebSocketProxy {
 		// before they are informed about a new channel state.
 		setState(State.OPEN);
 		
-		listenerThreadPool.execute(remoteListener);
+		if (!isServerMode()) {
+			listenerThreadPool.execute(remoteListener);
+		}
 		listenerThreadPool.execute(localListener);
 	}
 	
@@ -636,6 +640,10 @@ public abstract class WebSocketProxy {
 	 * @return opposed socket
 	 */
 	protected Socket getOppositeSocket(Socket socket) {
+		if (isServerMode()) {
+			return localSocket;
+		}
+
 		Socket oppositeSocket;
 		if (socket == localSocket) {
 			oppositeSocket = remoteSocket;
@@ -905,19 +913,24 @@ public abstract class WebSocketProxy {
 		}
 		WebSocketMessage message = createWebSocketMessage(msg);
 		
-		OutputStream out;
+		if (message.forward(getOuputStream(msg))) {
+			notifyMessageObservers(message);
+		}
+	}
+
+	private OutputStream getOuputStream(WebSocketMessageDTO msg) {
+		if (isServerMode()) {
+			return localListener.getOutputStream();
+		}
+
 		if (msg.isOutgoing) {
 			// an outgoing message is caught by the local listener
 			// and forwarded to its output stream
-			out = localListener.getOutputStream();
-		} else {
-			// an incoming message is caught by the remote listener
-			out = remoteListener.getOutputStream();
+			return localListener.getOutputStream();
 		}
-	
-		if (message.forward(out)) {
-			notifyMessageObservers(message);
-		}
+
+		// an incoming message is caught by the remote listener
+		return remoteListener.getOutputStream();
 	}
 	
 	/**
@@ -933,19 +946,9 @@ public abstract class WebSocketProxy {
 			logger.debug("sending custom message");
 		}
 		WebSocketMessage message = createWebSocketMessage(msg);
-		
-		OutputStream out;
-		if (msg.isOutgoing) {
-			// an outgoing message is caught by the local listener
-			// and forwarded to its output stream
-			out = localListener.getOutputStream();
-		} else {
-			// an incoming message is caught by the remote listener
-			out = remoteListener.getOutputStream();
-		}
 	
 		notifyMessageSenderListeners(message, initiator);
-		if (message.forward(out)) {
+		if (message.forward(getOuputStream(msg))) {
 			notifyMessageObservers(message);
 		}
 	}
@@ -957,17 +960,7 @@ public abstract class WebSocketProxy {
 		}
 		WebSocketMessage message = createWebSocketMessage(msg);
 
-		OutputStream out;
-		if (msg.isOutgoing) {
-			// an outgoing message is caught by the local listener
-			// and forwarded to its output stream
-			out = localListener.getOutputStream();
-		} else {
-			// an incoming message is caught by the remote listener
-			out = remoteListener.getOutputStream();
-		}
-
-		return message.forward(out);
+		return message.forward(getOuputStream(msg));
 	}
 	
 	public boolean send(WebSocketMessageDTO msg, Initiator initiator) throws IOException {
@@ -976,18 +969,8 @@ public abstract class WebSocketProxy {
 		}
 		WebSocketMessage message = createWebSocketMessage(msg);
 
-		OutputStream out;
-		if (msg.isOutgoing) {
-			// an outgoing message is caught by the local listener
-			// and forwarded to its output stream
-			out = localListener.getOutputStream();
-		} else {
-			// an incoming message is caught by the remote listener
-			out = remoteListener.getOutputStream();
-		}
-
 		notifyMessageSenderListeners(message, initiator);
-		return message.forward(out);
+		return message.forward(getOuputStream(msg));
 	}
 
 	public boolean isClientMode() {
