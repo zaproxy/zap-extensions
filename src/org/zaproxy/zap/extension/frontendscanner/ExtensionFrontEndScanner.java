@@ -244,7 +244,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
                     String injectedContent = injectedContentBuilder.toString()
                         .replace("<<HISTORY_REFERENCE_ID>>", Integer.toString(historyReferenceId))
-                        .replace("<<ZAP_CALLBACK_ENDPOINT>>", frontEndApiUrl);
+                        .replace("<<ZAP_CALLBACK_ENDPOINT>>", frontEndApiUrl + "?action=createAlert");
                     injectedContent = placeUserScriptsInto(injectedContent);
 
                     OutputDocument newResponseBody = new OutputDocument(document);

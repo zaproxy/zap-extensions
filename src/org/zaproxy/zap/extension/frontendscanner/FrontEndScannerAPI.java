@@ -23,9 +23,14 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
+import org.zaproxy.zap.model.StandardParameterParser;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -34,7 +39,10 @@ public class FrontEndScannerAPI extends ApiImplementor {
 
     private static final String PREFIX = "frontendscanner";
 
+    private StandardParameterParser parameterParser;
+
     public FrontEndScannerAPI() {
+        this.parameterParser = new StandardParameterParser();
     }
 
     @Override
@@ -44,6 +52,37 @@ public class FrontEndScannerAPI extends ApiImplementor {
 
     @Override
     public String handleCallBack(HttpMessage msg) throws ApiException {
+        try {
+            String query = msg.getRequestHeader().getURI().getQuery();
+
+            if (query == null) {
+                throw new ApiException (ApiException.Type.MISSING_PARAMETER, "action");
+            }
+
+            Map<String, String> parameters = parameterParser
+                .getParams(msg, HtmlParameter.Type.url);
+
+            String action = parameters.get("action");
+            if (action == null) {
+                throw new ApiException (ApiException.Type.MISSING_PARAMETER, "action");
+            }
+
+            LOGGER.debug("action = " + action);
+
+            switch (action) {
+                case "createAlert":
+                    return createAlertFromMessage(msg);
+                default:
+                    throw new ApiException (ApiException.Type.ILLEGAL_PARAMETER, "action");
+            }
+        } catch (ApiException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException (ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
+        }
+    }
+
+    private String createAlertFromMessage(HttpMessage msg) throws ApiException {
         try {
             int clientSidePassiveScriptPluginId = 50006;
 
@@ -73,7 +112,6 @@ public class FrontEndScannerAPI extends ApiImplementor {
             extAlert.alertFound(alert, historyReference);
 
             return "";
-
         } catch (JSONException e) {
             throw new ApiException (ApiException.Type.MISSING_PARAMETER, e.getMessage());
         } catch (Exception e) {
