@@ -158,7 +158,8 @@ public class WebSocketAPI extends ApiImplementor {
 
                 @Override
                 public int getObservingOrder() {
-                    return 0;
+                    // We want this to be after all of the built in observers
+                    return 1000;
                 }
 
                 @Override
@@ -166,11 +167,11 @@ public class WebSocketAPI extends ApiImplementor {
                     WebSocketProxy proxy = extension.getWebSocketProxy(channelId);
                     if (proxy == null || ! proxy.isAllowAPI()) {
                         // Shouldnt happen, but just to be safe
-                        return true;
+                        return false;
                     }
                     JSONObject json = null;
                     try {
-                        if (WebSocketMessage.isControl(message.opcode)) {
+                        if (WebSocketMessage.isControl(message.opcode) || ! message.isFinished) {
                             return false;
                         }
                         json = JSONObject.fromObject(message.getReadablePayload());
@@ -214,6 +215,11 @@ public class WebSocketAPI extends ApiImplementor {
                                 response = apiResp.toJSON();
                                 break;
                             case other:
+                                HttpMessage msg = new HttpMessage();
+                                msg = impl.handleApiOther(msg, name, params);
+                                apiResp = new ApiResponseElement("response", msg.getResponseBody().toString());
+                                response = apiResp.toJSON();
+                                break;
                             case pconn:
                                 // Not currently supported
                                 throw new ApiException(ApiException.Type.BAD_TYPE, reqType.name());
