@@ -11,6 +11,7 @@
 	Add wrapper to websocket API responses.<br>
 	Fix exception when handling API request with no API implementor.<br>
 	Correct output stream used in server mode.<br>
+	Add support for 'other' API operations.<br>
 	]]>
 	</changes>
 	<classnames>
