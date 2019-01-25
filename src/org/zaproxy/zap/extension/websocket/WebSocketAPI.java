@@ -66,6 +66,8 @@ import net.sf.json.JSONSerializer;
 
 public class WebSocketAPI extends ApiImplementor {
 
+    private static final String API_URL = "https://" + API.API_DOMAIN;
+
     private static final String PREFIX = "websocket";
 
     private ExtensionWebSocket extension;
@@ -104,7 +106,7 @@ public class WebSocketAPI extends ApiImplementor {
         this.addApiAction(
                 new ApiAction(ACTION_SEND_TEXT_MESSAGE, new String[] { PARAM_CHANNEL_ID, PARAM_OUTGOING, PARAM_MESSAGE }));
 
-        callbackUrl = API.getInstance().getCallBackUrl(this, "https://" + API.API_DOMAIN);
+        callbackUrl = API.getInstance().getCallBackUrl(this, API_URL);
 
     }
 
@@ -133,9 +135,14 @@ public class WebSocketAPI extends ApiImplementor {
 
             if (connectionHeader != null && connectionHeader.toLowerCase().contains("upgrade")) {
                 if (upgradeHeader != null && upgradeHeader.equalsIgnoreCase("websocket")) {
+                    // Check Origin in case the randomly generated callback URL is accidentally leaked.
+                    String origin = msg.getRequestHeader().getHeader("Origin");
+                    if (!API_URL.equals(origin)) {
+                        LOG.warn("Rejecting WebSocket connection, the Origin [" + origin + "] did not match [" + API_URL + "]");
+                        msg.setResponseHeader("HTTP/1.1 403 Forbidden");
+                        return "";
+                    }
                     // Respond to handshake
-                    // We are not performing any additional checks as we are assuming that any client that knows
-                    // the randomly generated callback URL is trusted.
                     msg.setResponseHeader(API.getDefaultResponseHeader("101 Switching Protocols", null, 0));
                     msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
                     msg.getResponseHeader().setHeader(HttpHeader.CONNECTION, "Upgrade");
