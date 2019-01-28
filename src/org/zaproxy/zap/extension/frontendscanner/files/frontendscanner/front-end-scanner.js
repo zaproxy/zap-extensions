@@ -1,16 +1,21 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (global){
+(function() {
+
+'use strict';
+
+require('@pamplemousse/front-end-tracker');
+
 /*
- * Expect the following variables to be injected by ZAP:
+ * Expect the following variables to be replaced by ZAP:
  *   - HISTORY_REFERENCE_ID: helps ZAP to associate the vulnerability
  *   to an HTTP exchange.
  *   - CALLBACK_ENDPOINT: url to report back to.
  *   - SCRIPTS: array of functions, any which is a script to be run.
  */
-
-'use strict';
-
-require('@pamplemousse/front-end-tracker');
+const HISTORY_REFERENCE_ID = '<<HISTORY_REFERENCE_ID>>';
+const CALLBACK_ENDPOINT = '<<ZAP_CALLBACK_ENDPOINT>>';
+const SCRIPTS = '<<LIST_OF_PASSIVE_SCRIPTS>>';
 
 const axios = require('axios');
 
@@ -43,11 +48,268 @@ const frontEndScanner = new FrontEndScanner();
 SCRIPTS.forEach(script => {
   script(frontEndScanner);
 });
+})();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./zap-alert-constants.js":29,"@pamplemousse/front-end-tracker":33,"axios":2}],2:[function(require,module,exports){
+},{"./zap-alert-constants.js":34,"@pamplemousse/front-end-tracker":5,"axios":6}],2:[function(require,module,exports){
+/*
+ * A list of DOM events can be found on MDN:
+ *   https://developer.mozilla.org/en-US/docs/Web/Events
+ * Note that the more events are tracked, the slower the scanner will be.
+ */
+
+'use strict';
+
+const FORM_EVENTS = ['reset', 'submit'];
+const CLIPBOARD_EVENTS = ['cut', 'copy', 'paste'];
+const KEYBOARD_EVENTS = ['keydown', 'keypress', 'keyup'];
+const MOUSE_EVENTS = [
+  'mousedown', 'mouseup', 'click', 'dblclick', 'contextmenu', 'wheel', 'select',
+  'pointerlockchange', 'pointerlockerror'
+];
+const DRAG_AND_DROP_EVENTS = [
+  'dragstart', 'drag', 'dragend', 'dragenter', 'dragover', 'dragleave', 'drop'
+];
+
+const EVENTS = Array.prototype.concat(
+  FORM_EVENTS, CLIPBOARD_EVENTS, KEYBOARD_EVENTS,
+  MOUSE_EVENTS, DRAG_AND_DROP_EVENTS
+);
+
+module.exports = {
+  EVENTS
+};
+
+},{}],3:[function(require,module,exports){
+'use strict';
+
+class Rule {
+  setOptions(opts) {
+    if ('enabled' in opts) {
+      this.enabled = Boolean(opts.enabled);
+    }
+    if ('types' in opts) {
+      this.types = opts.types;
+    }
+    if ('selector' in opts) {
+      this.selector = opts.selector;
+    }
+    this.onEvent = function (event) {
+      const data = {
+        topic: 'dom-events',
+        element: event.target.nodeName,
+        event: event.type
+      };
+      opts.callback(null, data);
+    };
+  }
+
+  _matches(type, elem) {
+    return (!this.types || this.types.includes(type)) &&
+           (!this.selector ||
+              (this.selector === 'document' && elem instanceof Document) ||
+              (this.selector === 'window' && elem instanceof Window) ||
+              (elem.matches && elem.matches(this.selector)));
+  }
+
+  _onEvent(event, handler) {
+    if (this.enabled && this._matches(event.type, event.target)) {
+      return this.onEvent(event, handler);
+    }
+    return undefined;
+  }
+}
+
+class EventListenerHook {
+  constructor(name) {
+    this.name = name;
+
+    this.targetInstance = this;
+    this.rules = [new Rule()];
+
+    this.handlerProxies = new WeakMap();
+
+    this.oldAEL = EventTarget.prototype.addEventListener;
+    this.oldREL = EventTarget.prototype.removeEventListener;
+
+    const me = this;
+    EventTarget.prototype.addEventListener = function (type, handler, opts) {
+      return me.onAddListener(this, type, handler, opts);
+    };
+    EventTarget.prototype.removeEventListener = function (type, handler, opts) {
+      return me.onRemoveListener(this, type, handler, opts);
+    };
+  }
+
+  onAddListener(elem, type, handler, options) {
+    if (!handler) { // No handler, so this call will fizzle anyway
+      return undefined;
+    }
+    const me = this;
+    const proxy = this.handlerProxies.get(handler) || function (event) {
+      return me.targetInstance.onEvent(this, event, handler);
+    };
+    const returnValue = this.oldAEL.call(elem, type, proxy, options);
+    this.handlerProxies.set(handler, proxy);
+    return returnValue;
+  }
+
+  onRemoveListener(elem, type, handler, options) {
+    if (handler && this.handlerProxies.has(handler)) {
+      const proxy = this.handlerProxies.get(handler);
+      this.oldREL.call(elem, type, proxy, options);
+    } else {
+      this.oldREL.call(elem, type, handler, options);
+    }
+  }
+
+  onEvent(thisObj, event, originalHandler) {
+    let stopEvent = false;
+    for (const rule of this.rules) {
+      if (rule._onEvent(event, originalHandler) === false) {
+        stopEvent = true;
+      }
+    }
+    if (!stopEvent) {
+      if (originalHandler.handleEvent) {
+        return originalHandler.handleEvent.call(thisObj, event);
+      }
+      return originalHandler.call(thisObj, event);
+    }
+    return undefined;
+  }
+
+  setOptions(opts) {
+    this.rules[0].setOptions(opts);
+    this.enabled = this.rules[0].enabled;
+  }
+}
+
+module.exports = {
+  EventListenerHook
+};
+
+},{}],4:[function(require,module,exports){
+'use strict';
+
+const hooks = [];
+const oldGetItem = Storage.prototype.getItem;
+const oldRemoveItem = Storage.prototype.removeItem;
+const oldSetItem = Storage.prototype.setItem;
+
+Storage.prototype.getItem = function (...args) {
+  const keyName = args[0];
+  const keyValue = oldGetItem.call(this, keyName);
+  for (const hook of hooks) {
+    hook.onStorage({
+      key: keyName,
+      action: 'get',
+      value: keyValue
+    });
+  }
+  return keyValue;
+};
+
+Storage.prototype.removeItem = function (...args) {
+  const keyName = args[0];
+  const keyValue = oldGetItem.call(this, keyName);
+  const returnValue = oldRemoveItem.call(this, keyName);
+  for (const hook of hooks) {
+    hook.onStorage({
+      key: keyName,
+      action: 'remove',
+      value: keyValue
+    });
+  }
+  return returnValue;
+};
+
+Storage.prototype.setItem = function (...args) {
+  const keyName = args[0];
+  const keyValue = args[1];
+  const returnValue = oldSetItem.call(this, keyName, keyValue);
+  for (const hook of hooks) {
+    hook.onStorage({
+      key: keyName,
+      action: 'set',
+      value: keyValue
+    });
+  }
+  return returnValue;
+};
+
+class StorageHook {
+  constructor() {
+    hooks.push(this);
+  }
+
+  setOptions(opts) {
+    if ('enabled' in opts) {
+      this.enabled = Boolean(opts.enabled);
+    }
+    this.onStorage = function (obj) {
+      const data = {...obj, topic: 'storage'};
+      opts.callback(null, data);
+    };
+  }
+}
+
+module.exports = {
+  StorageHook
+};
+
+},{}],5:[function(require,module,exports){
+(function (global){
+'use strict';
+
+const mailbox = require('pubsub-js');
+
+global.mailbox = mailbox;
+
+const {EVENTS} = require('./events.js');
+const {EventListenerHook} = require('./hooks/event-listener-hook.js');
+const {StorageHook} = require('./hooks/storage-hook');
+
+const eventListenerOptions = {
+  enabled: true,
+  types: EVENTS,
+  callback: publishToMailbox
+};
+
+const storageOptions = {
+  enabled: true,
+  callback: publishToMailbox
+};
+
+function publishToMailbox(err, data) {
+  if (err) {
+    console.log(err);
+  } else {
+    const time = new Date().getTime();
+    const {topic} = data;
+    data.timestamp = time;
+
+    mailbox.publish(topic, data);
+  }
+}
+
+const hooksAndOptions = [{
+  Hook: EventListenerHook,
+  options: eventListenerOptions
+}, {
+  Hook: StorageHook,
+  options: storageOptions
+}];
+
+hooksAndOptions.forEach(x => {
+  const hook = new x.Hook();
+  hook.setOptions(x.options);
+});
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./events.js":2,"./hooks/event-listener-hook.js":3,"./hooks/storage-hook":4,"pubsub-js":33}],6:[function(require,module,exports){
 module.exports = require('./lib/axios');
-},{"./lib/axios":4}],3:[function(require,module,exports){
+},{"./lib/axios":8}],7:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -231,7 +493,7 @@ module.exports = function xhrAdapter(config) {
 };
 
 }).call(this,require('_process'))
-},{"../core/createError":10,"./../core/settle":13,"./../helpers/btoa":17,"./../helpers/buildURL":18,"./../helpers/cookies":20,"./../helpers/isURLSameOrigin":22,"./../helpers/parseHeaders":24,"./../utils":26,"_process":28}],4:[function(require,module,exports){
+},{"../core/createError":14,"./../core/settle":17,"./../helpers/btoa":21,"./../helpers/buildURL":22,"./../helpers/cookies":24,"./../helpers/isURLSameOrigin":26,"./../helpers/parseHeaders":28,"./../utils":30,"_process":32}],8:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -285,7 +547,7 @@ module.exports = axios;
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
 
-},{"./cancel/Cancel":5,"./cancel/CancelToken":6,"./cancel/isCancel":7,"./core/Axios":8,"./defaults":15,"./helpers/bind":16,"./helpers/spread":25,"./utils":26}],5:[function(require,module,exports){
+},{"./cancel/Cancel":9,"./cancel/CancelToken":10,"./cancel/isCancel":11,"./core/Axios":12,"./defaults":19,"./helpers/bind":20,"./helpers/spread":29,"./utils":30}],9:[function(require,module,exports){
 'use strict';
 
 /**
@@ -306,7 +568,7 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-},{}],6:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 var Cancel = require('./Cancel');
@@ -365,14 +627,14 @@ CancelToken.source = function source() {
 
 module.exports = CancelToken;
 
-},{"./Cancel":5}],7:[function(require,module,exports){
+},{"./Cancel":9}],11:[function(require,module,exports){
 'use strict';
 
 module.exports = function isCancel(value) {
   return !!(value && value.__CANCEL__);
 };
 
-},{}],8:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var defaults = require('./../defaults');
@@ -453,7 +715,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = Axios;
 
-},{"./../defaults":15,"./../utils":26,"./InterceptorManager":9,"./dispatchRequest":11}],9:[function(require,module,exports){
+},{"./../defaults":19,"./../utils":30,"./InterceptorManager":13,"./dispatchRequest":15}],13:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -507,7 +769,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 
-},{"./../utils":26}],10:[function(require,module,exports){
+},{"./../utils":30}],14:[function(require,module,exports){
 'use strict';
 
 var enhanceError = require('./enhanceError');
@@ -527,7 +789,7 @@ module.exports = function createError(message, config, code, request, response) 
   return enhanceError(error, config, code, request, response);
 };
 
-},{"./enhanceError":12}],11:[function(require,module,exports){
+},{"./enhanceError":16}],15:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -615,7 +877,7 @@ module.exports = function dispatchRequest(config) {
   });
 };
 
-},{"../cancel/isCancel":7,"../defaults":15,"./../helpers/combineURLs":19,"./../helpers/isAbsoluteURL":21,"./../utils":26,"./transformData":14}],12:[function(require,module,exports){
+},{"../cancel/isCancel":11,"../defaults":19,"./../helpers/combineURLs":23,"./../helpers/isAbsoluteURL":25,"./../utils":30,"./transformData":18}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -638,7 +900,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   return error;
 };
 
-},{}],13:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 var createError = require('./createError');
@@ -666,7 +928,7 @@ module.exports = function settle(resolve, reject, response) {
   }
 };
 
-},{"./createError":10}],14:[function(require,module,exports){
+},{"./createError":14}],18:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -688,7 +950,7 @@ module.exports = function transformData(data, headers, fns) {
   return data;
 };
 
-},{"./../utils":26}],15:[function(require,module,exports){
+},{"./../utils":30}],19:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -788,7 +1050,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 }).call(this,require('_process'))
-},{"./adapters/http":3,"./adapters/xhr":3,"./helpers/normalizeHeaderName":23,"./utils":26,"_process":28}],16:[function(require,module,exports){
+},{"./adapters/http":7,"./adapters/xhr":7,"./helpers/normalizeHeaderName":27,"./utils":30,"_process":32}],20:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -801,7 +1063,7 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-},{}],17:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 // btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
@@ -839,7 +1101,7 @@ function btoa(input) {
 
 module.exports = btoa;
 
-},{}],18:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -907,7 +1169,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   return url;
 };
 
-},{"./../utils":26}],19:[function(require,module,exports){
+},{"./../utils":30}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -923,7 +1185,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
     : baseURL;
 };
 
-},{}],20:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -978,7 +1240,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":26}],21:[function(require,module,exports){
+},{"./../utils":30}],25:[function(require,module,exports){
 'use strict';
 
 /**
@@ -994,7 +1256,7 @@ module.exports = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
 
-},{}],22:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1064,7 +1326,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":26}],23:[function(require,module,exports){
+},{"./../utils":30}],27:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -1078,7 +1340,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   });
 };
 
-},{"../utils":26}],24:[function(require,module,exports){
+},{"../utils":30}],28:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1133,7 +1395,7 @@ module.exports = function parseHeaders(headers) {
   return parsed;
 };
 
-},{"./../utils":26}],25:[function(require,module,exports){
+},{"./../utils":30}],29:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1162,7 +1424,7 @@ module.exports = function spread(callback) {
   };
 };
 
-},{}],26:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 var bind = require('./helpers/bind');
@@ -1467,7 +1729,7 @@ module.exports = {
   trim: trim
 };
 
-},{"./helpers/bind":16,"is-buffer":27}],27:[function(require,module,exports){
+},{"./helpers/bind":20,"is-buffer":31}],31:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -1490,7 +1752,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],28:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -1676,289 +1938,14 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],29:[function(require,module,exports){
-'use strict';
-
-const RISK_INFO = 0;
-const RISK_LOW = 1;
-const RISK_MEDIUM = 2;
-const RISK_HIGH = 3;
-
-const CONFIDENCE_FALSE_POSITIVE = 0;
-const CONFIDENCE_LOW = 1;
-const CONFIDENCE_MEDIUM = 2;
-const CONFIDENCE_HIGH = 3;
-const CONFIDENCE_USER_CONFIRMED = 4;
-
-module.exports = {
-  RISK_INFO, RISK_LOW, RISK_MEDIUM, RISK_HIGH, CONFIDENCE_FALSE_POSITIVE,
-  CONFIDENCE_LOW, CONFIDENCE_MEDIUM, CONFIDENCE_HIGH,
-  CONFIDENCE_USER_CONFIRMED
-};
-
-},{}],30:[function(require,module,exports){
-/*
- * A list of DOM events can be found on MDN:
- *   https://developer.mozilla.org/en-US/docs/Web/Events
- * Note that the more events are tracked, the slower the scanner will be.
+},{}],33:[function(require,module,exports){
+/**
+ * Copyright (c) 2010,2011,2012,2013,2014 Morgan Roderick http://roderick.dk
+ * License: MIT - http://mrgnrdrck.mit-license.org
+ *
+ * https://github.com/mroderick/PubSubJS
  */
 
-'use strict';
-
-const FORM_EVENTS = ['reset', 'submit'];
-const CLIPBOARD_EVENTS = ['cut', 'copy', 'paste'];
-const KEYBOARD_EVENTS = ['keydown', 'keypress', 'keyup'];
-const MOUSE_EVENTS = [
-  'mousedown', 'mouseup', 'click', 'dblclick', 'contextmenu', 'wheel', 'select',
-  'pointerlockchange', 'pointerlockerror'
-];
-const DRAG_AND_DROP_EVENTS = [
-  'dragstart', 'drag', 'dragend', 'dragenter', 'dragover', 'dragleave', 'drop'
-];
-
-const EVENTS = Array.prototype.concat(
-  FORM_EVENTS, CLIPBOARD_EVENTS, KEYBOARD_EVENTS,
-  MOUSE_EVENTS, DRAG_AND_DROP_EVENTS
-);
-
-module.exports = {
-  EVENTS
-};
-
-},{}],31:[function(require,module,exports){
-'use strict';
-
-class Rule {
-  setOptions(opts) {
-    if ('enabled' in opts) {
-      this.enabled = Boolean(opts.enabled);
-    }
-    if ('types' in opts) {
-      this.types = opts.types;
-    }
-    if ('selector' in opts) {
-      this.selector = opts.selector;
-    }
-    this.onEvent = function (event) {
-      const data = {
-        topic: 'dom-events',
-        element: event.target.nodeName,
-        event: event.type
-      };
-      opts.callback(null, data);
-    };
-  }
-
-  _matches(type, elem) {
-    return (!this.types || this.types.includes(type)) &&
-           (!this.selector ||
-              (this.selector === 'document' && elem instanceof Document) ||
-              (this.selector === 'window' && elem instanceof Window) ||
-              (elem.matches && elem.matches(this.selector)));
-  }
-
-  _onEvent(event, handler) {
-    if (this.enabled && this._matches(event.type, event.target)) {
-      return this.onEvent(event, handler);
-    }
-    return undefined;
-  }
-}
-
-class EventListenerHook {
-  constructor(name) {
-    this.name = name;
-
-    this.targetInstance = this;
-    this.rules = [new Rule()];
-
-    this.handlerProxies = new WeakMap();
-
-    this.oldAEL = EventTarget.prototype.addEventListener;
-    this.oldREL = EventTarget.prototype.removeEventListener;
-
-    const me = this;
-    EventTarget.prototype.addEventListener = function (type, handler, opts) {
-      return me.onAddListener(this, type, handler, opts);
-    };
-    EventTarget.prototype.removeEventListener = function (type, handler, opts) {
-      return me.onRemoveListener(this, type, handler, opts);
-    };
-  }
-
-  onAddListener(elem, type, handler, options) {
-    if (!handler) { // No handler, so this call will fizzle anyway
-      return undefined;
-    }
-    const me = this;
-    const proxy = this.handlerProxies.get(handler) || function (event) {
-      return me.targetInstance.onEvent(this, event, handler);
-    };
-    const returnValue = this.oldAEL.call(elem, type, proxy, options);
-    this.handlerProxies.set(handler, proxy);
-    return returnValue;
-  }
-
-  onRemoveListener(elem, type, handler, options) {
-    if (handler && this.handlerProxies.has(handler)) {
-      const proxy = this.handlerProxies.get(handler);
-      this.oldREL.call(elem, type, proxy, options);
-    } else {
-      this.oldREL.call(elem, type, handler, options);
-    }
-  }
-
-  onEvent(thisObj, event, originalHandler) {
-    let stopEvent = false;
-    for (const rule of this.rules) {
-      if (rule._onEvent(event, originalHandler) === false) {
-        stopEvent = true;
-      }
-    }
-    if (!stopEvent) {
-      if (originalHandler.handleEvent) {
-        return originalHandler.handleEvent.call(thisObj, event);
-      }
-      return originalHandler.call(thisObj, event);
-    }
-    return undefined;
-  }
-
-  setOptions(opts) {
-    this.rules[0].setOptions(opts);
-    this.enabled = this.rules[0].enabled;
-  }
-}
-
-module.exports = {
-  EventListenerHook
-};
-
-},{}],32:[function(require,module,exports){
-'use strict';
-
-const hooks = [];
-const oldGetItem = Storage.prototype.getItem;
-const oldRemoveItem = Storage.prototype.removeItem;
-const oldSetItem = Storage.prototype.setItem;
-
-Storage.prototype.getItem = function (...args) {
-  const keyName = args[0];
-  const keyValue = oldGetItem.call(this, keyName);
-  for (const hook of hooks) {
-    hook.onStorage({
-      key: keyName,
-      action: 'get',
-      value: keyValue
-    });
-  }
-  return keyValue;
-};
-
-Storage.prototype.removeItem = function (...args) {
-  const keyName = args[0];
-  const keyValue = oldGetItem.call(this, keyName);
-  const returnValue = oldRemoveItem.call(this, keyName);
-  for (const hook of hooks) {
-    hook.onStorage({
-      key: keyName,
-      action: 'remove',
-      value: keyValue
-    });
-  }
-  return returnValue;
-};
-
-Storage.prototype.setItem = function (...args) {
-  const keyName = args[0];
-  const keyValue = args[1];
-  const returnValue = oldSetItem.call(this, keyName, keyValue);
-  for (const hook of hooks) {
-    hook.onStorage({
-      key: keyName,
-      action: 'set',
-      value: keyValue
-    });
-  }
-  return returnValue;
-};
-
-class StorageHook {
-  constructor() {
-    hooks.push(this);
-  }
-
-  setOptions(opts) {
-    if ('enabled' in opts) {
-      this.enabled = Boolean(opts.enabled);
-    }
-    this.onStorage = function (obj) {
-      const data = {...obj, topic: 'storage'};
-      opts.callback(null, data);
-    };
-  }
-}
-
-module.exports = {
-  StorageHook
-};
-
-},{}],33:[function(require,module,exports){
-(function (global){
-'use strict';
-
-const mailbox = require('pubsub-js');
-
-global.mailbox = mailbox;
-
-const {EVENTS} = require('./events.js');
-const {EventListenerHook} = require('./hooks/event-listener-hook.js');
-const {StorageHook} = require('./hooks/storage-hook');
-
-const eventListenerOptions = {
-  enabled: true,
-  types: EVENTS,
-  callback: publishToMailbox
-};
-
-const storageOptions = {
-  enabled: true,
-  callback: publishToMailbox
-};
-
-function publishToMailbox(err, data) {
-  if (err) {
-    console.log(err);
-  } else {
-    const time = new Date().getTime();
-    const {topic} = data;
-    data.timestamp = time;
-
-    mailbox.publish(topic, data);
-  }
-}
-
-const hooksAndOptions = [{
-  Hook: EventListenerHook,
-  options: eventListenerOptions
-}, {
-  Hook: StorageHook,
-  options: storageOptions
-}];
-
-hooksAndOptions.forEach(x => {
-  const hook = new x.Hook();
-  hook.setOptions(x.options);
-});
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./events.js":30,"./hooks/event-listener-hook.js":31,"./hooks/storage-hook":32,"pubsub-js":34}],34:[function(require,module,exports){
-/*
-Copyright (c) 2010,2011,2012,2013,2014 Morgan Roderick http://roderick.dk
-License: MIT - http://mrgnrdrck.mit-license.org
-
-https://github.com/mroderick/PubSubJS
-*/
 (function (root, factory){
     'use strict';
 
@@ -2000,9 +1987,11 @@ https://github.com/mroderick/PubSubJS
     }
 
     /**
-	 *	Returns a function that throws the passed exception, for use as argument for setTimeout
-	 *	@param { Object } ex An Error object
-	 */
+     * Returns a function that throws the passed exception, for use as argument for setTimeout
+     * @alias throwException
+     * @function
+     * @param { Object } ex An Error object
+     */
     function throwException( ex ){
         return function reThrowException(){
             throw ex;
@@ -2069,6 +2058,8 @@ https://github.com/mroderick/PubSubJS
     }
 
     function publish( message, data, sync, immediateExceptions ){
+        message = (typeof message === 'symbol') ? message.toString() : message;
+
         var deliver = createDeliveryFunction( message, data, immediateExceptions ),
             hasSubscribers = messageHasSubscribers( message );
 
@@ -2085,36 +2076,43 @@ https://github.com/mroderick/PubSubJS
     }
 
     /**
-	 *	PubSub.publish( message[, data] ) -> Boolean
-	 *	- message (String): The message to publish
-	 *	- data: The data to pass to subscribers
-	 *	Publishes the the message, passing the data to it's subscribers
-	**/
+     * Publishes the message, passing the data to it's subscribers
+     * @function
+     * @alias publish
+     * @param { String } message The message to publish
+     * @param {} data The data to pass to subscribers
+     * @return { Boolean }
+     */
     PubSub.publish = function( message, data ){
         return publish( message, data, false, PubSub.immediateExceptions );
     };
 
     /**
-	 *	PubSub.publishSync( message[, data] ) -> Boolean
-	 *	- message (String): The message to publish
-	 *	- data: The data to pass to subscribers
-	 *	Publishes the the message synchronously, passing the data to it's subscribers
-	**/
+     * Publishes the the message synchronously, passing the data to it's subscribers
+     * @function
+     * @alias publishSync
+     * @param { String } message The message to publish
+     * @param {} data The data to pass to subscribers
+     * @return { Boolean }
+     */
     PubSub.publishSync = function( message, data ){
         return publish( message, data, true, PubSub.immediateExceptions );
     };
 
     /**
-	 *	PubSub.subscribe( message, func ) -> String
-	 *	- message (String): The message to subscribe to
-	 *	- func (Function): The function to call when a new message is published
-	 *	Subscribes the passed function to the passed message. Every returned token is unique and should be stored if
-	 *	you need to unsubscribe
-	**/
+     * Subscribes the passed function to the passed message. Every returned token is unique and should be stored if you need to unsubscribe
+     * @function
+     * @alias subscribe
+     * @param { String } message The message to subscribe to
+     * @param { Function } func The function to call when a new message is published
+     * @return { String }
+     */
     PubSub.subscribe = function( message, func ){
         if ( typeof func !== 'function'){
             return false;
         }
+
+        message = (typeof message === 'symbol') ? message.toString() : message;
 
         // message is not registered yet
         if ( !messages.hasOwnProperty( message ) ){
@@ -2125,17 +2123,19 @@ https://github.com/mroderick/PubSubJS
         // and allow for easy use as key names for the 'messages' object
         var token = 'uid_' + String(++lastUid);
         messages[message][token] = func;
-
+        
         // return token for unsubscribing
         return token;
     };
 
     /**
-	 *	PubSub.subscribeOnce( message, func ) -> PubSub
-	 *	- message (String): The message to subscribe to
-	 *	- func (Function): The function to call when a new message is published
-	 *	Subscribes the passed function to the passed message once
-	**/
+     * Subscribes the passed function to the passed message once
+     * @function
+     * @alias subscribeOnce
+     * @param { String } message The message to subscribe to
+     * @param { Function } func The function to call when a new message is published
+     * @return { PubSub }
+     */
     PubSub.subscribeOnce = function( message, func ){
         var token = PubSub.subscribe( message, function(){
             // before func apply, unsubscribe message
@@ -2145,14 +2145,22 @@ https://github.com/mroderick/PubSubJS
         return PubSub;
     };
 
-    /* Public: Clears all subscriptions
-	 */
+    /**
+     * Clears all subscriptions
+     * @function
+     * @public
+     * @alias clearAllSubscriptions
+     */
     PubSub.clearAllSubscriptions = function clearAllSubscriptions(){
         messages = {};
     };
 
-    /*Public: Clear subscriptions by the topic
-	*/
+    /**
+     * Clear subscriptions by the topic
+     * @function
+     * @public
+     * @alias clearAllSubscriptions
+     */
     PubSub.clearSubscriptions = function clearSubscriptions(topic){
         var m;
         for (m in messages){
@@ -2162,25 +2170,26 @@ https://github.com/mroderick/PubSubJS
         }
     };
 
-    /* Public: removes subscriptions.
-	 * When passed a token, removes a specific subscription.
-	 * When passed a function, removes all subscriptions for that function
-	 * When passed a topic, removes all subscriptions for that topic (hierarchy)
-	 *
-	 * value - A token, function or topic to unsubscribe.
-	 *
-	 * Examples
-	 *
-	 *		// Example 1 - unsubscribing with a token
-	 *		var token = PubSub.subscribe('mytopic', myFunc);
-	 *		PubSub.unsubscribe(token);
-	 *
-	 *		// Example 2 - unsubscribing with a function
-	 *		PubSub.unsubscribe(myFunc);
-	 *
-	 *		// Example 3 - unsubscribing a topic
-	 *		PubSub.unsubscribe('mytopic');
-	 */
+    /**
+     * Removes subscriptions
+     *
+     * - When passed a token, removes a specific subscription.
+     *
+	 * - When passed a function, removes all subscriptions for that function
+     *
+	 * - When passed a topic, removes all subscriptions for that topic (hierarchy)
+     * @function
+     * @public
+     * @alias subscribeOnce
+     * @param { String | Function } value A token, function or topic to unsubscribe from
+     * @example // Unsubscribing with a token
+     * var token = PubSub.subscribe('mytopic', myFunc);
+     * PubSub.unsubscribe(token);
+     * @example // Unsubscribing with a function
+     * PubSub.unsubscribe(myFunc);
+     * @example // Unsubscribing from a topic
+     * PubSub.unsubscribe('mytopic');
+     */
     PubSub.unsubscribe = function(value){
         var descendantTopicExists = function(topic) {
                 var m;
@@ -2229,5 +2238,25 @@ https://github.com/mroderick/PubSubJS
         return result;
     };
 }));
+
+},{}],34:[function(require,module,exports){
+'use strict';
+
+const RISK_INFO = 0;
+const RISK_LOW = 1;
+const RISK_MEDIUM = 2;
+const RISK_HIGH = 3;
+
+const CONFIDENCE_FALSE_POSITIVE = 0;
+const CONFIDENCE_LOW = 1;
+const CONFIDENCE_MEDIUM = 2;
+const CONFIDENCE_HIGH = 3;
+const CONFIDENCE_USER_CONFIRMED = 4;
+
+module.exports = {
+  RISK_INFO, RISK_LOW, RISK_MEDIUM, RISK_HIGH, CONFIDENCE_FALSE_POSITIVE,
+  CONFIDENCE_LOW, CONFIDENCE_MEDIUM, CONFIDENCE_HIGH,
+  CONFIDENCE_USER_CONFIRMED
+};
 
 },{}]},{},[1]);

@@ -25,10 +25,8 @@ import java.lang.StringBuilder;
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -72,13 +70,12 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionFrontEndScanner";
 
-    private static final String SCRIPT_TYPE_CLIENT_ACTIVE = "client-side-active";
-    private static final String SCRIPT_TYPE_CLIENT_PASSIVE = "client-side-passive";
+    public static final String SCRIPT_TYPE_CLIENT_ACTIVE = "client-side-active";
+    public static final String SCRIPT_TYPE_CLIENT_PASSIVE = "client-side-passive";
 
     protected static final String PREFIX = "frontendscanner";
 
     private static final String RESOURCE = "/org/zaproxy/zap/extension/frontendscanner/resources";
-    private static final String FRONT_END_SCANNER = Constant.getZapHome() + "/frontendscanner/front-end-scanner.js";
     private static final String SCRIPTS_FOLDER = Constant.getZapHome() + "/scripts/scripts/";
 
     private static final String ASCAN_ICON = RESOURCE + "/client-side-ascan.png";
@@ -115,7 +112,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
         this.options = new FrontEndScannerOptions();
 
-        this.api = new FrontEndScannerAPI();
+        this.api = new FrontEndScannerAPI(this);
         this.api.addApiOptions(options);
 
         this.extensionScript = Control
@@ -229,25 +226,20 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
                     int historyReferenceId = msg.getHistoryRef().getHistoryId();
 
-                    // 67000 is a lower estimate, made by counting the characters in
-                    //   * files/frontendscanner/front-end-scanner.js
-                    //   * files/scripts/scripts/client-side-passive/scan-jwt-token.js
-                    StringBuilder injectedContentBuilder = new StringBuilder(67000)
-                        .append("<script type='text/javascript'>")
-                        .append("var frontEndScanner=(function() {")
-                        .append("const HISTORY_REFERENCE_ID = " + historyReferenceId + ";")
-                        .append("const CALLBACK_ENDPOINT = '" + frontEndApiUrl + "';");
+                    StringBuilder injectedContentBuilder = new StringBuilder(200)
+                        .append("<script src='")
+                        .append(frontEndApiUrl)
+                        .append("?action=getFile")
+                        .append("&filename=front-end-scanner.js")
+                        .append("&historyReferenceId=")
+                        .append(historyReferenceId)
+                        .append("'></script>");
 
-                    appendUserScriptsTo(injectedContentBuilder);
-                    appendFrontEndScannerCodeTo(injectedContentBuilder);
-
-                    injectedContentBuilder
-                        .append("})();")
-                        .append("</script>");
+                    String injectedContent = injectedContentBuilder.toString();
 
                     OutputDocument newResponseBody = new OutputDocument(document);
                     int insertPosition = head.getChildElements().get(0).getBegin();
-                    newResponseBody.insert(insertPosition, injectedContentBuilder.toString());
+                    newResponseBody.insert(insertPosition, injectedContent);
 
                     msg.getResponseBody()
                         .setBody(newResponseBody.toString());
@@ -275,58 +267,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         return DEPENDENCIES;
     }
 
-    private void appendFrontEndScannerCodeTo(StringBuilder stringBuilder) {
-        Path frontEndScannerPath = Paths.get(FRONT_END_SCANNER);
-        stringBuilder.append(
-            readFromFile(frontEndScannerPath)
-        );
-    }
-
-    private void appendUserScriptsTo(StringBuilder stringBuilder) throws IOException {
-        try {
-            List<String> passiveFunctionNames = new ArrayList<String>();
-
-            this.extensionScript
-                .getScripts(ExtensionFrontEndScanner.SCRIPT_TYPE_CLIENT_PASSIVE)
-                .stream()
-                .filter(script -> script.isEnabled())
-                .map(script -> script.getContents())
-                .map(code -> wrapInFunction(code, passiveFunctionNames))
-                .forEach(code -> stringBuilder.append(code));
-
-            stringBuilder
-                .append("const SCRIPTS = [ " + String.join(", ", passiveFunctionNames) + "];");
-        } catch (UncheckedIOException e) {
-            throw new IOException(e);
-        }
-    }
-
-    private String readFromFile(Path file) throws UncheckedIOException {
-        try {
-            byte[] content = Files.readAllBytes(file);
-            return new String(content, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    /**
-     * Creates a javascript function containing the given code as body.
-     * <p>
-     * Has a side-effect: it updates the `passiveFunctionNames` List.
-     * </p>
-     *
-     * @param javascriptCode the javascript code that will be used as body of the returned function declaration
-     * @param functionNames an array storing the different functions that have been created, it will be updated by the call to this method
-     * @return the returned function declaration
-     */
-    private String wrapInFunction(String javascriptCode, List<String> functionNames) {
-        String id = Long.toString(Math.abs(UUID.randomUUID().getMostSignificantBits()));
-        String functionName = "f_" + id;
-
-        functionNames.add(functionName);
-
-        return "function " + functionName + " (frontEndScanner) { " + javascriptCode + " };";
+    protected ExtensionScript getExtensionScript() {
+        return this.extensionScript;
     }
 
     private ZapToggleButton getFrontEndScannerButton() {
