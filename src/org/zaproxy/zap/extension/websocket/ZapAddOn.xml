@@ -13,6 +13,7 @@
 	Correct output stream used in server mode.<br>
 	Add support for 'other' API operations.<br>
 	Validate the Origin for API connections.<br>
+	Generate websocket events.<br>
 	]]>
 	</changes>
 	<classnames>
