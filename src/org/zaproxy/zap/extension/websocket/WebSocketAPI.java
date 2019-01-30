@@ -214,11 +214,17 @@ public class WebSocketAPI extends ApiImplementor {
 
                             switch (reqType) {
                             case action:
-                                apiResp = impl.handleApiAction(name, params);
+                                apiResp = impl.handleApiOptionAction(name, params);
+                                if (apiResp == null) {
+                                    apiResp = impl.handleApiAction(name, params);
+                                }
                                 response = apiResp.toJSON();
                                 break;
                             case view:
-                                apiResp = impl.handleApiView(name, params);
+                                apiResp = impl.handleApiOptionView(name, params);
+                                if (apiResp == null) {
+                                    apiResp = impl.handleApiView(name, params);
+                                }
                                 response = apiResp.toJSON();
                                 break;
                             case other:
