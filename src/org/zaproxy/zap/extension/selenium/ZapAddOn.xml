@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Selenium</name>
-	<version>14</version>
+	<version>15</version>
 	<semver>2.0.0</semver><!-- This version should be kept in sync with the one of the extension. -->
 	<status>release</status>
 	<description>WebDriver provider and includes HtmlUnit browser</description>
@@ -9,12 +9,6 @@
 	<dependencies/>
 	<changes>
 	<![CDATA[
-	Enable the extension for all DB types.<br>
-	Mention the configuration keys in the options help page.<br>
-	Tweak error message shown when failed to start/connect to the browser.<br>
-	Disable Firefox JSON viewer when used by AJAX Spider to prevent crawl.<br>
-	Prevent WebDriver process leak when closing ZAP.<br>
-	Ensure "localhost" is proxied through ZAP on Chrome >= 72.<br>
 	]]>
 	</changes>
 	<extensions>
