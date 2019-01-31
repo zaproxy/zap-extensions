@@ -14,6 +14,7 @@
 	Tweak error message shown when failed to start/connect to the browser.<br>
 	Disable Firefox JSON viewer when used by AJAX Spider to prevent crawl.<br>
 	Prevent WebDriver process leak when closing ZAP.<br>
+	Ensure "localhost" is proxied through ZAP on Chrome >= 72.<br>
 	]]>
 	</changes>
 	<extensions>

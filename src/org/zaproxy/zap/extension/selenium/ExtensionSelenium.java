@@ -671,6 +671,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         case CHROME:
             ChromeOptions chromeOptions = new ChromeOptions();
             setCommonOptions(chromeOptions, proxyAddress, proxyPort);
+            chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
             return new ChromeDriver(chromeOptions);
         case FIREFOX:
             FirefoxOptions firefoxOptions = new FirefoxOptions();
