@@ -116,7 +116,8 @@ public class FrontEndScannerAPI extends ApiImplementor {
             ).getJSONObject("alert");
 
             HistoryReference historyReference = new HistoryReference(
-                alertParams.getInt("historyReferenceId")
+                alertParams.getInt("historyReferenceId"),
+                true
             );
 
             Alert alert = new Alert(
@@ -128,6 +129,10 @@ public class FrontEndScannerAPI extends ApiImplementor {
             alert.setSource(Alert.Source.PASSIVE);
             alert.setDescription(alertParams.getString("description"));
             alert.setEvidence(alertParams.getString("evidence"));
+            alert.setUri(historyReference.getURI().toString());
+            alert.setHistoryRef(historyReference);
+            alert.setMessage(historyReference.getHttpMessage());
+            historyReference.clearHttpMessage();
 
             ExtensionAlert extAlert = Control
                 .getSingleton()
