@@ -217,6 +217,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Script type used to register Websocket sender scripts.
 	 */
 	private ScriptType websocketSenderSciptType;
+	
+	private WebSocketEventPublisher eventPublisher;
 
 	public ExtensionWebSocket() {
 		super(NAME);
@@ -398,6 +400,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			webSocketSenderScriptListener = new WebSocketSenderScriptListener();
 			addAllChannelSenderListener(webSocketSenderScriptListener);
 		}
+		
+		eventPublisher = new WebSocketEventPublisher(this);
+		this.addAllChannelSenderListener(eventPublisher);
 	}
 	
 	@Override
@@ -465,6 +470,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
     		removeAllChannelSenderListener(webSocketSenderScriptListener);
             extensionScript.removeScripType(websocketSenderSciptType);
         }
+		
+		eventPublisher.shutdown();
 	}
 
 	@Override
