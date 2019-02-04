@@ -12,6 +12,7 @@
 	Fix exception when handling API request with no API implementor.<br>
 	Correct output stream used in server mode.<br>
 	Add support for 'other' API operations.<br>
+	Handle API options.<br>
 	Validate the Origin for API connections.<br>
 	Generate websocket events.<br>
 	]]>
