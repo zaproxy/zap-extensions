@@ -24,7 +24,7 @@ from org.zaproxy.zap.extension.script import ScriptVars;
 def install(helper):
   	print('install called'); 
 	
-	frame = JFrame("Please input OCI Values")
+	frame = JFrame("Please Input Values")
 	#frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
 	frame.setLocation(100,100)
 	frame.setSize(500,400)
