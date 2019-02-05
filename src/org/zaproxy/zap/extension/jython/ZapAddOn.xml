@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Update the help to mention the bundled Jython version.<br>
+	Jython templates now includes an extender script (getInputsFromuser.py) for setting global script variables based on user input.<br> 
 	]]>
 	</changes>
 	<extensions>
