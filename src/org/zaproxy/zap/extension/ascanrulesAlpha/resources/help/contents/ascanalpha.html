@@ -22,6 +22,10 @@ For more details see:
 Tests to see if the server is vulnerable to the Apache Range Header Denial of Service issue, by requesting eleven (11) 
 different byte ranges. Eleven ranges is one more than is accepted by patched/fixed servers.
 
+<H2>Cloud Metadata Attack</H2>
+Attempts to abuse a misconfigured NGINX server in order to access the instance metadata maintained by cloud service providers such as AWS, GCP and Azure.<br>
+All of these providers provide metadata via an internal unroutable IP address '169.254.169.254' - this can be exposed by incorrectly configured NGINX servers and accessed by using this IP address in the Host header field.
+
 <H2>Cookie Slack Detector</H2>
 Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid"
 

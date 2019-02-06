@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Update minimum ZAP version to 2.6.0.<br>
+	Added Cloud Metadata Scanner<br>
 	]]>
 	</changes>
 	<extensions>
@@ -15,6 +16,7 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ApacheRangeHeaderDos</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.CloudMetadataScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ElmahScanner</ascanrule>
