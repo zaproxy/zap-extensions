@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>23</version>
+	<version>24</version>
 	<status>alpha</status>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAscanrulesAlphaAscanalpha</url>
 	<changes>
 	<![CDATA[
-	Update minimum ZAP version to 2.6.0.<br>
-	Added Cloud Metadata Scanner<br>
 	]]>
 	</changes>
 	<extensions>
