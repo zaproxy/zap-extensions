@@ -1,19 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>23</version>
+	<version>24</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Fix a stack overflow with PII Scanner.<br>
-	Fix a DateParseException in Cacheable Scanner (Issue 4969).<br>
-	Fix Open Redirect (10028) "Attack" should be Desc.<br>
-	Fix false positive due to RxJS Observable method being mistaken for ASP source disclosure.<br>
-	Tweak User Controllable Charset and Cookie Poisoning to use Description/Other Info field instead of Attack (Issue 5149).<br>
-	Only report missing STS header on redirects to HTTPS URLs on the same domain at Low threshold.<br>
-	Hash Disclosure (10097): Add threshold filtering and fix hash confidence levels.<br>
 	]]>
 	</changes>
 	<extensions>
