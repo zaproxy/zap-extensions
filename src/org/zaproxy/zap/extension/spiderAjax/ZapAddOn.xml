@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Correct WebDriver requester ID.<br>
+	Remove unused resource messages.<br>
 	]]>
 	</changes>
 	<dependencies>
