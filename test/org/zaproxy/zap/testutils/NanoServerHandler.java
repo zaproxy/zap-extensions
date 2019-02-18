@@ -104,4 +104,14 @@ public abstract class NanoServerHandler {
         }
         return new String(bytes);
     }
+    
+    /**
+     * Gets the first parameter which is contained in the parameters list
+     * @param session the session that has the request
+     * @param param tha parameter name
+     * @return the first value of the parameters
+     */
+    static protected String getFirstParamValue(IHTTPSession session, String param){
+        return session.getParameters().get(param) != null ? session.getParameters().get(param).get(0) : null;
+    }
 }

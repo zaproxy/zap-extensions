@@ -26,6 +26,8 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mockito;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
@@ -66,6 +68,14 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
      * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#HIGH AttackStrength.HIGH}, per parameter being scanned.
      */
     protected static final int NUMBER_MSGS_ATTACK_STRENGTH_HIGH = 24;
+
+    /**
+     * The maximum number of messages that a scanner can send in
+     * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#INSANE AttackStrength.INSANE}, per parameter being
+     * scanned.
+     */
+    // Arbitrary value, there's no recommended number.
+    protected static final int NUMBER_MSGS_ATTACK_STRENGTH_INSANE = 75;
 
     /**
      * The recommended maximum number of messages that a scanner can send per page being
@@ -155,6 +165,9 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         };
         
         rule = createScanner();
+        if (rule.getConfig() == null) {
+            rule.setConfig(new ZapXmlConfiguration());
+        }
     }
 
     @After
@@ -167,6 +180,48 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
     @Override
     public String getHtml(String name, Map<String, String> params) {
         return super.getHtml(getClass().getSimpleName() + "/" + name, params);
+    }
+
+    /**
+     * Gets the recommended maximum number of messages that a scanner can send per parameter for the given strength.
+     *
+     * @param strength the attack strength.
+     * @return the recommended maximum number of messages.
+     * @see AbstractAppParamPlugin
+     */
+    protected int getRecommendMaxNumberMessagesPerParam(Plugin.AttackStrength strength) {
+        switch (strength) {
+        case LOW:
+            return NUMBER_MSGS_ATTACK_STRENGTH_LOW;
+        case MEDIUM:
+        default:
+            return NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM;
+        case HIGH:
+            return NUMBER_MSGS_ATTACK_STRENGTH_HIGH;
+        case INSANE:
+            return NUMBER_MSGS_ATTACK_STRENGTH_INSANE;
+        }
+    }
+
+    /**
+     * Gets the recommended maximum number of messages that a scanner can send per page for the given strength.
+     *
+     * @param strength the attack strength.
+     * @return the recommended maximum number of messages.
+     * @see AbstractAppPlugin
+     */
+    protected int getRecommendMaxNumberMessagesPerPage(Plugin.AttackStrength strength) {
+        switch (strength) {
+        case LOW:
+            return NUMBER_MSGS_ATTACK_PER_PAGE_LOW;
+        case MEDIUM:
+        default:
+            return NUMBER_MSGS_ATTACK_PER_PAGE_MED;
+        case HIGH:
+            return NUMBER_MSGS_ATTACK_PER_PAGE_HIGH;
+        case INSANE:
+            return NUMBER_MSGS_ATTACK_PER_PAGE_INSANE;
+        }
     }
 
 }
