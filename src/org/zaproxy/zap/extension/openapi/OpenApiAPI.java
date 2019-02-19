@@ -42,6 +42,13 @@ public class OpenApiAPI extends ApiImplementor {
     private static final String PARAM_HOST_OVERRIDE = "hostOverride";
     private ExtensionOpenApi extension = null;
 
+    /**
+     * Provided only for API client generator usage.
+     */
+    public OpenApiAPI() {
+        this(null);
+    }
+
     public OpenApiAPI(ExtensionOpenApi ext) {
         extension = ext;
         this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, new String[] { PARAM_FILE }));

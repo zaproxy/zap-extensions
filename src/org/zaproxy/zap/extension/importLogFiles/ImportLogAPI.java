@@ -140,6 +140,13 @@ public class ImportLogAPI extends ApiImplementor {
     }
     */
 
+    /**
+     * Provided only for API client generator usage.
+     */
+    public ImportLogAPI() {
+        this(null);
+    }
+
     // Methods to show in the http API view
     public ImportLogAPI(ExtensionImportLogFiles extensionImportLogFiles) {
         this.addApiAction(new ApiAction(Import_Zap_Log_From_File, new String[] { PARAM_FILE }));
