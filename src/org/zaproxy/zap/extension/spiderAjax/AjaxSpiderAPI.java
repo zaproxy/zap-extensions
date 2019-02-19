@@ -95,6 +95,13 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	private List<SpiderResource> resourcesError;
 	private SpiderThread spiderThread;
 
+	/**
+	 * Provided only for API client generator usage.
+	 */
+	public AjaxSpiderAPI() {
+		this(null);
+	}
+
 	public AjaxSpiderAPI(ExtensionAjax extension) {
 		this.extension = extension;
 		this.historyReferences = Collections.emptyList();

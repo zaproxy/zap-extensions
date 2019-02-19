@@ -92,6 +92,13 @@ public class WebSocketAPI extends ApiImplementor {
 
     private String callbackUrl;
 
+    /**
+     * Provided only for API client generator usage.
+     */
+    public WebSocketAPI() {
+        this(null);
+    }
+
     public WebSocketAPI(ExtensionWebSocket extension) {
         this.extension = extension;
 
