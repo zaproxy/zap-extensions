@@ -60,6 +60,13 @@ public class ReplacerAPI extends ApiImplementor {
 
     private ExtensionReplacer extension = null;
 
+    /**
+     * Provided only for API client generator usage.
+     */
+    public ReplacerAPI() {
+        this(null);
+    }
+
     public ReplacerAPI(ExtensionReplacer ext) {
         extension = ext;
 

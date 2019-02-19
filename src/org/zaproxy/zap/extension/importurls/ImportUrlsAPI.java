@@ -47,6 +47,13 @@ public class ImportUrlsAPI extends ApiImplementor {
 
 	private ExtensionImportUrls extension;
 
+	/**
+	 * Provided only for API client generator usage.
+	 */
+	public ImportUrlsAPI() {
+		this(null);
+	}
+
 	public ImportUrlsAPI(ExtensionImportUrls extension) {
 		super();
 		this.extension = extension;
