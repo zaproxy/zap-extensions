@@ -50,7 +50,6 @@ import org.zaproxy.zap.utils.FontUtils;
  * <li>The path to ChromeDriver;</li>
  * <li>The path to Firefox binary.</li>
  * <li>The path to Firefox driver (geckodriver).</li>
- * <li>The path to IEDriverServer;</li>
  * <li>The path to PhantomJS binary.</li>
  * </ul>
  * 
@@ -66,9 +65,6 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     private final JTextField firefoxDriverTextField;
     private final JLabel infoBundledFirefoxDriverLabel;
     private final JButton useBundledFirefoxDriverButton;
-    private final JTextField ieDriverTextField;
-    private final JLabel infoBundledIeDriverLabel;
-    private final JButton useBundledIeDriverButton;
 
     private final JTextField firefoxBinaryTextField;
     private final JTextField phantomJsBinaryTextField;
@@ -122,22 +118,6 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                 firefoxDriverTextField,
                 Browser.FIREFOX);
 
-        ieDriverTextField = createTextField();
-        JButton ieDriverButton = createButtonFileChooser(selectFileButtonLabel, ieDriverTextField);
-        JLabel ieDriverLabel = new JLabel(resourceBundle.getString("selenium.options.label.driver.ie"));
-        ieDriverLabel.setLabelFor(ieDriverButton);
-
-        infoBundledIeDriverLabel = createBundledWebDriverLabel(
-                infoBundledWebDriverlabel,
-                infoBundledWebDriverToolTip,
-                infoIcon);
-        useBundledIeDriverButton = createBundledWebDriverButton(
-                bundledWebDriverButtonLabel,
-                bundledWebDriverButtonToolTip,
-                infoBundledWebDriverToolTip,
-                ieDriverTextField,
-                Browser.INTERNET_EXPLORER);
-
         phantomJsBinaryTextField = createTextField();
         JButton phantomJsBinaryButton = createButtonFileChooser(selectFileButtonLabel, phantomJsBinaryTextField);
         JLabel phantomJsBinaryLabel = new JLabel(resourceBundle.getString("selenium.options.label.phantomjs.binary"));
@@ -164,8 +144,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         .addGroup(
                                 driversLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(chromeDriverLabel)
-                                        .addComponent(firefoxDriverLabel)
-                                        .addComponent(ieDriverLabel))
+                                        .addComponent(firefoxDriverLabel))
                         .addGroup(
                                 driversLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addGroup(
@@ -187,17 +166,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                                                         .addGroup(
                                                                 driversLayout.createParallelGroup()
                                                                         .addComponent(firefoxDriverButton)
-                                                                        .addComponent(useBundledFirefoxDriverButton)))
-                                        .addGroup(
-                                                driversLayout.createSequentialGroup()
-                                                        .addGroup(
-                                                                driversLayout.createParallelGroup()
-                                                                        .addComponent(ieDriverTextField)
-                                                                        .addComponent(infoBundledIeDriverLabel))
-                                                        .addGroup(
-                                                                driversLayout.createParallelGroup()
-                                                                        .addComponent(ieDriverButton)
-                                                                        .addComponent(useBundledIeDriverButton)))));
+                                                                        .addComponent(useBundledFirefoxDriverButton)))));
 
         driversLayout.setVerticalGroup(
                 driversLayout.createSequentialGroup()
@@ -218,16 +187,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         .addGroup(
                                 driversLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(infoBundledFirefoxDriverLabel)
-                                        .addComponent(useBundledFirefoxDriverButton))
-                        .addGroup(
-                                driversLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(ieDriverLabel)
-                                        .addComponent(ieDriverTextField)
-                                        .addComponent(ieDriverButton))
-                        .addGroup(
-                                driversLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(infoBundledIeDriverLabel)
-                                        .addComponent(useBundledIeDriverButton)));
+                                        .addComponent(useBundledFirefoxDriverButton)));
 
         JPanel binariesPanel = new JPanel();
         binariesPanel.setBorder(
@@ -335,13 +295,6 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         firefoxDriverTextField
                 .setText(getEffectiveDriverPath(Browser.FIREFOX, seleniumOptions.getFirefoxDriverPath(), driverAvailable));
 
-        driverAvailable = Browser.hasBundledWebDriver(Browser.INTERNET_EXPLORER);
-        infoBundledIeDriverLabel.setVisible(!driverAvailable);
-        useBundledIeDriverButton.setEnabled(driverAvailable);
-
-        ieDriverTextField
-                .setText(getEffectiveDriverPath(Browser.INTERNET_EXPLORER, seleniumOptions.getIeDriverPath(), driverAvailable));
-
         firefoxBinaryTextField.setText(seleniumOptions.getFirefoxBinaryPath());
         phantomJsBinaryTextField.setText(seleniumOptions.getPhantomJsBinaryPath());
     }
@@ -381,7 +334,6 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         seleniumOptions.setChromeDriverPath(chromeDriverTextField.getText());
         seleniumOptions.setFirefoxBinaryPath(firefoxBinaryTextField.getText());
         seleniumOptions.setFirefoxDriverPath(firefoxDriverTextField.getText());
-        seleniumOptions.setIeDriverPath(ieDriverTextField.getText());
         seleniumOptions.setPhantomJsBinaryPath(phantomJsBinaryTextField.getText());
     }
 

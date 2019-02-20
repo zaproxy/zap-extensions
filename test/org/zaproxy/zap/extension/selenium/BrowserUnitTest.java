@@ -82,17 +82,6 @@ public class BrowserUnitTest {
     }
 
     @Test
-    public void shouldReturnIEWhenGettingBrowserWithIEId() {
-        // Given
-        String ieId = "ie";
-        // When
-        Browser retrievedBrowser = Browser.getBrowserWithId(ieId);
-        // Then
-        assertThat(retrievedBrowser, is(equalTo(Browser.INTERNET_EXPLORER)));
-        assertThat(ieId, is(equalTo(Browser.INTERNET_EXPLORER.getId())));
-    }
-
-    @Test
     public void shouldReturnOperaWhenGettingBrowserWithOperaId() {
         // Given
         String operaId = "opera";
