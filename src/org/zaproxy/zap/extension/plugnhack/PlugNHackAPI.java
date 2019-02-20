@@ -58,6 +58,13 @@ public class PlugNHackAPI extends ApiImplementor {
     private ExtensionPlugNHack extension = null;
 
     /**
+     * Provided only for API client generator usage.
+     */
+    public PlugNHackAPI() {
+        this(null);
+    }
+
+    /**
      * 
      * @param ext 
      */
