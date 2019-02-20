@@ -39,6 +39,13 @@ public class SoapAPI extends ApiImplementor {
 	private static final String PARAM_FILE = "file";
 	private ExtensionImportWSDL extension = null;
 
+	/**
+	 * Provided only for API client generator usage.
+	 */
+	public SoapAPI() {
+		this(null);
+	}
+
 	public SoapAPI(ExtensionImportWSDL ext) {
 		extension = ext;
 		this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, new String[] { PARAM_FILE }));
