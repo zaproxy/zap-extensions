@@ -29,6 +29,13 @@ public class SeleniumAPI extends ApiImplementor {
     private static final String API_PREFIX = "selenium";
 
     /**
+     * Provided only for API client generator usage.
+     */
+    public SeleniumAPI() {
+        // Nothing to do.
+    }
+
+    /**
      * Constructs a {@code SeleniumAPI} with the given {@code options} exposed through the API.
      * 
      * @param options the options that will be exposed through the API

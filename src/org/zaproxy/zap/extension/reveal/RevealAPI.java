@@ -40,6 +40,13 @@ public class RevealAPI extends ApiImplementor {
 
     private final ExtensionReveal extension;
 
+    /**
+     * Provided only for API client generator usage.
+     */
+    public RevealAPI() {
+        this(null);
+    }
+
     public RevealAPI(ExtensionReveal extension) {
         this.addApiAction(new ApiAction(ACTION_SET_REVEAL, new String[] { PARAM_REVEAL }));
 
