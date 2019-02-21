@@ -39,13 +39,12 @@ import org.apache.commons.lang.Validate;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
@@ -164,7 +163,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         addBuiltInProvider(Browser.CHROME);
         addBuiltInProvider(Browser.FIREFOX);
         addBuiltInProvider(Browser.HTML_UNIT);
-        addBuiltInProvider(Browser.INTERNET_EXPLORER);
         addBuiltInProvider(Browser.PHANTOM_JS);
         addBuiltInProvider(Browser.SAFARI);
 
@@ -718,11 +716,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);
             return new HtmlUnitDriver(DesiredCapabilities.htmlUnit().merge(htmlunitCapabilities));
         case INTERNET_EXPLORER:
-            InternetExplorerOptions ieOptions = new InternetExplorerOptions();
-            setCommonOptions(ieOptions, proxyAddress, proxyPort);
-            ieOptions.setCapability(InternetExplorerDriver.IE_USE_PER_PROCESS_PROXY, true);
-
-            return new InternetExplorerDriver(ieOptions);
+            throw new WebDriverException("No longer available, does not support the required capabilities.");
             /* No longer supported in the Selenium standalone jar
              * need to decide if we support older Opera versions 
         case OPERA:
@@ -809,8 +803,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         switch (browser) {
         case CHROME:
             return getMessages().getString("selenium.warn.message.failed.start.browser.chrome");
-        case INTERNET_EXPLORER:
-            return getMessages().getString("selenium.warn.message.failed.start.browser.ie");
         case PHANTOM_JS:
             return getMessages().getString("selenium.warn.message.failed.start.browser.phantomjs");
         default:
@@ -827,7 +819,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         browsers.add(Browser.SAFARI);
         // Requires drivers, but hopefully they are already provided.
         browsers.add(Browser.CHROME);
-        browsers.add(Browser.INTERNET_EXPLORER);
         browsers.add(Browser.FIREFOX);
 
         if (!getOptions().getPhantomJsBinaryPath().isEmpty()) {
@@ -866,13 +857,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     getOptions().setFirefoxDriverPath(path);
                 }
             }
-
-            if (getOptions().getIeDriverPath().isEmpty()) {
-                String path = Browser.getBundledWebDriverPath(Browser.INTERNET_EXPLORER);
-                if (path != null) {
-                    getOptions().setIeDriverPath(path);
-                }
-            }
         }
 
         @Override
@@ -886,11 +870,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     && Files.notExists(Paths.get(getOptions().getFirefoxDriverPath()))) {
                 getOptions().setFirefoxDriverPath("");
             }
-
-            if (Browser.isBundledWebDriverPath(getOptions().getIeDriverPath())
-                    && Files.notExists(Paths.get(getOptions().getIeDriverPath()))) {
-                getOptions().setIeDriverPath("");
-            }
         }
 
     }
@@ -903,7 +882,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public static boolean isConfigured(Browser browser) {
         switch (browser) {
         case INTERNET_EXPLORER:
-            return Constant.isWindows();
+            return false;
         case SAFARI:
             return Constant.isMacOsX();
         default:

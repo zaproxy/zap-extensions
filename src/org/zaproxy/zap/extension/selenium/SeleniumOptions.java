@@ -40,7 +40,6 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
  * <li>The path to ChromeDriver;</li>
  * <li>The path to Firefox binary;</li>
  * <li>The path to Firefox driver (geckodriver);</li>
- * <li>The path to IEDriverServer;</li>
  * <li>The path to PhantomJS binary.</li>
  * </ul>
  * 
@@ -52,6 +51,10 @@ public class SeleniumOptions extends VersionedAbstractParam {
     public static final String CHROME_DRIVER_SYSTEM_PROPERTY = ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
     public static final String FIREFOX_BINARY_SYSTEM_PROPERTY = "zap.selenium.webdriver.firefox.bin";
     public static final String FIREFOX_DRIVER_SYSTEM_PROPERTY = "webdriver.gecko.driver";
+    /**
+     * @deprecated IE is no longer supported.
+     */
+    @Deprecated
     public static final String IE_DRIVER_SYSTEM_PROPERTY = InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;
     public static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
 
@@ -64,7 +67,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 1;
+    private static final int CURRENT_CONFIG_VERSION = 2;
 
     /**
      * The base key for all selenium configurations.
@@ -94,11 +97,6 @@ public class SeleniumOptions extends VersionedAbstractParam {
     private static final String FIREFOX_DRIVER_KEY = SELENIUM_BASE_KEY + ".firefoxDriver";
 
     /**
-     * The configuration key to read/write the path to IEDriverServer.
-     */
-    private static final String IE_DRIVER_KEY = SELENIUM_BASE_KEY + ".ieDriver";
-
-    /**
      * The configuration key to read/write the path PhantomJS binary.
      */
     private static final String PHANTOM_JS_BINARY_KEY = SELENIUM_BASE_KEY + ".phantomJsBinary";
@@ -117,11 +115,6 @@ public class SeleniumOptions extends VersionedAbstractParam {
      * The path to Firefox driver (geckodriver).
      */
     private String firefoxDriverPath = "";
-
-    /**
-     * The path to IEDriverServer.
-     */
-    private String ieDriverPath = "";
 
     /**
      * The path to PhantomJS binary.
@@ -145,7 +138,6 @@ public class SeleniumOptions extends VersionedAbstractParam {
         chromeDriverPath = getWebDriverPath(Browser.CHROME, CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
         firefoxBinaryPath = readSystemPropertyWithOptionFallback(FIREFOX_BINARY_SYSTEM_PROPERTY, FIREFOX_BINARY_KEY);
         firefoxDriverPath = getWebDriverPath(Browser.FIREFOX, FIREFOX_DRIVER_SYSTEM_PROPERTY, FIREFOX_DRIVER_KEY);
-        ieDriverPath = getWebDriverPath(Browser.INTERNET_EXPLORER, IE_DRIVER_SYSTEM_PROPERTY, IE_DRIVER_KEY);
 
         phantomJsBinaryPath = readSystemPropertyWithOptionFallback(PHANTOM_JS_BINARY_SYSTEM_PROPERTY, PHANTOM_JS_BINARY_KEY);
     }
@@ -211,7 +203,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     @Override
     protected void updateConfigsImpl(int fileVersion) {
-        // Nothing to do.
+        switch (fileVersion) {
+        case 1:
+            getConfig().clearProperty("selenium.ieDriver");
+            break;
+        }
     }
 
     /**
@@ -306,9 +302,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
      * Gets the path to IEDriverServer.
      *
      * @return the path to IEDriverServer, or empty if not set.
+     * @deprecated IE is no longer supported.
      */
+    @Deprecated
     public String getIeDriverPath() {
-        return ieDriverPath;
+        return "";
     }
 
     /**
@@ -316,15 +314,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
      *
      * @param ieDriverPath the path to IEDriverServer, or empty if not known.
      * @throws IllegalArgumentException if {@code ieDriverPath} is {@code null}.
+     * @deprecated IE is no longer supported.
      */
+    @Deprecated
     public void setIeDriverPath(String ieDriverPath) {
-        Validate.notNull(ieDriverPath, "Parameter ieDriverPath must not be null.");
-
-        if (!this.ieDriverPath.equals(ieDriverPath)) {
-            this.ieDriverPath = ieDriverPath;
-
-            saveAndSetSystemProperty(IE_DRIVER_KEY, IE_DRIVER_SYSTEM_PROPERTY, ieDriverPath);
-        }
+        // Nothing to do.
     }
 
     /**

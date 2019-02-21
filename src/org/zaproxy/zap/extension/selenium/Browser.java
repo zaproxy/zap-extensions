@@ -46,6 +46,11 @@ public enum Browser {
      * @see #getFailSafeBrowser()
      */
     HTML_UNIT("htmlunit", true),
+    /**
+     * @deprecated Does not support required capabilities
+     *             ({@link org.openqa.selenium.remote.CapabilityType#ACCEPT_INSECURE_CERTS ACCEPT_INSECURE_CERTS}).
+     */
+    @Deprecated
     INTERNET_EXPLORER("ie", false),
     OPERA("opera", false),
     PHANTOM_JS("phantomjs", true),
@@ -222,8 +227,6 @@ public enum Browser {
         switch (browser) {
         case CHROME:
             return "chromedriver";
-        case INTERNET_EXPLORER:
-            return "IEDriverServer";
         case FIREFOX:
             return "geckodriver";
         default:

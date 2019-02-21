@@ -9,6 +9,7 @@
 	<dependencies/>
 	<changes>
 	<![CDATA[
+	Remove support for Internet Explorer, does not support required capabilities.<br>
 	]]>
 	</changes>
 	<extensions>

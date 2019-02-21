@@ -144,7 +144,7 @@ public class BrowsersComboBoxModelUnitTest {
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
         browsersComboBoxModel.setSelectedItem(FIREFOX);
         // When
-        browsersComboBoxModel.setSelectedItem(new BrowserUI("SomeName", Browser.INTERNET_EXPLORER));
+        browsersComboBoxModel.setSelectedItem(new BrowserUI("SomeName", Browser.CHROME));
         // Then
         assertThat(browsersComboBoxModel.getSelectedItem(), is(equalTo(FIREFOX)));
     }
