@@ -74,12 +74,6 @@ public class WebdriverDownload {
                 "https://github.com/" + repo + "/raw/master/files/webdriver/windows/32/chromedriver.exe",
                 srcdir, "files/webdriver/windows/32/chromedriver.exe");
 
-        downloadDriver(
-                "https://github.com/" + repo + "/raw/master/files/webdriver/windows/32/IEDriverServer.exe",
-                srcdir, "files/webdriver/windows/32/IEDriverServer.exe");
-        downloadDriver(
-                "https://github.com/" + repo + "/raw/master/files/webdriver/windows/64/IEDriverServer.exe",
-                srcdir, "files/webdriver/windows/64/IEDriverServer.exe");
         return 0;
     }
     
