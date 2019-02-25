@@ -2,7 +2,7 @@
 	<name>Windows WebDrivers</name>
 	<version>8</version>
 	<status>beta</status>
-	<description>Windows WebDrivers for Firefox, Chrome and IE.</description>
+	<description>Windows WebDrivers for Firefox and Chrome.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
