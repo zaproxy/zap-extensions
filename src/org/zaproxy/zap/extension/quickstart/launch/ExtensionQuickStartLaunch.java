@@ -48,6 +48,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.quickstart.QuickStartPanelContentProvider;
@@ -61,7 +62,8 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
         QuickStartPanelContentProvider {
 
     public static final String NAME = "ExtensionQuickStartLaunch";
-    private static final String DEFAULT_LAUNCH_PAGE_URL = "https://bit.ly/owaspzap-start-2-7";
+    private static final String DEFAULT_LAUNCH_PAGE_URL_PREFIX = "https://bit.ly/owaspzap-start-";
+    private static final String DEV_LAUNCH_PAGE = "dev";
     protected static final String PAGE_LOCALE_SEPARATOR = "<!-- - - - - - - - - %< - - - - - - - - -->\n";
     protected static final String PAGE_LOCALE_PREFIX = "<!-- Locale = ";
     protected static final String PAGE_LOCALE_POSTFIX = " -->";
@@ -178,13 +180,14 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
             public void run() {
                 // Try to read the default launch page
                 HttpMessage msg;
+                String launchPageUrl = getLaunchPageURL();
                 try {
                     HttpSender httpSender = new HttpSender(Model.getSingleton()
                             .getOptionsParam().getConnectionParam(), true,
                             HttpSender.CHECK_FOR_UPDATES_INITIATOR);
                     httpSender.setFollowRedirect(true);
                     msg = new HttpMessage(
-                            new URI(DEFAULT_LAUNCH_PAGE_URL, true), Model
+                            new URI(launchPageUrl, true), Model
                                     .getSingleton().getOptionsParam()
                                     .getConnectionParam());
                     httpSender.sendAndReceive(msg, true);
@@ -219,18 +222,33 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
                             }
                         }
                     } else {
-                        LOGGER.debug("Response from " + DEFAULT_LAUNCH_PAGE_URL
+                        LOGGER.debug("Response from " + launchPageUrl
                                 + " : "
                                 + msg.getResponseHeader().getStatusCode());
                     }
                 } catch (Exception e) {
                     LOGGER.debug("Failed to read from "
-                            + DEFAULT_LAUNCH_PAGE_URL + " : " + e.getMessage(),
+                            + launchPageUrl + " : " + e.getMessage(),
                             e);
                 }
 
             }
         }.start();
+    }
+    
+    private String getLaunchPageURL () {
+        String page = DEV_LAUNCH_PAGE;
+        if (! Constant.isDevBuild() && ! Constant.isDailyBuild()) {
+            // Converts the ZAP version to something like 2-8
+            try {
+                Version zapVersion = new Version(Constant.PROGRAM_VERSION);
+                page = zapVersion.getMajorVersion() + "-" + zapVersion.getMinorVersion();
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("Failed to parse ZAP version " + Constant.PROGRAM_VERSION, e);
+            }
+        }
+        
+        return DEFAULT_LAUNCH_PAGE_URL_PREFIX + page;
     }
 
     private OptionsQuickStartLaunchPanel getOptionsPanel() {
