@@ -40,7 +40,7 @@ public class JxBrowserDownload {
      */
     public static void main(String[] args) throws IOException {
 
-        final String VERSION = "6.22.2";
+        final String VERSION = "6.23";
         final String repo = "zaproxy/zap-libs"; // Makes it easier for testing
 
         String baseDir = "";
