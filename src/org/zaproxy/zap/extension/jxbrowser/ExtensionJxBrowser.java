@@ -19,14 +19,19 @@
  */
 package org.zaproxy.zap.extension.jxbrowser;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+
+import com.teamdev.jxbrowser.chromium.ProductInfo;
 
 public class ExtensionJxBrowser extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionJxBrowser";
 
     public static final String RESOURCES = "/org/zaproxy/zap/extension/jxbrowser/resources";
+
+    private static final Logger LOGGER = Logger.getLogger(ExtensionJxBrowser.class);
 
     /**
      * A minimal extension, just needed to load the messages correctly;)
@@ -38,6 +43,7 @@ public class ExtensionJxBrowser extends ExtensionAdaptor {
     @Override
     public void init() {
         super.init();
+        LOGGER.info("Using version " + ProductInfo.getVersion() + " of JxBrowser.");
     }
 
     @Override

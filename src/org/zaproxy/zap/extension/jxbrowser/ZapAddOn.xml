@@ -7,6 +7,8 @@
 	<url></url>
 	<changes>
 	<![CDATA[
+	Fix typo and tweak error message.<br>
+	Log JxBrowser version on start up.<br>
 	]]>
 	</changes>
 	<dependencies/>
