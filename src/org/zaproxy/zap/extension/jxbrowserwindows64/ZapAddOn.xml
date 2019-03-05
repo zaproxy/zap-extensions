@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>JxBrowser (Windows 64)</name>
-	<version>3</version>
+	<version>4</version>
 	<status>alpha</status>
 	<description>An embedded browser based on Chromium, Windows 64bits specific </description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Update JxBrowser to 6.23.<br>
 	]]>
 	</changes>
 	<dependencies>
