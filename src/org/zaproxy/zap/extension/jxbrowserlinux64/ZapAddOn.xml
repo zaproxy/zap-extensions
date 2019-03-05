@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>JxBrowser (Linux 64)</name>
-	<version>10</version>
+	<version>11</version>
 	<status>alpha</status>
 	<description>An embedded browser based on Chromium, Linux 64 specific </description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Update JxBrowser to 6.23.<br>
 	]]>
 	</changes>
 	<dependencies>
