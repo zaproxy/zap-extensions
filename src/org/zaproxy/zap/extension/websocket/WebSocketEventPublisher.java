@@ -47,6 +47,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
 
     private static final String FIELD_STATE = "state";
     private static final String FIELD_CHANNEL_ID = "channelId";
+    private static final String FIELD_CHANNEL_HOST = "channelHost";
     private static final String FIELD_LOCAL_SOCKET = "localSocket";
     private static final String FIELD_REMOTE_SOCKET = "remoteSocket";
     private static final String FIELD_TIME_IN_MS = "timeSentInMs";
@@ -93,6 +94,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
             this.executor.execute(() -> {
                 Map<String, String> map = new HashMap<String, String>();
                 map.put(FIELD_CHANNEL_ID, Integer.toString(channelId));
+                map.put(FIELD_CHANNEL_HOST, message.getDTO().channel.host);
                 map.put(FIELD_TIME_IN_MS, Long.toString(message.getTimestamp().getTime()));
                 map.put(FIELD_OP_CODE, Integer.toString(message.getOpcode()));
                 map.put(FIELD_OP_CODE_STRING, message.getOpcodeString());
