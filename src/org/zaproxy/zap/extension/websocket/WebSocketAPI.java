@@ -287,7 +287,7 @@ public class WebSocketAPI extends ApiImplementor {
             String id = request.optString("id", "");
             if (id.length() > 0) {
                 // Only send a response if they've specified an id in the call
-                sendWebSocketMessage(proxy, responseWrapper(response, id, request.optString("caller", "")).toString());
+                sendWebSocketMessage(proxy, responseWrapper(response, id, request.optString("caller", "")));
             }
         }
     }
@@ -297,14 +297,22 @@ public class WebSocketAPI extends ApiImplementor {
         optionalResponse(proxy, JSONObject.fromObject(ex.toString(Format.JSON, true)), request);
     }
 
-    private JSON responseWrapper(JSON response, String id, String caller) {
-        JSONObject wrapper = new JSONObject();
-        wrapper.put("id", id);
+    private String responseWrapper(JSON response, String id, String caller) {
+        // OK, so its nasty wrapping JSON using strings, but the net.sf.json classes do way too much
+        // auto conversion from strings that are valid JSON to JSON objects - this has proved to be the safest option.
+        StringBuilder sb = new StringBuilder();
+        sb.append("{ \"id\": \"");
+        sb.append(id);
+        sb.append("\", ");
         if (caller.length() > 0) {
-            wrapper.put("caller", caller);
+            sb.append("caller\": \"");
+            sb.append(caller);
+            sb.append("\", ");
         }
-        wrapper.put("response", response);
-        return wrapper;
+        sb.append("\"response\": ");
+        sb.append(response.toString());
+        sb.append(" }");
+        return sb.toString();
     }
 
     private void removeEventConsumer(WebsocketEventConsumer consumer) {
@@ -438,11 +446,20 @@ public class WebSocketAPI extends ApiImplementor {
         map.put("timestamp", Long.toString(message.timestamp));
         map.put("outgoing", Boolean.toString(message.isOutgoing));
         map.put("channelId", Integer.toString(message.channel.id));
+        map.put("channelHost", message.channel.host);
         map.put("messageId", Integer.toString(message.id));
         map.put("payloadLength", Integer.toString(message.payloadLength));
         if (fullPayload) {
             if (message.payload instanceof String) {
-                map.put("payload", (String) message.payload);
+                String payload = (String) message.payload;
+                try {
+                    JSONSerializer.toJSON(payload);
+                    // Its valid JSON so escape
+                    map.put("payload", "'" + payload + "'");
+                } catch (JSONException e) {
+                    // Its not a valid JSON object so can add as is
+                    map.put("payload", payload);
+                }
             } else if (message.payload instanceof byte[]) {
                 map.put("payload", Hex.encodeHexString((byte[]) message.payload));
             } else {
