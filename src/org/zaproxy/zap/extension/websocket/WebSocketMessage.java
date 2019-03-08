@@ -23,6 +23,8 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 
+import org.zaproxy.zap.extension.websocket.WebSocketProxy.Mode;
+
 /**
  * Represents a single WebSocket message, consisting of at least one frame.
  * <p>
@@ -459,6 +461,10 @@ public abstract class WebSocketMessage {
 		dto.payloadLength = getPayloadLength();
 		
 		return dto;
+	}
+	
+	public Mode getProxyMode() {
+		return this.proxy.getMode();
 	}
 	
 	@Override

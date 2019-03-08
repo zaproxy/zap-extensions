@@ -27,6 +27,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketObserver;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
+import org.zaproxy.zap.extension.websocket.WebSocketProxy.Mode;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 
@@ -66,6 +67,11 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
 		}
 		
 		// message is safe => no need to set onlyIfInScope parameter to true
+        
+        if (Mode.SERVER.equals(wsMessage.getProxyMode())) {
+            // These are typically API calls, breaking on these would make the API unusable
+            return true;
+        }
         
         if (message instanceof WebSocketFuzzMessageDTO) {
         	// as this message was sent by some fuzzer, do not catch it
