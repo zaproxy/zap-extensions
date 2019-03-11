@@ -15,6 +15,7 @@
 	Handle API options.<br>
 	Validate the Origin for API connections.<br>
 	Generate websocket events.<br>
+	Add break API endpoints.<br>
 	]]>
 	</changes>
 	<classnames>

@@ -20,12 +20,19 @@ package org.zaproxy.zap.extension.websocket;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 import org.zaproxy.zap.extension.websocket.utility.Utf8Util;
+
+import net.sf.json.JSONException;
+import net.sf.json.JSONSerializer;
 
 /**
  * Data Transfer Object used for displaying WebSockets communication. Intended to
@@ -116,7 +123,9 @@ public class WebSocketMessageDTO implements Message {
 				SimpleDateFormat.SHORT, SimpleDateFormat.MEDIUM,
 				Constant.getLocale());
 	}
-	
+
+    private static final Logger LOG = Logger.getLogger(WebSocketMessageDTO.class);
+
 	/**
 	 * 
 	 * @param channel
@@ -217,17 +226,56 @@ public class WebSocketMessageDTO implements Message {
 			return "";
 		}
 	}
-
+	
 	public boolean isForceIntercept() {
 		// Not currently supported for WebSockets
 		return false;
 	}
 
+    public Map<String, String> toMap(boolean fullPayload) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("id", Integer.toString(this.id));
+        map.put("opcode", Integer.toString(this.opcode));
+        map.put("opcodeString", this.readableOpcode);
+        map.put("timestamp", Long.toString(this.timestamp));
+        map.put("outgoing", Boolean.toString(this.isOutgoing));
+        map.put("channelId", Integer.toString(this.channel.id));
+        map.put("channelHost", this.channel.host);
+        map.put("thisId", Integer.toString(this.id));
+        map.put("payloadLength", Integer.toString(this.payloadLength));
+        if (fullPayload) {
+            if (this.payload instanceof String) {
+                String payload = (String) this.payload;
+                try {
+                    JSONSerializer.toJSON(payload);
+                    // Its valid JSON so escape
+                    map.put("payload", "'" + payload + "'");
+                } catch (JSONException e) {
+                    // Its not a valid JSON object so can add as is
+                    map.put("payload", payload);
+                }
+            } else if (this.payload instanceof byte[]) {
+                map.put("payload", Hex.encodeHexString((byte[]) this.payload));
+            } else {
+                try {
+                    map.put("payload", this.getReadablePayload());
+                } catch (InvalidUtf8Exception e) {
+                    LOG.error(e.getMessage(), e);
+                }
+            }
+        } else {
+            try {
+                String payloadFragment = this.getReadablePayload();
+                map.put("payloadFragment", payloadFragment);
+            } catch (InvalidUtf8Exception e) {
+                // Ignore as its just a summary
+            }
+        }
+        return map;
+    }
 
 	//@Override
-	public String getHeader(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String, String> toEventData() {
+	    return this.toMap(true);
 	}
-
 }

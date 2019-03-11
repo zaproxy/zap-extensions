@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -49,10 +49,11 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
+import org.zaproxy.zap.extension.brk.ExtensionBreak;
+import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesPayloadFilter;
-import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 import org.zaproxy.zap.extension.websocket.utility.WebSocketUtils;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.Target;
@@ -75,8 +76,10 @@ public class WebSocketAPI extends ApiImplementor {
     private static final String VIEW_CHANNELS = "channels";
     private static final String VIEW_MESSAGE = "message";
     private static final String VIEW_MESSAGES = "messages";
+    private static final String VIEW_BREAK_TEXT_MESSAGE = "breakTextMessage";
 
     private static final String ACTION_SEND_TEXT_MESSAGE = "sendTextMessage";
+    private static final String ACTION_SET_BREAK_TEXT_MESSAGE = "setBreakTextMessage";
 
     private static final String PARAM_COUNT = "count";
     private static final String PARAM_START = "start";
@@ -109,10 +112,14 @@ public class WebSocketAPI extends ApiImplementor {
                         VIEW_MESSAGES,
                         null,
                         new String[] { PARAM_CHANNEL_ID, PARAM_START, PARAM_COUNT, PARAM_PAYLOAD_PREVIEW_LENGTH }));
+        this.addApiView(new ApiView(VIEW_BREAK_TEXT_MESSAGE));
 
         this.addApiAction(
                 new ApiAction(ACTION_SEND_TEXT_MESSAGE, new String[] { PARAM_CHANNEL_ID, PARAM_OUTGOING, PARAM_MESSAGE }));
 
+        this.addApiAction(
+                new ApiAction(ACTION_SET_BREAK_TEXT_MESSAGE, new String[] { PARAM_MESSAGE, PARAM_OUTGOING }));
+        
         callbackUrl = API.getInstance().getCallBackUrl(this, API_URL);
 
     }
@@ -431,6 +438,23 @@ public class WebSocketAPI extends ApiImplementor {
                 LOG.error(e.getMessage(), e);
                 throw new ApiException(ApiException.Type.INTERNAL_ERROR);
             }
+        } else if (VIEW_BREAK_TEXT_MESSAGE.equals(name)) {
+            ExtensionBreak extBreak = Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
+            if (extBreak == null) {
+                throw new ApiException(ApiException.Type.INTERNAL_ERROR, "ExtensionBreak not present");
+            }
+            Message msg = extBreak.getBreakpointManagementInterface().getMessage();
+
+            if (msg == null) {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, 
+                        "No currently intercepted message");
+            } else if (msg instanceof WebSocketMessageDTO) {
+                WebSocketMessageDTO ws = (WebSocketMessageDTO)msg;
+                result = new ApiResponseElement(PARAM_MESSAGE, ws.getPayloadAsString());
+            } else {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, 
+                        "Intercepted message is not of the right type " + msg.getClass().getCanonicalName());
+            }
         } else {
             throw new ApiException(ApiException.Type.BAD_VIEW);
         }
@@ -439,47 +463,7 @@ public class WebSocketAPI extends ApiImplementor {
     }
 
     private ApiResponseSet<String> wsMessageToResult(WebSocketMessageDTO message, boolean fullPayload) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", Integer.toString(message.id));
-        map.put("opcode", Integer.toString(message.opcode));
-        map.put("opcodeString", message.readableOpcode);
-        map.put("timestamp", Long.toString(message.timestamp));
-        map.put("outgoing", Boolean.toString(message.isOutgoing));
-        map.put("channelId", Integer.toString(message.channel.id));
-        map.put("channelHost", message.channel.host);
-        map.put("messageId", Integer.toString(message.id));
-        map.put("payloadLength", Integer.toString(message.payloadLength));
-        if (fullPayload) {
-            if (message.payload instanceof String) {
-                String payload = (String) message.payload;
-                try {
-                    JSONSerializer.toJSON(payload);
-                    // Its valid JSON so escape
-                    map.put("payload", "'" + payload + "'");
-                } catch (JSONException e) {
-                    // Its not a valid JSON object so can add as is
-                    map.put("payload", payload);
-                }
-            } else if (message.payload instanceof byte[]) {
-                map.put("payload", Hex.encodeHexString((byte[]) message.payload));
-            } else {
-                try {
-                    String payloadFragment = message.getReadablePayload();
-                    map.put("payload", payloadFragment);
-                } catch (InvalidUtf8Exception e) {
-                    LOG.warn(e.getMessage(), e);
-                }
-            }
-        } else {
-            try {
-                String payloadFragment = message.getReadablePayload();
-                map.put("payloadFragment", payloadFragment);
-            } catch (InvalidUtf8Exception e) {
-                // Ignore as its just a summary
-            }
-        }
-
-        return new ApiResponseSet<String>("message", map);
+        return new ApiResponseSet<String>("message", message.toMap(fullPayload));
     }
 
     @Override
@@ -502,7 +486,26 @@ public class WebSocketAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.INTERNAL_ERROR, e.getMessage());
             }
             break;
+            
+        case ACTION_SET_BREAK_TEXT_MESSAGE:
+            ExtensionBreak extBreak = Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
+            if (extBreak == null) {
+                throw new ApiException(ApiException.Type.INTERNAL_ERROR, "ExtensionBreak not present");
+            }
+            Message msg = extBreak.getBreakpointManagementInterface().getMessage();
 
+            if (msg == null) {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, "No currently intercepted message");
+            } else if (msg instanceof WebSocketMessageDTO) {
+                WebSocketMessageDTO ws = (WebSocketMessageDTO)msg;
+                ws.payload = params.optString(PARAM_MESSAGE, "");
+                extBreak.getBreakpointManagementInterface().setMessage(ws, params.getBoolean(PARAM_OUTGOING));
+            } else {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, 
+                        "Intercepted message is not of the right type " + msg.getClass().getCanonicalName());
+            }
+            break;
+            
         default:
             throw new ApiException(ApiException.Type.BAD_ACTION);
         }
