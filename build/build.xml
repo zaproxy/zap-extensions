@@ -365,7 +365,6 @@
 		<build-addon name="callgraph" />
 		<build-addon name="cmss" />
 		<build-addon name="codedx"/>
-		<build-addon name="communityScripts"/>
 		<build-addon name="cspscanner"/>
 		<build-addon name="customreport"/>
 		<build-addon name="domxss"/>
@@ -499,14 +498,6 @@
 
 	<target name="generate-wiki-codedx" description="Generates the wiki for Code Dx add-on">
 		<generate-wiki addon="codedx" />
-	</target>
-	
-	<target name="deploy-communityScripts" description="deploy the communityScripts extension">
-		<build-deploy-addon name="communityScripts" />
-	</target>
-	
-	<target name="generate-wiki-communityScripts" description="Generates the wiki for communityScripts">
-		<generate-wiki addon="communityScripts" />
 	</target>
 
 	<target name="deploy-cspscanner" description="deploy the CSP Scanner">
