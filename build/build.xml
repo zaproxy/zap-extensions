@@ -333,55 +333,6 @@
 			</sequential>
 		</macrodef>
 
-	<macrodef name="build-help-addon" description="build the specified addon">
-		<attribute name="name"/>
-		<element name="extra-actions" implicit="true" optional="true" />
-		<sequential>
-			<local name="zapaddon.version" />
-			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
-			<local name="zapaddon.status" />
-			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
-			<local name="file" />
-			<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
-
-			<local name="addon.libs.zip" />
-			<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
-
-			<delete file="${addon.libs.zip}" failonerror="true" />
-			<zip destfile="${addon.libs.zip}" whenempty="create">
-				<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" />
-			</zip>
-
-			 <jar jarfile="${dist}/${file}" update="true" compress="true">
-				<zipfileset src="${addon.libs.zip}" />
-				<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
-			</jar>
-			<delete file="${addon.libs.zip}" />
-
-			<!-- allow callers to do extra actions before generating the hash and determine the size of the file -->
-			<extra-actions />
-
-			<local name="length" />
-			<length file="${dist}/${file}" property="length" />
-
-			<local name="sha1hash" />
-			<checksum file="${dist}/${file}"  algorithm="SHA-1" property="sha1hash"/>
-
-			<local name="hash" />
-			<property name="hash" value="SHA1:${sha1hash}"/>
-
-			<local name="yyyymmdd" />
-			<tstamp>
-				<format property="yyyymmdd" pattern="yyyy-MM-dd"/>
-			</tstamp>
-
-			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-				addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-				url="${zap.download.url}/${file}" />
-
-		</sequential>
-	</macrodef>
-
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 
@@ -395,8 +346,6 @@
 		<build-addon name="frontendscanner" />
 		<build-addon name="gettingStarted" />
 		<build-addon name="groovy" />
-		<build-addon name="help" />
-		<build-addon name="help_pt_BR" />
 		<build-addon name="onlineMenu" />
 		<build-addon name="pscanrules" />
 		<build-addon name="quickstart" />
@@ -438,16 +387,6 @@
 			<antcall target="compile" />
 
 			<build-addon-without-help-indexes name="@{name}" />
-			<deploy-addon name="@{name}" />
-		</sequential>
-	</macrodef>
-
-	<macrodef name="build-deploy-help-addon" description="build and deploy the specified help addon">
-		<attribute name="name"/>
-		<sequential>
-			<antcall target="clean" />
-
-			<build-help-addon name="@{name}" />
 			<deploy-addon name="@{name}" />
 		</sequential>
 	</macrodef>
@@ -515,18 +454,6 @@
 
 	<target name="generate-wiki-groovy" description="Generates the wiki of groovy extension">
 		<generate-wiki addon="groovy" />
-	</target>
-
-	<target name="deploy-help" description="deploy the help extension">
-		<build-deploy-help-addon name="help" />
-	</target>
-
-	<target name="build-help-pt-BR" description="builds the help_pt_BR add-on">
-		<build-help-addon name="help_pt_BR" />
-	</target>
-
-	<target name="deploy-help-pt-BR" description="deploy the help_pt_BR add-on">
-		<build-deploy-help-addon name="help_pt_BR" />
 	</target>
 
 	<target name="deploy-onlineMenu" description="deploy the onlineMenu extension">
@@ -643,7 +570,6 @@
 				<include name="coreLang-*.zap"/>
 				<include name="directorylistv1-*.zap"/>
 				<include name="gettingStarted-*.zap"/>
-				<include name="help-*.zap"/>
 				<include name="onlineMenu-*.zap"/>
 				<include name="pscanrules-*.zap"/>
 				<include name="quickstart-*.zap"/>
@@ -665,7 +591,6 @@
 				<include name="coreLang-*.zap"/>
 				<include name="directorylistv1-*.zap"/>
 				<include name="gettingStarted-*.zap"/>
-				<include name="help-*.zap"/>
 				<include name="onlineMenu-*.zap"/>
 				<include name="pscanrules-*.zap"/>
 				<include name="quickstart-*.zap"/>
