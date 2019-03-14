@@ -117,7 +117,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * A list containing all of the proxied WebDrivers opened, so that they can
      * be closed when ZAP is closed.
      */
-    private List<WebDriver> proxiedWebDrivers = new ArrayList<WebDriver>();
+    private Map<String, List<WebDriver>> proxiedWebDrivers = new HashMap<>();
     
     private List<WeakReference<ProvidedBrowsersComboBoxModel>> providedBrowserComboBoxModels =
             new ArrayList<WeakReference<ProvidedBrowsersComboBoxModel>>();
@@ -205,8 +205,16 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     @Override
     public void stop() {
         super.stop();
-        for (WebDriver wd : this.proxiedWebDrivers) {
-            // Just to make sure
+        this.proxiedWebDrivers.values().forEach(ExtensionSelenium::quitWebDrivers);
+        this.proxiedWebDrivers.clear();
+    }
+
+    private static void quitWebDrivers(List<WebDriver> drivers) {
+        if (drivers == null || drivers.isEmpty()) {
+            return;
+        }
+
+        for (WebDriver wd : drivers) {
             try {
                 wd.quit();
             } catch (Exception ex) {
@@ -290,6 +298,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public void removeWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
         validateWebDriverProvider(webDriverProvider);
 
+        quitWebDrivers(proxiedWebDrivers.remove(webDriverProvider.getId()));
         webDriverProviders.remove(webDriverProvider.getId());
         providedBrowsers.remove(webDriverProvider.getProvidedBrowser().getId());
         buildProvidedBrowserUIList();
@@ -567,7 +576,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
 
         if (webDriver != null) {
-            proxiedWebDrivers.add(webDriver);
+            proxiedWebDrivers.computeIfAbsent(providedBrowserId, k -> new ArrayList<>()).add(webDriver);
             if (url != null) {
                 webDriver.get(url);
             }
