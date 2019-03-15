@@ -49,13 +49,13 @@ public class PiiScanner extends PluginPassiveScanner {
     private PassiveScanThread parent = null;
 
     private enum CreditCard {
-        AMERICAN_EXPRESS("American Express", "(?:3[47][0-9]{13})"),
-        DINERSCLUB("DinersClub", "(?:3(?:0[0-5]|[68][0-9])[0-9]{11})"),
-        DISCOVER("Discover", "(?:6(?:011|5[0-9]{2})(?:[0-9]{12}))"),
-        JCB("Jcb", "(?:(?:2131|1800|35\\d{3})\\d{11})"),
-        MASESTRO("Maestro", "(?:(?:5[0678]\\d\\d|6304|6390|67\\d\\d)\\d{8,15})"),
-        MASTERCARD("Mastercard", "(?:(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12})"),
-        VISA("Visa", "(?:4[0-9]{12})(?:[0-9]{3})?");
+        AMERICAN_EXPRESS("American Express", "\\b(?:3[47][0-9]{13})\\b"),
+        DINERSCLUB("DinersClub", "\\b(?:3(?:0[0-5]|[68][0-9])[0-9]{11})\\b"),
+        DISCOVER("Discover", "\\b(?:6(?:011|5[0-9]{2})(?:[0-9]{12}))\\b"),
+        JCB("Jcb", "\\b(?:(?:2131|1800|35\\d{3})\\d{11})\\b"),
+        MAESTRO("Maestro", "\\b(?:(?:5[0678]\\d\\d|6304|6390|67\\d\\d)\\d{8,15})\\b"),
+        MASTERCARD("Mastercard", "\\b(?:(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12})\\b"),
+        VISA("Visa", "\\b(?:4[0-9]{12})(?:[0-9]{3})?\\b");
 
         private final String name;
         private final Pattern pattern;
