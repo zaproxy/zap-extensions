@@ -10,6 +10,7 @@
 	<changes>
 	<![CDATA[
 	Remove support for Internet Explorer, does not support required capabilities.<br>
+	Quit corresponding WebDrivers when removing WebDriver provider.<br>
 	]]>
 	</changes>
 	<extensions>
