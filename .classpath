@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/diffutils-1.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/dvAPI_5.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/flex-messaging-common.jar"/>
 	<classpathentry kind="lib" path="lib/flex-messaging-core.jar"/>
