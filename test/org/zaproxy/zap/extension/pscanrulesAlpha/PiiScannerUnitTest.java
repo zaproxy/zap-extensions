@@ -19,7 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
@@ -43,6 +47,26 @@ public class PiiScannerUnitTest extends PassiveScannerTest<PiiScanner> {
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then = No StackOverflowError
+    }
+
+    @Test
+    public void shouldNotRaiseAlertWhenNumberDoesntHaveWordBoundaries() throws Exception {
+        // Given
+        String cardNumber = "8.46786664623715e-47";
+        HttpMessage msg = createMsg(cardNumber);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    private HttpMessage createMsg(String cardNumber) throws HttpMalformedHeaderException {
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" +
+                "Server: Apache-Coyote/1.1\r\n");
+        msg.setResponseBody("{\"cc\": \"" + cardNumber + "\"}");
+        return msg;
     }
 
     private static String numbers(int count) {
