@@ -797,7 +797,6 @@
 				<include name="jxbrowser*-*.zap"/>
 				<include name="openapi-*.zap"/>
 				<include name="sequence-*.zap"/>
-				<include name="soap-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
