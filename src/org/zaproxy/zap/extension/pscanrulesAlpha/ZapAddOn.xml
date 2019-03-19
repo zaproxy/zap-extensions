@@ -7,7 +7,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
-		PiiScanner add word boundry checks to reduce false positives.<br>
+		PiiScanner add word boundary checks to reduce false positives.<br>
 	]]>
 	</changes>
 	<extensions>
