@@ -60,8 +60,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         extensionHook.addApiImplementor(new SoapAPI(this));
 
         if (getView() != null) {
-            extensionHook.getHookMenu().addToolsMenuItem(getMenuImportLocalWSDL());
-            extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrlWSDL());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalWSDL());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlWSDL());
 
             /*
              * Custom spider parser is added in order to explore not only WSDL files, but
@@ -95,12 +95,12 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         if (menuImportLocalWSDL == null) {
             menuImportLocalWSDL =
                     new ZapMenuItem(
-                            "soap.topmenu.tools.importWSDL",
+                            "soap.topmenu.import.importWSDL",
                             getView()
                                     .getMenuShortcutKeyStroke(
                                             KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false));
             menuImportLocalWSDL.setToolTipText(
-                    Constant.messages.getString("soap.topmenu.tools.importWSDL.tooltip"));
+                    Constant.messages.getString("soap.topmenu.import.importWSDL.tooltip"));
 
             menuImportLocalWSDL.addActionListener(
                     new java.awt.event.ActionListener() {
@@ -115,7 +115,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                             FileNameExtensionFilter filter =
                                     new FileNameExtensionFilter(
                                             Constant.messages.getString(
-                                                    "soap.topmenu.tools.importWSDL.filter.description"),
+                                                    "soap.topmenu.import.importWSDL.filter.description"),
                                             "wsdl");
                             chooser.setFileFilter(filter);
                             int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
@@ -133,10 +133,10 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         if (menuImportUrlWSDL == null) {
             menuImportUrlWSDL =
                     new ZapMenuItem(
-                            "soap.topmenu.tools.importRemoteWSDL",
+                            "soap.topmenu.import.importRemoteWSDL",
                             getView().getMenuShortcutKeyStroke(KeyEvent.VK_J, 0, false));
             menuImportUrlWSDL.setToolTipText(
-                    Constant.messages.getString("soap.topmenu.tools.importRemoteWSDL.tooltip"));
+                    Constant.messages.getString("soap.topmenu.import.importRemoteWSDL.tooltip"));
 
             final ExtensionImportWSDL shadowCopy = this;
             menuImportUrlWSDL.addActionListener(
