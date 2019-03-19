@@ -65,7 +65,7 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         if (getView() != null) {
-            extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrls());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrls());
         }
 
         this.api = new ImportUrlsAPI(this);
@@ -76,10 +76,10 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
         if (menuImportUrls == null) {
             menuImportUrls =
                     new ZapMenuItem(
-                            "importurls.topmenu.tools.importurls",
+                            "importurls.topmenu.import.importurls",
                             getView().getMenuShortcutKeyStroke(KeyEvent.VK_I, 0, false));
             menuImportUrls.setToolTipText(
-                    Constant.messages.getString("importurls.topmenu.tools.importurls.tooltip"));
+                    Constant.messages.getString("importurls.topmenu.import.importurls.tooltip"));
 
             menuImportUrls.addActionListener(
                     new java.awt.event.ActionListener() {
