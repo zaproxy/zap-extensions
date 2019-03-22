@@ -22,6 +22,7 @@
 		<file>scripts/templates/authentication/Simple Form-Based Authentication.py</file>
 		<file>scripts/templates/extender/Add tools menu.py</file>
 		<file>scripts/templates/extender/Extender default template.py</file>
+		<file>scripts/templates/extender/getInputsFromuser.py</file>
 		<file>scripts/templates/httpsender/HttpSender default template.py</file>
 		<file>scripts/templates/passive/Passive default template.py</file>
 		<file>scripts/templates/proxy/Proxy default template.py</file>
