@@ -4,7 +4,6 @@
 	<status>alpha</status>
 	<description>Fingerprint web applications</description>
 	<author>ZAP Dev Team</author>
-	<url>https://github.com/zaproxy/zaproxy</url>
 	<changes>
 	<![CDATA[
 	Update minimum ZAP version to 2.5.0.<br>
