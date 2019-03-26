@@ -102,7 +102,7 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 
 		//MD4/5 (clashes with LanMan)
 		//MD4/5 hashes occur fairly frequently in various legitimate uses, and are not necessarily indicative of an issue.
-		hashPatterns.put(Pattern.compile("\\b[0-9a-f]{32}\\b", Pattern.CASE_INSENSITIVE), new HashAlert("MD4 / MD5",Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
+		hashPatterns.put(Pattern.compile("(?<!jsessionid=)\\b[0-9a-f]{32}\\b", Pattern.CASE_INSENSITIVE), new HashAlert("MD4 / MD5",Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
 
 		//TODO: for the main hash types, verify the value by hashing the parameters
 		//  - if the hash value can be re-generated, then it is a "reflection" attack
