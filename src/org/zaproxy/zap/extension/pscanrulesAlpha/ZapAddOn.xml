@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 		PiiScanner add word boundary checks to reduce false positives.<br>
+		HashDisclosureScanner prevent false positives on obvious jsessionid values (Issue 5215).<br>
 	]]>
 	</changes>
 	<extensions>
