@@ -28,7 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import org.apache.log4j.Logger;
@@ -111,6 +110,7 @@ public class ZestDialogManager extends AbstractPanel {
 	//private ZestClientTakeScreenshotDialog clientTakeScreenshotDialog = null;
 
 	private MouseAdapter mouseListener;
+	private TreeSelectionListener treeSelectionListener;
 
 	public ZestDialogManager(ExtensionZest extension, ScriptUI scriptUI) {
 		super();
@@ -236,18 +236,13 @@ public class ZestDialogManager extends AbstractPanel {
 		};
 		this.scriptUI.addMouseListener(mouseListener);
 
+		treeSelectionListener = e -> displayHttpMessageOfSelectedNode();
 		// TODO remove reflection (and single click logic above, redundant) once available in targeted ZAP version.
-		// this.scriptUI.addSelectionListener(e -> displayHttpMessageOfSelectedNode());
+		// this.scriptUI.addSelectionListener(treeSelectionListener);
 		Method addSelectionListenerMethod;
 		try {
 			addSelectionListenerMethod = ScriptUI.class.getDeclaredMethod("addSelectionListener", TreeSelectionListener.class);
-			addSelectionListenerMethod.invoke(this.scriptUI, new TreeSelectionListener() {
-
-				@Override
-				public void valueChanged(TreeSelectionEvent e) {
-					displayHttpMessageOfSelectedNode();
-				}
-			});
+			addSelectionListenerMethod.invoke(this.scriptUI, treeSelectionListener);
 		} catch (NoSuchMethodException ignore) {
 			// Ignore, older versions don't have the method.
 		} catch (Exception e) {
@@ -687,6 +682,17 @@ public class ZestDialogManager extends AbstractPanel {
 
 	public void unload() {
 		scriptUI.removeMouseListener(mouseListener);
+		// TODO remove reflection once available in targeted ZAP version.
+		// this.scriptUI.removeSelectionListener(treeSelectionListener);
+		try {
+			Method addSelectionListenerMethod = ScriptUI.class
+					.getDeclaredMethod("removeSelectionListener", TreeSelectionListener.class);
+			addSelectionListenerMethod.invoke(this.scriptUI, treeSelectionListener);
+		} catch (NoSuchMethodException ignore) {
+			// Ignore, older versions don't have the method.
+		} catch (Exception e) {
+			logger.debug("Failed to remove tree selection listener.", e);
+		}
 
 		if (scriptDialog != null) {
 			scriptDialog.dispose();
