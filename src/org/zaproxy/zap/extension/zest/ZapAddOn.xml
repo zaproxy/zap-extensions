@@ -9,6 +9,7 @@
 	<![CDATA[
 	Rely on script context writer for script output.<br>
 	Correct message handling in HTTP Sender scripts.<br>
+	Remove Scripts tree selection listener when add-on is uninstalled.<br>
 	]]>
 	</changes>
 	<dependencies>
