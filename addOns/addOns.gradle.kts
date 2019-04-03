@@ -20,7 +20,8 @@ val parentProjects = listOf(
 val mainAddOns = listOf(
 )
 val weeklyAddOns = mainAddOns + listOf(
-    "accessControl"
+    "accessControl",
+    "cspscanner"
 )
 
 mapOf("main" to mainAddOns, "weekly" to weeklyAddOns).forEach { entry ->
