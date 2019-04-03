@@ -12,4 +12,9 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://developer.mozilla.org/en-US/docs/Plug-n-Hack")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.plugnhack.PlugNHackAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/plugnhack/resources/Messages.properties"))
+    }
 }

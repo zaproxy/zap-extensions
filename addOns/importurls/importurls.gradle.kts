@@ -11,4 +11,9 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.importurls.ImportUrlsAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/importurls/resources/Messages.properties"))
+    }
 }

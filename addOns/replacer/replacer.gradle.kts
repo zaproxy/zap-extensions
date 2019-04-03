@@ -11,4 +11,9 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.replacer.ReplacerAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/replacer/resources/Messages.properties"))
+    }
 }
