@@ -27,7 +27,8 @@ val mainAddOns = listOf(
     "invoke",
     "replacer",
     "scripts",
-    "tips"
+    "tips",
+    "webdriverlinux"
 )
 val weeklyAddOns = mainAddOns + listOf(
     "ascanrulesBeta",
