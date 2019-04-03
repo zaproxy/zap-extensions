@@ -11,7 +11,8 @@ var addOns = listOf(
     "ascanrulesBeta",
     "beanshell",
     "bruteforce",
-    "diff"
+    "diff",
+    "fuzz"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
