@@ -32,7 +32,8 @@ var addOns = listOf(
     "jxbrowsers:jxbrowsermacos",
     "jxbrowsers:jxbrowserwindows",
     "jxbrowsers:jxbrowserwindows64",
-    "openapi"
+    "openapi",
+    "pscanrulesAlpha"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
