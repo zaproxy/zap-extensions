@@ -13,7 +13,8 @@ var addOns = listOf(
     "bruteforce",
     "diff",
     "fuzz",
-    "importurls"
+    "importurls",
+    "invoke"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
