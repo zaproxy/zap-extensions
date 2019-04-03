@@ -26,7 +26,8 @@ val mainAddOns = listOf(
     "pscanrules",
     "reveal",
     "saverawmessage",
-    "savexmlmessage"
+    "savexmlmessage",
+    "selenium"
 )
 val weeklyAddOns = mainAddOns + listOf(
 )

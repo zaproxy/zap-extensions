@@ -18,7 +18,8 @@ var addOns = listOf(
     "pscanrules",
     "reveal",
     "saverawmessage",
-    "savexmlmessage"
+    "savexmlmessage",
+    "selenium"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
