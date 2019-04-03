@@ -22,7 +22,8 @@ var addOns = listOf(
     "savexmlmessage",
     "selenium",
     "spiderAjax",
-    "todo"
+    "todo",
+    "websocket"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
