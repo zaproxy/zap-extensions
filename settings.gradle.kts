@@ -6,6 +6,7 @@ include("testutils")
 
 // Keep the add-ons in alphabetic order.
 var addOns = listOf(
+    "accessControl"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
