@@ -36,7 +36,8 @@ var addOns = listOf(
     "pscanrulesAlpha",
     "requester",
     "revisit",
-    "saml"
+    "saml",
+    "sequence"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }

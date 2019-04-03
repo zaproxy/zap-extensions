@@ -29,7 +29,8 @@ val weeklyAddOns = mainAddOns + listOf(
     "accessControl",
     "cspscanner",
     "formhandler",
-    "openapi"
+    "openapi",
+    "sequence"
 )
 
 mapOf("main" to mainAddOns, "weekly" to weeklyAddOns).forEach { entry ->
