@@ -15,24 +15,42 @@ val zapCoreHelpWikiDir = "$rootDir/../zap-core-help-wiki/"
 val zapExtensionsWikiDir = "$rootDir/../zap-extensions-wiki/"
 
 val parentProjects = listOf(
+    "webdrivers"
 )
 
 val mainAddOns = listOf(
+    "alertFilters",
     "ascanrules",
+    "bruteforce",
     "coreLang",
+    "diff",
     "directorylistv1",
+    "fuzz",
     "gettingStarted",
+    "importurls",
+    "invoke",
     "onlineMenu",
     "pscanrules",
     "quickstart",
+    "replacer",
     "reveal",
     "saverawmessage",
     "savexmlmessage",
+    "scripts",
     "selenium",
     "spiderAjax",
-    "websocket"
+    "tips",
+    "webdriverlinux",
+    "webdrivermacos",
+    "webdriverwindows",
+    "websocket",
+    "zest"
 )
 val weeklyAddOns = mainAddOns + listOf(
+    "ascanrulesBeta",
+    "plugnhack",
+    "portscan",
+    "pscanrulesBeta"
 )
 
 mapOf("main" to mainAddOns, "weekly" to weeklyAddOns).forEach { entry ->

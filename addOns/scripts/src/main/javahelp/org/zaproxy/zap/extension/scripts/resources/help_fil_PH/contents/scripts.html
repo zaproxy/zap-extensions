@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Mga iskrip</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Ang mga Iskrip</h1>
+<p>
+Ang ZAP Iskrip add-on ay hinayaan ka upang patkabuhin ang mga iskrip na maaaring naka-embed sa loob ng ZAP at mai-access ang mga istraktura ng datos ng ZAP.<br/>
+Ito ay mga suporta sa kahit anung ini-iskrip na lenggwahe na sumusuporta sa JSR 223 (http://www.jcp.org/en/jsr/detail?id=223) , kabilang ang:
+<ul>
+<li>ECMAScript / Javascript ( gamit ang <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/">Nashorn engine</a>, kasama sa pamamagitan ng default)</li>
+<li>Zest <a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a> (kasama sa pamamagitan ng default)</li>
+<li>Groovy <a href="http://groovy-lang.org/">http://groovy-lang.org/</a></li>
+<li>Python <a href="http://www.jython.org">http://www.jython.org</a></li>
+<li>Ruby - <a href="http://jruby.org/">http://jruby.org/</a></li>
+<li>at marami pang iba...</li> 
+</ul>
+
+<b>BABALA - ang mga iskrip ay tumatakbo kasama ng parehong mga permisyon bilang ZAP, kaya huwag magpatakbo ng kahit na anung mga iskrip na hindi mo pinagkakatiwalaan!</b>
+
+<h2>Mga tipo ng iskrip</h2>
+Iba't ibang mga tipo ng mga iskrip na suportado:
+<ul>
+<li>Mag-isang manindigan - Ang mga iskrip ay nasa sarili at ito ay tumatakbo lamang kapag inumpisahan mo sila ng mano-mano</li>
+<li>Aktibong mga Patakaran - itong pagpapatakbo ay isang parte ng Aktibong mga nagsusuri at maaari ring gumana ng isa-isa</li>
+<li>Pasibong mga Patakaran - itong pagpapatakbo ay isang parte ng Pasibong Nagsusuri at maaari ring gumana ng isa-isa</li> 
+<li>Mga Patakaran ng Kinatawan - itong tumatakbong 'nasa linya', ay maaaring magbago ng bawat kahilingan at tumugon at maaari ring gumana ng isa-isa. Sila ay maaari ring mag-trigger ng mga punto ng break</li> 
+<li>Nagpadala ng HTTP - ang mga iskrips na tumatakbo laban sa bawat kailingan/pagtugon na naipadala/natanggap na sa pamamagitan ng ZAP. Ito ay mga kabilang ang mga mensahe na kinatawan, mga pinadalang mensahe sa panahon ng aktibong pagsusuri, fuzzer, ...</li>
+<li>Na-target na mga patakaran - ang mga iskrip na nagsasagawa kasama ang isang target URL at ito ay papatakbuhin lamang kapag inumpisahan silang imano-mano</li>
+<li>Awtentikasyon - ang mga skrip na nagsasagawa habang angawtentikasyon ay ginagampanan para sa konteksto. Upang magamit, kailangan nilang mapili habang kinukumpigura ang Sript-Based awtentikasyong pamamaraan para sa isang konteksto. </li> 
+<li>Iskrip Input ng mga Vector - ang mga iskrip na para sa pagtukoy ng eksakton na kung anung ZAP ang kinakailangang atakihin</li>
+<li>Ekstender - ang mga iskrip na maaaring idagdag sa bagong pag-andar, kasama ng grapikong mga elemento at ng bagong API ng mga puntong pagtatapos</li>
+</ul>
+Ang lahat ng mga iskrip ay tumatakbo ng awtomatikong unang ' hindi pinapagana' - kinakailangan na paganahin sila sa pamamagitan ng <a href="tree.html">Ang mga Iskrip na 'puno' ng tab</a>
+bago sila tumakbo.<br/>
+Kung ang isang mali ay nangyayari habang sila ay tumatakbo hindi na sila gagana pagkatapos.<br/>
+Kapag pinili mo ang iskrip ang huling pagkakamali ay magpapakita pagkatapos sa <a href="console.html">Tab ng iskrip console</a>.<br/>
+Ang mga iskrip na na-target ay maaaring ma-invoke sa pamamagitan ng tamang pagpindot sa isang nakatala sa, ga site at mga tab ng kasaysayan at piliin ang 'mag-invoke kasama ang iskrip...' pagpipilian ng gamit.
+</p>
+<p>
+
+Lahat ng mga lenggwahe na in-iskrip at maaaring magamit sa lahat ng mga tipo ng iskrip, pero ang mga lenggwahe lamang na nai-download na mula sa Marketplace ng ZAP ay karaniwang may mga template. Gayunpaman maaari mo ring mai-angkop ang isang template para sa ibang pang lenggwahe.<br/> Kung ang paborito mong lenggwahe ay hindi makuha sa Marketplace ay mangyaring ma-raise ng isang isyu sa pamamagitan ng " Online/Report ng isang isyu" pagpipilian ng gamit.<br/> Kasabay nito ay maaari mo na lamang ilagay sa kaugnay na mga garapon sa 'lib' na panutuan (hindi ang 'plugin' na panutuan) at muling i-restart ang ZAP.<br/>
+</p>
+
+<h2>Mga Pabagu-bagong Global</h2>
+Mga pabagu-bago ay maaaring ibahagi sa pagitan ng lahat ng mga iskrip sa pamamagitan ng klase ng org.proxy.zap.extension.script.ScriptVars.<br/>
+Halimbawa sa Javascript ay maaari mong magamit itong klase tulad ng sumusunod:<br/><br/>
+<code>
+org.zaproxyzap.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/> org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
+</code>
+
+<h2>Mga Pabagu-bagong Iskrip</h2>
+Mga pagu-bago ay maaaring ibahagi sa pagitan ng hiwalay na mga pagsang-ayon sa parehong iskrip sa pamamagitan ng parehong org.zaproxy.zap.extension.script.ScriptVars na klase.<br/>
+Halimbawa sa Javascript ay maaari mong magamit itong klase tuland ng mga sumusunod:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScripVars.setScriptVar(this.context, "var.name","value")<br/> org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
+</code>
+<br/>
+Tandaan na ang mga pamamaraan na ito ay magagamit lamang mula sa pag-iskrp ng mga lenggwahe na nagbibigay ng access sa ScriptContext (tulad ng Javascript).
+
+<h2>Maaari ring tingnan</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="console.html">Ang Iskrip console tab</a></td><td></td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="tree.html">Ang mga Iskrip na "puno" ng tab</a></td><td></td>
+</tr>
+</table>
+
+<h2>Mga link na panlabas</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/zaproxy/zaproxy/wiki/InternalDetails">https://github.com/zaproxy/zaproxy/wiki/InternalDetails</a></td>
+	<td>Mga bagay na nakapaloob sa ZAP</td></tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://javadoc.io/doc/org.zaproxy/zap">https://javadoc.io/doc/org.azproxy/zap</a></td>
+	<td>Mga javadoc ng ZAP</td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide">https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide</a></td>
+	<td>Gabay sa Migrasyon ng Rhino</td>
+</tr>
+</table>
+
+</body>
+</html>

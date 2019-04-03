@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+HTTP Mesaj İşlemcileri
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>HTTP Mesaj İşlemcileri</h1>
+Mesaj İşlemcileri fuzz'lanmakta olan mesajlara erişebilir ve onları değiştirebilir, fuzzing sürecini kontrol edebilir ve ZAP UI'ı ile etkileşime geçebilir.
+<p>
+Yerleşik HTTP Mesaj İşlemcileri'nde bulunanlar:
+
+<h3>Anti-CSRF Token Yenileyici</h3>
+Talepte bulunan anti-CSRF token'larını yenilemeye yarar. Bu işlemcinin kullanılabilmesi için anti-CSRF token'larının ZAP tarafından düzgünce algılanması gerekmektedir.<br>
+Daha fazla bilgi için "Başlarken" > "Öne Çıkanlar" > "Anti CSRF Token'ları" yardım sayfasına danışın.<br>
+<strong>Not:</strong> Eğer anti-CSRF token'ları algılanırsa, bu işlemci otomatik olarak işlemciler listesine eklenir.
+
+<h3>Fuzzer HTTP İşemcisi (Script)</h3>
+Etkinleştirilmiş Fuzzer HTTP İşlemcisi script'lerini seçmeye yarar. Bu script'ler şunları yapmanızı sağlar:
+<ul>
+<li>Payload'ların listesini edinme</li>
+<li>Fuzzing'i durdurma</li>
+<li>Hata sayımını arttır</li>
+<li>Yeni mesajlar gönder</li>
+<li>Sonuçlar sekmesine yeni mesajlar ekle</li>
+<li><a href="tab.html">Fuzzer sekmesi</a>ne özel 'durum' mesajları ayarı</li>
+<li>Uyarıları yükselt</li>
+</ul>
+
+<h3>Payload Yansıma Algılayıcısı</h3>
+" kullanarak Durum sütünunda, yanıtta enjekte edilen payload'lardn birinin bulunup bulunmadığını belirtir.<img src="images/reflected_icon.png"> Yansıtılmış".<br>
+<strong>Not:</strong> İşlemci işlemcilerin listesine otomatik olarak eklenir.
+
+<h3>İstek İçerik-Uzunluğu Güncelleyici</h3>
+Günceller (ya da zaten yoksa ekler) <code>İçerik-Uzunluğu</code> talep gövdesinin uzunluğu ile tüm talep yöntemleri için başlığı. Talep gövdesinin boyutu sıfırsa ve başlık mevcut değilse herhangi bir değişiklik yapılmaz.<br>
+<strong>Not:</strong> İşlemci işlemcilerin listesine otomatik olarak eklenir.
+
+<h3>Etiket Yaratıcı</h3>
+Sonuçlar tablosunun Durum sütununa yanıtın içeriğine bağlı olarak özel 'etiketler' eklemeye yarar
+
+<h3>Kullanıcı Mesaj İşlemcisi</h3>
+Fuzz'lanmakta olan HTTP mesajını içeren bağlamlarda tanımlanmış kullanıcılardan birini kullanarak, bir kullanıcı olarak fuzz'lamayı sağlar.
+
+<p>
+Diğer eklentiler ek HTTP Mesaj İşlemcileri tanımlayabilir.
+
+<h2>Aracılığıyla erişildi</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> Mesaj İşlemcileri sekmesi altında</td></tr>
+</table>
+
+<h2>Ayrıca bakın</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer kavramları</a></td></tr>
+</table>
+
+</body>
+</html>

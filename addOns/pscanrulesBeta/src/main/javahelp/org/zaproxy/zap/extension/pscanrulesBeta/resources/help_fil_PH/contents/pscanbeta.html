@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Mga Patakaran ng Passive iskan - Beta
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Mga Patakaran ng Pasibong Pagsusuri-Beta</h1>
+Ang sumusunod na beta ay kalidad ng passive iskan rules ay kasama sa add-on:
+
+<h2>Hindi tugmang Charset</h2>
+<p>Ang pagsiyasat ng mga tinukoy sa mga pagtugon kung saan ang nilalaman ng HTTP-Tipo ng header ng mga idiniklara ay ang pagkakaiba ng charset mula sa tinukoy na charset sa pamamagitan ng HTML o XML. Kung mayroong isang hindi tugmang charset sa pagitan ng HTTP header at katawan ng nilalaman ng mga Web Browser ay maaaring ipilit sa isang hindi kanais-nais na nilalaman-sniffing mode upang matukoy ang nilalaman ng tama ang karakter na itinakda.</p>
+<p>Ang nagsusuri ay mga naghahawak ng mga sari-saring mga kondisyon depende sa itinakda ng Threshold para sa nagsusuri, tulad ng mga sumusunod:</p>
+<ul>
+  <li>Lahat ng mga Threshold:
+    <ul>
+      <li>Header Laban sa Nilalaman ng Meta-Tipo ng Charset - Ang deklarasyon ng Nilalaman ng HTTP-Tipo ng header ay hindi tugma kung ano ang idineklara sa isang Nilalaman ng Meta-Tipo ng tag.</li>
+      <li>Header Laban ng Meta Charset - Ang deklarasyon ng Nilalaman ng HTTP-Tipo ng header ay hindi tugma sa kung ano ang idineklara sa isang Meta Charset ng tag.</li>
+    </ul>
+  </li>
+  <li>Mababang Threshold:
+    <ul>
+      <li>Uri ng Nilalan ng Meta na Charset ay nawawala- Ang pag-tugon ay hindi naglalaman ng isang nilalaman ng uri-Meta ng deklarasyon, na maaaring makita ng lumang mga kliyente.</li>
+      <li>Meta Charset Laban sa Nilalaman ng Meta-uri ng Charset - Ang mga nilalaman ng parehong pagtugon ng deklarasyon na Nilalaman ng Meta-Tipo at ang deklarasyon ng Meta Charset, at sila'y hindi magkatugma.</li>
+    </ul>
+  </li>
+</ul>
+Ang mga karagdagang saggunian:<br>
+<a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
+<a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
+
+<h2>Cookie - Maluwag na saklaw</h2>
+Ang mga Cookie ay maaaring i-saklaw ng dominyon o daan. Ang pagsusuring ito ay nag-aalala lamang sa sakop ng domain. Ang saklaw ng domain na inilalapat sa isang cookie ay tumutukoy kung aling domain ang maa-acess nito. Halimbawa, ang isang cookie ay maaaring mahigpit na pagsaklaw sa isang subdomain hal. www.nottrusted.com, o luwagan ang sinaklawan na parent dominyon hal. nottrusted.com. Sa huling kaso, anuman ang subdomain ay nottrusted.com ay maaaring i-access ang cookie. Luwagan ang saklaw ng mga cookie na karaniwan sa mga mega-aplikasyon tulad ng google.com at live.com.
+
+<h2>CSRF Mga Countermeasure</h2>
+Ang mga CSRFCountemeasure na plugin ay kinikilala ang "potensyal" na mga kahinaan na kasama ang kakulangan ng kilalang mga CSRF countermeasure ng mga pahina kasama ang mga form.<br>
+I-post ang 2.5.0 na maaaring matukoy ng isang kuwit na paghiwalayin ang listahan ng mga pagkakakilanlan sa mga 
+<code>rules.csrf.ignorelist</code> ang parametro sa pamamagitan ng mga pagpipilian 'Ang patakaran ng konpigurasyon' panel.
+Ang anumang mga FORM na may pangalan o ID ang mga tumutugma ay isa sa mga tumutukoy ay maaaring hindi pansinin habang sinusuri para sa nawawalang mga Anti-CSRF.
+Ginagamit lamang itong tanda para hindi mapansin ang mga FORM na alam mong ligtas, halimbawa hanapin ang mga form.
+
+
+<h2>Paglalantad ng Impormasyon: Mga mali Debug</h2>
+Itong passive scanner Ang mga nagsusuri sa nilalaman ng mga pagtugon ng web para sa kilalang kamalian ng Debug sa mensahe ng mga fragment.
+Ang pag-access para sa ganitong mga detalye ay maaaring magbigay ng isang malisosyong indibidwal kasama ang kahulugan na kung saan ay naglalayon na abusuhin ang web site.
+Maaari din mag-leak ang data ng hindi partikular na sinasadya para sa natapos na konsumo ng gumagamit.
+
+<h2>Paglalantad ng Impormasyon: Sa URL</h2>
+Ang mga pagtatangka na tukuyin ang pag-iral ng mga detalyeng sensitibo sa loob ng pagbisita sa mga URl ng mga ito. (maaari nitong isama sa mga parametro, mga pangalan ng dokumento, mga pangalan ng taga-pangasiwa, at iba pa).
+
+<h2>Paglalantad ng Impormasyon: Referrer</h2>
+Kinikilala nito ang pag-iral ng mga sensitibong detalye sa loob ng Referrer header field sa kahilingan ng HTTP (maaari nitong isama ang mga parametro, mga pangalan ng dokumento, mga pangalan ng taga-pangasiwa at iba pa).
+
+<h2>Paglalantad ng Impormation: Mga Komentong Kahina-hinala</h2>
+Sinusuri nito ang nilalaman ng web upang tukuyin ang mga komento kung saan naglalaman ng may potensyal na sensitibong mga detalye. Na kung saan ay naglalayong umatake o malantad ang hindi intensyon na datos.
+
+<h2>Hindi ligtas na pagpapatunay</h2>
+Ang HTTP basic o ang pagpapatunay ng digest ay ginamit sa isang hindi ligtas na koneksyon. Ang kredensyal ay maaaring basahin at pagkatapos gamitin muli ng isang taong may access sa network.
+
+<h2>Hindi ligtas ang JSF ViewState</h2>
+Ang pag tugon sa mga sumusunod na URL ay naglalaman ng isang mahalaga ng ViewState na walang mga proteksyon.
+
+<h2>Servlet ng Parametrong Polusyon</h2>
+Sa paghahanap ng pagtugon para sa mga form ng HTML kung saan ay bigo na matukoy ang isang aksyon ng elemento. 3 Bersyon ng Java Servlet spec ang tawag para sa pagsasama-sama ng mga katanungan ng string at ang datos ng post na mga elemento kung saan ay maaaring may resulta na hindi sinasadyang paghawak ng gumagamit para makontrol ang datos. Ito ay maaaring maging epekto sa ibang mga framework at mga teknolohiya din.
+
+<h2>VIEWSTATE</h2>
+Pagtatangka sa pagtukoy ng mga parametro ng VIEWSTATE at analisahin ang nasabing mga parametro para sa iba't ibang mga pinakamahuhusay na pagsasanay o proteksyon ng mga sukat tulad ng: 
+<ul>
+	<li>Yaong basihan sa ASP.NET 1.0 at 1.1.</li>
+	<li>Ang kakulangan ng lagda sa VIEWSTATE.</li>
+	<li>Hatiin ang VIEWSTATE.</li>
+	<li>Naglalaman ng email o mga IP pattern ang VIEWSTATE.</li>
+</ul>
+
+</body>
+</html>

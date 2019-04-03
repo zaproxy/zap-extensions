@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzing
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Pag-fuzz</h1>
+<p>
+Ang pag-fuzz ay isang paraan para sa pagpasa ng maraming inbalido o di inaasahang data para sa isang target.
+</p>
+<p>
+Ang ZAP ay pinahihintulutan ka para magfuzz sa ano mang kahilingan ng nananatiling gumagamit:
+<ul>
+<li>Isang pagbuo sa itinakdang mga payload</li>
+<li>Ang mga payload ay nakatutukoy sa pamamagitan ng opsyonal na mga add-on</li>
+<li>Pagtangkilik ng mga iskripto</li>
+</ul>
+</p>
+Para i-access ang <a href="dialogue.html">Pagfuzz ng dayalog</a> ikaw rin ay maaari:
+<ul>
+<li>I-right click ang isang kahilingan ng isa sa ZAP na mga tab (tulad ng kasaysayan o mga site) at napiling "Attack / Fuzz..."</li>
+<li>I-highlight ang isang hanay na hiniling na tab, I-right click ito at piliin ang "Fuzz..."</li>
+<li>Piliin ang "Mga kasangkapan / Fuzz..." menu ng aytem at piliin ang kahilingan na gusto mo sa Fuzz</li>
+</ul>
+
+<h3>Mga Generator ng Payload</h3>
+Mga Generator ng payload lumikha ng mga raw attack na ang fuzzer ang magpapasa para sa target na application.
+<br><br>
+Sila ay namamahala sa pamamagitan ng <a href="payloads.html">Mga payload dayalog</a>
+
+<h3>Mga prosesor ng payload</h3>
+Mga prosesor ng payload ay maaaring magamit para mapalitan ang tiyak na mga payload bago sila magpasa.
+<br><br>
+Sila'y namamahala sa pamamagitan ng <a href="processors.html">Mga proseso ng payload dayalog</a>
+
+<h3>Ang lokasyon ng mga prosesor ng Fuzz</h3>
+Ang lokasyon ng Fuzz ng mga prosesor ay maaaring gamitin para palitan ang lahat ng mga payload bago ito i-submit.
+<br><br>
+Pinamamahalaan nila ito sa pamamagitan ng <a href="locations.html">Lokasyon ng prosesor ng dayalogo</a>
+
+<h3>Ang mga mensahe ng prosesor</h3>
+Ang mga mensahe ng prosesor ay maaaring maccess at mapalitan ang mga mensahe na naging fuzz, kontrolin ang proseso ng fuzz at makipagugnayan sa ZAP UI.
+<br><br>
+Pinamamahalaan nila ito sa pamamagitan ng <a href="dialogue.html">Dayalogo ng Fuzz</a> 'Mga mensahe ng prosesor' tab.
+
+<p>
+Ang pagpapaganang ito ay base sa code na mula sa proyekto ng OWASP JBroFuzz at kasama dito ang mga file na mula sa proyekto ng fuzzdb.<br/>
+Paalala na ang ilang mga file ng fuzzdb ay naiwan sa labas bilang sila ang magiging dahilan ng karaniwang anti virus na mga scanner para hudyatan sila bilang naglalaman na mga virus.<br/>
+Maaari mong palitan sila (at pataasin ang fuzzdb) sa pamamagitan ng pag-download ng bagong bersyon ng fuzzdb at palawakin ito sa aklatan ng 'mga fuzzer'.
+</p>
+
+
+<h2>Tignan din</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Opsyon screen ng Fuzzer</a></td></tr>
+</table>
+
+
+
+</body>
+</html>

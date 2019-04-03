@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Zest</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Zest</h1>
+<p>
+Zest es un lenguaje experimental de scripting especializado (también conocido como un lenguaje de dominio específico) desarrollado por el equipo de seguridad Mozilla y está diseñado para utilizarse en las herramientas de seguridad orientadas a la web.
+<p>
+Se incluye con ZAP por defecto.<br>
+
+<h2>Crear scripts Zest</h2>
+
+Hay una variedad de maneras de crear scripts de Zest:
+
+<h3>Registrar un nuevo botón de script Zest</h3>
+<ul>
+<li>Presione el botón "Registrar un nuevo script Zest" en la barra de tareas principal</li>
+<li>Escriba un nombre apropiado para el script en el cuadro de diálogo "Agregar un script Zest"</li>
+<li>Seleccione el prefijo que desee para registrar solicitudes, o dejar en blanco para registrar todas las solicitudes</li>
+<li>Presione el botón "Guardar"</li>
+<li>El botón "Registrar un nuevo script Zest" siempre estará presionado, cambia a "Registrando un nuevo script Zest" y muestra un icono rojo.</li>
+</ul>
+El nuevo script Zest aparecerá en la pestaña Scripts con un icono rojo de "registrando".<br>
+Cualquier solicitud que se haga bajo el prefijo especificado será agregado al script.<br>
+Presione de nuevo "Registrando un nuevo script Zest" para detener el registro de solicitudes.<br>
+Tenga en cuenta que solo se puede registrar de esta manera scripts Zest "Independientes". Si desea crear otros tipos de script Zest se debe utilizar otro mecanismo.
+<br><br>
+También se puede hacer clic derecho en cualquier script Zest Idependiente y utilizar los botones "Iniciar registro" y "Detener registro". 
+
+<h3>Nuevo Botón Script</h3>
+<ul>
+<li>Navegue hasta el árbol de pestañas de Scripts</li>
+<li>Presione el botón "Nuevo Script..."</li>
+<li>Escriba un nombre apropiado para el script en el cuadro de diálogo "Nuevo Script"</li>
+<li>Seleccione el tipo de script (consulte la página de ayuda de complemento Scripts para más detalles)</li>
+<li>Seleccione el motor de script Zest</li>
+<li>Seleccione una de las plantillas (si procede)</li>
+<li>Presione el botón "Guardar"</li>
+</ul>
+Cualquier tipo de script Zest puede crearse de esta manera.
+
+<h3>Hacer clic derecho en una plantilla Zest</h3>
+<ul>
+<li>Navegue hasta el árbol de pestañas Scripts</li>
+<li>Expanda el nodo de "Plantillas" y encuentre la plantilla que desea utilizar</li>
+<li>Haga clic derecho en la plantilla y seleccione "Nuevo Script..."</li>
+<li>Presione el botón "Guardar"</li>
+</ul>
+Cualquier tipo de script Zest puede crearse de esta manera.
+
+<h3>Hacer clic derecho en las solicitudes</h3>
+<ul>
+<li>Navegue hasta cualquier pestaña que muestre solicitudes, como la pestaña de Historial</li>
+<li>Seleccione una o mas solicitudes</li>
+<li>Haga clic derecho sobre ellos</li>
+<li>Seleccione el menú "Agregar a Script Zest" el cual permite seleccionar un script "Stand Alone" existente o crear uno nuevo</li>
+</ul>
+Tenga en cuenta que solo se pueden añadir solicitudes a los script Zest "Stand Alone".
+
+<h3>Plug-n-Hack</h3>
+Si está utilizando una versión reciente de Firefox puede crear scripts Zest desde dentro del navegador.<br>
+<ul>
+<li>Presione el botón "Plug-n-Hack" sobre la pestaña "Inicio rápido" de ZAP</li>
+<li>Instale el complemento de Firefox Plug-n-Hack y acepte todos los cuadros de diálogo</li>
+<li>Presione "Shift F2" en Firefox para acceder a la barra de herramientas de desarrollador</li>
+<li>Escriba "zap record on global" para empezar a registrar un nuevo script Zest</li>
+<li>Cualquier solicitud que se haga a través de ZAP se añadirá al script</li>
+<li>Escriba "zap record off global" para detener el registro un script</li>
+</ul>
+Tenga en cuenta que solo se puede registrar de esta manera scripts Zest "Stand Alone". Si se desea crear otros tipos de script Zest se debe utilizar otro mecanismo.
+
+<h2>Editar script Zest</h2>
+Los scripts Zest se editan gráficamente en la pestaña de árbol Scripts.<br>
+Cada declaración es un nodo en el árbol. Haga doble clic en los nodos para editar las propiedades de la declaración.<br>
+Se puede agregar, mover y eliminar declaraciones haciendo clic derecho en los nodos Zest.<br>
+También se pueden agregar solicitudes a los scripts Zest "Stand alone" haciendo clic derecho en las solicitudes en cualquier otra pestaña.<br>
+También hay otras opciones disponibles cuando se selecciona el texto en las pestañas Solicitud o Respuesta.<br>
+<br>
+Zest incluye un conjunto de variables "incorporadas" y también permite declarar variables propias.<br>
+Se proporciona un menú de clic derecho (cuando corresponda) en el cuadro de diálogos de edición que permite pegar cualquiera de los nombres de variable disponible.<br>
+
+<h2>Enlaces externos</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a></td>
+	<td>Resumen de Zest</td></tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/mozilla/zest">https://github.com/mozilla/zest</a></td>
+	<td>El repositorio de github de Zest, incluyendo detalles del lenguaje</td>
+</tr>
+</table>
+
+</body>
+</html>

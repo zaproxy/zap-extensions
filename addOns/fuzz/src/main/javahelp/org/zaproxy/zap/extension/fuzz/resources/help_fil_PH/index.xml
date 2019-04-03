@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+    <indexitem text="Mga konsepto ng Fuzzer" target="addon.fuzzer.concepts" />
+    <indexitem text="Mga Dayalogo ng Fuzzer" target="addon.fuzzer.dialogue"/>
+    <indexitem text="Mga diyalogo ng lokasyon ng mga Processor ng Fuzzer" target="addon.fuzzer.locations"/>
+    <indexitem text="Mga Processor ng Mensahe ng HTTP ng Fuzzer" target="addon.fuzzer.httpmessageprocessors"/>
+    <indexitem text="Diyalogo ng Kargamento ng Fuzzer" target="addon.fuzzer.payloads"/>
+    <indexitem text="Diyalogo ng mga Processor ng Kargamento ng Fuzzer" target="addon.fuzzer.processors"/>
+    <indexitem text="Mga Opsyon ng Fuzzer" target="addon.fuzzer.options"/>
+    <indexitem text="Tab ng Fuzzer" target="addon.fuzzer.tab"/>
+</index>

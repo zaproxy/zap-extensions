@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Komut Dizileri</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Komut Dizileri</h1>
+<p>
+ZAP Komut Eklentisi, ZAP'a gömülebilen ve iç ZAP veri yapılarına erişebilen komut dosyalarını çalıştırmanıza izin verir.<br/>
+Aşağıdakiler de dahil olmak üzere JSR 223'ü (http://www.jcp.org/en/jsr/detail?id=223) destekleyen herhangi bir komut dosyası dili desteklemektedir:
+<ul>
+<li>ECMAScript / Javascript (varsayılan tarafından dahilen, <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/">Nashorn motoru</a> kullanarak)</li>
+<li>Zest <a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a> (varsayılan tarafından dahil edildi)</li>
+<li>Groovy <a href="http://groovy-lang.org/">http://groovy-lang.org/</a></li>
+<li>Python <a href="http://www.jython.org">http://www.jython.org</a></li>
+<li>Ruby - <a href="http://jruby.org/">http://jruby.org/</a></li>
+<li>ve daha fazlası...</li> 
+</ul>
+
+<b>UYARI - komut dosyaları ZAP ile aynı izinlerle çalışır, bu nedenle güvenmediğiniz komut dosyalarını çalıştırmayın!</b>
+
+<h2>Komut satırı türleri</h2>
+Farklı türde komut dosyaları desteklenir:
+<ul>
+<li>Yalnız Kalın - kendiliğinden bulunan ve yalnızca manuel olarak başlatıldığında çalıştırılan komut dosyaları</li>
+<li>Aktif Kurallar - bunlar Aktif Tarayıcının bir parçası olarak çalışır ve ayrı olarak etkinleştirilebilir</li>
+<li>Pasif Kurallar - bunlar Pasif Tarayıcının bir parçası olarak çalışır ve ayrı olarak etkinleştirilebilir</li> 
+<li>Proxy Kuralları - Bunlar 'satır içinde' çalışır, her isteği ve yanıtı değiştirebilir ve ayrı olarak etkinleştirilebilir. Ayrıca durma noktalarını da tetikleyebilir</li> 
+<li>HTTP Gönderici - ZAP tarafından gönderilen/alınan her isteğe/yanıta karşı çalışan komut dosyaları. Bu, proxy yapılmış mesajları, aktif tarayıcı sırasında gönderilen mesajları, fuzzerı, vb içerir.</li>
+<li>Hedeflenen Kurallar - Hedef URL ile çağrılan ve yalnızca manuel olarak başlatıldığında çalıştırılan komut dosyaları</li>
+<li>Kimlik doğrulama - bir Bağlam için kimlik doğrulama yapıldığında çağrılan komut dosyaları. Kullanılabilmesi için bir Bağlam için Komut Dosyası Tabanlı Kimlik Doğrulama Yöntemini yapılandırırken seçilmesi gerekir. </li> 
+<li>Komut Dizisi Veri Vektörleri - ZAP' ın tam olarak neye saldırmasını tanımlayan komut dizileri için</li>
+<li>Genişleticiler - grafiksel öğeler ve yeni API uç noktaları dahil, yeni işlevsellik ekleyebilen komut dosyaları</li>
+</ul>
+Otomatik olarak çalışan tüm komuz dizileri başlangıçta 'devredışıdır' - onları şunun üzerinden etkinleştirmelisiniz  <a href="tree.html">Komut dizisi 'ağacı' sekmesi</a>
+çalışmadan önce.<br/>
+Eğer çalıştıklarında bir hata meydana gelirse, devre dışı bırakılacaklardır.<br/>
+Script'i seçtikten sonra en son hata gösterilecek <a href="console.html">Komut Dizisi Konsolu sekmesi</a>.<br/>
+Hedeflenen komut dosyaları, Siteler ve Geçmiş sekmesindeki bir kayda sağ tıklayarak ve 'Komut dosyası ile çağır...' menü öğesini seçerek uyandırılabilirler.
+</p>
+<p>
+
+Tüm komut dosyası dilleri tüm komut dosyası türleri için kullanılabilir, ancak sadece ZAP Pazaryeri'nden indirilen dillerde genellikle şablonlar bulunur. Ancak bir şablonu başka bir dil için de uyarlayabilirsiniz.<br/>
+Favori diliniz Mağazada mevcut değilse, lütfen "Çevrimiçi/Sorun bildir" menü öğesi yoluyla yeni bir kayıt oluşturun.<br/>
+Bu arada ilgili kavanozları 'lib' dizinine ('eklenti' dizini değil) yerleştirip, ZAP'ı yeniden başlatabilirsiniz.<br/>
+</p>
+
+<h2>Global Değişkenler</h2>
+Değişkenler org.zaproxy.zap.extension.script.ScriptVars sınıfı aracılığıyla tüm komut dosyaları arasında paylaşılabilir.<br/>
+Örneğin, Javascript'te aşağıdaki sınıfları kullanabilirsiniz:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
+</code>
+
+<h2>Script Değişkenleri</h2>
+Değişkenler aynı scriptin ayrı invokasyonlarınca aynı org.zaproxy.zap.extension.script.ScriptVars sınıfı sayesinde paylaşılabilir.<br/>
+Örneğin, Javascript'te bu sınıfı aşağıdaki gibi kullanabilirsiniz:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
+</code>
+<br/>
+Not olarak bu methodlar sadece ScriptContext'e erişme yetkisini gösteren script dillerince kullanılabilir (Javascript gibi).
+
+<h2>Ayrıca bakınız</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="console.html">Komut dosyası konsolu sekmesi</a></td><td></td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="tree.html">Komut dizisi 'ağacı' sekmesi</a></td><td></td>
+</tr>
+</table>
+
+<h2>Harici linkler</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/zaproxy/zaproxy/wiki/InternalDetails">https://github.com/zaproxy/zaproxy/wiki/InternalDetails</a></td>
+	<td>ZAP iç nesneleri</td></tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://javadoc.io/doc/org.zaproxy/zap">https://javadoc.io/doc/org.zaproxy/zap</a></td>
+	<td>ZAP java dosyaları</td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide">https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide</a></td>
+	<td>Rhino Göçmenlik Rehberi</td>
+</tr>
+</table>
+
+</body>
+</html>

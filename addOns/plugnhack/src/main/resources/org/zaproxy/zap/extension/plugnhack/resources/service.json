@@ -1,0 +1,313 @@
+{
+  "commands":[{
+    "description":"OWASP ZAP Commands"
+  },
+  {
+    "name":"session",
+    "description":"Manipulate ZAP sessions"
+  },
+  {
+    "name": "session clear",
+    "description": "Clear the ZAP session (not saved to disk)",
+    "returnType": "string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/core/action/newSession/?apinonce={{APINONCE_/JSON/core/action/newSession/}}",
+      "expression":"$.Result"
+    }
+  },
+  {
+    "name": "session new",
+    "description": "Create a new ZAP session (saved to disk)",
+    "returnType": "string",
+    "params": [{
+      "name": "name",
+      "type": "string",
+      "description": "The name of the new ZAP session to create"
+    }],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/core/action/newSession/?apinonce={{APINONCE_/JSON/core/action/newSession/}}&name=${$.args.name}",
+      "expression":"$.Result"
+    }
+  },
+  {
+    "name":"version",
+    "description":"Returns the ZAP version",
+    "returnType":"string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/core/view/version/?apinonce={{APINONCE_/JSON/core/view/version/}}",
+      "expression":"$.version",
+      "callbackData":{"result":{"type":"expression","expression":"$.response.version","extract":true}}
+    }
+  },
+  {
+    "name":"brk",
+    "description":"Break on all new requests and/or responses",
+    "returnType":"string",
+    "params": [{
+      "name":"scope",
+      "type": {"name":"selection", "data":["global"]},
+      "description": "The scope - currently only 'global' supported",
+      "defaultValue": "global"
+    },
+    {
+      "name":"type",
+      "type": {"name":"selection", "data":["http-all","http-requests", "http-responses"]},
+      "description": "The types of messages to break on",
+      "defaultValue": "http-all"
+    },
+    {
+      "name": "state",
+      "type": "boolean",
+      "description": "Turn breaking on or off"
+    }],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/break/action/break/?apinonce={{APINONCE_/JSON/break/action/break/}}&type=${$.args.type}&scope=${$.args.scope}&state=${$.args.state}",
+      "expression":"$.Result",
+      "callbackData":{"result":{"type":"expression","expression":"$.response.Result","extract":true}}
+    }
+  },
+  {
+    "name":"record",
+    "description":"Record all requests",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"state",
+      "type": {"name":"selection", "data":["on","off"]},
+      "description": "Record requests",
+      "defaultValue": "on"
+    },
+    {
+      "name":"scope",
+      "type": {"name":"selection", "data":["tab","global"]},
+      "description": "Local to tab or global",
+      "defaultValue": "global"
+    }
+    ],
+    "execAction":{
+      "expression":"$.Result",
+      "callbackData":{
+        "conditionalCommands":{
+          "expression":"$.args.state",
+          "states":{
+            "on":[{
+              "command":"addToHeader",
+              "params": {
+                "headerName":"X-Security-Proxy",
+                "value":"record",
+                "scope":{"type":"expression","expression":"$.args.scope","extract":true}
+              }
+            }],
+            "off":[{
+              "command":"removeFromHeader",
+              "params": {
+                "headerName":"X-Security-Proxy",
+                "value":"record",
+                "scope":{"type":"expression","expression":"$.args.scope","extract":true}
+              }
+            }]
+          }
+        }
+      }
+    }
+  },
+  {
+    "name":"scan",
+    "description":"Control the ZAP active scanner"
+  },
+  {
+    "name":"scan start",
+    "description":"Start actively scanning a site",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"The site to scan (attack)"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/ascan/action/scan/?apinonce={{APINONCE_/JSON/ascan/action/scan/}}&url=${$.args.site}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"scan status",
+    "description":"Scan progress out of 100",
+    "returnType":"string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/ascan/view/status/?apinonce={{APINONCE_/JSON/ascan/view/status/}}",
+      "expression":"$.Result",
+      "callbackData":{},
+      "expression":"$.status",
+      "callbackData":{"result":{"type":"expression","expression":"$.response.status","extract":true}}
+    }
+  },
+  {
+    "name":"spider",
+    "description":"Control the ZAP spider"
+  },
+  {
+    "name":"spider start",
+    "description":"Start spidering a site",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"the site to spider"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/spider/action/scan/?apinonce={{APINONCE_/JSON/spider/action/scan/}}&url=${$.args.site}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"spider stop",
+    "description":"Stop spidering a site",
+    "returnType":"string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/spider/action/stop/?apinonce={{APINONCE_/JSON/spider/action/stop/}}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"spider status",
+    "description":"Spider progress out of 100",
+    "returnType":"string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/spider/view/status/?apinonce={{APINONCE_/JSON/spider/view/status/}}",
+      "expression":"$.Result",
+      "callbackData":{},
+      "expression":"$.status",
+      "callbackData":{"result":{"type":"expression","expression":"$.response.status","extract":true}}
+    }
+  },
+  {
+    "name":"http-session",
+    "description":"Manipulate HTTP sessions"
+  },
+  {
+    "name":"http-session new",
+    "description":"Start a new HTTP session",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"the site"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "The name of the new http session to create"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/httpSessions/action/createEmptySession/?apinonce={{APINONCE_/JSON/httpSessions/action/createEmptySession/}}&site=${$.args.site}&session=${$.args.name}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"http-session rename",
+    "description":"Rename an HTTP session",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"The site"
+    },
+    {
+      "name":"session",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/httpSessions/view/sessions/?site=${$.args.site}&apinonce={{APINONCE_/JSON/httpSessions/view/sessions/}}&session=",
+          "expression":"$.sessions.*.session.0"
+          }
+        },
+      "description":"The session to rename"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "The new name for HTTP session"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/httpSessions/action/renameSession/?apinonce={{APINONCE_/JSON/httpSessions/action/renameSession/}}&site=${$.args.site}&oldSessionName=${$.args.session}&newSessionName=${$.args.name}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"http-session switch",
+    "description":"Switch to another HTTP session",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"the site"
+    },
+    {
+      "name":"session",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/httpSessions/view/sessions/?site=${$.args.site}&apinonce={{APINONCE_/JSON/httpSessions/view/sessions/}}&session=",
+          "expression":"$.sessions.*.session.0"
+          }
+        },
+      "description":"The session to use"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/httpSessions/action/setActiveSession/?apinonce={{APINONCE_/JSON/httpSessions/action/setActiveSession/}}&site=${$.args.site}&session=${$.args.session}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  }
+  ]
+}

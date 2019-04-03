@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+模糊化
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>模糊化</h1>
+<p>
+模糊化是向目标提交大量无效或意外数据的技术。
+</p>
+<p>
+ZAP allows you to fuzz any request still using:
+<ul>
+<li>A build in set of payloads</li>
+<li>Payloads defined by optional add-ons</li>
+<li>自定义脚本</li>
+</ul>
+</p>
+为了访问 <a href="dialogue.html">Fuzzer对话框</a> you can either:
+<ul>
+<li>右键单击其中一个ZAP选项卡中的请求(如历史记录或站点) 然后选择"攻击/模糊…"</li>
+<li>在请求选项卡中突出显示一个字符串，右键单击它并选择"模糊…"</li>
+<li>选择"工具/模糊…"菜单项并选择您想要模糊的请求</li>
+</ul>
+
+<h3>有效载荷生成器</h3>
+Payload Generators generate the raw attacks that the fuzzer submits to the target application.
+<br><br>
+They are managed via the <a href="payloads.html">有效负载对话框</a>
+
+<h3>有效负载处理器</h3>
+有效负载处理器可用于在提交之前更改指定的负载。
+<br><br>
+They are managed via the <a href="processors.html">有效负载处理器对话框</a>
+
+<h3>模糊位置处理器</h3>
+模糊位置处理器可用于在提交之前更改所有有效负载。
+<br><br>
+They are managed via the <a href="locations.html">位置处理器对话框</a>
+
+<h3>消息处理器</h3>
+消息处理器可以访问和更改被模糊的信息，控制模糊处理并与ZAP UI进行交互。
+<br><br>
+They are managed via the <a href="dialogue.html">Fuzzer对话框</a> "消息处理器"选项卡。
+
+<p>
+该功能是基于OWASP JBroFuzz 项目的代码 ，并包含来自fuzzdb项目的文件。<br/>
+注意，一些fuzzdb文件已被排除，因为它们会导致常见的反病毒扫描程序将其标记为包含病毒。<br/>
+您可以通过下载最新版本的fuzzdb并将其扩展到"fuzzers"库中来替换它们（并升级fuzzdb)。
+</p>
+
+
+<h2>另请参阅</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Fuzzer选项屏</a></td></tr>
+</table>
+
+
+
+</body>
+</html>
