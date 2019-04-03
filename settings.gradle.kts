@@ -10,7 +10,8 @@ var addOns = listOf(
     "coreLang",
     "directorylistv1",
     "directorylistv2_3",
-    "directorylistv2_3_lc"
+    "directorylistv2_3_lc",
+    "frontendscanner"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
