@@ -43,7 +43,8 @@ var addOns = listOf(
     "sse",
     "tlsdebug",
     "viewstate",
-    "vulncheck"
+    "vulncheck",
+    "wappalyzer"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
