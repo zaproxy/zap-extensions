@@ -10,7 +10,8 @@ var addOns = listOf(
     "amf",
     "ascanrulesAlpha",
     "authstats",
-    "birtreports"
+    "birtreports",
+    "browserView"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
