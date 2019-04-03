@@ -27,7 +27,8 @@ var addOns = listOf(
     "importLogFiles",
     "jsonview",
     "jxbrowsers",
-    "jxbrowsers:jxbrowser"
+    "jxbrowsers:jxbrowser",
+    "jxbrowsers:jxbrowserlinux64"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
