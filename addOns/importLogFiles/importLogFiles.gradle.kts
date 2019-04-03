@@ -9,6 +9,11 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://github.com/zaproxy/zaproxy/wiki/MozillaMentorship_ImportingModSecurityLogs")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.importLogFiles.ImportLogAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/importLogFiles/resources/Messages.properties"))
+    }
 }
 
 dependencies {

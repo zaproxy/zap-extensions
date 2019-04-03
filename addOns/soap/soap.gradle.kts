@@ -8,6 +8,11 @@ zapAddOn {
     manifest {
         author.set("Alberto (albertov91) + ZAP Core team")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.soap.SoapAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/soap/resources/Messages.properties"))
+    }
 }
 
 dependencies {

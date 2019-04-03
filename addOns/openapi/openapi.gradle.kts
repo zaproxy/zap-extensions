@@ -8,6 +8,11 @@ zapAddOn {
     manifest {
         author.set("ZAP Core Team plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.openapi.OpenApiAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/openapi/resources/Messages.properties"))
+    }
 }
 
 configurations {
