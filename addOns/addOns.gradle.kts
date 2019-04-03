@@ -22,7 +22,8 @@ val mainAddOns = listOf(
     "coreLang",
     "directorylistv1",
     "gettingStarted",
-    "onlineMenu"
+    "onlineMenu",
+    "pscanrules"
 )
 val weeklyAddOns = mainAddOns + listOf(
 )
