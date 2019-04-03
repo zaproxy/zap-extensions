@@ -18,6 +18,7 @@ val parentProjects = listOf(
 )
 
 val mainAddOns = listOf(
+    "alertFilters"
 )
 val weeklyAddOns = mainAddOns + listOf(
 )
