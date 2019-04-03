@@ -31,7 +31,8 @@ var addOns = listOf(
     "jxbrowsers:jxbrowserlinux64",
     "jxbrowsers:jxbrowsermacos",
     "jxbrowsers:jxbrowserwindows",
-    "jxbrowsers:jxbrowserwindows64"
+    "jxbrowsers:jxbrowserwindows64",
+    "openapi"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
