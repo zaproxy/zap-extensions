@@ -20,7 +20,8 @@ var addOns = listOf(
     "customreport",
     "domxss",
     "exportreport",
-    "formhandler"
+    "formhandler",
+    "highlighter"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
