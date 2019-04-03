@@ -30,7 +30,8 @@ val mainAddOns = listOf(
     "tips",
     "webdriverlinux",
     "webdrivermacos",
-    "webdriverwindows"
+    "webdriverwindows",
+    "zest"
 )
 val weeklyAddOns = mainAddOns + listOf(
     "ascanrulesBeta",

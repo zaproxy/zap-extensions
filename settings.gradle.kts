@@ -30,7 +30,8 @@ var addOns = listOf(
     "webdrivers",
     "webdrivers:webdriverlinux",
     "webdrivers:webdrivermacos",
-    "webdrivers:webdriverwindows"
+    "webdrivers:webdriverwindows",
+    "zest"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
