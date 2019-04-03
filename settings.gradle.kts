@@ -15,7 +15,8 @@ var addOns = listOf(
     "fuzz",
     "importurls",
     "invoke",
-    "jruby"
+    "jruby",
+    "jython"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
