@@ -23,7 +23,8 @@ val mainAddOns = listOf(
     "directorylistv1",
     "gettingStarted",
     "onlineMenu",
-    "pscanrules"
+    "pscanrules",
+    "reveal"
 )
 val weeklyAddOns = mainAddOns + listOf(
 )

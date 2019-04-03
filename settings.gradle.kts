@@ -15,7 +15,8 @@ var addOns = listOf(
     "fuzzdb",
     "gettingStarted",
     "onlineMenu",
-    "pscanrules"
+    "pscanrules",
+    "reveal"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
