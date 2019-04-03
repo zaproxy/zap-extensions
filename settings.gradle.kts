@@ -24,7 +24,8 @@ var addOns = listOf(
     "highlighter",
     "httpsInfo",
     "imagelocationscanner",
-    "importLogFiles"
+    "importLogFiles",
+    "jsonview"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
