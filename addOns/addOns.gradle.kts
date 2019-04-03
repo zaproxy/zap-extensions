@@ -18,7 +18,8 @@ val parentProjects = listOf(
 )
 
 val mainAddOns = listOf(
-    "alertFilters"
+    "alertFilters",
+    "bruteforce"
 )
 val weeklyAddOns = mainAddOns + listOf(
     "ascanrulesBeta"
