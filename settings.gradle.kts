@@ -35,7 +35,8 @@ var addOns = listOf(
     "openapi",
     "pscanrulesAlpha",
     "requester",
-    "revisit"
+    "revisit",
+    "saml"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
