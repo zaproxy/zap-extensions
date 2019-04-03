@@ -28,7 +28,8 @@ val mainAddOns = listOf(
 val weeklyAddOns = mainAddOns + listOf(
     "ascanrulesBeta",
     "plugnhack",
-    "portscan"
+    "portscan",
+    "pscanrulesBeta"
 )
 
 mapOf("main" to mainAddOns, "weekly" to weeklyAddOns).forEach { entry ->

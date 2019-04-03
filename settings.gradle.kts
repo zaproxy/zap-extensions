@@ -18,7 +18,8 @@ var addOns = listOf(
     "jruby",
     "jython",
     "plugnhack",
-    "portscan"
+    "portscan",
+    "pscanrulesBeta"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
