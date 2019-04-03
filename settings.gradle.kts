@@ -16,7 +16,8 @@ var addOns = listOf(
     "gettingStarted",
     "onlineMenu",
     "pscanrules",
-    "reveal"
+    "reveal",
+    "saverawmessage"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
