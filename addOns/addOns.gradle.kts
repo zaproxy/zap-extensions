@@ -25,7 +25,8 @@ val mainAddOns = listOf(
     "onlineMenu",
     "pscanrules",
     "reveal",
-    "saverawmessage"
+    "saverawmessage",
+    "savexmlmessage"
 )
 val weeklyAddOns = mainAddOns + listOf(
 )
