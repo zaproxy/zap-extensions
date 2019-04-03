@@ -1,0 +1,389 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<HTML>
+    <HEAD>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+        <TITLE>
+            Export Report
+        </TITLE>
+    </HEAD>
+
+    <BODY BGCOLOR="#ffffff">
+
+        <H1><U>Export Report</U></H1>
+        Report Export module that allows users to customize content and export in a desired format.
+        <UL>
+            <LI>Created by <A href="https://github.com/JordanGS">JordanGS</A>.</LI>
+            <LI>Minimum Supported Version: Weekly Release ZAP_D-2016-09-05</LI>
+            <LI>Project on  <A href="https://github.com/JordanGS/workspace">GitHub</A>. You can also find a .zip of the minimum supported release in the zap-download folder.</LI>
+            <LI>Supported and incorporated in the <A href="https://wiki.jenkins-ci.org/display/JENKINS/zap+plugin">Official OWASP Zed Attack Proxy Jenkins Plugin</A>.</LI>
+        </UL>
+
+        <H2><U>Table of Contents</U></H2>
+        <UL>
+            <LI>ZAP UI</LI>
+            <LI>Command Line</LI>
+            <LI>API Calls</LI>
+        </UL>
+
+        <HR>
+
+        <a name="zap-ui"></a> 
+        <H2><U>ZAP UI</U></H2>
+
+        <H4>Source Info</H4>
+        User entered and automatically retrieve data relevant to the report. Hover over each field in the extension for tool tip.
+        <UL>
+            <LI>Title - Defaults to Session Name</LI>
+            <LI>By</LI>
+            <LI>For</LI>
+            <LI>Scan Date - User entered date of AScan, defaults to current date-time</LI>
+            <LI>Report Date - Defaults to current date-time</LI>
+            <LI>Scan Version - Placeholder for future</LI>
+            <LI>Report Version - Defaults to current version of ZAP tool</LI>
+        </UL>
+        <H4>UI</H4>
+        <UL style="list-style-type:none">
+            <LI>
+                <img src="images/SourceInfo.png" alt="Source Info">
+            </LI>
+        </UL>
+        <BR>
+
+        <H4>Alert Severity</H4>
+        Include/Exclude Alerts by Severity.
+        <H4>Included by Default</H4>
+        <UL>
+            <LI>High</LI>
+            <LI>Medium</LI>
+            <LI>Low</LI>
+            <LI>Informational</LI>
+        </UL>
+        <H4>UI</H4>
+        <UL style="list-style-type:none">
+            <LI>
+                <img src="images/AlertSeverity.png" alt="Source Info">
+            </LI>
+        </UL>
+        <BR>
+
+        <H4>Alert Details</H4>
+        Include/Exclude Details of each Alert.
+        <H4>Included by Default</H4>
+        <UL>
+            <LI>CWE ID</LI>
+            <LI>WASC ID</LI>
+            <LI>Description</LI>
+            <LI>Other Info</LI>
+            <LI>Solution</LI>
+            <LI>Reference</LI>
+        </UL>
+
+        <H4>Excluded by Default</H4>
+        <UL>
+            <LI>Request Header</LI>
+            <LI>Response Header</LI>
+            <LI>Request Body</LI>
+            <LI>Response Body</LI>
+        </UL>
+
+        <H4>UI</H4>
+
+        <UL style="list-style-type:none">
+            <LI>
+                <img src="images/Alert Details.png" alt="Source Info">
+            </LI>
+        </UL>
+
+        <HR>
+
+        <H4>File Chooser Dialog</H4>
+        The dialog only shows folders and accepted file types. The 'Files of Type' drop down list will filter to show only folders and files of the specified extension.
+
+        <H4>Currently Available</H4>
+        <UL>
+            <LI>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</LI>
+            <LI>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</LI>
+            <LI>JSON Files (.json <img src="../../images/json.png" alt="JSON Icon">)</LI>
+        </UL>
+
+        <H4>Future Milestone</H4>
+        <UL>
+            <LI>Bootstrap HTML Files(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</LI>
+            <LI>PDF Documents (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</LI>
+            <LI>Google Documents (.doc <img src="../../images/doc.png" alt="DOC Icon">)</LI>
+        </UL>            
+
+        <H4>UI</H4>
+        <UL style="list-style-type:none">
+            <LI>
+                Show all accepted files
+            </LI>
+            <LI>
+                <img src="images/FileChooser.png" alt="Source Info">
+            </LI>
+            <LI><BR></LI>
+            <LI>
+                List of accepted file formats
+            </LI>
+            <LI>
+                <img src="images/FileChooserChoices.png" alt="Source Info">
+            </LI>
+            <LI><BR></LI>
+            <LI>
+                Filter by a specific file format
+            </LI>
+            <LI>
+                <img src="images/FileChooserFilter.png" alt="Source Info">
+            </LI>
+        </UL>
+
+        <HR>
+
+        <a name="command-line"></a> 
+        <H2><U>Command Line</U></H2>
+        The extension can be run from the command line as well and requires the following arguments to be passed in to generate a report.
+
+        <H4>OWASP ZAP Command Line Options</H4>
+        <UL style="list-style: none;">
+            <LI><B>-session</B>: Opens the given session after starting ZAP</LI>
+            <LI><B>-cmd</B>: Runs ZAP 'inline', ie without starting the UI or a daemon</LI>
+        </UL>
+        See the <A href="https://github.com/zaproxy/zap-core-help/wiki/HelpCmdline">Wiki</A> for more details on the natively supported command line options.
+
+        <H4>Export Report Extension Command Line Options</H4>
+        <UL style="list-style: none;">
+            <LI><HR></LI>
+            <LI><B>-export_report</B>: 
+                <UL style="list-style: none;">
+                    <LI>
+                        <H4>Description:</H4>
+                        <UL>
+                            <LI>Saves to the specified file after loading the given session.</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Currently Available</H4>
+                        <UL>
+                            <LI>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</LI>
+                            <LI>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</LI>
+                            <LI>JSON Files (.json <img src="../../images/json.png" alt="JSON Icon">)</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Future Milestone</H4>
+                        <UL>
+                            <LI>Bootstrap HTML Files(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</LI>
+                            <LI>PDF Documents (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</LI>
+                            <LI>Google Documents (.doc <img src="../../images/doc.png" alt="DOC Icon">)</LI>
+                        </UL>            
+                    </LI>
+                    <LI><BR></LI>
+                </UL>
+            </LI>
+            <LI><HR></LI>
+
+            <LI><B>-source_info</B>:
+                <UL style="list-style: none;">
+                    <LI>
+                        <H4>Description:</H4>
+                        <UL>
+                            <LI>Specifies the following details of the report:</LI>
+                            <LI style="list-style: none;">
+                                <OL>
+                                    <LI>Title</LI>
+                                    <LI>By</LI>
+                                    <LI>For</LI>
+                                    <LI>Scan Date</LI>
+                                    <LI>Report Date</LI>
+                                    <LI>Scan Ver</LI>
+                                    <LI>Report Ver</LI>
+                                    <LI>Description</LI>
+                                </OL>
+                            </LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Example:</H4>
+                        <UL>
+                            <LI>-source_info "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, et sed nibh nostrum singulis. Nec causae viderer discere eu."</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Validation:</H4>
+                        <UL>
+                            <LI>Content is unchecked, can enter empty fields if you wish, only condition is that all 8 items are in the list.</LI>
+                        </UL>
+                    </LI>
+                    <LI><BR></LI>
+                </UL>
+            </LI>
+            <LI><HR></LI>
+            
+            <LI><B>-alert_severity</B>:
+                <UL style="list-style: none;">
+                    <LI>
+                        <H4>Description:</H4>
+                        <UL>
+                            <LI>Specifies which alert severities will be included in the report:</LI>
+                            <LI style="list-style: none;">
+                                <OL>
+                                    <LI>High</LI>
+                                    <LI>Medium</LI>
+                                    <LI>Low</LI>
+                                    <LI>Informational</LI>
+                                </OL>
+                            </LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Input format:</H4>
+                        <UL>
+                            <LI>Only accepts a string list with ';' delimiter</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Input restriction:</H4>
+                        <UL>
+                            <LI>Only accepts 't' and 'f' for each item in the list</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Example:</H4>
+                        <UL>
+                            <LI>-alert_severity "t;t;f;t"</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Explanation:</H4>
+                        <UL>
+                            <LI>In the above example, only High, Medium and Informational Alerts will be included in the generated report.</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Validation:</H4>
+                        <UL>
+                            <LI>Validation: Content is validated to be either 't' or 'f' and that all 4 items are in the list.</LI>
+                        </UL>
+                    </LI>
+                    <LI><BR></LI>
+                </UL>
+            </LI>
+            <LI><HR></LI>
+            
+            <LI><B>-alert_details</B>:
+                <UL style="list-style: none;">
+                
+                    <LI>
+                        <H4>Description:</H4>
+                        <UL>
+                            <LI>Specifies which alert details will be included in the report:</LI>
+                            <LI style="list-style: none;">
+                                <OL>
+                                    <LI>CWE ID</LI>
+                                    <LI>WASC ID</LI>
+                                    <LI>Description</LI>
+                                    <LI>Other Info</LI>
+                                    <LI>Solution</LI>
+                                    <LI>Reference</LI>
+                                    <LI>Request Header</LI>
+                                    <LI>Response Header</LI>
+                                    <LI>Request Body</LI>
+                                    <LI>Response Body</LI>
+                                </OL>
+                            </LI>
+                        </UL>
+                    <LI>
+                    <LI>
+                        <H4>Input format:</H4>
+                        <UL>
+                            <LI>Only accepts a string list with ';' delimiter</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Input restriction:</H4>
+                        <UL>
+                            <LI>Only accepts 't' and 'f' for each item in the list</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Example:</H4>
+                        <UL>
+                            <LI>-alert_details "t;t;t;t;t;t;f;f;f;f"</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Explanation:</H4>
+                        <UL>
+                            <LI>In the above example, only CWE ID, WASC ID, Description, Other Info, Solution and Reference Alert Details will be included in the generated report.</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Validation:</H4>
+                        <UL>
+                            <LI>Content is validated to be either 't' or 'f' and that all 10 items are in the list.</LI>
+                        </UL>
+                    </LI>
+                    <LI><BR></LI>
+                </UL>
+            </LI>
+            <LI><HR></LI>
+        </UL>
+
+        <UL style="list-style: none;">
+            <LI>
+                <H4>Putting it all together! (Windows)</H4>
+                <OL>
+                    <LI>Open a command prompt</LI>
+                    <LI>Navigate to location where the zap.bat file is located</LI>
+                    <LI>execute the following:
+                        <UL style="list-style: none;"><LI>zap.bat <B>-export_report</B> "/path/to/save/report.xhtml" <B>-source_info</B> "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, et sed nibh nostrum singulis. Nec causae viderer discere eu." <B>-alert_severity</B> "t;t;f;t" <B>-alert_details</B> "t;t;t;t;t;t;f;f;f;f" <B>-session</B> "/path/to/existing/session" <B>-cmd</B></LI></UL>
+                    </LI>
+                </OL>
+            </LI>
+        </UL>
+
+        <HR>
+
+        <a name="api-calls"></a> 
+        <H2><U>API Calls</U></H2>
+
+        The extension can be accessed with API calls and requires the following arguments to be passed in to generate a report.
+
+        <BR><BR>
+
+        The restrictions are the same as those for Command Line above.
+
+        <H4>Usage Example:</H4>
+        <BLOCKQUOTE><PRE><CODE>
+Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
+String API_KEY = "ZAPROXY-PLUGIN"
+String absolutePath = "/path/to/save/report.xhtml";
+String extension = "xhtml";
+String sourceDetails = "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;" +
+    "August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;" + 
+    "Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea " + 
+    "usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, " +
+    "et sed nibh nostrum singulis. Nec causae viderer discere eu.";
+String alertSeverity = "t;t;f;t";
+String alertDetails = "t;t;t;t;t;t;f;f;f;f";
+
+map.put("apikey", API_KEY);
+
+// String representing the absolute path to save destination for the report
+map.put("absolutePath", absolutePath)
+
+// String representing the extension of the report
+map.put("fileExtension", extension);
+
+// String separated by ; for each entry
+map.put("sourceDetails", sourceDetails);
+
+// String separated by ; for each entry
+map.put("alertSeverity", alertSeverity);
+
+//String separated by ; for each entry
+map.put("alertDetails", alertDetails);
+</CODE></PRE></BLOCKQUOTE>
+<BLOCKQUOTE><CODE>ApiResponseElement val = (ApiResponseElement) clientApi.callApi("exportreport", "action", "generate", map);</CODE></BLOCKQUOTE>
+    </BODY>
+</HTML>

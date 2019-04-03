@@ -1,0 +1,16 @@
+version = "5"
+description = "Allows the user to view a call graph of the selected resources"
+
+zapAddOn {
+    addOnName.set("Call Graph")
+    zapVersion.set("2.5.0")
+
+    manifest {
+        author.set("Colm O'Flaherty")
+    }
+}
+
+dependencies {
+    implementation("jgraph:jgraph:5.13.0.0")
+    implementation("org.tinyjee.jgraphx:jgraphx:2.0.0.1")
+}

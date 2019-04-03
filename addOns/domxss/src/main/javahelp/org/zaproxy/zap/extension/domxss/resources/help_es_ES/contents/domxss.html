@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Regla de Escaneo Activo DOM XSS
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Regla de Escaneo Activo DOM XSS</h1>
+<p>
+Una regla de escaneo activa para la detección de vulnerabilidades DOM XSS.
+<p>
+Genera ventanas de navegador y envía ataques de carga útil a todos los elementos DOM relevantes.<br>
+
+Debido a que genera ventanas de navegador no es adecuado para entornos sin encabezados, y tomará una cantidad de tiempo considerablemente mayor que otras reglas (No basadas en navegadores). 
+</p>
+<p>
+Esta versión solo es compatible con Firefox.<br>
+Versiones futuras pueden ser compatibles con otros navegadores.
+</p>
+<p>
+Se soportan las siguientes Fuerzas de Ataque, estas son proporcionales al número de ataques de carga útil utilizados:
+<ul>
+<li>BAJO: 2 ataques de cargas útiles 
+<li>MEDIO: 4 ataques de cargas útiles 
+<li>ALTO: 6 ataques de cargas útiles 
+<li>DEMENTE: 8 ataques de cargas útiles 
+</ul>
+</p>
+<p>
+La regla solo reportará de una vulnerabilidad DOM XSS por nodo. Seguirá intentando todos los nodos especificados a menos que se utilice el nivel de alerta BAJO. 
+</p>
+
+</body>
+</html>

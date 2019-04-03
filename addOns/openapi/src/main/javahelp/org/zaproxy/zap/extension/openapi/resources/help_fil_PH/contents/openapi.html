@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Pagsuporta sa Bukas na Ispesisikasyon ng API
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Pagsuporta sa Bukas na Ispesisikasyon ng API</h1>
+Ang add-on na ito ay magpapahintulot sa iyo na ispayder at mag-import ng OpenAPI (Swagger) na mga kahulugan (mga bersyong 1.2 at 2.0).
+<br><br>
+Ang add-on ay awtomatikong magtutuklas ng kahit anong Bukas na API na mga kahulugan at magspayder sa kanila habang sila ay nasa saklaw.
+
+<h2>UI</h2>
+2 mga item ng menu ang nadagdag sa Tools na menu:
+<ul>
+<li>Mag-import ng isang Bukas na API na kahulugan mula sa lokal na sistema ng file</li>
+<li>Mag-import ng Bukas na API na kahulugan mula sa isang URL</li>
+</ul>
+Ang URL sa Pag-import na dialogo ay sumusuporta ng opsyonal na karagdagdagang field na magpapahintulot sa iyo na ipawalang-bisa ang Host (at ang port) sa loob ng
+kahulugan kasama ang isang alternatibo na iyong isinu-supply.<br>
+Ang pagpipilian ay hindi inilaan para sa pag-import ng dokumento dahil madaling magbago ng isang lokal ng dokumento na magagamit sa ibang host.
+
+<h2>API</h2>
+Ang sumusunod na mga operasyon ay nadagdag sa API:
+<ul>
+<li>ACTION importFile (file)</li>
+<li>ACTION importUrl (url, hostOverride)</li>
+</ul>
+
+Ang mga kahulugan ay ma-iimport ng sabay at ang kahit anong mga babala ay ibabalik. 
+
+<h2>Linya ng Pag-utos</h2>
+Ang sumusunod na Linya ng Pag-utos na mga opsyon ay nadagdag:
+<ul>
+<li>-openapifile &lt;filename&gt; : Mag-import ng Bukas na API na kahulugan mula sa tinukoy na pangalan ng dokumento</li>
+<li>-openapiurl &lt;url&gt; : Mag-import ng Bukas na API na kahulugan mula sa natukoy na URL</li>
+</ul>
+
+Ang mga kahulugan ay ma-iimport ng sabay at ang kahit anong mga babala ay mapapakita sa linya ng pag-utos.
+
+<h2>Mga Balyu na Natukoy ng Tagagamit</h2>
+Ang default na mga balyu na ginamit habang nag-iimport ng Bukas na API na mga kahulugan.<br>
+Ito ay maaring mapawalang bisa gamit ang Tagahawak ng Form na add-on na magpapahintulot sa iyo na tukuyin ang mga sarili mong balyu.<br>
+Sa karamihang panahon ito ay magiging mga simpleng mga balyu (katulod ng mga string at integer) pero sa ibang mga kaso ay kailangan mong magtukoy ng naistrakturang mga balyu. <pre>{ "id": 0, "name": "Freda" }</pre>
+
+</body>
+</html>

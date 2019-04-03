@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Open API Specification Support
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Soporte de especificación de Open API</h1>
+Este complemento permite rastrear e importar definiciones (versiones 1.2 y 2.0) OpenAPI (Swagger).
+<br><br>
+El complemento detecta automáticamente cualquier definición Open API y las rastrea siempre que estén en el ámbito de la aplicación.
+
+<h2>Interfaz de Usuario</h2>
+Se agregan 2 elementos de menú en el menú Herramientas:
+<ul>
+<li>Importar una definición Open API desde el sistema archivo local</li>
+<li>Importar una definición Open API desde un URL</li>
+</ul>
+El cuadro de diálogo de importar URL soporta un campo adicional opcional que permite anular el Host (y puerto) en la definición con una alternativa que se proporcione.<br>
+Esta opción no se proporciona para la importación de archivos ya que es fácil cambiar un archivo local para utilizar un host diferente.
+
+<h2>API</h2>
+Las siguientes operaciones se agregan a la API:
+<ul>
+<li>ACTION importFile (file)</li>
+<li>ACTION importUrl (url, hostOverride)</li>
+</ul>
+
+Las definiciones se importarán sincrónicamente y se devolverá cualquier advertencia. 
+
+<h2>Línea de comandos</h2>
+Se agregan las siguientes opciones de línea de comandos:
+<ul>
+<li>-openapifile &lt;filename&gt;  : importa una definición Open API desde el nombre de archivo especificado</li>
+<li>-openapiurl &lt;url&gt;  : importa una definición Open API desde un URL especificado</li>
+</ul>
+
+Las definiciones se importarán sincrónicamente y cualquier advertencia se mostrará en la línea de comandos.
+
+<h2>Valores especificados por el usuario</h2>
+Se utilizan valores por defecto cuando se importan definiciones de Open API.<br>
+Estos pueden anularse utilizando el complemento Form Handler que permite especificar valores propios.<br>
+En la mayoría de los casos estos serán valores simples (como cadenas y enteros) pero en algunos casos podría necesitarse especificar valores estructurados, por ejemplo. <pre>{ "id": 0, "name": "Freda" }</pre>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Passive Scan Rules - Alpha
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Passive Scan Rules - Alpha</h1>
+Peraturan pemindaian alpha pasif berikut dimasukkan dalam tambahan ini:
+
+<h2>ASP.NET ViewState Disclosure</h2>
+An ASP.NET ViewState was disclosed by the application/web server
+
+<h2>ASP.NET ViewState Integrity</h2>
+Aplikasi ini tidak menggunakan Kod Pengesahan Mesej (MAC) untuk melindungi integriti dari ViewState ASP.NET, yang boleh rosak oleh klien yang berniat jahat
+
+<h2>Base64 Disclosure</h2>
+Data yang dikodkan oleh Base64 telah didedahkan oleh aplikasi/pelayan web
+
+<h2>Pengepala Dasar Keselamatan Kandungan hilang</h2>
+Ia menyemak pengepala tindak balas HTML untuk kehadiran tajuk Dasar Keselamatan Kandungan.<br>
+By default this rule checks for the presence of the "Content-Security-Policy" header, 
+and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
+<p>
+If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. Ini mungkin usaha penguatkuasaan undang-undang yang secara aktif dipertingkatkan atau dibangunkan, atau hanya boleh dilaksanakan secara separuh.
+
+<h2>Cookie Poisoning</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. Ini dipanggil serangan keracunan kuki, dan boleh dieksploitasi apabila penyerang mungkin memanipulasi cookies dalam pelbagai cara. Dalam sesetengah kes, ini tidak akan dapat dieksploitasi, tetapi ia membenarkan parameter URL untuk menetapkan nilai kuki umum yang dianggap sebagai pepijat.
+
+<h2>Cookie Without SameSite Attribute</h2>
+This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
+
+<h2>Cross Domain Misconfiguration</h2>
+Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
+The current implementation looks at excessively permissive CORS headers.
+
+<h2>Directory Browsing</h2>
+Passively scan responses for signatures that are indicative that Directory Browsing is possible.
+
+<h2>Example File Passive Scanner</h2>
+This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
+For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+
+<h2>Example Simple Passive Scanner</h2>
+This implements a very simple example passive scan rule.<br>
+For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+
+<h2>Hash Disclosure</h2>
+Passively scan for password hashes disclosed by the web server. <br>
+Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
+
+<h2>HeartBleed</h2>
+Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
+
+<h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
+This check looks for insecure HTTP pages that host HTTPS forms. Masalahnya ialah laman HTTP yang tidak selamat dengan mudah boleh dirampas melalui MITM dan selamat borang HTTPS boleh digantikan atau dipalsukan.
+
+<h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
+This check identifies secure HTTPS pages that host insecure HTTP forms. Masalahnya adalah bahawa laman selamat sedang beralih ke halaman yang tidak selamat apabila data dimuat naik melalui borang. Pengguna mungkin berfikir mereka akan menghantar data ke halaman yang selamat apabila tidak.
+
+<h2>Insecure Component</h2>
+Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
+Senarai skor CVE dan skor CVSS teratas adalah output bagi setiap produk yang direkodkan terdedah. 
+Currently, the following server side products are supported:<br>
+Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
+Apache web server<br>
+mod_auth_radius Apache module<br>
+mod_fcgid Apache module<br>
+mod_imap Apache module<br>
+mod_jk Apache module<br>
+mod_perl Apache module<br>
+mod_python Apache module<br>
+mod_ssl Apache module<br>
+OpenSSL Apache module<br>
+Perl Apache module<br>
+Python Apache module<br>
+IBM HTTP Server<br>
+JBoss application server<br>
+Jetty web server / application server<br>
+LiteSpeed web server<br>
+Lighttpd web server<br>
+Microsoft IIS web server<br>
+Netscape Enterprise web server<br>
+Nginx web server<br>
+OpenCMS<br>
+Oracle Application Server<br>
+Oracle Web Cache<br>
+PHP<br>
+Phusion_Passenger<br>
+Squid proxy server<br>
+Sun One web server<br>
+Sun Java System Web Server<br>
+TornadoServer web server<br>
+WordPress<br>
+
+<h2>Image Location Scanner</h2>
+<p>Pemindaian pasif untuk pendedahan lokasi GPS ke imej semasa penilaian keselamatan tapak web biasa.  Pengimbas Lokasi Imej membantu dalam situasi di mana pengguna akhir boleh menghantar gambar profil dan boleh memberikan lokasi rumah mereka, contohnya. dating laman web atau bilik sembang kanak.  A whitepaper on this can be found
+at http://veggiespam.com/ils/</p>
+
+<p>Nota: Agar plug-in ini berfungsi, ZAP mesti dikonfigurasikan untuk menerima dan memproses imej.  To do this, go to the ZAP Options panel (Tools
+&rarr; Options), choose Display, and enable the checkbox for "Process images in
+HTTP requests/responses".  Di samping itu, imej ZAP tidak boleh ditapis melalui tetapan "Pengecualian Global" atau Sesi Properties untuk "Kecualikan dari Proksi". </p>
+
+<h2>Open Redirect</h2>
+Terbuka semula adalah salah satu daripada sepuluh kelemahan OWASP 2010. Pemeriksaan ini melihat input yang disediakan oleh pengguna dalam parameter rentetan pertanyaan dan data POST untuk mengenal pasti pengalihan terbuka yang mungkin. Pengalihan terbuka berlaku apabila aplikasi membolehkan maklum balas yang disediakan oleh pengguna (cth. http://nottrusted.com) untuk mengawal pengalihan keluar pejabat. Ini biasanya merupakan cara yang cukup tepat untuk mencari di mana 301 atau 302 pengalihan boleh dieksploitasi oleh spammer atau serangan pancingan data
+
+<h2>HTTP Server Response Header Scanner</h2>
+Ia menyemak tajuk tindak balas untuk mengetahui tajuk pelayan mana yang mungkin mengandungi butiran versi.
+Pada Ambang LOW akan menimbulkan peringatan berdasarkan kewujudan bidang pengepala sama ada rentetan versi dikesan atau tidak.
+
+<h2>Source Code Disclosure</h2>
+Kod Sumber Aplikasi telah didedahkan oleh pelayan web
+
+<h2>Strict Transport Security Header Scanner</h2>
+This scanner checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
+alerting if they're found.
+
+Alerts generated:
+<ul>
+ <li><b>Strict-Transport-Security Header Not Set: </b> If the response is HTTPS and the header is completely missing.</li>
+ <li><b>Strict-Transport-Security Disabled: </b> If the response is HTTPS and the max-age value is set to zero, thus resetting the browser's HSTS information for the site.</li>
+ <li><b>Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec): </b> If the response is HTTPS and there is more than one HSTS header on the response.</li>
+ <li><b>Strict-Transport-Security Missing Max-Age (Non-compliant with Spec): </b> If the response is HTTPS, a HSTS header is specified but the max-age value does not contain a number.</li>
+ <li><b>Strict-Transport-Security Defined via META (Non-compliant with Spec): </b> If the response body includes a META tag which attempts to define HSTS.</li>
+ <li><b>Strict-Transport-Security Header on Plain HTTP Response: </b> If the response is HTTP and the HSTS header is present.</li>
+ <li><b>Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec): </b> If the response is HTTPS and the HSTS header is present, but there are quotes preceding the max-age directive (quotes are allowed around the max-age value, but not around the directive itself).</li>
+ <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec): </b> If the response is HTTPS and a HSTS header is present, but there is some unexpected content (such as curly quotes). The expectation is that the content be printable ASCII.</li>
+</ul>
+
+<h2>Timestamp Disclosure</h2>
+A timestamp was disclosed by the application/web server
+
+<h2>User Controllable HTML Element Attribute (Potential XSS)</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
+
+<h2>User Controllable Charset</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
+
+<h2>User Controllable Javascript Event (XSS)</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+
+<h2>User Controllable Javascript Property (XSS)</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+
+<h2>Username Hash Found</h2>
+If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
+Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact. 
+
+<h2>X-Powered-By Header Information Leak</h2>
+This checks response headers for the presence of X-Powered-By details.
+
+<h2>X-Backend-Server Header Information Leak</h2>
+This checks response headers for the presence of X-Backend-Server details.
+
+<h2>Big Redirect</h2>
+This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
+A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+
+<h2>X-ChromeLogger-Data Header Information Leak</h2>
+This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
+
+<h2>X-Debug-Token Information Leak</h2>
+This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
+Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
+
+<h2>X-AspNet-Version/X-AspNetMvc-Version Header Information Leak</h2>
+This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
+
+
+</body>
+</html>

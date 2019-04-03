@@ -1,0 +1,20 @@
+version = "8"
+description = "Includes request and response data in XML reports and provides the ability to upload reports directly to a Code Dx server"
+
+zapAddOn {
+    addOnName.set("Code Dx Extension")
+    zapVersion.set("2.5.0")
+
+    manifest {
+        author.set("Code Dx, Inc.")
+        url.set("https://www.codedx.com/")
+    }
+}
+
+dependencies {
+    implementation("org.apache.httpcomponents:httpmime:4.5.2")
+    implementation("com.googlecode.json-simple:json-simple:1.1.1") {
+        // Not needed.
+        exclude(group = "junit")
+    }
+}
