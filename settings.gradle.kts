@@ -26,7 +26,8 @@ var addOns = listOf(
     "imagelocationscanner",
     "importLogFiles",
     "jsonview",
-    "jxbrowsers"
+    "jxbrowsers",
+    "jxbrowsers:jxbrowser"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }

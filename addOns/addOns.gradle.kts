@@ -19,6 +19,7 @@ val parentProjects = listOf(
 )
 
 val mainAddOns = listOf(
+    "jxbrowser"
 )
 val weeklyAddOns = mainAddOns + listOf(
     "accessControl",
