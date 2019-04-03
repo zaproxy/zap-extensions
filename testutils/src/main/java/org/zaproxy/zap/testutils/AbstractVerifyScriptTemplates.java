@@ -56,7 +56,7 @@ public abstract class AbstractVerifyScriptTemplates {
     protected abstract void parseTemplate(Path template) throws Exception;
 
     private List<Path> getScriptTemplates(String extension) throws Exception {
-        String dirName = "files/scripts/templates";
+        String dirName = "/scripts/templates";
         URL dirPath = getClass().getResource(dirName);
         assertThat("Directory " + dirName + " not found on the classpath.", dirPath, is(not(nullValue())));
 
