@@ -23,7 +23,8 @@ var addOns = listOf(
     "formhandler",
     "highlighter",
     "httpsInfo",
-    "imagelocationscanner"
+    "imagelocationscanner",
+    "importLogFiles"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
