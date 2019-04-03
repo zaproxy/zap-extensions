@@ -19,7 +19,8 @@ var addOns = listOf(
     "cspscanner",
     "customreport",
     "domxss",
-    "exportreport"
+    "exportreport",
+    "formhandler"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
