@@ -1,0 +1,71 @@
+{
+  "about": "This is a Zest script. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "zestVersion": "0.3",
+  "title": "Drop requests for specified URLs",
+  "description": "Drop requests for specified URLs.\nYou will need to edit the script to specify the URL regexes you want to drop",
+  "prefix": "",
+  "type": "Targeted",
+  "parameters": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {},
+    "elementType": "ZestVariables"
+  },
+  "statements": [
+    {
+      "comment": "Proxy  scripts are called for every request and response made through ZAP.\nIf the response.url parameter is null then the script has been called for a response, otherwise it will have been called for a request.\n",
+      "index": 1,
+      "elementType": "ZestComment"
+    },
+    {
+      "rootExpression": {
+        "length": 0,
+        "approx": 0,
+        "variableName": "response.url",
+        "not": false,
+        "elementType": "ZestExpressionLength"
+      },
+      "ifStatements": [
+        {
+          "comment": "Called for the request - nothing to do.",
+          "index": 3,
+          "elementType": "ZestComment"
+        }
+      ],
+      "elseStatements": [
+        {
+          "comment": "Called for the response.\nSet request.header to an empty string to drop the response for specified URLs.",
+          "index": 6,
+          "elementType": "ZestComment"
+        },
+        {
+          "rootExpression": {
+            "includeRegexes": [
+              "http://www.example.com.*",
+              "http://www.example2.com.*"
+            ],
+            "excludeRegexes": [],
+            "not": false,
+            "elementType": "ZestExpressionURL"
+          },
+          "ifStatements": [
+            {
+              "string": "",
+              "variableName": "request.header",
+              "index": 8,
+              "elementType": "ZestAssignString"
+            }
+          ],
+          "elseStatements": [],
+          "index": 7,
+          "elementType": "ZestConditional"
+        }
+      ],
+      "index": 2,
+      "elementType": "ZestConditional"
+    }
+  ],
+  "authentication": [],
+  "index": 0,
+  "elementType": "ZestScript"
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Yerine geçen
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Yerine geçen</h1>
+Değiştirici, sorgu ve yanıtlarda string değiştirmek için kolay bir yoldur.
+<p>
+Seçeneklerden ve varsayılan olarak '&lt;ctrl&gt; R' kısayolu ile hızlıca erişilebilir.
+<p>
+Replacer Seçenekler paneli, ihtiyacınız olan birçok değiştirme kuralını tanımlamanıza olanak sağlar.<br>
+Her kural aşağıdaki alanlarla tanımlanır:
+<h3>Açıklama</h3>
+Kuralın tanınmasına imkan veren bir açıklama.
+
+<h3>Eşleşme Türü</h3>
+Biri olabilir:
+
+<h4>Başlık Talebi (eğer mevcut değilse eklenecek)</h4>
+Bu durumda 'Eşleşme Dizisi' bir başlık adı olarak ele alınır. 
+Eğer başlık mevcutsa, değer, yedek metin ile değiştirilecektir. 
+Eğer yedek metin boşsa, başlık kaldırılır (eğer mevcutsa).
+Başlık mevcut değilse ve yedek metin varsa, başlık eklenecektir.
+
+<h4>Başlık Talebi Dizisi</h4>
+Bu durumda 'Eşleşme Dizisi' bir dize veya düzenli ifadeler olarak ele alınacaktır.
+Eğer başlık talebinde varsa, yedek metinle değiştirilir.
+
+<h4>Gövde Talebi Dizisi</h4>
+Bu durumda 'Eşleşme Dizisi' bir dize veya düzenli ifadeler olarak ele alınacaktır.
+Gövde talebinde varsa, yerini yedek metinle değiştirir.
+
+<h4>Yanıt Başlığı (eğer mevcut değilse eklenir)</h4>
+Bu durumda 'Eşleşme Dizisi' bir başlık adı olarak ele alınır. 
+Eğer başlık var ise, değer, yedek metin ile değiştirilecek. 
+Eğer yedek metin boş ise, başlık kaldırılır(eğer var ise).
+Başlık yok ise ve yedek metin boş değilse, başlık eklenecektir.
+
+<h4>Üstbilgi Talep Dizisi</h4>
+Bu durumda 'Eşleşme Dizisi' bir dize veya düzenli ifadeler olarak ele alınacaktır.
+Eğer yanıt başlığında var ise yedek metin ile değiştirilir.
+
+<h4>Gövde Talep Dizisi</h4>
+Bu durumda 'Eşleşme Dizisi' bir dize veya düzenli ifadeler olarak ele alınacaktır.
+Eğer yanıt gövdesinde var ise yedek metin ile değiştirelecektir.
+
+<h3>Eşleşme Dizisi</h3>
+Neyin değiştirilmesi gerektiğini belirlemek için kullanılacak dize - Ayrıntılar için Eşleşme Türü' ne bakınız.
+
+<h3>Eşleşme Düzenli İfadeleri</h3>
+Eğer ayarlanırsa Eşleşme Dizesi bir düzenli ifade olarak değerlendirilir.
+Asıl başlıkları eşleştirirken bu seçenek devre dışı bırakılır.
+
+<h3>Değiştirme Dizesi</h3>
+Verilen seçimin yerini alacak yeni dize.
+
+<h3>Etkinleştir</h3>
+Belirlenmezse, kural geçerli olmayacaktır.
+
+<h3>İleri</h3>
+Eğer belirlenirse kuralın hangi 'başlatıcılar' için uygulanmasını belirlemenize izin veren ek bir sekme gösterilir.
+Mesaj gönderebilen ve alabilen her ZAP bileşeni ayrı bir başlatıcıdır, bu nedenle kuralın tam olarak ne zaman uygulanacağı konusunda çok ince bir tane kontrolü sağlar.
+
+<p>
+Eğer metin ne zaman ve nasıl değiştireleceği ile ilgili daha fazla kontrole ihtiyacınız var ise, Zam Komut Dosyası Konsolu'nu kullanabilirsiniz.
+ZAP mesajlar konusunda size tam kontrol verir.
+
+</body>
+</html>

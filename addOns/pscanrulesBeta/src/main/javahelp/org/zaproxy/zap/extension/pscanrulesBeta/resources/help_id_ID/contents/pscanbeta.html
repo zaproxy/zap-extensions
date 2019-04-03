@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Aturan Pindai Pasif - beta
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Aturan Pindai Pasif - beta</h1>
+Aturan pemindaian pasif kualitas rilis berikut disertakan dalam add-on ini:
+
+<h2>Ketidakcocokan Charset</h2>
+<p>Pemeriksaan ini mengidentifikasi respons di mana tajuk Jenis-Konten HTTP menyatakan sebuah charset berbeda dari charset yang ditetapkan di dalam tubuh HTML atau XML. Jika ada ketidakcocokan charset antara tajuk HTTP dan tubuh konten peramban Web dapat dipaksa untuk berada dalam mode mengendus konten yang tidak diinginkan untuk menentukan set karakter konten yang benar.</p>
+<p>Pemindai menangani berbagai kondisi tergantung pada ambang yang ditetapkan untuk pemindai, sebagai berikut:</p>
+<ul>
+  <li>Semua Ambang:
+    <ul>
+      <li>Tajuk Versus Charset Jenis Konten Meta - Pernyataan dalam tajuk Jenis Konten HTTP tidak cocok dengan apa yang dinyatakan dalam tag Jenis Konten META.</li>
+      <li>Tajuk Versus Charset Meta - Pernyataan dalam tajuk Jenis Konten HTTP tidak cocok dengan apa yang dinyatakan dalam charset META.</li>
+    </ul>
+  </li>
+  <li>Ambang Rendah:
+    <ul>
+      <li>Charset Jenis Konten Meta Hilang - Respons tidak berisi pernyataan Jenis Konten META yang mungkin mengabaikan klien yang lebih lama.</li>
+      <li>Charset Meta Versus Charset Jenis Konten Meta - Respons berisi pernyataan Jenis Konten META dan Charset META, dan keduanya tidak cocok.</li>
+    </ul>
+  </li>
+</ul>
+Referensi lebih lanjut:<br>
+<a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
+<a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
+
+<h2>Kuki - Loosely Scoped</h2>
+Kuki dapat ditentukan lingkupnya oleh ranah atau jalur. Pemeriksaan ini hanya berkaitan dengan lingkup ranah. Lingkup ranah yang diterapkan pada sebuah kuki menentukan ranah mana yang bisa mengaksesnya. Sebagai contoh, sebuah kuki dapat ditentukan lingkupnya secara ketat menjadi subranah misalnya www.nottrusted.com, atau loosely scoped pada ranah induk misalnya nottrusted.com. Pada kasus yang terakhir, subranah apapun dari nottrusted.com dapat mengakses kuki. Kuki berjenis loosely scoped sering ditemukan di mega-aplikasi seperti google.com dan live.com.
+
+<h2>Penanggulangan CSRF</h2>
+Plugin CSRFCountermeasures mengidentifikasi kerentanan "potensial" dengan kurangnya CSRF countermeasures yang diketahui di halaman-halaman dengan formulir.<br>
+Pos 2.5.0 Anda dapat menentukan daftar pengidentifikasi yang dipisahkan dengan tanda koma di 
+<code>rules.csrf.ignorelist</code> parameter melalui panel Opsi 'Konfigurasi aturan'.
+Formulir apapun dengan nama atau tanda pengenal yang cocok dengan salah satu dari pengidentifikasi ini akan diabaikan saat pemindaian token Anti-CSRF yang hilang.
+Hanya gunakan fitur ini untuk mengabaikan FORMs yang anda tahu adalah aman, misalnya bentuk-bentuk pencarian.
+
+
+<h2>Pengungkapan Informasi - Pesan Kesalahan Debug</h2>
+Pemindai pasif ini memeriksa konten dari respons web terhadap fragmen pesan Kesalahan Awakutu.
+Akses terhadap rincian semacam itu dapat memberi seseorang yang jahat suatu alat yang bisa digunakan untuk menyalahgunakan situs web.
+Mereka juga bisa membocorkan data yang tidak ditujukan untuk konsumsi pengguna akhir.
+
+<h2>Pengungkapan Informasi: Di URL</h2>
+Upaya untuk mengidentifikasi keberadaan rincian sensitif di dalam URI yang dikunjungi (ini termasuk parameter, nama dokumen, nama direktori, dsb).
+
+<h2>Pengungkapan Informasi - Pesan Kesalahan Debug</h2>
+Mengidentifikasi keberadaan rincian sensitif dalam bidang tajuk Perujuk dari permintaan HTTP (ini bisa termasuk parameter, nama dokumen, nama direktori, dsb).
+
+<h2>Keterbukaan Informasi - Komentar Mencurigakan</h2>
+Menganalisa konten web untuk mengidentifikasi komentar yang berisi rincian yang mungkin sensitif. Yang dapat menyebabkan serangan lebih lanjut atau pemaparan data yang tidak diinginkan.
+
+<h2>Tidak memadai otentikasi</h2>
+Otentikasi dasar atau ringkasan HTTP telah digunakan selama koneksi tanpa jaminan. Kredensial dapat dibaca dan kemudian digunakan kembali oleh seseorang yang memiliki akses ke jaringan.
+
+<h2>JSF ViewState Tidak aman</h2>
+Tanggapan pada URL berikut berisi nilai ViewState yang tidak memiliki perlindungan kriptografi.
+
+<h2>Parameter Polusi Http</h2>
+Mencari konten respons untuk formulir HTML yang gagal menentukan elemen tindakan. Versi 3 dari
+Java Servlet spec memanggil agregasi string kueri dan mengirim elemen data yang bisa menyebabkan penanganan yang tidak diinginkan dari data yang dikendalikan oleh penggguna. Hal ini dapat mempengaruhi kerangka kerja dan teknologi.
+
+<h2>VIEWSTATE</h2>
+Upaya identifikasi parameter VIEWSTATE dan menganalisa parameter tersebut untuk bermacam praktik yang bagus atau tindakan perlindungan seperti: 
+<ul>
+	<li>Setiap yang berbasis pada ASP.NET 1.0 dan 1.1.</li>
+	<li>VIEWSTATE Lacking signature.</li>
+	<li>Split VIEWSTATE.</li>
+	<li>VIEWSTATE berisi surel atau pola IP.</li>
+</ul>
+
+</body>
+</html>

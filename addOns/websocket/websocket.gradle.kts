@@ -36,7 +36,7 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(files("$rootDir/lib/fuzz-beta-4.jar"))
+    compileOnly(parent!!.childProjects.get("fuzz")!!)
 
     testImplementation(project(":testutils"))
 }

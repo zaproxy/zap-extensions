@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Ang Palitan
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Ang Palitan</h1>
+Ang palitan ay isang madaling paraan para mapalitan ang mga string sa mga kahilingan at mga tugon.
+<p>
+Ito ay accessible gamit ang mga opsyon at bilang default ito ay mabilis na ma-access sa pamamagitan ng '&lt;ctrl&gt; R' hotkey.
+<p>
+Ang palitan na mga opsyon panel ay nagpapahintulot sa iyo na tukuyin ang maraming mga pinapalitang mga patakaran kapag kailangan mo.<br>
+Bawat patakaran ay tinukoy sa pamamagitan ng sumusunod na mga patlang:
+<h3>Deskripsyon</h3>
+Ang deskripsyon na nagbibigay-daan sa iyo upang matukoy ang patakaran.
+
+<h3>Tugmang Uri</h3>
+Maaring isa sa:
+
+<h4>Request Header (ay magdagdag kung hindi nagpakita)</h4>
+sa pagkakataong ito ang 'Tugmang String' ay ituturing bilang isang pangalan ng header. 
+Kung ang header ay meron kung gayon ang halaga nito ay mapapalitan ng replacement na teksto. 
+Kung ang replacement na teksto ay walang laman kung gayon ang header ay tatanggalin (kung mayroon).
+Kung ang header ay hindi nagpakita at ang pagpapalit ng teksyo ay hindi walang laman na header ay magdagdag.
+
+<h4>Humiling ng Header na String</h4>
+Sa pagkakataon na ito ay 'Tugma na String' ay itinuturing bilang isang string o regex na expression.
+Kung ito ay nagpapakita sa kahilingan na header saka ito ay nagpapalit sa pamamagitan ng pagpapalit ng teksto.
+
+<h4>Humiling ng Katawan ng String</h4>
+Sa pagakakataon na ito ay 'Tugma na String' ay itinuturing bilang isang string o regex na expression.
+Kung ito ay nagpapakita sa kahilingan na katawan saka ito ay nagpapalit sa pamamagitan ng pagpapalit ng teksto.
+
+<h4>Mga Sagot sa Header (ay magdagdag kung hindi nagpapakita)</h4>
+Sa pagkakataon ito ang 'Tugmang String' ay itinuturing bilang isang pangalan ng header. 
+Kung ang header ay nagpapakita saka ang halaga nito ay mapapalitan sa pamamagitan ng pagpalit ng teksto. 
+Kung ang pagpapalit ng teksto ay walang laman kung gayon ang header ay matatanggal (kung mayroon).
+Kung ang header ay hindi nagpapakita at ang pagpalit ng teksto ay hindi walang laman na header ay magdagdag.
+
+<h4>Sagot ng Header na String</h4>
+Sa pagkakaon na ito ay 'Tugma na String' ay itinuturing bilang isang string o regex na expression.
+Kung ito ay nagpapakita sa sagot na header saka ito ay nagpapalit sa pamamagitan ng pagpapalit ng teksto.
+
+<h4>Sagot sa Katawan ng String</h4>
+Sa pagkakataon na ito ay 'Tugma na String' ay itinuturing bilang isang string o regex na expression.
+Kung ito ay nagpapakita sa sagot na katawan saka ito ay nagpapalit sa pamamagitan ng pagpapalit ng teksto.
+
+<h3>Tugmang String</h3>
+Ang string na gagamitin para malaman kung ano ang dapat palita - tingnan ang Kapareho na uri para sa mga detalye.
+
+<h3>Tugma na RegexMatch Regex</h3>
+Kung itakda pagkatapos sa tugma na string ay ituturing bilang isang regex na expression.
+Ang opsyon na ito ay hindi pinagana kapag ang pagkumpara sa kasalukuyang mga header.
+
+<h3>Pagpapalit ng String</h3>
+Ang bagong string na magpapalit sa itinutukoy na pagpipilian.
+
+<h3>Paganahin</h3>
+Kung hindi nakatakda saka ang patakaran ay hindi mag-apply.
+
+<h3>Advanced</h3>
+Kung itakda saka ang dagdag na tab ay makikita na nagbibigay-daan sa iyo para tumukoy kung sino ang 'mga initiator' ang patakaran ay dapat naka-apply.
+Bawat ZAP na komponent na maaaring magpapadala at tumanggap ng mga mensahe ay isang hiwalay na pagsimula, kaya ito ay nagbibigay sa iyo ng pinaka maayos na butil na kontrol sa eksakto kapag ang patakaran ay dapat ginawa.
+
+<p>
+Kung ikaw ay nangangailangan nang mas maraming kontrol kapag at papaano ang teksto na dapat mapalitan pagkatapos ikaw ay gumamit ng ZAP Script na console na nagbibigay sayo ng kumpletong kontrol sa ZAP na mga mensahe.
+
+</body>
+</html>

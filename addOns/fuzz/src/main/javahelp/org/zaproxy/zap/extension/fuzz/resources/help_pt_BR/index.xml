@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+    <indexitem text="Conceitos de difusor" target="addon.fuzzer.concepts" />
+    <indexitem text="Diálogo do difusor" target="addon.fuzzer.dialogue"/>
+    <indexitem text="Caixa de diálogo dos processadores de localização do Fuzzer" target="addon.fuzzer.locations"/>
+    <indexitem text="Diálogo de Payloads do fuzzer" target="addon.fuzzer.httpmessageprocessors"/>
+    <indexitem text="Diálogo de processadores de Payload do fuzzer" target="addon.fuzzer.payloads"/>
+    <indexitem text="Opções de difusor/fuzzer" target="addon.fuzzer.processors"/>
+    <indexitem text="Aba do fuzzer (difusor)" target="addon.fuzzer.options"/>
+    <indexitem text="Fuzzer Tab" target="addon.fuzzer.tab"/>
+</index>
