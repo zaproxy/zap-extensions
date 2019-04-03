@@ -9,7 +9,8 @@ var addOns = listOf(
     "accessControl",
     "amf",
     "ascanrulesAlpha",
-    "authstats"
+    "authstats",
+    "birtreports"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
