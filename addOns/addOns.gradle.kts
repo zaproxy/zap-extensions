@@ -24,7 +24,8 @@ val mainAddOns = listOf(
     "fuzz",
     "importurls",
     "invoke",
-    "replacer"
+    "replacer",
+    "scripts"
 )
 val weeklyAddOns = mainAddOns + listOf(
     "ascanrulesBeta",
