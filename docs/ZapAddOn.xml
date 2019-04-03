@@ -1,0 +1,36 @@
+<zapaddon>
+	<name>Short text name (no HTML)</name>
+	<version></version>			<!-- Integer that increments with each (released) change -->
+	<semver></semver>			<!-- Optional, semantic version of the add-on -->
+	<description>Longer test description (no HTML), but not too long!</description>
+	<author>Author (no HTML)</author>
+	<url/>						<!-- Optional URL to more info, eg on the zap-extensions wiki -->
+	<changes/>					<!-- Optional, text summary of changes since the last version -->
+	<dependencies>					<!-- Optional, dependencies of the add-on -->
+		<javaversion></javaversion> <!-- Optional, minimum Java version (major.min) (e.g. "1.7", "1.8", "1.9") -->
+		<addons>					<!-- Optional, add-on dependencies -->
+			<addon>
+				<id></id>				<!-- Mandatory, id of the add-on -->
+				<semver></semver>		<!-- Optional, semantic version of the add-on, as exact version (e.g. 2.0.0) or range (e.g. 2.* or 2.3.*), recommended way to depend on other add-ons -->
+				<not-before-version/>	<!-- Optional, this add-on can only be run from the specified file version (e.g. 12) -->
+				<not-from-version/>		<!-- Optional, this add-on can not be run from the specified file version (e.g. 14) -->
+			</addon>
+		</addons>
+	</dependencies>
+	<bundle prefix="example">com.example.Messages</bundle> <!-- Optional, declares a resource bundle to be automatically added/removed by core. The prefix attribute is used to add the bundle to Constant.messages. -->
+	<helpset localetoken="%LC%">com.example.help%LC%.helpset</helpset>  <!-- Optional, declares a helpset to be automatically added/removed by core. The locale token is used to indicate where in the base name the locale might be present. -->
+	<extensions>				<!-- Optional, to be used if this addon includes extensions -->
+		<extension/>			<!-- Full class name of the extension - can be multiple of these -->
+	</extensions>
+	<ascanrules>				<!-- Optional, to be used if this addon includes active scan rules -->
+		<ascanrule/>			<!-- Full class name of the active scan rule - can be multiple of these -->
+	</ascanrules>
+	<pscanrules>				<!-- Optional, to be used if this addon includes passive scan rules -->
+		<pscanrule/>			<!-- Full class name of the passive scan rule - can be multiple of these -->
+	</pscanrules>
+	<files>						<!-- Optional, to be used if this addon includes raw files -->
+		<file/>					<!-- Relative file name (to this package, and the users directory) - can be multiple of these -->
+	</files>
+	<not-before-version/>		<!-- Optional, to be used if this addon can only be run from the specified version e.g. 2.1.0 -->
+	<not-from-version/>			<!-- Optional, to be used if this addon can not run from the specified version e.g. 2.4.0 -->
+</zapaddon>
