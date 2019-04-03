@@ -14,6 +14,7 @@ var addOns = listOf(
     "frontendscanner",
     "fuzzdb",
     "gettingStarted",
+    "groovy",
     "onlineMenu",
     "pscanrules",
     "quickstart",
