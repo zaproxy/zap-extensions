@@ -38,7 +38,8 @@ var addOns = listOf(
     "revisit",
     "saml",
     "sequence",
-    "simpleexample"
+    "simpleexample",
+    "soap"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
