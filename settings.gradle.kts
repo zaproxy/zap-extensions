@@ -29,7 +29,8 @@ var addOns = listOf(
     "jxbrowsers",
     "jxbrowsers:jxbrowser",
     "jxbrowsers:jxbrowserlinux64",
-    "jxbrowsers:jxbrowsermacos"
+    "jxbrowsers:jxbrowsermacos",
+    "jxbrowsers:jxbrowserwindows"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
