@@ -8,7 +8,8 @@ include("testutils")
 var addOns = listOf(
     "ascanrules",
     "coreLang",
-    "directorylistv1"
+    "directorylistv1",
+    "directorylistv2_3"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
