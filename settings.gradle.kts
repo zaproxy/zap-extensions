@@ -40,7 +40,8 @@ var addOns = listOf(
     "sequence",
     "simpleexample",
     "soap",
-    "sse"
+    "sse",
+    "tlsdebug"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
