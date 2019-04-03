@@ -13,7 +13,8 @@ var addOns = listOf(
     "birtreports",
     "browserView",
     "bugtracker",
-    "callgraph"
+    "callgraph",
+    "cmss"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
