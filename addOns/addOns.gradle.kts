@@ -18,6 +18,7 @@ val parentProjects = listOf(
 )
 
 val mainAddOns = listOf(
+    "ascanrules"
 )
 val weeklyAddOns = mainAddOns + listOf(
 )
