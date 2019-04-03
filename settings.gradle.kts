@@ -8,7 +8,8 @@ include("testutils")
 var addOns = listOf(
     "alertFilters",
     "alertReport",
-    "ascanrulesBeta"
+    "ascanrulesBeta",
+    "beanshell"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
