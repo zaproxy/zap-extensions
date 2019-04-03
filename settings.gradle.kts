@@ -14,7 +14,8 @@ var addOns = listOf(
     "diff",
     "fuzz",
     "importurls",
-    "invoke"
+    "invoke",
+    "jruby"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
