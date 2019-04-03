@@ -23,7 +23,8 @@ var addOns = listOf(
     "replacer",
     "scripts",
     "sqliplugin",
-    "svndigger"
+    "svndigger",
+    "tips"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
