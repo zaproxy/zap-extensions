@@ -37,7 +37,8 @@ var addOns = listOf(
     "requester",
     "revisit",
     "saml",
-    "sequence"
+    "sequence",
+    "simpleexample"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
