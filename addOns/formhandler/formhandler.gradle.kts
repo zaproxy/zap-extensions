@@ -1,0 +1,11 @@
+version = "3"
+description = "This Form Handler Add-on allows a user to define field names and values to be used in a form's fields. Fields can be added, modified, enabled, and deleted for use in form fields."
+
+zapAddOn {
+    addOnName.set("Form Handler")
+    zapVersion.set("2.6.0")
+
+    manifest {
+        author.set("ZAP Dev Team")
+    }
+}

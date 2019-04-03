@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Akses Kontrol Pengujian
+    </title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Akses Kontrol Pengujian</h1>
+
+<p>
+    Ini add-on memungkinkan pengguna untuk membandingkan bagian-bagian mana dari web-aplikasi yang tersedia untuk beberapa pengguna, melakukan akses kontrol pengujian dan identifikasi potensi akses kontrol masalah. Hal ini memungkinkan konfigurasi aturan akses dan melakukan serangan penuh ditujukan untuk membantu mengidentifikasi bagian-bagian dari aplikasi web yang dapat diakses oleh klien tidak sah.
+</p>
+
+<p>
+    Ada dua konsep utama yang terkait dengan add-on ini yang harus dijelaskan: <b>Aturan Akses</b> dan <b>pengujian prosedur</b>.
+</p>
+
+<h3>Aturan Akses</h3>
+
+<p>
+    Dalam urutan untuk mengidentifikasi potensi masalah kontrol akses, kebutuhan ZAP untuk mengetahui bagian mana dari aplikasi web yang
+    seharusnya untuk bisa diakses oleh pengguna yang mana saja. Di ZAP, nama untuk aturan ini adalah: <i>Aturan Akses</i> dan umumnya memiliki
+artinya: "<i>PageA harus/seharusnya tidak dapat diakses oleh UserX</i>".
+</p>
+
+<p>Aturan yang dikonfigurasi untuk Konteks dan, untuk masing-masing Pengguna dari Konteks itu, Situs masing-masing Node (halaman web) akan
+terkait dengan salah satu nilai berikut:</p>
+<ul>
+    <li><b>Diperbolehkan</b> sumber <b>dapat</b> dapat diakses oleh Pengguna yang mengacu aturan</li>
+    <li><b>Ditolak</b> sumber <b>tidak</b> dapat diakses oleh Pengguna yang mengacu aturan</li>
+    <li><b>Unknown</b> - <b>tidak ada informasi</b> mengenai apakah sumber daya yang harus atau tidak dapat diakses
+untuk Pengguna yang mengacu aturan
+    </li>
+</ul>
+
+<p>
+    Dalam rangka untuk menyederhanakan aturan akses definisi proses, ZAP adalah memanfaatkan pohon-berdasarkan struktur URLs.
+    Ketika menganalisis aturan, sebuah kesimpulan algoritma ini digunakan untuk mendeteksi pencocokan aturan untuk masing-masing node berdasarkan induknya di URL jika tidak ada aturan khusus yang ditetapkan. Ini berarti bahwa, ketika mengkonfigurasi aturan akses, hanya 1
+aturan harus ditetapkan secara eksplisit untuk seluruh sub, sedangkan untuk node lain aturan disimpulkan. Rincian lebih lanjut
+tentang hal ini dapat ditemukan pada Akses Kontrol <a href="contextOptions.html">Konteks</a> halaman bantuan.</td>
+</p>
+
+<h3>Prosedur pengujian</h3>
+
+<p> Secara keseluruhan, dalam rangka untuk sepenuhnya melakukan akses kontrol pengujian untuk aplikasi web, langkah berikutnya yang harus diikuti:</p>
+<ul>
+    <li>tester mendefinisikan set Pengguna dan bagaimana mereka melakukan otentikasi;
+    </li>
+    <li>tester mendefinisikan bagaimana ZAP dapat mengidentifikasi un-resmi permintaan (melalui Otorisasi panel dalam Sidang
+Properties);
+    </li>
+    <li>web-aplikasi yang digali baik secara manual atau melalui laba-Laba;</li>
+    <li>tester menentukan Aturan Akses untuk masing-masing Pengguna yang terkait dengan Konteks, pada dasarnya membiarkan ZAP tahu bagian mana dari aplikasi web yang seharusnya dapat diakses oleh pengguna;
+    </li>
+    <li>sebuah 'serangan' yang dilakukan oleh ZAP dengan mencoba untuk mengakses setiap URL dari web-app dari perspektif setiap
+pengguna;
+    </li>
+    <li>dalam Status yang bersangkutan Tab, hasil yang ditampilkan, menunjukkan halaman-halaman mana yang diakses berhasil oleh pengguna dan menandai kasus-kasus di mana aturan akses di mana tidak diikuti.
+    </li>
+</ul>
+
+<h2>Lihat juga</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="tab.html">Akses Kontrol Pengujian Tab</a></td>
+        <td>untuk keterangan status tab digunakan oleh add-on</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="contextOptions.html">Akses Kontrol Konteks pilihan</a></td>
+        <td>untuk belajar tentang konteks terkait pilihan</td>
+    </tr>
+</table>
+
+</body>
+</html>

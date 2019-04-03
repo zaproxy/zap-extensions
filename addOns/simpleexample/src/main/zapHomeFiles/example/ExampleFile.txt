@@ -1,0 +1,1 @@
+This is an example text file that will be copied underneath the users ZAP directory when they install the add-on.
