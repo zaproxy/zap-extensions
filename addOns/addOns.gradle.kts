@@ -15,6 +15,7 @@ val zapCoreHelpWikiDir = "$rootDir/../zap-core-help-wiki/"
 val zapExtensionsWikiDir = "$rootDir/../zap-extensions-wiki/"
 
 val parentProjects = listOf(
+    "webdrivers"
 )
 
 val mainAddOns = listOf(
