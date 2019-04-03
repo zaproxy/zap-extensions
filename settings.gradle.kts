@@ -8,7 +8,8 @@ include("testutils")
 var addOns = listOf(
     "accessControl",
     "amf",
-    "ascanrulesAlpha"
+    "ascanrulesAlpha",
+    "authstats"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
