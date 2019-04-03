@@ -21,7 +21,8 @@ val mainAddOns = listOf(
     "alertFilters",
     "bruteforce",
     "diff",
-    "fuzz"
+    "fuzz",
+    "importurls"
 )
 val weeklyAddOns = mainAddOns + listOf(
     "ascanrulesBeta"
