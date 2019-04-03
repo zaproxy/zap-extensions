@@ -24,6 +24,7 @@ val mainAddOns = listOf(
     "gettingStarted",
     "onlineMenu",
     "pscanrules",
+    "quickstart",
     "reveal",
     "saverawmessage",
     "savexmlmessage",

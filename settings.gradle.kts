@@ -16,6 +16,7 @@ var addOns = listOf(
     "gettingStarted",
     "onlineMenu",
     "pscanrules",
+    "quickstart",
     "reveal",
     "saverawmessage",
     "savexmlmessage",
