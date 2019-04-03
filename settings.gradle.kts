@@ -13,7 +13,8 @@ var addOns = listOf(
     "directorylistv2_3_lc",
     "frontendscanner",
     "fuzzdb",
-    "gettingStarted"
+    "gettingStarted",
+    "onlineMenu"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }

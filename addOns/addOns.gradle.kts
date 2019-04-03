@@ -21,7 +21,8 @@ val mainAddOns = listOf(
     "ascanrules",
     "coreLang",
     "directorylistv1",
-    "gettingStarted"
+    "gettingStarted",
+    "onlineMenu"
 )
 val weeklyAddOns = mainAddOns + listOf(
 )
