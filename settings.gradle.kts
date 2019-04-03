@@ -29,7 +29,8 @@ var addOns = listOf(
     "treetools",
     "webdrivers",
     "webdrivers:webdriverlinux",
-    "webdrivers:webdrivermacos"
+    "webdrivers:webdrivermacos",
+    "webdrivers:webdriverwindows"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
