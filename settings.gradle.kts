@@ -9,7 +9,8 @@ var addOns = listOf(
     "ascanrules",
     "coreLang",
     "directorylistv1",
-    "directorylistv2_3"
+    "directorylistv2_3",
+    "directorylistv2_3_lc"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
