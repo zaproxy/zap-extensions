@@ -11,7 +11,8 @@ var addOns = listOf(
     "ascanrulesAlpha",
     "authstats",
     "birtreports",
-    "browserView"
+    "browserView",
+    "bugtracker"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }

@@ -1,0 +1,17 @@
+# Changelog
+All notable changes to this add-on will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## Unreleased
+
+- Remove unused resource message.
+
+## 2 - 2017-05-26
+
+- Added help for the add-on
+
+## 1 - 2016-08-25
+
+- First version
+
