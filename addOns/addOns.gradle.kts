@@ -28,7 +28,8 @@ val mainAddOns = listOf(
     "reveal",
     "saverawmessage",
     "savexmlmessage",
-    "selenium"
+    "selenium",
+    "spiderAjax"
 )
 val weeklyAddOns = mainAddOns + listOf(
 )
