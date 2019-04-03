@@ -21,6 +21,7 @@ val mainAddOns = listOf(
     "alertFilters"
 )
 val weeklyAddOns = mainAddOns + listOf(
+    "ascanrulesBeta"
 )
 
 mapOf("main" to mainAddOns, "weekly" to weeklyAddOns).forEach { entry ->

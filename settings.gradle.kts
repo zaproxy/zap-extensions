@@ -7,7 +7,8 @@ include("testutils")
 // Keep the add-ons in alphabetic order.
 var addOns = listOf(
     "alertFilters",
-    "alertReport"
+    "alertReport",
+    "ascanrulesBeta"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
