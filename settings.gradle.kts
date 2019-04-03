@@ -22,7 +22,8 @@ var addOns = listOf(
     "exportreport",
     "formhandler",
     "highlighter",
-    "httpsInfo"
+    "httpsInfo",
+    "imagelocationscanner"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
