@@ -25,7 +25,8 @@ var addOns = listOf(
     "sqliplugin",
     "svndigger",
     "tips",
-    "tokengen"
+    "tokengen",
+    "treetools"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
