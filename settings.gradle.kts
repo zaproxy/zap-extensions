@@ -28,7 +28,8 @@ var addOns = listOf(
     "tokengen",
     "treetools",
     "webdrivers",
-    "webdrivers:webdriverlinux"
+    "webdrivers:webdriverlinux",
+    "webdrivers:webdrivermacos"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
