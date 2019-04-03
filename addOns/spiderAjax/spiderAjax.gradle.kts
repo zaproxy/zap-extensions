@@ -19,6 +19,12 @@ zapAddOn {
             }
         }
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.spiderAjax.AjaxSpiderAPI")
+        options.set("org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/spiderAjax/resources/Messages.properties"))
+    }
 }
 
 dependencies {

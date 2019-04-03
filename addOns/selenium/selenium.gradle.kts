@@ -12,6 +12,12 @@ zapAddOn {
         semVer.set("2.0.0")
         author.set("ZAP Dev Team")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.selenium.SeleniumAPI")
+        options.set("org.zaproxy.zap.extension.selenium.SeleniumOptions")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/selenium/resources/Messages.properties"))
+    }
 }
 
 dependencies {
