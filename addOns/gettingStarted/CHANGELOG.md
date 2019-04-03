@@ -1,0 +1,45 @@
+# Changelog
+All notable changes to this add-on will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## Unreleased
+
+- Update Indonesian translation
+
+## 9 - 2018-02-13
+
+- Added the Spanish, Filipino and Indonesian translations
+
+## 8 - 2017-11-27
+
+- Updated for 2.7.0
+
+## 7 - 2017-11-24
+
+- Correct step when importing Root CA cert in Firefox (Issue 3724)
+
+## 6 - 2017-04-06
+
+- Updated for 2.6.0.
+
+## 5 - 2016-06-02
+
+- Updated for the new 2.5 guide
+
+## 4 - 2015-06-18
+
+- Updated to point to GitHub
+
+## 3 - 2015-04-13
+
+- Updated for 2.4 and promoted to release
+
+## 2 - 2014-06-09
+
+- Added (very basic) help and promoted to beta
+
+## 1 - 2014-05-20
+
+- First version
+
