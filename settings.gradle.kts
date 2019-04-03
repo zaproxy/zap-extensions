@@ -7,7 +7,8 @@ include("testutils")
 // Keep the add-ons in alphabetic order.
 var addOns = listOf(
     "ascanrules",
-    "coreLang"
+    "coreLang",
+    "directorylistv1"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }

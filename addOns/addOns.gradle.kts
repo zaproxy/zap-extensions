@@ -19,7 +19,8 @@ val parentProjects = listOf(
 
 val mainAddOns = listOf(
     "ascanrules",
-    "coreLang"
+    "coreLang",
+    "directorylistv1"
 )
 val weeklyAddOns = mainAddOns + listOf(
 )
