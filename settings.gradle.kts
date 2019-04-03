@@ -22,7 +22,8 @@ var addOns = listOf(
     "pscanrulesBeta",
     "replacer",
     "scripts",
-    "sqliplugin"
+    "sqliplugin",
+    "svndigger"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
