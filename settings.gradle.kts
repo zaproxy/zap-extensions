@@ -18,7 +18,8 @@ var addOns = listOf(
     "codedx",
     "cspscanner",
     "customreport",
-    "domxss"
+    "domxss",
+    "exportreport"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
