@@ -1,0 +1,26 @@
+# Changelog
+All notable changes to this add-on will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## Unreleased
+
+- Remove unused library.
+
+## 4 - 2018-06-27
+
+- Update minimum ZAP version to 2.5.0.
+- Fix "Content only in scope" handling (Issue 2492).
+
+## 3 - 2017-11-28
+
+- Minor code changes.
+
+## 2 - 2016-06-02
+
+- Allow to update/uninstall the add-on without restarting ZAP.
+
+## 1 - 2015-12-04
+
+
+
