@@ -22,7 +22,8 @@ val mainAddOns = listOf(
     "jxbrowser",
     "jxbrowserlinux64",
     "jxbrowsermacos",
-    "jxbrowserwindows"
+    "jxbrowserwindows",
+    "jxbrowserwindows64"
 )
 val weeklyAddOns = mainAddOns + listOf(
     "accessControl",
