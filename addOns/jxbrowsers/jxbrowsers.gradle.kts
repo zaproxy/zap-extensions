@@ -6,15 +6,15 @@ import org.zaproxy.gradle.tasks.DownloadWebDriver
 
 description = "Common configuration of the JxBrowser add-ons."
 
-val jxBrowserVersion = "6.23"
+val jxBrowserVersion = "6.23.1"
 val chromeDriverVersion = "2.44"
 
 val libsHashes = mapOf(
-    "jxbrowser-$jxBrowserVersion.jar" to "c1643df3628ef74c29a5f1974afb158197efed11535d9e69ac12ded7cef2ebfe",
-    "jxbrowser-linux64-$jxBrowserVersion.jar" to "534ccde4475fbb80b7c40f8a355f17282d50a30697bdee1e25e69326818ccd50",
-    "jxbrowser-mac-$jxBrowserVersion.jar" to "069d9dc3392e6700f5c3a8fb11cac7c0541197b5da28e6295561d4fc53200136",
-    "jxbrowser-win32-$jxBrowserVersion.jar" to "44a342bb39858ea9d751faa82432d66e39481f4cda84bb72eb7f43ce09f6d048",
-    "jxbrowser-win64-$jxBrowserVersion.jar" to "102cb713f861788de17769d5e5bb99991e39465531191aa400d50fbc1d49ee54"
+    "jxbrowser-$jxBrowserVersion.jar" to "5f3d17e393720073cd00d6e1d71684977fccf039eb1a232f364e06bfd066310f",
+    "jxbrowser-linux64-$jxBrowserVersion.jar" to "8c0c5e12ebbebe4165ace0a66bba6c94d465a7f748503b008aae0cde280a1c76",
+    "jxbrowser-mac-$jxBrowserVersion.jar" to "155be52076298448d47ec537ba512a2cc719e2b91aefa2f4c2ad47d1753a8a19",
+    "jxbrowser-win32-$jxBrowserVersion.jar" to "77e8c8d03f28e4555795304f4a4873284e1325b22248299fcd9ffedb8d457894",
+    "jxbrowser-win64-$jxBrowserVersion.jar" to "fdfc31ea4748019f8ec004b7f30d0cb8812d71486fe9a3e2694be04b8324fef6"
 )
 
 subprojects {
