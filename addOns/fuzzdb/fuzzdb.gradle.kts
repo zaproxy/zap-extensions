@@ -1,5 +1,16 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
+plugins {
+    eclipse
+}
+
+eclipse {
+    classpath {
+        // Prevent compilation of zapHomeFiles.
+        sourceSets = listOf()
+    }
+}
+
 version = "5"
 description = "FuzzDB files which can be used with the ZAP fuzzer"
 
