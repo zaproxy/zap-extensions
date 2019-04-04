@@ -18,6 +18,8 @@
 /buildSrc/*.iws
 /buildSrc/out
 /out
+/addOns/**/out
+/testutils/out
 
 # Eclipse
 # -------
