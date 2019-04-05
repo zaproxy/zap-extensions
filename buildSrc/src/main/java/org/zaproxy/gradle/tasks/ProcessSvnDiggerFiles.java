@@ -67,6 +67,7 @@ public class ProcessSvnDiggerFiles extends DefaultTask {
         Path dirbusterDir = outputDir.get().getAsFile().toPath().resolve(DIRBUSTER_DIR);
         Path svndiggerDir = dirbusterDir.resolve(SVNDIGGER_DIR);
 
+        getProject().delete(dirbusterDir.toFile());
         Files.createDirectories(svndiggerDir);
         Files.copy(srcDir.resolve(LICENCE_FILE_NAME), svndiggerDir.resolve(LICENCE_FILE_NAME));
         Files.copy(srcDir.resolve(README_FILE_NAME), svndiggerDir.resolve(README_FILE_NAME));
