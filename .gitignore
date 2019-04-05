@@ -1,7 +1,10 @@
+# Ignored files.
+#---------------
+*~
+*hprof 
+
 # Gradle
 #-------
-*~
-*hprof
 .gradle
 /build
 /buildSrc/build
