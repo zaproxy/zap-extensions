@@ -1,5 +1,7 @@
 # Gradle
 #-------
+*~
+*hprof
 .gradle
 /build
 /buildSrc/build
