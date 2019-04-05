@@ -2,7 +2,6 @@ package org.zaproxy.zap.extension.saml;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.*;
@@ -23,6 +22,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -156,7 +156,7 @@ public class SAMLMessage {
                 case Integer:
                     return Integer.parseInt(value);
                 case TimeStamp:
-                    return DateTime.parse(value);
+                    return LocalDateTime.parse(value);
                 default:
                     return value;
             }
