@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added SAML Passive Scanner
 - Dynamically unload the add-on.
 - Fix exception with Java 9+ (Issue 5032).
+- Replaced joda.time.datetime with java.time.localtime (Java8).
 
 ## 7 - 2017-11-24
 
