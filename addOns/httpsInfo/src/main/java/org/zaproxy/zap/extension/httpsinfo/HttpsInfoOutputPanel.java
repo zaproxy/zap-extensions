@@ -104,7 +104,7 @@ public class HttpsInfoOutputPanel extends OutputPanel {
 		return session;
 	}
 	
-	private void setDvEng(IDVSession session) {
+	private void setDvEng(IDVSession session) throws DVException {
 		this.dvEng = DVFactory.getDVEng(session);
 	}
 	
@@ -118,14 +118,15 @@ public class HttpsInfoOutputPanel extends OutputPanel {
 			public void run() {
 				try {
 					initSession(getTarget());
+					setDvEng(getSession());
 				} catch (DVException e) {
-					String warnMsg = Constant.messages.getString("httpsinfo.init.warning", getTarget().toString(),
-							e.getCause()); 
+					String warnMsg = Constant.messages.getString(
+						"httpsinfo.init.warning", getTarget().toString(), e.getCause()
+					);
 					LOGGER.warn(warnMsg);
 					View.getSingleton().showWarningDialog(warnMsg);
 					return;
 				}
-				setDvEng(getSession());
 				showGeneral();
 				showCipherSuites();
 			}
