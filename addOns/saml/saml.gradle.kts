@@ -11,6 +11,5 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("joda-time:joda-time:2.2")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
 }
