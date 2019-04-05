@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-
+### Fixed
+- Fix typo in request header used by Apache Range Header DoS.
 
 ## 23 - 2019-02-06
 

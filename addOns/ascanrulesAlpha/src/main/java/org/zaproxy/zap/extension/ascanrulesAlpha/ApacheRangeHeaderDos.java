@@ -173,7 +173,7 @@ public class ApacheRangeHeaderDos extends AbstractAppPlugin {
 	private void setRequestHeaders(HttpMessage aMessage, String rangeValue) {
 		rangeValue = "bytes=" + rangeValue;
 		aMessage.getRequestHeader().setHeader("Range", rangeValue);
-		aMessage.getRequestHeader().setHeader("Range-Request", rangeValue);
+		aMessage.getRequestHeader().setHeader("Request-Range", rangeValue);
 		aMessage.getRequestHeader().setHeader("Connection", "close");
 	}
 
