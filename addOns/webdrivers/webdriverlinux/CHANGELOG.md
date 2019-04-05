@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Fix link in help page.
+- Update geckodriver to v0.24.0.
+- Update ChromeDriver to v73.0.3683.68.
 
 ## 7 - 2018-10-29
 
