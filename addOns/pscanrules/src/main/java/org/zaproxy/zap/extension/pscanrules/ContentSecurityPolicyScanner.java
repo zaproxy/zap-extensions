@@ -18,7 +18,7 @@
  * limitations under the License. 
  */
 
-package org.zaproxy.zap.extension.cspscanner;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,7 @@ import com.shapesecurity.salvation.data.URI;
  */
 public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 
-	private static final String MESSAGE_PREFIX = "cspscanner.";
+	private static final String MESSAGE_PREFIX = "pscanrules.cspscanner.";
 	private static final int PLUGIN_ID = 10055;
 	private static final Logger LOGGER = Logger.getLogger(ContentSecurityPolicyScanner.class);
 

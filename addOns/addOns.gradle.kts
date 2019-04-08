@@ -55,7 +55,6 @@ val mainAddOns = listOf(
 val weeklyAddOns = mainAddOns + listOf(
     "accessControl",
     "ascanrulesBeta",
-    "cspscanner",
     "formhandler",
     "openapi",
     "plugnhack",
