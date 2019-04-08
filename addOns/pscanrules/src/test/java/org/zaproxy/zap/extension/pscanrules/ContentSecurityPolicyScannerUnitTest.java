@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.cspscanner;
+package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -26,23 +26,17 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-public class ContentSecurityPolicyScannerUnitTest extends PassiveScannerTestUtils<ContentSecurityPolicyScanner> {
+public class ContentSecurityPolicyScannerUnitTest extends PassiveScannerTest<ContentSecurityPolicyScanner> {
 
     @Override
     protected ContentSecurityPolicyScanner createScanner() {
         return new ContentSecurityPolicyScanner();
     }
 
-    @Override
-    protected void setUpMessages() {
-        mockMessages(new ExtensionContentSecurityPolicyScanner());
-    }
-
     @Test
     public void exampleBadCsp() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
 
@@ -52,8 +46,9 @@ public class ContentSecurityPolicyScannerUnitTest extends PassiveScannerTestUtil
                 + "Content-Security-Policy: default-src: 'none'; report_uri /__cspreport__\r\n"
                 + "Content-Type: text/html;charset=ISO-8859-1\r\n"
                 + "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+        // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(2));
 
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP Scanner: Notices"));

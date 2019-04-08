@@ -23,7 +23,6 @@ var addOns = listOf(
     "cmss",
     "codedx",
     "coreLang",
-    "cspscanner",
     "customreport",
     "diff",
     "directorylistv1",

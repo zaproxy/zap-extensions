@@ -38,6 +38,12 @@ Allowed Cross-Domain scripts:
 <li>At MEDIUM and HIGH thresholds if a script URL falls within a context that also includes the URL of the base message no alerts will be raised.</li>
 </ul> 
 
+<H2>CSP Scanner</H2>
+
+The Content Security Policy (CSP) Scanner adds a passive scan rule which parses and analyzes CSP headers for potential misconfiguration
+or weakness. This scanner leverages Shape Security's <a href="https://github.com/shapesecurity/salvation">Salvation</a> 
+library to perform it's parsing and assessment of CSPs.
+
 <H2>Header XSS Protection</H2>
 Checks for the existence of and value/setting of the X-XSS-Protection header. 
 This response header can be used to configure a user-agent's built-in reflective XSS protection.<br>
