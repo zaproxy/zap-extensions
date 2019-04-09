@@ -33,6 +33,7 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -213,8 +214,15 @@ public class AttackThread extends Thread {
 				}
 			}
 		} catch (UnknownHostException e1) {
-			extension.notifyProgress(Progress.failed,
-					Constant.messages.getString("quickstart.progress.failed.badhost"));
+			ConnectionParam connectionParam = Model.getSingleton().getOptionsParam().getConnectionParam();
+			if (connectionParam.isUseProxyChain()
+					&& connectionParam.getProxyChainName().equalsIgnoreCase(e1.getMessage())) {
+				extension.notifyProgress(Progress.failed,
+						Constant.messages.getString("quickstart.progress.failed.badhost.proxychain", e1.getMessage()));
+			} else {
+				extension.notifyProgress(Progress.failed,
+						Constant.messages.getString("quickstart.progress.failed.badhost", e1.getMessage()));
+			}
 		} catch (URIException e) {
 			extension.notifyProgress(Progress.failed,
 							Constant.messages.getString("quickstart.progress.failed.reason", e.getMessage()));

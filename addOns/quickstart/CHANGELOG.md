@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-- Support dev and 2.8+ versions for default quick start page
+- Support dev and 2.8+ versions for default quick start page.
+- Improve outgoing proxy failure error message (Issue 5304).
 
 ## 25 - 2018-12-11
 
