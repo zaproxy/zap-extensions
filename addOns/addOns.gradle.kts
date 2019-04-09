@@ -1,3 +1,4 @@
+import java.nio.charset.StandardCharsets
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.manifest.ManifestExtension
@@ -63,6 +64,17 @@ val weeklyAddOns = mainAddOns + listOf(
     "sequence"
 )
 
+val verifyDeclaredAddOnsExist by tasks.registering(ValidateDeclaredAddOns::class) {
+    declaredAddOns.addAll(mainAddOns)
+    declaredAddOns.addAll(weeklyAddOns)
+    addOns.set(subprojects.filter { !parentProjects.contains(it.name) }.mapTo(mutableSetOf(), { it.zapAddOn.addOnId.get() }))
+    validatedAddOns.set(project.layout.buildDirectory.file("validatedAddOns"))
+}
+
+tasks.check {
+    dependsOn(verifyDeclaredAddOnsExist)
+}
+
 mapOf("main" to mainAddOns, "weekly" to weeklyAddOns).forEach { entry ->
     tasks {
         val name = entry.key
@@ -70,6 +82,7 @@ mapOf("main" to mainAddOns, "weekly" to weeklyAddOns).forEach { entry ->
         register("copy${nameCapitalized}AddOns") {
             group = "ZAP"
             description = "Copies the $name release add-ons to zaproxy project."
+            dependsOn(verifyDeclaredAddOnsExist)
             subprojects(entry.value) {
                 dependsOn(it.tasks.named(AddOnPlugin.COPY_ADD_ON_TASK_NAME))
             }
@@ -140,3 +153,30 @@ fun AddOnPluginExtension.wikiGen(configure: WikiGenExtension.() -> Unit): Unit =
 
 fun AddOnPluginExtension.zapVersions(configure: ZapVersionsExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("zapVersions", configure)
+
+open class ValidateDeclaredAddOns : DefaultTask() {
+
+    init {
+        group = LifecycleBasePlugin.VERIFICATION_GROUP
+        description = "Verifies that the declared weekly/main add-ons exist."
+    }
+
+    @get:Input
+    val declaredAddOns = project.objects.setProperty<String>()
+
+    @get:Input
+    val addOns = project.objects.setProperty<String>()
+
+    @get:OutputFile
+    val validatedAddOns = project.objects.fileProperty()
+
+    @TaskAction
+    fun validate() {
+        val missingDeclaredAddOns = declaredAddOns.get() - addOns.get()
+        if (!missingDeclaredAddOns.isEmpty()) {
+            throw IllegalStateException("The following declared add-ons do not exist: $missingDeclaredAddOns")
+        }
+
+        validatedAddOns.get().getAsFile().writeText("${declaredAddOns.get()}", StandardCharsets.UTF_8)
+    }
+}
