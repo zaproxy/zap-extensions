@@ -23,9 +23,11 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.ContentMatcher;
+
 
 /**
  * Plugin able to analyze the content for Application Error messages. The plugin
@@ -133,7 +135,12 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
             // We found it!
             // The AS raise an Internal Error
             // so a possible disclosure can be found
-            raiseAlert(msg, id, msg.getResponseHeader().getPrimeHeader());
+        	if(AlertThreshold.HIGH.equals(this.getAlertThreshold()))
+        	{
+        		//No need to alert
+        		return;
+        	}
+            raiseAlert(msg, id, msg.getResponseHeader().getPrimeHeader(), Alert.RISK_LOW);
 
         } else if (status != HttpStatusCode.NOT_FOUND) {
             String evidence = matcher.findInContent(msg.getResponseBody().toString());
@@ -141,17 +148,17 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
                 // We found it!
                 // There exists a positive match of an
                 // application error occurrence
-                raiseAlert(msg, id, evidence);
+                raiseAlert(msg, id, evidence, getRisk());
             }
         }
     }
         
     // Internal service method for alert management
-    private void raiseAlert(HttpMessage msg, int id, String evidence) {
+    private void raiseAlert(HttpMessage msg, int id, String evidence, int risk) {
         // Raise an alert according to Passive Scan Rule model
         // description, uri, param, attack, otherInfo, 
         // solution, reference, evidence, cweId, wascId, msg
-        Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_MEDIUM, getName());
+        Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, getName());
         alert.setDetail(
                 getDescription(),
                 msg.getRequestHeader().getURI().toString(),
