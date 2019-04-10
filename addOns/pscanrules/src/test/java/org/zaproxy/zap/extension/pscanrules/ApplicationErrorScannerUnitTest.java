@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.equalTo;
@@ -40,20 +41,54 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseCodeIsInternalServerError() throws HttpMalformedHeaderException {
+    public void shouldRaiseAlertIfResponseCodeIsInternalServerErrorLow() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
         msg.setResponseHeader(createResponseHeader(INTERNAL_SERVER_ERROR));
         // When
+        rule.setAlertThreshold(AlertThreshold.LOW);
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         Alert result = alertsRaised.get(0);
         assertThat(result.getEvidence(), equalTo("HTTP/1.1 500"));
-        validateAlert(result);
+        assertThat(result.getPluginId(), equalTo(90022));
+        assertThat(result.getRisk(), equalTo(Alert.RISK_LOW));
+        assertThat(result.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(result.getUri(), equalTo(URI));
     }
-
+    @Test
+    public void shouldRaiseAlertIfResponseCodeIsInternalServerErrorMed() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(INTERNAL_SERVER_ERROR));
+        // When
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert result = alertsRaised.get(0);
+        assertThat(result.getEvidence(), equalTo("HTTP/1.1 500"));
+        assertThat(result.getPluginId(), equalTo(90022));
+        assertThat(result.getRisk(), equalTo(Alert.RISK_LOW));
+        assertThat(result.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(result.getUri(), equalTo(URI));
+    }
+    @Test
+    public void shouldNotRaiseAlertIfResponseCodeIsInternalServerErrorHigh() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(INTERNAL_SERVER_ERROR));
+        // When
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+  
     @Test
     public void shouldNotRaiseAlertIfResponseCodeIsNotFound() throws HttpMalformedHeaderException {
         // Given
