@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Switch to using re2j where possible - results in significant performance improvements.
-- Added version information column to Wappalyzer Results
+- Added version information column to Wappalyzer Results.
+- Updated to align with AliasIO/Wappalyzer release v5.7.4.
 
 ## 11 - 2018-01-04
 
