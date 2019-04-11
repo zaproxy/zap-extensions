@@ -20,7 +20,6 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import java.awt.EventQueue;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -34,9 +33,7 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
 
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -318,18 +315,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	@Override
 	public void sessionScopeChanged(Session arg0) {
 		// Ignore
-	}
-
-	public static void main(String[] args) throws Exception {
-		// Quick way to test the apps.json file parsing
-		
-		ConsoleAppender ca = new ConsoleAppender();
-		ca.setWriter(new OutputStreamWriter(System.out));
-		ca.setLayout(new PatternLayout("%-5p [%t]: %m%n"));
-        Logger.getRootLogger().addAppender(ca);
-		
-		new ExtensionWappalyzer();
-		
 	}
 
 }
