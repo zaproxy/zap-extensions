@@ -41,6 +41,15 @@ public class WappalyzerJsonParser {
 
 
     private static final Logger logger = Logger.getLogger(WappalyzerJsonParser.class);
+    private PatternErrorHandler patternErrorHandler;
+
+    public WappalyzerJsonParser() {
+        patternErrorHandler = (pattern, e) -> logger.error("Invalid pattern syntax " + pattern, e);
+    }
+
+    public WappalyzerJsonParser(PatternErrorHandler peh) {
+        this.patternErrorHandler = peh;
+    }
 
     public WappalyzerData parseDefaultAppsJson() throws IOException {
         return parseJson(getStringResource(ExtensionWappalyzer.RESOURCE + "/apps.json"));
@@ -158,7 +167,7 @@ public class WappalyzerJsonParser {
                 } catch (NumberFormatException e) {
                     logger.error("Invalid field syntax " + entry.getKey() + " : " + entry.getValue(), e);
                 } catch (PatternSyntaxException e) {
-                    logger.error("Invalid pattern syntax " + entry.getValue(), e);
+                    patternErrorHandler.handleError(entry.getValue(), e);
                 }
             }
         } else if (json != null) {
@@ -179,14 +188,14 @@ public class WappalyzerJsonParser {
                 try {
                     list.add(this.strToAppPattern(type, objStr));
                 } catch (PatternSyntaxException e) {
-                    logger.error("Invalid pattern syntax " + objStr, e);
+                    patternErrorHandler.handleError(objStr, e);
                 }
             }
         } else if (json != null) {
             try {
                 list.add(this.strToAppPattern(type, json.toString()));
             } catch (PatternSyntaxException e) {
-                logger.error("Invalid pattern syntax " + json.toString(), e);
+                patternErrorHandler.handleError(json.toString(), e);
             }
         }
         return list;
