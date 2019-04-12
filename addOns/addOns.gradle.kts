@@ -127,7 +127,7 @@ subprojects {
         }
 
         zapVersions {
-            downloadUrl.set("https://github.com/zaproxy/zap-extensions/releases/download/2.7")
+            downloadUrl.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/download/${zapAddOn.addOnId.get()}-v$version" })
         }
     }
 }
