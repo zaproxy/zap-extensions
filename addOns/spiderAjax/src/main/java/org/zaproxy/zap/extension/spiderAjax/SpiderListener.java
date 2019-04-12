@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.spiderAjax;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 
-interface SpiderListener {
+public interface SpiderListener {
 
 	enum ResourceState {
 		PROCESSED,

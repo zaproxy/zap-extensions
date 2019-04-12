@@ -62,7 +62,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private static final Logger logger = Logger.getLogger(ExtensionAjax.class);
 	public static final int PROXY_LISTENER_ORDER = ProxyListenerLog.PROXY_LISTENER_ORDER + 1;
 	public static final String NAME = "ExtensionSpiderAjax";
-
+	
 	private static final List<Class<? extends Extension>> DEPENDENCIES;
 
 	static {
@@ -282,6 +282,34 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		return StringUtils.abbreviateMiddle(displayName, "..", 30);
 	}
 
+    /**
+     * Starts a new spider scan using the given target.
+     * 
+     * @param displayName the name that will be used for this scan when it is displayed
+     * @param target the target that will be spidered
+     * @see #startScan(String, AjaxSpiderTarget)
+     * @throws IllegalStateException if the target is not allowed in the current
+     *             {@link org.parosproxy.paros.control.Control.Mode mode}.
+     */
+	public void startScan(String displayName, AjaxSpiderTarget target) {
+	    this.startScan(displayName, target, null);
+	}
+	
+    /**
+     * Starts a new spider scan using the given target.
+     * <p>
+     * The spider scan will use the most appropriate display name created from the given target.
+     *
+     * @param target the target that will be spidered
+     * @param listener a listener that will be notified of the scan progress
+     * @see #startScan(String, AjaxSpiderTarget)
+     * @throws IllegalStateException if the target is not allowed in the current
+     *             {@link org.parosproxy.paros.control.Control.Mode mode}.
+     */
+    public void startScan(AjaxSpiderTarget target, SpiderListener listener) {
+        startScan(createDisplayName(target), target, listener);
+    }
+    
 	/**
 	 * Starts a new spider scan, with the given display name and using the given target.
 	 * <p>
@@ -290,11 +318,12 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 * 
 	 * @param displayName the name of the scan (to be displayed in UI)
 	 * @param target the target that will be spidered
+     * @param listener a listener that will be notified of the scan progress
 	 * @throws IllegalStateException if the target is not allowed in the current
 	 *             {@link org.parosproxy.paros.control.Control.Mode mode}.
 	 */
 	@SuppressWarnings("fallthrough")
-	public void startScan(String displayName, AjaxSpiderTarget target) {
+ 	public void startScan(String displayName, AjaxSpiderTarget target, SpiderListener listener) { 
 		if (getView() != null) {
 			switch (Control.getSingleton().getMode()) {
 			case safe:
@@ -312,10 +341,17 @@ public class ExtensionAjax extends ExtensionAdaptor {
 				break;
 			}
 
-			getSpiderPanel().startScan(displayName, target);
+			getSpiderPanel().startScan(displayName, target, listener);
 		}
 	}
 
+	/**
+	 * Stops a scan started via the UI
+	 */
+	public void stopScan() {
+	    getSpiderPanel().stopScan();
+	}
+	
 	URI getFirstUriInContext(Context context) {
 		return findFirstUriInContext(context, (SiteNode) getModel().getSession().getSiteTree().getRoot());
 	}
@@ -405,7 +441,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		}
 	}
 
-	boolean isSpiderRunning() {
+	public boolean isSpiderRunning() {
 		return spiderRunning;
 	}
 

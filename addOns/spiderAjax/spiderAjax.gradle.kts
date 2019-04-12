@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "23"
+version = "23.0.0"
 description = "Allows you to spider sites that make heavy use of JavaScript using Crawljax"
 
 zapAddOn {
