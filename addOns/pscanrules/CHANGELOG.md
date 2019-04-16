@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Migrate CSP Scanner into the main passive scan release package (promoting it to Release). Upgrade Salvation (dependency) to 2.6.0.
 - Application Error scanner change for HTTP 500. Alert changed to low risk for HTTP 500, and not raised at all when Threshold is High.  
 
+## 24 - 2019-04-16
+
+- Updated the reference link for the alert: Web Browser XSS Protection Not Enabled.
+
 ## 23 - 2018-08-15
 
 - Fix a typo in the description of Referer Exposes Session ID.
