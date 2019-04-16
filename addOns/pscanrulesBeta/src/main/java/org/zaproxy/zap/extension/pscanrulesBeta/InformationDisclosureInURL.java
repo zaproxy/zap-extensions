@@ -187,38 +187,5 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 		}
 		return false;
 	}
-	
-	private static void testUrl (String url) {
-		InformationDisclosureInURL idiu = new InformationDisclosureInURL();
-		System.out.println("Test URL: " + url);
-		if (idiu.doesParamNameContainsSensitiveInformation(url)) {
-			System.out.println(" contains sensitive info: " + idiu.doesParamNameContainsSensitiveInformation(url));
-		}
-		if (idiu.isCreditCard(url)) {
-			System.out.println(" contains credit card: " + idiu.isCreditCard(url));
-		}
-		if (idiu.isEmailAddress(url)) {
-			System.out.println(" contains email addr: " + idiu.isEmailAddress(url));
-		}
-		if (idiu.isUsSSN(url)) {
-			System.out.println(" contains SSN: " + idiu.isUsSSN(url));
-		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		System.out.println("These should pass:");
-		testUrl("http://www.google.com");
-		testUrl("http://www.google.com/this/should/be/safe");
-
-		System.out.println("These should fail:");
-		testUrl("http://www.google.com/aaa?email=test@test.com");
-		testUrl("http://www.google.com/bbb?aaa=bbb&email=test@test.com");
-		testUrl("http://www.google.com/ccc?user=tester");
-		testUrl("http://www.google.com/ddd?ssn=987-65-4320");
-		testUrl("http://www.google.com/eee?ccn=378282246310005");
-		
-		
-	}
-
 
 }
