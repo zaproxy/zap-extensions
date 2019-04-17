@@ -2,6 +2,8 @@ plugins {
     id("com.diffplug.gradle.spotless") version "3.20.0"
 }
 
+apply(from = "$rootDir/gradle/travis-ci.gradle.kts")
+
 allprojects {
     apply(plugin = "com.diffplug.gradle.spotless")
 
