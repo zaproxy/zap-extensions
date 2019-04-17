@@ -45,7 +45,7 @@ public class HttpsInfoOutputPanel extends OutputPanel {
 
 	private static final String NEWLINE = System.lineSeparator();
 	
-	private static final Logger LOGGER = Logger.getLogger(ExtensionHttpsInfo.class);
+	private static final Logger LOGGER = Logger.getLogger(HttpsInfoOutputPanel.class);
 
 	private static final int BEAST_PLUGIN_ID = 10200;
 	private static final int CRIME_PLUGIN_ID = 10201;
@@ -104,7 +104,7 @@ public class HttpsInfoOutputPanel extends OutputPanel {
 		return session;
 	}
 	
-	private void setDvEng(IDVSession session) {
+	private void setDvEng(IDVSession session) throws DVException {
 		this.dvEng = DVFactory.getDVEng(session);
 	}
 	
@@ -125,7 +125,11 @@ public class HttpsInfoOutputPanel extends OutputPanel {
 					View.getSingleton().showWarningDialog(warnMsg);
 					return;
 				}
-				setDvEng(getSession());
+				try {
+					setDvEng(getSession());
+				} catch (DVException e) {
+					LOGGER.warn(e.getMessage(), e);
+				}
 				showGeneral();
 				showCipherSuites();
 			}
