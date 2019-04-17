@@ -3,6 +3,7 @@ plugins {
 }
 
 apply(from = "$rootDir/gradle/travis-ci.gradle.kts")
+apply(from = "$rootDir/gradle/lgtm.gradle.kts")
 
 allprojects {
     apply(plugin = "com.diffplug.gradle.spotless")
