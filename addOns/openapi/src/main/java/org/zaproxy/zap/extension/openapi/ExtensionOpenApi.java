@@ -231,7 +231,11 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 } catch (Exception e) {
                     if (initViaUi) {
                         String exMsg = e.getLocalizedMessage();
-                        exMsg = exMsg.length() >= 125 ? exMsg.substring(0, 122) + "..." : exMsg;
+                        if (exMsg != null) {
+                            exMsg = exMsg.length() >= 125 ? exMsg.substring(0, 122) + "..." : exMsg;
+                        } else {
+                            exMsg = "";
+                        }
                         View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.parse.error", exMsg)
                                 + "\n\n" + Constant.messages.getString("openapi.parse.trailer"));
                     }
