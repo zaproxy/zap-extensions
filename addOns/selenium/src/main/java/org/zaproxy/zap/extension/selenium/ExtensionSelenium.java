@@ -56,7 +56,6 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvider;
 
@@ -73,12 +72,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     private static final int MIN_PORT = 1;
 
     private static final int MAX_PORT = 65535;
-
-    /**
-     * The version of the extension. As consistency should be kept in sync with the version of the add-on (under ZapAddOn.xml
-     * file).
-     */
-    private static final Version CURRENT_VERSION = new Version("2.0.0");
 
     private SeleniumOptions options;
     private SeleniumOptionsPanel optionsPanel;
@@ -123,7 +116,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             new ArrayList<WeakReference<ProvidedBrowsersComboBoxModel>>();
 
     public ExtensionSelenium() {
-        super(NAME, CURRENT_VERSION);
+        super(NAME);
     }
 
     @Override
