@@ -20,6 +20,27 @@ Checks "Cache-Control" and "Pragma" response headers against general industry be
 At MEDIUM and HIGH thresholds only non-error or non-redirect text responses (excluding JavaScript) are considered.<br>
 At LOW threshold all responses apart from images and CSS are considered including errors and redirects.
 
+<H2>Charset Mismatch</H2>
+<p>This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.</p>
+<p>The scanner handles various conditions depending on the Threshold set for the scanner, as follows:</p>
+<ul>
+  <li>All Thresholds:
+    <ul>
+      <li>Header Versus Meta Content-Type Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Content-Type tag.</li>
+      <li>Header Versus Meta Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Charset tag.</li>
+    </ul>
+  </li>
+  <li>Low Threshold:
+    <ul>
+      <li>Meta Content-Type Charset Missing - The response doesn't contain a META Content-Type declaration, which may overlook older clients.</li>
+      <li>Meta Charset Versus Meta Content-Type Charset - The response contains both a META Content-Type declaration and a META Charset declaration, and they don't match.</li>
+    </ul>
+  </li>
+</ul>
+Further reference:<br>
+<a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
+<a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
+
 <H2>Content Type Missing</H2>
 Raises an alert if the response is lacking a Content-Type header or if the header exists but the value is empty.
 
