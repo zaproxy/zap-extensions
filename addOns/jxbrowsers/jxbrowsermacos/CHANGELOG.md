@@ -3,8 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## 11 - 2019-04-04
+## [11] - 2019-04-18
 
+### Changed
 - Update JxBrowser to 6.23.1.
 
 ## 10 - 2019-03-04
@@ -48,3 +49,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[11]: https://github.com/zaproxy/zap-extensions/releases/jxbrowsermacos-v11
