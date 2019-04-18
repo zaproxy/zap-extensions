@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMismatchScanner> {
     
-    private static final String BASE_RESOURCE_KEY = "pscanbeta.charsetmismatch.";
+    private static final String BASE_RESOURCE_KEY = "pscanrules.charsetmismatch.";
     private static final String NO_MISMATCH_METACONTENTTYPE_MISSING = BASE_RESOURCE_KEY + "variant.no_mismatch_metacontenttype_missing";
     private static final String HEADER_METACONTENTYPE_MISMATCH = BASE_RESOURCE_KEY + "variant.header_metacontentype_mismatch";
     private static final String HEADER_METACHARSET_MISMATCH = BASE_RESOURCE_KEY + "variant.header_metacharset_mismatch";
