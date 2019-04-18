@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.tasks.DownloadWebDriver
 
-version = "11"
+version = "12"
 
 extra["osName"] = "Windows"
 extra["osDep"] = "win32"

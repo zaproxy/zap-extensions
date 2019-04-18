@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.tasks.DownloadWebDriver
 
-version = "4"
+version = "5"
 
 extra["osName"] = "Windows 64bits"
 extra["osDep"] = "win64"

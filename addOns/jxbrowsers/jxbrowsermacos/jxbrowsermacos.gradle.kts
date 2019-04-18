@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.tasks.DownloadWebDriver
 
-version = "11"
+version = "12"
 
 extra["osName"] = "Mac OS"
 extra["osDep"] = "mac"
