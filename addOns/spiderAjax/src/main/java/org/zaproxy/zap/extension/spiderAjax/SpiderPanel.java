@@ -398,7 +398,18 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	 * @param displayName the display name of the new scan
 	 * @param target the target of the scan
 	 */
-	public void startScan(String displayName, AjaxSpiderTarget target) {
+    public void startScan(String displayName, AjaxSpiderTarget target) {
+        this.startScan(displayName, target, null);
+    }
+
+	/**
+	 * Starts a new scan with the given name and target.
+	 * 
+	 * @param displayName the display name of the new scan
+	 * @param target the target of the scan
+     * @param listener a listener that will be notified of the scan progress
+	 */
+	public void startScan(String displayName, AjaxSpiderTarget target, SpiderListener listener) {
 		if (View.isInitialised()) {
 			// Show the tab in case its been closed
 			this.setTabFocus();
@@ -413,6 +424,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		spiderResultsTableModel.clear();
 		visitedUrls.clear();
 		this.targetSite = displayName;
+		if (listener != null) {
+		    this.runnable.addSpiderListener(listener);
+		}
 		try {
 			new Thread(runnable, "ZAP-AjaxSpider").start();
 		} catch (Exception e) {
