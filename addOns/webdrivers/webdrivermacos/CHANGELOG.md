@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [8] - 2019-04-23
 
 - Fix link in help page.
 - Update geckodriver to v0.24.0.
@@ -45,3 +45,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[8]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v8
