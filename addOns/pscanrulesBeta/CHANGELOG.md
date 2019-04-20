@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Remove Insecure Authentication Scanner (promote to release Issue 4456).
 - Remove Information Disclosure Debug Errors Scanner (promote to release Issue 4457).
 - Remove CSRF Countermeasures Scanner (promote to release Issue 4458).
+- Remove Cookie Loosely Scoped Scanner (promote to release Issue 4459).
 
 ## 18 - 2018-01-19
 

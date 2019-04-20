@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Promote Insecure Authentication Scanner to release (Issue 4456).
 - Promote Information Disclosure Debug Errors Scanner to release (Issue 4457).
 - Promote CSRF Countermeasures Scanner to release (Issue 4458).
+- Promote Cookie Loosely Scoped Scanner to release (Issue 4459).
 
 ## 23 - 2018-08-15
 
