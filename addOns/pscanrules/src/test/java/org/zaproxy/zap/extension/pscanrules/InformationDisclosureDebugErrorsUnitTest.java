@@ -20,9 +20,11 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -78,7 +80,17 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
 		return msg;
 	}
-	
+
+	@Test
+	public void shouldFindDebugErrorsFile() {
+		// Given
+		String debugErrorFilePath = "/xml/debug-error-messages.txt";
+		// When
+		URL debugErrorFile = getClass().getResource(debugErrorFilePath);
+		// Then
+		assertThat(debugErrorFile, notNullValue());
+	}
+
 	@Test
 	public void alertsIfDebugErrorsDisclosed() throws HttpMalformedHeaderException {
 		for (int i = 0; i < DEBUG_ERRORS.size(); i++) {

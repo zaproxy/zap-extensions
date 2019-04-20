@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpMessage;
 public class InsecureJSFViewStatePassiveScannerUnitTest extends
         PassiveScannerTest<InsecureJSFViewStatePassiveScanner> {
 
-    private static final String BASE_RESOURCE_KEY = "pscanbeta.insecurejsfviewstate.";
+    private static final String BASE_RESOURCE_KEY = "pscanrules.insecurejsfviewstate.";
     private static final String INSECURE_JSF = BASE_RESOURCE_KEY + "name";
 
     @Override
