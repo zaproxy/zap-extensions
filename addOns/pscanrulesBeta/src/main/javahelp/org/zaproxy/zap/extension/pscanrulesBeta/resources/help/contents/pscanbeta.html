@@ -22,7 +22,6 @@ Post 2.5.0 you can specify a comma separated list of identifiers in the
 Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
 Only use this feature to ignore FORMs that you know are safe, for example search forms.
 
-
 <H2>Information Disclosure: Debug Errors</H2>
 This passive scanner checks the content of web responses for known Debug Error message fragments.
 Access to such details may provide a malicious individual with means by which to further abuse the web site.
@@ -40,9 +39,6 @@ Identifies the existence of sensitive details within the the Referrer header fie
 <H2>Information Disclosure: Suspicious Comments</H2>
 Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
 further attack or exposure of unintended data.
-
-<H2>Insecure Authentication</H2>
-HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
 
 <H2>Servlet Parameter Pollution</H2>
 Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
