@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -218,11 +218,11 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				String tokenNamesFlattened = tokenNames.toString();
 				
 				int risk = Alert.RISK_LOW;
-				String desc = Constant.messages.getString("pscanbeta.noanticsrftokens.desc");
-				String extraInfo = Constant.messages.getString("pscanbeta.noanticsrftokens.alert.extrainfo", tokenNamesFlattened, formDetails);
+				String desc = Constant.messages.getString("pscanrules.noanticsrftokens.desc");
+				String extraInfo = Constant.messages.getString("pscanrules.noanticsrftokens.alert.extrainfo", tokenNamesFlattened, formDetails);
 				if (hasSecurityAnnotation) {
 					risk = Alert.RISK_INFO;
-					extraInfo = Constant.messages.getString("pscanbeta.noanticsrftokens.extrainfo.annotation");
+					extraInfo = Constant.messages.getString("pscanrules.noanticsrftokens.extrainfo.annotation");
 				}
 				
 			    Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM,  getName());
@@ -270,7 +270,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 	public String getName() {
 		//do not use the name of the related vulnerability 
 		//(because we have not actually discovered an instance of this vulnerability class!)
-		return Constant.messages.getString("pscanbeta.noanticsrftokens.name");
+		return Constant.messages.getString("pscanrules.noanticsrftokens.name");
 	}
 	
     public String getDescription() {

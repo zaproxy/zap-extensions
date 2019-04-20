@@ -67,6 +67,15 @@ The Content Security Policy (CSP) Scanner adds a passive scan rule which parses 
 or weakness. This scanner leverages Shape Security's <a href="https://github.com/shapesecurity/salvation">Salvation</a> 
 library to perform it's parsing and assessment of CSPs.
 
+<H2>CSRF Countermeasures</H2>
+This scanner identifies "potential" vulnerabilities with the lack of known CSRF 
+countermeasures in pages with forms.<br>
+At HIGH alert threshold only scans messages which are in scope.<br>
+Post 2.5.0 you can specify a comma separated list of identifiers in the 
+<code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
+Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
+Only use this feature to ignore FORMs that you know are safe, for example search forms.
+
 <H2>Header XSS Protection</H2>
 Checks for the existence of and value/setting of the X-XSS-Protection header. 
 This response header can be used to configure a user-agent's built-in reflective XSS protection.<br>
