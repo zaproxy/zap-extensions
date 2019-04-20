@@ -94,6 +94,16 @@ To help reduce false positives the scanner checks the length of the token value,
 is not greater than 8 characters in length then the parameter is ignored 
 (i.e.: survey?sId=5 would not be flagged as vulnerable).
 
+<H2>VIEWSTATE</H2>
+Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 
+measures such as: 
+<ul>
+	<li>Those based on ASP.NET 1.0 and 1.1.</li>
+	<li>VIEWSTATE Lacking signature.</li>
+	<li>Split VIEWSTATE.</li>
+	<li>VIEWSTATE containing email or IP patterns.</li>
+</ul>
+
 <H2>X-Content-Type-Options</H2>
 This scanner check for the Anti-MIME-Sniffing header X-Content-Type-Options and ensures it is set to 'nosniff'.<br>
 At MEDIUM and HIGH thresholds this scanner does not alert on client or server error responses or redirects.<br> 

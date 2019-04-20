@@ -1,4 +1,4 @@
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -23,7 +23,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class ViewstateScanner extends PluginPassiveScanner {
 	
-	private static final String MESSAGE_PREFIX = "pscanbeta.viewstatescanner.";
+	private static final String MESSAGE_PREFIX = "pscanrules.viewstatescanner.";
 	private static final int PLUGIN_ID = 10032;
 	
     private PassiveScanThread parent = null;
