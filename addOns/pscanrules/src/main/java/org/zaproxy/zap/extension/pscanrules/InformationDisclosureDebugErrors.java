@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,7 +39,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 
-	private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosuredebugerrors.";
+	private static final String MESSAGE_PREFIX = "pscanrules.informationdisclosuredebugerrors.";
 	private static final int PLUGIN_ID = 10023;
 	
 	private PassiveScanThread parent = null;

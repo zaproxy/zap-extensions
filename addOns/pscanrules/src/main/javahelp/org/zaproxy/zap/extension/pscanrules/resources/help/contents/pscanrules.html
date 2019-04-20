@@ -73,6 +73,12 @@ This response header can be used to configure a user-agent's built-in reflective
 At MEDIUM and HIGH thresholds only non-error or non-redirect HTML responses are considered.<br>
 At LOW threshold all text responses are considered including errors and redirects.
 
+<H2>Information Disclosure: Debug Errors</H2>
+This passive scanner checks the content of web responses for known Debug Error message fragments.
+Access to such details may provide a malicious individual with means by which to further abuse the web site.
+They may also leak data not specifically meant for end user consumption.<br>
+Note: Javascript responses are only assessed at LOW threshold.
+
 <H2>Insecure Authentication</H2>
 HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
 

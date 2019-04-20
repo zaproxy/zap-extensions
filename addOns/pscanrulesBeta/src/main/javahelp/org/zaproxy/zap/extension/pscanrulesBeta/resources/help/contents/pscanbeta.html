@@ -22,12 +22,6 @@ Post 2.5.0 you can specify a comma separated list of identifiers in the
 Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
 Only use this feature to ignore FORMs that you know are safe, for example search forms.
 
-<H2>Information Disclosure: Debug Errors</H2>
-This passive scanner checks the content of web responses for known Debug Error message fragments.
-Access to such details may provide a malicious individual with means by which to further abuse the web site.
-They may also leak data not specifically meant for end user consumption.<br>
-Note: Javascript responses are only assessed at LOW threshold.
-
 <H2>Information Disclosure: In URL</H2>
 Attempts to identify the existence of sensitive details within the visited URIs themselves 
 (this may include parameters, document names, directory names, etc.).

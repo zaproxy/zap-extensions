@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Remove ViewState Scanner (promoted to release Issue 4453).
 - Remove Insecure JSF ViewState Scanner (promoted to release Issue 4455).
 - Remove Insecure Authentication Scanner (promote to release Issue 4456).
+- Remove Information Disclosure Debug Errors Scanner (promote to release Issue 4457).
 
 ## 18 - 2018-01-19
 
