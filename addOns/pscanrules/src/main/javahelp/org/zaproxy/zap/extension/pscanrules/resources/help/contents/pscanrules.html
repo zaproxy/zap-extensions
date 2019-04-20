@@ -73,6 +73,9 @@ This response header can be used to configure a user-agent's built-in reflective
 At MEDIUM and HIGH thresholds only non-error or non-redirect HTML responses are considered.<br>
 At LOW threshold all text responses are considered including errors and redirects.
 
+<H2>Insecure JSF ViewState</H2>
+The response at the following URL contains a ViewState value that has no cryptographic protections.
+
 <H2>Mixed Content</H2>
 For content served via HTTPS analyse all the src attributes in the response looking for those sourced
 via plain HTTP.

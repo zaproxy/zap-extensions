@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Tweak alert Authentication Credentials Captured to use Description field instead of Attack.
 - Remove Charset Mismatch Scanner (promoted to release Issue 4460).
 - Remove ViewState Scanner (promoted to release Issue 4453).
+- Remove Insecure JSF ViewState Scanner (promoted to release Issue 4455).
 
 ## 18 - 2018-01-19
 

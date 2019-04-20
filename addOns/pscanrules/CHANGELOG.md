@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated the reference link for the alert: Web Browser XSS Protection Not Enabled.
 - Promote Charset Mismatch Scanner to release (Issue 4460).
 - Promote ViewState Scanner to release (Issue 4453).
+- Promote Insecure JSF ViewState Scanner to release (Issue 4455).
 
 ## 23 - 2018-08-15
 

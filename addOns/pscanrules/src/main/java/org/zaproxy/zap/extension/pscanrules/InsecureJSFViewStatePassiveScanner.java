@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.io.IOException;
 import java.util.List;
@@ -62,7 +62,7 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 
 	private PassiveScanThread parent = null;
 
-	private static final String MESSAGE_PREFIX = "pscanbeta.insecurejsfviewstate.";
+	private static final String MESSAGE_PREFIX = "pscanrules.insecurejsfviewstate.";
 
 	@Override
 	public void setParent(PassiveScanThread parent) {
