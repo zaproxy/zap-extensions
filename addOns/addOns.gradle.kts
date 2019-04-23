@@ -5,6 +5,8 @@ import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.addon.manifest.tasks.ConvertChangelogToChanges
 import org.zaproxy.gradle.addon.wiki.WikiGenExtension
 import org.zaproxy.gradle.addon.zapversions.ZapVersionsExtension
+import org.zaproxy.gradle.tasks.CreateGitHubRelease
+import org.zaproxy.gradle.tasks.ExtractLatestChangesChangelog
 
 plugins {
     id("org.zaproxy.add-on") version "0.1.0" apply false
@@ -111,6 +113,11 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    tasks.register<ExtractLatestChangesChangelog>("extractLatestChanges") {
+        changelog.set(file("CHANGELOG.md"))
+        latestChanges.set(file("$buildDir/zapAddOn/latest-changes.md"))
+    }
+
     val generateManifestChanges by tasks.registering(ConvertChangelogToChanges::class) {
         changelog.set(file("CHANGELOG.md"))
         manifestChanges.set(file("$buildDir/zapAddOn/manifest-changes.html"))
@@ -132,9 +139,48 @@ subprojects {
     }
 }
 
+System.getenv("GITHUB_REF")?.let { ref ->
+    if ("refs/tags/" !in ref) {
+        return@let
+    }
+
+    tasks.register<CreateGitHubRelease>("createReleaseFromGitHubRef") {
+        val targetTag = ref.removePrefix("refs/tags/")
+        val (targetAddOnId, targetAddOnVersion) = targetTag.split("-v")
+        val addOnProject = subproject(targetAddOnId)
+
+        authToken.set(System.getenv("GITHUB_TOKEN"))
+        repo.set(System.getenv("GITHUB_REPOSITORY"))
+        tag.set(targetTag)
+
+        title.set(addOnProject.map { "${it.zapAddOn.addOnName.get()} version ${it.zapAddOn.addOnVersion.get()}" })
+        bodyFile.set(addOnProject.flatMap { it.tasks.named<ExtractLatestChangesChangelog>("extractLatestChanges").flatMap { it.latestChanges } })
+
+        assets {
+            register("add-on") {
+                file.set(addOnProject.flatMap { it.tasks.named<Jar>(AddOnPlugin.JAR_ZAP_ADD_ON_TASK_NAME).flatMap { it.archiveFile } })
+            }
+        }
+
+        doFirst {
+            val addOnVersion = addOnProject.get().zapAddOn.addOnVersion.get()
+            require(addOnVersion == targetAddOnVersion) {
+                "Version of the tag $targetAddOnVersion does not match the version of the add-on $addOnVersion"
+            }
+        }
+    }
+}
+
 fun subprojects(addOns: List<String>, action: (Project) -> Unit) {
     subprojects.filter { !parentProjects.contains(it.name) && addOns.contains(it.zapAddOn.addOnId.get()) }.forEach(action)
 }
+
+fun subproject(addOnId: String): Provider<Project> =
+    project.provider {
+        val addOnProject = subprojects.firstOrNull { it.name !in parentProjects && addOnId == it.zapAddOn.addOnId.get() }
+        require(addOnProject != null) { "Add-on with ID $addOnId not found." }
+        addOnProject
+    }
 
 fun Project.java(configure: JavaPluginExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("java", configure)
