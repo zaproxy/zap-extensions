@@ -96,6 +96,13 @@ public abstract class TestUtils {
     private static String zapHomeDir;
 
     /**
+     * The resource bundle of the extension under test.
+     * <p>
+     * Lazily initialised, in {@link #mockMessages(Extension)}.
+     */
+    private static ResourceBundle extensionResourceBundle;
+
+    /**
      * A HTTP test server.
      * <p>
      * The server is {@code null} if not started.
@@ -445,15 +452,15 @@ public abstract class TestUtils {
 
         given(i18n.getLocal()).willReturn(Locale.getDefault());
 
-        final ResourceBundle msg = getExtensionResourceBundle(extension);
+        extensionResourceBundle = getExtensionResourceBundle(extension);
         when(i18n.getString(anyString())).thenAnswer(new Answer<String>() {
 
             @Override
             public String answer(InvocationOnMock invocation) {
                 String key = (String) invocation.getArguments()[0];
                 if (key.startsWith(extension.getI18nPrefix())) {
-                    assertKeyExists(msg, key);
-                    return msg.getString(key);
+                    assertKeyExists(key);
+                    return extensionResourceBundle.getString(key);
                 }
                 // Return an empty string for non extension's messages.
                 return "";
@@ -467,8 +474,8 @@ public abstract class TestUtils {
                 Object[] args = invocation.getArguments();
                 String key = (String) args[0];
                 if (key.startsWith(extension.getI18nPrefix())) {
-                    assertKeyExists(msg, key);
-                    return MessageFormat.format(msg.getString(key), Arrays.copyOfRange(args, 1, args.length));
+                    assertKeyExists(key);
+                    return MessageFormat.format(extensionResourceBundle.getString(key), Arrays.copyOfRange(args, 1, args.length));
                 }
                 // Return an empty string for non extension's messages.
                 return "";
@@ -484,8 +491,9 @@ public abstract class TestUtils {
                 ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES));
     }
 
-    private static void assertKeyExists(ResourceBundle msg, String key) {
-        assertTrue("No resource message for: " + key, msg.containsKey(key));
+    private static void assertKeyExists(String key) {
+        assertTrue("The extension's ResourceBundle was not intialiased.", extensionResourceBundle != null);
+        assertTrue("No resource message for: " + key, extensionResourceBundle.containsKey(key));
     }
 
     /**
@@ -496,6 +504,7 @@ public abstract class TestUtils {
      * @return the name matcher
      */
     protected static Matcher<Alert> hasNameLoadedWithKey(final String key) {
+        assertKeyExists(key);
         return new BaseMatcher<Alert>() {
 
             @Override
@@ -524,6 +533,7 @@ public abstract class TestUtils {
      * @return the name matcher
      */
     protected static Matcher<Alert> containsNameLoadedWithKey(final String key) {
+        assertKeyExists(key);
         return new BaseMatcher<Alert>() {
 
             @Override
@@ -553,6 +563,7 @@ public abstract class TestUtils {
      * @param params the parameters to format the message.
      */
     protected static Matcher<Alert> containsOtherInfoLoadedWithKey(final String key, final Object... params) {
+        assertKeyExists(key);
         return new BaseMatcher<Alert>() {
 
             @Override
