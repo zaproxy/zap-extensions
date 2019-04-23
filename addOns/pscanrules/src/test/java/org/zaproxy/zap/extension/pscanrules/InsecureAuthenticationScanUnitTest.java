@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -36,13 +36,13 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 
 public class InsecureAuthenticationScanUnitTest extends PassiveScannerTest<InsecureAuthenticationScan> {
 
-    private static final String BASE_RESOURCE_KEY = "pscanbeta.authenticationcredentialscaptured.";
+    private static final String BASE_RESOURCE_KEY = "pscanrules.authenticationcredentialscaptured.";
     private static final String ALERT_NAME = BASE_RESOURCE_KEY + "name";
     private static final String BASIC_AUTH_KEY = BASE_RESOURCE_KEY + "alert.basicauth.extrainfo";
     private static final String DIGEST_AUTH_KEY = BASE_RESOURCE_KEY + "alert.digestauth.extrainfo";
     private static final String AUTHORIZATION_BASIC = "Basic";
     private static final String AUTHORIZATION_DIGEST = "Digest";
-    private static final String INSECURE_RESPONSE = "pscanbeta.insecureauthentication.name";
+    private static final String INSECURE_RESPONSE = "pscanrules.insecureauthentication.name";
     
     private final String user = "admin"; 
     private final String pass = "admin";

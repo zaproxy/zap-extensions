@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.net.HttpCookie;
 import java.util.LinkedList;
@@ -42,7 +42,7 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 	/**
 	 * Prefix for internationalized messages used by this rule
 	 */
-	private static final String MESSAGE_PREFIX = "pscanbeta.cookielooselyscoped.";
+	private static final String MESSAGE_PREFIX = "pscanrules.cookielooselyscoped.";
 
 	@Override
 	public String getName() {

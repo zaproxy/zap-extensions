@@ -48,6 +48,9 @@ Raises an alert if the response is lacking a Content-Type header or if the heade
 Ensures that as cookies are set they are flagged HttpOnly. The HttpOnly flag indicates to browsers that the cookie 
 being set should be acted upon by client side script (such as JavaScript).
 
+<H2>Cookie - Loosely Scoped</H2>
+Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
+
 <H2>Cookie Secure Flag</H2>
 Looks for cookies set during HTTPS sessions, raises an alert for those that are set but do not include the secure flag.
 A cookie set with the secure flag will not be sent during a plain HTTP session.
@@ -67,11 +70,32 @@ The Content Security Policy (CSP) Scanner adds a passive scan rule which parses 
 or weakness. This scanner leverages Shape Security's <a href="https://github.com/shapesecurity/salvation">Salvation</a> 
 library to perform it's parsing and assessment of CSPs.
 
+<H2>CSRF Countermeasures</H2>
+This scanner identifies "potential" vulnerabilities with the lack of known CSRF 
+countermeasures in pages with forms.<br>
+At HIGH alert threshold only scans messages which are in scope.<br>
+Post 2.5.0 you can specify a comma separated list of identifiers in the 
+<code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
+Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
+Only use this feature to ignore FORMs that you know are safe, for example search forms.
+
 <H2>Header XSS Protection</H2>
 Checks for the existence of and value/setting of the X-XSS-Protection header. 
 This response header can be used to configure a user-agent's built-in reflective XSS protection.<br>
 At MEDIUM and HIGH thresholds only non-error or non-redirect HTML responses are considered.<br>
 At LOW threshold all text responses are considered including errors and redirects.
+
+<H2>Information Disclosure: Debug Errors</H2>
+This passive scanner checks the content of web responses for known Debug Error message fragments.
+Access to such details may provide a malicious individual with means by which to further abuse the web site.
+They may also leak data not specifically meant for end user consumption.<br>
+Note: Javascript responses are only assessed at LOW threshold.
+
+<H2>Insecure Authentication</H2>
+HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
+
+<H2>Insecure JSF ViewState</H2>
+The response at the following URL contains a ViewState value that has no cryptographic protections.
 
 <H2>Mixed Content</H2>
 For content served via HTTPS analyse all the src attributes in the response looking for those sourced
@@ -93,6 +117,16 @@ This scanner checks for the existence of session token type parameters being rew
 To help reduce false positives the scanner checks the length of the token value,  if the value of the parameter 
 is not greater than 8 characters in length then the parameter is ignored 
 (i.e.: survey?sId=5 would not be flagged as vulnerable).
+
+<H2>VIEWSTATE</H2>
+Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 
+measures such as: 
+<ul>
+	<li>Those based on ASP.NET 1.0 and 1.1.</li>
+	<li>VIEWSTATE Lacking signature.</li>
+	<li>Split VIEWSTATE.</li>
+	<li>VIEWSTATE containing email or IP patterns.</li>
+</ul>
 
 <H2>X-Content-Type-Options</H2>
 This scanner check for the Anti-MIME-Sniffing header X-Content-Type-Options and ensures it is set to 'nosniff'.<br>

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -137,7 +137,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 							if ( this.debugEnabled ) log.debug("Malformed "+authMechanism+" Authentication Header: ["+ authHeaderValue + "], "+ authValues.length + " values found");
 							continue; //to the next header
 						}
-						extraInfo = Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.alert.basicauth.extrainfo", 
+						extraInfo = Constant.messages.getString("pscanrules.authenticationcredentialscaptured.alert.basicauth.extrainfo", 
 								method, uri, authMechanism, username, password);
 					}
 
@@ -166,19 +166,19 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 							continue; //to the next header
 						}
 
-						extraInfo = Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.alert.digestauth.extrainfo", 
+						extraInfo = Constant.messages.getString("pscanrules.authenticationcredentialscaptured.alert.digestauth.extrainfo", 
 								method, uri, authMechanism, username, authValues[1]);
 						digestInfo=authValues[1]; //info to output in the logging message.
 					}
 
-					Alert alert = new Alert(getPluginId(), alertRisk, alertLevel, Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.name"));
-					alert.setDetail(Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.desc"), 
+					Alert alert = new Alert(getPluginId(), alertRisk, alertLevel, Constant.messages.getString("pscanrules.authenticationcredentialscaptured.name"));
+					alert.setDetail(Constant.messages.getString("pscanrules.authenticationcredentialscaptured.desc"), 
 							uri,
 							"",  //No specific parameter. It's in the header.
 							"",
 							extraInfo, 
-							Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.soln"), 
-							Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.refs"), 
+							Constant.messages.getString("pscanrules.authenticationcredentialscaptured.soln"), 
+							Constant.messages.getString("pscanrules.authenticationcredentialscaptured.refs"), 
 							"",	// No Evidence
 							287,	// CWE Id - Improper authentication
 							1,	// WASC Id - Insufficient authentication
@@ -207,11 +207,11 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 	 */
 	@Override
 	public String getName() {
-		return Constant.messages.getString("pscanbeta.insecureauthentication.name");
+		return Constant.messages.getString("pscanrules.insecureauthentication.name");
 	}
 
 	public String getDescription() {
-		return Constant.messages.getString("pscanbeta.insecureauthentication.desc");
+		return Constant.messages.getString("pscanrules.insecureauthentication.desc");
 	}
 
 	public int getCategory() {
@@ -219,11 +219,11 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 	}
 
 	public String getSolution() {
-		return Constant.messages.getString("pscanbeta.insecureauthentication.soln");
+		return Constant.messages.getString("pscanrules.insecureauthentication.soln");
 	}
 
 	public String getReference() {
-		return Constant.messages.getString("pscanbeta.insecureauthentication.refs");  
+		return Constant.messages.getString("pscanrules.insecureauthentication.refs");  
 	}
 
 	@Override
