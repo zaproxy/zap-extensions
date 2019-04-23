@@ -121,7 +121,7 @@ public class CreateGitHubRelease extends DefaultTask {
             throw new InvalidUserDataException("Only one type of body property must be set.");
         }
 
-        GHRepository ghRepo = GitHub.connectUsingOAuth(authToken.get()).getRepository(repo.get());
+        GHRepository ghRepo = GitHub.connect("", authToken.get()).getRepository(repo.get());
 
         validateTagExists(ghRepo, tag.get());
         validateReleaseDoesNotExist(ghRepo, tag.get());
