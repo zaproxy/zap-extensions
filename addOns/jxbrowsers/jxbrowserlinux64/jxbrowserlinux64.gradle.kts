@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.tasks.DownloadWebDriver
 
-version = "11"
+version = "12"
 
 extra["osName"] = "Linux 64"
 extra["osDep"] = "linux64"
