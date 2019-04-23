@@ -15,7 +15,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -106,7 +106,7 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 	 */
 	@Override
 	public String getName() {
-		return Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.name");
+		return Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.name");
 	}
 
 	@Override
@@ -155,7 +155,7 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 		// Does not work with Java 9+
 		// https://github.com/zaproxy/zaproxy/issues/4038
 		if (SystemUtils.isJavaVersionAtLeast(1.9f)) {
-			getParent().pluginSkipped(this, Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.skipJava9"));
+			getParent().pluginSkipped(this, Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.skipJava9"));
 		}
 	}
 
@@ -232,13 +232,13 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 						//bingo.
 						bingo(	Alert.RISK_HIGH, 
 							Alert.CONFIDENCE_MEDIUM,
-							Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.name"),
-							Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.desc"), 
+							Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.name"),
+							Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.desc"), 
 							null, // originalMessage.getRequestHeader().getURI().getURI(),
 							null, // parameter being attacked: none.
 							"",  // attack
 							javaSourceCode, //extrainfo
-							Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.soln"),
+							Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.soln"),
 							"",		//evidence, highlighted in the message
 							classfilemsg	//raise the alert on the classfile, rather than on the web.xml (or other file where the class reference was found).
 							);	
@@ -270,13 +270,13 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 								//Holy sheet.. we found a properties file
 								bingo(	Alert.RISK_HIGH, 
 										Alert.CONFIDENCE_MEDIUM,
-										Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.propertiesfile.name"),
-										Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.propertiesfile.desc"), 
+										Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.propertiesfile.name"),
+										Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.propertiesfile.desc"), 
 										null, // originalMessage.getRequestHeader().getURI().getURI(),
 										null, // parameter being attacked: none.
 										"",  // attack
-										Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.propertiesfile.extrainfo", classURI), //extrainfo
-										Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.propertiesfile.soln"),
+										Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.propertiesfile.extrainfo", classURI), //extrainfo
+										Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.propertiesfile.soln"),
 										"",		//evidence, highlighted in the message
 										propsfilemsg
 										);

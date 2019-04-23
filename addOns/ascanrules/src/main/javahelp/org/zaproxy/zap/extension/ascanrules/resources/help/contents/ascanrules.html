@@ -105,6 +105,10 @@ returns immediately.
 This rule checks to see what OS the server is running on, then sends requests with a corresponding HTML SSI directive as a parameter value. If the response body matches
 a pattern indicating the SSI was successful, an alert is raised and the scanner returns immediately.
 
+<H2>Source Code Disclosure - /WEB-INF</H2>
+Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.<br>
+<strong>Note:</strong> Currently not supported on Java 9 and above.
+
 <H2>SQL Injection</H2>
 
 This scanner scans for SQL Injection vulnerabilities in an RDBMS-independent fashion, 

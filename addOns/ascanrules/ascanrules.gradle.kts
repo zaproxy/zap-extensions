@@ -14,5 +14,8 @@ zapAddOn {
 }
 
 dependencies {
+    implementation("org.bitbucket.mstrobel:procyon-compilertools:0.5.25")
+
     testImplementation(project(":testutils"))
+    testImplementation("org.apache.commons:commons-lang3:3.9")
 }
