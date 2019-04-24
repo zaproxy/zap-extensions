@@ -7,6 +7,8 @@ import org.zaproxy.gradle.addon.wiki.WikiGenExtension
 import org.zaproxy.gradle.addon.zapversions.ZapVersionsExtension
 import org.zaproxy.gradle.tasks.CreateGitHubRelease
 import org.zaproxy.gradle.tasks.ExtractLatestChangesChangelog
+import org.zaproxy.gradle.tasks.PrepareAddOnNextDevIter
+import org.zaproxy.gradle.tasks.PrepareAddOnRelease
 
 plugins {
     id("org.zaproxy.add-on") version "0.1.0" apply false
@@ -111,6 +113,18 @@ subprojects {
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    tasks.register<PrepareAddOnRelease>("prepareAddOnRelease") {
+        changelog.set(file("CHANGELOG.md"))
+        version.set(project.provider { zapAddOn.addOnVersion.get() })
+        releaseLink.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v${zapAddOn.addOnVersion.get()}" })
+    }
+
+    tasks.register<PrepareAddOnNextDevIter>("prepareAddOnNextDevIter") {
+        changelog.set(file("CHANGELOG.md"))
+        buildFile.set(file("${project.name}.gradle.kts"))
+        currentVersion.set(project.provider { zapAddOn.addOnVersion.get() })
     }
 
     tasks.register<ExtractLatestChangesChangelog>("extractLatestChanges") {
