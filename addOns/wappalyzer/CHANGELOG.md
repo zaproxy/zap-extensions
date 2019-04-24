@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [12] - 2019-04-24
 
 - Switch to using re2j where possible - results in significant performance improvements.
 - Added version information column to Wappalyzer Results.
@@ -60,3 +60,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+
+[12]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v12
