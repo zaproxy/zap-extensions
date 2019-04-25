@@ -45,13 +45,6 @@ that is actively being refined or developed, or one which is only partially impl
 <H2>Cookie Poisoning</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
 
-<H2>Cookie Without SameSite Attribute</H2>
-This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
-
-<H2>Cross Domain Misconfiguration</H2>
-Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
-The current implementation looks at excessively permissive CORS headers.
-
 <H2>Directory Browsing</H2>
 Passively scan responses for signatures that are indicative that Directory Browsing is possible.
 
@@ -132,9 +125,6 @@ At HIGH threshold it will only report links that use the "_blank" target.<br>
 You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
 Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
 
-<H2>Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)</H2>
-This checks response headers for the presence of X-Powered-By details.
-
 <H2>Source Code Disclosure</H2>
 Application Source Code was disclosed by the web server
 
@@ -156,9 +146,6 @@ Alerts generated:
 
 Redirects to HTTPS URLs on the same domain will only be reported at Low threshold.
 
-<H2>Timestamp Disclosure</H2>
-A timestamp was disclosed by the application/web server
-
 <H2>User Controllable Charset</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
 
@@ -168,23 +155,11 @@ This check looks at user-supplied input in query string parameters and POST data
 <H2>User Controllable Javascript Event (XSS)</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 
-<H2>Username Hash Found</H2>
-If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
-Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact. 
-
-<H2>X-AspNet-Version Response Header Scanner</H2>
-This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
-
 <H2>X-Backend-Server Header Information Leak</H2>
 This checks response headers for the presence of X-Backend-Server details.
 
 <H2>X-ChromeLogger-Data Header Information Leak</H2>
 This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
-
-<H2>X-Debug-Token Information Leak</H2>
-This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
-Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
-
 
 </BODY>
 </HTML>

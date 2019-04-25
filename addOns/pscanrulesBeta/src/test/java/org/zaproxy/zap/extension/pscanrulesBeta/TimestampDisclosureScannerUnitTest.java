@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;

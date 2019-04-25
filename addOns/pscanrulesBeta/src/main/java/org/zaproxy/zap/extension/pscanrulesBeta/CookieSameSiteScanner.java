@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.Vector;
 
@@ -29,13 +29,14 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscanrulesBeta.SetCookieUtils;
 
 public class CookieSameSiteScanner extends PluginPassiveScanner {
 
     /**
      * Prefix for internationalised messages used by this rule
      */
-    private static final String MESSAGE_PREFIX = "pscanalpha.cookiesamesitescanner.";
+    private static final String MESSAGE_PREFIX = "pscanbeta.cookiesamesitescanner.";
     private static final int PLUGIN_ID = 10054;
 
     private static final String SAME_SITE_COOKIE_ATTRIBUTE = "SameSite";

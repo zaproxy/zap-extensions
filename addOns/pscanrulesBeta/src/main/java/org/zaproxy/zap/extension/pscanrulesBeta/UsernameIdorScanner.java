@@ -18,7 +18,7 @@
  * limitations under the License. 
  */
 
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +45,7 @@ import org.zaproxy.zap.users.User;
 
 public class UsernameIdorScanner extends PluginPassiveScanner {
 
-	private static final String MESSAGE_PREFIX = "pscanalpha.usernameidor.";
+	private static final String MESSAGE_PREFIX = "pscanbeta.usernameidor.";
 	private static final int PLUGIN_ID = 10057;
 
 	private PassiveScanThread parent = null;
