@@ -517,8 +517,7 @@ public abstract class TestUtils {
                 description.appendText("alert name ").appendValue(Constant.messages.getString(key));
             }
 
-            // TODO uncomment once classpath is using just one library.
-            // @Override
+            @Override
             public void describeMismatch(Object item, Description description) {
                 description.appendText("was ").appendValue(((Alert) item).getName());
             }
@@ -546,8 +545,7 @@ public abstract class TestUtils {
                 description.appendText("alert name contains ").appendValue(Constant.messages.getString(key));
             }
 
-            // TODO uncomment once classpath is using just one library.
-            // @Override
+            @Override
             public void describeMismatch(Object item, Description description) {
                 description.appendText("was ").appendValue(((Alert) item).getName());
             }
@@ -576,8 +574,7 @@ public abstract class TestUtils {
                 description.appendText("alert other info contains ").appendValue(Constant.messages.getString(key, params));
             }
 
-            // TODO uncomment once classpath is using just one library.
-            // @Override
+            @Override
             public void describeMismatch(Object item, Description description) {
                 description.appendText("was ").appendValue(((Alert) item).getOtherInfo());
             }
