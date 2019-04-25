@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Remove Cookie Same Site Scanner (promoted to beta Issue 4464).
 - Remove Cross Domain Misconfiguration Scanner (promoted to beta Issue 4465).
 - Remove Timestamp Scanner (promoted to beta Issue 4466).
+- Remove Username IDOR Scanner (promoted to beta Issue 4467).
 
 ## 23 - 2019-02-08
 

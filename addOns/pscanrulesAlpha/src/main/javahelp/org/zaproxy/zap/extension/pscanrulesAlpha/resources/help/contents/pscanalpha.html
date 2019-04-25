@@ -158,10 +158,6 @@ This check looks at user-supplied input in query string parameters and POST data
 <H2>User Controllable Javascript Event (XSS)</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 
-<H2>Username Hash Found</H2>
-If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
-Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact. 
-
 <H2>X-AspNet-Version Response Header Scanner</H2>
 This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
 

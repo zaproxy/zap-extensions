@@ -37,5 +37,9 @@ unintended handling of user controlled data. This may impact other frameworks an
 <H2>Timestamp Disclosure</H2>
 A timestamp was disclosed by the application/web server.
 
+<H2>Username Hash Found</H2>
+If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
+Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact.
+
 </BODY>
 </HTML>

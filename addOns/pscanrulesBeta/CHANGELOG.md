@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Promote Cookie Same Site Scanner to Beta (Issue 4464).
 - Promote Cross Domain Misconfiguration Scanner to Beta (Issue 4465).
 - Promote Timestamp Scanner to Beta (Issue 4466).
+- Promote Username IDOR Scanner to Beta (Issue 4467).
 
 ## 18 - 2018-01-19
 
