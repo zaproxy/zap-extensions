@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - HashDisclosureScanner prevent false positives on obvious jsessionid values (Issue 5215).
 - Remove Cookie Same Site Scanner (promoted to beta Issue 4464).
 - Remove Cross Domain Misconfiguration Scanner (promoted to beta Issue 4465).
+- Remove Timestamp Scanner (promoted to beta Issue 4466).
 
 ## 23 - 2019-02-08
 

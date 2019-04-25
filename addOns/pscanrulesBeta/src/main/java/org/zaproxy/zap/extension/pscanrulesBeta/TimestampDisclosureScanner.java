@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -68,7 +68,7 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 	/**
 	 * Prefix for internationalized messages used by this rule
 	 */
-	private static final String MESSAGE_PREFIX = "pscanalpha.timestampdisclosure.";
+	private static final String MESSAGE_PREFIX = "pscanbeta.timestampdisclosure.";
 	
 	/**
 	 * ignore the following response headers for the purposes of the comparison, since they cause false positives
