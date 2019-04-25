@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Remove Cross Domain Misconfiguration Scanner (promoted to beta Issue 4465).
 - Remove Timestamp Scanner (promoted to beta Issue 4466).
 - Remove Username IDOR Scanner (promoted to beta Issue 4467).
+- Remove X AspNet Version Scanner (promoted to beta Issue 4468).
 
 ## 23 - 2019-02-08
 

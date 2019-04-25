@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
@@ -38,7 +38,7 @@ public class XAspNetVersionScanner extends PluginPassiveScanner {
     /**
      * Prefix for internationalised messages used by this rule
      */
-    private static final String MESSAGE_PREFIX = "pscanalpha.xaspnetversioncanner.";
+    private static final String MESSAGE_PREFIX = "pscanbeta.xaspnetversioncanner.";
 
     private PassiveScanThread parent = null;
 
