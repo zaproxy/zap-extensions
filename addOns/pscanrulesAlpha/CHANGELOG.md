@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Remove Timestamp Scanner (promoted to beta Issue 4466).
 - Remove Username IDOR Scanner (promoted to beta Issue 4467).
 - Remove X AspNet Version Scanner (promoted to beta Issue 4468).
+- Remove X Debug Token Scanner (promoted to beta Issue 4469).
 
 ## 23 - 2019-02-08
 

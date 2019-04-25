@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Promote Timestamp Scanner to Beta (Issue 4466).
 - Promote Username IDOR Scanner to Beta (Issue 4467).
 - Promote X AspNet Version Scanner to Beta (Issue 4468).
+- Promote X Debug Token Scanner to Beta (Issue 4469).
 
 ## 18 - 2018-01-19
 
