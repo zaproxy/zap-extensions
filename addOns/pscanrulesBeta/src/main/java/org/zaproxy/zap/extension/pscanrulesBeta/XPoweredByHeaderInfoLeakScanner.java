@@ -18,7 +18,7 @@
  * limitations under the License. 
  */
 
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 
-	private static final String MESSAGE_PREFIX = "pscanalpha.xpoweredbyheaderinfoleak.";
+	private static final String MESSAGE_PREFIX = "pscanbeta.xpoweredbyheaderinfoleak.";
 	private static final String HEADER_NAME = "X-Powered-By";
 	private static final int PLUGIN_ID = 10037;
 	

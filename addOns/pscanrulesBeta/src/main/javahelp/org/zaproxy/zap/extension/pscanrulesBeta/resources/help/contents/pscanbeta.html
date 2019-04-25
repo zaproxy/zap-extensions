@@ -29,6 +29,9 @@ Identifies the existence of sensitive details within the the Referrer header fie
 Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
 further attack or exposure of unintended data.
 
+<H2>Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)</H2>
+This checks response headers for the presence of X-Powered-By details.
+
 <H2>Servlet Parameter Pollution</H2>
 Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
 Java Servlet spec calls for aggregation of query string and post data elements which may result in 
