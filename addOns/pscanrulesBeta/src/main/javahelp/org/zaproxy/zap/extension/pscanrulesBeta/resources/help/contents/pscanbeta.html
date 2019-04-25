@@ -13,6 +13,10 @@ The following beta quality passive scan rules are included in this add-on:
 <H2>Cookie Without SameSite Attribute</H2>
 This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
 
+<H2>Cross Domain Misconfiguration</H2>
+Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
+The current implementation looks at excessively permissive CORS headers.
+
 <H2>Information Disclosure: In URL</H2>
 Attempts to identify the existence of sensitive details within the visited URIs themselves 
 (this may include parameters, document names, directory names, etc.).

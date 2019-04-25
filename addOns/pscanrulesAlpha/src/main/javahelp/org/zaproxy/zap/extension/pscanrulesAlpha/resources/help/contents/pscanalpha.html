@@ -45,10 +45,6 @@ that is actively being refined or developed, or one which is only partially impl
 <H2>Cookie Poisoning</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
 
-<H2>Cross Domain Misconfiguration</H2>
-Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
-The current implementation looks at excessively permissive CORS headers.
-
 <H2>Directory Browsing</H2>
 Passively scan responses for signatures that are indicative that Directory Browsing is possible.
 

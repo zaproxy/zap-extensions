@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Remove CSRF Countermeasures Scanner (promoted to release Issue 4458).
 - Remove Cookie Loosely Scoped Scanner (promoted to release Issue 4459).
 - Promote Cookie Same Site Scanner to Beta (Issue 4464).
+- Promote Cross Domain Misconfiguration Scanner to Beta (Issue 4465).
 
 ## 18 - 2018-01-19
 
