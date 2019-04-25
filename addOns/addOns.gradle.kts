@@ -146,10 +146,6 @@ subprojects {
             wikiFilesPrefix.set("HelpAddons${zapAddOn.addOnId.get().capitalize()}")
             wikiDir.set(project.provider { project.layout.projectDirectory.dir(if (mainAddOns.contains(zapAddOn.addOnId.get())) zapCoreHelpWikiDir else zapExtensionsWikiDir) })
         }
-
-        zapVersions {
-            downloadUrl.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/download/${zapAddOn.addOnId.get()}-v$version" })
-        }
     }
 }
 
