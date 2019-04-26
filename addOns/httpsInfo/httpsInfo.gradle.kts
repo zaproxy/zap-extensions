@@ -8,6 +8,10 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
     }
+
+    wikiGen {
+        wikiFilesPrefix.set("HelpAddonsHttpsinfo")
+    }
 }
 
 dependencies {
