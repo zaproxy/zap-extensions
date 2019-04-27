@@ -58,6 +58,9 @@ public class PrepareAddOnNextDevIter extends DefaultTask {
         this.currentVersion = objects.property(String.class);
         this.buildFile = objects.fileProperty();
         this.changelog = objects.fileProperty();
+
+        setGroup("ZAP Add-On Misc");
+        setDescription("Prepares the next development iteration of the add-on.");
     }
 
     @Input

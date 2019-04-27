@@ -59,6 +59,9 @@ public class PrepareAddOnRelease extends DefaultTask {
         this.releaseLink = objects.property(String.class);
         this.releaseDate = objects.property(String.class).value(LocalDate.now().toString());
         this.changelog = objects.fileProperty();
+
+        setGroup("ZAP Add-On Misc");
+        setDescription("Prepares the release of the add-on.");
     }
 
     @Input
@@ -93,6 +96,7 @@ public class PrepareAddOnRelease extends DefaultTask {
 
         try (BufferedReader reader = Files.newBufferedReader(changelogPath);
                 BufferedWriter writer = Files.newBufferedWriter(updatedChangelog)) {
+            boolean lastLineEmpty = false;
             String line;
             while ((line = reader.readLine()) != null) {
                 if (insertLink && VERSION_LINK_PATTERN.matcher(line).find()) {
@@ -105,10 +109,13 @@ public class PrepareAddOnRelease extends DefaultTask {
                 }
                 writer.write(line);
                 writer.write("\n");
+                lastLineEmpty = line.isEmpty();
             }
 
             if (insertLink) {
-                writer.write("\n");
+                if (!lastLineEmpty) {
+                    writer.write("\n");
+                }
                 writeReleaseLink(writer);
             }
         }
