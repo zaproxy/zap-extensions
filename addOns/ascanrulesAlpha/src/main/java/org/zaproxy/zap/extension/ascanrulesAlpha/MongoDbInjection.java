@@ -550,7 +550,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
                         return;
                     }
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("\nTrying with the value: " + jpv);
+                        LOG.debug("\nTrying with the value: " + jpv[0]);
                     }
                     String valueInj = getParamJsonString(param, jpv);
                     msgInjAttack = getNewMsg();
