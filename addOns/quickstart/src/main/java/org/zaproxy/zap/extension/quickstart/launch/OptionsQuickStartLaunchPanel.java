@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.zap.extension.quickstart.QuickStartParam;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class OptionsQuickStartLaunchPanel extends AbstractParamPanel {
@@ -83,16 +84,16 @@ public class OptionsQuickStartLaunchPanel extends AbstractParamPanel {
     @Override
     public void initParam(Object obj) {
         final OptionsParam options = (OptionsParam) obj;
-        final QuickStartLaunchParam param = options
-                .getParamSet(QuickStartLaunchParam.class);
+        final QuickStartParam param = options
+                .getParamSet(QuickStartParam.class);
 
-        if (param.isZapStartPage()) {
+        if (param.isLaunchZapStartPage()) {
             getStartPageOption().setSelectedIndex(0);
-        } else if (param.isBlankStartPage()) {
+        } else if (param.isLaunchBlankStartPage()) {
             getStartPageOption().setSelectedIndex(1);
         } else {
             getStartPageOption().setSelectedIndex(2);
-            getStartUrl().setText(param.getStartPage());
+            getStartUrl().setText(param.getLaunchStartPage());
         }
     }
 
@@ -114,21 +115,21 @@ public class OptionsQuickStartLaunchPanel extends AbstractParamPanel {
     @Override
     public void saveParam(Object obj) throws Exception {
         final OptionsParam options = (OptionsParam) obj;
-        final QuickStartLaunchParam param = options
-                .getParamSet(QuickStartLaunchParam.class);
+        final QuickStartParam param = options
+                .getParamSet(QuickStartParam.class);
 
         switch (getStartPageOption().getSelectedIndex()) {
         case 0:
-            param.setZapStartPage();
+            param.setLaunchZapStartPage();
             break;
         case 1:
-            param.setBlankStartPage();
+            param.setLaunchBlankStartPage();
             break;
         case 2:
-            param.setStartPage(new URL(getStartUrl().getText()));
+            param.setLaunchStartPage(new URL(getStartUrl().getText()));
             break;
         default:
-            param.setZapStartPage();
+            param.setLaunchZapStartPage();
             break;
         }
     }

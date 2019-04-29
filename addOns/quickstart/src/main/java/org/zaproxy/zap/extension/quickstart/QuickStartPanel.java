@@ -21,298 +21,237 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.net.URL;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
-import org.apache.commons.httpclient.URI;
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.ScrollableSizeHint;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractPanel;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.brk.BreakPanel;
-import org.zaproxy.zap.extension.search.SearchPanel;
+import org.parosproxy.paros.model.OptionsParam;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.utils.ZapTextField;
+import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.FontUtils.Size;
 import org.zaproxy.zap.view.LayoutHelper;
-import org.zaproxy.zap.view.NodeSelectDialog;
 
 public class QuickStartPanel extends AbstractPanel implements Tab {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String DEFAULT_VALUE_URL_FIELD = "http://";
+    private ExtensionQuickStart extension;
+    private JXPanel panelContent = null;
+    private JLabel lowerPadding = new JLabel("");
+    private int panelY = 0;
+    private AttackPanel attackPanel;
+    private JScrollPane jScrollPane;
+    private JButton attackButton = null;
+    private JPanel buttonPanel;
+    private JButton learnMoreButton = null;
+    private JButton exploreButton = null;
+    private LearnMorePanel learnMorePanel;
+    private DefaultExplorePanel defaultExplorePanel;
+    private QuickStartSubPanel explorePanel;
 
-	private ExtensionQuickStart extension;
-	private JButton attackButton = null;
-	private JButton stopButton = null;
-	private ZapTextField urlField = null;
-	private JButton selectButton;
-	private JLabel progressLabel = null;
-	private JPanel panelContent = null;
-	private JLabel lowerPadding = new JLabel("");
-	private int panelY = 0;
+    public QuickStartPanel(ExtensionQuickStart extension) {
+        super();
+        this.extension = extension;
+        initialize();
+    }
 
-	public QuickStartPanel(ExtensionQuickStart extension) {
-		super();
-		this.extension = extension;
-		initialize();
-	}
+    @SuppressWarnings("deprecation")
+    private void initialize() {
+        this.setShowByDefault(true);
+        this.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/147.png"))); // 'lightning' icon
+        // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when
+        // targeting Java 10+
+        this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
+        this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
+        this.setLayout(new BorderLayout());
 
-	@SuppressWarnings("deprecation")
-	private void initialize() {
-		this.setShowByDefault(true);
-		this.setIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
-		// TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when targeting Java 10+
-		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
-		this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
-		this.setLayout(new BorderLayout());
+        panelContent = new JXPanel(new GridBagLayout());
+        panelContent.setScrollableHeightHint(ScrollableSizeHint.FIT);
 
-		panelContent = new JPanel(new GridBagLayout());
-		JScrollPane jScrollPane = new JScrollPane();
-		jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
-		jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jScrollPane.setViewportView(panelContent);
+        jScrollPane = new JScrollPane();
+        jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+        jScrollPane.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane.setViewportView(panelContent);
 
-		this.add(jScrollPane, BorderLayout.CENTER);
-		
-		
-		panelContent.setBackground(Color.white);
-		panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-		
-		/*
-		 * Layout:
-		 * Col            0                      1                      2                    3                       4
-		 * Row+----------------------+----------------------+----------------------+----------------------+----------------------+
-		 *  0 | Top welcome message                                                                       |    zap128x128.png    |
-		 *  1 | URL:                 | [ Url field                                                      ] |                      |
-		 *  2 |                      | [ Attack button ]    | [ Stop button ]      | padding              |                      |
-		 *  3 | Progress:            | Progress details                                                   |                      |
-		 *    | Bottom message                                                                                                   |
-		 *    | Show at start:       | [x]                  |                      |                      |                      |
-		 *    +----------------------+----------------------+----------------------+----------------------+----------------------+
-		 */
+        this.add(jScrollPane, BorderLayout.CENTER);
 
-		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.topmsg")), 
-				LayoutHelper.getGBC(0, panelY, 4, 1.0D, new Insets(5,5,5,5)));
-		if (Constant.isDevBuild()) {
-			panelContent.add(new JLabel(new ImageIcon(QuickStartPanel.class.getResource(
-					"/org/zaproxy/zap/extension/quickstart/resources/zap128x128dark.png"))),
-					LayoutHelper.getGBC(4, panelY, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
-		} else {
-			panelContent.add(new JLabel(DisplayUtils.getScaledIcon(new ImageIcon(SearchPanel.class.getResource("/resource/zap128x128.png")))),
-				LayoutHelper.getGBC(4, panelY, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
-		}
-	
-		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.url")), 
-				LayoutHelper.getGBC(0, ++panelY, 1, 0.0D, new Insets(5,5,5,5)));
+        panelContent.setBackground(Color.white);
+        panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 
-		JPanel urlSelectPanel = new JPanel(new GridBagLayout());
-		selectButton = new JButton(Constant.messages.getString("all.button.select"));
-		selectButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(View.class.getResource("/resource/icon/16/094.png")))); // Globe icon
-		selectButton.addActionListener(new java.awt.event.ActionListener() { 
-			@Override
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-				NodeSelectDialog nsd = new NodeSelectDialog(View.getSingleton().getMainFrame());
-				SiteNode node = null; 
-				try {
-					node = Model.getSingleton().getSession().getSiteTree().findNode(new URI(getUrlField().getText(), false));
-				} catch (Exception e2) {
-					// Ignore
-				}
-				node = nsd.showDialog(node);
-				if (node != null && node.getHistoryReference() != null) {
-					try {
-						getUrlField().setText(node.getHistoryReference().getURI().toString());
-					} catch (Exception e1) {
-						// Ignore
-					}
-				}
-			}
-		});
-		
-		urlSelectPanel.add(this.getUrlField(), LayoutHelper.getGBC(0, 0, 1, 1.0D));
-		urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
-		panelContent.add(urlSelectPanel, LayoutHelper.getGBC(1, panelY, 3, 0.25D));
-		
-		panelContent.add(this.getAttackButton(), LayoutHelper.getGBC(1, ++panelY, 1, 0.0D));
-		panelContent.add(this.getStopButton(), LayoutHelper.getGBC(2, panelY, 1, 0.0D));
-		panelContent.add(new JLabel(""), LayoutHelper.getGBC(3, panelY, 1, 0.75D, 0.0D));	// Padding to right of buttons
-		
-		progressLabel = new JLabel(Constant.messages.getString("quickstart.progress." + AttackThread.Progress.notstarted.name()));
-		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.progress")), 
-				LayoutHelper.getGBC(0, ++panelY, 1, 0.0D, new Insets(5,5,5,5)));
-		panelContent.add(this.progressLabel, LayoutHelper.getGBC(1, panelY, 3, 0.0D));
+        JLabel topTitle = new JLabel(Constant.messages.getString("quickstart.top.panel.title"));
+        topTitle.setBackground(Color.WHITE);
+        topTitle.setFont(FontUtils.getFont(Size.much_larger));
+        topTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        panelContent.add(topTitle, LayoutHelper.getGBC(0, panelY, 4, 1.0D, 0.0D, GridBagConstraints.BOTH,
+                GridBagConstraints.CENTER, new Insets(0, 0, 0, 0)));
+        panelContent.add(QuickStartHelper.getWrappedLabel("quickstart.top.panel.message1"),
+                LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5)));
+        panelContent.add(QuickStartHelper.getWrappedLabel("quickstart.top.panel.message2"),
+                LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5)));
+        panelContent.add(new JLabel(" "), LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5))); // Spacer
 
-		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.proxymsg")), 
-				LayoutHelper.getGBC(0, ++panelY, 5, 1.0D, new Insets(5,5,5,5)));
+        buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.setBackground(Color.white);
+        buttonPanel.add(this.getAttackButton());
+        buttonPanel.add(this.getExploreButton());
+        buttonPanel.add(this.getLearnMoreButton());
 
-		for (QuickStartPanelContentProvider provider : extension.getContentProviders()) {
-		    this.addContent(provider);
-		}
-		replacePadding();
-		
-		this.setMode(Control.getSingleton().getMode());
-	}
-	
-	private void replacePadding() {
-	    if (panelContent != null) {
-	        // this may or may not be present
-	        panelContent.remove(this.lowerPadding);
-	        panelContent.add(this.lowerPadding, LayoutHelper.getGBC(0, ++panelY, 4, 1.D, 1.0D));    // Padding at bottom
-	    }
-	}
-	
-	protected void addContent(QuickStartPanelContentProvider provider) {
-        if (panelContent != null) {
-            panelY = provider.addToPanel(panelContent, panelY);
-            replacePadding();
+        panelContent.add(buttonPanel, LayoutHelper.getGBC(0, ++panelY, 5, 1.0D, 1.0D));
+
+        replacePadding();
+
+        getAttackPanel().setMode(Control.getSingleton().getMode());
+        getLearnMorePanel();
+    }
+
+    public void backToMainPanel() {
+        jScrollPane.setViewportView(panelContent);
+    }
+
+    public AttackPanel getAttackPanel() {
+        if (attackPanel == null) {
+            this.attackPanel = new AttackPanel(this.extension, this);
         }
-	}
-	
-    protected void removeContent(QuickStartPanelContentProvider provider) {
-        if (panelContent != null) {
-            provider.removeFromPanel(panelContent);
+        return attackPanel;
+    }
+
+    private JButton getAttackButton() {
+        if (attackButton == null) {
+            attackButton = new JButton();
+            attackButton.setText(Constant.messages.getString("quickstart.top.button.label.attack"));
+            attackButton.setIcon(getAttackPanel().getIcon());
+            attackButton.setVerticalTextPosition(AbstractButton.BOTTOM);
+            attackButton.setHorizontalTextPosition(AbstractButton.CENTER);
+            attackButton.setToolTipText(Constant.messages.getString("quickstart.top.button.tooltip.attack"));
+            attackButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
+
+            attackButton.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    jScrollPane.setViewportView(getAttackPanel());
+                }
+            });
         }
-	    
-	}
-	
-	protected void setMode(Mode mode) {
-		switch (mode) {
-		case safe:
-		case protect:
-			this.getUrlField().setEditable(false);
-			this.getUrlField().setText(Constant.messages.getString("quickstart.field.url.disabled.mode"));
-			this.selectButton.setEnabled(false);
-			this.getAttackButton().setEnabled(false);
-			break;
-		case standard:
-		case attack:
-			this.getUrlField().setEditable(true);
-			this.getUrlField().setText(DEFAULT_VALUE_URL_FIELD);
-			this.selectButton.setEnabled(true);
-			this.getAttackButton().setEnabled(true);
-			break;
-		}
-	}
-	
-	private ZapTextField getUrlField () {
-		if (urlField == null) {
-			urlField = new ZapTextField();
-			urlField.setText(DEFAULT_VALUE_URL_FIELD);
-		}
-		return urlField;
-	}
-	
-	private JButton getAttackButton() {
-		if (attackButton == null) {
-			attackButton = new JButton();
-			attackButton.setText(Constant.messages.getString("quickstart.button.label.attack"));
-			attackButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/147.png"))));	// 'lightning' icon
-			attackButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.attack"));
+        return attackButton;
+    }
 
-			attackButton.addActionListener(new java.awt.event.ActionListener() { 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					attackUrl();
-				}
-			});
-		}
-		return attackButton;
-	}
-	
-	private JButton getStopButton() {
-		if (stopButton == null) {
-			stopButton = new JButton();
-			stopButton.setText(Constant.messages.getString("quickstart.button.label.stop"));
-			stopButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/142.png"))));	// 'stop' icon
-			stopButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.stop"));
-			stopButton.setEnabled(false);
+    public LearnMorePanel getLearnMorePanel() {
+        if (learnMorePanel == null) {
+            learnMorePanel = new LearnMorePanel(this.extension, this);
+        }
+        return learnMorePanel;
+    }
 
-			stopButton.addActionListener(new java.awt.event.ActionListener() { 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					stopAttack();
-				}
-			});
-		}
-		return stopButton;
-	}
-	
-	
+    private JButton getLearnMoreButton() {
+        if (learnMoreButton == null) {
+            learnMoreButton = new JButton();
+            learnMoreButton.setText(Constant.messages.getString("quickstart.top.button.label.moreinfo"));
+            learnMoreButton.setIcon(getLearnMorePanel().getIcon());
+            learnMoreButton.setVerticalTextPosition(AbstractButton.BOTTOM);
+            learnMoreButton.setHorizontalTextPosition(AbstractButton.CENTER);
+            learnMoreButton.setToolTipText(Constant.messages.getString("quickstart.top.button.tooltip.moreinfo"));
+            learnMoreButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
-	boolean attackUrl () {
-		URL url;
-		try {
-			url = new URL(this.getUrlField().getText());
-			// Validate the actual request-uri of the HTTP message accessed.
-			new URI(this.getUrlField().getText(), true);
-		} catch (Exception e) {
-			extension.getView().showWarningDialog(Constant.messages.getString("quickstart.url.warning.invalid"));
-			this.getUrlField().requestFocusInWindow();
-			return false;
-		}
-		getAttackButton().setEnabled(false);
-		getStopButton().setEnabled(true);
-		
-		extension.attack(url);
-		return true;
-	}
+            learnMoreButton.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    jScrollPane.setViewportView(getLearnMorePanel());
+                }
+            });
+        }
+        return learnMoreButton;
+    }
 
-	void setAttackUrl(String url) {
-		getUrlField().setText(url);
-	}
-	
-	private void stopAttack() {
-		extension.stopAttack();
-		
-		stopButton.setEnabled(false);
-	}
+    public DefaultExplorePanel getDefaultExplorePanel() {
+        if (defaultExplorePanel == null) {
+            defaultExplorePanel = new DefaultExplorePanel(this.extension, this);
+        }
+        return defaultExplorePanel;
+    }
 
-	protected void notifyProgress(AttackThread.Progress progress) {
-		this.notifyProgress(progress, null);
-	}
+    private JButton getExploreButton() {
+        if (exploreButton == null) {
+            exploreButton = new JButton();
+            exploreButton.setText(Constant.messages.getString("quickstart.top.button.label.explore"));
+            exploreButton.setIcon(getDefaultExplorePanel().getIcon());
+            exploreButton.setVerticalTextPosition(AbstractButton.BOTTOM);
+            exploreButton.setHorizontalTextPosition(AbstractButton.CENTER);
+            exploreButton.setToolTipText(Constant.messages.getString("quickstart.top.button.tooltip.explore"));
+            exploreButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
-	protected void notifyProgress(AttackThread.Progress progress, String msg) {
-		if (msg == null) {
-			progressLabel.setText(Constant.messages.getString("quickstart.progress." + progress.name()));
-		} else {
-			progressLabel.setText(msg);
-		}
-		switch (progress) {
-		case complete:
-			getAttackButton().setEnabled(true);
-			getStopButton().setEnabled(false);
-			ExtensionAlert extAlert = ((ExtensionAlert)Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.NAME));
-			if (extAlert != null) {
-				extAlert.setAlertTabFocus();
-			}
-			break;
-		case failed:
-		case stopped:
-			getAttackButton().setEnabled(true);
-			getStopButton().setEnabled(false);
-			break;
-		default:
-			break;
-		}
-	}
+            exploreButton.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    if (explorePanel != null) {
+                        jScrollPane.setViewportView(explorePanel);
+                    } else {
+                        jScrollPane.setViewportView(getDefaultExplorePanel());
+                    }
+                }
+            });
+        }
+        return exploreButton;
+    }
 
+    private void replacePadding() {
+        if (panelContent != null) {
+            // this may or may not be present
+            panelContent.remove(this.lowerPadding);
+            GridBagConstraints gbc = LayoutHelper.getGBC(0, ++panelY, 4, 1.D, 1.0D);
+            panelContent.add(this.lowerPadding, gbc); // Padding at bottom
+        }
+    }
+
+    protected void setExplorePanel(QuickStartSubPanel panel) {
+        this.explorePanel = panel;
+    }
+
+    public void addPlugableSpider(PlugableSpider pe) {
+        if (this.attackPanel != null) {
+            this.attackPanel.addPlugableSpider(pe);
+        }
+    }
+
+    public void removePlugableSpider(PlugableSpider pe) {
+        if (this.attackPanel != null) {
+            this.attackPanel.removePlugableSpider(pe);
+        }
+    }
+
+    public void optionsLoaded(QuickStartParam quickStartParam) {
+        this.getAttackPanel().optionsLoaded(quickStartParam);
+    }
+
+    public void optionsChanged(OptionsParam optionsParam) {
+        this.getDefaultExplorePanel().optionsChanged(optionsParam);
+        this.getAttackPanel().optionsChanged(optionsParam);
+    }
+
+    public ComboBoxModel<String> getUrlModel() {
+        return this.getAttackPanel().getUrlModel();
+    }
 }
