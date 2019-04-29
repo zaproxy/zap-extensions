@@ -8,7 +8,7 @@ extra["targetOs"] = DownloadWebDriver.OS.MAC
 
 zapAddOn {
     addOnName.set("MacOS WebDrivers")
-    addOnStatus.set(AddOnStatus.BETA)
+    addOnStatus.set(AddOnStatus.RELEASE)
     zapVersion.set("2.5.0")
 
     manifest {
