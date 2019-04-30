@@ -8,7 +8,7 @@ extra["targetOs"] = DownloadWebDriver.OS.WIN
 
 zapAddOn {
     addOnName.set("Windows WebDrivers")
-    addOnStatus.set(AddOnStatus.BETA)
+    addOnStatus.set(AddOnStatus.RELEASE)
     zapVersion.set("2.5.0")
 
     manifest {
