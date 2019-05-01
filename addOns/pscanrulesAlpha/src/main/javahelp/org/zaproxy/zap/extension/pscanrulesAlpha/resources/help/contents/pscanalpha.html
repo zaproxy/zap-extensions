@@ -52,6 +52,10 @@ Passively scan responses for signatures that are indicative that Directory Brows
 This implements a very simple example passive scan rule.<br>
 For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
+<H2>Feature Policy Header Not Set</H2>
+This scanner checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Feature-Policy" header, 
+and alerts if one is not found.
+
 <H2>Hash Disclosure</H2>
 Passively scan for password hashes disclosed by the web server. <br>
 Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
