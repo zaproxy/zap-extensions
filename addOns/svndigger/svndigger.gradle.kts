@@ -11,7 +11,7 @@ val processFiles by tasks.registering(ProcessSvnDiggerFiles::class) {
 
 zapAddOn {
     addOnName.set("SVN Digger files")
-    addOnStatus.set(AddOnStatus.BETA)
+    addOnStatus.set(AddOnStatus.RELEASE)
     zapVersion.set("2.5.0")
 
     manifest {
