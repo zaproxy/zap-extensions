@@ -4,7 +4,6 @@ import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.addon.manifest.tasks.ConvertChangelogToChanges
 import org.zaproxy.gradle.addon.wiki.WikiGenExtension
-import org.zaproxy.gradle.addon.zapversions.ZapVersionsExtension
 import org.zaproxy.gradle.tasks.CreateGitHubRelease
 import org.zaproxy.gradle.tasks.ExtractLatestChangesChangelog
 import org.zaproxy.gradle.tasks.PrepareAddOnNextDevIter
@@ -206,9 +205,6 @@ fun AddOnPluginExtension.manifest(configure: ManifestExtension.() -> Unit): Unit
 
 fun AddOnPluginExtension.wikiGen(configure: WikiGenExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("wikiGen", configure)
-
-fun AddOnPluginExtension.zapVersions(configure: ZapVersionsExtension.() -> Unit): Unit =
-    (this as ExtensionAware).extensions.configure("zapVersions", configure)
 
 open class ValidateDeclaredAddOns : DefaultTask() {
 
