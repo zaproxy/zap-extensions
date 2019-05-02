@@ -685,6 +685,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 firefoxOptions.setBinary(binaryPath);
             }
 
+            // Ensure ServiceWorkers are enabled for the HUD.
+            firefoxOptions.addPreference("dom.serviceWorkers.enabled", true);
+
             // Disable the captive checks/requests, mainly to avoid flooding
             // the AJAX Spider results (those requests are out of scope) but
             // also useful for other launched browsers.

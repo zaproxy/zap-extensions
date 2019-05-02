@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Remove support for Internet Explorer, does not support required capabilities.
 - Quit corresponding WebDrivers when removing WebDriver provider.
+- Enable ServiceWorker on launched Firefox browsers.
 
 ## 14 - 2019-01-31
 
