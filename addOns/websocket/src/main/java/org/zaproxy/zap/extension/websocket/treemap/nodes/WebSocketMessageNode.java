@@ -3,8 +3,9 @@ package org.zaproxy.zap.extension.websocket.treemap.nodes;
 import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
-import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
+import org.zaproxy.zap.extension.websocket.treemap.analyzers.PayloadAnalyzer;
+import org.zaproxy.zap.extension.websocket.treemap.analyzers.structures.PayloadStructure;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 
 import java.util.List;
@@ -12,13 +13,23 @@ import java.util.List;
 public class WebSocketMessageNode extends WebSocketTreeNode{
     public static final int MAX_LENGTH = 40;
     private WebSocketMessageDTO messageDTO;
-    
-    public WebSocketMessageNode(WebSocketNodeType type, StructuralWebSocketNode parent, WebSocketMessageDTO webSocketMessage) throws InvalidUtf8Exception {
-        super(type, parent, webSocketMessage.getReadablePayload().length() < MAX_LENGTH ? webSocketMessage.getReadablePayload() : webSocketMessage.getReadablePayload().substring(MAX_LENGTH));
-        messageDTO = webSocketMessage;
-    }
-    
-    @Override
+    private PayloadAnalyzer payloadAnalyzer = null;
+	private PayloadStructure payloadStructure = null;
+	
+	public WebSocketMessageNode(WebSocketNodeType type, StructuralWebSocketNode parent, WebSocketMessageDTO webSocketMessage, String nodeName) throws Exception {
+		super(type, parent, nodeName);
+		messageDTO = webSocketMessage;
+	}
+	
+	public void setPayloadAnalyzer(PayloadAnalyzer payloadAnalyzer) {
+		this.payloadAnalyzer = payloadAnalyzer;
+	}
+	
+	public void setPayloadStructure(PayloadStructure payloadStructure) {
+		this.payloadStructure = payloadStructure;
+	}
+	
+	@Override
     public WebSocketMessageDTO getWebSocketMessageDTO() {
         return messageDTO;
     }
@@ -32,9 +43,13 @@ public class WebSocketMessageNode extends WebSocketTreeNode{
     public List<HistoryReference> getHandshakeMessage() {
         return parent.getHandshakeMessage();
     }
-    
-    
-    @Override
+	
+	@Override
+	public void setNodeName(String nodeName) {
+		this.nodeName = nodeName;
+	}
+	
+	@Override
     public URI getURI() {
         return null;
     }
