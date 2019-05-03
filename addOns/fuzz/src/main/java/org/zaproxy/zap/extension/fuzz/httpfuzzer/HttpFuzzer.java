@@ -68,21 +68,7 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                 : Collections.synchronizedList(new ArrayList<>(messageProcessors));
         currentSession = Model.getSingleton().getSession();
 
-        httpSender = new HttpSender(
-                Model.getSingleton().getOptionsParam().getConnectionParam(),
-                true,
-                HttpSender.FUZZER_INITIATOR);
-
-        if (fuzzerOptions.isFollowRedirects()) {
-            httpSender.setFollowRedirect(fuzzerOptions.isFollowRedirects());
-            httpSender.setMaxRedirects(fuzzerOptions.getMaximumRedirects());
-            httpSender.setAllowCircularRedirects(fuzzerOptions.isAllowCircularRedirects());
-        }
-
-        httpSender.setRemoveUserDefinedAuthHeaders(true);
-        // Retries are handled by the fuzzer tasks.
-        httpSender.setMaxRetriesOnIOError(0);
-
+        httpSender = HttpSenderForHttpFuzzerFactory.create(fuzzerOptions);
         this.originalMessage = message;
 
         messagesModel = new HttpFuzzerResultsTableModel();

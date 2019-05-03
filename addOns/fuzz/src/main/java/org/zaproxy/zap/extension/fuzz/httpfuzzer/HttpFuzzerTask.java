@@ -80,8 +80,7 @@ public class HttpFuzzerTask extends AbstractFuzzerTask<HttpMessage> {
             }
 
             try {
-                sender.sendAndReceive(message);
-
+                HttpSenderForHttpFuzzerFactory.sendAndReceive(sender, options, message);
                 return message;
             } catch (IOException e) {
                 ++retryCount;

@@ -46,6 +46,7 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.RequestContentLength
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.UserHttpFuzzerMessageProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator.HttpFuzzerMessageProcessorTagStateHighlighter;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator.HttpFuzzerMessageProcessorTagUIHandler;
+import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzSequencePopupMenuItem;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzAttackPopupMenuItem;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzerResultStateHighlighter;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacers;
@@ -55,6 +56,7 @@ import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.extension.search.HttpSearcher;
 import org.zaproxy.zap.extension.search.SearchResult;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
 
 public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
@@ -134,6 +136,10 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
         if (getView() != null) {
             extensionHook.getHookMenu().addPopupMenuItem(new HttpFuzzAttackPopupMenuItem(extensionFuzz, httpFuzzerHandler));
+
+            ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+            ExtensionZest extensionZest = Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.class);
+            extensionHook.getHookMenu().addPopupMenuItem(new HttpFuzzSequencePopupMenuItem(extensionFuzz, httpFuzzerHandler, extensionScript, extensionZest));
 
             ExtensionSearch extensionSearch = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSearch.class);
             if (extensionSearch != null) {
