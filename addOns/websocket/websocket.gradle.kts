@@ -37,6 +37,7 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("fuzz")!!)
+    implementation("com.google.code.gson:gson:2.8.5")
 
     testImplementation(project(":testutils"))
 }
