@@ -11,6 +11,33 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         extensions {
+            register("org.zaproxy.zap.extension.quickstart.ajaxspider.ExtensionQuickStartAjaxSpider") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.quickstart.ajaxspider"))
+                }
+                dependencies {
+                    addOns {
+                        register("selenium") {
+                            semVer.set("2.*")
+                        }
+                        register("spiderAjax") {
+                            semVer.set("23.*")
+                        }
+                    }
+                }
+            }
+            register("org.zaproxy.zap.extension.quickstart.hud.ExtensionQuickStartHud") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.quickstart.hud"))
+                }
+                dependencies {
+                    addOns {
+                        register("hud") {
+                            semVer.set(">= 0.4.0")
+                        }
+                    }
+                }
+            }
             register("org.zaproxy.zap.extension.quickstart.launch.ExtensionQuickStartLaunch") {
                 classnames {
                     allowed.set(listOf("org.zaproxy.zap.extension.quickstart.launch"))
@@ -29,4 +56,5 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("selenium")!!)
+    compileOnly(parent!!.childProjects.get("spiderAjax")!!)
 }
