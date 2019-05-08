@@ -25,26 +25,20 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 
-/**
- * Knows how to send {@link HttpMessage} objects. Contains a list of valid
- * WebSocket channels.
- */
+/** Knows how to send {@link HttpMessage} objects. Contains a list of valid WebSocket channels. */
 public class ClientMessagePanelSender implements MessageSender {
 
     private ExtensionPlugNHack extension = null;
 
     public ClientMessagePanelSender(ExtensionPlugNHack extension) {
-    	this.extension = extension;
+        this.extension = extension;
     }
-    
+
     @Override
     public void handleSendMessage(Message aMessage) {
-        this.extension.resend((ClientMessage)aMessage);
+        this.extension.resend((ClientMessage) aMessage);
     }
-    
+
     @Override
-    public void cleanup() {
-        
-    }
-    
+    public void cleanup() {}
 }

@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Before;
@@ -26,9 +28,8 @@ import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-import static org.junit.Assert.assertEquals;
-
-public class TimestampDisclosureScannerUnitTest extends PassiveScannerTest<TimestampDisclosureScanner> {
+public class TimestampDisclosureScannerUnitTest
+        extends PassiveScannerTest<TimestampDisclosureScanner> {
     private HttpMessage msg;
 
     @Before
@@ -48,11 +49,13 @@ public class TimestampDisclosureScannerUnitTest extends PassiveScannerTest<Times
     @Test
     public void shouldNotRaiseAlertOnSTSHeader() throws Exception {
         // Given
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n" + "Strict-Transport-Security: max-age=15552000; includeSubDomains\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Strict-Transport-Security: max-age=15552000; includeSubDomains\r\n");
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
-
 }

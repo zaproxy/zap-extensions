@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.alertFilters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.zaproxy.zap.model.Context;
 
 /**
@@ -31,76 +30,75 @@ import org.zaproxy.zap.model.Context;
  */
 public class ContextAlertFilterManager {
 
-	/** The context id. */
-	private int contextId;
+    /** The context id. */
+    private int contextId;
 
-	/** The model. */
-	private List<AlertFilter> alertFilters;
+    /** The model. */
+    private List<AlertFilter> alertFilters;
 
-	public ContextAlertFilterManager(int contextId) {
-		this.contextId = contextId;
-		this.alertFilters = new ArrayList<>();
-	}
+    public ContextAlertFilterManager(int contextId) {
+        this.contextId = contextId;
+        this.alertFilters = new ArrayList<>();
+    }
 
-	/**
-	 * Builds a table model for the alertFilters.
-	 * 
-	 * @return the model
-	 */
-	public AlertFilterTableModel getAlertFiltersModel() {
-		return new AlertFilterTableModel(this.alertFilters);
-	}
+    /**
+     * Builds a table model for the alertFilters.
+     *
+     * @return the model
+     */
+    public AlertFilterTableModel getAlertFiltersModel() {
+        return new AlertFilterTableModel(this.alertFilters);
+    }
 
-	/**
-	 * Gets the context id to which this object corresponds.
-	 * 
-	 * @return the context id
-	 */
-	public int getContextId() {
-		return contextId;
-	}
+    /**
+     * Gets the context id to which this object corresponds.
+     *
+     * @return the context id
+     */
+    public int getContextId() {
+        return contextId;
+    }
 
-	/**
-	 * Gets an unmodifiable view of the list of alertFilters.
-	 * 
-	 * @return the alertFilters
-	 */
-	public List<AlertFilter> getAlertFilters() {
-		return Collections.unmodifiableList(alertFilters);
-	}
+    /**
+     * Gets an unmodifiable view of the list of alertFilters.
+     *
+     * @return the alertFilters
+     */
+    public List<AlertFilter> getAlertFilters() {
+        return Collections.unmodifiableList(alertFilters);
+    }
 
-	/**
-	 * Sets a new list of alertFilters for this context. An internal copy of the provided list is stored.
-	 * 
-	 * @param alertFilters the alertFilters
-	 * @return the list
-	 */
-	public void setAlertFilters(List<AlertFilter> alertFilters) {
-		this.alertFilters = new ArrayList<>(alertFilters);
-	}
+    /**
+     * Sets a new list of alertFilters for this context. An internal copy of the provided list is
+     * stored.
+     *
+     * @param alertFilters the alertFilters
+     * @return the list
+     */
+    public void setAlertFilters(List<AlertFilter> alertFilters) {
+        this.alertFilters = new ArrayList<>(alertFilters);
+    }
 
-	/**
-	 * Adds an alertFilter.
-	 * 
-	 * @param alertFilter the alertFilter being added 
-	 */
-	public void addAlertFilter(AlertFilter alertFilter) {
-		alertFilters.add(alertFilter);
-	}
+    /**
+     * Adds an alertFilter.
+     *
+     * @param alertFilter the alertFilter being added
+     */
+    public void addAlertFilter(AlertFilter alertFilter) {
+        alertFilters.add(alertFilter);
+    }
 
-	/**
-	 * Removes an alertFilter.
-	 * 
-	 * @param alertFilter the alertFilter being removed 
-	 */
-	public boolean removeAlertFilter(AlertFilter alertFilter) {
-		return alertFilters.remove(alertFilter);
-	}
+    /**
+     * Removes an alertFilter.
+     *
+     * @param alertFilter the alertFilter being removed
+     */
+    public boolean removeAlertFilter(AlertFilter alertFilter) {
+        return alertFilters.remove(alertFilter);
+    }
 
-	/**
-	 * Removes all the alertFilters.
-	 */
-	public void removeAllAlertFilters(){
-		this.alertFilters.clear();
-	}
+    /** Removes all the alertFilters. */
+    public void removeAllAlertFilters() {
+        this.alertFilters.clear();
+    }
 }

@@ -24,45 +24,45 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
 
 /**
- * Menu Item for Popup. Used in WebSockets tab, when you click on some message
- * with right mouse button.
+ * Menu Item for Popup. Used in WebSockets tab, when you click on some message with right mouse
+ * button.
  */
 public class ResendWebSocketMessageMenuItem extends WebSocketMessagesPopupMenuItem {
-    
-	private static final long serialVersionUID = 356209537052284999L;
-	
-	private final ManualWebSocketSendEditorDialog dialog;
-    
+
+    private static final long serialVersionUID = 356209537052284999L;
+
+    private final ManualWebSocketSendEditorDialog dialog;
+
     public ResendWebSocketMessageMenuItem(ManualWebSocketSendEditorDialog dialog) {
         super();
 
         this.dialog = dialog;
     }
 
-	@Override
-	protected String getMenuText() {
-		return Constant.messages.getString("websocket.manual_send.resend.menu");
-	}
+    @Override
+    protected String getMenuText() {
+        return Constant.messages.getString("websocket.manual_send.resend.menu");
+    }
 
-	@Override
-	protected void performAction() {
-		WebSocketMessageDTO message = getSelectedMessageDTO();
-		if (message == null) {
-			// do nothing
-			return;
-		}
-		
-		dialog.setMessage(message);
-		dialog.setVisible(true);
-	}
-	
-	@Override
-	protected String getInvokerName() {
-		return WebSocketMessagesView.PANEL_NAME;
-	}
-	
-	@Override
-	public boolean isSafe() {
-		return false;
-	}
+    @Override
+    protected void performAction() {
+        WebSocketMessageDTO message = getSelectedMessageDTO();
+        if (message == null) {
+            // do nothing
+            return;
+        }
+
+        dialog.setMessage(message);
+        dialog.setVisible(true);
+    }
+
+    @Override
+    protected String getInvokerName() {
+        return WebSocketMessagesView.PANEL_NAME;
+    }
+
+    @Override
+    public boolean isSafe() {
+        return false;
+    }
 }

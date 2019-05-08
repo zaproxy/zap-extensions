@@ -33,22 +33,23 @@ public class ClientBreakpointsUiManagerInterface implements BreakpointsUiManager
 
     private ExtensionPlugNHack extension;
     private ExtensionBreak extensionBreak;
-    
-    public ClientBreakpointsUiManagerInterface(ExtensionPlugNHack extension, ExtensionBreak extensionBreak) {
-    	this.extension = extension;
+
+    public ClientBreakpointsUiManagerInterface(
+            ExtensionPlugNHack extension, ExtensionBreak extensionBreak) {
+        this.extension = extension;
         this.extensionBreak = extensionBreak;
     }
-    
+
     @Override
     public Class<ClientMessage> getMessageClass() {
         return ClientMessage.class;
     }
-    
+
     @Override
     public Class<ClientBreakpointMessage> getBreakpointClass() {
         return ClientBreakpointMessage.class;
     }
-    
+
     @Override
     public String getType() {
         return "Client";
@@ -65,10 +66,11 @@ public class ClientBreakpointsUiManagerInterface implements BreakpointsUiManager
 
     @Override
     public void handleEditBreakpoint(BreakpointMessageInterface breakpoint) {
-        showEditDialog((ClientBreakpointMessage)breakpoint);
+        showEditDialog((ClientBreakpointMessage) breakpoint);
     }
 
-    void editBreakpoint(BreakpointMessageInterface oldBreakpoint, BreakpointMessageInterface newBreakpoint) {
+    void editBreakpoint(
+            BreakpointMessageInterface oldBreakpoint, BreakpointMessageInterface newBreakpoint) {
         extensionBreak.editBreakpoint(oldBreakpoint, newBreakpoint);
     }
 
@@ -78,14 +80,13 @@ public class ClientBreakpointsUiManagerInterface implements BreakpointsUiManager
     }
 
     @Override
-    public void reset() {
-    }
-    
+    public void reset() {}
+
     private void populateAddDialogAndSetVisible(Message aMessage) {
-        addDialog.setMessage((ClientMessage)aMessage);
+        addDialog.setMessage((ClientMessage) aMessage);
         addDialog.setVisible(true);
     }
-    
+
     private void showAddDialog(Message aMessage) {
         if (addDialog == null) {
             addDialog = new ClientBreakDialogAdd(extension, this);
@@ -94,12 +95,12 @@ public class ClientBreakpointsUiManagerInterface implements BreakpointsUiManager
             populateAddDialogAndSetVisible(aMessage);
         }
     }
-    
+
     private void populateEditDialogAndSetVisible(ClientBreakpointMessage breakpoint) {
         editDialog.setBreakpoint(breakpoint);
         editDialog.setVisible(true);
     }
-    
+
     private void showEditDialog(ClientBreakpointMessage breakpoint) {
         if (editDialog == null) {
             editDialog = new ClientBreakDialogEdit(extension, this);
@@ -108,5 +109,4 @@ public class ClientBreakpointsUiManagerInterface implements BreakpointsUiManager
             populateEditDialogAndSetVisible(breakpoint);
         }
     }
-
 }

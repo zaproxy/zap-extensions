@@ -26,8 +26,8 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 /**
  * A {@code MessageLocationReplacement} associated with a iterator of a {@code PayloadGenerator}.
  */
-public class PayloadGeneratorMessageLocation<E extends Payload> implements
-        MessageLocationReplacementGenerator<E, PayloadMessageLocationReplacement<E>> {
+public class PayloadGeneratorMessageLocation<E extends Payload>
+        implements MessageLocationReplacementGenerator<E, PayloadMessageLocationReplacement<E>> {
 
     private final MessageLocation messageLocation;
     private final long numberOfPayloads;
@@ -100,8 +100,7 @@ public class PayloadGeneratorMessageLocation<E extends Payload> implements
     }
 
     @Override
-    public void remove() {
-    }
+    public void remove() {}
 
     @Override
     public void reset() {

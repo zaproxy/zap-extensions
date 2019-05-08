@@ -20,32 +20,29 @@
 package org.zaproxy.zap.extension.websocket.ui;
 
 import javax.swing.JTable;
-
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
-/**
- * Helper for context menus on {@link WebSocketMessagesView}.
- */
+/** Helper for context menus on {@link WebSocketMessagesView}. */
 public class WebSocketPopupHelper {
 
-	private JTable messagesView;
-	
-	public WebSocketPopupHelper(JTable invoker) {
-		messagesView = invoker;
-	}
+    private JTable messagesView;
 
-	public WebSocketMessageDTO getSelectedMessage() {
-		WebSocketMessageDTO message = null;
+    public WebSocketPopupHelper(JTable invoker) {
+        messagesView = invoker;
+    }
+
+    public WebSocketMessageDTO getSelectedMessage() {
+        WebSocketMessageDTO message = null;
         int[] rows = messagesView.getSelectedRows();
         if (rows.length == 1) {
-        	int index = rows[0];
-    		WebSocketMessagesViewModel model = (WebSocketMessagesViewModel) messagesView.getModel();
+            int index = rows[0];
+            WebSocketMessagesViewModel model = (WebSocketMessagesViewModel) messagesView.getModel();
             message = model.getDTO(index);
         }
         return message;
-	}
+    }
 
-	public boolean isOneRowSelected() {
-		return 1 == messagesView.getSelectedRowCount();
-	}
+    public boolean isOneRowSelected() {
+        return 1 == messagesView.getSelectedRowCount();
+    }
 }

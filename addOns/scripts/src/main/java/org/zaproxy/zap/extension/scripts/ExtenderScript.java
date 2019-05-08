@@ -25,16 +25,18 @@ public interface ExtenderScript {
 
     /**
      * Called when the script is enabled
+     *
      * @param helper a class which provides easy access to add graphical elements and API calls
      * @throws ScriptException
      */
     void install(ExtenderScriptHelper helper) throws ScriptException;
 
     /**
-     * Called when the script is disabled - any elements added in the install method should be disabled here.
+     * Called when the script is disabled - any elements added in the install method should be
+     * disabled here.
+     *
      * @param helper a class which provides easy access to add graphical elements and API calls
      * @throws ScriptException
      */
     void uninstall(ExtenderScriptHelper helper) throws ScriptException;
-
 }

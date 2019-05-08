@@ -33,7 +33,6 @@ public class Generators {
     private PathGenerator pathGenerator;
     private List<String> errorMessages = new ArrayList<String>();
 
-
     public Generators(org.zaproxy.zap.model.ValueGenerator valueGenerator) {
         this.valueGenerator = new ValueGenerator(valueGenerator);
         this.modelGenerator = new ModelGenerator();
@@ -67,15 +66,15 @@ public class Generators {
     public PathGenerator getPathGenerator() {
         return pathGenerator;
     }
-    
-    public void addErrorMessage (String error) {
+
+    public void addErrorMessage(String error) {
         this.errorMessages.add(error);
     }
-    
+
     public List<String> getErrorMessages() {
         return this.errorMessages;
     }
-    
+
     public ValueGenerator getValueGenerator() {
         return this.valueGenerator;
     }

@@ -19,38 +19,33 @@
  */
 package org.zaproxy.zap.extension.jsonview;
 
+import java.util.List;
+import java.util.regex.Pattern;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
 import org.zaproxy.zap.extension.search.SearchMatch;
 
-import java.util.List;
-import java.util.regex.Pattern;
-
 public class HttpPanelJsonArea extends HttpPanelSyntaxHighlightTextArea {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public HttpPanelJsonArea() {
-		setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
-		addSyntaxStyle(
-				Constant.messages.getString("http.panel.view.syntaxtext.syntax.json"),
-				SyntaxConstants.SYNTAX_STYLE_JSON);
-		setCodeFoldingEnabled(true);
-	}
+    public HttpPanelJsonArea() {
+        setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
+        addSyntaxStyle(
+                Constant.messages.getString("http.panel.view.syntaxtext.syntax.json"),
+                SyntaxConstants.SYNTAX_STYLE_JSON);
+        setCodeFoldingEnabled(true);
+    }
 
-	@Override
-	public void search(Pattern pattern, List<SearchMatch> list) {
+    @Override
+    public void search(Pattern pattern, List<SearchMatch> list) {}
 
-	}
+    @Override
+    public void highlight(SearchMatch searchMatch) {}
 
-	@Override
-	public void highlight(SearchMatch searchMatch) {
-
-	}
-
-	@Override
-	protected CustomTokenMakerFactory getTokenMakerFactory() {
-		return null;
-	}
+    @Override
+    protected CustomTokenMakerFactory getTokenMakerFactory() {
+        return null;
+    }
 }

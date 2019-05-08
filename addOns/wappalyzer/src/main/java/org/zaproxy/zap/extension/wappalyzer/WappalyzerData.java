@@ -29,12 +29,11 @@ public class WappalyzerData {
     private Map<String, String> categories = new HashMap<String, String>();
     private List<Application> applications = new ArrayList<Application>();
 
-
-    public void addCategory(String key, String value){
+    public void addCategory(String key, String value) {
         this.categories.put(key, value);
     }
 
-    public void addApplication(Application application){
+    public void addApplication(Application application) {
         this.applications.add(application);
     }
 

@@ -32,14 +32,14 @@ public class WappalyzerApplicationTestHolder implements WappalyzerApplicationHol
     @Override
     public void addApplicationsToSite(String site, ApplicationMatch applicationMatch) {
         List<ApplicationMatch> apps = siteToApps.get(site);
-        if(apps == null){
+        if (apps == null) {
             apps = new ArrayList<>();
             siteToApps.put(site, apps);
         }
         apps.add(applicationMatch);
     }
 
-    public List<ApplicationMatch> getAppsForSite(String site){
+    public List<ApplicationMatch> getAppsForSite(String site) {
         return siteToApps.get(site);
     }
 

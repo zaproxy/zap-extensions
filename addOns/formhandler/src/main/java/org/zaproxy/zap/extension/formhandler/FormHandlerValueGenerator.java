@@ -21,13 +21,11 @@ package org.zaproxy.zap.extension.formhandler;
 
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.httpclient.URI;
-
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
 
-public class FormHandlerValueGenerator implements ValueGenerator{
+public class FormHandlerValueGenerator implements ValueGenerator {
 
     private FormHandlerParam param;
 
@@ -38,17 +36,26 @@ public class FormHandlerValueGenerator implements ValueGenerator{
     }
 
     @Override
-    public String getValue(URI uri, String url, String fieldId, String defaultValue, List<String> definedValues, Map<String, String> envAttributes, Map<String, String> fieldAttributes) {
+    public String getValue(
+            URI uri,
+            String url,
+            String fieldId,
+            String defaultValue,
+            List<String> definedValues,
+            Map<String, String> envAttributes,
+            Map<String, String> fieldAttributes) {
 
-        //Check to see if there is an enabled field for the current field being processed, based on field attribute 'name'
+        // Check to see if there is an enabled field for the current field being processed, based on
+        // field attribute 'name'
         String value = param.getEnabledFieldValue(fieldId.toLowerCase());
 
-        //If there is an existing field in the list
+        // If there is an existing field in the list
         if (value != null) {
             return value;
         }
 
-        //In all other cases pass the field to the defaultValueGenerator
-        return defaultValueGenerator.getValue(uri, url, fieldId, defaultValue, definedValues, envAttributes, fieldAttributes);
+        // In all other cases pass the field to the defaultValueGenerator
+        return defaultValueGenerator.getValue(
+                uri, url, fieldId, defaultValue, definedValues, envAttributes, fieldAttributes);
     }
 }

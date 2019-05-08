@@ -33,86 +33,87 @@ import org.parosproxy.paros.network.HttpStatusCode;
 
 public class InsecureFormPostScannerUnitTest extends PassiveScannerTest<InsecureFormPostScanner> {
 
-	private HttpMessage createMessage() throws URIException {
-		HttpRequestHeader requestHeader = new HttpRequestHeader();
-		requestHeader.setURI(new URI("https://example.com", false));
+    private HttpMessage createMessage() throws URIException {
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        requestHeader.setURI(new URI("https://example.com", false));
 
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader(requestHeader);
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
-		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
-		return msg;
-	}
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
+        return msg;
+    }
 
-	@Override
-	protected InsecureFormPostScanner createScanner() {
-		return new InsecureFormPostScanner();
-	}
+    @Override
+    protected InsecureFormPostScanner createScanner() {
+        return new InsecureFormPostScanner();
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseIsNotHttps() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setSecure(false);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseIsNotHttps() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setSecure(false);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseIsNotStatusOk() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseIsNotStatusOk() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseIsNotHtml() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
-	
-	@Test
-	public void shouldNotRaiseAlertIfResponseContentTypeIsNull() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseIsNotHtml() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseFormIsSecure() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.setResponseBody("<html><form name=\"someform\" action=\"https://example.com/processform\"></form</html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseContentTypeIsNull() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfResponseFormIsInsecure() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.setResponseBody("<html><form name=\"someform\" action=\"http://example.com/processform\"></form</html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseFormIsSecure() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><form name=\"someform\" action=\"https://example.com/processform\"></form</html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
+    @Test
+    public void shouldRaiseAlertIfResponseFormIsInsecure() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><form name=\"someform\" action=\"http://example.com/processform\"></form</html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+    }
 }

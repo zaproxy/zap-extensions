@@ -27,7 +27,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class ContentSecurityPolicyScannerUnitTest extends PassiveScannerTest<ContentSecurityPolicyScanner> {
+public class ContentSecurityPolicyScannerUnitTest
+        extends PassiveScannerTest<ContentSecurityPolicyScanner> {
 
     @Override
     protected ContentSecurityPolicyScanner createScanner() {
@@ -41,33 +42,42 @@ public class ContentSecurityPolicyScannerUnitTest extends PassiveScannerTest<Con
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
 
         msg.setResponseBody("<html></html>");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n"
-                + "Server: Apache-Coyote/1.1\r\n"
-                + "Content-Security-Policy: default-src: 'none'; report_uri /__cspreport__\r\n"
-                + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                + "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: default-src: 'none'; report_uri /__cspreport__\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
 
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP Scanner: Notices"));
-        assertThat(alertsRaised.get(0).getDescription(), equalTo(
-                "Errors:\n"
-                + "1:12: Expecting directive-value but found U+003A (:). Non-ASCII and non-printable characters must be percent-encoded.\n"
-                + "1:22: Unrecognised directive-name: \"report\".\n"
-                + "1:28: Expecting directive-value but found U+005F (_). Non-ASCII and non-printable characters must be percent-encoded.\n"));
-        assertThat(alertsRaised.get(0).getEvidence(),
+        assertThat(
+                alertsRaised.get(0).getDescription(),
+                equalTo(
+                        "Errors:\n"
+                                + "1:12: Expecting directive-value but found U+003A (:). Non-ASCII and non-printable characters must be percent-encoded.\n"
+                                + "1:22: Unrecognised directive-name: \"report\".\n"
+                                + "1:28: Expecting directive-value but found U+005F (_). Non-ASCII and non-printable characters must be percent-encoded.\n"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
 
         assertThat(alertsRaised.get(1).getName(), equalTo("CSP Scanner: Wildcard Directive"));
-        assertThat(alertsRaised.get(1).getDescription(), equalTo(
-                "The following directives either allow wildcard sources (or ancestors), are not defined, or are overly broadly defined: \n"
-                + "script-src, style-src, img-src, connect-src, frame-src, frame-ancestor, font-src, media-src, object-src, manifest-src, "
-                + "worker-src, prefetch-src"));
-        assertThat(alertsRaised.get(1).getEvidence(),
+        assertThat(
+                alertsRaised.get(1).getDescription(),
+                equalTo(
+                        "The following directives either allow wildcard sources (or ancestors), are not defined, or are overly broadly defined: \n"
+                                + "script-src, style-src, img-src, connect-src, frame-src, frame-ancestor, font-src, media-src, object-src, manifest-src, "
+                                + "worker-src, prefetch-src"));
+        assertThat(
+                alertsRaised.get(1).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));

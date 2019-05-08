@@ -20,17 +20,18 @@
 package org.zaproxy.zap.extension.invoke;
 
 import java.awt.Dialog;
-
 import org.parosproxy.paros.Constant;
 
 class DialogModifyApp extends DialogAddApp {
 
     private static final long serialVersionUID = 2527021826845655293L;
 
-    private static final String DIALOG_TITLE = Constant.messages.getString("invoke.options.dialog.app.modify.title");
-    
-    private static final String CONFIRM_BUTTON_LABEL = Constant.messages.getString("invoke.options.dialog.app.modify.button.confirm");
-    
+    private static final String DIALOG_TITLE =
+            Constant.messages.getString("invoke.options.dialog.app.modify.title");
+
+    private static final String CONFIRM_BUTTON_LABEL =
+            Constant.messages.getString("invoke.options.dialog.app.modify.button.confirm");
+
     protected DialogModifyApp(Dialog owner) {
         super(owner, DIALOG_TITLE);
     }
@@ -43,7 +44,7 @@ class DialogModifyApp extends DialogAddApp {
     public void setApp(InvokableApp app) {
         this.app = app;
     }
-    
+
     @Override
     protected boolean validateFields() {
         if (app.getDisplayName().equals(getDisplayNameTextField().getText())) {
@@ -56,24 +57,23 @@ class DialogModifyApp extends DialogAddApp {
     protected void init() {
         getDisplayNameTextField().setText(app.getDisplayName());
         getDisplayNameTextField().discardAllEdits();
-        
+
         getFullCommandTextField().setText(app.getFullCommand());
         getFullCommandTextField().discardAllEdits();
-        
+
         if (app.getWorkingDirectory() != null) {
             getWorkingDirTextField().setText(app.getWorkingDirectory().getAbsolutePath());
         }
         getWorkingDirTextField().discardAllEdits();
-        
+
         getParametersTextField().setText(app.getParameters());
         getParametersTextField().discardAllEdits();
-        
+
         getCaptureOutputCheckBox().setSelected(app.isCaptureOutput());
-        
+
         getOutputToNoteCheckBox().setEnabled(app.isCaptureOutput());
         getOutputToNoteCheckBox().setSelected(app.isOutputNote());
-        
+
         getEnabledCheckBox().setSelected(app.isEnabled());
     }
-
 }

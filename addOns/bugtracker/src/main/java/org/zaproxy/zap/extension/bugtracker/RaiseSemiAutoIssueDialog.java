@@ -20,13 +20,12 @@
 package org.zaproxy.zap.extension.bugtracker;
 
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
@@ -38,11 +37,11 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
 
     private ExtensionBugTracker extension = null;
     private List<BugTracker> bugTrackers = null;
-    
+
     private Set<Alert> alerts = null;
     private String FIELD_TRACKER_LIST = "bugtracker.trackers.list";
 
-    public RaiseSemiAutoIssueDialog(ExtensionBugTracker ext, Frame owner, Dimension dim){
+    public RaiseSemiAutoIssueDialog(ExtensionBugTracker ext, Frame owner, Dimension dim) {
         super(owner, "bugtracker.dialog.semi.title", dim);
         this.extension = ext;
         this.alerts = ext.alerts;
@@ -55,39 +54,38 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
         initialize();
     }
 
-    /**
-     * This method initializes this
-     */
+    /** This method initializes this */
     private void initialize() {
         this.removeAllFields();
         this.setTitle(Constant.messages.getString("bugtracker.popup.issue.semi"));
         addTrackerList(bugTrackers.get(0).getName());
         updateTrackerFields();
-        
     }
 
     public void addTrackerList(String value) {
         List<String> trackerNames = new ArrayList<String>();
-        for(BugTracker bugTracker: bugTrackers) {
+        for (BugTracker bugTracker : bugTrackers) {
             trackerNames.add(bugTracker.getName());
         }
         this.addComboField(FIELD_TRACKER_LIST, trackerNames, value);
-        for(BugTracker bugTracker: bugTrackers) {
+        for (BugTracker bugTracker : bugTrackers) {
             bugTracker.setDialog(this);
             bugTracker.setDetails(alerts);
         }
-        this.addFieldListener(FIELD_TRACKER_LIST, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateTrackerFields();
-            }
-        });
+        this.addFieldListener(
+                FIELD_TRACKER_LIST,
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateTrackerFields();
+                    }
+                });
     }
 
     public void updateTrackerFields() {
         String currentItem = this.getStringValue(FIELD_TRACKER_LIST);
-        for(BugTracker bugTracker: bugTrackers) {
-            if(bugTracker.getName().equals(currentItem)) {
+        for (BugTracker bugTracker : bugTrackers) {
+            if (bugTracker.getName().equals(currentItem)) {
                 this.removeAllFields();
                 addTrackerList(bugTracker.getName());
                 bugTracker.createDialogs();
@@ -100,10 +98,10 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
     @Override
     public String validateFields() {
         String currentItem = this.getStringValue(FIELD_TRACKER_LIST);
-        for(BugTracker bugTracker: bugTrackers) {
-            if(bugTracker.getName().equals(currentItem)) {
+        for (BugTracker bugTracker : bugTrackers) {
+            if (bugTracker.getName().equals(currentItem)) {
                 String response = bugTracker.raise(this);
-                if(response != null) {
+                if (response != null) {
                     return response;
                 }
                 break;
@@ -113,8 +111,5 @@ public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
         return null;
     }
 
-    public void save() {
-
-    }
-
+    public void save() {}
 }

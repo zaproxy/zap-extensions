@@ -75,5 +75,4 @@ public class SHA512HashProcessor extends AbstractStringHashProcessor {
     public SHA512HashProcessor copy() {
         return new SHA512HashProcessor(getCharset(), isUpperCase());
     }
-
 }

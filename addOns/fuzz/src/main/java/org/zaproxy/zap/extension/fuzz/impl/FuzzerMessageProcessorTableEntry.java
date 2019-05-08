@@ -24,12 +24,15 @@ import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.utils.Orderable;
 
-public class FuzzerMessageProcessorTableEntry<T1 extends Message, T2 extends FuzzerMessageProcessor<T1>> implements Orderable {
+public class FuzzerMessageProcessorTableEntry<
+                T1 extends Message, T2 extends FuzzerMessageProcessor<T1>>
+        implements Orderable {
 
     private int order;
     private FuzzerMessageProcessorUI<T1, T2> messageProcessorUI;
 
-    public FuzzerMessageProcessorTableEntry(int order, FuzzerMessageProcessorUI<T1, T2> messageProcessorUI) {
+    public FuzzerMessageProcessorTableEntry(
+            int order, FuzzerMessageProcessorUI<T1, T2> messageProcessorUI) {
         this.order = order;
         this.messageProcessorUI = messageProcessorUI;
     }
@@ -67,5 +70,4 @@ public class FuzzerMessageProcessorTableEntry<T1 extends Message, T2 extends Fuz
     public boolean isMutable() {
         return messageProcessorUI.isMutable();
     }
-
 }

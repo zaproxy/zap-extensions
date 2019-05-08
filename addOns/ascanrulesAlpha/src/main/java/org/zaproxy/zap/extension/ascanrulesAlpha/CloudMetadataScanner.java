@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
-
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.URIException;
@@ -44,22 +43,20 @@ import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.users.User;
 
 /**
- * Attempts to retrieve cloud metadata by forging the host header and requesting a specific URL.
- * See https://www.nginx.com/blog/trust-no-one-perils-of-trusting-user-input/ for more details
+ * Attempts to retrieve cloud metadata by forging the host header and requesting a specific URL. See
+ * https://www.nginx.com/blog/trust-no-one-perils-of-trusting-user-input/ for more details
  */
 public class CloudMetadataScanner extends AbstractHostPlugin {
 
-    /**
-     * Prefix for internationalised messages used by this rule
-     */
+    /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanalpha.cloudmetadata.";
-    
+
     private static final int PLUGIN_ID = 90034;
     private static final String METADATA_PATH = "/latest/meta-data/";
     private static final String METADATA_HOST = "169.154.169.254";
 
     private static final Logger LOG = Logger.getLogger(CloudMetadataScanner.class);
-    
+
     @Override
     public int getId() {
         return PLUGIN_ID;
@@ -69,7 +66,7 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
-    
+
     @Override
     public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
@@ -94,7 +91,7 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
     public int getCategory() {
         return Category.INJECTION;
     }
-    
+
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
@@ -111,30 +108,29 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
     }
 
     @Override
-    public void init() {
-
-    }
+    public void init() {}
 
     public void raiseAlert(HttpMessage newRequest) {
-        bingo(getRisk(), //Risk
-                Alert.CONFIDENCE_LOW, //Confidence/Reliability
-                getName(), //Name
-                getDescription(), //Description
-                newRequest.getRequestHeader().getURI().toString(), //Original URI
-                null, //Param
-                METADATA_HOST, //Attack
-                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"), //OtherInfo 
-                getSolution(), //Solution
-                "", //Evidence
-                getCweId(), //CWE ID
-                getWascId(), //WASC ID
-                newRequest); //HTTPMessage
+        bingo(
+                getRisk(), // Risk
+                Alert.CONFIDENCE_LOW, // Confidence/Reliability
+                getName(), // Name
+                getDescription(), // Description
+                newRequest.getRequestHeader().getURI().toString(), // Original URI
+                null, // Param
+                METADATA_HOST, // Attack
+                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"), // OtherInfo
+                getSolution(), // Solution
+                "", // Evidence
+                getCweId(), // CWE ID
+                getWascId(), // WASC ID
+                newRequest); // HTTPMessage
     }
 
     @Override
     public void scan() {
         HttpMessage newRequest = getNewMsg();
-        try{
+        try {
             newRequest.getRequestHeader().getURI().setPath(METADATA_PATH);
             this.sendMessageWithCustomHostHeader(newRequest, METADATA_HOST);
             if (HttpStatusCode.isSuccess(newRequest.getResponseHeader().getStatusCode())) {
@@ -145,37 +141,41 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
             return;
         }
     }
-    
-     void sendMessageWithCustomHostHeader(HttpMessage message, String host) throws IOException {
-         HttpMethodParams params = new HttpMethodParams();
-         params.setVirtualHost(host);
-         HttpMethod method = createRequestMethod(message.getRequestHeader(), message.getRequestBody(), params);
-         if (!(method instanceof EntityEnclosingMethod) || method instanceof ZapGetMethod) {
-             method.setFollowRedirects(false);
-         }
-         User forceUser = getParent().getHttpSender().getUser(message);
-         message.setTimeSentMillis(System.currentTimeMillis());
-         if (forceUser != null) {
-             getParent().getHttpSender().executeMethod(method, forceUser.getCorrespondingHttpState());
-         } else {
-             getParent().getHttpSender().executeMethod(method, null);
-         }
-         message.setTimeElapsedMillis((int) (System.currentTimeMillis() - message.getTimeSentMillis()));
 
-         HttpMethodHelper.updateHttpRequestHeaderSent(message.getRequestHeader(), method);
+    void sendMessageWithCustomHostHeader(HttpMessage message, String host) throws IOException {
+        HttpMethodParams params = new HttpMethodParams();
+        params.setVirtualHost(host);
+        HttpMethod method =
+                createRequestMethod(message.getRequestHeader(), message.getRequestBody(), params);
+        if (!(method instanceof EntityEnclosingMethod) || method instanceof ZapGetMethod) {
+            method.setFollowRedirects(false);
+        }
+        User forceUser = getParent().getHttpSender().getUser(message);
+        message.setTimeSentMillis(System.currentTimeMillis());
+        if (forceUser != null) {
+            getParent()
+                    .getHttpSender()
+                    .executeMethod(method, forceUser.getCorrespondingHttpState());
+        } else {
+            getParent().getHttpSender().executeMethod(method, null);
+        }
+        message.setTimeElapsedMillis(
+                (int) (System.currentTimeMillis() - message.getTimeSentMillis()));
 
-         HttpResponseHeader resHeader = HttpMethodHelper.getHttpResponseHeader(method);
-         resHeader.setHeader(HttpHeader.TRANSFER_ENCODING, null);
-         message.setResponseHeader(resHeader);
-         message.getResponseBody().setCharset(resHeader.getCharset());
-         message.getResponseBody().setLength(0);
-         message.getResponseBody().append(method.getResponseBody());
-         message.setResponseFromTargetHost(true);
-         getParent().notifyNewMessage(this, message);
-     }
+        HttpMethodHelper.updateHttpRequestHeaderSent(message.getRequestHeader(), method);
 
-    private static HttpMethod createRequestMethod(HttpRequestHeader header, HttpBody body, HttpMethodParams params)
-            throws URIException {
+        HttpResponseHeader resHeader = HttpMethodHelper.getHttpResponseHeader(method);
+        resHeader.setHeader(HttpHeader.TRANSFER_ENCODING, null);
+        message.setResponseHeader(resHeader);
+        message.getResponseBody().setCharset(resHeader.getCharset());
+        message.getResponseBody().setLength(0);
+        message.getResponseBody().append(method.getResponseBody());
+        message.setResponseFromTargetHost(true);
+        getParent().notifyNewMessage(this, message);
+    }
+
+    private static HttpMethod createRequestMethod(
+            HttpRequestHeader header, HttpBody body, HttpMethodParams params) throws URIException {
         HttpMethod httpMethod = new ZapGetMethod();
         httpMethod.setURI(header.getURI());
         httpMethod.setParams(params);
@@ -201,7 +201,6 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
             name = token.substring(0, pos).trim();
             value = token.substring(pos + 1).trim();
             httpMethod.addRequestHeader(name, value);
-
         }
         if (body != null && body.length() > 0 && (httpMethod instanceof EntityEnclosingMethod)) {
             EntityEnclosingMethod post = (EntityEnclosingMethod) httpMethod;

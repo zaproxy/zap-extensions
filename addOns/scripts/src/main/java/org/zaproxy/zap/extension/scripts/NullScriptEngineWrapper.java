@@ -21,36 +21,35 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.util.Collections;
 import java.util.List;
-
 import javax.script.ScriptEngine;
-
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 
 public class NullScriptEngineWrapper extends DefaultEngineWrapper {
-	
-	public static final String NAME = "Null";
 
-	public NullScriptEngineWrapper(ScriptEngine engine) {
-		super(engine);
-	}
-	@Override
-	public String getLanguageName() {
-		return "";
-	}
+    public static final String NAME = "Null";
 
-	@Override
-	public String getEngineName() {
-		return NAME;
-	}
-	
-	@Override
-	public List<String> getExtensions() {
-		return Collections.emptyList();
-	}
+    public NullScriptEngineWrapper(ScriptEngine engine) {
+        super(engine);
+    }
 
-	// TODO Uncomment the annotation once targeting newer core version.
-	// @Override
-	public boolean isVisible() {
-		return false;
-	}
+    @Override
+    public String getLanguageName() {
+        return "";
+    }
+
+    @Override
+    public String getEngineName() {
+        return NAME;
+    }
+
+    @Override
+    public List<String> getExtensions() {
+        return Collections.emptyList();
+    }
+
+    // TODO Uncomment the annotation once targeting newer core version.
+    // @Override
+    public boolean isVisible() {
+        return false;
+    }
 }

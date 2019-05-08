@@ -30,10 +30,8 @@ import javax.script.ScriptException;
  */
 public interface ScriptStringPayloadProcessor {
 
-    /**
-     * The name used to identify the type of this script, for example, in configurations.
-     */
-    final static String TYPE_NAME = "payloadprocessor";
+    /** The name used to identify the type of this script, for example, in configurations. */
+    static final String TYPE_NAME = "payloadprocessor";
 
     /**
      * Returns the result of processing the given {@code payloadValue}.
@@ -43,5 +41,4 @@ public interface ScriptStringPayloadProcessor {
      * @throws ScriptException if an error occurs while executing the script
      */
     String process(String payloadValue) throws ScriptException;
-
 }

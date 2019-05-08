@@ -23,34 +23,34 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 
 /**
- * A null extension just to cause the message bundle and help file to get loaded 
- * @author psiinon
+ * A null extension just to cause the message bundle and help file to get loaded
  *
+ * @author psiinon
  */
 public class ExtensionPscanRulesAlpha extends ExtensionAdaptor {
 
-	public ExtensionPscanRulesAlpha() {
-		super();
-		this.setI18nPrefix("pscanalpha");
-	}
-	
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    public ExtensionPscanRulesAlpha() {
+        super();
+        this.setI18nPrefix("pscanalpha");
+    }
 
-	@Override
-	public String getName() {
-		return "ExtensionPscanRulesAlpha";
-	}
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("pscanalpha.desc");
-	}
+    @Override
+    public String getName() {
+        return "ExtensionPscanRulesAlpha";
+    }
 
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("pscanalpha.desc");
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 }

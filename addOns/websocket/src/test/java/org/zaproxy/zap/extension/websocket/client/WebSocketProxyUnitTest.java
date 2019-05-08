@@ -20,84 +20,89 @@
 package org.zaproxy.zap.extension.websocket.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import fi.iki.elonen.NanoWSD;
 import fi.iki.elonen.NanoWSD.WebSocketFrame;
+import java.util.Stack;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
 import org.zaproxy.zap.testutils.WebSocketTestUtils;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
 
-import java.util.Stack;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 public class WebSocketProxyUnitTest extends WebSocketTestUtils {
-	
-	private final static String HOST_NAME = "localhost";
-	
-	@Before
-	public void openWebSocketServer() throws Exception {
-		super.startWebSocketServer(HOST_NAME);
-		super.setUpZap();
-	}
-	
-	@After
-	@Override
-	public void stopWebSocketServer(){
-		super.stopWebSocketServer();
-	}
-	
-	@Override
-	protected void setUpMessages() {
-		mockMessages(new ExtensionWebSocket());
-	}
-	
-	@Test
-	public void shouldAnswerToPingWithPong() throws Exception {
-		ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
-		HttpMessage handshakeRequest = new HttpMessage(HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
-		
-		WebSocketProxy webSocketProxy = establisher.send(new HandshakeConfig(handshakeRequest,false,false));
-		assertTrue(webSocketProxy.isConnected());
-		NanoWebSocketConnection webSocketConnection = super.getLastConnection();
-		
-		int numberExpectedIncomingMessages = 4;
-		CountDownLatch cdl = new CountDownLatch(numberExpectedIncomingMessages);
-		webSocketConnection.addIncomingWebSocketFrameListener(wf -> cdl.countDown());
-		webSocketConnection.setPingScheduling(50,("1010").getBytes());
-		assertTrue(cdl.await(2, TimeUnit.SECONDS));
-		
-		for(WebSocketFrame message : webSocketConnection.getListOfIncomingMessages()){
-			assertEquals("1010", message.getTextPayload());
-			assertEquals("Pong", message.getOpCode().toString());
-		}
-		
-	}
-	
-	@Test
-	public void shouldReceiveMessagesFromServer() throws Exception {
-		ServerConnectionEstablisher establisher = new ServerConnectionEstablisher ();
-		HttpMessage handshakeRequest = new HttpMessage(HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
-		
-		WebSocketProxy webSocketProxy = establisher.send(new HandshakeConfig(handshakeRequest,false,false));
-		NanoWebSocketConnection webSocketConnection = super.getWebSocketTestServer().getLastConnection();
-		
-		Stack<NanoWSD.WebSocketFrame> webSocketFrameStack = new Stack<>();
-		webSocketFrameStack.push(new NanoWSD.WebSocketFrame(WebSocketFrame.OpCode.Text,true,"Hello World"));
-		webSocketFrameStack.push(new NanoWSD.WebSocketFrame(WebSocketFrame.OpCode.Text,true,"Hello World-2"));
-		webSocketFrameStack.push(new NanoWSD.WebSocketFrame(WebSocketFrame.OpCode.Text,true,"Hello World-3"));
-		webSocketConnection.setOutgoingMessageSchedule(webSocketFrameStack,50);
-		
-		Thread.sleep(210);
-		assertEquals(4,webSocketProxy.getIncrementedMessageCount());
-		
-	}
-	
+
+    private static final String HOST_NAME = "localhost";
+
+    @Before
+    public void openWebSocketServer() throws Exception {
+        super.startWebSocketServer(HOST_NAME);
+        super.setUpZap();
+    }
+
+    @After
+    @Override
+    public void stopWebSocketServer() {
+        super.stopWebSocketServer();
+    }
+
+    @Override
+    protected void setUpMessages() {
+        mockMessages(new ExtensionWebSocket());
+    }
+
+    @Test
+    public void shouldAnswerToPingWithPong() throws Exception {
+        ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
+        HttpMessage handshakeRequest =
+                new HttpMessage(
+                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
+
+        WebSocketProxy webSocketProxy =
+                establisher.send(new HandshakeConfig(handshakeRequest, false, false));
+        assertTrue(webSocketProxy.isConnected());
+        NanoWebSocketConnection webSocketConnection = super.getLastConnection();
+
+        int numberExpectedIncomingMessages = 4;
+        CountDownLatch cdl = new CountDownLatch(numberExpectedIncomingMessages);
+        webSocketConnection.addIncomingWebSocketFrameListener(wf -> cdl.countDown());
+        webSocketConnection.setPingScheduling(50, ("1010").getBytes());
+        assertTrue(cdl.await(2, TimeUnit.SECONDS));
+
+        for (WebSocketFrame message : webSocketConnection.getListOfIncomingMessages()) {
+            assertEquals("1010", message.getTextPayload());
+            assertEquals("Pong", message.getOpCode().toString());
+        }
+    }
+
+    @Test
+    public void shouldReceiveMessagesFromServer() throws Exception {
+        ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
+        HttpMessage handshakeRequest =
+                new HttpMessage(
+                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
+
+        WebSocketProxy webSocketProxy =
+                establisher.send(new HandshakeConfig(handshakeRequest, false, false));
+        NanoWebSocketConnection webSocketConnection =
+                super.getWebSocketTestServer().getLastConnection();
+
+        Stack<NanoWSD.WebSocketFrame> webSocketFrameStack = new Stack<>();
+        webSocketFrameStack.push(
+                new NanoWSD.WebSocketFrame(WebSocketFrame.OpCode.Text, true, "Hello World"));
+        webSocketFrameStack.push(
+                new NanoWSD.WebSocketFrame(WebSocketFrame.OpCode.Text, true, "Hello World-2"));
+        webSocketFrameStack.push(
+                new NanoWSD.WebSocketFrame(WebSocketFrame.OpCode.Text, true, "Hello World-3"));
+        webSocketConnection.setOutgoingMessageSchedule(webSocketFrameStack, 50);
+
+        Thread.sleep(210);
+        assertEquals(4, webSocketProxy.getIncrementedMessageCount());
+    }
 }

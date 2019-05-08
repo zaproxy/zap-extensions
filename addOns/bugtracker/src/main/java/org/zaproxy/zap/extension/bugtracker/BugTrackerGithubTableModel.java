@@ -21,45 +21,44 @@ package org.zaproxy.zap.extension.bugtracker;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
-public class BugTrackerGithubTableModel extends AbstractMultipleOptionsTableModel<BugTrackerGithubConfigParams> {
+public class BugTrackerGithubTableModel
+        extends AbstractMultipleOptionsTableModel<BugTrackerGithubConfigParams> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private static final String[] COLUMN_NAMES = {
-            Constant.messages.getString("bugtracker.trackers.github.table.header.username"),
-            Constant.messages.getString("bugtracker.trackers.github.table.header.password"),
-            Constant.messages.getString("bugtracker.trackers.github.table.header.repoUrl")};
-    
-	private static final int COLUMN_COUNT = COLUMN_NAMES.length;
-	
+        Constant.messages.getString("bugtracker.trackers.github.table.header.username"),
+        Constant.messages.getString("bugtracker.trackers.github.table.header.password"),
+        Constant.messages.getString("bugtracker.trackers.github.table.header.repoUrl")
+    };
+
+    private static final int COLUMN_COUNT = COLUMN_NAMES.length;
+
     private List<BugTrackerGithubConfigParams> configs = new ArrayList<>(0);
-    
+
     public BugTrackerGithubTableModel() {
         super();
     }
-    
+
     @Override
     public List<BugTrackerGithubConfigParams> getElements() {
         return configs;
     }
 
-    /**
-     * @param configs The configs to set.
-     */
+    /** @param configs The configs to set. */
     public void setConfigs(List<BugTrackerGithubConfigParams> configs) {
-		this.configs = new ArrayList<>(configs.size());
-		
-		for (BugTrackerGithubConfigParams config : configs) {
-			this.configs.add(new BugTrackerGithubConfigParams(config));
-		}
-    	
-  	  	fireTableDataChanged();
+        this.configs = new ArrayList<>(configs.size());
+
+        for (BugTrackerGithubConfigParams config : configs) {
+            this.configs.add(new BugTrackerGithubConfigParams(config));
+        }
+
+        fireTableDataChanged();
     }
-    
+
     @Override
     public String getColumnName(int col) {
         return COLUMN_NAMES[col];
@@ -69,9 +68,9 @@ public class BugTrackerGithubTableModel extends AbstractMultipleOptionsTableMode
     public int getColumnCount() {
         return COLUMN_COUNT;
     }
-    
+
     @Override
-	public Class<?> getColumnClass(int c) {
+    public Class<?> getColumnClass(int c) {
         return String.class;
     }
 
@@ -84,25 +83,22 @@ public class BugTrackerGithubTableModel extends AbstractMultipleOptionsTableMode
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return (columnIndex == 0);
     }
-    
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        switch(columnIndex) {
-        case 0:
-            return getElement(rowIndex).getName();
-        case 1:
-            return "********";
-        case 2:
-            return getElement(rowIndex).getRepoUrl();
+        switch (columnIndex) {
+            case 0:
+                return getElement(rowIndex).getName();
+            case 1:
+                return "********";
+            case 2:
+                return getElement(rowIndex).getRepoUrl();
         }
         return null;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 0) {
-            
-        }
+        if (columnIndex == 0) {}
     }
-    
 }

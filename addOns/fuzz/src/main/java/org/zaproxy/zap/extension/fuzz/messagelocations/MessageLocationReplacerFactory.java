@@ -27,5 +27,4 @@ public interface MessageLocationReplacerFactory<T extends Message> {
     Class<? extends MessageLocation> getTargetMessageLocation();
 
     MessageLocationReplacer<T> createReplacer();
-
 }

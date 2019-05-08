@@ -20,9 +20,7 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
-
 import javax.swing.JPopupMenu;
-
 import org.parosproxy.paros.view.View;
 
 public class ZapPopupMenu extends JPopupMenu {
@@ -31,8 +29,7 @@ public class ZapPopupMenu extends JPopupMenu {
 
     private static final long serialVersionUID = -3110110234622733751L;
 
-    private ZapPopupMenu() {
-    }
+    private ZapPopupMenu() {}
 
     @Override
     public void show(Component invoker, int x, int y) {

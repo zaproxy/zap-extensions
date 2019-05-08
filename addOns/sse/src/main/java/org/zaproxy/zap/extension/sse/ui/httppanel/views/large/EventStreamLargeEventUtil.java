@@ -25,16 +25,16 @@ import org.zaproxy.zap.extension.sse.ServerSentEvent;
 
 public class EventStreamLargeEventUtil extends LargeResponseUtil {
 
-	public static boolean isLargeEvent(Message aMessage) {
-		if (aMessage instanceof ServerSentEvent) {
-			ServerSentEvent message = (ServerSentEvent) aMessage;
-			Long length = message.getRawEventLength();
-			if (length == null) {
-				return false;
-			}
-			return length > minContentLength;
-		}
+    public static boolean isLargeEvent(Message aMessage) {
+        if (aMessage instanceof ServerSentEvent) {
+            ServerSentEvent message = (ServerSentEvent) aMessage;
+            Long length = message.getRawEventLength();
+            if (length == null) {
+                return false;
+            }
+            return length > minContentLength;
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

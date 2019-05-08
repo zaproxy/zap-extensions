@@ -178,5 +178,4 @@ public class ScanTarget implements Comparable<ScanTarget> {
     public int compareTo(ScanTarget other) {
         return stringRepresentation.compareTo(other.stringRepresentation);
     }
-
 }

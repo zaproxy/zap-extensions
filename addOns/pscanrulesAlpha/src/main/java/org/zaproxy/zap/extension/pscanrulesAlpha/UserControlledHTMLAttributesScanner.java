@@ -24,13 +24,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -40,244 +38,267 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/)
- * rule {@code CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledHTMLAttributes}
+ * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
+ * CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledHTMLAttributes}
  */
 public class UserControlledHTMLAttributesScanner extends PluginPassiveScanner {
 
-	private PassiveScanThread parent = null;
+    private PassiveScanThread parent = null;
 
-	/**
-	 * Prefix for internationalized messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledhtmlattributes.";
+    /** Prefix for internationalized messages used by this rule */
+    private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledhtmlattributes.";
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
-
-	@Override
-	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		// do nothing
-	}
-
-	@Override
-	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {		
-		if (msg.getResponseHeader().getStatusCode() != 200 ||
-				!isResponseHTML(msg, source)) {
-			return;
-		}
-		
-		List<Element> htmlElements = source.getAllElements();
-		if (htmlElements.size() == 0) {
-			return;
-		}
-		
-    	Set<HtmlParameter> params = new TreeSet<HtmlParameter>(msg.getFormParams());
-    	params.addAll(msg.getUrlParams());    	
-    	if (params.size() == 0) {
-    		return;
-    	}
-    	
-    	checkHtmlElements(msg, id, params, htmlElements);
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
-	
+
+    @Override
+    public void scanHttpRequestSend(HttpMessage msg, int id) {
+        // do nothing
+    }
+
+    @Override
+    public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (msg.getResponseHeader().getStatusCode() != 200 || !isResponseHTML(msg, source)) {
+            return;
+        }
+
+        List<Element> htmlElements = source.getAllElements();
+        if (htmlElements.size() == 0) {
+            return;
+        }
+
+        Set<HtmlParameter> params = new TreeSet<HtmlParameter>(msg.getFormParams());
+        params.addAll(msg.getUrlParams());
+        if (params.size() == 0) {
+            return;
+        }
+
+        checkHtmlElements(msg, id, params, htmlElements);
+    }
+
     /*
      Mainly looks to see if user-input controls certain attributes.  If the input is a URL, this attempts
      to see if the scheme or domain can be controlled.  If it's not, it attempts to see if the attribute
      data starts with the user-data.
     */
-    private void checkHtmlElements(HttpMessage msg, int id, Set<HtmlParameter> params, List<Element> listOfHtmlElements) {
-        for (Element element: listOfHtmlElements) {
-        	checkHtmlElement(msg, id, params, element);
+    private void checkHtmlElements(
+            HttpMessage msg, int id, Set<HtmlParameter> params, List<Element> listOfHtmlElements) {
+        for (Element element : listOfHtmlElements) {
+            checkHtmlElement(msg, id, params, element);
         }
     }
 
-	private void checkHtmlElement(HttpMessage msg, int id,
-			Set<HtmlParameter> params, Element htmlElement) {
-		Attributes attributes = htmlElement.getAttributes();
-		if (attributes == null) {
-			return;
-		}
-		
-		for (Attribute attribute: attributes) {
-			checkHtmlAttribute(msg, id, params, htmlElement, attribute);
-		}
-	}
-	
-	private void checkHtmlAttribute(HttpMessage msg, int id,
-			Set<HtmlParameter> params, Element htmlElement, 
-			Attribute attribute) {
-		String attrValue = attribute.getValue();
-		if (attrValue == null) {
-			return;
-		}
-		
-		attrValue = attrValue.toLowerCase();
-		
-	    // special handling of meta tag
-		if (htmlElement.getName().equalsIgnoreCase(HTMLElementName.META) &&
-				attribute.getName().equalsIgnoreCase("content")) {
-			if (attrValue.matches("^\\s*?[0-9]+?\\s*?;\\s*?url\\s*?=.*")) {
-				attrValue = attrValue.substring(attrValue.indexOf("url=") + 4).trim();
-	        }
-	    }
-		
-		if (attrValue.length() == 0) {
-			return;
-		}
+    private void checkHtmlElement(
+            HttpMessage msg, int id, Set<HtmlParameter> params, Element htmlElement) {
+        Attributes attributes = htmlElement.getAttributes();
+        if (attributes == null) {
+            return;
+        }
 
-	    String protocol = null;
-	    String domain = null;
-	    String token = null;
+        for (Attribute attribute : attributes) {
+            checkHtmlAttribute(msg, id, params, htmlElement, attribute);
+        }
+    }
 
-	    // if contains protocol/domain name separator
-	    if (attrValue.indexOf("://") > 0) {
-	    	URL url;
-			try {
-				url = new URL(attrValue);
-			} catch (MalformedURLException e) {
-				return;
-			}
-	        // get protocol
-	        protocol = url.getProtocol();
+    private void checkHtmlAttribute(
+            HttpMessage msg,
+            int id,
+            Set<HtmlParameter> params,
+            Element htmlElement,
+            Attribute attribute) {
+        String attrValue = attribute.getValue();
+        if (attrValue == null) {
+            return;
+        }
 
-	        // get domain name
-	        domain = url.getAuthority();
-	        
-	        // token
-	        token = url.getQuery();
-	        // get up to first slash
-	        if (token != null && token.indexOf("/") > 0) {
-	        	token = token.substring(0, token.indexOf("/"));
-	        }   
-	    }                
+        attrValue = attrValue.toLowerCase();
 
-	    // It's a local path, or it's not a resource.
-	    // Proceed later expecting the attribute value
-	    // might start with the user-input.
-	    
-	    for (HtmlParameter param: params) {
-	    	String paramValue = param.getValue();
-	    	if (paramValue == null) {
-	    		return;
-	    	}
-	    	
-	    	paramValue = paramValue.toLowerCase();
-	    	
-	        // Special handling of meta tag.
-	        // If I were just looking to see if the meta tag 'contains' the user input,
-	        // we'd wind up with lots of false positives.
-	        // To avoid this, I  parse the meta tag values based on a set of delimeters,
-	        // such as ; =  and ,.  This is similar to what the Cookie poisoning
-	        // check does.
-			if (htmlElement.getName().equalsIgnoreCase(HTMLElementName.META) &&
-					attribute.getName().equalsIgnoreCase("content")) {
-				// False Positive Reduction
-	            // We have a check for meta tag charset already, so get out of here.
-	            if (attrValue.contains("charset")) {
-	            	continue;
-	            }
+        // special handling of meta tag
+        if (htmlElement.getName().equalsIgnoreCase(HTMLElementName.META)
+                && attribute.getName().equalsIgnoreCase("content")) {
+            if (attrValue.matches("^\\s*?[0-9]+?\\s*?;\\s*?url\\s*?=.*")) {
+                attrValue = attrValue.substring(attrValue.indexOf("url=") + 4).trim();
+            }
+        }
 
-	            for (String s: attrValue.split("[;=,]")) {
-	                if (s.equals(paramValue)) {
-	                    raiseAlert(msg, id, htmlElement, attribute, param, attrValue);
-	                    return; //Only need one alert
-	                }
-	            }
-	        }
+        if (attrValue.length() == 0) {
+            return;
+        }
 
-	        // False Positive Reduction
-	        // I want the value length to be greater than 1 to avoid all the false positives
-	        // we're seeing when the input is limited to a single character.
-	        if (paramValue.length() > 1) {
-	            // See if the user-input can control the start of the attribute data.
-	            if (attrValue.startsWith(paramValue) || paramValue.equalsIgnoreCase(protocol) 
-	            		|| paramValue.equalsIgnoreCase(domain) || paramValue.equalsIgnoreCase(token)
-	            		|| (attrValue.indexOf("://") > 0 && paramValue.indexOf(attrValue) == 0)) {
-	                raiseAlert(msg, id, htmlElement, attribute, param, attrValue);
-	            }
-	        }
-	        
-	        // Make up for the false positive reduction by by being
-	        // sure to catch cases where a single character may control the attribute.
-	        // UPDATE: This case is too common and annoyingly rife with false positives.
+        String protocol = null;
+        String domain = null;
+        String token = null;
 
-	        // if (val.Length == 1 && att.Equals(val) )
-	        // {
-	        //    AssembleAlert(element.tag, attribute, parm, val, value);
-	        // }
-	    	
-	    }		
-	}
-   
-	// TODO: Fix up to support other variations of text/html.  
-	// FIX: This will match Atom and RSS feeds now, which set text/html but 
-	// use &lt;?xml&gt; in content
-  	
+        // if contains protocol/domain name separator
+        if (attrValue.indexOf("://") > 0) {
+            URL url;
+            try {
+                url = new URL(attrValue);
+            } catch (MalformedURLException e) {
+                return;
+            }
+            // get protocol
+            protocol = url.getProtocol();
+
+            // get domain name
+            domain = url.getAuthority();
+
+            // token
+            token = url.getQuery();
+            // get up to first slash
+            if (token != null && token.indexOf("/") > 0) {
+                token = token.substring(0, token.indexOf("/"));
+            }
+        }
+
+        // It's a local path, or it's not a resource.
+        // Proceed later expecting the attribute value
+        // might start with the user-input.
+
+        for (HtmlParameter param : params) {
+            String paramValue = param.getValue();
+            if (paramValue == null) {
+                return;
+            }
+
+            paramValue = paramValue.toLowerCase();
+
+            // Special handling of meta tag.
+            // If I were just looking to see if the meta tag 'contains' the user input,
+            // we'd wind up with lots of false positives.
+            // To avoid this, I  parse the meta tag values based on a set of delimeters,
+            // such as ; =  and ,.  This is similar to what the Cookie poisoning
+            // check does.
+            if (htmlElement.getName().equalsIgnoreCase(HTMLElementName.META)
+                    && attribute.getName().equalsIgnoreCase("content")) {
+                // False Positive Reduction
+                // We have a check for meta tag charset already, so get out of here.
+                if (attrValue.contains("charset")) {
+                    continue;
+                }
+
+                for (String s : attrValue.split("[;=,]")) {
+                    if (s.equals(paramValue)) {
+                        raiseAlert(msg, id, htmlElement, attribute, param, attrValue);
+                        return; // Only need one alert
+                    }
+                }
+            }
+
+            // False Positive Reduction
+            // I want the value length to be greater than 1 to avoid all the false positives
+            // we're seeing when the input is limited to a single character.
+            if (paramValue.length() > 1) {
+                // See if the user-input can control the start of the attribute data.
+                if (attrValue.startsWith(paramValue)
+                        || paramValue.equalsIgnoreCase(protocol)
+                        || paramValue.equalsIgnoreCase(domain)
+                        || paramValue.equalsIgnoreCase(token)
+                        || (attrValue.indexOf("://") > 0 && paramValue.indexOf(attrValue) == 0)) {
+                    raiseAlert(msg, id, htmlElement, attribute, param, attrValue);
+                }
+            }
+
+            // Make up for the false positive reduction by by being
+            // sure to catch cases where a single character may control the attribute.
+            // UPDATE: This case is too common and annoyingly rife with false positives.
+
+            // if (val.Length == 1 && att.Equals(val) )
+            // {
+            //    AssembleAlert(element.tag, attribute, parm, val, value);
+            // }
+
+        }
+    }
+
+    // TODO: Fix up to support other variations of text/html.
+    // FIX: This will match Atom and RSS feeds now, which set text/html but
+    // use &lt;?xml&gt; in content
+
     // TODO: these methods have been extracted from CharsetMismatchScanner
     // I think we should create helper methods for them
-	private boolean isResponseHTML(HttpMessage message, Source source) {
-		String contentType = message.getResponseHeader().getHeader(
-				HttpHeader.CONTENT_TYPE);
-		if (contentType == null) {
-			return false;
-		}
-		
-		return contentType.indexOf("text/html") != -1 || 
-				contentType.indexOf("application/xhtml+xml") != -1 ||
-				contentType.indexOf("application/xhtml") != -1;
-	}    
-	
-	private void raiseAlert(HttpMessage msg, int id, Element htmlElement, 
-			Attribute htmlAttribute, HtmlParameter param, String userControlledValue) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_LOW,
-				getName());				    
+    private boolean isResponseHTML(HttpMessage message, Source source) {
+        String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
+        if (contentType == null) {
+            return false;
+        }
 
-		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), param.getName(), "", 
-				getExtraInfoMessage(msg, htmlElement.getName(), 
-						htmlAttribute.getName(), param, userControlledValue),
-				getSolutionMessage(), getReferenceMessage(),  
-				"",	// No evidence
-				20,	// CWE-20: Improper Input Validation
-				20,	// WASC-20: Improper Input Handling
-				msg);  
+        return contentType.indexOf("text/html") != -1
+                || contentType.indexOf("application/xhtml+xml") != -1
+                || contentType.indexOf("application/xhtml") != -1;
+    }
 
-		parent.raiseAlert(id, alert);
-	}
+    private void raiseAlert(
+            HttpMessage msg,
+            int id,
+            Element htmlElement,
+            Attribute htmlAttribute,
+            HtmlParameter param,
+            String userControlledValue) {
+        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getName());
 
-	@Override
-	public int getPluginId() {
-		return 10031;
-	}
+        alert.setDetail(
+                getDescriptionMessage(),
+                msg.getRequestHeader().getURI().toString(),
+                param.getName(),
+                "",
+                getExtraInfoMessage(
+                        msg,
+                        htmlElement.getName(),
+                        htmlAttribute.getName(),
+                        param,
+                        userControlledValue),
+                getSolutionMessage(),
+                getReferenceMessage(),
+                "", // No evidence
+                20, // CWE-20: Improper Input Validation
+                20, // WASC-20: Improper Input Handling
+                msg);
 
-	@Override
-	public void setParent(PassiveScanThread parent) {
-		this.parent = parent;
-	}
+        parent.raiseAlert(id, alert);
+    }
 
-	/*
-	 * Rule-associated messages
-	 */
+    @Override
+    public int getPluginId() {
+        return 10031;
+    }
 
-	private String getDescriptionMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
+    @Override
+    public void setParent(PassiveScanThread parent) {
+        this.parent = parent;
+    }
 
-	private String getSolutionMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
+    /*
+     * Rule-associated messages
+     */
 
-	private String getReferenceMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
+    private String getDescriptionMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
 
-	private String getExtraInfoMessage(HttpMessage msg, String tag, String attr,
-			HtmlParameter param, String userControlledValue) {        
-        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", 
-        		msg.getRequestHeader().getURI().toString(), tag, attr, 
-        		param.getName(), param.getValue(), userControlledValue);        
-	}
+    private String getSolutionMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    private String getReferenceMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    private String getExtraInfoMessage(
+            HttpMessage msg,
+            String tag,
+            String attr,
+            HtmlParameter param,
+            String userControlledValue) {
+        return Constant.messages.getString(
+                MESSAGE_PREFIX + "extrainfo",
+                msg.getRequestHeader().getURI().toString(),
+                tag,
+                attr,
+                param.getName(),
+                param.getValue(),
+                userControlledValue);
+    }
 }

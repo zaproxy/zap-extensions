@@ -28,10 +28,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
-
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -48,180 +46,205 @@ import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportUrls extends ExtensionAdaptor {
 
-	public static final String NAME = "ExtensionImportUrls";
+    public static final String NAME = "ExtensionImportUrls";
 
-	private static final String THREAD_PREFIX = "ZAP-Import-Urls-";
+    private static final String THREAD_PREFIX = "ZAP-Import-Urls-";
 
     private ZapMenuItem menuImportUrls;
     private int threadId = 1;
 
     private ImportUrlsAPI api;
 
-	private static Logger log = Logger.getLogger(ExtensionImportUrls.class);
+    private static Logger log = Logger.getLogger(ExtensionImportUrls.class);
 
-	public ExtensionImportUrls() {
-		super(NAME);
-		this.setOrder(157);
-	}
+    public ExtensionImportUrls() {
+        super(NAME);
+        this.setOrder(157);
+    }
 
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-		super.hook(extensionHook);
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
 
-	    if (getView() != null) {
-	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrls());
-	    }
-	    
-	    this.api = new ImportUrlsAPI(this);
-	    extensionHook.addApiImplementor(api);
-	}
+        if (getView() != null) {
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrls());
+        }
 
-	@SuppressWarnings("deprecation")
-	private ZapMenuItem getMenuImportUrls() {
+        this.api = new ImportUrlsAPI(this);
+        extensionHook.addApiImplementor(api);
+    }
+
+    @SuppressWarnings("deprecation")
+    private ZapMenuItem getMenuImportUrls() {
         if (menuImportUrls == null) {
-        	menuImportUrls = new ZapMenuItem("importurls.topmenu.tools.importurls",
-        			// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-        			KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        	menuImportUrls.setToolTipText(Constant.messages.getString("importurls.topmenu.tools.importurls.tooltip"));
+            menuImportUrls =
+                    new ZapMenuItem(
+                            "importurls.topmenu.tools.importurls",
+                            // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke
+                            // with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
+                            KeyStroke.getKeyStroke(
+                                    KeyEvent.VK_I,
+                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
+                                    false));
+            menuImportUrls.setToolTipText(
+                    Constant.messages.getString("importurls.topmenu.tools.importurls.tooltip"));
 
-        	menuImportUrls.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                	// Prompt for a file
-            		final JFileChooser chooser = new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
-            	    int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
-            	    if(rc == JFileChooser.APPROVE_OPTION) {
-            	    	
-            	    	Thread t = new Thread(){
-							@Override
-							public void run() {
-								this.setName(THREAD_PREFIX + threadId++);
-		        	    		importUrlFile(chooser.getSelectedFile());
-							}
-            	    		
-            	    	};
-            	    	t.start();
-            	    }
+            menuImportUrls.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            // Prompt for a file
+                            final JFileChooser chooser =
+                                    new JFileChooser(
+                                            Model.getSingleton()
+                                                    .getOptionsParam()
+                                                    .getUserDirectory());
+                            int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
+                            if (rc == JFileChooser.APPROVE_OPTION) {
 
-                }
-            });
+                                Thread t =
+                                        new Thread() {
+                                            @Override
+                                            public void run() {
+                                                this.setName(THREAD_PREFIX + threadId++);
+                                                importUrlFile(chooser.getSelectedFile());
+                                            }
+                                        };
+                                t.start();
+                            }
+                        }
+                    });
         }
         return menuImportUrls;
     }
-	
-	public String importUrlFile(File file) {
-		if (file == null) {
-			return "";
-		}
-		BufferedReader in = null;
-		try {
-			if (View.isInitialised()) {
-				// Switch to the output panel, if in GUI mode
-				View.getSingleton().getOutputPanel().setTabFocus();
-			}
-			in = new BufferedReader(new FileReader(file));
-			
-			HttpSender sender = new HttpSender(
-					Model.getSingleton().getOptionsParam().getConnectionParam(),
-					true,
-					HttpSender.MANUAL_REQUEST_INITIATOR);
-			
-			String line;
-			StringBuilder outputLine;
-			while ((line = in.readLine()) != null) {
-				if (! line.startsWith("#") && line.trim().length() > 0) {
-					if (!line.startsWith("http")) {
-						// ZAP exports urls to a file in which each line starts with the HTTP Method (verb) 
-						// followed by a tab, so makes sense to cope with it.
-						// Otherwise assume complete URLs starting with http(s) scheme.
-						int tabIdx = line.indexOf("\t");
-						if (tabIdx > -1) {
-							line = line.substring(line.indexOf("\t")).trim();
-						}
-					}
-					outputLine = new StringBuilder();
-					try {
-						outputLine.append("GET").append("\t").append(line).append("\t");
-						HttpMessage msg = new HttpMessage(new URI(line, false));
-						sender.sendAndReceive(msg, true);
-						persistMessage(msg);
-						
-						outputLine.append(msg.getResponseHeader().getStatusCode());
-						
-					} catch (Exception e) {
-						outputLine.append(e.getMessage());
-					}
-					outputLine.append("\n");
-					if (View.isInitialised()) {
-						final String str = outputLine.toString();
-						EventQueue.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-								View.getSingleton().getOutputPanel().append(str);
-							}}
-						);
-					}
-				}
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// Ignore
-				}
-			}
-		}
-		return null;
-	}
 
-	private static void persistMessage(final HttpMessage message) {
-		// Add the message to the history panel and sites tree
-		final HistoryReference historyRef;
+    public String importUrlFile(File file) {
+        if (file == null) {
+            return "";
+        }
+        BufferedReader in = null;
+        try {
+            if (View.isInitialised()) {
+                // Switch to the output panel, if in GUI mode
+                View.getSingleton().getOutputPanel().setTabFocus();
+            }
+            in = new BufferedReader(new FileReader(file));
 
-		try {
-			historyRef = new HistoryReference(Model.getSingleton().getSession(), HistoryReference.TYPE_ZAP_USER, message);
-		} catch (Exception e) {
-			log.warn(e.getMessage(), e);
-			return;
-		}
+            HttpSender sender =
+                    new HttpSender(
+                            Model.getSingleton().getOptionsParam().getConnectionParam(),
+                            true,
+                            HttpSender.MANUAL_REQUEST_INITIATOR);
 
-		final ExtensionHistory extHistory = (ExtensionHistory) Control.getSingleton()
-				.getExtensionLoader().getExtension(ExtensionHistory.NAME);
-		if (extHistory != null) {
-			EventQueue.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					extHistory.addHistory(historyRef);
-					Model.getSingleton().getSession().getSiteTree().addPath(historyRef, message);
-				}
-			});
-		}
-	}
+            String line;
+            StringBuilder outputLine;
+            while ((line = in.readLine()) != null) {
+                if (!line.startsWith("#") && line.trim().length() > 0) {
+                    if (!line.startsWith("http")) {
+                        // ZAP exports urls to a file in which each line starts with the HTTP Method
+                        // (verb)
+                        // followed by a tab, so makes sense to cope with it.
+                        // Otherwise assume complete URLs starting with http(s) scheme.
+                        int tabIdx = line.indexOf("\t");
+                        if (tabIdx > -1) {
+                            line = line.substring(line.indexOf("\t")).trim();
+                        }
+                    }
+                    outputLine = new StringBuilder();
+                    try {
+                        outputLine.append("GET").append("\t").append(line).append("\t");
+                        HttpMessage msg = new HttpMessage(new URI(line, false));
+                        sender.sendAndReceive(msg, true);
+                        persistMessage(msg);
 
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
+                        outputLine.append(msg.getResponseHeader().getStatusCode());
 
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+                    } catch (Exception e) {
+                        outputLine.append(e.getMessage());
+                    }
+                    outputLine.append("\n");
+                    if (View.isInitialised()) {
+                        final String str = outputLine.toString();
+                        EventQueue.invokeLater(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        View.getSingleton().getOutputPanel().append(str);
+                                    }
+                                });
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("importurls.desc");
-	}
+    private static void persistMessage(final HttpMessage message) {
+        // Add the message to the history panel and sites tree
+        final HistoryReference historyRef;
 
-	@Override
-	public URL getURL() {
-		try {
-			return new URL(Constant.ZAP_HOMEPAGE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
+        try {
+            historyRef =
+                    new HistoryReference(
+                            Model.getSingleton().getSession(),
+                            HistoryReference.TYPE_ZAP_USER,
+                            message);
+        } catch (Exception e) {
+            log.warn(e.getMessage(), e);
+            return;
+        }
+
+        final ExtensionHistory extHistory =
+                (ExtensionHistory)
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionHistory.NAME);
+        if (extHistory != null) {
+            EventQueue.invokeLater(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            extHistory.addHistory(historyRef);
+                            Model.getSingleton()
+                                    .getSession()
+                                    .getSiteTree()
+                                    .addPath(historyRef, message);
+                        }
+                    });
+        }
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
+
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("importurls.desc");
+    }
+
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_HOMEPAGE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 }

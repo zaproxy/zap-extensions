@@ -20,10 +20,8 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.Color;
-
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
@@ -48,6 +46,8 @@ public class QuickStartHelper {
     }
 
     public static void raiseOptionsChangedEvent() {
-        Control.getSingleton().getExtensionLoader().optionsChangedAllPlugin(Model.getSingleton().getOptionsParam());
+        Control.getSingleton()
+                .getExtensionLoader()
+                .optionsChangedAllPlugin(Model.getSingleton().getOptionsParam());
     }
 }

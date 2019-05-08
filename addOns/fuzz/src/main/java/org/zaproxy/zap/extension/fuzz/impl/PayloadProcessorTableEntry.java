@@ -44,7 +44,8 @@ public class PayloadProcessorTableEntry implements Orderable {
         this.order = order;
     }
 
-    public PayloadProcessorUI<? extends Payload, ? extends PayloadProcessor<? extends Payload>> getPayloadProcessorUI() {
+    public PayloadProcessorUI<? extends Payload, ? extends PayloadProcessor<? extends Payload>>
+            getPayloadProcessorUI() {
         return payloadProcessorUI;
     }
 
@@ -67,5 +68,4 @@ public class PayloadProcessorTableEntry implements Orderable {
     public boolean isMutable() {
         return payloadProcessorUI.isMutable();
     }
-
 }

@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-
 import org.junit.Test;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -36,7 +35,8 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 public class ZestZapUtilsUnitTest {
 
     @Test
-    public void shouldKeepAllHeadersIfIncludingAllWhenConvertingHttpMessageToZestRequest() throws Exception {
+    public void shouldKeepAllHeadersIfIncludingAllWhenConvertingHttpMessageToZestRequest()
+            throws Exception {
         // Given
         boolean includeAllHeaders = true;
         ZestParam zestParam = createZestParam();
@@ -44,20 +44,23 @@ public class ZestZapUtilsUnitTest {
         String headers = "A: 1\r\nB: 2\r\nHost: example.com\r\n";
         HttpMessage httpMessage = createRequest(headers);
         // When
-        ZestRequest zestRequest = ZestZapUtils.toZestRequest(httpMessage, false, includeAllHeaders, zestParam);
+        ZestRequest zestRequest =
+                ZestZapUtils.toZestRequest(httpMessage, false, includeAllHeaders, zestParam);
         // Then
         assertThat(zestRequest.getHeaders(), is(equalTo(headers)));
     }
 
     @Test
-    public void shouldRemoveIgnoredHeadersIfNotIncludingAllWhenConvertingHttpMessageToZestRequest() throws Exception {
+    public void shouldRemoveIgnoredHeadersIfNotIncludingAllWhenConvertingHttpMessageToZestRequest()
+            throws Exception {
         // Given
         boolean includeAllHeaders = false;
         ZestParam zestParam = createZestParam();
         zestParam.setIgnoredHeaders(Arrays.asList("B"));
         HttpMessage httpMessage = createRequest("A: 1\r\nB: 2\r\nHost: example.com\r\n");
         // When
-        ZestRequest zestRequest = ZestZapUtils.toZestRequest(httpMessage, false, includeAllHeaders, zestParam);
+        ZestRequest zestRequest =
+                ZestZapUtils.toZestRequest(httpMessage, false, includeAllHeaders, zestParam);
         // Then
         assertThat(zestRequest.getHeaders(), is(equalTo("A: 1\r\nHost: example.com\r\n")));
     }

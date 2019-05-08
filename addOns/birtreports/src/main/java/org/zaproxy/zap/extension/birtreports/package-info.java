@@ -1,8 +1,3 @@
-/**
- * 
- */
-/**
- * @author johanna
- *
- */
+/** */
+/** @author johanna */
 package org.zaproxy.zap.extension.birtreports;

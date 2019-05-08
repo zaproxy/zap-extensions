@@ -20,25 +20,26 @@
 package org.zaproxy.zap.extension.invoke;
 
 import javax.swing.JMenuItem;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 
-
 public class PopupMenuInvokeConfigure extends JMenuItem {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     public PopupMenuInvokeConfigure() {
         super(Constant.messages.getString("invoke.config.popup"));
-        
-        this.addActionListener(new java.awt.event.ActionListener() { 
 
-        	@Override
-        	public void actionPerformed(java.awt.event.ActionEvent e) {
-        		// Implement
-        		Control.getSingleton().getMenuToolsControl().options(Constant.messages.getString("invoke.options.title"));
-        	}
-        });
-	}
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
+
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        // Implement
+                        Control.getSingleton()
+                                .getMenuToolsControl()
+                                .options(Constant.messages.getString("invoke.options.title"));
+                    }
+                });
+    }
 }

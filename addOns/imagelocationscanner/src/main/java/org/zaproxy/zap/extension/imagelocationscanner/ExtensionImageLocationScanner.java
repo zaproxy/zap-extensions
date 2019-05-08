@@ -24,28 +24,28 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 
 public class ExtensionImageLocationScanner extends ExtensionAdaptor {
 
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
 
-	@Override
-	public String getName() {
-		return "ExtensionImageLocationScanner";
-	}
-	
-	@Override
-	public String getUIName() {
-		return Constant.messages.getString("imagelocationscanner.ui.name");
-	}
+    @Override
+    public String getName() {
+        return "ExtensionImageLocationScanner";
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("imagelocationscanner.addon.desc");
-	}
-	
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
+    @Override
+    public String getUIName() {
+        return Constant.messages.getString("imagelocationscanner.ui.name");
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("imagelocationscanner.addon.desc");
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 }

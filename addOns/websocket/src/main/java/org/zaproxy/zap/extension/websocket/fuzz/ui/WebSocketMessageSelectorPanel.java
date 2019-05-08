@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.websocket.fuzz.ui;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.MessageSelectorPanel;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
@@ -37,7 +36,10 @@ public class WebSocketMessageSelectorPanel implements MessageSelectorPanel<WebSo
         panel.setLayout(layout);
         layout.setAutoCreateGaps(true);
 
-        JLabel label = new JLabel(Constant.messages.getString("websocket.fuzzer.select.message.dialogue.warn"));
+        JLabel label =
+                new JLabel(
+                        Constant.messages.getString(
+                                "websocket.fuzzer.select.message.dialogue.warn"));
 
         layout.setHorizontalGroup(layout.createSequentialGroup().addComponent(label));
         layout.setVerticalGroup(layout.createSequentialGroup().addComponent(label));
@@ -59,13 +61,11 @@ public class WebSocketMessageSelectorPanel implements MessageSelectorPanel<WebSo
     }
 
     @Override
-    public void clear() {
-    }
+    public void clear() {}
 
     @Override
     public String getHelpTarget() {
         // THC add help...
         return null;
     }
-
 }

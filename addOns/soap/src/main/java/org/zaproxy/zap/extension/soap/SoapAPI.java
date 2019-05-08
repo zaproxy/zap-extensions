@@ -20,9 +20,7 @@
 package org.zaproxy.zap.extension.soap;
 
 import java.io.File;
-
 import net.sf.json.JSONObject;
-
 import org.apache.commons.httpclient.URI;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -32,61 +30,58 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 
 public class SoapAPI extends ApiImplementor {
 
-	private static final String PREFIX = "soap";
-	private static final String ACTION_IMPORT_FILE = "importFile";
-	private static final String ACTION_IMPORT_URL = "importUrl";
-	private static final String PARAM_URL = "url";
-	private static final String PARAM_FILE = "file";
-	private ExtensionImportWSDL extension = null;
+    private static final String PREFIX = "soap";
+    private static final String ACTION_IMPORT_FILE = "importFile";
+    private static final String ACTION_IMPORT_URL = "importUrl";
+    private static final String PARAM_URL = "url";
+    private static final String PARAM_FILE = "file";
+    private ExtensionImportWSDL extension = null;
 
-	/**
-	 * Provided only for API client generator usage.
-	 */
-	public SoapAPI() {
-		this(null);
-	}
+    /** Provided only for API client generator usage. */
+    public SoapAPI() {
+        this(null);
+    }
 
-	public SoapAPI(ExtensionImportWSDL ext) {
-		extension = ext;
-		this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, new String[] { PARAM_FILE }));
-		this.addApiAction(new ApiAction(ACTION_IMPORT_URL, new String[] { PARAM_URL }));
-	}
+    public SoapAPI(ExtensionImportWSDL ext) {
+        extension = ext;
+        this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, new String[] {PARAM_FILE}));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_URL, new String[] {PARAM_URL}));
+    }
 
-	@Override
-	public String getPrefix() {
-		return PREFIX;
-	}
+    @Override
+    public String getPrefix() {
+        return PREFIX;
+    }
 
-	@Override
-	public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-		if (ACTION_IMPORT_FILE.equals(name)) {
-			File file = new File(params.getString(PARAM_FILE));
-			if (!file.exists() || !file.canRead()) {
-				throw new ApiException(ApiException.Type.DOES_NOT_EXIST, file.getAbsolutePath());
-			}
+    @Override
+    public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
+        if (ACTION_IMPORT_FILE.equals(name)) {
+            File file = new File(params.getString(PARAM_FILE));
+            if (!file.exists() || !file.canRead()) {
+                throw new ApiException(ApiException.Type.DOES_NOT_EXIST, file.getAbsolutePath());
+            }
 
-			extension.fileUrlWSDLImport(file);
+            extension.fileUrlWSDLImport(file);
 
-			return ApiResponseElement.OK;
+            return ApiResponseElement.OK;
 
-		} else if (ACTION_IMPORT_URL.equals(name)) {
-			String url = params.getString(PARAM_URL);
-			try {
-				new URI(url, false);
-			} catch (Exception e) {
-				throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
-			}
+        } else if (ACTION_IMPORT_URL.equals(name)) {
+            String url = params.getString(PARAM_URL);
+            try {
+                new URI(url, false);
+            } catch (Exception e) {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
+            }
 
-			try {
-				extension.extUrlWSDLImport(url);
-				return ApiResponseElement.OK;
-			} catch (Exception e) {
-				throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
-			}
+            try {
+                extension.extUrlWSDLImport(url);
+                return ApiResponseElement.OK;
+            } catch (Exception e) {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
+            }
 
-		} else {
-			throw new ApiException(ApiException.Type.BAD_ACTION);
-		}
-	}
-
+        } else {
+            throw new ApiException(ApiException.Type.BAD_ACTION);
+        }
+    }
 }

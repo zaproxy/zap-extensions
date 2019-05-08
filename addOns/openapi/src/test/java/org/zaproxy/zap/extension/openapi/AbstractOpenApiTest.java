@@ -25,9 +25,9 @@ import org.zaproxy.zap.testutils.TestUtils;
 
 /**
  * Base class for OpenAPI tests.
- * <p>
- * It's responsible for {@link #startServer() starting} and {@link #stopServer() stopping} the HTTP test server and
- * {@link #setUpZap() set up ZAP} for each test method.
+ *
+ * <p>It's responsible for {@link #startServer() starting} and {@link #stopServer() stopping} the
+ * HTTP test server and {@link #setUpZap() set up ZAP} for each test method.
  */
 public abstract class AbstractOpenApiTest extends TestUtils {
 

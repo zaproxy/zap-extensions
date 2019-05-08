@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.bugtracker;
 
 import java.awt.Dimension;
 import java.util.Set;
-
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
@@ -44,8 +43,11 @@ public class PopupSemiAutoIssue extends PopupMenuItemAlert {
     private void showRaiseSemiAutoIssueDialog(Set<Alert> alerts) {
         if (raiseSemiAutoIssueDialog == null) {
             this.extBT.alerts = alerts;
-            raiseSemiAutoIssueDialog = new RaiseSemiAutoIssueDialog(this.extBT, View.getSingleton()
-                    .getMainFrame(), new Dimension(500, 500));
+            raiseSemiAutoIssueDialog =
+                    new RaiseSemiAutoIssueDialog(
+                            this.extBT,
+                            View.getSingleton().getMainFrame(),
+                            new Dimension(500, 500));
         } else if (raiseSemiAutoIssueDialog.isVisible()) {
             bringToFront(raiseSemiAutoIssueDialog);
             return;
@@ -64,7 +66,7 @@ public class PopupSemiAutoIssue extends PopupMenuItemAlert {
     public void performAction(Alert alert) {
         // Empty because alerts are retrieved, stored and sent to the dialogs in a list
     }
-    
+
     void setExtension(ExtensionAlert extension) {
         this.extension = extension;
     }
@@ -78,5 +80,4 @@ public class PopupSemiAutoIssue extends PopupMenuItemAlert {
         dialog.toFront();
         dialog.requestFocus();
     }
-    
 }

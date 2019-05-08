@@ -21,12 +21,13 @@ package org.zaproxy.zap.extension.websocket.fuzz;
 
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
-public abstract class AbstractWebSocketFuzzerMessageProcessorUIPanel<T extends WebSocketFuzzerMessageProcessor, T1 extends WebSocketFuzzerMessageProcessorUI<T>>
+public abstract class AbstractWebSocketFuzzerMessageProcessorUIPanel<
+                T extends WebSocketFuzzerMessageProcessor,
+                T1 extends WebSocketFuzzerMessageProcessorUI<T>>
         implements WebSocketFuzzerMessageProcessorUIPanel<T, T1> {
 
     @Override
-    public void init(WebSocketMessageDTO message) {
-    }
+    public void init(WebSocketMessageDTO message) {}
 
     @Override
     public boolean validate() {
@@ -34,12 +35,10 @@ public abstract class AbstractWebSocketFuzzerMessageProcessorUIPanel<T extends W
     }
 
     @Override
-    public void clear() {
-    }
+    public void clear() {}
 
     @Override
     public String getHelpTarget() {
         return null;
     }
-
 }

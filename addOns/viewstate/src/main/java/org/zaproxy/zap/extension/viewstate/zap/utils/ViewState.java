@@ -21,70 +21,68 @@ package org.zaproxy.zap.extension.viewstate.zap.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
-
 import org.apache.log4j.Logger;
 
 public class ViewState {
-        
-	private static Logger logger = Logger.getLogger(ViewState.class);
-	
-	private String type;
-	protected String value;
-	protected String name;
-	
-	public ViewState(String val, String type, String name) {
-		this.value = val;
-		this.type = type;
-		this.name = name;
-	}
-	
-	public String getType() {
-		return this.type;
-	}
-	
-	public String getValue() {
-		return this.value;
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	public byte[] getDecodedValue() {
-		byte[] val = null;
-		try {
-			if (getType().equalsIgnoreCase(ASPViewState.KEY)) {
-				ASPViewState avs = (ASPViewState) this;
-				val = avs.decode();
-			}
-			if (getType().equalsIgnoreCase(JSFViewState.KEY)) {
-				JSFViewState jvs = (JSFViewState) this;
-				ByteArrayOutputStream b = new ByteArrayOutputStream();
-				ObjectOutputStream o = new ObjectOutputStream(b);
-				o.writeObject(jvs.decode());
-				val = b.toString().getBytes();
-			}
-		} catch (Exception e) {
-			logger.error("Exception in getDecodedValue(): " + e.getMessage(), e);
-		}
-		return val;
-	}
-	
-	public String getEncodedValue(byte[] plain) {
-		String val = null;
-		try {
-			if (getType().equalsIgnoreCase(ASPViewState.KEY)) {
-				ASPViewState avs = (ASPViewState) this;
-				val = avs.encode(plain);
-			}
-			if (getType().equalsIgnoreCase(JSFViewState.KEY)) {
-				JSFViewState jvs = (JSFViewState) this;
-				val = jvs.encode(plain);
-			}
-		} catch (Exception e) {
-			logger.error("Exception in getEncodedValue(): " + e.getMessage(), e);
-		}
-		return val;
-	}
-        
+
+    private static Logger logger = Logger.getLogger(ViewState.class);
+
+    private String type;
+    protected String value;
+    protected String name;
+
+    public ViewState(String val, String type, String name) {
+        this.value = val;
+        this.type = type;
+        this.name = name;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public byte[] getDecodedValue() {
+        byte[] val = null;
+        try {
+            if (getType().equalsIgnoreCase(ASPViewState.KEY)) {
+                ASPViewState avs = (ASPViewState) this;
+                val = avs.decode();
+            }
+            if (getType().equalsIgnoreCase(JSFViewState.KEY)) {
+                JSFViewState jvs = (JSFViewState) this;
+                ByteArrayOutputStream b = new ByteArrayOutputStream();
+                ObjectOutputStream o = new ObjectOutputStream(b);
+                o.writeObject(jvs.decode());
+                val = b.toString().getBytes();
+            }
+        } catch (Exception e) {
+            logger.error("Exception in getDecodedValue(): " + e.getMessage(), e);
+        }
+        return val;
+    }
+
+    public String getEncodedValue(byte[] plain) {
+        String val = null;
+        try {
+            if (getType().equalsIgnoreCase(ASPViewState.KEY)) {
+                ASPViewState avs = (ASPViewState) this;
+                val = avs.encode(plain);
+            }
+            if (getType().equalsIgnoreCase(JSFViewState.KEY)) {
+                JSFViewState jvs = (JSFViewState) this;
+                val = jvs.encode(plain);
+            }
+        } catch (Exception e) {
+            logger.error("Exception in getEncodedValue(): " + e.getMessage(), e);
+        }
+        return val;
+    }
 }

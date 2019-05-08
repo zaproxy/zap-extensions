@@ -22,33 +22,33 @@ package org.zaproxy.zap.extension.todo;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
-public class ExtensionTodoList extends ExtensionAdaptor{
-	
-	private TodoList todoList = null;
-		
-	public ExtensionTodoList(){
-		super();
-	}
-	
-    	@Override
-	public String getAuthor() {
-		return "vishesh";
-	}
+public class ExtensionTodoList extends ExtensionAdaptor {
 
-	private TodoList getTodoList(){
-		if(todoList==null){
-			todoList = new TodoList();
-			todoList.setName("Todo List");
-		}
-		return todoList;
-	}
+    private TodoList todoList = null;
 
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-	    super.hook(extensionHook);
+    public ExtensionTodoList() {
+        super();
+    }
 
-	    if (getView() != null) {
-	    	extensionHook.getHookView().addWorkPanel(getTodoList());
-	    }
-	}
+    @Override
+    public String getAuthor() {
+        return "vishesh";
+    }
+
+    private TodoList getTodoList() {
+        if (todoList == null) {
+            todoList = new TodoList();
+            todoList.setName("Todo List");
+        }
+        return todoList;
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+
+        if (getView() != null) {
+            extensionHook.getHookView().addWorkPanel(getTodoList());
+        }
+    }
 }

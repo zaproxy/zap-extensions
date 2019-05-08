@@ -23,37 +23,36 @@ import java.io.IOException;
 import java.io.Writer;
 
 public class OutputPanelWriter extends Writer {
-	
-	private OutputPanel outputPanel;
-	private boolean enabled = true;
 
-	public OutputPanelWriter (OutputPanel outputPanel) {
-		this.outputPanel = outputPanel;
-	}
-	
-	@Override
-	public void write(char[] cbuf, int off, int len) throws IOException {
-		if (enabled) {
-			outputPanel.append(new String(cbuf, off, len));
-		}
-	}
+    private OutputPanel outputPanel;
+    private boolean enabled = true;
 
-	@Override
-	public void flush() throws IOException {
-		// Ignore
-	}
+    public OutputPanelWriter(OutputPanel outputPanel) {
+        this.outputPanel = outputPanel;
+    }
 
-	@Override
-	public void close() throws IOException {
-		// Ignore
-	}
+    @Override
+    public void write(char[] cbuf, int off, int len) throws IOException {
+        if (enabled) {
+            outputPanel.append(new String(cbuf, off, len));
+        }
+    }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+    @Override
+    public void flush() throws IOException {
+        // Ignore
+    }
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    @Override
+    public void close() throws IOException {
+        // Ignore
+    }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

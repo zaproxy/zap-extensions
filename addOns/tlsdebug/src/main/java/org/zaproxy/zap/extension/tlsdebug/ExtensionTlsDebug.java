@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.tlsdebug;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -30,64 +29,64 @@ import org.zaproxy.zap.extension.help.ExtensionHelp;
 
 public class ExtensionTlsDebug extends ExtensionAdaptor {
 
-	public static final String NAME = "ExtensionTlsDebug";
+    public static final String NAME = "ExtensionTlsDebug";
 
-	private TlsDebugPanel tlsDebugPanel;
+    private TlsDebugPanel tlsDebugPanel;
 
-	public ExtensionTlsDebug() {
-		super();
-		this.setName(NAME);
-	}
+    public ExtensionTlsDebug() {
+        super();
+        this.setName(NAME);
+    }
 
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-		super.hook(extensionHook);
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
 
-		if (getView() != null) {
-			extensionHook.getHookView().addWorkPanel(getTlsDebugPanel());
+        if (getView() != null) {
+            extensionHook.getHookView().addWorkPanel(getTlsDebugPanel());
 
-			ExtensionHelp.enableHelpKey(getTlsDebugPanel(), "tlsdebug");
-		}
-	}
+            ExtensionHelp.enableHelpKey(getTlsDebugPanel(), "tlsdebug");
+        }
+    }
 
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 
-	private TlsDebugPanel getTlsDebugPanel() {
-		if (tlsDebugPanel == null) {
-			tlsDebugPanel = new TlsDebugPanel(this);
-			tlsDebugPanel.setName(Constant.messages.getString("tlsdebug.panel.title"));
-		}
-		return tlsDebugPanel;
-	}
+    private TlsDebugPanel getTlsDebugPanel() {
+        if (tlsDebugPanel == null) {
+            tlsDebugPanel = new TlsDebugPanel(this);
+            tlsDebugPanel.setName(Constant.messages.getString("tlsdebug.panel.title"));
+        }
+        return tlsDebugPanel;
+    }
 
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("tlsdebug.desc");
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("tlsdebug.desc");
+    }
 
-	@Override
-	public URL getURL() {
-		try {
-			return new URL(Constant.ZAP_HOMEPAGE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_HOMEPAGE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 
-	public void launchDebug(URL url) throws IOException {
-		HttpsCallerLauncher pl = new HttpsCallerLauncher(this);
-		pl.startProcess(url, this.getTlsDebugPanel().getDebugProperty());
-	}
+    public void launchDebug(URL url) throws IOException {
+        HttpsCallerLauncher pl = new HttpsCallerLauncher(this);
+        pl.startProcess(url, this.getTlsDebugPanel().getDebugProperty());
+    }
 
-	public void notifyResponse(String line) {
-		this.tlsDebugPanel.writeConsole(line);
-	}
+    public void notifyResponse(String line) {
+        this.tlsDebugPanel.writeConsole(line);
+    }
 }

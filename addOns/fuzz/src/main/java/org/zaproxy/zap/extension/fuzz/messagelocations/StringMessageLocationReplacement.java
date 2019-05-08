@@ -75,5 +75,4 @@ public class StringMessageLocationReplacement implements MessageLocationReplacem
         }
         return true;
     }
-
 }

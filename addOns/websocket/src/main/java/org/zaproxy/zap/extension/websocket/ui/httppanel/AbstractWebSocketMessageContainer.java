@@ -20,24 +20,25 @@
 package org.zaproxy.zap.extension.websocket.ui.httppanel;
 
 import java.awt.Component;
-
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.view.messagecontainer.AbstractMessageContainer;
 
 /**
  * An abstract implementation of a {@code WebSocketMessageContainer}.
- * 
+ *
  * @see WebSocketMessageContainer
  */
-public abstract class AbstractWebSocketMessageContainer extends AbstractMessageContainer<WebSocketMessageDTO>
-        implements WebSocketMessageContainer {
+public abstract class AbstractWebSocketMessageContainer
+        extends AbstractMessageContainer<WebSocketMessageDTO> implements WebSocketMessageContainer {
 
     /**
-     * Constructs an {@code AbstractHttpMessageContainer} with the given container {@code name} and {@code component}.
-     * 
+     * Constructs an {@code AbstractHttpMessageContainer} with the given container {@code name} and
+     * {@code component}.
+     *
      * @param name the name of the container
      * @param component the GUI component of the container
-     * @throws IllegalArgumentException if the given {@code name} or {@code component} is {@code null}.
+     * @throws IllegalArgumentException if the given {@code name} or {@code component} is {@code
+     *     null}.
      */
     public AbstractWebSocketMessageContainer(String name, Component component) {
         super(name, component);

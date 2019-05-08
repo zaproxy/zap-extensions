@@ -22,67 +22,65 @@ package org.zaproxy.zap.extension.zest;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.script.ScriptEngine;
 import javax.swing.ImageIcon;
-
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ZestEngineWrapper extends DefaultEngineWrapper {
 
-	private final List<Path> defaultTemplates;
+    private final List<Path> defaultTemplates;
 
-	public ZestEngineWrapper(ScriptEngine engine, List<Path> defaultTemplates) {
-		super(engine);
+    public ZestEngineWrapper(ScriptEngine engine, List<Path> defaultTemplates) {
+        super(engine);
 
-		if (defaultTemplates == null) {
-			throw new IllegalArgumentException("Parameter defaultTemplates must not be null.");
-		}
+        if (defaultTemplates == null) {
+            throw new IllegalArgumentException("Parameter defaultTemplates must not be null.");
+        }
 
-		this.defaultTemplates = defaultTemplates;
-	}
+        this.defaultTemplates = defaultTemplates;
+    }
 
-	@Override
-	public ImageIcon getIcon() {
-		return ExtensionZest.ZEST_ICON;
-	}
+    @Override
+    public ImageIcon getIcon() {
+        return ExtensionZest.ZEST_ICON;
+    }
 
-	@Override
-	public String getSyntaxStyle() {
-		return SyntaxConstants.SYNTAX_STYLE_JSON;
-	}
-	
-	@Override
-	public List<String> getExtensions() {
-		List<String> list = new ArrayList<>(2);
-		list.add("zst");
-		list.add("zest");
-		return list;
-	}
+    @Override
+    public String getSyntaxStyle() {
+        return SyntaxConstants.SYNTAX_STYLE_JSON;
+    }
 
-	@Override
-	public boolean isTextBased() {
-		return false;
-	}
+    @Override
+    public List<String> getExtensions() {
+        List<String> list = new ArrayList<>(2);
+        list.add("zst");
+        list.add("zest");
+        return list;
+    }
 
-	@Override
-	public boolean isRawEngine() {
-		return false;
-	}
+    @Override
+    public boolean isTextBased() {
+        return false;
+    }
 
-	@Override
-	public boolean isSupportsMissingTemplates() {
-		return false;
-	}
+    @Override
+    public boolean isRawEngine() {
+        return false;
+    }
 
-	@Override
-	public boolean isDefaultTemplate(ScriptWrapper script) {
-		if (script.getFile() == null) {
-			return false;
-		}
+    @Override
+    public boolean isSupportsMissingTemplates() {
+        return false;
+    }
 
-		return defaultTemplates.contains(script.getFile().toPath());
-	}
+    @Override
+    public boolean isDefaultTemplate(ScriptWrapper script) {
+        if (script.getFile() == null) {
+            return false;
+        }
+
+        return defaultTemplates.contains(script.getFile().toPath());
+    }
 }

@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.selenium;
 
 /**
  * A provided browser, either by Selenium add-on or other add-ons.
- * 
+ *
  * @since 1.1.0
  */
 public interface ProvidedBrowser {
@@ -42,8 +42,8 @@ public interface ProvidedBrowser {
 
     /**
      * The name of the browser.
-     * <p>
-     * The name will be shown in UI components.
+     *
+     * <p>The name will be shown in UI components.
      *
      * @return the name of the browser.
      */
@@ -51,12 +51,14 @@ public interface ProvidedBrowser {
 
     /**
      * Returns true if the browser is headless
+     *
      * @return true if the browser is headless
      */
     boolean isHeadless();
 
     /**
      * Returns true if the browser is suitably configured for the current system
+     *
      * @return true if the browser is suitably configured for the current system
      */
     boolean isConfigured();

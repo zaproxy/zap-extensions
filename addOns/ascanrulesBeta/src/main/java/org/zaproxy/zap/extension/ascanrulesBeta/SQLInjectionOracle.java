@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -32,268 +31,352 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-
 /**
  * TODO: maybe implement a more specific UNION based check for Oracle (with table names)
- * 
- * The SQLInjectionOracle plugin identifies Oracle specific SQL Injection vulnerabilities
- * using Oracle specific syntax.  If it doesn't use Oracle specific syntax, it belongs in the generic SQLInjection class! 
- * Note the ordering of checks, for efficiency is : 
- * 1) Error based (N/A)
- * 2) Boolean Based (N/A - uses standard syntax) 
- * 3) UNION based (TODO)
- * 4) Stacked (N/A - uses standard syntax)
- * 5) Blind/Time Based (Yes)
- * 
- * See the following for some great specific tricks which could be integrated here
+ *
+ * <p>The SQLInjectionOracle plugin identifies Oracle specific SQL Injection vulnerabilities using
+ * Oracle specific syntax. If it doesn't use Oracle specific syntax, it belongs in the generic
+ * SQLInjection class! Note the ordering of checks, for efficiency is : 1) Error based (N/A) 2)
+ * Boolean Based (N/A - uses standard syntax) 3) UNION based (TODO) 4) Stacked (N/A - uses standard
+ * syntax) 5) Blind/Time Based (Yes)
+ *
+ * <p>See the following for some great specific tricks which could be integrated here
  * http://www.websec.ca/kb/sql_injection
  * http://pentestmonkey.net/cheat-sheet/sql-injection/oracle-sql-injection-cheat-sheet
- * 
- * Important Notes for the Oracle database (and useful in the code):
- * - takes -- style comments
- * - requires a table name in normal select statements (like Hypersonic: cannot just say "select 1" or "select 2" like in most RDBMSs
- * - requires a table name in "union select" statements (like Hypersonic). 
- * - does NOT allow stacked queries via JDBC driver or in PHP. 
- * - Constants in select must be in single quotes, not doubles (like Hypersonic).
- * - supports UDFs  (very interesting!!)
- * - 5 second delay select statement: SELECT  UTL_INADDR.get_host_name('10.0.0.1') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.2') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.3') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.4') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.5') from dual
- * - metadata select statement: TODO
- * 
- *  @author 70pointer
+ *
+ * <p>Important Notes for the Oracle database (and useful in the code): - takes -- style comments -
+ * requires a table name in normal select statements (like Hypersonic: cannot just say "select 1" or
+ * "select 2" like in most RDBMSs - requires a table name in "union select" statements (like
+ * Hypersonic). - does NOT allow stacked queries via JDBC driver or in PHP. - Constants in select
+ * must be in single quotes, not doubles (like Hypersonic). - supports UDFs (very interesting!!) - 5
+ * second delay select statement: SELECT UTL_INADDR.get_host_name('10.0.0.1') from dual union SELECT
+ * UTL_INADDR.get_host_name('10.0.0.2') from dual union SELECT UTL_INADDR.get_host_name('10.0.0.3')
+ * from dual union SELECT UTL_INADDR.get_host_name('10.0.0.4') from dual union SELECT
+ * UTL_INADDR.get_host_name('10.0.0.5') from dual - metadata select statement: TODO
+ *
+ * @author 70pointer
  */
 public class SQLInjectionOracle extends AbstractAppParamPlugin {
-	
-	private boolean doUnionBased = false;   //TODO: use in Union based, when we implement it
-	private boolean doTimeBased = false;
-	
-	private int doUnionMaxRequests = 0;	//TODO: use in Union based, when we implement it
-	private int doTimeMaxRequests = 0;
 
-	
-	/**
-	 * Oracle one-line comment
-	 */
-	public static final String SQL_ONE_LINE_COMMENT = " -- ";
+    private boolean doUnionBased = false; // TODO: use in Union based, when we implement it
+    private boolean doTimeBased = false;
 
-	/**
-	 * create a map of SQL related error message fragments, and map them back to the RDBMS that they are associated with
-	 * keep the ordering the same as the order in which the values are inserted, to allow the more (subjectively judged) common cases to be tested first
-	 * Note: these should represent actual (driver level) error messages for things like syntax error, 
-	 * otherwise we are simply guessing that the string should/might occur.
-	 */
-	private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<>();
-	static {
-		SQL_ERROR_TO_DBMS.put("oracle.jdbc", "Oracle");
-		SQL_ERROR_TO_DBMS.put("SQLSTATE[HY", "Oracle");
-		SQL_ERROR_TO_DBMS.put("ORA-00933", "Oracle");
-		SQL_ERROR_TO_DBMS.put("ORA-06512", "Oracle");  //indicates the line number of an error
-		SQL_ERROR_TO_DBMS.put("SQL command not properly ended", "Oracle");
-		SQL_ERROR_TO_DBMS.put("ORA-00942", "Oracle");  //table or view does not exist
-		SQL_ERROR_TO_DBMS.put("ORA-29257", "Oracle");  //host unknown
-		SQL_ERROR_TO_DBMS.put("ORA-00932", "Oracle");  //inconsistent datatypes
+    private int doUnionMaxRequests = 0; // TODO: use in Union based, when we implement it
+    private int doTimeMaxRequests = 0;
 
-		//Note: only Oracle mappings here.
-		//TODO: is this all?? we need more error messages for Oracle for different languages. PHP (oci8), ASP, JSP(JDBC), etc 
-	}
+    /** Oracle one-line comment */
+    public static final String SQL_ONE_LINE_COMMENT = " -- ";
 
+    /**
+     * create a map of SQL related error message fragments, and map them back to the RDBMS that they
+     * are associated with keep the ordering the same as the order in which the values are inserted,
+     * to allow the more (subjectively judged) common cases to be tested first Note: these should
+     * represent actual (driver level) error messages for things like syntax error, otherwise we are
+     * simply guessing that the string should/might occur.
+     */
+    private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<>();
 
-	/**
-	 * the 5 second sleep function in Oracle SQL
-	 */
-	private static String SQL_ORACLE_TIME_SELECT = "SELECT  UTL_INADDR.get_host_name('10.0.0.1') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.2') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.3') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.4') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.5') from dual";
-	
-	/**
-	 * Oracle specific time based injection strings. each for 5 seconds
-	 */
-	
-	//Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these examples below (see * comment)
-	//TODO: maybe add support for ')' after the original value, before the sleeps
-	private static String[] SQL_ORACLE_TIME_REPLACEMENTS = {
-		"("+SQL_ORACLE_TIME_SELECT+")",	
-		"<<<<ORIGINALVALUE>>>> / ("+SQL_ORACLE_TIME_SELECT+") ",
-		"<<<<ORIGINALVALUE>>>>' / ("+SQL_ORACLE_TIME_SELECT+") / '",
-		"<<<<ORIGINALVALUE>>>>\" / ("+SQL_ORACLE_TIME_SELECT+") / \"",			
-		"<<<<ORIGINALVALUE>>>> and exists ("+SQL_ORACLE_TIME_SELECT+")"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>' and exists ("+SQL_ORACLE_TIME_SELECT+")"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>\" and exists ("+SQL_ORACLE_TIME_SELECT+")"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>) and exists ("+SQL_ORACLE_TIME_SELECT+")"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>> or exists ("+SQL_ORACLE_TIME_SELECT+")"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>' or exists ("+SQL_ORACLE_TIME_SELECT+")"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>\" or exists ("+SQL_ORACLE_TIME_SELECT+")"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>) or exists ("+SQL_ORACLE_TIME_SELECT+")"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		};
-	
+    static {
+        SQL_ERROR_TO_DBMS.put("oracle.jdbc", "Oracle");
+        SQL_ERROR_TO_DBMS.put("SQLSTATE[HY", "Oracle");
+        SQL_ERROR_TO_DBMS.put("ORA-00933", "Oracle");
+        SQL_ERROR_TO_DBMS.put("ORA-06512", "Oracle"); // indicates the line number of an error
+        SQL_ERROR_TO_DBMS.put("SQL command not properly ended", "Oracle");
+        SQL_ERROR_TO_DBMS.put("ORA-00942", "Oracle"); // table or view does not exist
+        SQL_ERROR_TO_DBMS.put("ORA-29257", "Oracle"); // host unknown
+        SQL_ERROR_TO_DBMS.put("ORA-00932", "Oracle"); // inconsistent datatypes
 
-	/**
-	 * plugin dependencies (none! not even "SQL Injection")
-	 */
-	private static final String[] dependency = {};    	
+        // Note: only Oracle mappings here.
+        // TODO: is this all?? we need more error messages for Oracle for different languages. PHP
+        // (oci8), ASP, JSP(JDBC), etc
+    }
 
-	/**
-	 * for logging.
-	 */
-	private static Logger log = Logger.getLogger(SQLInjectionOracle.class);
+    /** the 5 second sleep function in Oracle SQL */
+    private static String SQL_ORACLE_TIME_SELECT =
+            "SELECT  UTL_INADDR.get_host_name('10.0.0.1') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.2') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.3') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.4') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.5') from dual";
 
-	/**
-	 * determines if we should output Debug level logging
-	 */
-	private boolean debugEnabled = log.isDebugEnabled();
+    /** Oracle specific time based injection strings. each for 5 seconds */
 
-	@Override
-	public int getId() {
-		return 40021;
-	}
+    // Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these
+    // examples below (see * comment)
+    // TODO: maybe add support for ')' after the original value, before the sleeps
+    private static String[] SQL_ORACLE_TIME_REPLACEMENTS = {
+        "(" + SQL_ORACLE_TIME_SELECT + ")",
+        "<<<<ORIGINALVALUE>>>> / (" + SQL_ORACLE_TIME_SELECT + ") ",
+        "<<<<ORIGINALVALUE>>>>' / (" + SQL_ORACLE_TIME_SELECT + ") / '",
+        "<<<<ORIGINALVALUE>>>>\" / (" + SQL_ORACLE_TIME_SELECT + ") / \"",
+        "<<<<ORIGINALVALUE>>>> and exists ("
+                + SQL_ORACLE_TIME_SELECT
+                + ")"
+                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        "<<<<ORIGINALVALUE>>>>' and exists ("
+                + SQL_ORACLE_TIME_SELECT
+                + ")"
+                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        "<<<<ORIGINALVALUE>>>>\" and exists ("
+                + SQL_ORACLE_TIME_SELECT
+                + ")"
+                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        "<<<<ORIGINALVALUE>>>>) and exists ("
+                + SQL_ORACLE_TIME_SELECT
+                + ")"
+                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        "<<<<ORIGINALVALUE>>>> or exists ("
+                + SQL_ORACLE_TIME_SELECT
+                + ")"
+                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        "<<<<ORIGINALVALUE>>>>' or exists ("
+                + SQL_ORACLE_TIME_SELECT
+                + ")"
+                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        "<<<<ORIGINALVALUE>>>>\" or exists ("
+                + SQL_ORACLE_TIME_SELECT
+                + ")"
+                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+        "<<<<ORIGINALVALUE>>>>) or exists ("
+                + SQL_ORACLE_TIME_SELECT
+                + ")"
+                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+    };
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString("ascanbeta.sqlinjection.oracle.name");
-	}
-	@Override
-	public String[] getDependency() {        
-		return dependency;
-	}
+    /** plugin dependencies (none! not even "SQL Injection") */
+    private static final String[] dependency = {};
 
-	@Override
-	public boolean targets(TechSet technologies) {
-		return technologies.includes(Tech.Oracle);
-	}
+    /** for logging. */
+    private static Logger log = Logger.getLogger(SQLInjectionOracle.class);
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("ascanbeta.sqlinjection.desc");
-	}
+    /** determines if we should output Debug level logging */
+    private boolean debugEnabled = log.isDebugEnabled();
 
-	@Override
-	public int getCategory() {
-		return Category.INJECTION;
-	}
+    @Override
+    public int getId() {
+        return 40021;
+    }
 
-	@Override
-	public String getSolution() {
-		return Constant.messages.getString("ascanbeta.sqlinjection.soln");
-	}
+    @Override
+    public String getName() {
+        return Constant.messages.getString("ascanbeta.sqlinjection.oracle.name");
+    }
 
-	@Override
-	public String getReference() {
-		return Constant.messages.getString("ascanbeta.sqlinjection.refs");  
-	}
+    @Override
+    public String[] getDependency() {
+        return dependency;
+    }
 
-	@Override
-	public void init() {
-		//DEBUG: turn on for debugging
-		//TODO: turn this off
-		//log.setLevel(org.apache.log4j.Level.DEBUG);
-		//this.debugEnabled = true;
+    @Override
+    public boolean targets(TechSet technologies) {
+        return technologies.includes(Tech.Oracle);
+    }
 
-		if ( this.debugEnabled ) log.debug("Initialising");
-		
-		//TODO: debug only
-		//this.setAttackStrength(AttackStrength.INSANE);
-		
-		//set up what we are allowed to do, depending on the attack strength that was set.
-		if ( this.getAttackStrength() == AttackStrength.LOW ) {
-			doTimeBased=true; doTimeMaxRequests=3;
-			doUnionBased=true; doUnionMaxRequests=3;
-		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
-			doTimeBased=true; doTimeMaxRequests=5;
-			doUnionBased=true; doUnionMaxRequests=5;
-		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
-			doTimeBased=true; doTimeMaxRequests=10;
-			doUnionBased=true; doUnionMaxRequests=10;
-		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
-			doTimeBased=true; doTimeMaxRequests=100;
-			doUnionBased=true; doUnionMaxRequests=100;
-		}
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("ascanbeta.sqlinjection.desc");
+    }
 
-	/**
-	 * scans for SQL Injection vulnerabilities, using Oracle specific syntax.  If it doesn't use specifically Oracle syntax, it does not belong in here, but in SQLInjection 
-	 */
-	@Override
-	public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
-		
-		try {
-			//Timing Baseline check: we need to get the time that it took the original query, to know if the time based check is working correctly..
-			HttpMessage msgTimeBaseline = getNewMsg();
-			long originalTimeStarted = System.currentTimeMillis();
-			try {
-				sendAndReceive(msgTimeBaseline, false); //do not follow redirects
-				}
-			catch (java.net.SocketTimeoutException e) {
-				//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
-				if ( this.debugEnabled ) log.debug("The Base Time Check timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"]");
-			}
-			long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
-			//end of timing baseline check
-			
-			int countUnionBasedRequests = 0;
-			int countTimeBasedRequests = 0;	
-			
-			if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], field ["+ paramName + "] with value ["+paramValue+"] for Oracle SQL Injection");    			
-			
-			//Check for time based SQL Injection, using Oracle specific syntax 
-			for (int timeBasedSQLindex = 0; 
-					timeBasedSQLindex < SQL_ORACLE_TIME_REPLACEMENTS.length && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
-					timeBasedSQLindex ++) {
-				HttpMessage msgAttack = getNewMsg();
-				String newTimeBasedInjectionValue = SQL_ORACLE_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", paramValue);
-				setParameter(msgAttack, paramName, newTimeBasedInjectionValue);				
-				//send it.
-				long modifiedTimeStarted = System.currentTimeMillis();
-				try {
-					sendAndReceive(msgAttack, false); //do not follow redirects
-					countTimeBasedRequests++;
-					}
-				catch (java.net.SocketTimeoutException e) {
-					//this is to be expected, if we start sending slow queries to the database.  ignore it in this case.. and just get the time.
-					if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
-				}
-				long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
+    @Override
+    public int getCategory() {
+        return Category.INJECTION;
+    }
 
-				if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on field: ["+paramName+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
+    @Override
+    public String getSolution() {
+        return Constant.messages.getString("ascanbeta.sqlinjection.soln");
+    }
 
-				if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
-					//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
-					String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, paramValue, originalTimeUsed);
-					String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", paramName, newTimeBasedInjectionValue);
+    @Override
+    public String getReference() {
+        return Constant.messages.getString("ascanbeta.sqlinjection.refs");
+    }
 
-					//raise the alert
-					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - Time Based", getDescription(), 
-							getBaseMsg().getRequestHeader().getURI().getURI(), //url
-							paramName,  attack, 
-							extraInfo, getSolution(), msgAttack);
+    @Override
+    public void init() {
+        // DEBUG: turn on for debugging
+        // TODO: turn this off
+        // log.setLevel(org.apache.log4j.Level.DEBUG);
+        // this.debugEnabled = true;
 
-					if (log.isDebugEnabled()) {
-						log.debug("A likely Time Based SQL Injection Vulnerability has been found with ["+msgAttack.getRequestHeader().getMethod()+"] URL ["+msgAttack.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
-					}
-					return;
-				} //query took longer than the amount of time we attempted to retard it by						
-			}  //for each time based SQL index
-			//end of check for time based SQL Injection
+        if (this.debugEnabled) log.debug("Initialising");
 
-			
+        // TODO: debug only
+        // this.setAttackStrength(AttackStrength.INSANE);
 
-    	} catch (InvalidRedirectLocationException e) {
-    		// Not an error, just means we probably attacked the redirect location
-		} catch (Exception e) {
-			//Do not try to internationalise this.. we need an error message in any event.. 
-			//if it's in English, it's still better than not having it at all. 
-			log.error("An error occurred checking a url for Oracle SQL Injection vulnerabilities", e);
-		}
-	}
+        // set up what we are allowed to do, depending on the attack strength that was set.
+        if (this.getAttackStrength() == AttackStrength.LOW) {
+            doTimeBased = true;
+            doTimeMaxRequests = 3;
+            doUnionBased = true;
+            doUnionMaxRequests = 3;
+        } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
+            doTimeBased = true;
+            doTimeMaxRequests = 5;
+            doUnionBased = true;
+            doUnionMaxRequests = 5;
+        } else if (this.getAttackStrength() == AttackStrength.HIGH) {
+            doTimeBased = true;
+            doTimeMaxRequests = 10;
+            doUnionBased = true;
+            doUnionMaxRequests = 10;
+        } else if (this.getAttackStrength() == AttackStrength.INSANE) {
+            doTimeBased = true;
+            doTimeMaxRequests = 100;
+            doUnionBased = true;
+            doUnionMaxRequests = 100;
+        }
+    }
 
-	@Override
-	public int getRisk() {
-		return Alert.RISK_HIGH;
-	}
+    /**
+     * scans for SQL Injection vulnerabilities, using Oracle specific syntax. If it doesn't use
+     * specifically Oracle syntax, it does not belong in here, but in SQLInjection
+     */
+    @Override
+    public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
 
-	@Override
-	public int getCweId() {
-		return 89;
-	}
+        try {
+            // Timing Baseline check: we need to get the time that it took the original query, to
+            // know if the time based check is working correctly..
+            HttpMessage msgTimeBaseline = getNewMsg();
+            long originalTimeStarted = System.currentTimeMillis();
+            try {
+                sendAndReceive(msgTimeBaseline, false); // do not follow redirects
+            } catch (java.net.SocketTimeoutException e) {
+                // to be expected occasionally, if the base query was one that contains some
+                // parameters exploiting time based SQL injection?
+                if (this.debugEnabled)
+                    log.debug(
+                            "The Base Time Check timed out on ["
+                                    + msgTimeBaseline.getRequestHeader().getMethod()
+                                    + "] URL ["
+                                    + msgTimeBaseline.getRequestHeader().getURI().getURI()
+                                    + "]");
+            }
+            long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
+            // end of timing baseline check
 
-	@Override
-	public int getWascId() {
-		return 19;
-	}
+            int countUnionBasedRequests = 0;
+            int countTimeBasedRequests = 0;
+
+            if (this.debugEnabled)
+                log.debug(
+                        "Scanning URL ["
+                                + getBaseMsg().getRequestHeader().getMethod()
+                                + "] ["
+                                + getBaseMsg().getRequestHeader().getURI()
+                                + "], field ["
+                                + paramName
+                                + "] with value ["
+                                + paramValue
+                                + "] for Oracle SQL Injection");
+
+            // Check for time based SQL Injection, using Oracle specific syntax
+            for (int timeBasedSQLindex = 0;
+                    timeBasedSQLindex < SQL_ORACLE_TIME_REPLACEMENTS.length
+                            && doTimeBased
+                            && countTimeBasedRequests < doTimeMaxRequests;
+                    timeBasedSQLindex++) {
+                HttpMessage msgAttack = getNewMsg();
+                String newTimeBasedInjectionValue =
+                        SQL_ORACLE_TIME_REPLACEMENTS[timeBasedSQLindex].replace(
+                                "<<<<ORIGINALVALUE>>>>", paramValue);
+                setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
+                // send it.
+                long modifiedTimeStarted = System.currentTimeMillis();
+                try {
+                    sendAndReceive(msgAttack, false); // do not follow redirects
+                    countTimeBasedRequests++;
+                } catch (java.net.SocketTimeoutException e) {
+                    // this is to be expected, if we start sending slow queries to the database.
+                    // ignore it in this case.. and just get the time.
+                    if (this.debugEnabled)
+                        log.debug(
+                                "The time check query timed out on ["
+                                        + msgTimeBaseline.getRequestHeader().getMethod()
+                                        + "] URL ["
+                                        + msgTimeBaseline.getRequestHeader().getURI().getURI()
+                                        + "] on field: ["
+                                        + paramName
+                                        + "]");
+                }
+                long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
+
+                if (this.debugEnabled)
+                    log.debug(
+                            "Time Based SQL Injection test: ["
+                                    + newTimeBasedInjectionValue
+                                    + "] on field: ["
+                                    + paramName
+                                    + "] with value ["
+                                    + newTimeBasedInjectionValue
+                                    + "] took "
+                                    + modifiedTimeUsed
+                                    + "ms, where the original took "
+                                    + originalTimeUsed
+                                    + "ms");
+
+                if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
+                    // takes more than 5 extra seconds => likely time based SQL injection. Raise it
+                    String extraInfo =
+                            Constant.messages.getString(
+                                    "ascanbeta.sqlinjection.alert.timebased.extrainfo",
+                                    newTimeBasedInjectionValue,
+                                    modifiedTimeUsed,
+                                    paramValue,
+                                    originalTimeUsed);
+                    String attack =
+                            Constant.messages.getString(
+                                    "ascanbeta.sqlinjection.alert.booleanbased.attack",
+                                    paramName,
+                                    newTimeBasedInjectionValue);
+
+                    // raise the alert
+                    bingo(
+                            Alert.RISK_HIGH,
+                            Alert.CONFIDENCE_MEDIUM,
+                            getName() + " - Time Based",
+                            getDescription(),
+                            getBaseMsg().getRequestHeader().getURI().getURI(), // url
+                            paramName,
+                            attack,
+                            extraInfo,
+                            getSolution(),
+                            msgAttack);
+
+                    if (log.isDebugEnabled()) {
+                        log.debug(
+                                "A likely Time Based SQL Injection Vulnerability has been found with ["
+                                        + msgAttack.getRequestHeader().getMethod()
+                                        + "] URL ["
+                                        + msgAttack.getRequestHeader().getURI().getURI()
+                                        + "] on field: ["
+                                        + paramName
+                                        + "]");
+                    }
+                    return;
+                } // query took longer than the amount of time we attempted to retard it by
+            } // for each time based SQL index
+            // end of check for time based SQL Injection
+
+        } catch (InvalidRedirectLocationException e) {
+            // Not an error, just means we probably attacked the redirect location
+        } catch (Exception e) {
+            // Do not try to internationalise this.. we need an error message in any event..
+            // if it's in English, it's still better than not having it at all.
+            log.error(
+                    "An error occurred checking a url for Oracle SQL Injection vulnerabilities", e);
+        }
+    }
+
+    @Override
+    public int getRisk() {
+        return Alert.RISK_HIGH;
+    }
+
+    @Override
+    public int getCweId() {
+        return 89;
+    }
+
+    @Override
+    public int getWascId() {
+        return 19;
+    }
 }

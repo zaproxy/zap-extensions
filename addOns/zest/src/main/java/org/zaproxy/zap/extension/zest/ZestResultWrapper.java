@@ -26,49 +26,53 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class ZestResultWrapper extends HistoryReference {
-	
-	public enum Type {request, scanAction};
-	
-	private boolean passed = false;
-	private String message = "";
-	private int scriptRequestIndex = -1;
-	private Type type = Type.request;
 
-	public ZestResultWrapper(Session session, int historyType, HttpMessage msg, int scriptRequestIndex) throws HttpMalformedHeaderException, DatabaseException {
-		super(session, historyType, msg);
-		this.scriptRequestIndex = scriptRequestIndex;
-	}
+    public enum Type {
+        request,
+        scanAction
+    };
 
-	public boolean isPassed() {
-		return passed;
-	}
+    private boolean passed = false;
+    private String message = "";
+    private int scriptRequestIndex = -1;
+    private Type type = Type.request;
 
-	public void setPassed(boolean passed) {
-		this.passed = passed;
-	}
+    public ZestResultWrapper(
+            Session session, int historyType, HttpMessage msg, int scriptRequestIndex)
+            throws HttpMalformedHeaderException, DatabaseException {
+        super(session, historyType, msg);
+        this.scriptRequestIndex = scriptRequestIndex;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public boolean isPassed() {
+        return passed;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setPassed(boolean passed) {
+        this.passed = passed;
+    }
 
-	public int getScriptRequestIndex() {
-		return scriptRequestIndex;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setScriptRequestIndex(int scriptRequestIndex) {
-		this.scriptRequestIndex = scriptRequestIndex;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public Type getType() {
-		return type;
-	}
+    public int getScriptRequestIndex() {
+        return scriptRequestIndex;
+    }
 
-	public void setType(Type type) {
-		this.type = type;
-	}
-	
+    public void setScriptRequestIndex(int scriptRequestIndex) {
+        this.scriptRequestIndex = scriptRequestIndex;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
 }

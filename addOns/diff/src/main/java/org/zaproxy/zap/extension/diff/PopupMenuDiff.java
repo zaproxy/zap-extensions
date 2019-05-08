@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.diff;
 
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
@@ -29,13 +28,11 @@ public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
 
     private static final Logger LOGGER = Logger.getLogger(PopupMenuDiff.class);
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     private ExtensionDiff ext = null;
     private boolean request = false;
 
-    /**
-     * @param label
-     */
+    /** @param label */
     public PopupMenuDiff(String label, ExtensionDiff ext, boolean request) {
         super(label, true);
         this.setName("DiffPopup");
@@ -43,45 +40,44 @@ public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
         this.request = request;
     }
 
-
     public boolean isEnableForInvoker(Invoker invoker) {
-    	return true;
+        return true;
     }
 
-	@Override
+    @Override
     protected boolean isButtonEnabledForSelectedHistoryReferences(List<HistoryReference> hrefs) {
-	    if (hrefs.size() != 2) {
-	        return false;
-	    }
-	    
-	    for (HistoryReference hRef : hrefs) {
-	        if (hRef == null) {
-	            return false;
-	        }
-	    }
-	    
-    	return true;
+        if (hrefs.size() != 2) {
+            return false;
+        }
+
+        for (HistoryReference hRef : hrefs) {
+            if (hRef == null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-	@Override
+    @Override
     protected void performHistoryReferenceActions(List<HistoryReference> hrefs) {
-    	if (hrefs.size() == 2) {
-    		try {
-                this.ext.showDiffDialog(hrefs.get(0).getHttpMessage(), hrefs.get(1).getHttpMessage(), this.request);
+        if (hrefs.size() == 2) {
+            try {
+                this.ext.showDiffDialog(
+                        hrefs.get(0).getHttpMessage(), hrefs.get(1).getHttpMessage(), this.request);
             } catch (Exception e) {
                 LOGGER.error("Failed to show diff dialogue: " + e.getMessage(), e);
             }
-    	}
+        }
     }
 
+    @Override
+    public void performAction(HistoryReference href) {
+        // Ignore
+    }
 
-	@Override
-	public void performAction(HistoryReference href) {
-		// Ignore
-	}
-
-	@Override
-	public boolean isSafe() {
-		return true;
-	}
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
 }

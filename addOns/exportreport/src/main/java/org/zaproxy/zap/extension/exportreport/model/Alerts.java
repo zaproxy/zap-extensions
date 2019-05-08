@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.exportreport.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -30,7 +29,9 @@ import javax.xml.bind.annotation.XmlType;
  * SPONSOR: RYERSON UNIVERSITY
  */
 
-@XmlType(name = "AlertsType", propOrder = { "alertItem", "temp", "placeholder" })
+@XmlType(
+        name = "AlertsType",
+        propOrder = {"alertItem", "temp", "placeholder"})
 public class Alerts {
 
     List<AlertItem> alertItem;
@@ -52,7 +53,6 @@ public class Alerts {
             this.alertItem = new ArrayList<AlertItem>();
         }
         this.alertItem.add(alertItem);
-
     }
 
     public String getTemp() {

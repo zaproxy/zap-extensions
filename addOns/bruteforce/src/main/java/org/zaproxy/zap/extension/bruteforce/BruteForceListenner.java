@@ -19,15 +19,20 @@
  */
 package org.zaproxy.zap.extension.bruteforce;
 
-import java.net.URL;
-
 import com.sittinglittleduck.DirBuster.BaseCase;
+import java.net.URL;
 
 public interface BruteForceListenner {
 
-	void scanFinshed(ScanTarget target);
-	
-	void scanProgress(ScanTarget target, int done, int todo);
-	
-    void foundDir(URL url, int statusCode, String response, String baseCase, String rawResponse, BaseCase baseCaseObj);
+    void scanFinshed(ScanTarget target);
+
+    void scanProgress(ScanTarget target, int done, int todo);
+
+    void foundDir(
+            URL url,
+            int statusCode,
+            String response,
+            String baseCase,
+            String rawResponse,
+            BaseCase baseCaseObj);
 }

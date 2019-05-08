@@ -23,31 +23,29 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
-/**
- * This class defines the extension's popup menu item.
- */
+/** This class defines the extension's popup menu item. */
 public class MenuEntry extends PopupMenuItemHttpMessageContainer {
 
-	private static final long serialVersionUID = 1L;
-	private final ExtensionHttpsInfo extension;
+    private static final long serialVersionUID = 1L;
+    private final ExtensionHttpsInfo extension;
 
-	public MenuEntry(String label, ExtensionHttpsInfo extension) {
-		super(label);
-		this.extension = extension;
-	}
+    public MenuEntry(String label, ExtensionHttpsInfo extension) {
+        super(label);
+        this.extension = extension;
+    }
 
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-		return invoker == Invoker.SITES_PANEL || invoker == Invoker.HISTORY_PANEL;
-	}
-	
-	@Override
-	protected boolean isButtonEnabledForSelectedHttpMessage(HttpMessage message) {
-	    return message.getRequestHeader().isSecure();
-	}
+    @Override
+    public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
+        return invoker == Invoker.SITES_PANEL || invoker == Invoker.HISTORY_PANEL;
+    }
 
-	@Override
-	protected void performAction(HttpMessage msg) {
-		extension.addTab(msg);
-	}
+    @Override
+    protected boolean isButtonEnabledForSelectedHttpMessage(HttpMessage message) {
+        return message.getRequestHeader().isSecure();
+    }
+
+    @Override
+    protected void performAction(HttpMessage msg) {
+        extension.addTab(msg);
+    }
 }

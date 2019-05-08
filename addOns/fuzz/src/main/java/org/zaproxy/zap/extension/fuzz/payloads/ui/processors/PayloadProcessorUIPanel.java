@@ -20,12 +20,12 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import javax.swing.JPanel;
-
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.model.MessageLocation;
 
-public interface PayloadProcessorUIPanel<T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>> {
+public interface PayloadProcessorUIPanel<
+        T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>> {
 
     JPanel getComponent();
 
@@ -42,12 +42,14 @@ public interface PayloadProcessorUIPanel<T extends Payload, T2 extends PayloadPr
     boolean validate();
 
     /**
-     * Gets the 'target' to the help page of this payload generator panel. The 'target' must be defined in the {@code map}'s
-     * help file. If there's no help available this method should return {@code null}.
-     * <p>
-     * A help button is shown when the help is available.
-     * 
-     * @return the 'target' to the help page of this payload generator panel, or {@code null} if no help page is available
+     * Gets the 'target' to the help page of this payload generator panel. The 'target' must be
+     * defined in the {@code map}'s help file. If there's no help available this method should
+     * return {@code null}.
+     *
+     * <p>A help button is shown when the help is available.
+     *
+     * @return the 'target' to the help page of this payload generator panel, or {@code null} if no
+     *     help page is available
      */
     String getHelpTarget();
 }

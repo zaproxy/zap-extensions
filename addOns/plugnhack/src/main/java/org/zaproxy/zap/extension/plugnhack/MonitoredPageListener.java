@@ -23,10 +23,9 @@ import org.zaproxy.zap.extension.api.ApiResponse;
 
 public interface MonitoredPageListener {
 
-	public void startMonitoringPageEvent(MonitoredPage page);
-	
-	public void stopMonitoringPageEvent(MonitoredPage page);
-	
-	public ApiResponse messageReceived(ClientMessage message);
+    public void startMonitoringPageEvent(MonitoredPage page);
 
+    public void stopMonitoringPageEvent(MonitoredPage page);
+
+    public ApiResponse messageReceived(ClientMessage message);
 }

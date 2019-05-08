@@ -19,30 +19,33 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
+import io.swagger.models.properties.ArrayProperty;
 import java.util.List;
 
-import io.swagger.models.properties.ArrayProperty;
-
 public class ArrayGenerator {
-    
+
     private DataGenerator dataGenerator;
 
     /**
-     * csv - comma separated values foo,bar.
-     * ssv - space separated values foo bar. 
-     * tsv - tab separated values foo\tbar. 
-     * pipes - pipe separated values foo|bar. 
-     * multi - corresponds to multiple parameter instances instead of multiple values for a
-     *      single instance foo=bar&foo=baz. This is valid only for parameters in "query" or "formData".
+     * csv - comma separated values foo,bar. ssv - space separated values foo bar. tsv - tab
+     * separated values foo\tbar. pipes - pipe separated values foo|bar. multi - corresponds to
+     * multiple parameter instances instead of multiple values for a single instance
+     * foo=bar&foo=baz. This is valid only for parameters in "query" or "formData".
      */
     private static final String ARRAY_BEGIN = "[";
+
     private static final String ARRAY_END = "]";
-    
-    public ArrayGenerator (DataGenerator dataGenerator) {
+
+    public ArrayGenerator(DataGenerator dataGenerator) {
         this.dataGenerator = dataGenerator;
     }
 
-    public String generate(String name, ArrayProperty property, String collectionType, boolean isPath, List<String> refs) {
+    public String generate(
+            String name,
+            ArrayProperty property,
+            String collectionType,
+            boolean isPath,
+            List<String> refs) {
 
         if (property == null) {
             return "";
@@ -53,7 +56,8 @@ public class ArrayGenerator {
         String valueType = property.getItems().getType();
         if (dataGenerator.isArray(valueType)) {
             if (property.getItems() instanceof ArrayProperty) {
-                return generate(name, (ArrayProperty) property.getItems(), collectionType, isPath, refs);
+                return generate(
+                        name, (ArrayProperty) property.getItems(), collectionType, isPath, refs);
             } else {
                 return "";
             }

@@ -21,10 +21,9 @@ package org.zaproxy.zap.extension.bugtracker;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Set;
-import java.util.List;
 import java.util.ArrayList;
-
+import java.util.List;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,89 +33,98 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
-/**
- * A ZAP Extension to help user raise issues in bug trackers from within ZAP.
- */
+/** A ZAP Extension to help user raise issues in bug trackers from within ZAP. */
 public class ExtensionBugTracker extends ExtensionAdaptor {
 
-	public static final String NAME = "ExtensionBugTracker";
-	public Set<Alert> alerts = null;
-	
-	protected static final String PREFIX = "bugtracker";
+    public static final String NAME = "ExtensionBugTracker";
+    public Set<Alert> alerts = null;
 
-	private static final String RESOURCE = "/org/zaproxy/zap/extension/bugtracker/resources";
+    protected static final String PREFIX = "bugtracker";
 
-	private List<BugTracker> bugTrackers = new ArrayList<BugTracker>();
-	private PopupSemiAutoIssue popupMsgRaiseSemiAuto;
+    private static final String RESOURCE = "/org/zaproxy/zap/extension/bugtracker/resources";
+
+    private List<BugTracker> bugTrackers = new ArrayList<BugTracker>();
+    private PopupSemiAutoIssue popupMsgRaiseSemiAuto;
 
     private static final Logger LOGGER = Logger.getLogger(ExtensionBugTracker.class);
 
     public ExtensionBugTracker() {
         super(NAME);
     }
-	
+
     public void addBugTracker(BugTracker bugTracker) {
-    	bugTrackers.add(bugTracker);
+        bugTrackers.add(bugTracker);
     }
 
     public List<BugTracker> getBugTrackers() {
-    	return bugTrackers;
+        return bugTrackers;
     }
 
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-	    super.hook(extensionHook);
-	    
-	    BugTrackerGithub githubTracker = new BugTrackerGithub();
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+
+        BugTrackerGithub githubTracker = new BugTrackerGithub();
         extensionHook.addOptionsParamSet(githubTracker.getOptions());
         BugTrackerBugzilla bugzillaTracker = new BugTrackerBugzilla();
         extensionHook.addOptionsParamSet(bugzillaTracker.getOptions());
 
-	    if (getView() != null) {
-	    	addBugTracker(githubTracker);
-			addBugTracker(bugzillaTracker);
-			View.getSingleton().getOptionsDialog("").addParamPanel(new String[]{Constant.messages.getString("bugtracker.name")}, githubTracker.getOptionsPanel(), true);
-			View.getSingleton().getOptionsDialog("").addParamPanel(new String[]{Constant.messages.getString("bugtracker.name")}, bugzillaTracker.getOptionsPanel(), true);
-	    	extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgRaiseSemiAuto());
-	    }
+        if (getView() != null) {
+            addBugTracker(githubTracker);
+            addBugTracker(bugzillaTracker);
+            View.getSingleton()
+                    .getOptionsDialog("")
+                    .addParamPanel(
+                            new String[] {Constant.messages.getString("bugtracker.name")},
+                            githubTracker.getOptionsPanel(),
+                            true);
+            View.getSingleton()
+                    .getOptionsDialog("")
+                    .addParamPanel(
+                            new String[] {Constant.messages.getString("bugtracker.name")},
+                            bugzillaTracker.getOptionsPanel(),
+                            true);
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgRaiseSemiAuto());
+        }
+    }
 
-	}
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
+    @Override
+    public void unload() {
+        super.unload();
+    }
 
-	@Override
-	public void unload() {
-		super.unload();
-	}
+    private PopupSemiAutoIssue getPopupMsgRaiseSemiAuto() {
+        if (popupMsgRaiseSemiAuto == null) {
+            popupMsgRaiseSemiAuto =
+                    new PopupSemiAutoIssue(
+                            this, Constant.messages.getString(PREFIX + ".popup.issue.semi"));
+        }
+        popupMsgRaiseSemiAuto.setExtension(
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class));
+        return popupMsgRaiseSemiAuto;
+    }
 
-	private PopupSemiAutoIssue getPopupMsgRaiseSemiAuto() {
-		if (popupMsgRaiseSemiAuto  == null) {
-			popupMsgRaiseSemiAuto = new PopupSemiAutoIssue(this,
-					Constant.messages.getString(PREFIX + ".popup.issue.semi"));
-		}
-		popupMsgRaiseSemiAuto.setExtension(Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class)); 
-		return popupMsgRaiseSemiAuto;
-	}
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
 
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString(PREFIX + ".desc");
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString(PREFIX + ".desc");
-	}
-
-	@Override
-	public URL getURL() {
-		try {
-			return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 }

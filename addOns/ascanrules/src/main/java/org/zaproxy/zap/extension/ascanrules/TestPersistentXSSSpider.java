@@ -28,11 +28,9 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "ascanrules.testpersistentxssspider.";
-	
+    /** Prefix for internationalised messages used by this rule */
+    private static final String MESSAGE_PREFIX = "ascanrules.testpersistentxssspider.";
+
     private static Logger log = Logger.getLogger(TestPersistentXSSSpider.class);
 
     @Override
@@ -47,7 +45,7 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
     @Override
     public String[] getDependency() {
-        return new String[]{"TestPersistentXSSPrime"};
+        return new String[] {"TestPersistentXSSPrime"};
     }
 
     @Override
@@ -71,8 +69,7 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
     }
 
     @Override
-    public void init() {
-    }
+    public void init() {}
 
     @Override
     public void scan() {
@@ -84,7 +81,7 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
             PersistentXSSUtils.testForSink(msg1);
 
         } catch (Exception e) {
-			log.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 

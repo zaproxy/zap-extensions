@@ -39,8 +39,11 @@ public class ReplacementException extends Exception {
         super(cause);
     }
 
-    protected ReplacementException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    protected ReplacementException(
+            String message,
+            Throwable cause,
+            boolean enableSuppression,
+            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-
 }

@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz;
 
 import javax.swing.JPanel;
-
 import org.zaproxy.zap.extension.httppanel.Message;
 
 public interface FuzzResultsContentPanel<M extends Message, F extends Fuzzer<M>> {
@@ -30,5 +29,4 @@ public interface FuzzResultsContentPanel<M extends Message, F extends Fuzzer<M>>
     void clear();
 
     void showFuzzerResults(F fuzzer);
-
 }

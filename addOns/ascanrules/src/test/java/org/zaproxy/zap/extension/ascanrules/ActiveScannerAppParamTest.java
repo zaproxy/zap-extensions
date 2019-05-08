@@ -27,7 +27,8 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Plugin;
 
-public abstract class ActiveScannerAppParamTest<T extends AbstractAppParamPlugin> extends ActiveScannerTest<T> {
+public abstract class ActiveScannerAppParamTest<T extends AbstractAppParamPlugin>
+        extends ActiveScannerTest<T> {
 
     @Test
     public void shouldSendReasonableNumberOfMessagesInLowStrength() throws Exception {
@@ -38,7 +39,9 @@ public abstract class ActiveScannerAppParamTest<T extends AbstractAppParamPlugin
         // When
         rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerParam(strength))));
+        assertThat(
+                httpMessagesSent,
+                hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerParam(strength))));
         assertThat(alertsRaised, hasSize(0));
     }
 
@@ -51,7 +54,9 @@ public abstract class ActiveScannerAppParamTest<T extends AbstractAppParamPlugin
         // When
         rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerParam(strength))));
+        assertThat(
+                httpMessagesSent,
+                hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerParam(strength))));
         assertThat(alertsRaised, hasSize(0));
     }
 
@@ -64,7 +69,9 @@ public abstract class ActiveScannerAppParamTest<T extends AbstractAppParamPlugin
         // When
         rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerParam(strength))));
+        assertThat(
+                httpMessagesSent,
+                hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerParam(strength))));
         assertThat(alertsRaised, hasSize(0));
     }
 
@@ -77,8 +84,9 @@ public abstract class ActiveScannerAppParamTest<T extends AbstractAppParamPlugin
         // When
         rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerParam(strength))));
+        assertThat(
+                httpMessagesSent,
+                hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerParam(strength))));
         assertThat(alertsRaised, hasSize(0));
     }
-
 }

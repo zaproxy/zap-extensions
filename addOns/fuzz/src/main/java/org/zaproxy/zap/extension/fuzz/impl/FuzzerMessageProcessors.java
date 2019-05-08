@@ -21,19 +21,20 @@ package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessor;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUIPanel;
 import org.zaproxy.zap.extension.httppanel.Message;
 
-public interface FuzzerMessageProcessors<T1 extends Message, T2 extends FuzzerMessageProcessor<T1>> {
+public interface FuzzerMessageProcessors<
+        T1 extends Message, T2 extends FuzzerMessageProcessor<T1>> {
 
     boolean isEmpty();
 
     FuzzerMessageProcessorUIPanel<T1, T2, ?> getPanel(String name);
 
-    <T3 extends FuzzerMessageProcessorUI<T1, T2>> FuzzerMessageProcessorUIPanel<T1, T2, T3> getPanel(T3 fuzzerMessageProcessorUI);
+    <T3 extends FuzzerMessageProcessorUI<T1, T2>>
+            FuzzerMessageProcessorUIPanel<T1, T2, T3> getPanel(T3 fuzzerMessageProcessorUI);
 
     FuzzerMessageProcessorUIPanel<T1, T2, ?> getDefaultPanel();
 

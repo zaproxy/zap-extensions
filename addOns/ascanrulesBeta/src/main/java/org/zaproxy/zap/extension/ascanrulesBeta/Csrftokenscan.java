@@ -20,18 +20,16 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -48,269 +46,256 @@ import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
 /**
- * Csrftokenscan is an effort to improve the anti-CSRF token detection of ZAP
- * It is based on previous plugins such as csrfcountermeasuresscan and sessionfixation
+ * Csrftokenscan is an effort to improve the anti-CSRF token detection of ZAP It is based on
+ * previous plugins such as csrfcountermeasuresscan and sessionfixation
  */
 public class Csrftokenscan extends AbstractAppPlugin {
 
-	private static final String MESSAGE_PREFIX = "ascanbeta.csrftokenscan.";
-	private static final int PLUGIN_ID = 20012;
+    private static final String MESSAGE_PREFIX = "ascanbeta.csrftokenscan.";
+    private static final int PLUGIN_ID = 20012;
 
-	private List<String> ignoreList = new ArrayList<String>();
-	private String ignoreAttName;
-	private String ignoreAttValue;
-	
-	// WASC Threat Classification (WASC-9)
-	private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
+    private List<String> ignoreList = new ArrayList<String>();
+    private String ignoreAttName;
+    private String ignoreAttValue;
 
-	private static Logger log = Logger.getLogger(Csrftokenscan.class);
+    // WASC Threat Classification (WASC-9)
+    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
 
-	/**
-     * Constructor of the class
+    private static Logger log = Logger.getLogger(Csrftokenscan.class);
+
+    /** Constructor of the class */
+    public Csrftokenscan() {}
+
+    /** @return the Id of the plugin */
+    @Override
+    public int getId() {
+        return PLUGIN_ID;
+    }
+
+    /** @return the name of the plugin */
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
+
+    /** @return dependencies of the plugin (none) */
+    @Override
+    public String[] getDependency() {
+        return null;
+    }
+
+    /** @return the description of the vulnerability */
+    @Override
+    public String getDescription() {
+        if (vuln != null) {
+            return vuln.getDescription();
+        }
+        return "Failed to load vulnerability description from file";
+    }
+
+    /** @return the category of the vulnerability (Server side). */
+    @Override
+    public int getCategory() {
+        return Category.SERVER;
+    }
+
+    /** @return The solution of the vulnerability */
+    @Override
+    public String getSolution() {
+        if (vuln != null) {
+            return vuln.getSolution();
+        }
+        return "Failed to load vulnerability solution from file";
+    }
+
+    /** @return Reference for more information about the vulnerability */
+    @Override
+    public String getReference() {
+        if (vuln != null) {
+            StringBuilder sb = new StringBuilder();
+            for (String ref : vuln.getReferences()) {
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                }
+                sb.append(ref);
+            }
+            return sb.toString();
+        }
+        return "Failed to load vulnerability reference from file";
+    }
+
+    /** */
+    @Override
+    public void init() {
+        String ignoreConf = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_LIST);
+        if (ignoreConf != null && ignoreConf.length() > 0) {
+            log.debug("Using ignore list: " + ignoreConf);
+            for (String str : ignoreConf.split(",")) {
+                String strTrim = str.trim();
+                if (strTrim.length() > 0) {
+                    ignoreList.add(strTrim);
+                }
+            }
+        }
+        ignoreAttName = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_ATT_NAME);
+        ignoreAttValue = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_ATT_VALUE);
+    }
+
+    /**
+     * Main method of the class. It is executed for each page. Determined whether the page in
+     * vulnerable to CSRF or not.
      */
-	public Csrftokenscan() {
-	}
+    @Override
+    public void scan() {
+        if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !getBaseMsg().isInScope()) {
+            return; // At HIGH threshold return if the msg isn't in scope
+        }
 
-	/**
-	 * @return the Id of the plugin
-	 */
-	@Override
-	public int getId() {
-		return PLUGIN_ID;
-	}
+        boolean vuln = false;
+        Map<String, String> tagsMap = new HashMap<>();
+        Source s1;
+        try {
+            // We parse the HTML of the response
+            s1 = new Source(getBaseMsg().getResponseBody().toString());
 
-	/**
-	 * @return the name of the plugin
-	 */
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
+            List<Element> formElements = s1.getAllElements(HTMLElementName.FORM);
 
-	/**
-	 * @return dependencies of the plugin (none)
-	 */
-	@Override
-	public String[] getDependency() {
-		return null;
-	}
+            int formIdx = 0;
+            for (Element formElement : formElements) {
 
-	/**
-	 * @return the description of the vulnerability
-	 */
-	@Override
-	public String getDescription() {
-		if (vuln != null) {
-			return vuln.getDescription();
-		}
-		return "Failed to load vulnerability description from file";
-	}
+                if (formOnIgnoreList(formElement)) {
+                    continue;
+                }
 
-	/**
-	 * @return the category of the vulnerability (Server side).
-	 */
-	@Override
-	public int getCategory() {
-		return Category.SERVER;
-	}
+                // Assume the worst
+                vuln = true;
+                List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
+                for (Element inputElement : inputElements) {
+                    if (isHiddenInputElement(inputElement) && hasNameAttribute(inputElement)) {
+                        final String name = inputElement.getAttributeValue("name");
+                        final String value = getNonNullValueAttribute(inputElement);
+                        tagsMap.put(name, value);
+                        log.debug("Input Tag: " + name + ", " + value);
+                    }
+                }
 
-	/**
-	 * @return The solution of the vulnerability
-	 */
-	@Override
-	public String getSolution() {
-		if (vuln != null) {
-			return vuln.getSolution();
-		}
-		return "Failed to load vulnerability solution from file";
-	}
+                // We keep only the "flagged as session" cookies, and perform again the request
+                // Get HTTP session names from config
+                OptionsParam options = Model.getSingleton().getOptionsParam();
+                HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
 
-	/**
-	 * @return Reference for more information about the vulnerability
-	 */
-	@Override
-	public String getReference() {
-		if (vuln != null) {
-			StringBuilder sb = new StringBuilder();
-			for (String ref : vuln.getReferences()) {
-				if (sb.length() > 0) {
-					sb.append("\n");
-				}
-				sb.append(ref);
-			}
-			return sb.toString();
-		}
-		return "Failed to load vulnerability reference from file";
-	}
+                List<String> sessionIds;
+                if (sessionOptions != null) {
+                    // extension is enabled
+                    sessionIds = sessionOptions.getDefaultTokensEnabled();
+                } else {
+                    // extension is disabled
+                    sessionIds = Collections.emptyList();
+                }
 
-	/**
-	 * 
-	 */
-	@Override
-	public void init() {
-		String ignoreConf = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_LIST);
-		if (ignoreConf != null && ignoreConf.length() > 0) {
-			log.debug("Using ignore list: " + ignoreConf);
-			for (String str : ignoreConf.split(",")) {
-				String strTrim = str.trim();
-				if (strTrim.length() > 0) {
-					ignoreList.add(strTrim);
-				}
-			}
-		}
-		ignoreAttName = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_ATT_NAME);
-		ignoreAttValue = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_ATT_VALUE);
-	}
+                HttpMessage newMsg = getNewMsg();
+                TreeSet<HtmlParameter> newCookies = new TreeSet<>();
 
-	/**
-	 * Main  method of the class. It is executed for each page.
-	 * Determined whether the page in vulnerable to CSRF or not.
-	 */
-	@Override
-	public void scan() {
-		if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !getBaseMsg().isInScope()) {
-			return; // At HIGH threshold return if the msg isn't in scope
-		}
+                // Loop the original cookies to keep only the session ones
+                for (HtmlParameter cookie : newMsg.getCookieParams()) {
+                    // if sessionIds contains cookie ignoring the case
+                    // lambda would have been ==> if (sessionIds.stream().anyMatch(s ->
+                    // s.equalsIgnoreCase(cookie.getName())))
+                    for (String id : sessionIds) {
+                        if (id.equalsIgnoreCase(cookie.getName())) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Keeping " + cookie.getName() + " to be authenticated");
+                            }
+                            newCookies.add(cookie);
+                            break; // avoids looping over sessionIds if already found
+                        }
+                    }
+                }
+                newMsg.setCookieParams(newCookies);
+                sendAndReceive(newMsg);
 
-		boolean vuln = false;
-		Map<String, String> tagsMap = new HashMap<>();
-		Source s1;
-		try {		
-			// We parse the HTML of the response
-			s1 = new Source(getBaseMsg().getResponseBody().toString());
+                // We parse the HTML of the response
+                Source s2 = new Source(newMsg.getResponseBody().toString());
+                List<Element> form2Elements = s2.getAllElements(HTMLElementName.FORM);
+                if (form2Elements.size() > formIdx) {
 
-			List<Element> formElements = s1.getAllElements(HTMLElementName.FORM);
-			
-			int formIdx = 0;
-			for (Element formElement : formElements) {
-				
-				if (formOnIgnoreList(formElement)) {
-					continue;
-				}
-				
-				// Assume the worst
-				vuln = true;
-				List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
-				for (Element inputElement : inputElements) {
-					if (isHiddenInputElement(inputElement) && hasNameAttribute(inputElement)) {
-						final String name = inputElement.getAttributeValue("name");
-						final String value = getNonNullValueAttribute(inputElement);
-						tagsMap.put(name, value);
-						log.debug("Input Tag: " + name + ", " + value);
-					}
-					
-				}
+                    List<Element> iElements =
+                            form2Elements.get(formIdx).getAllElements(HTMLElementName.INPUT);
 
-				// We keep only the "flagged as session" cookies, and perform again the request
-				// Get HTTP session names from config
-				OptionsParam options = Model.getSingleton().getOptionsParam();
-				HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
+                    // We store the hidden input fields in a hash map.
+                    for (Element element2 : iElements) {
+                        if (isHiddenInputElement(element2) && hasNameAttribute(element2)) {
+                            final String name = element2.getAttributeValue("name");
+                            final String newValue = getNonNullValueAttribute(element2);
+                            final String oldValue = tagsMap.get(name);
+                            if (oldValue != null && !newValue.equals(oldValue)) {
+                                log.debug("Found Anti-CSRF token: " + name + ", " + newValue);
+                                vuln = false;
+                            }
+                        }
+                    }
+                    // If vulnerable, generates the alert
+                    if (vuln) {
+                        int risk = Alert.RISK_HIGH;
+                        String evidence = formElement.getFirstElement().getStartTag().toString();
+                        String otherInfo = "";
 
-				List<String> sessionIds;
-				if (sessionOptions != null) {
-					//extension is enabled
-					sessionIds = sessionOptions.getDefaultTokensEnabled();
-				} else {
-					//extension is disabled
-					sessionIds = Collections.emptyList();
-				}
+                        if (formHasSecurityAnnotation(formElement)) {
+                            risk = Alert.RISK_INFO;
+                            otherInfo =
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX + "extrainfo.annotation");
+                        }
+                        bingo(
+                                risk,
+                                Alert.CONFIDENCE_MEDIUM,
+                                getBaseMsg().getRequestHeader().getURI().toString(),
+                                "", // No param
+                                "", // No attack
+                                otherInfo,
+                                evidence,
+                                getBaseMsg());
+                    }
+                }
 
-				HttpMessage newMsg = getNewMsg();
-				TreeSet<HtmlParameter> newCookies = new TreeSet<>();
+                formIdx++;
+            }
+        } catch (IOException e) {
+            log.error(e);
+        }
+    }
 
-				// Loop the original cookies to keep only the session ones
-				for (HtmlParameter cookie : newMsg.getCookieParams()) {
-					// if sessionIds contains cookie ignoring the case
-					// lambda would have been ==> if (sessionIds.stream().anyMatch(s -> s.equalsIgnoreCase(cookie.getName())))
-					for (String id : sessionIds) {
-						if (id.equalsIgnoreCase(cookie.getName())) {
-							if (log.isDebugEnabled()) {
-								log.debug("Keeping " + cookie.getName() + " to be authenticated");
-							}
-							newCookies.add(cookie);
-							break; // avoids looping over sessionIds if already found
-						}
-					}
-				}
-				newMsg.setCookieParams(newCookies);
-				sendAndReceive(newMsg);
-	
-				// We parse the HTML of the response
-				Source s2 = new Source(newMsg.getResponseBody().toString());
-				List<Element> form2Elements = s2.getAllElements(HTMLElementName.FORM);
-				if (form2Elements.size() > formIdx) {
-					
-					List<Element> iElements = form2Elements.get(formIdx).getAllElements(HTMLElementName.INPUT);
-					
-					// We store the hidden input fields in a hash map.
-					for (Element element2 : iElements) {
-						if (isHiddenInputElement(element2) && hasNameAttribute(element2)) {
-							final String name = element2.getAttributeValue("name");
-							final String newValue = getNonNullValueAttribute(element2);
-							final String oldValue = tagsMap.get(name);
-							if (oldValue != null && !newValue.equals(oldValue)) {
-								log.debug("Found Anti-CSRF token: " + name + ", " + newValue);
-								vuln = false;
-							}
-						}
-					}
-					// If vulnerable, generates the alert
-					if (vuln) {
-						int risk = Alert.RISK_HIGH; 
-						String evidence = formElement.getFirstElement().getStartTag().toString();
-						String otherInfo = "";
+    private boolean formOnIgnoreList(Element formElement) {
+        String id = formElement.getAttributeValue("id");
+        String name = formElement.getAttributeValue("name");
+        for (String ignore : ignoreList) {
+            if (ignore.equals(id)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Ignoring form with id = " + id);
+                }
+                return true;
+            } else if (ignore.equals(name)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Ignoring form with name = " + name);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 
-						if (formHasSecurityAnnotation(formElement)) {
-							risk = Alert.RISK_INFO;
-							otherInfo = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.annotation");
-						}
-						bingo(risk, Alert.CONFIDENCE_MEDIUM, 
-								getBaseMsg().getRequestHeader().getURI().toString(),
-								"", // No param 
-								"", // No attack
-								otherInfo,
-								evidence,
-								getBaseMsg());
-					}
-				}
-
-				formIdx++;
-			}
-		} catch (IOException e) {
-			log.error(e);
-		}
-	}
-
-	private boolean formOnIgnoreList(Element formElement) {
-		String id = formElement.getAttributeValue("id");
-		String name = formElement.getAttributeValue("name");
-		for (String ignore : ignoreList) {
-			if (ignore.equals(id)) {
-				if (log.isDebugEnabled()) {
-					log.debug("Ignoring form with id = " + id);
-				}
-				return true;
-			} else if (ignore.equals(name)) {
-				if (log.isDebugEnabled()) {
-					log.debug("Ignoring form with name = " + name);
-				}
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean formHasSecurityAnnotation(Element formElement) {
-		if (! StringUtils.isEmpty(this.ignoreAttName)) {
-			Attribute att = formElement.getAttributes().get(this.ignoreAttName);
-			if (att != null) {
-				if (StringUtils.isEmpty(this.ignoreAttValue) || this.ignoreAttValue.equals(att.getValue())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    private boolean formHasSecurityAnnotation(Element formElement) {
+        if (!StringUtils.isEmpty(this.ignoreAttName)) {
+            Attribute att = formElement.getAttributes().get(this.ignoreAttName);
+            if (att != null) {
+                if (StringUtils.isEmpty(this.ignoreAttValue)
+                        || this.ignoreAttValue.equals(att.getValue())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     private static boolean isHiddenInputElement(Element inputElement) {
         return "hidden".equalsIgnoreCase(inputElement.getAttributeValue("type"));
@@ -329,19 +314,18 @@ public class Csrftokenscan extends AbstractAppPlugin {
         return value;
     }
 
-	@Override
-	public int getRisk() {
-		return Alert.RISK_HIGH;
-	}
+    @Override
+    public int getRisk() {
+        return Alert.RISK_HIGH;
+    }
 
-	@Override
-	public int getCweId() {
-		return 352;
-	}
+    @Override
+    public int getCweId() {
+        return 352;
+    }
 
-	@Override
-	public int getWascId() {
-		return 9;
-	}
-
+    @Override
+    public int getWascId() {
+        return 9;
+    }
 }

@@ -21,17 +21,14 @@ package org.zaproxy.zap.extension.formhandler;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SortOrder;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
-
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
 public class OptionsFormHandlerPanel extends AbstractParamPanel {
@@ -47,9 +44,7 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
         initialize();
     }
 
-    /**
-     * This method initializes this
-     */
+    /** This method initializes this */
     private void initialize() {
         this.setName(Constant.messages.getString("formhandler.options.title"));
         this.setLayout(new GridBagLayout());
@@ -60,7 +55,9 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.fill = GridBagConstraints.BOTH;
 
-        this.add(new JLabel(Constant.messages.getString("formhandler.options.label.description")), gbc);
+        this.add(
+                new JLabel(Constant.messages.getString("formhandler.options.label.description")),
+                gbc);
 
         fieldsOptionsPanel = new FormHandlerMultipleOptionsPanel(getFormHandlerModel());
 
@@ -101,17 +98,26 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
         return "fhandler";
     }
 
-    private static class FormHandlerMultipleOptionsPanel extends AbstractMultipleOptionsTablePanel<FormHandlerParamField> {
+    private static class FormHandlerMultipleOptionsPanel
+            extends AbstractMultipleOptionsTablePanel<FormHandlerParamField> {
 
         private static final long serialVersionUID = -115340627058929308L;
 
-        private static final String REMOVE_DIALOG_TITLE = Constant.messages.getString("formhandler.options.dialog.field.remove.title");
-        private static final String REMOVE_DIALOG_TEXT = Constant.messages.getString("formhandler.options.dialog.field.remove.text");
+        private static final String REMOVE_DIALOG_TITLE =
+                Constant.messages.getString("formhandler.options.dialog.field.remove.title");
+        private static final String REMOVE_DIALOG_TEXT =
+                Constant.messages.getString("formhandler.options.dialog.field.remove.text");
 
-        private static final String REMOVE_DIALOG_CONFIRM_BUTTON_LABEL = Constant.messages.getString("formhandler.options.dialog.field.remove.button.confirm");
-        private static final String REMOVE_DIALOG_CANCEL_BUTTON_LABEL = Constant.messages.getString("formhandler.options.dialog.field.remove.button.cancel");
+        private static final String REMOVE_DIALOG_CONFIRM_BUTTON_LABEL =
+                Constant.messages.getString(
+                        "formhandler.options.dialog.field.remove.button.confirm");
+        private static final String REMOVE_DIALOG_CANCEL_BUTTON_LABEL =
+                Constant.messages.getString(
+                        "formhandler.options.dialog.field.remove.button.cancel");
 
-        private static final String REMOVE_DIALOG_CHECKBOX_LABEL = Constant.messages.getString("formhandler.options.dialog.field.remove.checkbox.label");
+        private static final String REMOVE_DIALOG_CHECKBOX_LABEL =
+                Constant.messages.getString(
+                        "formhandler.options.dialog.field.remove.checkbox.label");
 
         private DialogAddField addDialog = null;
         private DialogModifyField modifyDialog = null;
@@ -164,11 +170,22 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
 
         @Override
         public boolean showRemoveDialogue(FormHandlerParamField e) {
-            JCheckBox removeWithoutConfirmationCheckBox = new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
+            JCheckBox removeWithoutConfirmationCheckBox =
+                    new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
             Object[] messages = {REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox};
-            int option = JOptionPane.showOptionDialog(View.getSingleton().getMainFrame(), messages, REMOVE_DIALOG_TITLE,
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                    null, new String[] { REMOVE_DIALOG_CONFIRM_BUTTON_LABEL, REMOVE_DIALOG_CANCEL_BUTTON_LABEL }, null);
+            int option =
+                    JOptionPane.showOptionDialog(
+                            View.getSingleton().getMainFrame(),
+                            messages,
+                            REMOVE_DIALOG_TITLE,
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[] {
+                                REMOVE_DIALOG_CONFIRM_BUTTON_LABEL,
+                                REMOVE_DIALOG_CANCEL_BUTTON_LABEL
+                            },
+                            null);
 
             if (option == JOptionPane.OK_OPTION) {
                 setRemoveWithoutConfirmation(removeWithoutConfirmationCheckBox.isSelected());

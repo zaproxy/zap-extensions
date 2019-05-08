@@ -22,88 +22,80 @@ package org.zaproxy.zap.extension.websocket.ui;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JTable;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
-/**
- * Menu Item for a right click menu on the {@link WebSocketMessagesView}.
- */
+/** Menu Item for a right click menu on the {@link WebSocketMessagesView}. */
 public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuItem {
-	private static final long serialVersionUID = 4774753835401981588L;
+    private static final long serialVersionUID = 4774753835401981588L;
 
-	private static final Logger logger = Logger.getLogger(WebSocketMessagesPopupMenuItem.class);
-	
-	/**
-	 * Will be set by
-	 * {@link WebSocketMessagesPopupMenuItem#isEnableForComponent(Component)}.
-	 */
-	private WebSocketPopupHelper wsPopupHelper;
-    
+    private static final Logger logger = Logger.getLogger(WebSocketMessagesPopupMenuItem.class);
+
+    /** Will be set by {@link WebSocketMessagesPopupMenuItem#isEnableForComponent(Component)}. */
+    private WebSocketPopupHelper wsPopupHelper;
+
     public WebSocketMessagesPopupMenuItem() {
         super();
- 		initialize();
+        initialize();
     }
-    
+
     public WebSocketMessagesPopupMenuItem(String label) {
         super(label);
- 		initialize();
+        initialize();
     }
 
-	private void initialize() {
+    private void initialize() {
         setText(getMenuText());
         final WebSocketMessagesPopupMenuItem item = this;
-        addActionListener(new ActionListener() {
+        addActionListener(
+                new ActionListener() {
 
-        	@Override
-        	public void actionPerformed(ActionEvent evt) {
-        		try {
-					item.performAction();
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-        	}
-        });
-	}
-    
-	/**
-	 * Title that appears as item text.
-	 * 
-	 * @return I18n name of this item.
-	 */
-    protected abstract String getMenuText();
+                    @Override
+                    public void actionPerformed(ActionEvent evt) {
+                        try {
+                            item.performAction();
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    }
+                });
+    }
 
     /**
-     * What happens if choosen?
+     * Title that appears as item text.
+     *
+     * @return I18n name of this item.
      */
-	protected abstract void performAction();
+    protected abstract String getMenuText();
 
-	/**
-	 * Which panel is allowed to show this popup item?
-	 * 
-	 * @return Name of caller.
-	 */
-	protected abstract String getInvokerName();
-	
-	/**
-	 * More fine-grained control about enable-status of this item. Called by
-	 * {@link WebSocketMessagesPopupMenuItem#isEnableForComponent(Component)}.
-	 * 
-	 * @return True
-	 */
-	protected boolean isEnabledExtended() {
-		return true;
-	}
+    /** What happens if choosen? */
+    protected abstract void performAction();
 
-	protected WebSocketMessageDTO getSelectedMessageDTO() {
-		return wsPopupHelper.getSelectedMessage();
-	}
-	
+    /**
+     * Which panel is allowed to show this popup item?
+     *
+     * @return Name of caller.
+     */
+    protected abstract String getInvokerName();
+
+    /**
+     * More fine-grained control about enable-status of this item. Called by {@link
+     * WebSocketMessagesPopupMenuItem#isEnableForComponent(Component)}.
+     *
+     * @return True
+     */
+    protected boolean isEnabledExtended() {
+        return true;
+    }
+
+    protected WebSocketMessageDTO getSelectedMessageDTO() {
+        return wsPopupHelper.getSelectedMessage();
+    }
+
     @Override
-    public final boolean isEnableForComponent(Component invoker) {        
+    public final boolean isEnableForComponent(Component invoker) {
         if (invoker.getName() != null && invoker.getName().equals(getInvokerName())) {
             try {
                 wsPopupHelper = new WebSocketPopupHelper((JTable) invoker);
@@ -114,7 +106,7 @@ public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuI
                     setEnabled(false);
                 }
             } catch (Exception e) {
-            	logger.warn(e.getMessage(), e);
+                logger.warn(e.getMessage(), e);
             }
             return true;
         }

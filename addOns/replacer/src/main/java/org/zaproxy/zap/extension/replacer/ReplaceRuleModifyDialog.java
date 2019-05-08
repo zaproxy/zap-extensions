@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.replacer;
 
 import java.awt.Window;
-
 import org.parosproxy.paros.Constant;
 
 public class ReplaceRuleModifyDialog extends ReplaceRuleAddDialog {
@@ -29,8 +28,11 @@ public class ReplaceRuleModifyDialog extends ReplaceRuleAddDialog {
 
     private String originalDesc;
 
-    public ReplaceRuleModifyDialog(Window owner, String title, 
-            ReplacerParam replacerParam, OptionsReplacerTableModel replacerModel) {
+    public ReplaceRuleModifyDialog(
+            Window owner,
+            String title,
+            ReplacerParam replacerParam,
+            OptionsReplacerTableModel replacerModel) {
         super(owner, title, replacerParam, replacerModel);
     }
 

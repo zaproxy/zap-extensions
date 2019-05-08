@@ -21,18 +21,19 @@ package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTableModel;
 
-public class ProcessorsTableModel extends AbstractMultipleOrderedOptionsBaseTableModel<PayloadProcessorTableEntry> {
+public class ProcessorsTableModel
+        extends AbstractMultipleOrderedOptionsBaseTableModel<PayloadProcessorTableEntry> {
 
     private static final long serialVersionUID = 1445590168342841316L;
 
     private static final String[] COLUMNS = {
-            Constant.messages.getString("fuzz.fuzzer.processors.table.header.order"),
-            Constant.messages.getString("fuzz.fuzzer.processors.table.header.type"),
-            Constant.messages.getString("fuzz.fuzzer.processors.table.header.description") };
+        Constant.messages.getString("fuzz.fuzzer.processors.table.header.order"),
+        Constant.messages.getString("fuzz.fuzzer.processors.table.header.type"),
+        Constant.messages.getString("fuzz.fuzzer.processors.table.header.description")
+    };
 
     private List<PayloadProcessorTableEntry> processors;
 
@@ -88,5 +89,4 @@ public class ProcessorsTableModel extends AbstractMultipleOrderedOptionsBaseTabl
         }
         fireTableDataChanged();
     }
-
 }

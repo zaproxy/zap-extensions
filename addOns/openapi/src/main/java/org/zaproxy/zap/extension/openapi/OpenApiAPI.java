@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.openapi;
 
 import java.io.File;
 import java.util.List;
-
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -29,8 +29,6 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
-
-import net.sf.json.JSONObject;
 
 public class OpenApiAPI extends ApiImplementor {
 
@@ -42,17 +40,19 @@ public class OpenApiAPI extends ApiImplementor {
     private static final String PARAM_HOST_OVERRIDE = "hostOverride";
     private ExtensionOpenApi extension = null;
 
-    /**
-     * Provided only for API client generator usage.
-     */
+    /** Provided only for API client generator usage. */
     public OpenApiAPI() {
         this(null);
     }
 
     public OpenApiAPI(ExtensionOpenApi ext) {
         extension = ext;
-        this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, new String[] { PARAM_FILE }));
-        this.addApiAction(new ApiAction(ACTION_IMPORT_URL, new String[] { PARAM_URL }, new String[] { PARAM_HOST_OVERRIDE }));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, new String[] {PARAM_FILE}));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_IMPORT_URL,
+                        new String[] {PARAM_URL},
+                        new String[] {PARAM_HOST_OVERRIDE}));
     }
 
     @Override
@@ -95,13 +95,15 @@ public class OpenApiAPI extends ApiImplementor {
                     try {
                         new URI("http://" + override, true);
                     } catch (Exception e1) {
-                        throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_HOST_OVERRIDE);
+                        throw new ApiException(
+                                ApiException.Type.ILLEGAL_PARAMETER, PARAM_HOST_OVERRIDE);
                     }
                 }
-                
-                List<String> errors = extension.importOpenApiDefinition(new URI(params.getString(PARAM_URL), false),
-                        override, false);
-                
+
+                List<String> errors =
+                        extension.importOpenApiDefinition(
+                                new URI(params.getString(PARAM_URL), false), override, false);
+
                 ApiResponseList result = new ApiResponseList(name);
                 for (String error : errors) {
                     result.addItem(new ApiResponseElement("warning", error));
@@ -116,5 +118,4 @@ public class OpenApiAPI extends ApiImplementor {
             throw new ApiException(ApiException.Type.BAD_ACTION);
         }
     }
-
 }

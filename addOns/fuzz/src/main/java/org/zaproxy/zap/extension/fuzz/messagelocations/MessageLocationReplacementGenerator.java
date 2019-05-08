@@ -22,8 +22,9 @@ package org.zaproxy.zap.extension.fuzz.messagelocations;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public interface MessageLocationReplacementGenerator<T, E extends MessageLocationReplacement<T>> extends
-        ResettableAutoCloseableIterator<E>, Comparable<MessageLocationReplacementGenerator<?, ?>> {
+public interface MessageLocationReplacementGenerator<T, E extends MessageLocationReplacement<T>>
+        extends ResettableAutoCloseableIterator<E>,
+                Comparable<MessageLocationReplacementGenerator<?, ?>> {
 
     final long UNKNOWN_NUMBER_OF_REPLACEMENTS = 0;
 

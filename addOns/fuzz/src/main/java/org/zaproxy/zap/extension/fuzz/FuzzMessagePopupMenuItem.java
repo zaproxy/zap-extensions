@@ -21,9 +21,7 @@ package org.zaproxy.zap.extension.fuzz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.SwingUtilities;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -47,14 +45,15 @@ public class FuzzMessagePopupMenuItem extends ExtensionPopupMenuItemMessageConta
 
         this.extension = extension;
 
-        addActionListener(new ActionListener() {
+        addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                action.perform();
-                action = null;
-            }
-        });
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        action.perform();
+                        action = null;
+                    }
+                });
     }
 
     @Override
@@ -70,7 +69,8 @@ public class FuzzMessagePopupMenuItem extends ExtensionPopupMenuItemMessageConta
         return isEnableForMessageContainerHelper(invoker);
     }
 
-    private <M extends Message, F extends Fuzzer<M>> boolean isEnableForMessageContainerHelper(MessageContainer<M> invoker) {
+    private <M extends Message, F extends Fuzzer<M>> boolean isEnableForMessageContainerHelper(
+            MessageContainer<M> invoker) {
         if (SwingUtilities.getAncestorOfClass(FuzzerDialog.class, invoker.getComponent()) != null) {
             return false;
         }
@@ -111,7 +111,8 @@ public class FuzzMessagePopupMenuItem extends ExtensionPopupMenuItemMessageConta
         private final MessageContainer<M> lastInvoker;
         private final FuzzerHandler<M, F> selectedFuzzHandler;
 
-        private ShowFuzzerDialogAction(MessageContainer<M> lastInvoker, FuzzerHandler<M, F> selectedFuzzHandler) {
+        private ShowFuzzerDialogAction(
+                MessageContainer<M> lastInvoker, FuzzerHandler<M, F> selectedFuzzHandler) {
             this.lastInvoker = lastInvoker;
             this.selectedFuzzHandler = selectedFuzzHandler;
         }

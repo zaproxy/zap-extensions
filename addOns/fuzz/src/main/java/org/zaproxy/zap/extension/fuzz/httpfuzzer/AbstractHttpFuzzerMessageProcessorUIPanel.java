@@ -21,12 +21,12 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 
 import org.parosproxy.paros.network.HttpMessage;
 
-public abstract class AbstractHttpFuzzerMessageProcessorUIPanel<T extends HttpFuzzerMessageProcessor, T1 extends HttpFuzzerMessageProcessorUI<T>>
+public abstract class AbstractHttpFuzzerMessageProcessorUIPanel<
+                T extends HttpFuzzerMessageProcessor, T1 extends HttpFuzzerMessageProcessorUI<T>>
         implements HttpFuzzerMessageProcessorUIPanel<T, T1> {
 
     @Override
-    public void init(HttpMessage message) {
-    }
+    public void init(HttpMessage message) {}
 
     @Override
     public boolean validate() {
@@ -34,12 +34,10 @@ public abstract class AbstractHttpFuzzerMessageProcessorUIPanel<T extends HttpFu
     }
 
     @Override
-    public void clear() {
-    }
+    public void clear() {}
 
     @Override
     public String getHelpTarget() {
         return "addon.fuzzer.httpmessageprocessors";
     }
-
 }

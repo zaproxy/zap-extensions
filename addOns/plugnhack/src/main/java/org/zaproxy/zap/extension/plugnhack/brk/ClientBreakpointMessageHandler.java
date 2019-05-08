@@ -25,63 +25,62 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 
 /**
- * Wraps WebSocket specific options to determine if breakpoint should be applied
- * on given {@link ClientMessage}.
+ * Wraps WebSocket specific options to determine if breakpoint should be applied on given {@link
+ * ClientMessage}.
  */
 public class ClientBreakpointMessageHandler extends BreakpointMessageHandler2 {
 
-	public ClientBreakpointMessageHandler(BreakpointManagementInterface breakMgmt) {
-		super(breakMgmt);
-	}
+    public ClientBreakpointMessageHandler(BreakpointManagementInterface breakMgmt) {
+        super(breakMgmt);
+    }
 
-	/**
-	 * Only break on all requests when 'Break on all' is enabled for WebSockets.
-	 * 
-	 * @param aMessage
-	 * @param isRequest
-	 * @return True if it breaks on all requests.
-	 */
-	@Override
-	public boolean isBreakOnAllRequests(Message aMessage, boolean isRequest) {
-		if (aMessage instanceof ClientMessage) {
-			ClientMessage cmsg = (ClientMessage) aMessage;
-			if (!cmsg.getBoolean("intercept")) {
-				// Only break on messages that have intercept=true set
-				return false;
-			}
-		}
-		return super.isBreakOnAllRequests(aMessage, isRequest);
-	}
+    /**
+     * Only break on all requests when 'Break on all' is enabled for WebSockets.
+     *
+     * @param aMessage
+     * @param isRequest
+     * @return True if it breaks on all requests.
+     */
+    @Override
+    public boolean isBreakOnAllRequests(Message aMessage, boolean isRequest) {
+        if (aMessage instanceof ClientMessage) {
+            ClientMessage cmsg = (ClientMessage) aMessage;
+            if (!cmsg.getBoolean("intercept")) {
+                // Only break on messages that have intercept=true set
+                return false;
+            }
+        }
+        return super.isBreakOnAllRequests(aMessage, isRequest);
+    }
 
-	/**
-	 * Only break on all responses when 'Break on all' is enabled for WebSockets.
-	 * 
-	 * @param aMessage
-	 * @param isRequest
-	 * @return True if it breaks on all responses.
-	 */
-	@Override
-	public boolean isBreakOnAllResponses(Message aMessage, boolean isRequest) {
-		if (aMessage instanceof ClientMessage) {
-			ClientMessage cmsg = (ClientMessage) aMessage;
-			if (!cmsg.getBoolean("intercept")) {
-				// Only break on messages that have intercept=true set
-				return false;
-			}
-		}
-		return super.isBreakOnAllResponses(aMessage, isRequest);
-	}
+    /**
+     * Only break on all responses when 'Break on all' is enabled for WebSockets.
+     *
+     * @param aMessage
+     * @param isRequest
+     * @return True if it breaks on all responses.
+     */
+    @Override
+    public boolean isBreakOnAllResponses(Message aMessage, boolean isRequest) {
+        if (aMessage instanceof ClientMessage) {
+            ClientMessage cmsg = (ClientMessage) aMessage;
+            if (!cmsg.getBoolean("intercept")) {
+                // Only break on messages that have intercept=true set
+                return false;
+            }
+        }
+        return super.isBreakOnAllResponses(aMessage, isRequest);
+    }
 
-	/**
-	 * Only break on stepping if opcode is allowed.
-	 * 
-	 * @param aMessage
-	 * @param isRequest
-	 * @return True if it breaks on stepping through action.
-	 */
-	@Override
-	protected boolean isBreakOnStepping(Message aMessage, boolean isRequest) {
-		return aMessage instanceof ClientMessage && super.isBreakOnStepping(aMessage, isRequest);
-	}
-	
+    /**
+     * Only break on stepping if opcode is allowed.
+     *
+     * @param aMessage
+     * @param isRequest
+     * @return True if it breaks on stepping through action.
+     */
+    @Override
+    protected boolean isBreakOnStepping(Message aMessage, boolean isRequest) {
+        return aMessage instanceof ClientMessage && super.isBreakOnStepping(aMessage, isRequest);
+    }
 }

@@ -22,14 +22,11 @@ package org.zaproxy.zap.extension.jxbrowsermacos.selenium;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.file.Paths;
-
 import org.openqa.selenium.WebDriverException;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.selenium.SingleWebDriverProvider;
 
-/**
- * A {@link SingleWebDriverProvider} for JxBrowser on MacOS.
- */
+/** A {@link SingleWebDriverProvider} for JxBrowser on MacOS. */
 public class MacOsJxBrowserProvider extends JxBrowserProvider {
 
     public MacOsJxBrowserProvider() {
@@ -42,7 +39,8 @@ public class MacOsJxBrowserProvider extends JxBrowserProvider {
     protected int getFreePort() {
         // Reuse the same port, as the JxBrowser/Chrome process tends to live longer on macOS.
         if (chromePort == null) {
-            try (ServerSocket socket = new ServerSocket(0, 400, InetAddress.getByName("localhost"))) {
+            try (ServerSocket socket =
+                    new ServerSocket(0, 400, InetAddress.getByName("localhost"))) {
                 chromePort = socket.getLocalPort();
             } catch (Exception e) {
                 throw new WebDriverException(e);

@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -26,18 +29,13 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
 /**
- * a scanner to passively scan for the presence of the X-AspNet-Version/X-AspNetMvc-Version response header
+ * a scanner to passively scan for the presence of the X-AspNet-Version/X-AspNetMvc-Version response
+ * header
  */
 public class XAspNetVersionScanner extends PluginPassiveScanner {
 
-    /**
-     * Prefix for internationalised messages used by this rule
-     */
+    /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.xaspnetversioncanner.";
 
     private PassiveScanThread parent = null;
@@ -55,35 +53,32 @@ public class XAspNetVersionScanner extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-
-    }
+    public void scanHttpRequestSend(HttpMessage msg, int id) {}
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        for (String header :
-                xAspNetHeaders) {
+        for (String header : xAspNetHeaders) {
             Vector<String> found = msg.getResponseHeader().getHeaders(header);
 
-            if (found != null){
+            if (found != null) {
                 this.raiseAlert(msg, id, found.firstElement());
             }
         }
     }
 
     private void raiseAlert(HttpMessage msg, int id, String evidence) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_HIGH,  getName());
+        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_HIGH, getName());
         alert.setDetail(
                 Constant.messages.getString(MESSAGE_PREFIX + "desc"),
                 msg.getRequestHeader().getURI().toString(),
-                "", //parameter
-                "", 					//attack
-                Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"),		//other info
-                Constant.messages.getString(MESSAGE_PREFIX + "soln"),			//solution
-                Constant.messages.getString(MESSAGE_PREFIX + "refs"),			//refs
-                evidence, 	//evidence, if any
-                933, //CWE-933: OWASP Top Ten 2013 Category A5 - Security Misconfiguration
-                14,  //WASC-14: Server Misconfiguration
+                "", // parameter
+                "", // attack
+                Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"), // other info
+                Constant.messages.getString(MESSAGE_PREFIX + "soln"), // solution
+                Constant.messages.getString(MESSAGE_PREFIX + "refs"), // refs
+                evidence, // evidence, if any
+                933, // CWE-933: OWASP Top Ten 2013 Category A5 - Security Misconfiguration
+                14, // WASC-14: Server Misconfiguration
                 msg);
 
         parent.raiseAlert(id, alert);
@@ -98,5 +93,4 @@ public class XAspNetVersionScanner extends PluginPassiveScanner {
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
-
 }

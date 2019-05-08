@@ -19,13 +19,6 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.DateProperty;
@@ -33,35 +26,44 @@ import io.swagger.models.properties.DateTimeProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.log4j.Logger;
 
 public class DataGenerator {
 
     private Generators generators;
     private static final Logger LOG = Logger.getLogger(DataGenerator.class);
 
-    public DataGenerator (Generators generators) {
+    public DataGenerator(Generators generators) {
         this.generators = generators;
     }
 
     @SuppressWarnings("serial")
-    private static final Map<String, String> TYPES = Collections.unmodifiableMap(new HashMap<String, String>() {
-        {
-            put("integer", "10");
-            put("number", "1.2");
-            put("string", "\"John Doe\"");
-            put("boolean", "true");
-            put("array", "");
-            put("file", "\u0800");
-            put("ref", "ref");
-        }
-    });
+    private static final Map<String, String> TYPES =
+            Collections.unmodifiableMap(
+                    new HashMap<String, String>() {
+                        {
+                            put("integer", "10");
+                            put("number", "1.2");
+                            put("string", "\"John Doe\"");
+                            put("boolean", "true");
+                            put("array", "");
+                            put("file", "\u0800");
+                            put("ref", "ref");
+                        }
+                    });
 
     public boolean isSupported(String type) {
         return TYPES.get(type) != null;
     }
 
-    public String generate(String name, AbstractSerializableParameter<?> parameter, List<String> refs) {
-        String defaultValue = generateDefaultValue(parameter.getEnum(), parameter.getDefaultValue());
+    public String generate(
+            String name, AbstractSerializableParameter<?> parameter, List<String> refs) {
+        String defaultValue =
+                generateDefaultValue(parameter.getEnum(), parameter.getDefaultValue());
         return generateParam(name, defaultValue, parameter, refs);
     }
 
@@ -78,7 +80,11 @@ public class DataGenerator {
         return "";
     }
 
-    private String generateParam(String name, String example, AbstractSerializableParameter<?> parameter, List<String> refs) {
+    private String generateParam(
+            String name,
+            String example,
+            AbstractSerializableParameter<?> parameter,
+            List<String> refs) {
 
         if (example != null && !example.isEmpty()) {
             return example;
@@ -94,17 +100,27 @@ public class DataGenerator {
         return getExampleValue(isPath(parameter.getIn()), parameter.getType(), parameter.getName());
     }
 
-    private String generateArrayValue(String name, AbstractSerializableParameter<?> parameter, List<String> refs) {
+    private String generateArrayValue(
+            String name, AbstractSerializableParameter<?> parameter, List<String> refs) {
         boolean isPath = isPath(parameter.getIn());
         if (!(parameter.getItems() instanceof ArrayProperty)) {
             return generateValue(name, parameter.getItems(), isPath, refs);
         }
-        return generators.getArrayGenerator().generate(name, (ArrayProperty) parameter.getItems(), parameter.getCollectionFormat(), isPath, refs);
+        return generators
+                .getArrayGenerator()
+                .generate(
+                        name,
+                        (ArrayProperty) parameter.getItems(),
+                        parameter.getCollectionFormat(),
+                        isPath,
+                        refs);
     }
 
     public String generateBodyValue(String name, Property property, List<String> refs) {
         if (isArray(property.getType())) {
-            return generators.getArrayGenerator().generate(name, (ArrayProperty) property, "csv", false, refs);
+            return generators
+                    .getArrayGenerator()
+                    .generate(name, (ArrayProperty) property, "csv", false, refs);
         }
         return generateValue(name, property, false, refs);
     }
@@ -120,7 +136,7 @@ public class DataGenerator {
         if (isDate(items)) {
             value = "1970-01-01";
         }
-        
+
         value = generators.getValueGenerator().getValue(name, items.getType(), value);
 
         if (value.isEmpty()) {
@@ -133,7 +149,7 @@ public class DataGenerator {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Dereferencing definition: " + defn);
                         }
-                        if(refs.contains(defn)) {
+                        if (refs.contains(defn)) {
                             // Likely to be a loop
                             StringBuilder sb = new StringBuilder();
                             sb.append("Apparent loop in the OpenAPI definition: ");

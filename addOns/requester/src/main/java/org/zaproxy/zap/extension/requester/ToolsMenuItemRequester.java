@@ -23,42 +23,42 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-
 import javax.swing.KeyStroke;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ToolsMenuItemRequester extends ZapMenuItem {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionRequester extension = null;   
-		
+    private static final long serialVersionUID = 1L;
+    private ExtensionRequester extension = null;
+
     @SuppressWarnings("deprecation")
     public ToolsMenuItemRequester(ExtensionRequester extension) {
-        super("requester", Constant.messages.getString("requester.toolsmenu.label"), KeyStroke.getKeyStroke(
-        		// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-        		KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+        super(
+                "requester",
+                Constant.messages.getString("requester.toolsmenu.label"),
+                KeyStroke.getKeyStroke(
+                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
+                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
+                        KeyEvent.VK_W,
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
+                        false));
         this.extension = extension;
-        
-        this.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {				
-				HttpMessage message = (HttpMessage) getExtension().getSelectedMsg();
-				if (message != null) {
-					getExtension().newRequesterPane(message);
-				}
-			}
-		});
-    }
-    
-    public ExtensionRequester getExtension() {
-		return extension;
-	}
 
-	
-	
-	
-	
+        this.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        HttpMessage message = (HttpMessage) getExtension().getSelectedMsg();
+                        if (message != null) {
+                            getExtension().newRequesterPane(message);
+                        }
+                    }
+                });
+    }
+
+    public ExtensionRequester getExtension() {
+        return extension;
+    }
 }

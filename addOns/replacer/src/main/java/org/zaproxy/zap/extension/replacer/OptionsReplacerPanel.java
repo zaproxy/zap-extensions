@@ -22,12 +22,10 @@ package org.zaproxy.zap.extension.replacer;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
-
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SortOrder;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
@@ -76,9 +74,7 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
     }
 
     @Override
-    public void validateParam(Object obj) throws Exception {
-
-    }
+    public void validateParam(Object obj) throws Exception {}
 
     @Override
     public void saveParam(Object obj) throws Exception {
@@ -100,17 +96,23 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
         return "replacer";
     }
 
-    private static class ReplacerMultipleOptionsPanel extends AbstractMultipleOptionsTablePanel<ReplacerParamRule> {
+    private static class ReplacerMultipleOptionsPanel
+            extends AbstractMultipleOptionsTablePanel<ReplacerParamRule> {
 
         private static final long serialVersionUID = -115340627058929308L;
 
-        private static final String REMOVE_DIALOG_TITLE = Constant.messages.getString("replacer.options.dialog.token.remove.title");
-        private static final String REMOVE_DIALOG_TEXT = Constant.messages.getString("replacer.options.dialog.token.remove.text");
+        private static final String REMOVE_DIALOG_TITLE =
+                Constant.messages.getString("replacer.options.dialog.token.remove.title");
+        private static final String REMOVE_DIALOG_TEXT =
+                Constant.messages.getString("replacer.options.dialog.token.remove.text");
 
-        private static final String REMOVE_DIALOG_CONFIRM_BUTTON_LABEL = Constant.messages.getString("replacer.options.dialog.token.remove.button.confirm");
-        private static final String REMOVE_DIALOG_CANCEL_BUTTON_LABEL = Constant.messages.getString("replacer.options.dialog.token.remove.button.cancel");
+        private static final String REMOVE_DIALOG_CONFIRM_BUTTON_LABEL =
+                Constant.messages.getString("replacer.options.dialog.token.remove.button.confirm");
+        private static final String REMOVE_DIALOG_CANCEL_BUTTON_LABEL =
+                Constant.messages.getString("replacer.options.dialog.token.remove.button.cancel");
 
-        private static final String REMOVE_DIALOG_CHECKBOX_LABEL = Constant.messages.getString("replacer.options.dialog.token.remove.checkbox.label");
+        private static final String REMOVE_DIALOG_CHECKBOX_LABEL =
+                Constant.messages.getString("replacer.options.dialog.token.remove.checkbox.label");
 
         private ReplacerParam replacerParam;
         private ReplaceRuleAddDialog addDialog;
@@ -125,7 +127,9 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
             getTable().getColumnExt(1).setPreferredWidth(200); // wide Desc Col
             getTable().getColumnExt(2).setPreferredWidth(100); // less wide matchString Column
             getTable().getColumnExt(3).setPreferredWidth(100); // less wide replacement Column
-            getTable().setHorizontalScrollEnabled(true); // descriptions could be very wide, so turn on horiz scroll
+            getTable()
+                    .setHorizontalScrollEnabled(
+                            true); // descriptions could be very wide, so turn on horiz scroll
 
             getTable().setAutoCreateRowSorter(true);
             getTable().setSortOrder(1, SortOrder.ASCENDING); // sort by description by default
@@ -134,11 +138,12 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
         @Override
         public ReplacerParamRule showAddDialogue() {
             if (addDialog == null) {
-                addDialog = new ReplaceRuleAddDialog(
-                        (Window) View.getSingleton().getOptionsDialog(null),
-                        "replacer.add.title",
-                        replacerParam,
-                        (OptionsReplacerTableModel)model);
+                addDialog =
+                        new ReplaceRuleAddDialog(
+                                (Window) View.getSingleton().getOptionsDialog(null),
+                                "replacer.add.title",
+                                replacerParam,
+                                (OptionsReplacerTableModel) model);
                 addDialog.pack();
             }
             addDialog.setVisible(true);
@@ -150,11 +155,12 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
         @Override
         public ReplacerParamRule showModifyDialogue(ReplacerParamRule r) {
             if (modifyDialog == null) {
-                modifyDialog = new ReplaceRuleModifyDialog(
-                        (Window) View.getSingleton().getOptionsDialog(null),
-                        "replacer.modify.title",
-                        replacerParam,
-                        (OptionsReplacerTableModel)model);
+                modifyDialog =
+                        new ReplaceRuleModifyDialog(
+                                (Window) View.getSingleton().getOptionsDialog(null),
+                                "replacer.modify.title",
+                                replacerParam,
+                                (OptionsReplacerTableModel) model);
                 modifyDialog.pack();
             }
             modifyDialog.setRule(r);
@@ -166,17 +172,22 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
 
         @Override
         public boolean showRemoveDialogue(ReplacerParamRule e) {
-            JCheckBox removeWithoutConfirmationCheckBox = new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
-            Object[] messages = { REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox };
-            int option = JOptionPane.showOptionDialog(
-                    View.getSingleton().getMainFrame(),
-                    messages,
-                    REMOVE_DIALOG_TITLE,
-                    JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    new String[] { REMOVE_DIALOG_CONFIRM_BUTTON_LABEL, REMOVE_DIALOG_CANCEL_BUTTON_LABEL },
-                    null);
+            JCheckBox removeWithoutConfirmationCheckBox =
+                    new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
+            Object[] messages = {REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox};
+            int option =
+                    JOptionPane.showOptionDialog(
+                            View.getSingleton().getMainFrame(),
+                            messages,
+                            REMOVE_DIALOG_TITLE,
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[] {
+                                REMOVE_DIALOG_CONFIRM_BUTTON_LABEL,
+                                REMOVE_DIALOG_CANCEL_BUTTON_LABEL
+                            },
+                            null);
 
             if (option == JOptionPane.OK_OPTION) {
                 setRemoveWithoutConfirmation(removeWithoutConfirmationCheckBox.isSelected());

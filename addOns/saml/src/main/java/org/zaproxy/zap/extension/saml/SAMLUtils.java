@@ -19,11 +19,6 @@
  */
 package org.zaproxy.zap.extension.saml;
 
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.extension.encoder.Base64;
-import org.parosproxy.paros.network.HtmlParameter;
-import org.parosproxy.paros.network.HttpMessage;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -32,20 +27,19 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.extension.encoder.Base64;
+import org.parosproxy.paros.network.HtmlParameter;
+import org.parosproxy.paros.network.HttpMessage;
 
-/**
- * Contains some frequent methods related to decoding and encoding SAML messages
- */
+/** Contains some frequent methods related to decoding and encoding SAML messages */
 public class SAMLUtils {
     private static final int MAX_INFLATED_SIZE = 100000;
 
     protected static final Logger log = Logger.getLogger(SAMLUtils.class);
 
-    /**
-     * Private constructor, because this class is and Util class and the methods are static
-     */
-    private SAMLUtils() {
-    }
+    /** Private constructor, because this class is and Util class and the methods are static */
+    private SAMLUtils() {}
 
     /**
      * Base 64 decode a given string and gives the decoded data as a byte array
@@ -80,16 +74,19 @@ public class SAMLUtils {
      * @throws SAMLException
      */
     public static String inflateMessage(byte[] data) throws SAMLException {
-       try{
-           byte[] out = data;
-           int length = data.length;
+        try {
+            byte[] out = data;
+            int length = data.length;
             try {
                 Inflater inflater = new Inflater(true);
                 inflater.setInput(data);
                 byte[] xmlMessageBytes = new byte[MAX_INFLATED_SIZE];
                 int inflatedLength = inflater.inflate(xmlMessageBytes);
                 if (!inflater.finished()) {
-                    throw new SAMLException("Out of space allocated for inflated data ("+(MAX_INFLATED_SIZE/1000)+"kb)");
+                    throw new SAMLException(
+                            "Out of space allocated for inflated data ("
+                                    + (MAX_INFLATED_SIZE / 1000)
+                                    + "kb)");
                 }
                 inflater.end();
                 out = xmlMessageBytes;
@@ -97,7 +94,7 @@ public class SAMLUtils {
             } catch (DataFormatException e) {
                 log.debug("Inflate SAML message failed - Invalid data format", e);
             }
-            return new String(out,0,length, "UTF-8");
+            return new String(out, 0, length, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new SAMLException("Data is not in valid encoding format", e);
         }
@@ -112,10 +109,9 @@ public class SAMLUtils {
     public static byte[] deflateMessage(String message) throws SAMLException {
         try {
             Deflater deflater = new Deflater(Deflater.DEFLATED, true);
-            try(
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream, deflater)
-            ){
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    DeflaterOutputStream deflaterOutputStream =
+                            new DeflaterOutputStream(byteArrayOutputStream, deflater)) {
                 deflaterOutputStream.write(message.getBytes("UTF-8"));
                 deflaterOutputStream.finish();
                 return byteArrayOutputStream.toByteArray();
@@ -156,7 +152,8 @@ public class SAMLUtils {
     }
 
     private static boolean isSAMLParameter(HtmlParameter parameter) {
-        return (parameter.getName().equals("SAMLRequest") || parameter.getName().equals("SAMLResponse"))
+        return (parameter.getName().equals("SAMLRequest")
+                        || parameter.getName().equals("SAMLResponse"))
                 && isNonEmptyValue(parameter.getValue());
     }
 
@@ -167,7 +164,7 @@ public class SAMLUtils {
     /**
      * Decode the SAML messages based on the binding used
      *
-     * @param val     the SAML message to decode
+     * @param val the SAML message to decode
      * @param binding The binding used
      * @return The decoded SAML message if success, or the original string if failed
      */

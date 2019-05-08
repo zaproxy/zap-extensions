@@ -23,9 +23,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import javax.script.Compilable;
-
 import org.junit.BeforeClass;
 import org.python.core.Options;
 import org.python.jsr223.PyScriptEngineFactory;

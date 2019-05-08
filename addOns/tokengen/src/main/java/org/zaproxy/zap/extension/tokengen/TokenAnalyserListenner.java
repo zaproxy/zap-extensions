@@ -21,6 +21,5 @@ package org.zaproxy.zap.extension.tokengen;
 
 public interface TokenAnalyserListenner {
 
-	public void notifyTestResult(TokenAnalysisTestResult result);
-	
+    public void notifyTestResult(TokenAnalysisTestResult result);
 }

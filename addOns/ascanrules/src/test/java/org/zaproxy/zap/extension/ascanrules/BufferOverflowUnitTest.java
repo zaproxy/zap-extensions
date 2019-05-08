@@ -27,9 +27,7 @@ import org.junit.Test;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-/**
- * Unit test for {@link BufferOverflow}.
- */
+/** Unit test for {@link BufferOverflow}. */
 public class BufferOverflowUnitTest extends ActiveScannerAppParamTest<BufferOverflow> {
 
     @Override
@@ -56,5 +54,4 @@ public class BufferOverflowUnitTest extends ActiveScannerAppParamTest<BufferOver
         // Then
         assertThat(targets, is(equalTo(false)));
     }
-
 }

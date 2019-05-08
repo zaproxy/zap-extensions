@@ -35,7 +35,14 @@ public class FileType {
     private final ImageIcon icon;
     private final boolean enabled;
 
-    public FileType(int index, String search, String type, String extension, String description, String icon, boolean enabled) {
+    public FileType(
+            int index,
+            String search,
+            String type,
+            String extension,
+            String description,
+            String icon,
+            boolean enabled) {
         this.index = index;
         this.search = search;
         this.type = type;

@@ -24,20 +24,20 @@ import org.zaproxy.zap.model.TechSet;
 
 public class HtAccessScanner extends AbstractAppFilePlugin {
 
-	private static final String MESSAGE_PREFIX = "ascanalpha.htaccscanner.";
-	private static final int PLUGIN_ID = 40032;
-	
-	public HtAccessScanner() {
-		super(".htaccess", MESSAGE_PREFIX);
-	}	
+    private static final String MESSAGE_PREFIX = "ascanalpha.htaccscanner.";
+    private static final int PLUGIN_ID = 40032;
 
-	@Override
-	public int getId() {
-		return PLUGIN_ID;
-	}
+    public HtAccessScanner() {
+        super(".htaccess", MESSAGE_PREFIX);
+    }
 
-	@Override
-	public boolean targets(TechSet technologies) {
-		return technologies.includes(Tech.Apache);
-	}
+    @Override
+    public int getId() {
+        return PLUGIN_ID;
+    }
+
+    @Override
+    public boolean targets(TechSet technologies) {
+        return technologies.includes(Tech.Apache);
+    }
 }

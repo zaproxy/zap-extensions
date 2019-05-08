@@ -21,18 +21,19 @@ package org.zaproxy.zap.extension.formhandler;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
-public class OptionsFormHandlerTableModel extends AbstractMultipleOptionsTableModel<FormHandlerParamField> {
+public class OptionsFormHandlerTableModel
+        extends AbstractMultipleOptionsTableModel<FormHandlerParamField> {
 
     private static final long serialVersionUID = 1L;
 
     private static final String[] COLUMN_NAMES = {
-            Constant.messages.getString("formhandler.options.table.column.enabled"),
-            Constant.messages.getString("formhandler.options.table.column.field"),
-            Constant.messages.getString("formhandler.options.table.column.value")};
+        Constant.messages.getString("formhandler.options.table.column.enabled"),
+        Constant.messages.getString("formhandler.options.table.column.field"),
+        Constant.messages.getString("formhandler.options.table.column.value")
+    };
 
     private static final int COLUMN_COUNT = COLUMN_NAMES.length;
 
@@ -47,9 +48,7 @@ public class OptionsFormHandlerTableModel extends AbstractMultipleOptionsTableMo
         return fields;
     }
 
-    /**
-     * @param fields The fields to set.
-     */
+    /** @param fields The fields to set. */
     public void setFields(List<FormHandlerParamField> fields) {
         this.fields = new ArrayList<>(fields.size());
 
@@ -90,13 +89,13 @@ public class OptionsFormHandlerTableModel extends AbstractMultipleOptionsTableMo
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        switch(columnIndex) {
-        case 0:
-            return Boolean.valueOf(getElement(rowIndex).isEnabled());
-        case 1:
-            return getElement(rowIndex).getName();
-        case 2:
-            return getElement(rowIndex).getValue();
+        switch (columnIndex) {
+            case 0:
+                return Boolean.valueOf(getElement(rowIndex).isEnabled());
+            case 1:
+                return getElement(rowIndex).getName();
+            case 2:
+                return getElement(rowIndex).getValue();
         }
         return null;
     }
@@ -110,5 +109,4 @@ public class OptionsFormHandlerTableModel extends AbstractMultipleOptionsTableMo
             }
         }
     }
-
 }

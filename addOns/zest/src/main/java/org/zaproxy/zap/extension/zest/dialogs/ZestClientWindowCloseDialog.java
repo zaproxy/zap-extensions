@@ -24,7 +24,6 @@ import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
@@ -35,75 +34,80 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestClientWindowCloseDialog extends StandardFieldsDialog implements ZestDialog {
 
-	private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle"; 
-	private static final String FIELD_SLEEP_IN_SECS = "zest.dialog.client.label.sleepInSecs"; 
+    private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle";
+    private static final String FIELD_SLEEP_IN_SECS = "zest.dialog.client.label.sleepInSecs";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionZest extension = null;
-	private ScriptNode parent = null;
-	private ScriptNode child = null;
-	private ZestScriptWrapper script = null;
-	private ZestStatement request = null;
-	private ZestClientWindowClose client = null;
-	private boolean add = false;
+    private ExtensionZest extension = null;
+    private ScriptNode parent = null;
+    private ScriptNode child = null;
+    private ZestScriptWrapper script = null;
+    private ZestStatement request = null;
+    private ZestClientWindowClose client = null;
+    private boolean add = false;
 
-	public ZestClientWindowCloseDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.clientWindowClose.add.title", dim);
-		this.extension = ext;
-	}
+    public ZestClientWindowCloseDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(owner, "zest.dialog.clientWindowClose.add.title", dim);
+        this.extension = ext;
+    }
 
-	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestStatement req, ZestClientWindowClose client, boolean add) {
-		this.script = script;
-		this.add = add;
-		this.parent = parent;
-		this.child = child;
-		this.request = req;
-		this.client = client;
+    public void init(
+            ZestScriptWrapper script,
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientWindowClose client,
+            boolean add) {
+        this.script = script;
+        this.add = add;
+        this.parent = parent;
+        this.child = child;
+        this.request = req;
+        this.client = client;
 
-		this.removeAllFields();
-		
-		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindowClose.add.title"));
-		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindowClose.edit.title"));
-		}
+        this.removeAllFields();
 
-		// Pull down of all the valid window ids
-		List <String> windowIds = new ArrayList<String>(script.getZestScript().getClientWindowHandles());
-		Collections.sort(windowIds);
-		this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
-		
-		this.addNumberField(FIELD_SLEEP_IN_SECS, 0, 60, client.getSleepInSeconds());
-	}
+        if (add) {
+            this.setTitle(Constant.messages.getString("zest.dialog.clientWindowClose.add.title"));
+        } else {
+            this.setTitle(Constant.messages.getString("zest.dialog.clientWindowClose.edit.title"));
+        }
 
-	@Override
-	public void save() {
-		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
-		client.setSleepInSeconds(this.getIntValue(FIELD_SLEEP_IN_SECS));
+        // Pull down of all the valid window ids
+        List<String> windowIds =
+                new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+        Collections.sort(windowIds);
+        this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
 
-		if (add) {
-			if (request == null) {
-				extension.addToParent(parent, client);
-			} else {
-				extension.addAfterRequest(parent, child, request, client);
-			}
-		} else {
-			extension.updated(child);
-			extension.display(child, false);
-		}
-	}
+        this.addNumberField(FIELD_SLEEP_IN_SECS, 0, 60, client.getSleepInSeconds());
+    }
 
-	@Override
-	public String validateFields() {
-		// Nothing to do
-		return null;
-	}
+    @Override
+    public void save() {
+        client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
+        client.setSleepInSeconds(this.getIntValue(FIELD_SLEEP_IN_SECS));
 
-	@Override
-	public ZestScriptWrapper getScript() {
-		return this.script;
-	}
-	
+        if (add) {
+            if (request == null) {
+                extension.addToParent(parent, client);
+            } else {
+                extension.addAfterRequest(parent, child, request, client);
+            }
+        } else {
+            extension.updated(child);
+            extension.display(child, false);
+        }
+    }
+
+    @Override
+    public String validateFields() {
+        // Nothing to do
+        return null;
+    }
+
+    @Override
+    public ZestScriptWrapper getScript() {
+        return this.script;
+    }
 }

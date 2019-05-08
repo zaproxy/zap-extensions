@@ -19,10 +19,9 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
-import org.parosproxy.paros.Constant;
-
 import java.util.HashSet;
 import java.util.Set;
+import org.parosproxy.paros.Constant;
 
 public class ApplicationMatch {
 

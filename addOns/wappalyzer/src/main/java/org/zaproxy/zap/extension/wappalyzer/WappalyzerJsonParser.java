@@ -19,11 +19,6 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
-
-import javax.swing.ImageIcon;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -32,12 +27,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
+import javax.swing.ImageIcon;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
 
 public class WappalyzerJsonParser {
 
     private static final String FIELD_CONFIDENCE = "confidence:";
     private static final String FIELD_VERSION = "version:";
-
 
     private static final Logger logger = Logger.getLogger(WappalyzerJsonParser.class);
     private PatternErrorHandler patternErrorHandler;
@@ -59,9 +57,9 @@ public class WappalyzerJsonParser {
         StringBuilder sb = new StringBuilder();
         try {
             in = ExtensionWappalyzer.class.getResourceAsStream(resourceName);
-            int numRead=0;
+            int numRead = 0;
             byte[] buf = new byte[1024];
-            while((numRead = in.read(buf)) != -1){
+            while ((numRead = in.read(buf)) != -1) {
                 sb.append(new String(buf, 0, numRead));
             }
             return sb.toString();
@@ -101,7 +99,8 @@ public class WappalyzerJsonParser {
                 Application app = new Application();
                 app.setName(appName);
                 app.setWebsite(appData.getString("website"));
-                app.setCategories(this.jsonToCategoryList(result.getCategories(), appData.get("cats")));
+                app.setCategories(
+                        this.jsonToCategoryList(result.getCategories(), appData.get("cats")));
                 app.setHeaders(this.jsonToAppPatternMapList("HEADER", appData.get("headers")));
                 app.setUrl(this.jsonToPatternList("URL", appData.get("url")));
                 app.setHtml(this.jsonToPatternList("HTML", appData.get("html")));
@@ -109,7 +108,9 @@ public class WappalyzerJsonParser {
                 app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
                 app.setImplies(this.jsonToStringList(appData.get("implies")));
 
-                URL icon = ExtensionWappalyzer.class.getResource( ExtensionWappalyzer.RESOURCE + "/icons/" + appName + ".png");
+                URL icon =
+                        ExtensionWappalyzer.class.getResource(
+                                ExtensionWappalyzer.RESOURCE + "/icons/" + appName + ".png");
                 if (icon != null) {
                     app.setIcon(new ImageIcon(icon));
                 }
@@ -127,7 +128,7 @@ public class WappalyzerJsonParser {
     private List<String> jsonToStringList(Object json) {
         List<String> list = new ArrayList<String>();
         if (json instanceof JSONArray) {
-            for (Object obj : (JSONArray)json) {
+            for (Object obj : (JSONArray) json) {
                 list.add(obj.toString());
             }
         } else if (json != null) {
@@ -139,7 +140,7 @@ public class WappalyzerJsonParser {
     private List<String> jsonToCategoryList(Map<String, String> categories, Object json) {
         List<String> list = new ArrayList<String>();
         if (json instanceof JSONArray) {
-            for (Object obj : (JSONArray)json) {
+            for (Object obj : (JSONArray) json) {
                 String category = categories.get(obj.toString());
                 if (category != null) {
                     list.add(category);
@@ -156,7 +157,7 @@ public class WappalyzerJsonParser {
         List<Map<String, AppPattern>> list = new ArrayList<Map<String, AppPattern>>();
         AppPattern ap;
         if (json instanceof JSONObject) {
-            for (Object obj : ((JSONObject)json).entrySet()) {
+            for (Object obj : ((JSONObject) json).entrySet()) {
                 Map.Entry<String, String> entry = (Map.Entry<String, String>) obj;
                 try {
                     Map<String, AppPattern> map = new HashMap<String, AppPattern>();
@@ -164,13 +165,18 @@ public class WappalyzerJsonParser {
                     map.put(entry.getKey(), ap);
                     list.add(map);
                 } catch (NumberFormatException e) {
-                    logger.error("Invalid field syntax " + entry.getKey() + " : " + entry.getValue(), e);
+                    logger.error(
+                            "Invalid field syntax " + entry.getKey() + " : " + entry.getValue(), e);
                 } catch (PatternSyntaxException e) {
                     patternErrorHandler.handleError(entry.getValue(), e);
                 }
             }
         } else if (json != null) {
-            logger.error("Unexpected header type for " + json.toString() + " " + json.getClass().getCanonicalName());
+            logger.error(
+                    "Unexpected header type for "
+                            + json.toString()
+                            + " "
+                            + json.getClass().getCanonicalName());
         }
         return list;
     }
@@ -178,11 +184,11 @@ public class WappalyzerJsonParser {
     private List<AppPattern> jsonToPatternList(String type, Object json) {
         List<AppPattern> list = new ArrayList<AppPattern>();
         if (json instanceof JSONArray) {
-            for (Object obj : ((JSONArray)json).toArray()) {
+            for (Object obj : ((JSONArray) json).toArray()) {
                 String objStr = obj.toString();
                 if (obj instanceof JSONArray) {
                     // Dereference it again
-                    objStr = ((JSONArray)obj).getString(0);
+                    objStr = ((JSONArray) obj).getString(0);
                 }
                 try {
                     list.add(this.strToAppPattern(type, objStr));
@@ -205,10 +211,11 @@ public class WappalyzerJsonParser {
         ap.setType(type);
         String[] values = str.split("\\\\;");
         String pattern = values[0];
-        for (int i=1; i < values.length; i++) {
+        for (int i = 1; i < values.length; i++) {
             try {
                 if (values[i].startsWith(FIELD_CONFIDENCE)) {
-                    ap.setConfidence(Integer.parseInt(values[i].substring(FIELD_CONFIDENCE.length())));
+                    ap.setConfidence(
+                            Integer.parseInt(values[i].substring(FIELD_CONFIDENCE.length())));
                 } else if (values[i].startsWith(FIELD_VERSION)) {
                     ap.setVersion(values[i].substring(FIELD_VERSION.length()));
                 } else {

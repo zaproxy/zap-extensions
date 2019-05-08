@@ -23,7 +23,7 @@ import org.parosproxy.paros.network.HtmlParameter;
 
 public class SAMLInspectionResult {
 
-    public final static SAMLInspectionResult NOT_SAML = new SAMLInspectionResult(null);
+    public static final SAMLInspectionResult NOT_SAML = new SAMLInspectionResult(null);
 
     private boolean hasSAMLMessage;
     private HtmlParameter evidence;

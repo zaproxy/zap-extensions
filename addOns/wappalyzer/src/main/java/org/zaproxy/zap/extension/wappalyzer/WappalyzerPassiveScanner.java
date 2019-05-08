@@ -19,6 +19,10 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -32,196 +36,194 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 public class WappalyzerPassiveScanner implements PassiveScanner {
 
-	private static final Logger LOGGER = Logger.getLogger(WappalyzerPassiveScanner.class);
-	private WappalyzerApplicationHolder applicationHolder;
-	private Set<String> visitedSiteIdentifiers = new HashSet<>();
-	private ApplicationMatch appMatch;
-	private Application currentApp;
+    private static final Logger LOGGER = Logger.getLogger(WappalyzerPassiveScanner.class);
+    private WappalyzerApplicationHolder applicationHolder;
+    private Set<String> visitedSiteIdentifiers = new HashSet<>();
+    private ApplicationMatch appMatch;
+    private Application currentApp;
 
-	public WappalyzerPassiveScanner(WappalyzerApplicationHolder applicationHolder) {
-		super();
-		this.applicationHolder = applicationHolder;
-	}
-	
-	@Override
-	public String getName() {
-		return Constant.messages.getString("wappalyzer.scanner");
-	}
+    public WappalyzerPassiveScanner(WappalyzerApplicationHolder applicationHolder) {
+        super();
+        this.applicationHolder = applicationHolder;
+    }
 
-	@Override
-	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		// do nothing
-	}
+    @Override
+    public String getName() {
+        return Constant.messages.getString("wappalyzer.scanner");
+    }
 
-	@Override
-	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		String siteIdentifier = getSiteIdentifier(msg);
+    @Override
+    public void scanHttpRequestSend(HttpMessage msg, int id) {
+        // do nothing
+    }
 
-		if (!visitedSiteIdentifiers.add(siteIdentifier)) {
-			return;
-		}
+    @Override
+    public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        String siteIdentifier = getSiteIdentifier(msg);
 
-		long startTime = System.currentTimeMillis();
-		for (Application app : this.getApps()) {
-			this.currentApp = app;
-			checkAppMatches(msg, source);
-			if(appMatch != null) {
-				String site = msg.getRequestHeader().getHostName() + ":" + msg.getRequestHeader().getHostPort();
-				if(LOGGER.isDebugEnabled()) {
-					LOGGER.debug("Adding " + app.getName() + " to " + site);
-				}
-				addApplicationsToSite(site, appMatch);
-				this.appMatch = null;
-			}
-			this.currentApp = null;
-		}
+        if (!visitedSiteIdentifiers.add(siteIdentifier)) {
+            return;
+        }
 
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Analyse took " + (System.currentTimeMillis() - startTime) + "ms");
-		}
-	}
+        long startTime = System.currentTimeMillis();
+        for (Application app : this.getApps()) {
+            this.currentApp = app;
+            checkAppMatches(msg, source);
+            if (appMatch != null) {
+                String site =
+                        msg.getRequestHeader().getHostName()
+                                + ":"
+                                + msg.getRequestHeader().getHostPort();
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Adding " + app.getName() + " to " + site);
+                }
+                addApplicationsToSite(site, appMatch);
+                this.appMatch = null;
+            }
+            this.currentApp = null;
+        }
 
-	private String getSiteIdentifier(HttpMessage msg){
-		SiteNode node = getSiteNode(msg);
-		if(node != null){
-			return node.getHierarchicNodeName() + "_" + node.getNodeName();
-		}
-		return msg.getRequestHeader().getURI().toString();
-	}
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Analyse took " + (System.currentTimeMillis() - startTime) + "ms");
+        }
+    }
 
-	private SiteNode getSiteNode(HttpMessage msg) {
-		HistoryReference href = msg.getHistoryRef();
-		if (href == null) {
-			return null;
-		}
-		return href.getSiteNode();
-	}
+    private String getSiteIdentifier(HttpMessage msg) {
+        SiteNode node = getSiteNode(msg);
+        if (node != null) {
+            return node.getHierarchicNodeName() + "_" + node.getNodeName();
+        }
+        return msg.getRequestHeader().getURI().toString();
+    }
 
-	private void addApplicationsToSite(String site, ApplicationMatch applicationMatch) {
-		applicationHolder.addApplicationsToSite(site, applicationMatch);
-		// Add implied apps
-		for (String imp : applicationMatch.getApplication().getImplies()) {
-			Application ia = applicationHolder.getApplication(imp);
-			if (ia != null) {
-				addApplicationsToSite(site, new ApplicationMatch(ia));
-			}
-		}
-	}
+    private SiteNode getSiteNode(HttpMessage msg) {
+        HistoryReference href = msg.getHistoryRef();
+        if (href == null) {
+            return null;
+        }
+        return href.getSiteNode();
+    }
 
-	private void checkAppMatches(HttpMessage msg, Source source) {
-		checkUrlMatches(msg);
-		checkHeadersMatches(msg);
-		checkBodyMatches(msg);
-		checkMetaElementsMatches(source);
-		checkScriptMatches(msg);
-	}
+    private void addApplicationsToSite(String site, ApplicationMatch applicationMatch) {
+        applicationHolder.addApplicationsToSite(site, applicationMatch);
+        // Add implied apps
+        for (String imp : applicationMatch.getApplication().getImplies()) {
+            Application ia = applicationHolder.getApplication(imp);
+            if (ia != null) {
+                addApplicationsToSite(site, new ApplicationMatch(ia));
+            }
+        }
+    }
 
-	private void checkScriptMatches(HttpMessage msg) {
-		String body = msg.getResponseBody().toString();
-		for (AppPattern p : currentApp.getScript()) {
-			addIfMatches(p, body);
-		}
-	}
+    private void checkAppMatches(HttpMessage msg, Source source) {
+        checkUrlMatches(msg);
+        checkHeadersMatches(msg);
+        checkBodyMatches(msg);
+        checkMetaElementsMatches(source);
+        checkScriptMatches(msg);
+    }
 
-	private void checkMetaElementsMatches(Source source) {
-		List<Element> metaElements = source.getAllElements(HTMLElementName.META);
-		for (Element metaElement : metaElements) {
-			for (Map<String, AppPattern> sp : currentApp.getMetas()) {
-				for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
-					String name = metaElement.getAttributeValue("name");
-					String content = metaElement.getAttributeValue("content");
-					if (name != null && content != null && name.equals(entry.getKey())) {
-						AppPattern p = entry.getValue();
-						addIfMatches(p, content);
-					}
-				}
-			}
-		}
-	}
+    private void checkScriptMatches(HttpMessage msg) {
+        String body = msg.getResponseBody().toString();
+        for (AppPattern p : currentApp.getScript()) {
+            addIfMatches(p, body);
+        }
+    }
 
-	private void checkBodyMatches(HttpMessage msg) {
-		String body = msg.getResponseBody().toString();
-		for (AppPattern p : currentApp.getHtml()) {
-			addIfMatches(p, body);
-		}
-	}
+    private void checkMetaElementsMatches(Source source) {
+        List<Element> metaElements = source.getAllElements(HTMLElementName.META);
+        for (Element metaElement : metaElements) {
+            for (Map<String, AppPattern> sp : currentApp.getMetas()) {
+                for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
+                    String name = metaElement.getAttributeValue("name");
+                    String content = metaElement.getAttributeValue("content");
+                    if (name != null && content != null && name.equals(entry.getKey())) {
+                        AppPattern p = entry.getValue();
+                        addIfMatches(p, content);
+                    }
+                }
+            }
+        }
+    }
 
-	private void checkHeadersMatches(HttpMessage msg) {
-		for (Map<String, AppPattern> sp : currentApp.getHeaders()) {
-			for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
-				String header = msg.getResponseHeader().getHeader(entry.getKey());
-				if (header != null) {
-					AppPattern p = entry.getValue();
-					addIfMatches(p, header);
-				}
-			}
-		}
-	}
+    private void checkBodyMatches(HttpMessage msg) {
+        String body = msg.getResponseBody().toString();
+        for (AppPattern p : currentApp.getHtml()) {
+            addIfMatches(p, body);
+        }
+    }
 
-	private void checkUrlMatches(HttpMessage msg) {
-		String url = msg.getRequestHeader().getURI().toString();
-		for (AppPattern p : currentApp.getUrl()) {
-			addIfMatches(p, url);
-		}
-	}
+    private void checkHeadersMatches(HttpMessage msg) {
+        for (Map<String, AppPattern> sp : currentApp.getHeaders()) {
+            for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
+                String header = msg.getResponseHeader().getHeader(entry.getKey());
+                if (header != null) {
+                    AppPattern p = entry.getValue();
+                    addIfMatches(p, header);
+                }
+            }
+        }
+    }
 
-	private void addIfMatches(AppPattern appPattern, String content){
-		List<String> results = appPattern.findInString(content);
-		if (results != null) {
-			this.appMatch = getAppMatch();
-			// TODO may need to account for the wappalyzer spec in dealing with version info:
-			// https://www.wappalyzer.com/docs/specification
-			results.forEach(appMatch::addVersion);
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(appPattern.getType() + " matched " + appMatch.getApplication().getName());
-			}
-		}
-	}
+    private void checkUrlMatches(HttpMessage msg) {
+        String url = msg.getRequestHeader().getURI().toString();
+        for (AppPattern p : currentApp.getUrl()) {
+            addIfMatches(p, url);
+        }
+    }
 
-	private List<Application> getApps() {
-		return applicationHolder.getApplications();
-	}
+    private void addIfMatches(AppPattern appPattern, String content) {
+        List<String> results = appPattern.findInString(content);
+        if (results != null) {
+            this.appMatch = getAppMatch();
+            // TODO may need to account for the wappalyzer spec in dealing with version info:
+            // https://www.wappalyzer.com/docs/specification
+            results.forEach(appMatch::addVersion);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(
+                        appPattern.getType() + " matched " + appMatch.getApplication().getName());
+            }
+        }
+    }
 
-	private ApplicationMatch getAppMatch() {
-		if (appMatch == null) {
-			appMatch = new ApplicationMatch(currentApp);
-		}
-		return appMatch;
-	}
+    private List<Application> getApps() {
+        return applicationHolder.getApplications();
+    }
 
-	@Override
-	public void setParent(PassiveScanThread parent) {
-		// Does not apply.
-	}
+    private ApplicationMatch getAppMatch() {
+        if (appMatch == null) {
+            appMatch = new ApplicationMatch(currentApp);
+        }
+        return appMatch;
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
+    @Override
+    public void setParent(PassiveScanThread parent) {
+        // Does not apply.
+    }
 
-	@Override
-	public void setEnabled(boolean enabled) {
-		// Does not apply.
-	}
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
-	public AlertThreshold getAlertThreshold() {
-		return AlertThreshold.MEDIUM;
-	}
+    @Override
+    public void setEnabled(boolean enabled) {
+        // Does not apply.
+    }
 
-	public void setAlertThresholdl(AlertThreshold level) {
-		// Does not apply.
-	}
+    public AlertThreshold getAlertThreshold() {
+        return AlertThreshold.MEDIUM;
+    }
 
-	@Override
-	public boolean appliesToHistoryType(int historyType) {
-		return PluginPassiveScanner.getDefaultHistoryTypes().contains(historyType);
-	}
+    public void setAlertThresholdl(AlertThreshold level) {
+        // Does not apply.
+    }
 
+    @Override
+    public boolean appliesToHistoryType(int historyType) {
+        return PluginPassiveScanner.getDefaultHistoryTypes().contains(historyType);
+    }
 }

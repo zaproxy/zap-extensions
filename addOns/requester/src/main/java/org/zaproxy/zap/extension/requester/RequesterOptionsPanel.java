@@ -22,12 +22,10 @@ package org.zaproxy.zap.extension.requester;
 import java.awt.CardLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
@@ -37,7 +35,7 @@ public class RequesterOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private JCheckBox checkBoxAutoFocus = null;    
+    private JCheckBox checkBoxAutoFocus = null;
 
     public RequesterOptionsPanel() {
         super();
@@ -48,47 +46,45 @@ public class RequesterOptionsPanel extends AbstractParamPanel {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(2, 2, 2, 2));
 
-        panel.add(getCheckBoxAutoFocus(), LayoutHelper.getGBC(0, 0, 2, 1.0, new Insets(2, 2, 2, 2)));       
-        
-        
-		panel.add(new JLabel(), LayoutHelper.getGBC(0, 10, 1, 0.5D, 1.0D));	// Spacer
+        panel.add(
+                getCheckBoxAutoFocus(), LayoutHelper.getGBC(0, 0, 2, 1.0, new Insets(2, 2, 2, 2)));
+
+        panel.add(new JLabel(), LayoutHelper.getGBC(0, 10, 1, 0.5D, 1.0D)); // Spacer
 
         add(panel);
-    }    
-    
-    private JCheckBox getCheckBoxAutoFocus() {
-    	if (checkBoxAutoFocus == null) {
-    		checkBoxAutoFocus = new JCheckBox(
-    				Constant.messages.getString("requester.optionspanel.option.autoFocus.label"));
-    	}
-    	return checkBoxAutoFocus;
     }
 
+    private JCheckBox getCheckBoxAutoFocus() {
+        if (checkBoxAutoFocus == null) {
+            checkBoxAutoFocus =
+                    new JCheckBox(
+                            Constant.messages.getString(
+                                    "requester.optionspanel.option.autoFocus.label"));
+        }
+        return checkBoxAutoFocus;
+    }
 
     @Override
     public void initParam(Object obj) {
         final OptionsParam options = (OptionsParam) obj;
         final RequesterParam param = options.getParamSet(RequesterParam.class);
-        
+
         getCheckBoxAutoFocus().setSelected(param.isAutoFocus());
-        
     }
 
     @Override
-    public void validateParam(Object obj) throws Exception {
-    }
+    public void validateParam(Object obj) throws Exception {}
 
     @Override
     public void saveParam(Object obj) throws Exception {
         final OptionsParam options = (OptionsParam) obj;
         final RequesterParam param = options.getParamSet(RequesterParam.class);
 
-        param.setAutoFocus(getCheckBoxAutoFocus().isSelected());        
+        param.setAutoFocus(getCheckBoxAutoFocus().isSelected());
     }
 
     @Override
     public String getHelpIndex() {
         return null;
     }
-
 }

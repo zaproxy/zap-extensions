@@ -20,23 +20,20 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.net.URI;
-
 import javax.swing.JPanel;
 
-/**
- * Interface to allow the Ajax Spider to be plugged into the Quick Start panels
- */
+/** Interface to allow the Ajax Spider to be plugged into the Quick Start panels */
 public interface PlugableSpider {
-    
+
     void startScan(URI uri);
-    
+
     void stopScan();
-    
+
     String getLabel();
-    
+
     JPanel getPanel();
-    
+
     boolean isSelected();
-    
+
     boolean isRunning();
 }

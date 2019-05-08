@@ -20,17 +20,19 @@
 package org.zaproxy.zap.extension.bugtracker;
 
 import java.awt.Dialog;
-
 import org.parosproxy.paros.Constant;
 
 class DialogModifyBugzillaConfig extends DialogAddBugzillaConfig {
 
     private static final long serialVersionUID = 6675509994290748494L;
 
-    private static final String DIALOG_TITLE = Constant.messages.getString("bugtracker.trackers.bugzilla.dialog.config.modify.title");
-    
-    private static final String CONFIRM_BUTTON_LABEL = Constant.messages.getString("bugtracker.trackers.bugzilla.dialog.config.modify.button.confirm");
-    
+    private static final String DIALOG_TITLE =
+            Constant.messages.getString("bugtracker.trackers.bugzilla.dialog.config.modify.title");
+
+    private static final String CONFIRM_BUTTON_LABEL =
+            Constant.messages.getString(
+                    "bugtracker.trackers.bugzilla.dialog.config.modify.button.confirm");
+
     protected DialogModifyBugzillaConfig(Dialog owner) {
         super(owner, DIALOG_TITLE);
     }
@@ -43,7 +45,7 @@ class DialogModifyBugzillaConfig extends DialogAddBugzillaConfig {
     public void setConfig(BugTrackerBugzillaConfigParams config) {
         this.config = config;
     }
-    
+
     @Override
     protected boolean validateFields() {
         if (config.getName().equals(getNameTextField().getText())) {
@@ -60,5 +62,4 @@ class DialogModifyBugzillaConfig extends DialogAddBugzillaConfig {
         getBugzillaUrlTextField().setText(config.getBugzillaUrl());
         getBugzillaUrlTextField().discardAllEdits();
     }
-
 }

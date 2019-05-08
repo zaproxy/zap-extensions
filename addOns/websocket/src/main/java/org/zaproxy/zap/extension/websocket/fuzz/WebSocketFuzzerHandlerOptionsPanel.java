@@ -20,11 +20,11 @@
 package org.zaproxy.zap.extension.websocket.fuzz;
 
 import javax.swing.JPanel;
-
 import org.zaproxy.zap.extension.fuzz.FuzzerOptions;
 import org.zaproxy.zap.extension.fuzz.impl.FuzzerHandlerOptionsPanel;
 
-public class WebSocketFuzzerHandlerOptionsPanel implements FuzzerHandlerOptionsPanel<FuzzerOptions> {
+public class WebSocketFuzzerHandlerOptionsPanel
+        implements FuzzerHandlerOptionsPanel<FuzzerOptions> {
 
     private final JPanel optionsPanel;
 
@@ -48,6 +48,5 @@ public class WebSocketFuzzerHandlerOptionsPanel implements FuzzerHandlerOptionsP
     }
 
     @Override
-    public void reset() {
-    }
+    public void reset() {}
 }

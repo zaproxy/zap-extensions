@@ -20,10 +20,12 @@
 package org.zaproxy.zap.extension.fuzz;
 
 import javax.swing.JPanel;
-
 import org.zaproxy.zap.extension.httppanel.Message;
 
-public interface FuzzerMessageProcessorUIPanel<T1 extends Message, T2 extends FuzzerMessageProcessor<T1>, T3 extends FuzzerMessageProcessorUI<T1, T2>> {
+public interface FuzzerMessageProcessorUIPanel<
+        T1 extends Message,
+        T2 extends FuzzerMessageProcessor<T1>,
+        T3 extends FuzzerMessageProcessorUI<T1, T2>> {
 
     void init(T1 message);
 
@@ -38,12 +40,14 @@ public interface FuzzerMessageProcessorUIPanel<T1 extends Message, T2 extends Fu
     void clear();
 
     /**
-     * Gets the 'target' to the help page of this payload generator panel. The 'target' must be defined in the {@code map}'s
-     * help file. If there's no help available this method should return {@code null}.
-     * <p>
-     * A help button is shown when the help is available.
-     * 
-     * @return the 'target' to the help page of this payload generator panel, or {@code null} if no help page is available
+     * Gets the 'target' to the help page of this payload generator panel. The 'target' must be
+     * defined in the {@code map}'s help file. If there's no help available this method should
+     * return {@code null}.
+     *
+     * <p>A help button is shown when the help is available.
+     *
+     * @return the 'target' to the help page of this payload generator panel, or {@code null} if no
+     *     help page is available
      */
     String getHelpTarget();
 }

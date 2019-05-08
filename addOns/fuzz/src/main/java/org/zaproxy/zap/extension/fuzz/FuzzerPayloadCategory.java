@@ -79,5 +79,4 @@ public class FuzzerPayloadCategory implements Comparable<FuzzerPayloadCategory> 
         }
         return getFullName().compareTo(other.getFullName());
     }
-
 }

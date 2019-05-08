@@ -26,53 +26,52 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import org.parosproxy.paros.Constant;
 
-public class CloseTabPanel extends JPanel {	
-	
-	private static final long serialVersionUID = 1L;
-	private static final Icon CLOSE_TAB_GREY_ICON = new ImageIcon(
-			CloseTabPanel.class.getResource("/resource/icon/fugue/cross-small-grey.png"));
-	private static final Icon CLOSE_TAB_RED_ICON = new ImageIcon(
-			CloseTabPanel.class.getResource("/resource/icon/fugue/cross-small-red.png"));
-	
-	private NumberedTabbedPane ntp;	
+public class CloseTabPanel extends JPanel {
 
-	public CloseTabPanel(String tabName, NumberedTabbedPane ntp) {
-		super();
-		this.ntp = ntp;
-    	this.setOpaque(false);
-    	JLabel lblTitle = new JLabel(tabName);
-    	JButton btnClose = new JButton();
-    	btnClose.setOpaque(false);
-    	
-		// Configure icon and rollover icon for button
-		btnClose.setRolloverIcon(CLOSE_TAB_RED_ICON);
-		btnClose.setRolloverEnabled(true);
-		btnClose.setContentAreaFilled(false);
-		btnClose.setToolTipText(Constant.messages.getString("all.button.close"));
-		btnClose.setIcon(CLOSE_TAB_GREY_ICON);
-		// Set a border only on the left side so the button doesn't make the tab too big
-		btnClose.setBorder(new EmptyBorder(0, 6, 0, 0));
-		// This is needed to Macs for some reason
-		btnClose.setBorderPainted(false);
+    private static final long serialVersionUID = 1L;
+    private static final Icon CLOSE_TAB_GREY_ICON =
+            new ImageIcon(
+                    CloseTabPanel.class.getResource("/resource/icon/fugue/cross-small-grey.png"));
+    private static final Icon CLOSE_TAB_RED_ICON =
+            new ImageIcon(
+                    CloseTabPanel.class.getResource("/resource/icon/fugue/cross-small-red.png"));
 
-		// Make sure the button can't get focus, otherwise it looks funny
-		btnClose.setFocusable(false);
-    	GridBagConstraints gbc = new GridBagConstraints();
-    	gbc.gridx = 0;
-    	gbc.gridy = 0;
-    	gbc.weightx = 1;
+    private NumberedTabbedPane ntp;
 
-    	this.add(lblTitle, gbc);
+    public CloseTabPanel(String tabName, NumberedTabbedPane ntp) {
+        super();
+        this.ntp = ntp;
+        this.setOpaque(false);
+        JLabel lblTitle = new JLabel(tabName);
+        JButton btnClose = new JButton();
+        btnClose.setOpaque(false);
 
-    	gbc.gridx++;
-    	gbc.weightx = 0;
-    	this.add(btnClose, gbc);    	
+        // Configure icon and rollover icon for button
+        btnClose.setRolloverIcon(CLOSE_TAB_RED_ICON);
+        btnClose.setRolloverEnabled(true);
+        btnClose.setContentAreaFilled(false);
+        btnClose.setToolTipText(Constant.messages.getString("all.button.close"));
+        btnClose.setIcon(CLOSE_TAB_GREY_ICON);
+        // Set a border only on the left side so the button doesn't make the tab too big
+        btnClose.setBorder(new EmptyBorder(0, 6, 0, 0));
+        // This is needed to Macs for some reason
+        btnClose.setBorderPainted(false);
 
-    	btnClose.addActionListener(new CloseActionHandler(this.ntp, tabName));    	
-    	
+        // Make sure the button can't get focus, otherwise it looks funny
+        btnClose.setFocusable(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+
+        this.add(lblTitle, gbc);
+
+        gbc.gridx++;
+        gbc.weightx = 0;
+        this.add(btnClose, gbc);
+
+        btnClose.addActionListener(new CloseActionHandler(this.ntp, tabName));
     }
-
 }

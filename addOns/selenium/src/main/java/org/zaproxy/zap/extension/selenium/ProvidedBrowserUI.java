@@ -20,13 +20,12 @@
 package org.zaproxy.zap.extension.selenium;
 
 import java.text.Collator;
-
 import org.apache.commons.lang.Validate;
 
 /**
  * A representation of a {@link ProvidedBrowser} for UI components.
- * <p>
- * The method {@code toString()} returns the name of the browser.
+ *
+ * <p>The method {@code toString()} returns the name of the browser.
  *
  * @since 1.1.0
  */
@@ -38,7 +37,8 @@ public class ProvidedBrowserUI implements Comparable<ProvidedBrowserUI> {
      * Constructs a {@code ProvidedBrowserUI} with the given {@code browser}.
      *
      * @param browser the browser.
-     * @throws IllegalArgumentException if the {@code browser} is {@code null} or its name {@code null} or empty.
+     * @throws IllegalArgumentException if the {@code browser} is {@code null} or its name {@code
+     *     null} or empty.
      */
     public ProvidedBrowserUI(ProvidedBrowser browser) {
         Validate.notNull(browser, "Parameter browser must not be null");
@@ -67,7 +67,7 @@ public class ProvidedBrowserUI implements Comparable<ProvidedBrowserUI> {
 
     /**
      * Returns the name for the browser.
-     * 
+     *
      * @see #getName()
      */
     @Override
@@ -86,7 +86,7 @@ public class ProvidedBrowserUI implements Comparable<ProvidedBrowserUI> {
 
     /**
      * Two {@code ProvidedBrowserUI} are considered equal if both have the same ID and provider.
-     * 
+     *
      * @see #getName()
      */
     @Override
@@ -112,7 +112,7 @@ public class ProvidedBrowserUI implements Comparable<ProvidedBrowserUI> {
 
     /**
      * Compares the names of browsers, using a {@code Collator} of the default {@code Locale}.
-     * 
+     *
      * @see #getName()
      * @see Collator
      */
@@ -126,6 +126,7 @@ public class ProvidedBrowserUI implements Comparable<ProvidedBrowserUI> {
         if (result != 0) {
             return result;
         }
-        return Collator.getInstance().compare(browser.getProviderId(), other.browser.getProviderId());
+        return Collator.getInstance()
+                .compare(browser.getProviderId(), other.browser.getProviderId());
     }
 }

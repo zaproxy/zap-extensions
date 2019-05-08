@@ -30,11 +30,9 @@ import java.awt.font.TextAttribute;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
@@ -47,7 +45,8 @@ public class LearnMorePanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
 
     private static final String FAQ_LINK = "https://github.com/zaproxy/zaproxy/wiki/FAQtoplevel";
-    private static final String GETTING_STARTED_LINK = "https://github.com/zaproxy/zaproxy/releases/download/2.7.0/ZAPGettingStartedGuide-2.7.pdf";
+    private static final String GETTING_STARTED_LINK =
+            "https://github.com/zaproxy/zaproxy/releases/download/2.7.0/ZAPGettingStartedGuide-2.7.pdf";
     private static final String USER_GROUP_LINK = "https://groups.google.com/group/zaproxy-users";
     private static final String USER_GUIDE_LINK = "https://github.com/zaproxy/zap-core-help/wiki";
 
@@ -68,9 +67,13 @@ public class LearnMorePanel extends QuickStartSubPanel {
     public JPanel getDescriptionPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
-        panel.add(QuickStartHelper.getWrappedLabel("quickstart.learn.panel.message1"),
+        panel.add(
+                QuickStartHelper.getWrappedLabel("quickstart.learn.panel.message1"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-        panel.add(new JLabel(" "), LayoutHelper.getGBC(0, 2, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5))); // Spacer
+        panel.add(
+                new JLabel(" "),
+                LayoutHelper.getGBC(
+                        0, 2, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5))); // Spacer
         return panel;
     }
 
@@ -90,80 +93,138 @@ public class LearnMorePanel extends QuickStartSubPanel {
             contentPanel.setBackground(Color.WHITE);
             int formPanelY = 0;
 
-            ExtensionHelp extHelp = Control.getSingleton().getExtensionLoader().getExtension(ExtensionHelp.class);
+            ExtensionHelp extHelp =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionHelp.class);
             boolean isHelpAvailable = extHelp != null && extHelp.isHelpAvailable();
             boolean isGuideAvailable = Constant.messages.containsKey("gettingStarted.file");
             File guide = null;
             if (isGuideAvailable) {
-                guide = new File(Constant.getZapHome() + File.separator + "lang" + File.separator
-                        + Constant.messages.getString("gettingStarted.file"));
-                if (! guide.canRead()) {
-                	isGuideAvailable = false;
+                guide =
+                        new File(
+                                Constant.getZapHome()
+                                        + File.separator
+                                        + "lang"
+                                        + File.separator
+                                        + Constant.messages.getString("gettingStarted.file"));
+                if (!guide.canRead()) {
+                    isGuideAvailable = false;
                 }
             }
             // Keep the compiler happy
-            final File finalGuide = guide;  
+            final File finalGuide = guide;
 
             if (isHelpAvailable || isGuideAvailable) {
 
-                contentPanel.add(new JLabel(Constant.messages.getString("quickstart.links.local")),
-                        LayoutHelper.getGBC(0, formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-                contentPanel.add(new JLabel(""),
-                        LayoutHelper.getGBC(2, formPanelY, 1, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5))); // Spacer
+                contentPanel.add(
+                        new JLabel(Constant.messages.getString("quickstart.links.local")),
+                        LayoutHelper.getGBC(
+                                0, formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+                contentPanel.add(
+                        new JLabel(""),
+                        LayoutHelper.getGBC(
+                                2,
+                                formPanelY,
+                                1,
+                                1.0D,
+                                DisplayUtils.getScaledInsets(5, 5, 5, 5))); // Spacer
 
                 if (isGuideAvailable) {
-                    JLabel qsLabel = ulJLabel(Constant.messages.getString("quickstart.link.startguide"));
+                    JLabel qsLabel =
+                            ulJLabel(Constant.messages.getString("quickstart.link.startguide"));
                     qsLabel.setIcon(ExtensionQuickStart.PDF_DOC_ICON);
                     qsLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    qsLabel.addMouseListener(new MouseAdapter() {
-                        public void mouseClicked(MouseEvent e) {
-                            try {
-                                Desktop.getDesktop().open(finalGuide);
-                            } catch (Exception ex) {
-                                View.getSingleton().showWarningDialog(LearnMorePanel.this, Constant.messages
-                                        .getString("quickstart.link.warning.nostartguide", ex.getMessage()));
-                            }
-                        }
-                    });
-                    contentPanel.add(qsLabel,
-                            LayoutHelper.getGBC(1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+                    qsLabel.addMouseListener(
+                            new MouseAdapter() {
+                                public void mouseClicked(MouseEvent e) {
+                                    try {
+                                        Desktop.getDesktop().open(finalGuide);
+                                    } catch (Exception ex) {
+                                        View.getSingleton()
+                                                .showWarningDialog(
+                                                        LearnMorePanel.this,
+                                                        Constant.messages.getString(
+                                                                "quickstart.link.warning.nostartguide",
+                                                                ex.getMessage()));
+                                    }
+                                }
+                            });
+                    contentPanel.add(
+                            qsLabel,
+                            LayoutHelper.getGBC(
+                                    1,
+                                    ++formPanelY,
+                                    1,
+                                    0.0D,
+                                    DisplayUtils.getScaledInsets(5, 5, 5, 5)));
                 }
 
                 if (isHelpAvailable) {
-                    JLabel helpLabel = ulJLabel(Constant.messages.getString("quickstart.link.userguide"));
+                    JLabel helpLabel =
+                            ulJLabel(Constant.messages.getString("quickstart.link.userguide"));
                     helpLabel.setIcon(ExtensionHelp.getHelpIcon());
                     helpLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    helpLabel.addMouseListener(new MouseAdapter() {
-                        public void mouseClicked(MouseEvent e) {
-                            ExtensionHelp.showHelp();
-                        }
-                    });
-                    contentPanel.add(helpLabel,
-                            LayoutHelper.getGBC(1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+                    helpLabel.addMouseListener(
+                            new MouseAdapter() {
+                                public void mouseClicked(MouseEvent e) {
+                                    ExtensionHelp.showHelp();
+                                }
+                            });
+                    contentPanel.add(
+                            helpLabel,
+                            LayoutHelper.getGBC(
+                                    1,
+                                    ++formPanelY,
+                                    1,
+                                    0.0D,
+                                    DisplayUtils.getScaledInsets(5, 5, 5, 5)));
                 }
             }
 
-            contentPanel.add(new JLabel(Constant.messages.getString("quickstart.links.online")),
-                    LayoutHelper.getGBC(0, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-            contentPanel.add(new JLabel(""),
-                    LayoutHelper.getGBC(2, formPanelY, 1, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5))); // Spacer
+            contentPanel.add(
+                    new JLabel(Constant.messages.getString("quickstart.links.online")),
+                    LayoutHelper.getGBC(
+                            0, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(
+                    new JLabel(""),
+                    LayoutHelper.getGBC(
+                            2,
+                            formPanelY,
+                            1,
+                            1.0D,
+                            DisplayUtils.getScaledInsets(5, 5, 5, 5))); // Spacer
 
             if (!isGuideAvailable) {
                 // Link to the online version instead
-                contentPanel.add(getOnlineLink("quickstart.link.startguide", GETTING_STARTED_LINK),
-                        LayoutHelper.getGBC(1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+                contentPanel.add(
+                        getOnlineLink("quickstart.link.startguide", GETTING_STARTED_LINK),
+                        LayoutHelper.getGBC(
+                                1,
+                                ++formPanelY,
+                                1,
+                                0.0D,
+                                DisplayUtils.getScaledInsets(5, 5, 5, 5)));
                 // TODO move link if/when we detect the add-on is installed
             }
             if (!isHelpAvailable) {
                 // Link to the online version instead
-                contentPanel.add(getOnlineLink("quickstart.link.userguide", USER_GUIDE_LINK),
-                        LayoutHelper.getGBC(1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+                contentPanel.add(
+                        getOnlineLink("quickstart.link.userguide", USER_GUIDE_LINK),
+                        LayoutHelper.getGBC(
+                                1,
+                                ++formPanelY,
+                                1,
+                                0.0D,
+                                DisplayUtils.getScaledInsets(5, 5, 5, 5)));
                 // TODO move link if/when we detect the add-on is installed
             }
-            contentPanel.add(getOnlineLink("quickstart.link.usergroup", USER_GROUP_LINK),
-                    LayoutHelper.getGBC(1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-            contentPanel.add(getOnlineLink("quickstart.link.faq", FAQ_LINK),
-                    LayoutHelper.getGBC(1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(
+                    getOnlineLink("quickstart.link.usergroup", USER_GROUP_LINK),
+                    LayoutHelper.getGBC(
+                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(
+                    getOnlineLink("quickstart.link.faq", FAQ_LINK),
+                    LayoutHelper.getGBC(
+                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
             paddingY = ++formPanelY;
             this.replacePadding();
@@ -176,11 +237,12 @@ public class LearnMorePanel extends QuickStartSubPanel {
         JLabel label = ulJLabel(Constant.messages.getString(key));
         label.setIcon(ExtensionQuickStart.ONLINE_DOC_ICON);
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        label.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                DesktopUtils.openUrlInBrowser(url);
-            }
-        });
+        label.addMouseListener(
+                new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        DesktopUtils.openUrlInBrowser(url);
+                    }
+                });
         return label;
     }
 
@@ -192,7 +254,9 @@ public class LearnMorePanel extends QuickStartSubPanel {
             } else {
                 contentPanel.remove(this.lowerPadding);
             }
-            contentPanel.add(lowerPadding, LayoutHelper.getGBC(0, paddingY, 1, 0.0D, 1.0D)); // Padding at bottom
+            contentPanel.add(
+                    lowerPadding,
+                    LayoutHelper.getGBC(0, paddingY, 1, 0.0D, 1.0D)); // Padding at bottom
         }
     }
 

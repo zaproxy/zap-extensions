@@ -18,10 +18,5 @@ dependencies {
 }
 
 spotless {
-    java {
-        target(fileTree(projectDir) {
-            include("**/*.java")
-            exclude("**/ReportLastScan.java")
-        })
-    }
+    javaWith3rdPartyFormatted(project, listOf("**/ReportLastScan.java"))
 }

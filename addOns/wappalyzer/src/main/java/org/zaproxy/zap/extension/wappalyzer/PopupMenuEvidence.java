@@ -24,9 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import javax.swing.JMenuItem;
-
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
@@ -34,44 +32,52 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
 public class PopupMenuEvidence extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private ExtensionWappalyzer extension;
-    
+
     private List<PopupMenuEvidenceSearch> subMenus = new ArrayList<PopupMenuEvidenceSearch>();
 
     public PopupMenuEvidence(ExtensionWappalyzer extension) {
-		this.extension = extension;
-	}
+        this.extension = extension;
+    }
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
         clearSubMenus();
-    	
+
         if (invoker.getName() != null && invoker.getName().equals(TechPanel.PANEL_NAME)) {
             Application app = extension.getSelectedApp();
             if (app != null) {
-            	for (AppPattern p : app.getUrl()) {
-            		this.addSubMenu("URL", p.getJavaPattern(), ExtensionSearch.Type.URL);
-            	}
-            	for (Map<String,AppPattern> mp : app.getHeaders()) {
-					for (Map.Entry<String, AppPattern> entry : mp.entrySet()) {
-						Pattern p = Pattern.compile(entry.getKey() + ".*" + entry.getValue().getJavaPattern().pattern());
-	            		this.addSubMenu("HEAD", p, ExtensionSearch.Type.Header);
-					}
-            	}
-            	for (AppPattern p : app.getHtml()) {
-            		this.addSubMenu("HTML", p.getJavaPattern(), ExtensionSearch.Type.Response);
-            	}
-            	for (Map<String,AppPattern> mp : app.getMetas()) {
-					for (Map.Entry<String, AppPattern> entry : mp.entrySet()) {
-						Pattern p = Pattern.compile(entry.getKey() + ".*" + entry.getValue().getJavaPattern().pattern());
-						this.addSubMenu("META", p, ExtensionSearch.Type.Response);
-						}
-	            	}
-            	for (AppPattern p : app.getScript()) {
-            		this.addSubMenu("SCRIPT", p.getJavaPattern(), ExtensionSearch.Type.Response);
-            	}
+                for (AppPattern p : app.getUrl()) {
+                    this.addSubMenu("URL", p.getJavaPattern(), ExtensionSearch.Type.URL);
+                }
+                for (Map<String, AppPattern> mp : app.getHeaders()) {
+                    for (Map.Entry<String, AppPattern> entry : mp.entrySet()) {
+                        Pattern p =
+                                Pattern.compile(
+                                        entry.getKey()
+                                                + ".*"
+                                                + entry.getValue().getJavaPattern().pattern());
+                        this.addSubMenu("HEAD", p, ExtensionSearch.Type.Header);
+                    }
+                }
+                for (AppPattern p : app.getHtml()) {
+                    this.addSubMenu("HTML", p.getJavaPattern(), ExtensionSearch.Type.Response);
+                }
+                for (Map<String, AppPattern> mp : app.getMetas()) {
+                    for (Map.Entry<String, AppPattern> entry : mp.entrySet()) {
+                        Pattern p =
+                                Pattern.compile(
+                                        entry.getKey()
+                                                + ".*"
+                                                + entry.getValue().getJavaPattern().pattern());
+                        this.addSubMenu("META", p, ExtensionSearch.Type.Response);
+                    }
+                }
+                for (AppPattern p : app.getScript()) {
+                    this.addSubMenu("SCRIPT", p.getJavaPattern(), ExtensionSearch.Type.Response);
+                }
             }
         }
         return false;
@@ -85,13 +91,13 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
         }
         this.subMenus.clear();
     }
-    
+
     private void addSubMenu(String label, Pattern p, ExtensionSearch.Type type) {
-    	// TODO add label as prefix for pattern types?
-		PopupMenuEvidenceSearch menu = new PopupMenuEvidenceSearch(p.pattern(), extension, p, type);
-		menu.setMenuIndex(this.getMenuIndex());
-		View.getSingleton().getPopupList().add(menu);
-		this.subMenus.add(menu);
+        // TODO add label as prefix for pattern types?
+        PopupMenuEvidenceSearch menu = new PopupMenuEvidenceSearch(p.pattern(), extension, p, type);
+        menu.setMenuIndex(this.getMenuIndex());
+        View.getSingleton().getPopupList().add(menu);
+        this.subMenus.add(menu);
     }
 
     @Override
@@ -101,6 +107,6 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
 
     @Override
     public boolean isSafe() {
-    	return true;
+        return true;
     }
 }

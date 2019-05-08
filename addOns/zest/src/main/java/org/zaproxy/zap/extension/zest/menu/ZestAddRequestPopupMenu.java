@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestRequest;
@@ -30,63 +29,58 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 
-
-/**
- * ZAP: New Popup Menu Alert Delete
- */
+/** ZAP: New Popup Menu Alert Delete */
 public class ZestAddRequestPopupMenu extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionZest extension = null;
-	private ScriptNode parent = null;
+    private ExtensionZest extension = null;
+    private ScriptNode parent = null;
 
-	/**
-     * 
-     */
+    /** */
     public ZestAddRequestPopupMenu(ExtensionZest extension) {
         super();
         this.extension = extension;
- 		initialize();
+        initialize();
     }
 
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
+    /** This method initializes this */
+    private void initialize() {
         this.setText(Constant.messages.getString("zest.request.popup"));
 
-        this.addActionListener(new java.awt.event.ActionListener() { 
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
 
-        	@Override
-        	public void actionPerformed(java.awt.event.ActionEvent e) {
-				extension.getDialogManager().showZestEditRequestDialog(parent, null);
-        	}
-        });
-	}
-	
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        extension.getDialogManager().showZestEditRequestDialog(parent, null);
+                    }
+                });
+    }
+
     @Override
     public boolean isEnableForComponent(Component invoker) {
-		if (extension.isScriptTree(invoker)) {
-    		ScriptNode node = extension.getSelectedZestNode();
-    		ZestElement ze = extension.getSelectedZestElement();
-    		if (node == null || node.isTemplate()) {
-    			return false;
-    		} else if (ze != null) {
-    	    	ZestScript script = extension.getZestTreeModel().getScriptWrapper(node).getZestScript();
-    	    	String type = script.getType();
-    	    	if (! ZestScript.Type.StandAlone.name().equals(type)) {
-    	    		// Only support for standalone scripts (which includes authentication ones)
-    	    		return false;
-    	    	}
-	    		if (ze instanceof ZestRequest) {
-	    			parent = node.getParent();
-	            	return true;
-	    		} else if (ze instanceof ZestContainer) {
-	    			parent = node;
-	            	return true;
-	    		}
-    		}
+        if (extension.isScriptTree(invoker)) {
+            ScriptNode node = extension.getSelectedZestNode();
+            ZestElement ze = extension.getSelectedZestElement();
+            if (node == null || node.isTemplate()) {
+                return false;
+            } else if (ze != null) {
+                ZestScript script =
+                        extension.getZestTreeModel().getScriptWrapper(node).getZestScript();
+                String type = script.getType();
+                if (!ZestScript.Type.StandAlone.name().equals(type)) {
+                    // Only support for standalone scripts (which includes authentication ones)
+                    return false;
+                }
+                if (ze instanceof ZestRequest) {
+                    parent = node.getParent();
+                    return true;
+                } else if (ze instanceof ZestContainer) {
+                    parent = node;
+                    return true;
+                }
+            }
         }
         return false;
     }

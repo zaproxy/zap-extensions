@@ -27,7 +27,9 @@ import javax.xml.bind.annotation.XmlType;
  * SPONSOR: RYERSON UNIVERSITY
  */
 
-@XmlType(name = "SitesType", propOrder = { "host", "name", "port", "SSL", "alerts" })
+@XmlType(
+        name = "SitesType",
+        propOrder = {"host", "name", "port", "SSL", "alerts"})
 public class Sites {
     private String host;
     private String name;

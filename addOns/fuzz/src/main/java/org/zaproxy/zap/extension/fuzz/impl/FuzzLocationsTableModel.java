@@ -27,11 +27,11 @@ public class FuzzLocationsTableModel extends MessageLocationsTableModel<FuzzLoca
     private static final long serialVersionUID = 4506544561803715504L;
 
     private static final String[] COLUMNS = {
-            Constant.messages.getString("fuzz.fuzzer.messagelocations.table.header.numberOfPayloads"),
-            Constant.messages.getString("fuzz.fuzzer.messagelocations.table.header.numberOfProcessors") };
+        Constant.messages.getString("fuzz.fuzzer.messagelocations.table.header.numberOfPayloads"),
+        Constant.messages.getString("fuzz.fuzzer.messagelocations.table.header.numberOfProcessors")
+    };
 
-    public FuzzLocationsTableModel() {
-    }
+    public FuzzLocationsTableModel() {}
 
     @Override
     public String getColumnName(int column) {

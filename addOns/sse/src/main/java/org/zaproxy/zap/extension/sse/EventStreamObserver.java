@@ -24,9 +24,9 @@ import org.zaproxy.zap.extension.sse.db.ServerSentEventStream;
 
 public interface EventStreamObserver {
 
-	boolean onServerSentEvent(ServerSentEvent event);
-	
-	void onServerSentEventStateChange(State state, ServerSentEventStream stream);
-	
-	int getServerSentEventObservingOrder();
+    boolean onServerSentEvent(ServerSentEvent event);
+
+    void onServerSentEventStateChange(State state, ServerSentEventStream stream);
+
+    int getServerSentEventObservingOrder();
 }

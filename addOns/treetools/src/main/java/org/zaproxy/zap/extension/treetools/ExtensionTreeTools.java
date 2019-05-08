@@ -21,58 +21,56 @@ package org.zaproxy.zap.extension.treetools;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
 public class ExtensionTreeTools extends ExtensionAdaptor {
-	
-	public static final String NAME = "TreeTools";
-	private PopupMenuTreeTools popupMenuTreeTools;
+
+    public static final String NAME = "TreeTools";
+    private PopupMenuTreeTools popupMenuTreeTools;
 
     public ExtensionTreeTools() {
         super("TreeTools");
-        this.setOrder(667);	// Want this to be as low as possible :)
-	}
-	
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-	    super.hook(extensionHook);
-	    if (getView() != null) {
+        this.setOrder(667); // Want this to be as low as possible :)
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+        if (getView() != null) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuTreeTools());
-	    }
-	}
-	
-	private PopupMenuTreeTools getPopupMenuTreeTools() {
-		if (popupMenuTreeTools == null) {
-			popupMenuTreeTools = new PopupMenuTreeTools();
-		}
-		return popupMenuTreeTools;
-		
-	}
+        }
+    }
 
-	@Override
-	public String getAuthor() {
-		return "Carl Sampson";
-	}
+    private PopupMenuTreeTools getPopupMenuTreeTools() {
+        if (popupMenuTreeTools == null) {
+            popupMenuTreeTools = new PopupMenuTreeTools();
+        }
+        return popupMenuTreeTools;
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("treetools.desc");
-	}
+    @Override
+    public String getAuthor() {
+        return "Carl Sampson";
+    }
 
-	@Override
-	public URL getURL() {
-		try {
-			return new URL("http://www.chs.us");
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
-	
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("treetools.desc");
+    }
+
+    @Override
+    public URL getURL() {
+        try {
+            return new URL("http://www.chs.us");
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 }

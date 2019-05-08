@@ -21,11 +21,9 @@ package org.zaproxy.zap.extension.jxbrowserwindows;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -43,8 +41,11 @@ public class ExtensionJxBrowserWindows extends ExtensionAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(ExtensionJxBrowserWindows.class);
 
-    private static final ImageIcon CHROMIUM_ICON = DisplayUtils.getScaledIcon(
-            new ImageIcon(ExtensionJxBrowser.class.getResource(ExtensionJxBrowser.RESOURCES + "/chromium.png")));
+    private static final ImageIcon CHROMIUM_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ExtensionJxBrowser.class.getResource(
+                                    ExtensionJxBrowser.RESOURCES + "/chromium.png")));
 
     private JButton launchBrowserButton;
 
@@ -66,53 +67,56 @@ public class ExtensionJxBrowserWindows extends ExtensionAdaptor {
             if (Constant.isWindows() && !Utils.isOs64Bits()) {
                 // Only show if we're running on the right platform
                 View.getSingleton().addMainToolbarButton(this.getLaunchBrowserButton());
-    
+
                 ZapMenuItem menulaunch = new ZapMenuItem("jxbrowser.menu.launch");
-                menulaunch.addActionListener(new java.awt.event.ActionListener() {
-    
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent ae) {
-                        launchBrowser(null);
-                    }
-                });
-    
+                menulaunch.addActionListener(
+                        new java.awt.event.ActionListener() {
+
+                            @Override
+                            public void actionPerformed(java.awt.event.ActionEvent ae) {
+                                launchBrowser(null);
+                            }
+                        });
+
                 extensionHook.getHookMenu().addToolsMenuItem(menulaunch);
             }
         }
     }
-    
+
     private JButton getLaunchBrowserButton() {
         if (launchBrowserButton == null) {
             launchBrowserButton = new JButton();
             launchBrowserButton.setIcon(CHROMIUM_ICON);
-            launchBrowserButton.setToolTipText(Constant.messages.getString("jxbrowser.button.launch"));
-            launchBrowserButton.addActionListener(new ActionListener() {
+            launchBrowserButton.setToolTipText(
+                    Constant.messages.getString("jxbrowser.button.launch"));
+            launchBrowserButton.addActionListener(
+                    new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    launchBrowser(null);
-                }
-            });
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            launchBrowser(null);
+                        }
+                    });
         }
         return launchBrowserButton;
     }
 
     private void launchBrowser(final String url) {
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(
+                new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    ZapBrowserFrame zbf = new ZapBrowserFrame(true, true);
-                    if (url != null) {
-                        zbf.getBrowser().loadURL(url);
+                    @Override
+                    public void run() {
+                        try {
+                            ZapBrowserFrame zbf = new ZapBrowserFrame(true, true);
+                            if (url != null) {
+                                zbf.getBrowser().loadURL(url);
+                            }
+                        } catch (Exception e) {
+                            LOGGER.error(e.getMessage(), e);
+                        }
                     }
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            }
-        });
-
+                });
     }
 
     @Override

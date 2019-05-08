@@ -23,82 +23,94 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.PatternSyntaxException;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.ui.ChannelSortedListModel;
 
 public class WebSocketBreakDialogEdit extends WebSocketBreakDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ActionListener actionListenerCancel;
-	private ActionListener actionListenerSubmit;
-	
-	private WebSocketBreakpointMessage breakpoint;
+    private ActionListener actionListenerCancel;
+    private ActionListener actionListenerSubmit;
 
-	public WebSocketBreakDialogEdit(WebSocketBreakpointsUiManagerInterface breakPointsManager, ChannelSortedListModel channelsModel) throws HeadlessException {
-		super(breakPointsManager, channelsModel);
-	}
+    private WebSocketBreakpointMessage breakpoint;
 
-	@Override
-	protected String getBtnSubmitText() {
-		return Constant.messages.getString("brk.edit.button.save");
-	}
+    public WebSocketBreakDialogEdit(
+            WebSocketBreakpointsUiManagerInterface breakPointsManager,
+            ChannelSortedListModel channelsModel)
+            throws HeadlessException {
+        super(breakPointsManager, channelsModel);
+    }
 
-	@Override
-	protected String getDialogTitle() {
-		return Constant.messages.getString("brk.edit.title");
-	}
+    @Override
+    protected String getBtnSubmitText() {
+        return Constant.messages.getString("brk.edit.button.save");
+    }
 
-	@Override
-	protected ActionListener getActionListenerCancel() {
-		if (actionListenerCancel == null) {
-			actionListenerCancel = new ActionListener() { 
+    @Override
+    protected String getDialogTitle() {
+        return Constant.messages.getString("brk.edit.title");
+    }
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    breakpoint = null;
-                    dispose();
-                }
-			};
-		}
-		return actionListenerCancel;
-	}
+    @Override
+    protected ActionListener getActionListenerCancel() {
+        if (actionListenerCancel == null) {
+            actionListenerCancel =
+                    new ActionListener() {
 
-	@Override
-	protected ActionListener getActionListenerSubmit() {
-		if (actionListenerSubmit == null) {
-			actionListenerSubmit = new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            breakpoint = null;
+                            dispose();
+                        }
+                    };
+        }
+        return actionListenerCancel;
+    }
 
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						breakPointsManager.editBreakpoint(breakpoint, getWebSocketBreakpointMessage());
-	                    breakpoint = null;
-	                    dispose();
-					} catch (PatternSyntaxException e) {
-						// show popup
-						View.getSingleton().showWarningDialog(Constant.messages.getString("filter.replacedialog.invalidpattern"));
-				        wsUiHelper.getPatternTextField().grabFocus();
-				        return;
-					}
-				}
-			};
-		}
-		return actionListenerSubmit;
-	}
+    @Override
+    protected ActionListener getActionListenerSubmit() {
+        if (actionListenerSubmit == null) {
+            actionListenerSubmit =
+                    new ActionListener() {
 
-	public void setBreakpoint(WebSocketBreakpointMessage breakpoint) {
+                        @Override
+                        public void actionPerformed(ActionEvent evt) {
+                            try {
+                                breakPointsManager.editBreakpoint(
+                                        breakpoint, getWebSocketBreakpointMessage());
+                                breakpoint = null;
+                                dispose();
+                            } catch (PatternSyntaxException e) {
+                                // show popup
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "filter.replacedialog.invalidpattern"));
+                                wsUiHelper.getPatternTextField().grabFocus();
+                                return;
+                            }
+                        }
+                    };
+        }
+        return actionListenerSubmit;
+    }
+
+    public void setBreakpoint(WebSocketBreakpointMessage breakpoint) {
         resetDialogValues();
-        
+
         this.breakpoint = breakpoint;
-        
+
         Direction direction = breakpoint.getDirection();
         Boolean isOutgoing = null;
         if (direction != null) {
-        	isOutgoing = direction.equals(Direction.OUTGOING) ? true : false;
+            isOutgoing = direction.equals(Direction.OUTGOING) ? true : false;
         }
-        setDialogValues(breakpoint.getOpcode(), breakpoint.getChannelId(), breakpoint.getPayloadPattern(), isOutgoing);
+        setDialogValues(
+                breakpoint.getOpcode(),
+                breakpoint.getChannelId(),
+                breakpoint.getPayloadPattern(),
+                isOutgoing);
     }
 }

@@ -26,45 +26,45 @@ import org.zaproxy.zap.extension.sse.ui.httppanel.views.EventStreamPanelTextView
 
 public class EventStreamLargePayloadView extends EventStreamPanelTextView {
 
-	public static final String NAME = "largePayload";
-	
-	public static final String CAPTION_NAME = Constant.messages.getString("sse.panel.view.largepayload.name");
-	
-	public EventStreamLargePayloadView(StringEventStreamPanelViewModel model) {
-		super(model);
-	}
-	
-	@Override
-	public String getName() {
-		return NAME;
-	}
-	
-	@Override
-	public String getCaptionName() {
-		return CAPTION_NAME;
-	}
+    public static final String NAME = "largePayload";
 
-	@Override
-	public int getPosition() {
-		return 1;
-	}
+    public static final String CAPTION_NAME =
+            Constant.messages.getString("sse.panel.view.largepayload.name");
 
-	@Override
-	public boolean isEnabled(Message message) {
-		return EventStreamLargeEventUtil.isLargeEvent(message);
-	}
+    public EventStreamLargePayloadView(StringEventStreamPanelViewModel model) {
+        super(model);
+    }
 
-	@Override
-	public boolean hasChanged() {
-		return false;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public boolean isEditable() {
-		return false;
-	}
+    @Override
+    public String getCaptionName() {
+        return CAPTION_NAME;
+    }
 
-	@Override
-	public void setEditable(boolean editable) {
-	}
+    @Override
+    public int getPosition() {
+        return 1;
+    }
+
+    @Override
+    public boolean isEnabled(Message message) {
+        return EventStreamLargeEventUtil.isLargeEvent(message);
+    }
+
+    @Override
+    public boolean hasChanged() {
+        return false;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return false;
+    }
+
+    @Override
+    public void setEditable(boolean editable) {}
 }

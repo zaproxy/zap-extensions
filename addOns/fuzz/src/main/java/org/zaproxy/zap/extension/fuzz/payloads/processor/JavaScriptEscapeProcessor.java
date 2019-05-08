@@ -26,8 +26,7 @@ public class JavaScriptEscapeProcessor implements DefaultPayloadProcessor {
 
     public static final JavaScriptEscapeProcessor INSTANCE = new JavaScriptEscapeProcessor();
 
-    public JavaScriptEscapeProcessor() {
-    }
+    public JavaScriptEscapeProcessor() {}
 
     @Override
     public DefaultPayload process(DefaultPayload payload) {
@@ -39,5 +38,4 @@ public class JavaScriptEscapeProcessor implements DefaultPayloadProcessor {
     public JavaScriptEscapeProcessor copy() {
         return this;
     }
-
 }

@@ -19,9 +19,7 @@
  */
 package org.zaproxy.zap.extension.websocket;
 
-/**
- * Contains more information about fuzzing process.
- */
+/** Contains more information about fuzzing process. */
 public class WebSocketFuzzMessageDTO extends WebSocketMessageDTO {
 
     public enum State {
@@ -30,19 +28,13 @@ public class WebSocketFuzzMessageDTO extends WebSocketMessageDTO {
         ERROR
     }
 
-    /**
-     * Id of fuzzing process.
-     */
+    /** Id of fuzzing process. */
     public Integer fuzzId;
 
-    /**
-     * Contains sending status.
-     */
+    /** Contains sending status. */
     public State state = State.PENDING;
 
-    /**
-     * Text which was used for fuzzing.
-     */
+    /** Text which was used for fuzzing. */
     public String fuzz;
 
     public WebSocketFuzzMessageDTO(WebSocketChannelDTO channelDto) {

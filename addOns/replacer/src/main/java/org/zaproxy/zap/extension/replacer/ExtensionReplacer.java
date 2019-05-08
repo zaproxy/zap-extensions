@@ -24,9 +24,7 @@ import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Pattern;
-
 import javax.swing.KeyStroke;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -41,11 +39,10 @@ import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /**
- * An add-on which provides an easy way to replace strings in requests and responses.
- * TODO
- *      Implement for contexts as well
- * @author psiinon
+ * An add-on which provides an easy way to replace strings in requests and responses. TODO Implement
+ * for contexts as well
  *
+ * @author psiinon
  */
 public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderListener {
 
@@ -55,7 +52,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     protected static final String PREFIX = "replacer";
 
     private OptionsReplacerPanel optionsReplacerPanel;
-    private ReplacerParam params; 
+    private ReplacerParam params;
     private ZapMenuItem replacerMenuItem;
     private static final Logger LOGGER = Logger.getLogger(ExtensionReplacer.class);
 
@@ -75,7 +72,6 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
             extensionHook.getHookView().addOptionPanel(getOptionsReplacerPanel());
             extensionHook.getHookMenu().addToolsMenuItem(getReplacerMenuItem());
         }
-
     }
 
     @Override
@@ -130,35 +126,44 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     @SuppressWarnings("deprecation")
     private ZapMenuItem getReplacerMenuItem() {
         if (replacerMenuItem == null) {
-            replacerMenuItem = new ZapMenuItem(PREFIX + ".topmenu.tools.shortcut", 
-                    // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                    KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+            replacerMenuItem =
+                    new ZapMenuItem(
+                            PREFIX + ".topmenu.tools.shortcut",
+                            // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke
+                            // with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
+                            KeyStroke.getKeyStroke(
+                                    KeyEvent.VK_R,
+                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
+                                    false));
 
-            replacerMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent ae) {
-                    Control.getSingleton().getMenuToolsControl().options(OptionsReplacerPanel.PANEL_NAME);
-                }
-            });
+            replacerMenuItem.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent ae) {
+                            Control.getSingleton()
+                                    .getMenuToolsControl()
+                                    .options(OptionsReplacerPanel.PANEL_NAME);
+                        }
+                    });
         }
         return replacerMenuItem;
     }
 
-    private static boolean contains (String original, String match, Pattern p) {
+    private static boolean contains(String original, String match, Pattern p) {
         if (p != null) {
             return p.matcher(original).find();
         }
-        
+
         return original.contains(match);
     }
 
-    private static String replace (String original, String match, Pattern p, String replacement) {
+    private static String replace(String original, String match, Pattern p, String replacement) {
         if (p != null) {
             return p.matcher(original).replaceAll(replacement);
         }
         return original.replace(match, replacement);
     }
-    
+
     @Override
     public void onHttpRequestSend(HttpMessage msg, int initiator, HttpSender httpSender) {
         for (ReplacerParamRule rule : this.getParams().getRules()) {
@@ -168,42 +173,60 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                     p = Pattern.compile(rule.getMatchString());
                 }
                 switch (rule.getMatchType()) {
-                case REQ_HEADER:
-                    LOGGER.debug("Add in request header: " + rule.getMatchString() + " : " + rule.getReplacement());
-                    if (rule.getReplacement().length() == 0) {
-                        // Remove the header
-                        msg.getRequestHeader().setHeader(rule.getMatchString(), null);
-                    } else {
-                        msg.getRequestHeader().setHeader(rule.getMatchString(), rule.getReplacement());
-                    }
-                    break;
-                case REQ_HEADER_STR:
-                    LOGGER.debug("Replace in request header: " + rule.getMatchString() + " with " + rule.getReplacement());
-                    String header = msg.getRequestHeader().toString();
-                    if (contains(header, rule.getMatchString(), p)) {
-                        header = replace(header, rule.getMatchString(), p, rule.getReplacement());
-                        try {
-                            msg.setRequestHeader(new HttpRequestHeader(header));
-                        } catch (HttpMalformedHeaderException e) {
-                            LOGGER.error(e.getMessage(), e);
+                    case REQ_HEADER:
+                        LOGGER.debug(
+                                "Add in request header: "
+                                        + rule.getMatchString()
+                                        + " : "
+                                        + rule.getReplacement());
+                        if (rule.getReplacement().length() == 0) {
+                            // Remove the header
+                            msg.getRequestHeader().setHeader(rule.getMatchString(), null);
+                        } else {
+                            msg.getRequestHeader()
+                                    .setHeader(rule.getMatchString(), rule.getReplacement());
                         }
-                    }
-                    break;
-                case REQ_BODY_STR:
-                    LOGGER.debug("Add in request body: " + rule.getMatchString() + " : " + rule.getReplacement());
-                    String body = msg.getRequestBody().toString();
-                    if (contains(body, rule.getMatchString(), p)) {
-                        body = replace(body, rule.getMatchString(), p, rule.getReplacement());
-                        msg.getRequestBody().setBody(body);
-                        msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
-                    }
-                    break;
-                case RESP_HEADER:
-                case RESP_HEADER_STR:
-                case RESP_BODY_STR:
-                    // Ignore response rules here
-                    LOGGER.debug("Ignore response rule " + rule.getDescription());
-                    break;
+                        break;
+                    case REQ_HEADER_STR:
+                        LOGGER.debug(
+                                "Replace in request header: "
+                                        + rule.getMatchString()
+                                        + " with "
+                                        + rule.getReplacement());
+                        String header = msg.getRequestHeader().toString();
+                        if (contains(header, rule.getMatchString(), p)) {
+                            header =
+                                    replace(
+                                            header,
+                                            rule.getMatchString(),
+                                            p,
+                                            rule.getReplacement());
+                            try {
+                                msg.setRequestHeader(new HttpRequestHeader(header));
+                            } catch (HttpMalformedHeaderException e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        }
+                        break;
+                    case REQ_BODY_STR:
+                        LOGGER.debug(
+                                "Add in request body: "
+                                        + rule.getMatchString()
+                                        + " : "
+                                        + rule.getReplacement());
+                        String body = msg.getRequestBody().toString();
+                        if (contains(body, rule.getMatchString(), p)) {
+                            body = replace(body, rule.getMatchString(), p, rule.getReplacement());
+                            msg.getRequestBody().setBody(body);
+                            msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
+                        }
+                        break;
+                    case RESP_HEADER:
+                    case RESP_HEADER_STR:
+                    case RESP_BODY_STR:
+                        // Ignore response rules here
+                        LOGGER.debug("Ignore response rule " + rule.getDescription());
+                        break;
                 }
             }
         }
@@ -218,42 +241,61 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                     p = Pattern.compile(rule.getMatchString());
                 }
                 switch (rule.getMatchType()) {
-                case REQ_HEADER:
-                case REQ_HEADER_STR:
-                case REQ_BODY_STR:
-                    // Ignore request rules here
-                    LOGGER.debug("Ignore request rule " + rule.getDescription());
-                    break;
-                case RESP_HEADER:
-                    LOGGER.debug("Add in response header: " + rule.getMatchString() + " : " + rule.getReplacement());
-                    if (rule.getReplacement().length() == 0) {
-                        // Remove the header
-                        msg.getResponseHeader().setHeader(rule.getMatchString(), null);
-                    } else {
-                        msg.getResponseHeader().setHeader(rule.getMatchString(), rule.getReplacement());
-                    }
-                    break;
-                case RESP_HEADER_STR:
-                    LOGGER.debug("Replace in response header: " + rule.getMatchString() + " with " + rule.getReplacement());
-                    String header = msg.getResponseHeader().toString();
-                    if (contains(header, rule.getMatchString(), p)) {
-                        header = replace(header, rule.getMatchString(), p, rule.getReplacement());
-                        try {
-                            msg.setResponseHeader(new HttpResponseHeader(header));
-                        } catch (HttpMalformedHeaderException e) {
-                            LOGGER.error(e.getMessage(), e);
+                    case REQ_HEADER:
+                    case REQ_HEADER_STR:
+                    case REQ_BODY_STR:
+                        // Ignore request rules here
+                        LOGGER.debug("Ignore request rule " + rule.getDescription());
+                        break;
+                    case RESP_HEADER:
+                        LOGGER.debug(
+                                "Add in response header: "
+                                        + rule.getMatchString()
+                                        + " : "
+                                        + rule.getReplacement());
+                        if (rule.getReplacement().length() == 0) {
+                            // Remove the header
+                            msg.getResponseHeader().setHeader(rule.getMatchString(), null);
+                        } else {
+                            msg.getResponseHeader()
+                                    .setHeader(rule.getMatchString(), rule.getReplacement());
                         }
-                    }
-                    break;
-                case RESP_BODY_STR:
-                    LOGGER.debug("Replace in response body: " + rule.getMatchString() + " with " + rule.getReplacement());
-                    String body = msg.getResponseBody().toString();
-                    if (contains(body, rule.getMatchString(), p)) {
-                        body = replace(body, rule.getMatchString(), p, rule.getReplacement());
-                        msg.getResponseBody().setBody(body);
-                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
-                    }
-                    break;
+                        break;
+                    case RESP_HEADER_STR:
+                        LOGGER.debug(
+                                "Replace in response header: "
+                                        + rule.getMatchString()
+                                        + " with "
+                                        + rule.getReplacement());
+                        String header = msg.getResponseHeader().toString();
+                        if (contains(header, rule.getMatchString(), p)) {
+                            header =
+                                    replace(
+                                            header,
+                                            rule.getMatchString(),
+                                            p,
+                                            rule.getReplacement());
+                            try {
+                                msg.setResponseHeader(new HttpResponseHeader(header));
+                            } catch (HttpMalformedHeaderException e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        }
+                        break;
+                    case RESP_BODY_STR:
+                        LOGGER.debug(
+                                "Replace in response body: "
+                                        + rule.getMatchString()
+                                        + " with "
+                                        + rule.getReplacement());
+                        String body = msg.getResponseBody().toString();
+                        if (contains(body, rule.getMatchString(), p)) {
+                            body = replace(body, rule.getMatchString(), p, rule.getReplacement());
+                            msg.getResponseBody().setBody(body);
+                            msg.getResponseHeader()
+                                    .setContentLength(msg.getResponseBody().length());
+                        }
+                        break;
                 }
             }
         }

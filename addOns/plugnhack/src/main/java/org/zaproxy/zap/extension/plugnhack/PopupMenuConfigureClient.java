@@ -22,47 +22,46 @@ package org.zaproxy.zap.extension.plugnhack;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JList;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 
 public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionPlugNHack extension = null;
-	private JList<MonitoredPage> clientsList = null;
+    private static final long serialVersionUID = 1L;
+    private ExtensionPlugNHack extension = null;
+    private JList<MonitoredPage> clientsList = null;
     private static Logger log = Logger.getLogger(PopupMenuConfigureClient.class);
-    
+
     public PopupMenuConfigureClient(ExtensionPlugNHack extension) {
         super(Constant.messages.getString("plugnhack.clientconf.popup"));
-        
+
         this.extension = extension;
-        
- 		initialize();
+
+        initialize();
     }
 
-	private void initialize() {
-        this.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent evt) {
-                MonitoredPage page = clientsList.getSelectedValue();
-                if (page != null) {
-                	extension.showClientConfigDialog(page);
-                }
-        	}
-        });
-	}
-	
+    private void initialize() {
+        this.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent evt) {
+                        MonitoredPage page = clientsList.getSelectedValue();
+                        if (page != null) {
+                            extension.showClientConfigDialog(page);
+                        }
+                    }
+                });
+    }
+
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public boolean isEnableForComponent(Component invoker) {
-        
+
         if (ClientsPanel.CLIENTS_LIST_NAME.equals(invoker.getName())) {
             try {
-            	clientsList = (JList<MonitoredPage>) invoker;
+                clientsList = (JList<MonitoredPage>) invoker;
                 MonitoredPage client = clientsList.getSelectedValue();
                 if (client != null && client.isActive()) {
                     this.setEnabled(true);
@@ -71,10 +70,9 @@ public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
                 }
 
             } catch (Exception e) {
-            	log.warn(e.getMessage(), e);
+                log.warn(e.getMessage(), e);
             }
             return true;
-            
         }
         return false;
     }

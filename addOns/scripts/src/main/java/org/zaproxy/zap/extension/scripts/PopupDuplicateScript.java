@@ -20,82 +20,73 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
-
 import javax.swing.JTree;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
-
-/**
- * ZAP: New Popup Menu Alert Delete
- */
+/** ZAP: New Popup Menu Alert Delete */
 public class PopupDuplicateScript extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionScriptsUI extension = null;
+    private ExtensionScriptsUI extension = null;
 
-    /**
-     * 
-     */
+    /** */
     public PopupDuplicateScript(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
- 		initialize();
+        initialize();
     }
 
-    /**
-     * @param label
-     */
+    /** @param label */
     public PopupDuplicateScript(String label) {
         super(label);
     }
 
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
+    /** This method initializes this */
+    private void initialize() {
         this.setText(Constant.messages.getString("scripts.duplicate.popup"));
 
-        this.addActionListener(new java.awt.event.ActionListener() { 
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
 
-        	@Override
-        	public void actionPerformed(java.awt.event.ActionEvent e) {
-        		ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
-        		if (script != null) {
-        			duplicateScript(script);
-        		}
-        	}
-        });
-			
-	}
-	
-	private void duplicateScript(ScriptWrapper sw) {
-		extension.getScriptsPanel().showCopyScriptDialog(sw);
-	}
-	
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
+                        if (script != null) {
+                            duplicateScript(script);
+                        }
+                    }
+                });
+    }
+
+    private void duplicateScript(ScriptWrapper sw) {
+        extension.getScriptsPanel().showCopyScriptDialog(sw);
+    }
+
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (invoker.getName() != null && invoker.getName().equals(ScriptsListPanel.TREE)) {
             try {
                 JTree tree = (JTree) invoker;
                 ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
-        		
-                if (node == null || node.isTemplate() ||
-                		node.getUserObject() == null || ! (node.getUserObject() instanceof ScriptWrapper)) {
-                	return false;
-                }
 
-                if (((ScriptWrapper)node.getUserObject()).getEngine() == null) {
+                if (node == null
+                        || node.isTemplate()
+                        || node.getUserObject() == null
+                        || !(node.getUserObject() instanceof ScriptWrapper)) {
                     return false;
                 }
-                	
-            	return extension.getScriptsPanel().getSelectedScript() != null;
-            } catch (Exception e) {}
-            
+
+                if (((ScriptWrapper) node.getUserObject()).getEngine() == null) {
+                    return false;
+                }
+
+                return extension.getScriptsPanel().getSelectedScript() != null;
+            } catch (Exception e) {
+            }
         }
         return false;
     }

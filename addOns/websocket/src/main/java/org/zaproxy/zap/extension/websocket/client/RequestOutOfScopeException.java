@@ -21,16 +21,17 @@ package org.zaproxy.zap.extension.websocket.client;
 
 import org.apache.commons.httpclient.URI;
 
-public class RequestOutOfScopeException extends Exception{
-    
+public class RequestOutOfScopeException extends Exception {
+
     private static final long serialVersionUID = 7078111064046230261L;
-    
+
     private final URI invalidRedirection;
-    RequestOutOfScopeException(String msg, URI invalidRedirection){
+
+    RequestOutOfScopeException(String msg, URI invalidRedirection) {
         super(msg);
         this.invalidRedirection = invalidRedirection;
     }
-    
+
     private final URI getInvalidRedirection() {
         return invalidRedirection;
     }

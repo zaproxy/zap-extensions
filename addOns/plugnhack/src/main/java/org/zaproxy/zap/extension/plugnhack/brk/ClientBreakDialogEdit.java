@@ -23,75 +23,84 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.PatternSyntaxException;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 
 public class ClientBreakDialogEdit extends ClientBreakDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ActionListener actionListenerCancel;
-	private ActionListener actionListenerSubmit;
-	
-	private ClientBreakpointMessage breakpoint;
+    private ActionListener actionListenerCancel;
+    private ActionListener actionListenerSubmit;
 
-	public ClientBreakDialogEdit(ExtensionPlugNHack extension, 
-			ClientBreakpointsUiManagerInterface breakPointsManager) throws HeadlessException {
-		super(extension, breakPointsManager);
-	}
+    private ClientBreakpointMessage breakpoint;
 
-	@Override
-	protected String getBtnSubmitText() {
-		return Constant.messages.getString("brk.edit.button.save");
-	}
+    public ClientBreakDialogEdit(
+            ExtensionPlugNHack extension, ClientBreakpointsUiManagerInterface breakPointsManager)
+            throws HeadlessException {
+        super(extension, breakPointsManager);
+    }
 
-	@Override
-	protected String getDialogTitle() {
-		return Constant.messages.getString("brk.edit.title");
-	}
+    @Override
+    protected String getBtnSubmitText() {
+        return Constant.messages.getString("brk.edit.button.save");
+    }
 
-	@Override
-	protected ActionListener getActionListenerCancel() {
-		if (actionListenerCancel == null) {
-			actionListenerCancel = new ActionListener() { 
+    @Override
+    protected String getDialogTitle() {
+        return Constant.messages.getString("brk.edit.title");
+    }
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    breakpoint = null;
-                    dispose();
-                }
-			};
-		}
-		return actionListenerCancel;
-	}
+    @Override
+    protected ActionListener getActionListenerCancel() {
+        if (actionListenerCancel == null) {
+            actionListenerCancel =
+                    new ActionListener() {
 
-	@Override
-	protected ActionListener getActionListenerSubmit() {
-		if (actionListenerSubmit == null) {
-			actionListenerSubmit = new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            breakpoint = null;
+                            dispose();
+                        }
+                    };
+        }
+        return actionListenerCancel;
+    }
 
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						breakPointsManager.editBreakpoint(breakpoint, getClientBreakpointMessage());
-	                    breakpoint = null;
-	                    dispose();
-					} catch (PatternSyntaxException e) {
-						// show popup
-						View.getSingleton().showWarningDialog(Constant.messages.getString("filter.replacedialog.invalidpattern"));
-				        return;
-					}
-				}
-			};
-		}
-		return actionListenerSubmit;
-	}
+    @Override
+    protected ActionListener getActionListenerSubmit() {
+        if (actionListenerSubmit == null) {
+            actionListenerSubmit =
+                    new ActionListener() {
 
-	public void setBreakpoint(ClientBreakpointMessage breakpoint) {
+                        @Override
+                        public void actionPerformed(ActionEvent evt) {
+                            try {
+                                breakPointsManager.editBreakpoint(
+                                        breakpoint, getClientBreakpointMessage());
+                                breakpoint = null;
+                                dispose();
+                            } catch (PatternSyntaxException e) {
+                                // show popup
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "filter.replacedialog.invalidpattern"));
+                                return;
+                            }
+                        }
+                    };
+        }
+        return actionListenerSubmit;
+    }
+
+    public void setBreakpoint(ClientBreakpointMessage breakpoint) {
         resetDialogValues();
-        
+
         this.breakpoint = breakpoint;
-        setDialogValues(breakpoint.getMessageType(), breakpoint.getClient(), breakpoint.getPayloadPattern());
+        setDialogValues(
+                breakpoint.getMessageType(),
+                breakpoint.getClient(),
+                breakpoint.getPayloadPattern());
     }
 }

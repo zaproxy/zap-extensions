@@ -21,14 +21,11 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 /**
  * thrown if an index file is not a valid V1 Git "pack index" file.
- * @author 70pointer@gmail.com
  *
+ * @author 70pointer@gmail.com
  */
 public class NotV1GitPackIndexFileException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 664525398598253409L;    	
-
+    /** */
+    private static final long serialVersionUID = 664525398598253409L;
 }

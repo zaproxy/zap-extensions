@@ -22,56 +22,54 @@ package org.zaproxy.zap.extension.jruby;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.script.ScriptEngine;
 import javax.swing.ImageIcon;
-
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class JrubyEngineWrapper extends DefaultEngineWrapper {
 
-	private final List<Path> defaultTemplates;
+    private final List<Path> defaultTemplates;
 
-	public JrubyEngineWrapper(ScriptEngine engine, List<Path> defaultTemplates) {
-		super(engine);
+    public JrubyEngineWrapper(ScriptEngine engine, List<Path> defaultTemplates) {
+        super(engine);
 
-		if (defaultTemplates == null) {
-			throw new IllegalArgumentException("Parameter defaultTemplates must not be null.");
-		}
+        if (defaultTemplates == null) {
+            throw new IllegalArgumentException("Parameter defaultTemplates must not be null.");
+        }
 
-		this.defaultTemplates = defaultTemplates;
-	}
+        this.defaultTemplates = defaultTemplates;
+    }
 
-	@Override
-	public ImageIcon getIcon() {
-		return ExtensionJruby.RUBY_ICON;
-	}
+    @Override
+    public ImageIcon getIcon() {
+        return ExtensionJruby.RUBY_ICON;
+    }
 
-	@Override
-	public String getSyntaxStyle() {
-		return SyntaxConstants.SYNTAX_STYLE_RUBY;
-	}
-	
-	@Override
-	public List<String> getExtensions() {
-		List<String> list = new ArrayList<String>();
-		list.add("rb");
-		return list;
-	}
-	
-	@Override
-	public boolean isRawEngine() {
-		return false;
-	}
+    @Override
+    public String getSyntaxStyle() {
+        return SyntaxConstants.SYNTAX_STYLE_RUBY;
+    }
 
-	@Override
-	public boolean isDefaultTemplate(ScriptWrapper script) {
-		if (script.getFile() == null) {
-			return false;
-		}
+    @Override
+    public List<String> getExtensions() {
+        List<String> list = new ArrayList<String>();
+        list.add("rb");
+        return list;
+    }
 
-		return defaultTemplates.contains(script.getFile().toPath());
-	}
+    @Override
+    public boolean isRawEngine() {
+        return false;
+    }
+
+    @Override
+    public boolean isDefaultTemplate(ScriptWrapper script) {
+        if (script.getFile() == null) {
+            return false;
+        }
+
+        return defaultTemplates.contains(script.getFile().toPath());
+    }
 }

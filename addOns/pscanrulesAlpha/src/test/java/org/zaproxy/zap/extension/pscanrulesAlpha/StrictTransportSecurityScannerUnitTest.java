@@ -30,244 +30,251 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class StrictTransportSecurityScannerUnitTest extends PassiveScannerTest<StrictTransportSecurityScanner> {
+public class StrictTransportSecurityScannerUnitTest
+        extends PassiveScannerTest<StrictTransportSecurityScanner> {
 
-	private static final String STS_HEADER = "Strict-Transport-Security";
-	private static final String HEADER_VALUE = "max-age=31536000";// 1 year
-	private static final String SHORT_VALUE = "max-age=86400";
+    private static final String STS_HEADER = "Strict-Transport-Security";
+    private static final String HEADER_VALUE = "max-age=31536000"; // 1 year
+    private static final String SHORT_VALUE = "max-age=86400";
 
-	private HttpMessage createMessage() throws URIException {
-		HttpRequestHeader requestHeader = new HttpRequestHeader();
-		requestHeader.setURI(new URI("https://example.com", false));
+    private HttpMessage createMessage() throws URIException {
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        requestHeader.setURI(new URI("https://example.com", false));
 
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader(requestHeader);
-		return msg;
-	}
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+        return msg;
+    }
 
-	@Override
-	protected StrictTransportSecurityScanner createScanner() {
-		return new StrictTransportSecurityScanner();
-	}
+    @Override
+    protected StrictTransportSecurityScanner createScanner() {
+        return new StrictTransportSecurityScanner();
+    }
 
-	@Test
-	public void scannerNameShouldMatch() {
-		// Quick test to verify scanner name which is used in the policy dialog but not
-		// alerts
+    @Test
+    public void scannerNameShouldMatch() {
+        // Quick test to verify scanner name which is used in the policy dialog but not
+        // alerts
 
-		// Given
-		StrictTransportSecurityScanner thisScanner = createScanner();
-		// Then
-		assertThat(thisScanner.getName(), equalTo("Strict-Transport-Security Header Scanner"));
-	}
+        // Given
+        StrictTransportSecurityScanner thisScanner = createScanner();
+        // Then
+        assertThat(thisScanner.getName(), equalTo("Strict-Transport-Security Header Scanner"));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponsIsNotHttps() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setSecure(false);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponsIsNotHttps() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setSecure(false);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfResponseMissingHeader() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Header Not Set"));
-	}
+    @Test
+    public void shouldRaiseAlertIfResponseMissingHeader() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(), equalTo("Strict-Transport-Security Header Not Set"));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseHasWelformedHeaderAndValue() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseHasWelformedHeaderAndValue() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfResponseHasMultipleHeaders() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE);
-		msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec)"));
-	}
+    @Test
+    public void shouldRaiseAlertIfResponseHasMultipleHeaders() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE);
+        msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo(
+                        "Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec)"));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfResponseHasStsDisablingHeader() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(STS_HEADER, "max-age=0");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Disabled"));
-	}
+    @Test
+    public void shouldRaiseAlertIfResponseHasStsDisablingHeader() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(STS_HEADER, "max-age=0");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getName(), equalTo("Strict-Transport-Security Disabled"));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfResponseHasStsHeaderWithBlankValue() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(STS_HEADER, "");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Missing Max-Age (Non-compliant with Spec)"));
-	}
+    @Test
+    public void shouldRaiseAlertIfResponseHasStsHeaderWithBlankValue() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(STS_HEADER, "");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("Strict-Transport-Security Missing Max-Age (Non-compliant with Spec)"));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfHeaderValueHasJunkContent() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE + "”");// Append curly quote
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Malformed Content (Non-compliant with Spec)"));
-	}
+    @Test
+    public void shouldRaiseAlertIfHeaderValueHasJunkContent() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE + "”"); // Append curly quote
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("Strict-Transport-Security Malformed Content (Non-compliant with Spec)"));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfHeaderValueHasImproperQuotes() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(STS_HEADER, "\"max-age=84600\"");// Quotes before max
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec)"));
-	}
+    @Test
+    public void shouldRaiseAlertIfHeaderValueHasImproperQuotes() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(STS_HEADER, "\"max-age=84600\""); // Quotes before max
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec)"));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfThresholdLowNonSecureResponseWithHeader() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setSecure(false);
-		msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
-		rule.setAlertThreshold(AlertThreshold.LOW);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Header on Plain HTTP Response"));
-	}
+    @Test
+    public void shouldRaiseAlertIfThresholdLowNonSecureResponseWithHeader() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setSecure(false);
+        msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("Strict-Transport-Security Header on Plain HTTP Response"));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfThresholdLowNonSecureResponseNoHeader() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setSecure(false);
-		rule.setAlertThreshold(AlertThreshold.LOW);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfThresholdLowNonSecureResponseNoHeader() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setSecure(false);
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfResponseContainsStsHeaderAndMeta() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
-		msg.setResponseBody(
-				"<html><meta http-equiv=\"Strict-Transport-Security\" content=\"max-age=31536000\" /></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Defined via META (Non-compliant with Spec)"));
-	}
+    @Test
+    public void shouldRaiseAlertIfResponseContainsStsHeaderAndMeta() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
+        msg.setResponseBody(
+                "<html><meta http-equiv=\"Strict-Transport-Security\" content=\"max-age=31536000\" /></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("Strict-Transport-Security Defined via META (Non-compliant with Spec)"));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfThresholdNotLowRedirectSameDomain() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setStatusCode(301);
-		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://example.com/default/");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfThresholdNotLowRedirectSameDomain() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setStatusCode(301);
+        msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://example.com/default/");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfThresholdLowRedirectSameDomain() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setStatusCode(301);
-		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://example.com/default/");
-		rule.setAlertThreshold(AlertThreshold.LOW);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Header Not Set"));
-	}
+    @Test
+    public void shouldRaiseAlertIfThresholdLowRedirectSameDomain() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setStatusCode(301);
+        msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://example.com/default/");
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(), equalTo("Strict-Transport-Security Header Not Set"));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfThresholdNotLowRedirectRelativePath() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setStatusCode(301);
-		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "/default/");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfThresholdNotLowRedirectRelativePath() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setStatusCode(301);
+        msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "/default/");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfThresholdLowRedirectRelativePath() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setStatusCode(301);
-		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "/default/");
-		rule.setAlertThreshold(AlertThreshold.LOW);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Header Not Set"));
-	}
+    @Test
+    public void shouldRaiseAlertIfThresholdLowRedirectRelativePath() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setStatusCode(301);
+        msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "/default/");
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(), equalTo("Strict-Transport-Security Header Not Set"));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfThresholdNotLowRedirectCrossDomain() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setStatusCode(301);
-		msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://other.com/default/");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo("Strict-Transport-Security Header Not Set"));
-	}
+    @Test
+    public void shouldRaiseAlertIfThresholdNotLowRedirectCrossDomain() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setStatusCode(301);
+        msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://other.com/default/");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(), equalTo("Strict-Transport-Security Header Not Set"));
+    }
 }

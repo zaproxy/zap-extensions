@@ -23,14 +23,15 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.AbstractStringHttpPanelViewModel;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
-public abstract class AbstractWebSocketStringPanelViewModel extends AbstractStringHttpPanelViewModel {
+public abstract class AbstractWebSocketStringPanelViewModel
+        extends AbstractStringHttpPanelViewModel {
 
     protected WebSocketMessageDTO webSocketMessage;
-    
+
     @Override
     public void setMessage(Message aMessage) {
         webSocketMessage = (WebSocketMessageDTO) aMessage;
-        
+
         super.setMessage(aMessage);
     }
 }

@@ -20,19 +20,19 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.nio.charset.Charset;
-
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.URLEncodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractCharsetProcessorUIPanel.AbstractCharsetProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.URLEncodeProcessorUIHandler.URLEncodeProcessorUI;
 
-public class URLEncodeProcessorUIHandler implements
-        PayloadProcessorUIHandler<DefaultPayload, URLEncodeProcessor, URLEncodeProcessorUI> {
+public class URLEncodeProcessorUIHandler
+        implements PayloadProcessorUIHandler<
+                DefaultPayload, URLEncodeProcessor, URLEncodeProcessorUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.urlEncode.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.payload.processor.urlEncode.name");
 
     @Override
     public String getName() {
@@ -54,7 +54,8 @@ public class URLEncodeProcessorUIHandler implements
         return new URLEncodeProcessorUIPanel();
     }
 
-    public static class URLEncodeProcessorUI extends AbstractCharsetProcessorUI<DefaultPayload, URLEncodeProcessor> {
+    public static class URLEncodeProcessorUI
+            extends AbstractCharsetProcessorUI<DefaultPayload, URLEncodeProcessor> {
 
         public URLEncodeProcessorUI(Charset charset) {
             super(charset);
@@ -77,7 +78,8 @@ public class URLEncodeProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return Constant.messages.getString("fuzz.payload.processor.urlEncode.description", getCharset().name());
+            return Constant.messages.getString(
+                    "fuzz.payload.processor.urlEncode.description", getCharset().name());
         }
 
         @Override
@@ -89,11 +91,11 @@ public class URLEncodeProcessorUIHandler implements
         public URLEncodeProcessorUI copy() {
             return this;
         }
-
     }
 
-    public static class URLEncodeProcessorUIPanel extends
-            AbstractCharsetProcessorUIPanel<DefaultPayload, URLEncodeProcessor, URLEncodeProcessorUI> {
+    public static class URLEncodeProcessorUIPanel
+            extends AbstractCharsetProcessorUIPanel<
+                    DefaultPayload, URLEncodeProcessor, URLEncodeProcessorUI> {
 
         private JPanel fieldsPanel;
 

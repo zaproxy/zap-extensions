@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
+import io.swagger.models.Scheme;
+import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpHeader;
@@ -30,9 +32,6 @@ import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.spider.parser.SpiderParser;
-
-import io.swagger.models.Scheme;
-import net.htmlparser.jericho.Source;
 
 public class OpenApiSpider extends SpiderParser {
 
@@ -48,10 +47,14 @@ public class OpenApiSpider extends SpiderParser {
     @Override
     public boolean parseResource(HttpMessage message, Source source, int depth) {
         try {
-            Scheme defaultScheme = Scheme.forValue(message.getRequestHeader().getURI().getScheme().toLowerCase());
-            Converter converter = new SwaggerConverter(defaultScheme,
-                    message.getRequestHeader().getURI().getAuthority(),
-                    message.getResponseBody().toString(), this.getValueGenerator());
+            Scheme defaultScheme =
+                    Scheme.forValue(message.getRequestHeader().getURI().getScheme().toLowerCase());
+            Converter converter =
+                    new SwaggerConverter(
+                            defaultScheme,
+                            message.getRequestHeader().getURI().getAuthority(),
+                            message.getResponseBody().toString(),
+                            this.getValueGenerator());
             requestor.run(converter.getRequestModels());
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
@@ -64,8 +67,8 @@ public class OpenApiSpider extends SpiderParser {
     public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
         try {
             String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
-            if (contentType.toLowerCase().startsWith("text") && 
-                    message.getResponseBody().toString().toLowerCase().startsWith("swagger:")) {
+            if (contentType.toLowerCase().startsWith("text")
+                    && message.getResponseBody().toString().toLowerCase().startsWith("swagger:")) {
                 return true;
             } else if (contentType.toLowerCase().startsWith("application")) {
                 return true;
@@ -76,12 +79,11 @@ public class OpenApiSpider extends SpiderParser {
         log.debug("Cant parse " + message.getRequestHeader().getURI());
         return false;
     }
-    
+
     private ValueGenerator getValueGenerator() {
         if (this.valGen == null) {
-            ExtensionSpider spider = Control.getSingleton()
-                    .getExtensionLoader()
-                    .getExtension(ExtensionSpider.class);
+            ExtensionSpider spider =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
             valGen = spider.getValueGenerator();
         }
         return valGen;

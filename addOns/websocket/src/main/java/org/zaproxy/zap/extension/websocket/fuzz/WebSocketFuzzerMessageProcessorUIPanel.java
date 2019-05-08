@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.websocket.fuzz;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUIPanel;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
-public interface WebSocketFuzzerMessageProcessorUIPanel<T extends WebSocketFuzzerMessageProcessor, T1 extends WebSocketFuzzerMessageProcessorUI<T>>
-        extends FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, T, T1> {
-
-}
+public interface WebSocketFuzzerMessageProcessorUIPanel<
+                T extends WebSocketFuzzerMessageProcessor,
+                T1 extends WebSocketFuzzerMessageProcessorUI<T>>
+        extends FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, T, T1> {}

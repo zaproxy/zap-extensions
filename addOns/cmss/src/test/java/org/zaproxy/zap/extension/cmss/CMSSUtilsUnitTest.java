@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.cmss;
 
-import org.junit.Test;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.zaproxy.zap.extension.cmss.CMSSUtils.checksum;
+
+import org.junit.Test;
 
 public class CMSSUtilsUnitTest {
 
@@ -45,5 +45,4 @@ public class CMSSUtilsUnitTest {
     public void checksumOfEmptyBytesArrayIsEqualToMD5HashOfEmptyString() throws Exception {
         assertThat(checksum(new byte[0]), is(checksum("".getBytes())));
     }
-
 }

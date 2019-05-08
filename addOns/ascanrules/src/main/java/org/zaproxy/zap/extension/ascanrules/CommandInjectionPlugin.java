@@ -27,10 +27,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.concurrent.ThreadLocalRandom;
-
 import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -47,43 +46,41 @@ import org.zaproxy.zap.model.Vulnerability;
 /**
  * Active Plugin for Command Injection testing and verification.
  * https://www.owasp.org/index.php/Command_Injection
- * 
+ *
  * @author yhawke (2013)
  * @author kingthorin+owaspzap@gmail.com (2015)
  */
 public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
-	/**
-	 * The name of the rule to obtain the time, in seconds, for time-based attacks.
-	 */
-	private static final String RULE_SLEEP_TIME = RuleConfigParam.RULE_COMMON_SLEEP_TIME;
+    /** The name of the rule to obtain the time, in seconds, for time-based attacks. */
+    private static final String RULE_SLEEP_TIME = RuleConfigParam.RULE_COMMON_SLEEP_TIME;
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "ascanrules.commandinjectionplugin.";
-	
-	// *NIX OS Command constants
-    private static final String  NIX_TEST_CMD = "cat /etc/passwd";    
-    private static final Pattern NIX_CTRL_PATTERN = Pattern.compile("root:.:0:0"); 
+    /** Prefix for internationalised messages used by this rule */
+    private static final String MESSAGE_PREFIX = "ascanrules.commandinjectionplugin.";
+
+    // *NIX OS Command constants
+    private static final String NIX_TEST_CMD = "cat /etc/passwd";
+    private static final Pattern NIX_CTRL_PATTERN = Pattern.compile("root:.:0:0");
     // Dot used to match 'x' or '!' (used in AIX)
-    
+
     // Windows OS Command constants
-    private static final String  WIN_TEST_CMD = "type %SYSTEMROOT%\\win.ini";
+    private static final String WIN_TEST_CMD = "type %SYSTEMROOT%\\win.ini";
     private static final Pattern WIN_CTRL_PATTERN = Pattern.compile("\\[fonts\\]");
-    
+
     // PowerShell Command constants
     private static final String PS_TEST_CMD = "get-help";
-    private static final Pattern PS_CTRL_PATTERN = Pattern.compile("(?:\\sget-help)|cmdlet|get-alias", Pattern.CASE_INSENSITIVE);
-    
+    private static final Pattern PS_CTRL_PATTERN =
+            Pattern.compile("(?:\\sget-help)|cmdlet|get-alias", Pattern.CASE_INSENSITIVE);
+
     // Useful if space char isn't allowed by filters
     // http://www.blackhatlibrary.net/Command_Injection
     private static final String BASH_SPACE_REPLACEMENT = "${IFS}";
-    
+
     // OS Command payloads for command Injection testing
     private static final Map<String, Pattern> NIX_OS_PAYLOADS = new LinkedHashMap<>();
     private static final Map<String, Pattern> WIN_OS_PAYLOADS = new LinkedHashMap<>();
     private static final Map<String, Pattern> PS_PAYLOADS = new LinkedHashMap<>();
+
     static {
         // No quote payloads
         NIX_OS_PAYLOADS.put("&" + NIX_TEST_CMD + "&", NIX_CTRL_PATTERN);
@@ -91,7 +88,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         WIN_OS_PAYLOADS.put("&" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         PS_PAYLOADS.put(";" + PS_TEST_CMD, PS_CTRL_PATTERN);
-        
+
         // Double quote payloads
         NIX_OS_PAYLOADS.put("\"&" + NIX_TEST_CMD + "&\"", NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("\";" + NIX_TEST_CMD + ";\"", NIX_CTRL_PATTERN);
@@ -105,18 +102,18 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         WIN_OS_PAYLOADS.put("'&" + WIN_TEST_CMD + "&'", WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("'|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         PS_PAYLOADS.put("';" + PS_TEST_CMD, PS_CTRL_PATTERN);
-        
-        // Special payloads   
-        NIX_OS_PAYLOADS.put("\n" + NIX_TEST_CMD + "\n", NIX_CTRL_PATTERN);  //force enter
-        NIX_OS_PAYLOADS.put("`" + NIX_TEST_CMD + "`", NIX_CTRL_PATTERN);    //backtick execution
-        NIX_OS_PAYLOADS.put("||" + NIX_TEST_CMD, NIX_CTRL_PATTERN);         //or control concatenation
-        NIX_OS_PAYLOADS.put("&&" + NIX_TEST_CMD, NIX_CTRL_PATTERN);         //and control concatenation
-        NIX_OS_PAYLOADS.put("|" + NIX_TEST_CMD + "#", NIX_CTRL_PATTERN);    //pipe & comment
+
+        // Special payloads
+        NIX_OS_PAYLOADS.put("\n" + NIX_TEST_CMD + "\n", NIX_CTRL_PATTERN); // force enter
+        NIX_OS_PAYLOADS.put("`" + NIX_TEST_CMD + "`", NIX_CTRL_PATTERN); // backtick execution
+        NIX_OS_PAYLOADS.put("||" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // or control concatenation
+        NIX_OS_PAYLOADS.put("&&" + NIX_TEST_CMD, NIX_CTRL_PATTERN); // and control concatenation
+        NIX_OS_PAYLOADS.put("|" + NIX_TEST_CMD + "#", NIX_CTRL_PATTERN); // pipe & comment
         // FoxPro for running os commands
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        PS_PAYLOADS.put(";" + PS_TEST_CMD + " #", PS_CTRL_PATTERN); //chain & comment
-        
-	//uninitialized variable waf bypass
+        PS_PAYLOADS.put(";" + PS_TEST_CMD + " #", PS_CTRL_PATTERN); // chain & comment
+
+        // uninitialized variable waf bypass
         String insertedCMD = insertUninitVar(NIX_TEST_CMD);
         // No quote payloads
         NIX_OS_PAYLOADS.put("&" + insertedCMD + "&", NIX_CTRL_PATTERN);
@@ -133,32 +130,31 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         NIX_OS_PAYLOADS.put("||" + insertedCMD, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("&&" + insertedCMD, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("|" + insertedCMD + "#", NIX_CTRL_PATTERN);
-	    
-        //Used for *nix
-        //OS_PAYLOADS.put("\"|\"ld", null);
-        //OS_PAYLOADS.put("'|'ld", null);
+
+        // Used for *nix
+        // OS_PAYLOADS.put("\"|\"ld", null);
+        // OS_PAYLOADS.put("'|'ld", null);
     };
 
     // Coefficient used for a time-based query delay checking (must be >= 7)
     private static final int TIME_STDEV_COEFF = 7;
-    /**
-     * The default number of seconds used in time-based attacks (i.e. sleep commands).
-     */
+    /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
     private static final int DEFAULT_TIME_SLEEP_SEC = 5;
     // Standard deviation limit in milliseconds (long requests deviate from a correct model)
     public static final double WARN_TIME_STDEV = 0.5 * 1000;
-    
+
     // *NIX Blind OS Command constants
-    private static final String  NIX_BLIND_TEST_CMD = "sleep {0}";
+    private static final String NIX_BLIND_TEST_CMD = "sleep {0}";
     // Windows Blind OS Command constants
-    private static final String  WIN_BLIND_TEST_CMD = "timeout /T {0}";
+    private static final String WIN_BLIND_TEST_CMD = "timeout /T {0}";
     // PowerSHell Blind Command constants
-    private static final String  PS_BLIND_TEST_CMD = "start-sleep -s {0}";
-    
+    private static final String PS_BLIND_TEST_CMD = "start-sleep -s {0}";
+
     // OS Command payloads for blind command Injection testing
     private static final List<String> NIX_BLIND_OS_PAYLOADS = new LinkedList<>();
     private static final List<String> WIN_BLIND_OS_PAYLOADS = new LinkedList<>();
     private static final List<String> PS_BLIND_PAYLOADS = new LinkedList<>();
+
     static {
         // No quote payloads
         NIX_BLIND_OS_PAYLOADS.add("&" + NIX_BLIND_TEST_CMD + "&");
@@ -166,32 +162,32 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         WIN_BLIND_OS_PAYLOADS.add("&" + WIN_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("|" + WIN_BLIND_TEST_CMD);
         PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD);
-        
+
         // Double quote payloads
         NIX_BLIND_OS_PAYLOADS.add("\"&" + NIX_BLIND_TEST_CMD + "&\"");
         NIX_BLIND_OS_PAYLOADS.add("\";" + NIX_BLIND_TEST_CMD + ";\"");
         WIN_BLIND_OS_PAYLOADS.add("\"&" + WIN_BLIND_TEST_CMD + "&\"");
         WIN_BLIND_OS_PAYLOADS.add("\"|" + WIN_BLIND_TEST_CMD);
         PS_BLIND_PAYLOADS.add("\";" + PS_BLIND_TEST_CMD);
-        
+
         // Single quote payloads
         NIX_BLIND_OS_PAYLOADS.add("'&" + NIX_BLIND_TEST_CMD + "&'");
         NIX_BLIND_OS_PAYLOADS.add("';" + NIX_BLIND_TEST_CMD + ";'");
         WIN_BLIND_OS_PAYLOADS.add("'&" + WIN_BLIND_TEST_CMD + "&'");
         WIN_BLIND_OS_PAYLOADS.add("'|" + WIN_BLIND_TEST_CMD);
         PS_BLIND_PAYLOADS.add("';" + PS_BLIND_TEST_CMD);
-        
-        // Special payloads   
-        NIX_BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD + "\n");  //force enter
-        NIX_BLIND_OS_PAYLOADS.add("`" + NIX_BLIND_TEST_CMD + "`");    //backtick execution
-        NIX_BLIND_OS_PAYLOADS.add("||" + NIX_BLIND_TEST_CMD);         //or control concatenation
-        NIX_BLIND_OS_PAYLOADS.add("&&" + NIX_BLIND_TEST_CMD);         //and control concatenation
-        NIX_BLIND_OS_PAYLOADS.add("|" + NIX_BLIND_TEST_CMD + "#");    //pipe & comment
+
+        // Special payloads
+        NIX_BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD + "\n"); // force enter
+        NIX_BLIND_OS_PAYLOADS.add("`" + NIX_BLIND_TEST_CMD + "`"); // backtick execution
+        NIX_BLIND_OS_PAYLOADS.add("||" + NIX_BLIND_TEST_CMD); // or control concatenation
+        NIX_BLIND_OS_PAYLOADS.add("&&" + NIX_BLIND_TEST_CMD); // and control concatenation
+        NIX_BLIND_OS_PAYLOADS.add("|" + NIX_BLIND_TEST_CMD + "#"); // pipe & comment
         // FoxPro for running os commands
         WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
-        PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); //chain & comment
-	    
-	//uninitialized variable waf bypass
+        PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); // chain & comment
+
+        // uninitialized variable waf bypass
         String insertedCMD = insertUninitVar(NIX_BLIND_TEST_CMD);
         // No quote payloads
         NIX_BLIND_OS_PAYLOADS.add("&" + insertedCMD + "&");
@@ -209,22 +205,19 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         NIX_BLIND_OS_PAYLOADS.add("&&" + insertedCMD);
         NIX_BLIND_OS_PAYLOADS.add("|" + insertedCMD + "#");
     };
-                
+
     // Logger instance
-    private static final Logger log 
-            = Logger.getLogger(CommandInjectionPlugin.class);
+    private static final Logger log = Logger.getLogger(CommandInjectionPlugin.class);
 
     // Get WASC Vulnerability description
-    private static final Vulnerability vuln 
-            = Vulnerabilities.getVulnerability("wasc_31");
+    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_31");
+
+    /** The number of seconds used in time-based attacks (i.e. sleep commands). */
+    private int timeSleepSeconds = DEFAULT_TIME_SLEEP_SEC;
 
     /**
-     * The number of seconds used in time-based attacks (i.e. sleep commands).
-     */
-    private int timeSleepSeconds = DEFAULT_TIME_SLEEP_SEC;
-    
-    /**
      * Get the unique identifier of this plugin
+     *
      * @return this plugin identifier
      */
     @Override
@@ -234,25 +227,28 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Get the name of this plugin
+     *
      * @return the plugin name
      */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
-    
+
     /**
      * Give back specific plugin dependencies (none for this)
+     *
      * @return the list of plugins that need to be executed before
      */
     @Override
     public String[] getDependency() {
-        return new String[]{};
+        return new String[] {};
     }
 
     @Override
     public boolean targets(TechSet technologies) {
-        if (technologies.includes(Tech.Linux) || technologies.includes(Tech.MacOS)
+        if (technologies.includes(Tech.Linux)
+                || technologies.includes(Tech.MacOS)
                 || technologies.includes(Tech.Windows)) {
             return true;
         }
@@ -261,6 +257,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Get the description of the vulnerability when found
+     *
      * @return the vulnerability description
      */
     @Override
@@ -269,10 +266,11 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Give back the categorization of the vulnerability 
-     * checked by this plugin (it's an injection category for CODEi)
-     * @return a category from the Category enum list 
-     */    
+     * Give back the categorization of the vulnerability checked by this plugin (it's an injection
+     * category for CODEi)
+     *
+     * @return a category from the Category enum list
+     */
     @Override
     public int getCategory() {
         return Category.INJECTION;
@@ -280,6 +278,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Give back a general solution for the found vulnerability
+     *
      * @return the solution that can be put in place
      */
     @Override
@@ -287,12 +286,13 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         if (vuln != null) {
             return vuln.getSolution();
         }
-        
-        return "Failed to load vulnerability solution from file";    
+
+        return "Failed to load vulnerability solution from file";
     }
 
     /**
      * Reports all links and documentation which refers to this vulnerability
+     *
      * @return a string based list of references
      */
     @Override
@@ -302,6 +302,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * http://cwe.mitre.org/data/definitions/78.html
+     *
      * @return the official CWE id
      */
     @Override
@@ -311,6 +312,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * http://projects.webappsec.org/w/page/13246950/OS%20Commanding
+     *
      * @return the official WASC id
      */
     @Override
@@ -320,23 +322,25 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Give back the risk associated to this vulnerability (high)
+     *
      * @return the risk according to the Alert enum
      */
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
-    }    
+    }
 
-    /**
-     * Initialize the plugin according to
-     * the overall environment configuration
-     */
+    /** Initialize the plugin according to the overall environment configuration */
     @Override
     public void init() {
         try {
             timeSleepSeconds = this.getConfig().getInt(RULE_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
         } catch (ConversionException e) {
-            log.debug("Invalid value for '" + RULE_SLEEP_TIME + "': " + this.getConfig().getString(RULE_SLEEP_TIME));
+            log.debug(
+                    "Invalid value for '"
+                            + RULE_SLEEP_TIME
+                            + "': "
+                            + this.getConfig().getString(RULE_SLEEP_TIME));
         }
         if (log.isDebugEnabled()) {
             log.debug("Sleep set to " + timeSleepSeconds + " seconds");
@@ -345,9 +349,9 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Gets the number of seconds used in time-based attacks.
-     * <p>
-     * <strong>Note:</strong> Method provided only to ease the unit tests.
-     * 
+     *
+     * <p><strong>Note:</strong> Method provided only to ease the unit tests.
+     *
      * @return the number of seconds used in time-based attacks.
      */
     int getTimeSleep() {
@@ -356,7 +360,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Scan for OS Command Injection Vulnerabilites
-     * 
+     *
      * @param msg a request only copy of the original message (the response isn't copied)
      * @param paramName the parameter name that need to be exploited
      * @param value the original parameter value
@@ -366,47 +370,67 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
         // Begin plugin execution
         if (log.isDebugEnabled()) {
-            log.debug("Checking [" + msg.getRequestHeader().getMethod() + "][" 
-                    + msg.getRequestHeader().getURI() 
-                    + "], parameter [" + paramName 
-                    + "] for OS Command Injection vulnerabilites");
+            log.debug(
+                    "Checking ["
+                            + msg.getRequestHeader().getMethod()
+                            + "]["
+                            + msg.getRequestHeader().getURI()
+                            + "], parameter ["
+                            + paramName
+                            + "] for OS Command Injection vulnerabilites");
         }
-        
+
         // Number of targets to try
         int targetCount = 0;
         int blindTargetCount = 0;
 
         switch (this.getAttackStrength()) {
             case LOW:
-                // This works out as a total of 2+2 reqs / param per tech / per interface (i.e.: on windows we check both commandline and then powershell)
+                // This works out as a total of 2+2 reqs / param per tech / per interface (i.e.: on
+                // windows we check both commandline and then powershell)
                 // Probably blind should be enabled only starting from MEDIUM (TBE)
                 targetCount = 2;
                 blindTargetCount = 2;
                 break;
 
             case MEDIUM:
-                // This works out as a total of 6+6 reqs / param per tech / per interface (i.e.: on windows we check both commandline and then powershell)
+                // This works out as a total of 6+6 reqs / param per tech / per interface (i.e.: on
+                // windows we check both commandline and then powershell)
                 targetCount = 6;
                 blindTargetCount = 6;
                 break;
 
             case HIGH:
-		// Up to around 24 requests / param / page 
+                // Up to around 24 requests / param / page
                 targetCount = 12;
                 blindTargetCount = 12;
                 break;
-			
+
             case INSANE:
-                targetCount = Math.max(PS_PAYLOADS.size(), (Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size())));
-                blindTargetCount = Math.max(PS_BLIND_PAYLOADS.size(), (Math.max(NIX_BLIND_OS_PAYLOADS.size(), WIN_BLIND_OS_PAYLOADS.size())));
+                targetCount =
+                        Math.max(
+                                PS_PAYLOADS.size(),
+                                (Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size())));
+                blindTargetCount =
+                        Math.max(
+                                PS_BLIND_PAYLOADS.size(),
+                                (Math.max(
+                                        NIX_BLIND_OS_PAYLOADS.size(),
+                                        WIN_BLIND_OS_PAYLOADS.size())));
                 break;
 
             default:
-            // Default to off
+                // Default to off
         }
-        
+
         if (inScope(Tech.Linux) || inScope(Tech.MacOS)) {
-            if (testCommandInjection(paramName, value, targetCount, blindTargetCount, NIX_OS_PAYLOADS, NIX_BLIND_OS_PAYLOADS)) {
+            if (testCommandInjection(
+                    paramName,
+                    value,
+                    targetCount,
+                    blindTargetCount,
+                    NIX_OS_PAYLOADS,
+                    NIX_BLIND_OS_PAYLOADS)) {
                 return;
             }
         }
@@ -416,17 +440,29 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         }
 
         if (inScope(Tech.Windows)) {
-        	//Windows Command Prompt
-            if (testCommandInjection(paramName, value, targetCount, blindTargetCount, WIN_OS_PAYLOADS, WIN_BLIND_OS_PAYLOADS)) {
+            // Windows Command Prompt
+            if (testCommandInjection(
+                    paramName,
+                    value,
+                    targetCount,
+                    blindTargetCount,
+                    WIN_OS_PAYLOADS,
+                    WIN_BLIND_OS_PAYLOADS)) {
                 return;
             }
-            //Check if the user has stopped the scan
+            // Check if the user has stopped the scan
             if (isStop()) {
                 return;
             }
-            //Windows PowerShell
-            if (testCommandInjection(paramName, value, targetCount, blindTargetCount, PS_PAYLOADS, PS_BLIND_PAYLOADS)) {
-            	return;
+            // Windows PowerShell
+            if (testCommandInjection(
+                    paramName,
+                    value,
+                    targetCount,
+                    blindTargetCount,
+                    PS_PAYLOADS,
+                    PS_BLIND_PAYLOADS)) {
+                return;
             }
         }
     }
@@ -456,7 +492,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         Iterator<String> it = osPayloads.keySet().iterator();
         List<Long> responseTimes = new ArrayList<>(targetCount);
         long elapsedTime;
-        
+
         // -----------------------------------------------
         // Check 1: Feedback based OS Command Injection
         // -----------------------------------------------
@@ -464,12 +500,12 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // and verifying if it returns back the output inside
         // the response content
         // -----------------------------------------------
-        for(int i = 0; it.hasNext() && (i < targetCount); i++) {
+        for (int i = 0; it.hasNext() && (i < targetCount); i++) {
             payload = it.next();
             if (osPayloads.get(payload).matcher(getBaseMsg().getResponseBody().toString()).find()) {
                 continue; // The original matches the detection so continue to next
             }
-            
+
             HttpMessage msg = getNewMsg();
             paramValue = value + payload;
             setParameter(msg, paramName, paramValue);
@@ -477,53 +513,69 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             if (log.isDebugEnabled()) {
                 log.debug("Testing [" + paramName + "] = [" + paramValue + "]");
             }
-            
-            try {                
+
+            try {
                 // Send the request and retrieve the response
                 try {
                     sendAndReceive(msg, false);
                 } catch (SocketException ex) {
-        			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-        					" when accessing: " + msg.getRequestHeader().getURI().toString() + 
-        					"\n The target may have replied with a poorly formed redirect due to our input.");
-        			continue; //Something went wrong, move to next payload iteration
+                    if (log.isDebugEnabled())
+                        log.debug(
+                                "Caught "
+                                        + ex.getClass().getName()
+                                        + " "
+                                        + ex.getMessage()
+                                        + " when accessing: "
+                                        + msg.getRequestHeader().getURI().toString()
+                                        + "\n The target may have replied with a poorly formed redirect due to our input.");
+                    continue; // Something went wrong, move to next payload iteration
                 }
                 elapsedTime = msg.getTimeElapsedMillis();
                 responseTimes.add(elapsedTime);
-                                
+
                 // Check if the injected content has been evaluated and printed
                 String content = msg.getResponseBody().toString();
                 Matcher matcher = osPayloads.get(payload).matcher(content);
                 if (matcher.find()) {
-                    // We Found IT!                    
+                    // We Found IT!
                     // First do logging
                     if (log.isDebugEnabled()) {
-                        log.debug("[OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                        log.debug(
+                                "[OS Command Injection Found] on parameter ["
+                                        + paramName
+                                        + "] with value ["
+                                        + paramValue
+                                        + "]");
                     }
-                    
+
                     // Now create the alert message
                     this.bingo(
-                            Alert.RISK_HIGH, 
+                            Alert.RISK_HIGH,
                             Alert.CONFIDENCE_MEDIUM,
                             msg.getRequestHeader().getURI().toString(),
                             paramName,
-                            paramValue, 
+                            paramValue,
                             null,
                             matcher.group(),
                             msg);
 
-                    // All done. No need to look for vulnerabilities on subsequent 
+                    // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)
-                    return true;                 
+                    return true;
                 }
 
             } catch (IOException ex) {
-                //Do not try to internationalise this.. we need an error message in any event..
-                //if it's in English, it's still better than not having it at all.
-                log.warn("Command Injection vulnerability check failed for parameter ["
-                    + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
+                // Do not try to internationalise this.. we need an error message in any event..
+                // if it's in English, it's still better than not having it at all.
+                log.warn(
+                        "Command Injection vulnerability check failed for parameter ["
+                                + paramName
+                                + "] and payload ["
+                                + payload
+                                + "] due to an I/O error",
+                        ex);
             }
-            
+
             // Check if the scan has been stopped
             // if yes dispose resources and exit
             if (isStop()) {
@@ -532,7 +584,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 return false;
             }
         }
-        
+
         // -----------------------------------------------
         // Check 2: Time-based Blind OS Command Injection
         // -----------------------------------------------
@@ -544,69 +596,88 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // Math reference: http://www.answers.com/topic/standard-deviation
         // -----------------------------------------------
         double deviation = getResponseTimeDeviation(responseTimes);
-        double lowerLimit = (deviation >= 0) ? getResponseTimeAverage(responseTimes) + TIME_STDEV_COEFF * deviation : timeSleepSeconds * 1000;
+        double lowerLimit =
+                (deviation >= 0)
+                        ? getResponseTimeAverage(responseTimes) + TIME_STDEV_COEFF * deviation
+                        : timeSleepSeconds * 1000;
 
         it = blindOsPayloads.iterator();
-        
+
         String timeSleepSecondsStr = String.valueOf(timeSleepSeconds);
-        for(int i = 0; it.hasNext() && (i < blindTargetCount); i++) {
+        for (int i = 0; it.hasNext() && (i < blindTargetCount); i++) {
             HttpMessage msg = getNewMsg();
             payload = it.next();
-            
+
             paramValue = value + payload.replace("{0}", timeSleepSecondsStr);
             setParameter(msg, paramName, paramValue);
 
             if (log.isDebugEnabled()) {
                 log.debug("Testing [" + paramName + "] = [" + paramValue + "]");
             }
-            
-            try {                
+
+            try {
                 // Send the request and retrieve the response
                 try {
                     sendAndReceive(msg, false);
                 } catch (SocketException ex) {
-        			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-        					" when accessing: " + msg.getRequestHeader().getURI().toString() + 
-        					"\n The target may have replied with a poorly formed redirect due to our input.");
-        			continue; //Something went wrong, move to next blind iteration
+                    if (log.isDebugEnabled())
+                        log.debug(
+                                "Caught "
+                                        + ex.getClass().getName()
+                                        + " "
+                                        + ex.getMessage()
+                                        + " when accessing: "
+                                        + msg.getRequestHeader().getURI().toString()
+                                        + "\n The target may have replied with a poorly formed redirect due to our input.");
+                    continue; // Something went wrong, move to next blind iteration
                 }
                 elapsedTime = msg.getTimeElapsedMillis();
 
-                // Check if enough time has passed                            
+                // Check if enough time has passed
                 if (elapsedTime >= lowerLimit && elapsedTime > timeSleepSeconds * 1000) {
 
                     // Probably we've to confirm it launching again the query
                     // But we arise the alert directly with MEDIUM Confidence...
-                    
-                    // We Found IT!                    
+
+                    // We Found IT!
                     // First do logging
                     if (log.isDebugEnabled()) {
-                        log.debug("[Blind OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                        log.debug(
+                                "[Blind OS Command Injection Found] on parameter ["
+                                        + paramName
+                                        + "] with value ["
+                                        + paramValue
+                                        + "]");
                     }
-                    
+
                     // Now create the alert message
                     this.bingo(
-                            Alert.RISK_HIGH, 
+                            Alert.RISK_HIGH,
                             Alert.CONFIDENCE_MEDIUM,
                             msg.getRequestHeader().getURI().toString(),
                             paramName,
-                            paramValue, 
+                            paramValue,
                             null,
                             null,
                             msg);
 
-                    // All done. No need to look for vulnerabilities on subsequent 
+                    // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)
-                    return true;           
+                    return true;
                 }
 
             } catch (IOException ex) {
-                //Do not try to internationalise this.. we need an error message in any event..
-                //if it's in English, it's still better than not having it at all.
-                log.warn("Blind Command Injection vulnerability check failed for parameter ["
-                    + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
+                // Do not try to internationalise this.. we need an error message in any event..
+                // if it's in English, it's still better than not having it at all.
+                log.warn(
+                        "Blind Command Injection vulnerability check failed for parameter ["
+                                + paramName
+                                + "] and payload ["
+                                + payload
+                                + "] due to an I/O error",
+                        ex);
             }
-            
+
             // Check if the scan has been stopped
             // if yes dispose resources and exit
             if (isStop()) {
@@ -614,7 +685,6 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 // Exit the plugin
                 return false;
             }
-            
         }
         return false;
     }
@@ -642,10 +712,13 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
         // Check if there is too much deviation
         if (result > WARN_TIME_STDEV) {
-            log.warn("There is considerable lagging "
-                    + "in connection response(s) which gives a standard deviation of " 
-                    + result + "ms on the sample set which is more than " 
-                    + WARN_TIME_STDEV + "ms");
+            log.warn(
+                    "There is considerable lagging "
+                            + "in connection response(s) which gives a standard deviation of "
+                            + result
+                            + "ms on the sample set which is more than "
+                            + WARN_TIME_STDEV
+                            + "ms");
         }
 
         return result;
@@ -658,36 +731,34 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
      */
     private static double getResponseTimeAverage(List<Long> responseTimes) {
         double result = 0;
-        
-        if (responseTimes.isEmpty())
-            return result;
-        
+
+        if (responseTimes.isEmpty()) return result;
+
         for (long value : responseTimes) {
             result += value;
         }
 
         return result / responseTimes.size();
     }
-	
+
     /**
-     *Generate payload variants for uninitialized variable waf bypass
-     *https://www.secjuice.com/web-application-firewall-waf-evasion/
+     * Generate payload variants for uninitialized variable waf bypass
+     * https://www.secjuice.com/web-application-firewall-waf-evasion/
      *
      * @param cmd the cmd to insert uninitialized variable
      */
-    private static String insertUninitVar(String cmd){
-        int varLength = ThreadLocalRandom.current().nextInt(1,3)+1;
+    private static String insertUninitVar(String cmd) {
+        int varLength = ThreadLocalRandom.current().nextInt(1, 3) + 1;
         char[] array = new char[varLength];
-        //$xx
-        array[0]='$';
-        for(int i=1;i<varLength;++i){
-            array[i]=(char)ThreadLocalRandom.current().nextInt(97,123);
+        // $xx
+        array[0] = '$';
+        for (int i = 1; i < varLength; ++i) {
+            array[i] = (char) ThreadLocalRandom.current().nextInt(97, 123);
         }
         String var = new String(array);
-	    
-        //insert variable before each space and '/' in the path
-        return cmd.replaceAll("\\s",Matcher.quoteReplacement(var+" ")).replaceAll("\\/",Matcher.quoteReplacement(var+"/"));
+
+        // insert variable before each space and '/' in the path
+        return cmd.replaceAll("\\s", Matcher.quoteReplacement(var + " "))
+                .replaceAll("\\/", Matcher.quoteReplacement(var + "/"));
     }
-
-
 }

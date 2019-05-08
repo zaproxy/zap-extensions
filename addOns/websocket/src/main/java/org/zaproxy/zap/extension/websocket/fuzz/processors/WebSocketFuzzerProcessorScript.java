@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.websocket.fuzz.processors;
 
 import javax.script.ScriptException;
-
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerTaskProcessorUtils;
 
@@ -33,10 +32,8 @@ import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerTaskProcessorUtil
  */
 public interface WebSocketFuzzerProcessorScript {
 
-    /**
-     * The name used to identify the type of this script, for example, in configurations.
-     */
-    final static String TYPE_NAME = "websocketfuzzerprocessor";
+    /** The name used to identify the type of this script, for example, in configurations. */
+    static final String TYPE_NAME = "websocketfuzzerprocessor";
 
     /**
      * Processes the fuzzed message before being forward to the server.
@@ -45,6 +42,6 @@ public interface WebSocketFuzzerProcessorScript {
      * @param message the fuzzed message that will be forward to the server
      * @throws ScriptException if an error occurs while executing the script
      */
-    void processMessage(WebSocketFuzzerTaskProcessorUtils utils, WebSocketMessageDTO message) throws ScriptException;
-
+    void processMessage(WebSocketFuzzerTaskProcessorUtils utils, WebSocketMessageDTO message)
+            throws ScriptException;
 }

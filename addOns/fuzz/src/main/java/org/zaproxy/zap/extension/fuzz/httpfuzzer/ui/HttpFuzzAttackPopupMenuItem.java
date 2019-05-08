@@ -35,7 +35,8 @@ public class HttpFuzzAttackPopupMenuItem extends PopupMenuItemHttpMessageContain
     private final ExtensionFuzz extensionFuzz;
     private final HttpFuzzerHandler fuzzerHandler;
 
-    public HttpFuzzAttackPopupMenuItem(ExtensionFuzz extensionFuzz, HttpFuzzerHandler fuzzerHandler) {
+    public HttpFuzzAttackPopupMenuItem(
+            ExtensionFuzz extensionFuzz, HttpFuzzerHandler fuzzerHandler) {
         super(Constant.messages.getString("fuzz.httpfuzzer.popup.menu.item.attack"));
         setIcon(FuzzerUIUtils.FUZZER_ICON);
 
@@ -60,29 +61,31 @@ public class HttpFuzzAttackPopupMenuItem extends PopupMenuItemHttpMessageContain
 
     @Override
     protected void performAction(HttpMessage httpMessage) {
-        HttpFuzzer fuzzer = fuzzerHandler.showFuzzerDialog(httpMessage, extensionFuzz.getDefaultFuzzerOptions());
+        HttpFuzzer fuzzer =
+                fuzzerHandler.showFuzzerDialog(
+                        httpMessage, extensionFuzz.getDefaultFuzzerOptions());
         if (fuzzer != null) {
             extensionFuzz.runFuzzer(fuzzerHandler, fuzzer);
         }
     }
 
     @Override
-    protected boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
+    protected boolean isEnableForInvoker(
+            Invoker invoker, HttpMessageContainer httpMessageContainer) {
         if (!fuzzerHandler.canHandle(httpMessageContainer)) {
             return false;
         }
         switch (invoker) {
-        case HISTORY_PANEL:
-        case SITES_PANEL:
-        case SEARCH_PANEL:
-            return true;
-        case ALERTS_PANEL:
-        case ACTIVE_SCANNER_PANEL:
-        case FORCED_BROWSE_PANEL:
-        case FUZZER_PANEL:
-        default:
-            return false;
+            case HISTORY_PANEL:
+            case SITES_PANEL:
+            case SEARCH_PANEL:
+                return true;
+            case ALERTS_PANEL:
+            case ACTIVE_SCANNER_PANEL:
+            case FORCED_BROWSE_PANEL:
+            case FUZZER_PANEL:
+            default:
+                return false;
         }
     }
-
 }

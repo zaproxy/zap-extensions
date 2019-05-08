@@ -19,13 +19,10 @@
  */
 package org.zaproxy.zap.extension.jxbrowser;
 
-/**
- * Utility methods used/for JxBrowser classes/extensions.
- */
+/** Utility methods used/for JxBrowser classes/extensions. */
 public final class Utils {
 
-    private Utils() {
-    }
+    private Utils() {}
 
     /**
      * Tells whether or not the current OS/JVM is 64bits arch.

@@ -30,11 +30,11 @@ public abstract class RegexTagRule implements TagRule {
         this.pattern = Pattern.compile(regex);
     }
 
-    public String getRegex(){
+    public String getRegex() {
         return regex;
     }
 
-    protected Pattern getRegexPattern(){
+    protected Pattern getRegexPattern() {
         return pattern;
     }
 

@@ -20,28 +20,24 @@
 package org.zaproxy.zap.extension.quickstart.launch;
 
 import java.net.URL;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
 
 public class QuickStartLaunchParam extends AbstractParam {
 
-    private static final Logger LOGGER = Logger
-            .getLogger(QuickStartLaunchParam.class);
+    private static final Logger LOGGER = Logger.getLogger(QuickStartLaunchParam.class);
 
     private static final String PARAM_BASE_KEY = "quickstart.launch";
 
-    private static final String PARAM_START_PAGE = PARAM_BASE_KEY
-            + ".startPage";
+    private static final String PARAM_START_PAGE = PARAM_BASE_KEY + ".startPage";
 
-    private static final String PARAM_DEFAULT_BROWSER = PARAM_BASE_KEY
-            + ".defaultBrowser";
+    private static final String PARAM_DEFAULT_BROWSER = PARAM_BASE_KEY + ".defaultBrowser";
 
     private static final String ZAP_START_PAGE = "ZAP";
 
     private static final String BLANK_START_PAGE = "BLANK";
 
-    private static final String DEFAULT_BROWSER = "JxBrowser";   // The default default ;)
+    private static final String DEFAULT_BROWSER = "JxBrowser"; // The default default ;)
 
     private String startPage;
     private String defaultBrowser = DEFAULT_BROWSER;
@@ -56,8 +52,7 @@ public class QuickStartLaunchParam extends AbstractParam {
         try {
             defaultBrowser = getConfig().getString(PARAM_DEFAULT_BROWSER, DEFAULT_BROWSER);
         } catch (Exception e) {
-            LOGGER.error(
-                    "Failed to load the \"Default Browser\" configuration", e);
+            LOGGER.error("Failed to load the \"Default Browser\" configuration", e);
         }
     }
 
@@ -102,5 +97,4 @@ public class QuickStartLaunchParam extends AbstractParam {
         this.defaultBrowser = defaultBrowser;
         getConfig().setProperty(PARAM_DEFAULT_BROWSER, defaultBrowser);
     }
-
 }

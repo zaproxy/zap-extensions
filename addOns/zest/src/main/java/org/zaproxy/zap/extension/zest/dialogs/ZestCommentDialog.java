@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
@@ -32,68 +31,72 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestCommentDialog extends StandardFieldsDialog implements ZestDialog {
 
-	private static final String FIELD_COMMENT = "zest.dialog.comment.label.comment"; 
+    private static final String FIELD_COMMENT = "zest.dialog.comment.label.comment";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionZest extension = null;
-	private ScriptNode parent = null;
-	private ScriptNode child = null;
-	private ZestScriptWrapper script = null;
-	private ZestStatement stmt = null;
-	private ZestComment comment = null;
-	private boolean add = false;
+    private ExtensionZest extension = null;
+    private ScriptNode parent = null;
+    private ScriptNode child = null;
+    private ZestScriptWrapper script = null;
+    private ZestStatement stmt = null;
+    private ZestComment comment = null;
+    private boolean add = false;
 
-	public ZestCommentDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.action.add.title", dim);
-		this.extension = ext;
-	}
+    public ZestCommentDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(owner, "zest.dialog.action.add.title", dim);
+        this.extension = ext;
+    }
 
-	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestStatement stmt, ZestComment comment, boolean add) {
-		this.script = script;
-		this.add = add;
-		this.parent = parent;
-		this.child = child;
-		this.stmt = stmt;
-		this.comment = comment;
+    public void init(
+            ZestScriptWrapper script,
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement stmt,
+            ZestComment comment,
+            boolean add) {
+        this.script = script;
+        this.add = add;
+        this.parent = parent;
+        this.child = child;
+        this.stmt = stmt;
+        this.comment = comment;
 
-		this.removeAllFields();
-		
-		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.comment.add.title"));
-		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.comment.edit.title"));
-		}
+        this.removeAllFields();
 
-		this.addMultilineField(FIELD_COMMENT, comment.getComment());
-	}
+        if (add) {
+            this.setTitle(Constant.messages.getString("zest.dialog.comment.add.title"));
+        } else {
+            this.setTitle(Constant.messages.getString("zest.dialog.comment.edit.title"));
+        }
 
-	@Override
-	public void save() {
-		comment.setComment(this.getStringValue(FIELD_COMMENT));
+        this.addMultilineField(FIELD_COMMENT, comment.getComment());
+    }
 
-		if (add) {
-			if (stmt == null) {
-				extension.addToParent(parent, comment);
-			} else {
-				extension.addAfterRequest(parent, child, stmt, comment);
-			}
-		} else {
-			extension.updated(child);
-			extension.display(child, false);
-		}
-	}
+    @Override
+    public void save() {
+        comment.setComment(this.getStringValue(FIELD_COMMENT));
 
-	@Override
-	public String validateFields() {
-		// Nothing to do
-		return null;
-	}
+        if (add) {
+            if (stmt == null) {
+                extension.addToParent(parent, comment);
+            } else {
+                extension.addAfterRequest(parent, child, stmt, comment);
+            }
+        } else {
+            extension.updated(child);
+            extension.display(child, false);
+        }
+    }
 
-	@Override
-	public ZestScriptWrapper getScript() {
-		return this.script;
-	}
-	
+    @Override
+    public String validateFields() {
+        // Nothing to do
+        return null;
+    }
+
+    @Override
+    public ZestScriptWrapper getScript() {
+        return this.script;
+    }
 }

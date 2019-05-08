@@ -27,10 +27,9 @@ import org.junit.Test;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-/**
- * Unit test for {@link TestServerSideInclude}.
- */
-public class TestServerSideIncludeUnitTest extends ActiveScannerAppParamTest<TestServerSideInclude> {
+/** Unit test for {@link TestServerSideInclude}. */
+public class TestServerSideIncludeUnitTest
+        extends ActiveScannerAppParamTest<TestServerSideInclude> {
 
     @Override
     protected TestServerSideInclude createScanner() {
@@ -76,5 +75,4 @@ public class TestServerSideIncludeUnitTest extends ActiveScannerAppParamTest<Tes
         // Then
         assertThat(targets, is(equalTo(false)));
     }
-
 }

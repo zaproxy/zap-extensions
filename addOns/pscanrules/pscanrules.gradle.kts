@@ -21,11 +21,7 @@ dependencies {
 }
 
 spotless {
-    java {
-        target(fileTree(projectDir) {
-            include("**/*.java")
-            exclude("**/TestInfoPrivateAddressDisclosure.java",
-                    "**/TestInfoSessionIdURL.java")
-        })
-    }
+    javaWith3rdPartyFormatted(project, listOf(
+        "**/TestInfoPrivateAddressDisclosure.java",
+        "**/TestInfoSessionIdURL.java"))
 }

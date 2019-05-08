@@ -26,11 +26,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
-
 import org.jruby.embed.jsr223.JRubyEngineFactory;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -47,188 +45,196 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListener {
 
-	public static final String NAME = "ExtensionJruby";
-	public static final ImageIcon RUBY_ICON;
+    public static final String NAME = "ExtensionJruby";
+    public static final ImageIcon RUBY_ICON;
 
-	private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
-	static {
-		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-		dependencies.add(ExtensionScript.class);
-		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+    static {
+        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
+        dependencies.add(ExtensionScript.class);
+        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
 
-		RUBY_ICON = View.isInitialised()
-				? new ImageIcon(ExtensionJruby.class.getResource("/org/zaproxy/zap/extension/jruby/resources/ruby.png"))
-				: null;
-	}
+        RUBY_ICON =
+                View.isInitialised()
+                        ? new ImageIcon(
+                                ExtensionJruby.class.getResource(
+                                        "/org/zaproxy/zap/extension/jruby/resources/ruby.png"))
+                        : null;
+    }
 
-	private ExtensionScript extScript = null;
-	private ScriptEngine rubyScriptEngine = null;
-	private JrubyEngineWrapper engineWrapper;
+    private ExtensionScript extScript = null;
+    private ScriptEngine rubyScriptEngine = null;
+    private JrubyEngineWrapper engineWrapper;
 
-	public ExtensionJruby() {
-		super(NAME);
-		this.setOrder(76);
-	}
+    public ExtensionJruby() {
+        super(NAME);
+        this.setOrder(76);
+    }
 
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-		super.hook(extensionHook);
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
 
-		if (this.getRubyScriptEngine() == null) {
-			JRubyEngineFactory factory = new JRubyEngineFactory();
-			this.rubyScriptEngine = factory.getScriptEngine();
-			engineWrapper = new JrubyEngineWrapper(this.rubyScriptEngine, getDefaultTemplates());
-			this.getExtScript().registerScriptEngineWrapper(engineWrapper);
-		}
+        if (this.getRubyScriptEngine() == null) {
+            JRubyEngineFactory factory = new JRubyEngineFactory();
+            this.rubyScriptEngine = factory.getScriptEngine();
+            engineWrapper = new JrubyEngineWrapper(this.rubyScriptEngine, getDefaultTemplates());
+            this.getExtScript().registerScriptEngineWrapper(engineWrapper);
+        }
 
-		this.getExtScript().addListener(this);
-	}
+        this.getExtScript().addListener(this);
+    }
 
-	private List<Path> getDefaultTemplates() {
-		AddOn addOn = getAddOn();
-		if (addOn == null) {
-			// Probably running from source...
-			return Collections.emptyList();
-		}
+    private List<Path> getDefaultTemplates() {
+        AddOn addOn = getAddOn();
+        if (addOn == null) {
+            // Probably running from source...
+            return Collections.emptyList();
+        }
 
-		List<String> files = addOn.getFiles();
-		if (files == null || files.isEmpty()) {
-			return Collections.emptyList();
-		}
+        List<String> files = addOn.getFiles();
+        if (files == null || files.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-		ArrayList<Path> defaultTemplates = new ArrayList<>(files.size());
-		Path zapHome = Paths.get(Constant.getZapHome());
-		for (String file : files) {
-			if (file.startsWith(ExtensionScript.TEMPLATES_DIR)) {
-				defaultTemplates.add(zapHome.resolve(file));
-			}
-		}
-		defaultTemplates.trimToSize();
-		return defaultTemplates;
-	}
+        ArrayList<Path> defaultTemplates = new ArrayList<>(files.size());
+        Path zapHome = Paths.get(Constant.getZapHome());
+        for (String file : files) {
+            if (file.startsWith(ExtensionScript.TEMPLATES_DIR)) {
+                defaultTemplates.add(zapHome.resolve(file));
+            }
+        }
+        defaultTemplates.trimToSize();
+        return defaultTemplates;
+    }
 
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
-	
-	@Override
-	public void unload() {
-		super.unload();
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 
-		String engineName = getRubyScriptEngine().getFactory().getEngineName();
-		for (ScriptType type : this.getExtScript().getScriptTypes()) {
-			for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
-				if (script.getEngineName().equals(engineName)) {
-					if (script instanceof JrubyScriptWrapper) {
-						ScriptNode node = this.getExtScript().getTreeModel().getNodeForScript(script);
-						node.setUserObject(((JrubyScriptWrapper) script).getOriginal());
-					}
-				}
-			}
-		}
+    @Override
+    public void unload() {
+        super.unload();
 
-		getExtScript().removeListener(this);
+        String engineName = getRubyScriptEngine().getFactory().getEngineName();
+        for (ScriptType type : this.getExtScript().getScriptTypes()) {
+            for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
+                if (script.getEngineName().equals(engineName)) {
+                    if (script instanceof JrubyScriptWrapper) {
+                        ScriptNode node =
+                                this.getExtScript().getTreeModel().getNodeForScript(script);
+                        node.setUserObject(((JrubyScriptWrapper) script).getOriginal());
+                    }
+                }
+            }
+        }
 
-		if (engineWrapper != null) {
-			getExtScript().removeScriptEngineWrapper(engineWrapper);
-		}
-	}
-	
-	private ScriptEngine getRubyScriptEngine() {
-		if (this.rubyScriptEngine == null) {
-			ScriptEngineManager mgr = new ScriptEngineManager();
-			this.rubyScriptEngine = mgr.getEngineByExtension("rb");
-		}
-		return this.rubyScriptEngine;
-	}
+        getExtScript().removeListener(this);
 
-	private ExtensionScript getExtScript() {
-		if (extScript == null) {
-			extScript = (ExtensionScript) Control.getSingleton()
-					.getExtensionLoader().getExtension(ExtensionScript.NAME);
-		}
-		return extScript;
-	}
+        if (engineWrapper != null) {
+            getExtScript().removeScriptEngineWrapper(engineWrapper);
+        }
+    }
 
+    private ScriptEngine getRubyScriptEngine() {
+        if (this.rubyScriptEngine == null) {
+            ScriptEngineManager mgr = new ScriptEngineManager();
+            this.rubyScriptEngine = mgr.getEngineByExtension("rb");
+        }
+        return this.rubyScriptEngine;
+    }
 
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    private ExtensionScript getExtScript() {
+        if (extScript == null) {
+            extScript =
+                    (ExtensionScript)
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionScript.NAME);
+        }
+        return extScript;
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("jruby.desc");
-	}
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
 
-	@Override
-	public URL getURL() {
-		try {
-			return new URL(Constant.ZAP_HOMEPAGE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("jruby.desc");
+    }
 
-	@Override
-	public List<Class<? extends Extension>> getDependencies() {
-		return EXTENSION_DEPENDENCIES;
-	}
-	
-	@Override
-	public void preInvoke(ScriptWrapper script) {
-		// Ignore
-	}
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_HOMEPAGE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 
-	@Override
-	public void refreshScript(ScriptWrapper script) {
-		// Ignore
-	}
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return EXTENSION_DEPENDENCIES;
+    }
 
-	@Override
-	public void scriptAdded(ScriptWrapper script, boolean arg1) {
-		
-		if (this.getRubyScriptEngine() != null &&
-				this.getRubyScriptEngine().getFactory().getEngineName().equals(script.getEngineName())) {
+    @Override
+    public void preInvoke(ScriptWrapper script) {
+        // Ignore
+    }
 
-			// Replace the standard ScriptWrapper with a JrubyScriptWrapper as
-			// JRuby seems to handle interfaces differently from other JSR223 languages
-			ScriptNode parentNode = this.getExtScript().getTreeModel().getNodeForScript(script);
-			
-			parentNode.setUserObject(new JrubyScriptWrapper(script));
-		}
+    @Override
+    public void refreshScript(ScriptWrapper script) {
+        // Ignore
+    }
 
-	}
+    @Override
+    public void scriptAdded(ScriptWrapper script, boolean arg1) {
 
-	@Override
-	public void scriptChanged(ScriptWrapper script) {
-		// Ignore
-	}
+        if (this.getRubyScriptEngine() != null
+                && this.getRubyScriptEngine()
+                        .getFactory()
+                        .getEngineName()
+                        .equals(script.getEngineName())) {
 
-	@Override
-	public void scriptError(ScriptWrapper script) {
-		// Ignore
-	}
+            // Replace the standard ScriptWrapper with a JrubyScriptWrapper as
+            // JRuby seems to handle interfaces differently from other JSR223 languages
+            ScriptNode parentNode = this.getExtScript().getTreeModel().getNodeForScript(script);
 
-	@Override
-	public void scriptRemoved(ScriptWrapper script) {
-		// Ignore
-	}
+            parentNode.setUserObject(new JrubyScriptWrapper(script));
+        }
+    }
 
-	@Override
-	public void scriptSaved(ScriptWrapper script) {
-		// Ignore
-	}
+    @Override
+    public void scriptChanged(ScriptWrapper script) {
+        // Ignore
+    }
 
-	@Override
-	public void templateAdded(ScriptWrapper script, boolean arg1) {
-		// Ignore
-	}
+    @Override
+    public void scriptError(ScriptWrapper script) {
+        // Ignore
+    }
 
-	@Override
-	public void templateRemoved(ScriptWrapper script) {
-		// Ignore
-	}
+    @Override
+    public void scriptRemoved(ScriptWrapper script) {
+        // Ignore
+    }
+
+    @Override
+    public void scriptSaved(ScriptWrapper script) {
+        // Ignore
+    }
+
+    @Override
+    public void templateAdded(ScriptWrapper script, boolean arg1) {
+        // Ignore
+    }
+
+    @Override
+    public void templateRemoved(ScriptWrapper script) {
+        // Ignore
+    }
 }

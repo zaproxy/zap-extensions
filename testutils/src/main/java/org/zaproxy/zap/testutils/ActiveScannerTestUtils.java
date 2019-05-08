@@ -22,7 +22,6 @@ package org.zaproxy.zap.testutils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mockito;
@@ -42,68 +41,68 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /**
- * Class with utility/helper methods for active scanner tests ({@link org.parosproxy.paros.core.scanner.Plugin Plugin}.
- * <p>
- * It automatically starts the HTTP test server for each test.
- * 
+ * Class with utility/helper methods for active scanner tests ({@link
+ * org.parosproxy.paros.core.scanner.Plugin Plugin}.
+ *
+ * <p>It automatically starts the HTTP test server for each test.
+ *
  * @param <T> the type of the active scanner.
  */
 public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends TestUtils {
 
     /**
-     * The recommended maximum number of messages that a scanner can send in
-     * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#LOW AttackStrength.LOW}, per parameter being scanned.
+     * The recommended maximum number of messages that a scanner can send in {@link
+     * org.parosproxy.paros.core.scanner.Plugin.AttackStrength#LOW AttackStrength.LOW}, per
+     * parameter being scanned.
      */
     protected static final int NUMBER_MSGS_ATTACK_STRENGTH_LOW = 6;
 
     /**
-     * The recommended maximum number of messages that a scanner can send in
-     * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#MEDIUM AttackStrength.MEDIUM}, per parameter being
-     * scanned.
+     * The recommended maximum number of messages that a scanner can send in {@link
+     * org.parosproxy.paros.core.scanner.Plugin.AttackStrength#MEDIUM AttackStrength.MEDIUM}, per
+     * parameter being scanned.
      */
     protected static final int NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM = 12;
 
     /**
-     * The recommended maximum number of messages that a scanner can send in
-     * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#HIGH AttackStrength.HIGH}, per parameter being scanned.
+     * The recommended maximum number of messages that a scanner can send in {@link
+     * org.parosproxy.paros.core.scanner.Plugin.AttackStrength#HIGH AttackStrength.HIGH}, per
+     * parameter being scanned.
      */
     protected static final int NUMBER_MSGS_ATTACK_STRENGTH_HIGH = 24;
 
     /**
-     * The maximum number of messages that a scanner can send in
-     * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#INSANE AttackStrength.INSANE}, per parameter being
-     * scanned.
+     * The maximum number of messages that a scanner can send in {@link
+     * org.parosproxy.paros.core.scanner.Plugin.AttackStrength#INSANE AttackStrength.INSANE}, per
+     * parameter being scanned.
      */
     // Arbitrary value, there's no recommended number.
     protected static final int NUMBER_MSGS_ATTACK_STRENGTH_INSANE = 75;
 
     /**
-     * The recommended maximum number of messages that a scanner can send per page being
-     * scanned at {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#LOW AttackStrength.LOW}.
-     * @see <a href="https://github.com/zaproxy/zap-extensions/wiki/AddOnsBeta">https://github.com/zaproxy/zap-extensions/wiki/AddOnsBeta</a>
+     * The recommended maximum number of messages that a scanner can send per page being scanned at
+     * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#LOW AttackStrength.LOW}.
+     *
+     * @see <a
+     *     href="https://github.com/zaproxy/zap-extensions/wiki/AddOnsBeta">https://github.com/zaproxy/zap-extensions/wiki/AddOnsBeta</a>
      */
-    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_LOW = 36;// 6x6
-    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_MED = 72;// 6x12
-    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_HIGH = 144;// 6x24
-    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_INSANE = 500; //whatever
+    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_LOW = 36; // 6x6
+
+    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_MED = 72; // 6x12
+    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_HIGH = 144; // 6x24
+    protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_INSANE = 500; // whatever
 
     protected T rule;
     protected HostProcess parent;
     protected ScannerParam scannerParam;
 
-    /**
-     * The alerts raised during the scan.
-     */
+    /** The alerts raised during the scan. */
     protected List<Alert> alertsRaised;
 
-    /**
-     * The HTTP messages sent during the scan.
-     */
+    /** The HTTP messages sent during the scan. */
     protected List<HttpMessage> httpMessagesSent;
 
-    /**
-     * The count of messages (HTTP and others) sent during the scan.
-     */
+    /** The count of messages (HTTP and others) sent during the scan. */
     protected int countMessagesSent;
 
     public ActiveScannerTestUtils() {
@@ -117,9 +116,9 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         PluginFactory pluginFactory = Mockito.mock(PluginFactory.class);
         ScanPolicy scanPolicy = Mockito.mock(ScanPolicy.class);
         Mockito.when(scanPolicy.getPluginFactory()).thenReturn(pluginFactory);
-        
+
         ConnectionParam connectionParam = new ConnectionParam();
-        
+
         scannerParam = new ScannerParam();
         scannerParam.load(new ZapXmlConfiguration());
         RuleConfigParam ruleConfigParam = new RuleConfigParam();
@@ -128,42 +127,43 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
 
         startServer();
         int port = nano.getListeningPort();
-        
+
         alertsRaised = new ArrayList<>();
         httpMessagesSent = new ArrayList<>();
-        parent = new HostProcess(
-                "localhost:" + port,
-                parentScanner, 
-                scannerParam, 
-                connectionParam, 
-                scanPolicy,
-                ruleConfigParam) {
-            @Override
-            public void alertFound(Alert arg1) {
-                alertsRaised.add(arg1);
-            }
+        parent =
+                new HostProcess(
+                        "localhost:" + port,
+                        parentScanner,
+                        scannerParam,
+                        connectionParam,
+                        scanPolicy,
+                        ruleConfigParam) {
+                    @Override
+                    public void alertFound(Alert arg1) {
+                        alertsRaised.add(arg1);
+                    }
 
-            @Override
-            public void notifyNewMessage(HttpMessage msg) {
-                super.notifyNewMessage(msg);
-                httpMessagesSent.add(msg);
-                countMessagesSent++;
-            }
+                    @Override
+                    public void notifyNewMessage(HttpMessage msg) {
+                        super.notifyNewMessage(msg);
+                        httpMessagesSent.add(msg);
+                        countMessagesSent++;
+                    }
 
-            @Override
-            public void notifyNewMessage(Plugin plugin) {
-                super.notifyNewMessage(plugin);
-                countMessagesSent++;
-            }
+                    @Override
+                    public void notifyNewMessage(Plugin plugin) {
+                        super.notifyNewMessage(plugin);
+                        countMessagesSent++;
+                    }
 
-            @Override
-            public void notifyNewMessage(Plugin plugin, HttpMessage msg) {
-                super.notifyNewMessage(plugin, msg);
-                httpMessagesSent.add(msg);
-                countMessagesSent++;
-            }
-        };
-        
+                    @Override
+                    public void notifyNewMessage(Plugin plugin, HttpMessage msg) {
+                        super.notifyNewMessage(plugin, msg);
+                        httpMessagesSent.add(msg);
+                        countMessagesSent++;
+                    }
+                };
+
         rule = createScanner();
         if (rule.getConfig() == null) {
             rule.setConfig(new ZapXmlConfiguration());
@@ -183,7 +183,8 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
     }
 
     /**
-     * Gets the recommended maximum number of messages that a scanner can send per parameter for the given strength.
+     * Gets the recommended maximum number of messages that a scanner can send per parameter for the
+     * given strength.
      *
      * @param strength the attack strength.
      * @return the recommended maximum number of messages.
@@ -191,20 +192,21 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
      */
     protected int getRecommendMaxNumberMessagesPerParam(Plugin.AttackStrength strength) {
         switch (strength) {
-        case LOW:
-            return NUMBER_MSGS_ATTACK_STRENGTH_LOW;
-        case MEDIUM:
-        default:
-            return NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM;
-        case HIGH:
-            return NUMBER_MSGS_ATTACK_STRENGTH_HIGH;
-        case INSANE:
-            return NUMBER_MSGS_ATTACK_STRENGTH_INSANE;
+            case LOW:
+                return NUMBER_MSGS_ATTACK_STRENGTH_LOW;
+            case MEDIUM:
+            default:
+                return NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM;
+            case HIGH:
+                return NUMBER_MSGS_ATTACK_STRENGTH_HIGH;
+            case INSANE:
+                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE;
         }
     }
 
     /**
-     * Gets the recommended maximum number of messages that a scanner can send per page for the given strength.
+     * Gets the recommended maximum number of messages that a scanner can send per page for the
+     * given strength.
      *
      * @param strength the attack strength.
      * @return the recommended maximum number of messages.
@@ -212,16 +214,15 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
      */
     protected int getRecommendMaxNumberMessagesPerPage(Plugin.AttackStrength strength) {
         switch (strength) {
-        case LOW:
-            return NUMBER_MSGS_ATTACK_PER_PAGE_LOW;
-        case MEDIUM:
-        default:
-            return NUMBER_MSGS_ATTACK_PER_PAGE_MED;
-        case HIGH:
-            return NUMBER_MSGS_ATTACK_PER_PAGE_HIGH;
-        case INSANE:
-            return NUMBER_MSGS_ATTACK_PER_PAGE_INSANE;
+            case LOW:
+                return NUMBER_MSGS_ATTACK_PER_PAGE_LOW;
+            case MEDIUM:
+            default:
+                return NUMBER_MSGS_ATTACK_PER_PAGE_MED;
+            case HIGH:
+                return NUMBER_MSGS_ATTACK_PER_PAGE_HIGH;
+            case INSANE:
+                return NUMBER_MSGS_ATTACK_PER_PAGE_INSANE;
         }
     }
-
 }

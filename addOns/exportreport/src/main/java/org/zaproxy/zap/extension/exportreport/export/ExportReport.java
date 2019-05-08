@@ -27,9 +27,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Locale;
-
 import javax.swing.SwingWorker;
-
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -58,8 +56,11 @@ public class ExportReport {
 
     private static final Logger logger = Logger.getLogger(ExportReport.class);
 
-    private Task task; // Create a task and dump the export into the background, essential for large exports.
-    private static WritableFileChooser fc; // Global because the property change listener won't be able to access if it's local scope.
+    private Task task; // Create a task and dump the export into the background, essential for large
+    // exports.
+    private static WritableFileChooser
+            fc; // Global because the property change listener won't be able to access if it's local
+    // scope.
 
     private static class Task extends SwingWorker<Void, Void> {
         private ViewDelegate view;
@@ -67,7 +68,8 @@ public class ExportReport {
         private String fileExtension;
         private File f;
 
-        public Task(ViewDelegate view, ExtensionExportReport extension, String fileExtension, File f) {
+        public Task(
+                ViewDelegate view, ExtensionExportReport extension, String fileExtension, File f) {
             this.view = view;
             this.extension = extension;
             this.fileExtension = fileExtension;
@@ -83,15 +85,30 @@ public class ExportReport {
 
             String xmlPath = "";
             try {
-                xmlPath = ReportExport.generateDUMP(path, fileName, extension.extensionGetTitle(), extension.extensionGetBy(), extension.extensionGetFor(), extension.extensionGetScanDate(), extension.extensionGetScanVer(), extension.extensionGetReportDate(), extension.extensionGetReportVer(), extension.extensionGetDescription(), extension.getIncludedAlertSeverity(), extension.getIncludedAlertDetails());
+                xmlPath =
+                        ReportExport.generateDUMP(
+                                path,
+                                fileName,
+                                extension.extensionGetTitle(),
+                                extension.extensionGetBy(),
+                                extension.extensionGetFor(),
+                                extension.extensionGetScanDate(),
+                                extension.extensionGetScanVer(),
+                                extension.extensionGetReportDate(),
+                                extension.extensionGetReportVer(),
+                                extension.extensionGetDescription(),
+                                extension.getIncludedAlertSeverity(),
+                                extension.getIncludedAlertDetails());
             } catch (UnsupportedEncodingException e) {
                 logger.error(e.getMessage(), e);
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.dump"));
+                view.showWarningDialog(
+                        Constant.messages.getString("exportreport.message.error.dump"));
                 return null;
             } catch (URIException e) {
                 logger.error(e.getMessage(), e);
                 // Update error message for dump
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.dump"));
+                view.showWarningDialog(
+                        Constant.messages.getString("exportreport.message.error.dump"));
                 return null;
             }
 
@@ -104,37 +121,44 @@ public class ExportReport {
 
             try {
                 switch (fileExtension.toLowerCase(Locale.ROOT)) {
-                case Utils.HTML:
-                    f_view = ReportExport.transformation(view, xmlGenerated, xmlPath, mergeXSL);
-                    // f_view = null;
-                    f_view = ReportExport.transformation(view, absolutePath, xmlGenerated, reportXSL);
-                    deleteFile(xmlGenerated);// , "The merged XML file: ");
-                    show = true;
-                    break;
-                case Utils.BOOTSTRAP:
-                    view.showMessageDialog(Constant.messages.getString("exportreport.message.notice.bootstrap"));
-                    break;
-                case Utils.XML:
-                    f_view = ReportExport.transformation(view, xmlGenerated, xmlPath, mergeXSL);
-                    show = true;
-                    break;
-                case Utils.JSON:
-                    view.showMessageDialog(Constant.messages.getString("exportreport.message.notice.json"));
-                    f_view = ReportExport.transformation(view, xmlGenerated, xmlPath, mergeXSL);
-                    // f_view = null;
-                    f_view = ReportExport.jsonExport(view, absolutePath, xmlGenerated);
-                    deleteFile(xmlGenerated);// , "The merged XML file: ");
-                    break;
-                case Utils.PDF:
-                    view.showMessageDialog(Constant.messages.getString("exportreport.message.notice.pdf"));
-                    // f_view = null;
-                    break;
-                case Utils.DOC:
-                    view.showMessageDialog(Constant.messages.getString("exportreport.message.notice.doc"));
-                    // f_view = null;
-                    break;
-                default:
-                    break;
+                    case Utils.HTML:
+                        f_view = ReportExport.transformation(view, xmlGenerated, xmlPath, mergeXSL);
+                        // f_view = null;
+                        f_view =
+                                ReportExport.transformation(
+                                        view, absolutePath, xmlGenerated, reportXSL);
+                        deleteFile(xmlGenerated); // , "The merged XML file: ");
+                        show = true;
+                        break;
+                    case Utils.BOOTSTRAP:
+                        view.showMessageDialog(
+                                Constant.messages.getString(
+                                        "exportreport.message.notice.bootstrap"));
+                        break;
+                    case Utils.XML:
+                        f_view = ReportExport.transformation(view, xmlGenerated, xmlPath, mergeXSL);
+                        show = true;
+                        break;
+                    case Utils.JSON:
+                        view.showMessageDialog(
+                                Constant.messages.getString("exportreport.message.notice.json"));
+                        f_view = ReportExport.transformation(view, xmlGenerated, xmlPath, mergeXSL);
+                        // f_view = null;
+                        f_view = ReportExport.jsonExport(view, absolutePath, xmlGenerated);
+                        deleteFile(xmlGenerated); // , "The merged XML file: ");
+                        break;
+                    case Utils.PDF:
+                        view.showMessageDialog(
+                                Constant.messages.getString("exportreport.message.notice.pdf"));
+                        // f_view = null;
+                        break;
+                    case Utils.DOC:
+                        view.showMessageDialog(
+                                Constant.messages.getString("exportreport.message.notice.doc"));
+                        // f_view = null;
+                        break;
+                    default:
+                        break;
                 }
             } finally {
                 deleteFile(xmlPath);
@@ -146,14 +170,13 @@ public class ExportReport {
                 }
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.file.open"));
+                view.showWarningDialog(
+                        Constant.messages.getString("exportreport.message.error.file.open"));
             }
             return null;
         }
 
-        /**
-         * Executed in event dispatching thread
-         */
+        /** Executed in event dispatching thread */
         @Override
         public void done() {
             Toolkit.getDefaultToolkit().beep();
@@ -172,7 +195,13 @@ public class ExportReport {
         return getExportReportHomeDir() + HTML_XSL_FILENAME;
     }
 
-    public boolean generateReport(ExtensionExportReport extension, String absolutePath, String ext, ArrayList<String> sourceDetailsList, ArrayList<String> alertSeverityList, ArrayList<String> alertDetailsList) {
+    public boolean generateReport(
+            ExtensionExportReport extension,
+            String absolutePath,
+            String ext,
+            ArrayList<String> sourceDetailsList,
+            ArrayList<String> alertSeverityList,
+            ArrayList<String> alertDetailsList) {
 
         File f = new File(absolutePath);
         String file = f.getName();
@@ -191,7 +220,20 @@ public class ExportReport {
 
         String xmlPath = "";
         try {
-            xmlPath = ReportExport.generateDUMP(path, fileName, extensionGetTitle, extensionGetBy, extensionGetFor, extensionGetScanDate, extensionGetScanVer, extensionGetReportDate, extensionGetReportVer, getDescription, alertSeverityList, alertDetailsList);
+            xmlPath =
+                    ReportExport.generateDUMP(
+                            path,
+                            fileName,
+                            extensionGetTitle,
+                            extensionGetBy,
+                            extensionGetFor,
+                            extensionGetScanDate,
+                            extensionGetScanVer,
+                            extensionGetReportDate,
+                            extensionGetReportVer,
+                            getDescription,
+                            alertSeverityList,
+                            alertDetailsList);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);
             CommandLine.error(Constant.messages.getString("exportreport.message.error.dump"));
@@ -212,34 +254,40 @@ public class ExportReport {
 
         try {
             switch (fileExtension.toLowerCase(Locale.ROOT)) {
-            case Utils.HTML:
-                f_view = ReportExport.transformation(null, xmlGenerated, xmlPath, mergeXSL);
-                f_view = ReportExport.transformation(null, absolutePath, xmlGenerated, reportXSL);
-                deleteFile(xmlGenerated);
-                show = true;
-                break;
-            case Utils.BOOTSTRAP:
-                CommandLine.error(Constant.messages.getString("exportreport.message.notice.bootstrap"));
-                return false;
-            case Utils.XML:
-                xmlGenerated = path + fileName+ ".xml";
-                f_view = ReportExport.transformation(null, xmlGenerated, xmlPath, mergeXSL);
-                show = true;
-                break;
-            case Utils.JSON:
-                CommandLine.info(Constant.messages.getString("exportreport.message.notice.json"));
-                f_view = ReportExport.transformation(null, xmlGenerated, xmlPath, mergeXSL);
-                f_view = ReportExport.jsonExport(null, absolutePath, xmlGenerated);
-                deleteFile(xmlGenerated);
-                break;
-            case Utils.PDF:
-                CommandLine.error(Constant.messages.getString("exportreport.message.notice.pdf"));
-                return false;
-            case Utils.DOC:
-                CommandLine.error(Constant.messages.getString("exportreport.message.notice.doc"));
-                return false;
-            default:
-                break;
+                case Utils.HTML:
+                    f_view = ReportExport.transformation(null, xmlGenerated, xmlPath, mergeXSL);
+                    f_view =
+                            ReportExport.transformation(
+                                    null, absolutePath, xmlGenerated, reportXSL);
+                    deleteFile(xmlGenerated);
+                    show = true;
+                    break;
+                case Utils.BOOTSTRAP:
+                    CommandLine.error(
+                            Constant.messages.getString("exportreport.message.notice.bootstrap"));
+                    return false;
+                case Utils.XML:
+                    xmlGenerated = path + fileName + ".xml";
+                    f_view = ReportExport.transformation(null, xmlGenerated, xmlPath, mergeXSL);
+                    show = true;
+                    break;
+                case Utils.JSON:
+                    CommandLine.info(
+                            Constant.messages.getString("exportreport.message.notice.json"));
+                    f_view = ReportExport.transformation(null, xmlGenerated, xmlPath, mergeXSL);
+                    f_view = ReportExport.jsonExport(null, absolutePath, xmlGenerated);
+                    deleteFile(xmlGenerated);
+                    break;
+                case Utils.PDF:
+                    CommandLine.error(
+                            Constant.messages.getString("exportreport.message.notice.pdf"));
+                    return false;
+                case Utils.DOC:
+                    CommandLine.error(
+                            Constant.messages.getString("exportreport.message.notice.doc"));
+                    return false;
+                default:
+                    break;
             }
         } finally {
             deleteFile(xmlPath);
@@ -262,14 +310,23 @@ public class ExportReport {
         try {
             if (fc == null) {
                 fc = generateWriteableFileChooser(list);
-                fc.addPropertyChangeListener(WritableFileChooser.FILE_FILTER_CHANGED_PROPERTY, new PropertyChangeListener() {
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        ReportFilter filter = (ReportFilter) evt.getNewValue();
-                        String extension = (filter.getExtensionByDescription(filter.getDescription()).length() == 0 ? "" : "." + filter.getExtensionByDescription(filter.getDescription()));
-                        fc.setSelectedFile(new File(extension));
-                    }
-                });
+                fc.addPropertyChangeListener(
+                        WritableFileChooser.FILE_FILTER_CHANGED_PROPERTY,
+                        new PropertyChangeListener() {
+                            @Override
+                            public void propertyChange(PropertyChangeEvent evt) {
+                                ReportFilter filter = (ReportFilter) evt.getNewValue();
+                                String extension =
+                                        (filter.getExtensionByDescription(filter.getDescription())
+                                                                .length()
+                                                        == 0
+                                                ? ""
+                                                : "."
+                                                        + filter.getExtensionByDescription(
+                                                                filter.getDescription()));
+                                fc.setSelectedFile(new File(extension));
+                            }
+                        });
             }
 
             int rc = fc.showSaveDialog(View.getSingleton().getMainFrame());
@@ -288,7 +345,10 @@ public class ExportReport {
                     // "The file " + fc.getSelectedFile() + " is not a valid
                     // destination file.", "Open Error",
                     // JOptionPane.ERROR_MESSAGE);
-                    view.showWarningDialog(Constant.messages.getString("exportreport.message.error.file.destination", fc.getSelectedFile()));
+                    view.showWarningDialog(
+                            Constant.messages.getString(
+                                    "exportreport.message.error.file.destination",
+                                    fc.getSelectedFile()));
                     rc = fc.showSaveDialog(View.getSingleton().getMainFrame());
                 }
             }
@@ -300,7 +360,8 @@ public class ExportReport {
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            view.showWarningDialog(Constant.messages.getString("exportreport.message.error.exception"));
+            view.showWarningDialog(
+                    Constant.messages.getString("exportreport.message.error.exception"));
         }
     }
 

@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
 import java.util.Random;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -34,140 +33,140 @@ import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
 /**
- * An example active scan rule, for more details see 
+ * An example active scan rule, for more details see
  * http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+ *
  * @author psiinon
  */
 public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
 
-	// wasc_10 is Denial of Service - well, its just an example ;)
-	private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
+    // wasc_10 is Denial of Service - well, its just an example ;)
+    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
 
-	private Random rnd = new Random();
+    private Random rnd = new Random();
 
-	private static Logger log = Logger.getLogger(ExampleSimpleActiveScanner.class);
-	
-	@Override
-	public int getId() {
-		/*
-		 * This should be unique across all active and passive rules.
-		 * The master list is https://github.com/zaproxy/zaproxy/blob/develop/docs/scanners.md
-		 */
-		return 60100;
-	}
+    private static Logger log = Logger.getLogger(ExampleSimpleActiveScanner.class);
 
-	@Override
-	public String getName() {
-		// Strip off the "Example Active Scanner: " part if implementing a real one ;)
-		if (vuln != null) {
-			return "Example Active Scanner: " + vuln.getAlert();
-		}
-		return "Example Active Scanner: Denial of Service";
-	}
+    @Override
+    public int getId() {
+        /*
+         * This should be unique across all active and passive rules.
+         * The master list is https://github.com/zaproxy/zaproxy/blob/develop/docs/scanners.md
+         */
+        return 60100;
+    }
 
-	@Override
-	public String[] getDependency() {
-		return null;
-	}
+    @Override
+    public String getName() {
+        // Strip off the "Example Active Scanner: " part if implementing a real one ;)
+        if (vuln != null) {
+            return "Example Active Scanner: " + vuln.getAlert();
+        }
+        return "Example Active Scanner: Denial of Service";
+    }
 
-	@Override
-	public boolean targets(TechSet technologies) {  // This method allows the programmer or user to restrict when a 
-		//scanner is run based on the technologies selected.  For example, to restrict the scanner to run just when 
-		//C language is selected 
-		return technologies.includes(Tech.C); 
-	}
-	
-	@Override
-	public String getDescription() {
-		if (vuln != null) {
-			return vuln.getDescription();
-		}
-		return "Failed to load vulnerability description from file";
-	}
+    @Override
+    public String[] getDependency() {
+        return null;
+    }
 
-	@Override
-	public int getCategory() {
-		return Category.MISC;
-	}
+    @Override
+    public boolean targets(
+            TechSet technologies) { // This method allows the programmer or user to restrict when a
+        // scanner is run based on the technologies selected.  For example, to restrict the scanner
+        // to run just when
+        // C language is selected
+        return technologies.includes(Tech.C);
+    }
 
-	@Override
-	public String getSolution() {
-		if (vuln != null) {
-			return vuln.getSolution();
-		}
-		return "Failed to load vulnerability solution from file";
-	}
+    @Override
+    public String getDescription() {
+        if (vuln != null) {
+            return vuln.getDescription();
+        }
+        return "Failed to load vulnerability description from file";
+    }
 
-	@Override
-	public String getReference() {
-		if (vuln != null) {
-			StringBuilder sb = new StringBuilder();
-			for (String ref : vuln.getReferences()) {
-				if (sb.length() > 0) {
-					sb.append("\n");
-				}
-				sb.append(ref);
-			}
-			return sb.toString();
-		}
-		return "Failed to load vulnerability reference from file";
-	}
+    @Override
+    public int getCategory() {
+        return Category.MISC;
+    }
 
-	@Override
-	public void init() {
+    @Override
+    public String getSolution() {
+        if (vuln != null) {
+            return vuln.getSolution();
+        }
+        return "Failed to load vulnerability solution from file";
+    }
 
-	}
+    @Override
+    public String getReference() {
+        if (vuln != null) {
+            StringBuilder sb = new StringBuilder();
+            for (String ref : vuln.getReferences()) {
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                }
+                sb.append(ref);
+            }
+            return sb.toString();
+        }
+        return "Failed to load vulnerability reference from file";
+    }
 
-	/*
-	 * This method is called by the active scanner for each GET and POST parameter for every page 
-	 * @see org.parosproxy.paros.core.scanner.AbstractAppParamPlugin#scan(org.parosproxy.paros.network.HttpMessage, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void scan(HttpMessage msg, String param, String value) {
-		try {
-			if (!Constant.isDevBuild()) {
-				// Only run this example scanner in dev mode
-				// Uncomment locally if you want to see these alerts in non dev mode ;)
-				return;
-			}
-			// This is where you change the 'good' request to attack the application
-			// You can make multiple requests if needed
-			String attack = "attack";
-			
-			// Always use getNewMsg() for each new request
-			msg = getNewMsg();
-			setParameter(msg, param, attack);
-			sendAndReceive(msg);
-			
-			// This is where you detect potential vulnerabilities in the response
-			
-			// For this example we're just going to raise the alert at random!
-			
-			if (rnd.nextInt(10) == 0) {
-		   		bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, value, null, msg);
-				return;
-			}
-			
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}	
-	}
+    @Override
+    public void init() {}
 
-	@Override
-	public int getRisk() {
-		return Alert.RISK_HIGH;
-	}
+    /*
+     * This method is called by the active scanner for each GET and POST parameter for every page
+     * @see org.parosproxy.paros.core.scanner.AbstractAppParamPlugin#scan(org.parosproxy.paros.network.HttpMessage, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void scan(HttpMessage msg, String param, String value) {
+        try {
+            if (!Constant.isDevBuild()) {
+                // Only run this example scanner in dev mode
+                // Uncomment locally if you want to see these alerts in non dev mode ;)
+                return;
+            }
+            // This is where you change the 'good' request to attack the application
+            // You can make multiple requests if needed
+            String attack = "attack";
 
-	@Override
-	public int getCweId() {
-		// The CWE id
-		return 0;
-	}
+            // Always use getNewMsg() for each new request
+            msg = getNewMsg();
+            setParameter(msg, param, attack);
+            sendAndReceive(msg);
 
-	@Override
-	public int getWascId() {
-		// The WASC ID
-		return 0;
-	}
+            // This is where you detect potential vulnerabilities in the response
 
+            // For this example we're just going to raise the alert at random!
+
+            if (rnd.nextInt(10) == 0) {
+                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, value, null, msg);
+                return;
+            }
+
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public int getRisk() {
+        return Alert.RISK_HIGH;
+    }
+
+    @Override
+    public int getCweId() {
+        // The CWE id
+        return 0;
+    }
+
+    @Override
+    public int getWascId() {
+        // The WASC ID
+        return 0;
+    }
 }

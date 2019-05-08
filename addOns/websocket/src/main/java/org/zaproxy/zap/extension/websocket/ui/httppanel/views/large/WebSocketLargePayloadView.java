@@ -26,45 +26,45 @@ import org.zaproxy.zap.extension.websocket.ui.httppanel.views.WebSocketPanelText
 
 public class WebSocketLargePayloadView extends WebSocketPanelTextView {
 
-	public static final String NAME = "WebSocketLargePayloadView";
-	
-	public static final String CAPTION_NAME = Constant.messages.getString("websocket.panel.view.largepayload.name");
-	
-	public WebSocketLargePayloadView(StringWebSocketPanelViewModel model) {
-		super(model);
-	}
-	
-	@Override
-	public String getName() {
-		return NAME;
-	}
-	
-	@Override
-	public String getCaptionName() {
-		return CAPTION_NAME;
-	}
+    public static final String NAME = "WebSocketLargePayloadView";
 
-	@Override
-	public int getPosition() {
-		return 1;
-	}
+    public static final String CAPTION_NAME =
+            Constant.messages.getString("websocket.panel.view.largepayload.name");
 
-	@Override
-	public boolean isEnabled(Message message) {
-		return WebSocketLargePayloadUtil.isLargePayload(message);
-	}
+    public WebSocketLargePayloadView(StringWebSocketPanelViewModel model) {
+        super(model);
+    }
 
-	@Override
-	public boolean hasChanged() {
-		return false;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public boolean isEditable() {
-		return false;
-	}
+    @Override
+    public String getCaptionName() {
+        return CAPTION_NAME;
+    }
 
-	@Override
-	public void setEditable(boolean editable) {
-	}
+    @Override
+    public int getPosition() {
+        return 1;
+    }
+
+    @Override
+    public boolean isEnabled(Message message) {
+        return WebSocketLargePayloadUtil.isLargePayload(message);
+    }
+
+    @Override
+    public boolean hasChanged() {
+        return false;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return false;
+    }
+
+    @Override
+    public void setEditable(boolean editable) {}
 }

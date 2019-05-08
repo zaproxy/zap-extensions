@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.ui;
 
 import java.util.Map;
-
 import javax.swing.Icon;
 
 public interface HttpFuzzerResultStateHighlighter {

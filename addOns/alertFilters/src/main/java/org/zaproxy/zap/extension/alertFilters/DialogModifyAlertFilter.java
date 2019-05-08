@@ -20,46 +20,43 @@
 package org.zaproxy.zap.extension.alertFilters;
 
 import java.awt.Dialog;
-
 import org.parosproxy.paros.Constant;
 
 public class DialogModifyAlertFilter extends DialogAddAlertFilter {
 
-	private static final long serialVersionUID = 7828871270310672334L;
-	private static final String DIALOG_TITLE = 
-			Constant.messages.getString("alertFilters.dialog.modify.title");
+    private static final long serialVersionUID = 7828871270310672334L;
+    private static final String DIALOG_TITLE =
+            Constant.messages.getString("alertFilters.dialog.modify.title");
 
-	public DialogModifyAlertFilter(Dialog owner, ExtensionAlertFilters extension) {
-		super(owner, extension, DIALOG_TITLE);
-	}
+    public DialogModifyAlertFilter(Dialog owner, ExtensionAlertFilters extension) {
+        super(owner, extension, DIALOG_TITLE);
+    }
 
-	public void setAlertFilter(AlertFilter alertFilter) {
-		this.alertFilter = alertFilter;
-	}
+    public void setAlertFilter(AlertFilter alertFilter) {
+        this.alertFilter = alertFilter;
+    }
 
-	@Override
-	protected String getConfirmButtonLabel() {
-		return Constant.messages.getString("alertFilters.dialog.modify.button.confirm");
-	}
+    @Override
+    protected String getConfirmButtonLabel() {
+        return Constant.messages.getString("alertFilters.dialog.modify.button.confirm");
+    }
 
-	@Override
-	protected void init() {
-		if (this.workingContext == null) {
-			throw new IllegalStateException(
-					"A working Context should be set before setting the 'Add Dialog' visible.");
-		}
-		log.debug("Initializing modify alertFilter dialog for: " + alertFilter);
-		getAlertCombo().setSelectedItem(
-				ExtensionAlertFilters.getRuleNameForId(alertFilter.getRuleId()));
-		getNewLevelCombo().setSelectedItem(
-				AlertFilter.getNameForRisk(alertFilter.getNewRisk()));
-		getUrlTextField().setText(alertFilter.getUrl());
-		getRegexCheckBox().setSelected(alertFilter.isRegex());
-		getParamTextField().setText(alertFilter.getParameter());
+    @Override
+    protected void init() {
+        if (this.workingContext == null) {
+            throw new IllegalStateException(
+                    "A working Context should be set before setting the 'Add Dialog' visible.");
+        }
+        log.debug("Initializing modify alertFilter dialog for: " + alertFilter);
+        getAlertCombo()
+                .setSelectedItem(ExtensionAlertFilters.getRuleNameForId(alertFilter.getRuleId()));
+        getNewLevelCombo().setSelectedItem(AlertFilter.getNameForRisk(alertFilter.getNewRisk()));
+        getUrlTextField().setText(alertFilter.getUrl());
+        getRegexCheckBox().setSelected(alertFilter.isRegex());
+        getParamTextField().setText(alertFilter.getParameter());
 
-		getEnabledCheckBox().setSelected(alertFilter.isEnabled());
+        getEnabledCheckBox().setSelected(alertFilter.isEnabled());
 
-		this.setConfirmButtonEnabled(true);
-
-	}
+        this.setConfirmButtonEnabled(true);
+    }
 }

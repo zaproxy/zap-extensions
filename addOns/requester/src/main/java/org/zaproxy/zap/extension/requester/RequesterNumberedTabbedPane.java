@@ -19,21 +19,19 @@
  */
 package org.zaproxy.zap.extension.requester;
 
-import org.zaproxy.zap.extension.requester.ManualHttpRequestEditorPanel;
-
 public class RequesterNumberedTabbedPane extends NumberedTabbedPane {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public RequesterNumberedTabbedPane() {
-		super();		
-	}
+    public RequesterNumberedTabbedPane() {
+        super();
+    }
 
-	@Override
-	public void addDefaultTab() {
-		ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel(true, "requesterpanel");
-		requestPane.setDefaultMessage();
-		addTab(requestPane);
-		}
-
+    @Override
+    public void addDefaultTab() {
+        ManualHttpRequestEditorPanel requestPane =
+                new ManualHttpRequestEditorPanel(true, "requesterpanel");
+        requestPane.setDefaultMessage();
+        addTab(requestPane);
+    }
 }

@@ -22,10 +22,9 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUI;
 
-public interface HttpFuzzerMessageProcessorUI<T extends HttpFuzzerMessageProcessor> extends
-        FuzzerMessageProcessorUI<HttpMessage, T> {
+public interface HttpFuzzerMessageProcessorUI<T extends HttpFuzzerMessageProcessor>
+        extends FuzzerMessageProcessorUI<HttpMessage, T> {
 
     @Override
     T getFuzzerMessageProcessor();
-
 }

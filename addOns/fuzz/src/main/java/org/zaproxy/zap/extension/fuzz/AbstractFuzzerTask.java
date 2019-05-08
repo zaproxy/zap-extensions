@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz;
 
 import java.util.List;
-
 import org.zaproxy.zap.extension.httppanel.Message;
 
 public abstract class AbstractFuzzerTask<M extends Message> implements Runnable {

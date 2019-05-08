@@ -23,31 +23,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DirCategory {
-	private String name;
-	private List<FileFuzzer> fuzzers = new ArrayList<>();
-	
-	public List<FileFuzzer> getFuzzers() {
-		return fuzzers;
-	}
-	public DirCategory(String name) {
-		super();
-		this.name = name;
-	}
-	
-	public void addFuzzer(FileFuzzer fileFuzzer) {
-		this.fuzzers.add(fileFuzzer);
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	public FileFuzzer getFileFuzzer(String name) {
-		for (FileFuzzer ff : fuzzers) {
-			if (ff.getFileName().equals(name)) {
-				return ff;
-			}
-		}
-		return null;
-	}
+    private String name;
+    private List<FileFuzzer> fuzzers = new ArrayList<>();
+
+    public List<FileFuzzer> getFuzzers() {
+        return fuzzers;
+    }
+
+    public DirCategory(String name) {
+        super();
+        this.name = name;
+    }
+
+    public void addFuzzer(FileFuzzer fileFuzzer) {
+        this.fuzzers.add(fileFuzzer);
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public FileFuzzer getFileFuzzer(String name) {
+        for (FileFuzzer ff : fuzzers) {
+            if (ff.getFileName().equals(name)) {
+                return ff;
+            }
+        }
+        return null;
+    }
 }

@@ -24,12 +24,10 @@ import org.zaproxy.zap.view.messagecontainer.SingleMessageContainer;
 
 /**
  * A {@code SingleMessageContainer} of {@code HttpMessage}s.
- * 
+ *
  * @see WebSocketMessageDTO
  * @see WebSocketMessageContainer
  * @see SingleMessageContainer
  */
 public interface SingleWebSocketMessageContainer
-        extends SingleMessageContainer<WebSocketMessageDTO>, WebSocketMessageContainer {
-
-}
+        extends SingleMessageContainer<WebSocketMessageDTO>, WebSocketMessageContainer {}

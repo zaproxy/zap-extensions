@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.tokengen;
 
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
@@ -29,53 +28,47 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 
 /**
  * The options panel.
- * <p>
- * It allows to change the following options:
+ *
+ * <p>It allows to change the following options:
+ *
  * <ul>
- * <li>Number of threads for the token generation;</li>
- * <li>The request delay;</li>
+ *   <li>Number of threads for the token generation;
+ *   <li>The request delay;
  * </ul>
- * 
+ *
  * @see TokenParam
  */
 public class TokenOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The name of the options panel.
-     */
+    /** The name of the options panel. */
     private static final String NAME = Constant.messages.getString("tokengen.optionspanel.name");
 
-    /**
-     * The label for the threads per scan option.
-     */
-    private static final String THREADS_PER_SCAN_LABEL = Constant.messages
-            .getString("tokengen.optionspanel.option.threadsperscan");
+    /** The label for the threads per scan option. */
+    private static final String THREADS_PER_SCAN_LABEL =
+            Constant.messages.getString("tokengen.optionspanel.option.threadsperscan");
 
-    /**
-     * The label for the request delay option.
-     */
-    private static final String REQUEST_DELAY_LABEL = Constant.messages.getString("tokengen.optionspanel.option.requestdelay");
+    /** The label for the request delay option. */
+    private static final String REQUEST_DELAY_LABEL =
+            Constant.messages.getString("tokengen.optionspanel.option.requestdelay");
 
-    /**
-     * The number spinner for the number of threads per scan.
-     */
+    /** The number spinner for the number of threads per scan. */
     private ZapNumberSpinner threadsPerScanNumberSpinner;
 
-    /**
-     * The number spinner for the request delay.
-     */
+    /** The number spinner for the request delay. */
     private ZapNumberSpinner requestDelayNumberSpinner;
 
     public TokenOptionsPanel() {
         super();
 
         JLabel threadsPerScanLabel = new JLabel(THREADS_PER_SCAN_LABEL);
-        threadsPerScanNumberSpinner = new ZapNumberSpinner(1, TokenParam.DEFAULT_THREADS_PER_SCAN, 50);
+        threadsPerScanNumberSpinner =
+                new ZapNumberSpinner(1, TokenParam.DEFAULT_THREADS_PER_SCAN, 50);
 
         JLabel requestDelayLabel = new JLabel(REQUEST_DELAY_LABEL);
-        requestDelayNumberSpinner = new ZapNumberSpinner(0, TokenParam.DEFAULT_REQUEST_DELAY_IN_MS, Integer.MAX_VALUE);
+        requestDelayNumberSpinner =
+                new ZapNumberSpinner(0, TokenParam.DEFAULT_REQUEST_DELAY_IN_MS, Integer.MAX_VALUE);
 
         setName(NAME);
 
@@ -128,5 +121,4 @@ public class TokenOptionsPanel extends AbstractParamPanel {
     public String getHelpIndex() {
         return "tokengen.options";
     }
-
 }

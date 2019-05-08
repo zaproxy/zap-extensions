@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
@@ -37,48 +36,51 @@ public class ZestParameterizePopupMenu extends ExtensionPopupMenuItem {
 
     private ExtensionZest extension;
     private String replace = null;
-    
+
     private ZestScriptWrapper script = null;
     private ScriptNode node = null;
     private ZestRequest request = null;
 
-    /**
-     * This method initializes 
-     * 
-     */
+    /** This method initializes */
     public ZestParameterizePopupMenu(final ExtensionZest extension, String label) {
         super(label);
         this.extension = extension;
 
-        this.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                extension.getDialogManager().showZestParameterizeDialog(script, node, request, replace);
-            }
-        });
+        this.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        extension
+                                .getDialogManager()
+                                .showZestParameterizeDialog(script, node, request, replace);
+                    }
+                });
     }
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
-        if (invoker instanceof HttpPanelSyntaxHighlightTextArea && extension.getExtScript().getScriptUI() != null) {
-            HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
+        if (invoker instanceof HttpPanelSyntaxHighlightTextArea
+                && extension.getExtScript().getScriptUI() != null) {
+            HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea) invoker;
             ScriptNode node = extension.getExtScript().getScriptUI().getSelectedNode();
-            if (node != null && extension.isSelectedMessage(panel.getMessage()) &&
-                    panel.getSelectedText() != null && panel.getSelectedText().length() > 0) {
+            if (node != null
+                    && extension.isSelectedMessage(panel.getMessage())
+                    && panel.getSelectedText() != null
+                    && panel.getSelectedText().length() > 0) {
                 if (ZestZapUtils.getElement(node) instanceof ZestRequest) {
-                	this.request = (ZestRequest) ZestZapUtils.getElement(node);
-                	this.script = extension.getZestTreeModel().getScriptWrapper(node);
-                	this.node = node;
+                    this.request = (ZestRequest) ZestZapUtils.getElement(node);
+                    this.script = extension.getZestTreeModel().getScriptWrapper(node);
+                    this.node = node;
                     this.replace = panel.getSelectedText();
                     return true;
                 }
             }
         }
-       
+
         return false;
     }
 
-        @Override
+    @Override
     public boolean isSafe() {
         return true;
     }

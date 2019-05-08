@@ -24,7 +24,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.log4j.Logger;
@@ -67,454 +66,481 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     private static final Logger log = Logger.getLogger(ZestZapRunner.class);
 
-	private static final int ZEST_HISTORY_REFERENCE_TYPE = HistoryReference.TYPE_ZEST_SCRIPT;
-	private static final int FAIL_ACTION_PLUGIN_ID = 50004;
+    private static final int ZEST_HISTORY_REFERENCE_TYPE = HistoryReference.TYPE_ZEST_SCRIPT;
+    private static final int FAIL_ACTION_PLUGIN_ID = 50004;
 
-	private static Field fieldOutputWriter;
-	
-	private ExtensionZest extension;
-	private ZestScriptWrapper wrapper = null;
-	private HttpMessage target = null;
-	private ZestResultWrapper lastResult = null;
-	private HistoryReference lastHref = null;
+    private static Field fieldOutputWriter;
 
-	private boolean pause = false;
+    private ExtensionZest extension;
+    private ZestScriptWrapper wrapper = null;
+    private HttpMessage target = null;
+    private ZestResultWrapper lastResult = null;
+    private HistoryReference lastHref = null;
+
+    private boolean pause = false;
     private boolean isStop = false;
-    
+
     private boolean scanning = false;
-    
+
     private List<Alert> alerts = new ArrayList<Alert>();;
 
-	private ScriptUI scriptUI;
-    
-    /**
-     * 
-     */
-    public ZestZapRunner(ExtensionZest extension, ZestScriptWrapper wrapper) {
-    	super();
-    	log.debug("Constructor");
-    	this.extension = extension;
-    	this.wrapper = wrapper;
-    	this.scriptUI = extension.getExtScript().getScriptUI();
-    	this.setScriptEngineFactory(extension.getZestScriptEngineFactory());
-    	
-	    this.setStopOnAssertFail(false);
-	    this.setStopOnTestFail(false);
+    private ScriptUI scriptUI;
 
-		HttpClient httpClient = new HttpClient();
-		httpClient.getParams().setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true);
-		this.setHttpClient(httpClient);
-	    // Always proxy via ZAP
-		this.setProxy(Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
-				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
+    /** */
+    public ZestZapRunner(ExtensionZest extension, ZestScriptWrapper wrapper) {
+        super();
+        log.debug("Constructor");
+        this.extension = extension;
+        this.wrapper = wrapper;
+        this.scriptUI = extension.getExtScript().getScriptUI();
+        this.setScriptEngineFactory(extension.getZestScriptEngineFactory());
+
+        this.setStopOnAssertFail(false);
+        this.setStopOnTestFail(false);
+
+        HttpClient httpClient = new HttpClient();
+        httpClient.getParams().setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true);
+        this.setHttpClient(httpClient);
+        // Always proxy via ZAP
+        this.setProxy(
+                Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
+                Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
     }
 
     @Override
-	public String run(ZestScript script, Map<String, String> params) throws ZestAssertFailException, ZestActionFailException, 
-			IOException, ZestInvalidCommonTestException, ZestAssignFailException, ZestClientFailException {
-    	log.debug("Run script " + script.getTitle());
-		// Check for any missing parameters
-		boolean missingParams = false;
-		for (String[] vars : script.getParameters().getVariables()) {
-			if (vars[1].length() == 0 && params.get(vars[0]) == null) {
-	        	missingParams = true;
-			}
-		}
-    	if (missingParams) {
-    		// Prompt for them
-    		params = extension.getDialogManager().showRunScriptDialog(this, script, params);
-    		return "";
-    	} else {
-			this.target = null;
-			if (wrapper.getWriter() != null) {
-				super.setOutputWriter(wrapper.getWriter());
-			} else if (scriptUI != null && !hasOutputWriter()) {
-				super.setOutputWriter(scriptUI.getOutputWriter());
-			}
-			this.setDebug(this.wrapper.isDebug());
-			
-			return super.run(script, params);
-    	}
-	}
+    public String run(ZestScript script, Map<String, String> params)
+            throws ZestAssertFailException, ZestActionFailException, IOException,
+                    ZestInvalidCommonTestException, ZestAssignFailException,
+                    ZestClientFailException {
+        log.debug("Run script " + script.getTitle());
+        // Check for any missing parameters
+        boolean missingParams = false;
+        for (String[] vars : script.getParameters().getVariables()) {
+            if (vars[1].length() == 0 && params.get(vars[0]) == null) {
+                missingParams = true;
+            }
+        }
+        if (missingParams) {
+            // Prompt for them
+            params = extension.getDialogManager().showRunScriptDialog(this, script, params);
+            return "";
+        } else {
+            this.target = null;
+            if (wrapper.getWriter() != null) {
+                super.setOutputWriter(wrapper.getWriter());
+            } else if (scriptUI != null && !hasOutputWriter()) {
+                super.setOutputWriter(scriptUI.getOutputWriter());
+            }
+            this.setDebug(this.wrapper.isDebug());
 
-	private boolean hasOutputWriter() {
-		try {
-			if (fieldOutputWriter == null) {
-				fieldOutputWriter = ZestBasicRunner.class.getDeclaredField("outputWriter");
-				fieldOutputWriter.setAccessible(true);
-			}
-			return fieldOutputWriter.get(this) != null;
-		} catch (IllegalAccessException | NoSuchFieldException e) {
-			return false;
-		}
-	}
+            return super.run(script, params);
+        }
+    }
 
-	@Override
-	public String run (ZestScript script, ZestRequest target, Map<String, String> params) 
-			throws ZestAssertFailException, ZestActionFailException, IOException,
-			ZestInvalidCommonTestException, ZestAssignFailException, ZestClientFailException {
-    	log.debug("Run script " + script.getTitle());
-		if (wrapper.getWriter() != null) {
-			super.setOutputWriter(wrapper.getWriter());
-		} else if (scriptUI != null && !hasOutputWriter()) {
-			super.setOutputWriter(scriptUI.getOutputWriter());
-		}
-		this.setDebug(this.wrapper.isDebug());
-		String result = super.run(script, target, params);
-		return result;
-	}
-    
+    private boolean hasOutputWriter() {
+        try {
+            if (fieldOutputWriter == null) {
+                fieldOutputWriter = ZestBasicRunner.class.getDeclaredField("outputWriter");
+                fieldOutputWriter.setAccessible(true);
+            }
+            return fieldOutputWriter.get(this) != null;
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String run(ZestScript script, ZestRequest target, Map<String, String> params)
+            throws ZestAssertFailException, ZestActionFailException, IOException,
+                    ZestInvalidCommonTestException, ZestAssignFailException,
+                    ZestClientFailException {
+        log.debug("Run script " + script.getTitle());
+        if (wrapper.getWriter() != null) {
+            super.setOutputWriter(wrapper.getWriter());
+        } else if (scriptUI != null && !hasOutputWriter()) {
+            super.setOutputWriter(scriptUI.getOutputWriter());
+        }
+        this.setDebug(this.wrapper.isDebug());
+        String result = super.run(script, target, params);
+        return result;
+    }
+
     public void stop() {
         isStop = true;
     }
-   
-	private void notifyResponse(ZestResultWrapper href) {
-		this.lastHref = href;
-		if (View.isInitialised()) {
-			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
-				// Add to the Zest results tab
-				this.extension.addResultToList(href);
-			}
-			// Add to history tab
-			/* TODO wont work until ExtensionHistory changed to display non MANUAL requests
-			ExtensionHistory extHist = (ExtensionHistory) Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.NAME);
-			if (extHist != null) {
-				extHist.addHistory(href);
-			}
-			*/
-			
-		} else {
-			// TODO i18n for cmdline??
-			try {
-				System.out.println("Response: " + href.getURI() + " passed = " + href.isPassed() + " code=" + href.getStatusCode());
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-			}
-		}
-	}
 
-	private void notifyActionFailed(ZestActionFailException e) {
-    	log.debug("notifyActionFailed", e);
-		if (e.getAction() instanceof ZestActionFail) {
-			int risk = Alert.RISK_LOW;
-			ZestActionFail zaf = (ZestActionFail)e.getAction();
-			if (ZestActionFail.Priority.INFO.name().equals(zaf.getPriority())) {
-				risk = Alert.RISK_INFO;
-			} else if (ZestActionFail.Priority.LOW.name().equals(zaf.getPriority())) {
-				risk = Alert.RISK_LOW;
-			} else if (ZestActionFail.Priority.MEDIUM.name().equals(zaf.getPriority())) {
-				risk = Alert.RISK_MEDIUM;
-			} else if (ZestActionFail.Priority.HIGH.name().equals(zaf.getPriority())) {
-				risk = Alert.RISK_HIGH;
-			}
-			Alert alert = new Alert(FAIL_ACTION_PLUGIN_ID, risk, Alert.CONFIDENCE_MEDIUM, e.getMessage());
-			
-			if (lastHref != null) {
-				alert.setHistoryRef(lastHref);
-				try {
-					alert.setUri(lastHref.getURI().toString());
-					alert.setMessage(lastHref.getHttpMessage());
-				} catch (Exception e1) {
-					log.error(e1.getMessage(), e1);
-				}
-			}
-			this.alertFound(alert);
-		}
-		
-		if (View.isInitialised()) {
-			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
-				if (! hasSameScriptType(wrapper.getZestScript(), ZestScript.Type.Passive)) {
-					// Dont try to update passive scripts - they cant make requests so the 
-					// last request wont be in the results list
-					extension.failLastResult(e);
-				}
-			}
-		} else {
-			// TODO i18n for cmdline??
-			// TODO check type first? toUiFailureString as above?
-			System.out.println("Action: failed: " + e.getMessage());
-		}
-	}
+    private void notifyResponse(ZestResultWrapper href) {
+        this.lastHref = href;
+        if (View.isInitialised()) {
+            if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
+                // Add to the Zest results tab
+                this.extension.addResultToList(href);
+            }
+            // Add to history tab
+            /* TODO wont work until ExtensionHistory changed to display non MANUAL requests
+            ExtensionHistory extHist = (ExtensionHistory) Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.NAME);
+            if (extHist != null) {
+            	extHist.addHistory(href);
+            }
+            */
 
-	private static boolean hasSameScriptType(ZestScript script, ZestScript.Type type) {
-		return type.name().equalsIgnoreCase(script.getType());
-	}
+        } else {
+            // TODO i18n for cmdline??
+            try {
+                System.out.println(
+                        "Response: "
+                                + href.getURI()
+                                + " passed = "
+                                + href.isPassed()
+                                + " code="
+                                + href.getStatusCode());
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        }
+    }
 
-	private void notifyAssignFailed(ZestAssignFailException e) {
-    	log.debug("notifyAssignFailed", e);
-		if (View.isInitialised()) {
-			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
-				if (! hasSameScriptType(wrapper.getZestScript(), ZestScript.Type.Passive)) {
-					// Dont try to update passive scripts - they cant make requests so the 
-					// last request wont be in the results list
-					extension.failLastResult(e);
-				}
-			}			
-		} else {
-			// TODO i18n for cmdline??
-			// TODO check type first? toUiFailureString as above?
-			System.out.println("Assign: failed: " + e.getMessage());
-		}
-	}
+    private void notifyActionFailed(ZestActionFailException e) {
+        log.debug("notifyActionFailed", e);
+        if (e.getAction() instanceof ZestActionFail) {
+            int risk = Alert.RISK_LOW;
+            ZestActionFail zaf = (ZestActionFail) e.getAction();
+            if (ZestActionFail.Priority.INFO.name().equals(zaf.getPriority())) {
+                risk = Alert.RISK_INFO;
+            } else if (ZestActionFail.Priority.LOW.name().equals(zaf.getPriority())) {
+                risk = Alert.RISK_LOW;
+            } else if (ZestActionFail.Priority.MEDIUM.name().equals(zaf.getPriority())) {
+                risk = Alert.RISK_MEDIUM;
+            } else if (ZestActionFail.Priority.HIGH.name().equals(zaf.getPriority())) {
+                risk = Alert.RISK_HIGH;
+            }
+            Alert alert =
+                    new Alert(FAIL_ACTION_PLUGIN_ID, risk, Alert.CONFIDENCE_MEDIUM, e.getMessage());
 
-	@Override
-	public ZestResponse runStatement(ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
-			throws ZestAssertFailException, ZestActionFailException, 
-			ZestInvalidCommonTestException, IOException, ZestAssignFailException, ZestClientFailException {
-    	log.debug("runStatement " + stmt.getElementType());
-		while (this.isPaused() && ! this.isStop) {
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// Ignore
-			}
-		}
-		if (this.isStop) {
-			return null;
-		}
-		return super.runStatement(script, stmt, lastResponse);
-	}
+            if (lastHref != null) {
+                alert.setHistoryRef(lastHref);
+                try {
+                    alert.setUri(lastHref.getURI().toString());
+                    alert.setMessage(lastHref.getHttpMessage());
+                } catch (Exception e1) {
+                    log.error(e1.getMessage(), e1);
+                }
+            }
+            this.alertFound(alert);
+        }
 
-	@Override
-	public String handleAction(ZestScript script, ZestAction action, ZestResponse lastResponse) throws ZestActionFailException {
-    	log.debug("handleAction " + action.getElementType());
-		if (action instanceof ZestActionScan) {
-			this.invokeScan(script, (ZestActionScan)action);
-		} else if (action instanceof ZestActionIntercept) {
-			// Use a script variable, which we check in ZestProxyRunner
-			script.getParameters().setVariable(
-					ZestScriptWrapper.ZAP_BREAK_VARIABLE_NAME, ZestScriptWrapper.ZAP_BREAK_VARIABLE_VALUE);
-		} else {
-			try {
-				return super.handleAction(script, action, lastResponse);
-			} catch (ZestActionFailException e) {
-				notifyActionFailed(e); 
-			}
-		}
-		return null;
-	}
+        if (View.isInitialised()) {
+            if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
+                if (!hasSameScriptType(wrapper.getZestScript(), ZestScript.Type.Passive)) {
+                    // Dont try to update passive scripts - they cant make requests so the
+                    // last request wont be in the results list
+                    extension.failLastResult(e);
+                }
+            }
+        } else {
+            // TODO i18n for cmdline??
+            // TODO check type first? toUiFailureString as above?
+            System.out.println("Action: failed: " + e.getMessage());
+        }
+    }
 
-	@Override
-	public String handleAssignment(ZestScript script, ZestAssignment assign, ZestResponse lastResponse) throws ZestAssignFailException {
-    	log.debug("handleAssignment " + assign.getElementType());
-		try {
-			return super.handleAssignment(script, assign, lastResponse);
-		} catch (ZestAssignFailException e) {
-			notifyAssignFailed(e); 
-		}
-		return null;
-	}
+    private static boolean hasSameScriptType(ZestScript script, ZestScript.Type type) {
+        return type.name().equalsIgnoreCase(script.getType());
+    }
 
-	@Override
-	public void handleResponse(ZestRequest request, ZestResponse response) throws ZestAssertFailException {
-    	log.debug("handleResponse " + request.getElementType());
-	    try {
-			HttpMessage msg = ZestZapUtils.toHttpMessage(request, response);
-			
-			ZestResultWrapper zrw = new ZestResultWrapper(Model.getSingleton().getSession(), 
-					ZEST_HISTORY_REFERENCE_TYPE, msg, request.getIndex());
-			
-			lastResult = zrw;
+    private void notifyAssignFailed(ZestAssignFailException e) {
+        log.debug("notifyAssignFailed", e);
+        if (View.isInitialised()) {
+            if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
+                if (!hasSameScriptType(wrapper.getZestScript(), ZestScript.Type.Passive)) {
+                    // Dont try to update passive scripts - they cant make requests so the
+                    // last request wont be in the results list
+                    extension.failLastResult(e);
+                }
+            }
+        } else {
+            // TODO i18n for cmdline??
+            // TODO check type first? toUiFailureString as above?
+            System.out.println("Assign: failed: " + e.getMessage());
+        }
+    }
 
-			if (request.getAssertions().size() == 0) {
-				zrw.setPassed(true);
-			} else {
-				for (ZestAssertion za : request.getAssertions()) {
-					if (za.isValid(this)) {
-						zrw.setPassed(true);
-					} else {
-						zrw.setPassed(false);
-						zrw.setMessage(ZestZapUtils.toUiFailureString(za, this));
-						break;
-					}
-				}
-			}
-			this.notifyResponse(zrw);
+    @Override
+    public ZestResponse runStatement(
+            ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
+            throws ZestAssertFailException, ZestActionFailException, ZestInvalidCommonTestException,
+                    IOException, ZestAssignFailException, ZestClientFailException {
+        log.debug("runStatement " + stmt.getElementType());
+        while (this.isPaused() && !this.isStop) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                // Ignore
+            }
+        }
+        if (this.isStop) {
+            return null;
+        }
+        return super.runStatement(script, stmt, lastResponse);
+    }
 
-	    } catch (Exception e) {
-	    	log.error(e.getMessage(), e);
-		}
-	}
-	
-	@Override
-	public String handleClient(ZestScript script, ZestClient client) throws ZestClientFailException {
-		try {
-			return super.handleClient(script, client);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-			return null;
-		}
-	}
-	
-	private ScanPolicy getDefaultScanPolicy () {
-		// Dont cache as the user can change the default
-		ExtensionActiveScan extAscan = 
-				(ExtensionActiveScan) Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.NAME);
-		if (extAscan != null) {
-			return extAscan.getPolicyManager().getDefaultScanPolicy();
-		}
-		return null;
-	}
-	
-	private void invokeScan(ZestScript script, ZestActionScan scan) throws ZestActionFailException {
-    	log.debug("invokeScan " + scan.getElementType());
-		this.alerts = new ArrayList<Alert>();
-		
-		ScannerParam scannerParam = new ScannerParam();
-		RuleConfigParam ruleConfigParam = null;
-		ExtensionRuleConfig extRC = Control.getSingleton().getExtensionLoader().getExtension(ExtensionRuleConfig.class);
-		if (extRC != null) {
-			ruleConfigParam = extRC.getRuleConfigParam();
-		}
-		Scanner scanner = new Scanner(scannerParam, 
-							Model.getSingleton().getOptionsParam().getConnectionParam(),
-							getDefaultScanPolicy (),
-							ruleConfigParam);
-		scanner.setScanChildren(false);
-		scanner.addScannerListener(this);
-		
-		if (this.lastResult != null) {
-			SiteNode fakeRoot = new SiteNode(null, ZEST_HISTORY_REFERENCE_TYPE, "");
-			SiteNode sn = new SiteNode(null, ZEST_HISTORY_REFERENCE_TYPE, "");
-			sn.setHistoryReference(this.lastResult);
-			fakeRoot.add(sn);
-			scanning = true;
-			scanner.setStartNode(sn);
-			scanner.start(sn);
-			
-			while (scanning) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// Ignore
-				}
-			}
-		}
-		if (alerts.size() > 0) {
-			// Add all to alerts tab, flags in Script results.. 
-			this.lastResult.setPassed(false);
-			this.lastResult.setMessage(alerts.get(0).getName());
-			extension.notifyChanged(this.lastResult);
-		}
-		
-	}
+    @Override
+    public String handleAction(ZestScript script, ZestAction action, ZestResponse lastResponse)
+            throws ZestActionFailException {
+        log.debug("handleAction " + action.getElementType());
+        if (action instanceof ZestActionScan) {
+            this.invokeScan(script, (ZestActionScan) action);
+        } else if (action instanceof ZestActionIntercept) {
+            // Use a script variable, which we check in ZestProxyRunner
+            script.getParameters()
+                    .setVariable(
+                            ZestScriptWrapper.ZAP_BREAK_VARIABLE_NAME,
+                            ZestScriptWrapper.ZAP_BREAK_VARIABLE_VALUE);
+        } else {
+            try {
+                return super.handleAction(script, action, lastResponse);
+            } catch (ZestActionFailException e) {
+                notifyActionFailed(e);
+            }
+        }
+        return null;
+    }
 
-	public boolean isStop() {
-	    return isStop;
-	}
-	
-	public void pause() {
-		this.pause = true;
-	}
-	
-	public void resume () {
-		this.pause = false;
-	}
-	
-	public boolean isPaused() {
-		return pause;
-	}
+    @Override
+    public String handleAssignment(
+            ZestScript script, ZestAssignment assign, ZestResponse lastResponse)
+            throws ZestAssignFailException {
+        log.debug("handleAssignment " + assign.getElementType());
+        try {
+            return super.handleAssignment(script, assign, lastResponse);
+        } catch (ZestAssignFailException e) {
+            notifyAssignFailed(e);
+        }
+        return null;
+    }
 
-	@Override
-	public void scannerComplete(int id) {
-		this.scanning = false;
-	}
+    @Override
+    public void handleResponse(ZestRequest request, ZestResponse response)
+            throws ZestAssertFailException {
+        log.debug("handleResponse " + request.getElementType());
+        try {
+            HttpMessage msg = ZestZapUtils.toHttpMessage(request, response);
 
-	@Override
-	public void hostNewScan(int id, String hostAndPort, HostProcess hostThread) {
-	}
+            ZestResultWrapper zrw =
+                    new ZestResultWrapper(
+                            Model.getSingleton().getSession(),
+                            ZEST_HISTORY_REFERENCE_TYPE,
+                            msg,
+                            request.getIndex());
 
+            lastResult = zrw;
 
-	@Override
-	public void hostProgress(int id, String hostAndPort, String msg, int percentage) {
-	}
+            if (request.getAssertions().size() == 0) {
+                zrw.setPassed(true);
+            } else {
+                for (ZestAssertion za : request.getAssertions()) {
+                    if (za.isValid(this)) {
+                        zrw.setPassed(true);
+                    } else {
+                        zrw.setPassed(false);
+                        zrw.setMessage(ZestZapUtils.toUiFailureString(za, this));
+                        break;
+                    }
+                }
+            }
+            this.notifyResponse(zrw);
 
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void hostComplete(int id, String hostAndPort) {
-	}
+    @Override
+    public String handleClient(ZestScript script, ZestClient client)
+            throws ZestClientFailException {
+        try {
+            return super.handleClient(script, client);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
 
+    private ScanPolicy getDefaultScanPolicy() {
+        // Dont cache as the user can change the default
+        ExtensionActiveScan extAscan =
+                (ExtensionActiveScan)
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionActiveScan.NAME);
+        if (extAscan != null) {
+            return extAscan.getPolicyManager().getDefaultScanPolicy();
+        }
+        return null;
+    }
 
-	@Override
-	public void alertFound(Alert alert) {
-		this.alerts.add(alert);
-		
-		ExtensionAlert extAlert = (ExtensionAlert) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.NAME);
-		if (extAlert != null) {
-			extAlert.alertFound(alert, alert.getHistoryRef());
-		}
-		
-		extension.notifyAlert(alert);
-	}
+    private void invokeScan(ZestScript script, ZestActionScan scan) throws ZestActionFailException {
+        log.debug("invokeScan " + scan.getElementType());
+        this.alerts = new ArrayList<Alert>();
 
-	public HttpMessage getTarget() {
-		return target;
-	}
+        ScannerParam scannerParam = new ScannerParam();
+        RuleConfigParam ruleConfigParam = null;
+        ExtensionRuleConfig extRC =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionRuleConfig.class);
+        if (extRC != null) {
+            ruleConfigParam = extRC.getRuleConfigParam();
+        }
+        Scanner scanner =
+                new Scanner(
+                        scannerParam,
+                        Model.getSingleton().getOptionsParam().getConnectionParam(),
+                        getDefaultScanPolicy(),
+                        ruleConfigParam);
+        scanner.setScanChildren(false);
+        scanner.addScannerListener(this);
 
-	public void setTarget(HttpMessage target) {
-		this.target = target;
-	}
+        if (this.lastResult != null) {
+            SiteNode fakeRoot = new SiteNode(null, ZEST_HISTORY_REFERENCE_TYPE, "");
+            SiteNode sn = new SiteNode(null, ZEST_HISTORY_REFERENCE_TYPE, "");
+            sn.setHistoryReference(this.lastResult);
+            fakeRoot.add(sn);
+            scanning = true;
+            scanner.setStartNode(sn);
+            scanner.start(sn);
 
-	@Override
-	public void notifyNewMessage(HttpMessage msg) {
-		try {
-			ZestResultWrapper zrw = new ZestResultWrapper(Model.getSingleton().getSession(), 
-					ZEST_HISTORY_REFERENCE_TYPE, msg, -1);
-			zrw.setType(ZestResultWrapper.Type.scanAction);
-			
-			this.notifyResponse(zrw);
-			
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-	}
+            while (scanning) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+            }
+        }
+        if (alerts.size() > 0) {
+            // Add all to alerts tab, flags in Script results..
+            this.lastResult.setPassed(false);
+            this.lastResult.setMessage(alerts.get(0).getName());
+            extension.notifyChanged(this.lastResult);
+        }
+    }
 
-	public void setWrapper(ZestScriptWrapper wrapper) {
-		this.wrapper = wrapper;
-	}
+    public boolean isStop() {
+        return isStop;
+    }
 
+    public void pause() {
+        this.pause = true;
+    }
 
-	@Override
-	public String getVariable(String name) {
-		if (log.isDebugEnabled()) {
-			String value = super.getVariable(name);
-			String val = value;
-			if (value != null) {
-				val = value.replace("\n", " ");
-				if (val.length() > 100) {
-					val = val.substring(0, 100) + "...";
-				}
-			}
-			log.debug("getVariable " + name + " : " + val);
-			
-			return value;
-		} else {
-			return super.getVariable(name);
-		}
-	}
-	
-	@Override
-	public void setVariable(String name, String value) {
-		if (log.isDebugEnabled()) {
-			String val = value;
-			if (value != null) {
-				val = value.replace("\n", " ");
-				if (val.length() > 100) {
-					val = val.substring(0, 100) + "...";
-				}
-			}
-			log.debug("setVariable " + name + " = " + val);
-			super.setVariable(name, value);
-		} else {
-			super.setVariable(name, value);
-		}
-	}
+    public void resume() {
+        this.pause = false;
+    }
 
-	@Override
-	public ZestResponse send(ZestRequest request) throws IOException {
-		if (request.getUrl() == null) {
-			throw new IOException("Request does not contain a request-uri.");
-		}
-		return super.send(request);
-	}
+    public boolean isPaused() {
+        return pause;
+    }
+
+    @Override
+    public void scannerComplete(int id) {
+        this.scanning = false;
+    }
+
+    @Override
+    public void hostNewScan(int id, String hostAndPort, HostProcess hostThread) {}
+
+    @Override
+    public void hostProgress(int id, String hostAndPort, String msg, int percentage) {}
+
+    @Override
+    public void hostComplete(int id, String hostAndPort) {}
+
+    @Override
+    public void alertFound(Alert alert) {
+        this.alerts.add(alert);
+
+        ExtensionAlert extAlert =
+                (ExtensionAlert)
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionAlert.NAME);
+        if (extAlert != null) {
+            extAlert.alertFound(alert, alert.getHistoryRef());
+        }
+
+        extension.notifyAlert(alert);
+    }
+
+    public HttpMessage getTarget() {
+        return target;
+    }
+
+    public void setTarget(HttpMessage target) {
+        this.target = target;
+    }
+
+    @Override
+    public void notifyNewMessage(HttpMessage msg) {
+        try {
+            ZestResultWrapper zrw =
+                    new ZestResultWrapper(
+                            Model.getSingleton().getSession(),
+                            ZEST_HISTORY_REFERENCE_TYPE,
+                            msg,
+                            -1);
+            zrw.setType(ZestResultWrapper.Type.scanAction);
+
+            this.notifyResponse(zrw);
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    public void setWrapper(ZestScriptWrapper wrapper) {
+        this.wrapper = wrapper;
+    }
+
+    @Override
+    public String getVariable(String name) {
+        if (log.isDebugEnabled()) {
+            String value = super.getVariable(name);
+            String val = value;
+            if (value != null) {
+                val = value.replace("\n", " ");
+                if (val.length() > 100) {
+                    val = val.substring(0, 100) + "...";
+                }
+            }
+            log.debug("getVariable " + name + " : " + val);
+
+            return value;
+        } else {
+            return super.getVariable(name);
+        }
+    }
+
+    @Override
+    public void setVariable(String name, String value) {
+        if (log.isDebugEnabled()) {
+            String val = value;
+            if (value != null) {
+                val = value.replace("\n", " ");
+                if (val.length() > 100) {
+                    val = val.substring(0, 100) + "...";
+                }
+            }
+            log.debug("setVariable " + name + " = " + val);
+            super.setVariable(name, value);
+        } else {
+            super.setVariable(name, value);
+        }
+    }
+
+    @Override
+    public ZestResponse send(ZestRequest request) throws IOException {
+        if (request.getUrl() == null) {
+            throw new IOException("Request does not contain a request-uri.");
+        }
+        return super.send(request);
+    }
 }

@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.messagelocations;
 
 import java.util.SortedSet;
-
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.InvalidMessageException;
 
@@ -30,7 +29,8 @@ public interface MultipleMessageLocationsReplacer<T extends Message> {
 
     void init(
             MessageLocationReplacer<T> replacer,
-            SortedSet<? extends MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerator);
+            SortedSet<? extends MessageLocationReplacementGenerator<?, ?>>
+                    messageLocationReplacementGenerator);
 
     long getNumberOfReplacements();
 

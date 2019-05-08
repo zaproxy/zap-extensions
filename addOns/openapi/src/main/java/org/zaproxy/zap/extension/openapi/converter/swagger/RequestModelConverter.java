@@ -19,22 +19,20 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.parosproxy.paros.network.HttpHeaderField;
-import org.zaproxy.zap.extension.openapi.generators.Generators;
-import org.zaproxy.zap.extension.openapi.generators.HeadersGenerator;
-import org.zaproxy.zap.extension.openapi.generators.PathGenerator;
-import org.zaproxy.zap.extension.openapi.network.FormData;
-import org.zaproxy.zap.extension.openapi.network.RequestModel;
-
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.RefModel;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.RefProperty;
+import java.util.ArrayList;
+import java.util.List;
+import org.parosproxy.paros.network.HttpHeaderField;
+import org.zaproxy.zap.extension.openapi.generators.Generators;
+import org.zaproxy.zap.extension.openapi.generators.HeadersGenerator;
+import org.zaproxy.zap.extension.openapi.generators.PathGenerator;
+import org.zaproxy.zap.extension.openapi.network.FormData;
+import org.zaproxy.zap.extension.openapi.network.RequestModel;
 
 public class RequestModelConverter {
 
@@ -72,13 +70,25 @@ public class RequestModelConverter {
             if ("body".equals(parameter.getIn())) {
                 Model schema = ((BodyParameter) parameter).getSchema();
                 switch (schema.getClass().getSimpleName()) {
-                case "RefModel":
-                    body = generators.getBodyGenerator().generate(((RefModel) schema).getSimpleRef(), false, new ArrayList<String>());
-                    break;
-                case "ArrayModel":
-                    body = generators.getBodyGenerator().generate(((RefProperty) ((ArrayModel) schema).getItems()).getSimpleRef(), 
-                            true, new ArrayList<String>());
-                    break;
+                    case "RefModel":
+                        body =
+                                generators
+                                        .getBodyGenerator()
+                                        .generate(
+                                                ((RefModel) schema).getSimpleRef(),
+                                                false,
+                                                new ArrayList<String>());
+                        break;
+                    case "ArrayModel":
+                        body =
+                                generators
+                                        .getBodyGenerator()
+                                        .generate(
+                                                ((RefProperty) ((ArrayModel) schema).getItems())
+                                                        .getSimpleRef(),
+                                                true,
+                                                new ArrayList<String>());
+                        break;
                 }
             }
         }

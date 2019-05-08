@@ -20,16 +20,17 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.JavaScriptEscapeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.JavaScriptEscapeProcessorUIHandler.JavaScriptEscapeProcessorUI;
 
-public class JavaScriptEscapeProcessorUIHandler implements
-        PayloadProcessorUIHandler<DefaultPayload, JavaScriptEscapeProcessor, JavaScriptEscapeProcessorUI> {
+public class JavaScriptEscapeProcessorUIHandler
+        implements PayloadProcessorUIHandler<
+                DefaultPayload, JavaScriptEscapeProcessor, JavaScriptEscapeProcessorUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.javascriptEscape.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.payload.processor.javascriptEscape.name");
 
     @Override
     public String getName() {
@@ -51,13 +52,13 @@ public class JavaScriptEscapeProcessorUIHandler implements
         return new JavaScriptEscapeProcessorUIPanel();
     }
 
-    public static class JavaScriptEscapeProcessorUI implements
-            PayloadProcessorUI<DefaultPayload, JavaScriptEscapeProcessor> {
+    public static class JavaScriptEscapeProcessorUI
+            implements PayloadProcessorUI<DefaultPayload, JavaScriptEscapeProcessor> {
 
-        public static final JavaScriptEscapeProcessorUI INSTANCE = new JavaScriptEscapeProcessorUI();
+        public static final JavaScriptEscapeProcessorUI INSTANCE =
+                new JavaScriptEscapeProcessorUI();
 
-        public JavaScriptEscapeProcessorUI() {
-        }
+        public JavaScriptEscapeProcessorUI() {}
 
         @Override
         public Class<JavaScriptEscapeProcessor> getPayloadProcessorClass() {
@@ -88,11 +89,11 @@ public class JavaScriptEscapeProcessorUIHandler implements
         public JavaScriptEscapeProcessorUI copy() {
             return this;
         }
-
     }
 
-    public static class JavaScriptEscapeProcessorUIPanel extends
-            AbstractProcessorUIPanel<DefaultPayload, JavaScriptEscapeProcessor, JavaScriptEscapeProcessorUI> {
+    public static class JavaScriptEscapeProcessorUIPanel
+            extends AbstractProcessorUIPanel<
+                    DefaultPayload, JavaScriptEscapeProcessor, JavaScriptEscapeProcessorUI> {
 
         private JPanel fieldsPanel;
 
@@ -111,13 +112,11 @@ public class JavaScriptEscapeProcessorUIHandler implements
         }
 
         @Override
-        public void setPayloadProcessorUI(JavaScriptEscapeProcessorUI payloadProcessorUI) {
-        }
+        public void setPayloadProcessorUI(JavaScriptEscapeProcessorUI payloadProcessorUI) {}
 
         @Override
         public JavaScriptEscapeProcessor getPayloadProcessor() {
             return JavaScriptEscapeProcessor.INSTANCE;
         }
     }
-
 }

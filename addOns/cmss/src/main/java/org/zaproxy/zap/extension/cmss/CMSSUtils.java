@@ -19,14 +19,12 @@
  */
 package org.zaproxy.zap.extension.cmss;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
-
 import java.io.*;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class CMSSUtils {
 
@@ -55,7 +53,8 @@ public class CMSSUtils {
         return checkSumApacheCommons(getFileFromUrl(url));
     }
 
-    public static String checksum(byte[] octets) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public static String checksum(byte[] octets)
+            throws UnsupportedEncodingException, NoSuchAlgorithmException {
         final MessageDigest messageDigest = MessageDigest.getInstance("MD5");
         messageDigest.reset();
         messageDigest.update(octets);

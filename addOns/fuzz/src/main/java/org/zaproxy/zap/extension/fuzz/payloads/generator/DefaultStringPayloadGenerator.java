@@ -22,13 +22,13 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadCollectionIterator;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 /**
- * A {@code PayloadGenerator} that returns {@code DefaultPayload} created from a {@code List} of {@code String}s.
+ * A {@code PayloadGenerator} that returns {@code DefaultPayload} created from a {@code List} of
+ * {@code String}s.
  */
 public class DefaultStringPayloadGenerator implements StringPayloadGenerator {
 
@@ -78,5 +78,4 @@ public class DefaultStringPayloadGenerator implements StringPayloadGenerator {
     public DefaultStringPayloadGenerator copy() {
         return new DefaultStringPayloadGenerator(payloads);
     }
-
 }

@@ -22,11 +22,9 @@ package org.zaproxy.zap.extension.portscan;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
 import org.zaproxy.zap.model.GenericScanner;
@@ -36,107 +34,109 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ScanPanel;
 
 public class PortScanPanel extends ScanPanel implements ScanListenner {
-	
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @deprecated (5) Replaced by {@link #RESULTS_TABLE_NAME}, the results are shown in a table. It will be removed in a future
-	 *             release.
-	 */
-	@Deprecated
-	public static final String PANEL_NAME = "portscan";
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * The name of the table that shows the port scan results.
-	 */
-	public static final String RESULTS_TABLE_NAME = "PortScanResultsTable";
-
-	private static final PortScanResultsTableModel EMPTY_TABLE_MODEL = new PortScanResultsTableModel();
-	
-	private JScrollPane jScrollPane = null;
-
-	private PortScanResultsTable portScanResultsTable;
-    
     /**
-     * @param portScanParam 
-     * 
+     * @deprecated (5) Replaced by {@link #RESULTS_TABLE_NAME}, the results are shown in a table. It
+     *     will be removed in a future release.
      */
+    @Deprecated public static final String PANEL_NAME = "portscan";
+
+    /** The name of the table that shows the port scan results. */
+    public static final String RESULTS_TABLE_NAME = "PortScanResultsTable";
+
+    private static final PortScanResultsTableModel EMPTY_TABLE_MODEL =
+            new PortScanResultsTableModel();
+
+    private JScrollPane jScrollPane = null;
+
+    private PortScanResultsTable portScanResultsTable;
+
+    /** @param portScanParam */
     @SuppressWarnings("deprecation")
     public PortScanPanel(ExtensionPortScan extension, PortScanParam portScanParam) {
-    	// 'picture list' icon
-        super("ports", new ImageIcon(PortScanPanel.class.getResource("/resource/icon/16/187.png")), extension, portScanParam);
-        
-		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-				KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
-		this.setMnemonic(Constant.messages.getChar("ports.panel.mnemonic"));
+        // 'picture list' icon
+        super(
+                "ports",
+                new ImageIcon(PortScanPanel.class.getResource("/resource/icon/16/187.png")),
+                extension,
+                portScanParam);
+
+        this.setDefaultAccelerator(
+                KeyStroke.getKeyStroke(
+                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
+                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
+                        KeyEvent.VK_P,
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                | KeyEvent.ALT_DOWN_MASK
+                                | KeyEvent.SHIFT_DOWN_MASK,
+                        false));
+        this.setMnemonic(Constant.messages.getChar("ports.panel.mnemonic"));
     }
 
+    @Override
+    protected JScrollPane getWorkPanel() {
+        if (jScrollPane == null) {
+            jScrollPane = new JScrollPane();
+            jScrollPane.setViewportView(getPortScanResultsTable());
+            jScrollPane.setFont(FontUtils.getFont("Dialog"));
+        }
+        return jScrollPane;
+    }
 
-	@Override
-	protected JScrollPane getWorkPanel() {
-		if (jScrollPane == null) {
-			jScrollPane = new JScrollPane();
-			jScrollPane.setViewportView(getPortScanResultsTable());
-			jScrollPane.setFont(FontUtils.getFont("Dialog"));
-		}
-		return jScrollPane;
-	}
-	
-	@Override
-	public void reset() {
-		super.reset();
-		this.resetPortList();
-	}
+    @Override
+    public void reset() {
+        super.reset();
+        this.resetPortList();
+    }
 
-	private void resetPortList() {
-		portScanResultsTable.setModel(EMPTY_TABLE_MODEL);
-	}
-	
-	public boolean isResultsSelectionEmpty() {
-		return getPortScanResultsTable().isResultsSelectionEmpty();
-	}
-	
-	public List<PortScanResultEntry> getSelectedResults() {
-		return getPortScanResultsTable().getSelectedResults();
-	}
-	
-	private PortScanResultsTable getPortScanResultsTable() {
-		if (portScanResultsTable == null) {
-			portScanResultsTable = new PortScanResultsTable(EMPTY_TABLE_MODEL);
-			portScanResultsTable.setName(RESULTS_TABLE_NAME);
-		}
-		return portScanResultsTable;
-	}
+    private void resetPortList() {
+        portScanResultsTable.setModel(EMPTY_TABLE_MODEL);
+    }
 
-	@Override
-	protected ScanThread newScanThread(String site, AbstractParam params) {
-		return new PortScan(site, this, (PortScanParam) params);
-	}
+    public boolean isResultsSelectionEmpty() {
+        return getPortScanResultsTable().isResultsSelectionEmpty();
+    }
 
+    public List<PortScanResultEntry> getSelectedResults() {
+        return getPortScanResultsTable().getSelectedResults();
+    }
 
-	@Override
-	protected void switchView(String site) {
-		if (site == null || site.isEmpty()) {
-			resetPortList();
-			return;
-		}
+    private PortScanResultsTable getPortScanResultsTable() {
+        if (portScanResultsTable == null) {
+            portScanResultsTable = new PortScanResultsTable(EMPTY_TABLE_MODEL);
+            portScanResultsTable.setName(RESULTS_TABLE_NAME);
+        }
+        return portScanResultsTable;
+    }
 
-		if (site.indexOf(":") >= 0) {
-			// Strip off port
-			site = site.substring(0, site.indexOf(":"));
-		}
-		GenericScanner thread = this.getScanThread(site);
-		if (thread != null) {
-			getPortScanResultsTable().setModel(((PortScan)thread).getResultsTableModel());
-		}
-	}
+    @Override
+    protected ScanThread newScanThread(String site, AbstractParam params) {
+        return new PortScan(site, this, (PortScanParam) params);
+    }
 
-	@Override
-	protected void unload() {
-		this.reset();
-		
-		super.unload();
-	}
+    @Override
+    protected void switchView(String site) {
+        if (site == null || site.isEmpty()) {
+            resetPortList();
+            return;
+        }
 
+        if (site.indexOf(":") >= 0) {
+            // Strip off port
+            site = site.substring(0, site.indexOf(":"));
+        }
+        GenericScanner thread = this.getScanThread(site);
+        if (thread != null) {
+            getPortScanResultsTable().setModel(((PortScan) thread).getResultsTableModel());
+        }
+    }
+
+    @Override
+    protected void unload() {
+        this.reset();
+
+        super.unload();
+    }
 }

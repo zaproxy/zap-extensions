@@ -22,5 +22,5 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
 public interface ZestDialog {
-	ZestScriptWrapper getScript();
+    ZestScriptWrapper getScript();
 }

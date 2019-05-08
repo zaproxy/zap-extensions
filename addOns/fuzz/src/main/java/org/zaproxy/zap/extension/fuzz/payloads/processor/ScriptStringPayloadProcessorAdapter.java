@@ -25,8 +25,8 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 /**
- * A {@code DefaultPayloadProcessor} that delegates the processing of the value of a {@code DefaultPayload} to a
- * {@code DefaultPayloadProcessorScript}.
+ * A {@code DefaultPayloadProcessor} that delegates the processing of the value of a {@code
+ * DefaultPayload} to a {@code DefaultPayloadProcessorScript}.
  *
  * @see DefaultPayload
  * @see DefaultPayloadProcessor
@@ -43,8 +43,10 @@ public class ScriptStringPayloadProcessorAdapter implements DefaultPayloadProces
             throw new IllegalArgumentException("Parameter scriptWrapper must not be null.");
         }
         if (!ScriptStringPayloadProcessor.TYPE_NAME.equals(scriptWrapper.getTypeName())) {
-            throw new IllegalArgumentException("Parameter scriptWrapper must wrap a script of type \""
-                    + ScriptStringPayloadProcessor.TYPE_NAME + "\".");
+            throw new IllegalArgumentException(
+                    "Parameter scriptWrapper must wrap a script of type \""
+                            + ScriptStringPayloadProcessor.TYPE_NAME
+                            + "\".");
         }
         this.scriptWrapper = scriptWrapper;
     }
@@ -57,8 +59,10 @@ public class ScriptStringPayloadProcessorAdapter implements DefaultPayloadProces
         }
 
         if (scriptProcessor == null) {
-            throw new PayloadProcessingException("Script '" + scriptWrapper.getName()
-                    + "' does not implement the expected interface (ScriptStringPayloadProcessor).");
+            throw new PayloadProcessingException(
+                    "Script '"
+                            + scriptWrapper.getName()
+                            + "' does not implement the expected interface (ScriptStringPayloadProcessor).");
         }
 
         try {
@@ -67,7 +71,8 @@ public class ScriptStringPayloadProcessorAdapter implements DefaultPayloadProces
                 payload.setValue(value);
             }
         } catch (Exception e) {
-            // N.B. Catch exception (instead of ScriptException) since Nashorn throws RuntimeException.
+            // N.B. Catch exception (instead of ScriptException) since Nashorn throws
+            // RuntimeException.
             // The same applies to all other script try-catch blocks.
             // For example, when a variable or function is not defined it throws:
             // jdk.nashorn.internal.runtime.ECMAException
@@ -77,10 +82,13 @@ public class ScriptStringPayloadProcessorAdapter implements DefaultPayloadProces
     }
 
     private void initialise() throws PayloadProcessingException {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             try {
-                scriptProcessor = extensionScript.getInterface(scriptWrapper, ScriptStringPayloadProcessor.class);
+                scriptProcessor =
+                        extensionScript.getInterface(
+                                scriptWrapper, ScriptStringPayloadProcessor.class);
             } catch (Exception e) {
                 handleScriptException(e);
             }
@@ -88,7 +96,8 @@ public class ScriptStringPayloadProcessorAdapter implements DefaultPayloadProces
     }
 
     private void handleScriptException(Exception cause) throws PayloadProcessingException {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             extensionScript.setError(scriptWrapper, cause);
             extensionScript.setEnabled(scriptWrapper, false);

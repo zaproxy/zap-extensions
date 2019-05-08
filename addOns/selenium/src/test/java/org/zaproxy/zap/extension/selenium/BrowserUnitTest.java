@@ -25,9 +25,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-/**
- * Unit test for {@link Browser}.
- */
+/** Unit test for {@link Browser}. */
 public class BrowserUnitTest {
 
     @Test(expected = IllegalArgumentException.class)

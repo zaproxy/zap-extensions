@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.ScanController;
 import org.zaproxy.zap.model.Target;
@@ -35,14 +34,14 @@ import org.zaproxy.zap.users.User;
 
 /**
  * A main {@code ScanController} of fuzzer scans.
- * <p>
- * Allows to control all fuzzer scans of several message types, for example, HTTP and WebSockets.
+ *
+ * <p>Allows to control all fuzzer scans of several message types, for example, HTTP and WebSockets.
  */
 public class FuzzersController implements ScanController<Fuzzer<? extends Message>> {
 
     /**
      * The {@code Lock} for exclusive access to instance variables related to multiple fuzzers.
-     * 
+     *
      * @see #fuzzerIdCounter
      * @see #fuzzerIdsToFuzzerMap
      */
@@ -50,22 +49,24 @@ public class FuzzersController implements ScanController<Fuzzer<? extends Messag
 
     /**
      * The counter used to give an unique ID to fuzzers.
-     * <p>
-     * <strong>Note:</strong> All accesses (read/write) should be done while holding the {@code Lock} {@code scansLock}.
-     * 
+     *
+     * <p><strong>Note:</strong> All accesses (read/write) should be done while holding the {@code
+     * Lock} {@code scansLock}.
+     *
      * @see #fuzzersLock
      * @see #registerScan(FuzzerHandler, Fuzzer)
      */
     private int fuzzerIdCounter;
 
     /**
-     * A map that contains all {@code Fuzzer}s created (and not yet removed) and corresponding {@code FuzzerHandler}s. Used to
-     * control (i.e. pause/resume and stop) the multiple active fuzzers and get its results. The instance variable is never
-     * {@code null}. The map key is the ID of the fuzzer.
-     * <p>
-     * <strong>Note:</strong> All accesses (both write and read) should be done while holding the {@code Lock}
-     * {@code fuzzersLock}.
-     * 
+     * A map that contains all {@code Fuzzer}s created (and not yet removed) and corresponding
+     * {@code FuzzerHandler}s. Used to control (i.e. pause/resume and stop) the multiple active
+     * fuzzers and get its results. The instance variable is never {@code null}. The map key is the
+     * ID of the fuzzer.
+     *
+     * <p><strong>Note:</strong> All accesses (both write and read) should be done while holding the
+     * {@code Lock} {@code fuzzersLock}.
+     *
      * @see #fuzzersLock
      * @see #fuzzerIdCounter
      */
@@ -88,16 +89,19 @@ public class FuzzersController implements ScanController<Fuzzer<? extends Messag
 
     /**
      * Throws {@code UnsupportedOperationException}, the fuzzers are started by 3rd party.
-     * 
+     *
      * @throws UnsupportedOperationException the fuzzers are started by 3rd party.
      * @see #registerScan(FuzzerHandler, Fuzzer)
      */
     @Override
-    public int startScan(String displayName, Target target, User user, Object[] contextSpecificObjects) {
-        throw new UnsupportedOperationException("Fuzzer scans are started by concrete fuzzer implementations.");
+    public int startScan(
+            String displayName, Target target, User user, Object[] contextSpecificObjects) {
+        throw new UnsupportedOperationException(
+                "Fuzzer scans are started by concrete fuzzer implementations.");
     }
 
-    public <M extends Message, F extends Fuzzer<M>, FH extends FuzzerHandler<M, F>> void registerScan(FH fuzzHandler, F fuzzer) {
+    public <M extends Message, F extends Fuzzer<M>, FH extends FuzzerHandler<M, F>>
+            void registerScan(FH fuzzHandler, F fuzzer) {
         acquireFuzzersLock();
         try {
             fuzzer.setScanId(fuzzerIdCounter);
@@ -112,14 +116,15 @@ public class FuzzersController implements ScanController<Fuzzer<? extends Messag
     public FuzzResultsContentPanel<?, ?> getFuzzResultsContentPanel(Fuzzer<?> fuzzer) {
         acquireFuzzersLock();
         try {
-            return getScanContentPanelHelper(fuzzerIdsToFuzzerMap.get(Integer.valueOf(fuzzer.getScanId())));
+            return getScanContentPanelHelper(
+                    fuzzerIdsToFuzzerMap.get(Integer.valueOf(fuzzer.getScanId())));
         } finally {
             releaseScanStateLock();
         }
     }
 
-    private <M extends Message, F extends Fuzzer<M>> FuzzResultsContentPanel<?, ?> getScanContentPanelHelper(
-            FuzzerEntry<M, F> entry) {
+    private <M extends Message, F extends Fuzzer<M>>
+            FuzzResultsContentPanel<?, ?> getScanContentPanelHelper(FuzzerEntry<M, F> entry) {
         if (entry == null) {
             return null;
         }
@@ -286,7 +291,8 @@ public class FuzzersController implements ScanController<Fuzzer<? extends Messag
     public void removeAllScans(FuzzerHandler<?, ?> fuzzerHandler) {
         acquireFuzzersLock();
         try {
-            for (Iterator<FuzzerEntry<?, ?>> it = fuzzerIdsToFuzzerMap.values().iterator(); it.hasNext();) {
+            for (Iterator<FuzzerEntry<?, ?>> it = fuzzerIdsToFuzzerMap.values().iterator();
+                    it.hasNext(); ) {
                 FuzzerEntry<?, ?> entry = it.next();
                 if (entry.getFuzzerHandler() == fuzzerHandler) {
                     entry.getFuzzer().stopScan();
@@ -304,7 +310,8 @@ public class FuzzersController implements ScanController<Fuzzer<? extends Messag
         acquireFuzzersLock();
         try {
             int count = 0;
-            for (Iterator<FuzzerEntry<?, ?>> it = fuzzerIdsToFuzzerMap.values().iterator(); it.hasNext();) {
+            for (Iterator<FuzzerEntry<?, ?>> it = fuzzerIdsToFuzzerMap.values().iterator();
+                    it.hasNext(); ) {
                 FuzzerEntry<?, ?> entry = it.next();
                 if (entry.getFuzzer().isStopped()) {
                     entry.notifyScannerRemoved();
@@ -331,7 +338,8 @@ public class FuzzersController implements ScanController<Fuzzer<? extends Messag
         List<F> fuzzers = new ArrayList<>();
         acquireFuzzersLock();
         try {
-            for (Iterator<FuzzerEntry<?, ?>> it = fuzzerIdsToFuzzerMap.values().iterator(); it.hasNext();) {
+            for (Iterator<FuzzerEntry<?, ?>> it = fuzzerIdsToFuzzerMap.values().iterator();
+                    it.hasNext(); ) {
                 Fuzzer<?> fuzzer = it.next().getFuzzer();
                 if (fuzzerClass.equals(fuzzer.getClass())) {
                     fuzzers.add(fuzzerClass.cast(fuzzer));
@@ -348,13 +356,14 @@ public class FuzzersController implements ScanController<Fuzzer<? extends Messag
             return;
         }
 
-        EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(
+                new Runnable() {
 
-            @Override
-            public void run() {
-                fuzzersStatusPanel.updateScannerUI();
-            }
-        });
+                    @Override
+                    public void run() {
+                        fuzzersStatusPanel.updateScannerUI();
+                    }
+                });
     }
 
     private static class FuzzerEntry<M extends Message, F extends Fuzzer<M>> {

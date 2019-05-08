@@ -65,15 +65,15 @@ class BugTrackerGithubConfigParams extends Enableable {
         this.repoUrl = repoUrl;
     }
 
-    @Override 
-    public int hashCode() { 
-        final int prime = 31; 
-        int result = super.hashCode(); 
-        result = prime * result + ((password == null) ? 0 : password.hashCode()); 
-        result = prime * result + ((repoUrl == null) ? 0 : repoUrl.hashCode()); 
-        result = prime * result + ((username == null) ? 0 : username.hashCode()); 
-        return result; 
-    } 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + ((repoUrl == null) ? 0 : repoUrl.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        return result;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -110,5 +110,4 @@ class BugTrackerGithubConfigParams extends Enableable {
         }
         return true;
     }
-
 }

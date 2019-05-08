@@ -23,11 +23,12 @@ import org.zaproxy.zap.common.VersionedAbstractParam;
 
 /**
  * Manages the options saved in the configuration file.
- * <p>
- * It allows to change, programmatically, the following options:
+ *
+ * <p>It allows to change, programmatically, the following options:
+ *
  * <ul>
- * <li>Number of threads for the token generation;</li>
- * <li>The request delay;</li>
+ *   <li>Number of threads for the token generation;
+ *   <li>The request delay;
  * </ul>
  */
 public class TokenParam extends VersionedAbstractParam {
@@ -37,15 +38,14 @@ public class TokenParam extends VersionedAbstractParam {
     protected static final int DEFAULT_REQUEST_DELAY_IN_MS = 0;
 
     /**
-     * The version of the configurations. Used to keep track of configurations changes between releases, if updates are needed.
-     * <p>
-     * It only needs to be updated for configurations changes (not releases of the add-on).
+     * The version of the configurations. Used to keep track of configurations changes between
+     * releases, if updates are needed.
+     *
+     * <p>It only needs to be updated for configurations changes (not releases of the add-on).
      */
     private static final int PARAM_CURRENT_VERSION = 1;
 
-    /**
-     * The base configuration key for all configurations.
-     */
+    /** The base configuration key for all configurations. */
     private static final String PARAM_BASE_KEY = "tokengen";
 
     private static final String THREADS_PER_SCAN = PARAM_BASE_KEY + ".threadsPerScan";
@@ -56,8 +56,7 @@ public class TokenParam extends VersionedAbstractParam {
 
     private int requestDelayInMs = DEFAULT_REQUEST_DELAY_IN_MS;
 
-    public TokenParam() {
-    }
+    public TokenParam() {}
 
     @Override
     protected int getCurrentVersion() {

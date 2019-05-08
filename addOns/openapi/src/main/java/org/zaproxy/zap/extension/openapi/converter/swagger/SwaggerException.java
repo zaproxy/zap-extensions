@@ -19,13 +19,11 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
-
 public class SwaggerException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public SwaggerException() {
-    }
+    public SwaggerException() {}
 
     public SwaggerException(String message) {
         super(message);
@@ -39,8 +37,11 @@ public class SwaggerException extends Exception {
         super(message, cause);
     }
 
-    public SwaggerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public SwaggerException(
+            String message,
+            Throwable cause,
+            boolean enableSuppression,
+            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-
 }

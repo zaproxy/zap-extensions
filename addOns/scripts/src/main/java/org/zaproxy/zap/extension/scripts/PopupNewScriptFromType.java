@@ -20,84 +20,73 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
-
 import javax.swing.JTree;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 
-
-/**
- * ZAP: New Popup Menu Alert Delete
- */
+/** ZAP: New Popup Menu Alert Delete */
 public class PopupNewScriptFromType extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionScriptsUI extension = null;
+    private ExtensionScriptsUI extension = null;
 
-	private ScriptType type = null;
-	
-    /**
-     * 
-     */
+    private ScriptType type = null;
+
+    /** */
     public PopupNewScriptFromType(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
- 		initialize();
+        initialize();
     }
 
-    /**
-     * @param label
-     */
+    /** @param label */
     public PopupNewScriptFromType(String label) {
         super(label);
     }
 
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
+    /** This method initializes this */
+    private void initialize() {
         this.setText(Constant.messages.getString("scripts.instantiate.popup"));
 
-        this.addActionListener(new java.awt.event.ActionListener() { 
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
 
-        	@Override
-        	public void actionPerformed(java.awt.event.ActionEvent e) {
-        		if (type != null) {
-        			instantiateType(type);
-        		}
-        	}
-        });
-			
-	}
-	
-	private void instantiateType(ScriptType type) {
-		extension.getScriptsPanel().showNewScriptDialog(type);
-	}
-	
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        if (type != null) {
+                            instantiateType(type);
+                        }
+                    }
+                });
+    }
+
+    private void instantiateType(ScriptType type) {
+        extension.getScriptsPanel().showNewScriptDialog(type);
+    }
+
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (invoker.getName() != null && invoker.getName().equals(ScriptsListPanel.TREE)) {
             try {
                 JTree tree = (JTree) invoker;
                 ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
-        		
+
                 // Enable if this is a type node - doesnt matter if its a template or not..
                 if (node == null || node.getUserObject() != null || node.getType() == null) {
-                	return false;
+                    return false;
                 }
                 this.type = node.getType();
-                	
-            	return true;
-            } catch (Exception e) {}
-            
+
+                return true;
+            } catch (Exception e) {
+            }
         }
         return false;
     }
-    
+
     @Override
     public boolean isSafe() {
         return true;

@@ -23,12 +23,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
-
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 
 /**
  * A {@code PayloadProcessor} that has/uses a {@code Charset} in the processing of {@code Payload}s.
- * 
+ *
  * @param <T> the type of payload
  * @see Charset
  * @see Payload
@@ -36,9 +35,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.Payload;
  */
 public abstract class AbstractCharsetProcessor<T extends Payload> implements PayloadProcessor<T> {
 
-    /**
-     * The {@code Charset}, never {@code null}.
-     */
+    /** The {@code Charset}, never {@code null}. */
     private final Charset charset;
 
     public AbstractCharsetProcessor() {
@@ -60,7 +57,8 @@ public abstract class AbstractCharsetProcessor<T extends Payload> implements Pay
         try {
             charset = Charset.forName(charsetName);
         } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
-            throw new IllegalArgumentException("Parameter charsetName does not represent a valid or supported charset name.");
+            throw new IllegalArgumentException(
+                    "Parameter charsetName does not represent a valid or supported charset name.");
         }
     }
 

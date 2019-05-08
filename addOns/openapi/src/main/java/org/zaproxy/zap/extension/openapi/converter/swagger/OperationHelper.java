@@ -19,13 +19,11 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
+import io.swagger.models.Path;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.openapi.network.RequestMethod;
-
-import io.swagger.models.Path;
 
 public class OperationHelper {
 

@@ -19,9 +19,7 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads;
 
-/**
- * A payload used for fuzzing.
- */
+/** A payload used for fuzzing. */
 public interface Payload {
 
     /**
@@ -33,9 +31,9 @@ public interface Payload {
 
     /**
      * Sets value of the payload.
-     * <p>
-     * Implementations might ignore the value, if not appropriate (for example, if it's a numeric payload but it's being set a
-     * String).
+     *
+     * <p>Implementations might ignore the value, if not appropriate (for example, if it's a numeric
+     * payload but it's being set a String).
      *
      * @param value the new value
      */
@@ -43,8 +41,8 @@ public interface Payload {
 
     /**
      * Returns a copy of this payload.
-     * <p>
-     * Implementations might opt to return {@code this}, if immutable and thread-safe.
+     *
+     * <p>Implementations might opt to return {@code this}, if immutable and thread-safe.
      *
      * @return a new {@code Payload} whose contents are equal to this payload.
      */

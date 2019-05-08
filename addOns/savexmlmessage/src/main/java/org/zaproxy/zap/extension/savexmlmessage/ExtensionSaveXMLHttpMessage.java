@@ -24,30 +24,30 @@ import org.parosproxy.paros.extension.ExtensionHook;
 
 public class ExtensionSaveXMLHttpMessage extends ExtensionAdaptor {
 
-	private static final String NAME = "ExtensionSaveXMLHttpMessage";
-	private static final String AUTHOR = "thatsn0tmysite";
+    private static final String NAME = "ExtensionSaveXMLHttpMessage";
+    private static final String AUTHOR = "thatsn0tmysite";
 
-	public ExtensionSaveXMLHttpMessage() {
-		super(NAME);
-		setI18nPrefix("savexml");
-	}
-	
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-		super.hook(extensionHook);
-		
-		if (getView() != null) {
-			extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveXMLMessage());
-		}
-	}
-	
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
-	
-	@Override
-	public String getAuthor() {
-		return AUTHOR;
-	}
+    public ExtensionSaveXMLHttpMessage() {
+        super(NAME);
+        setI18nPrefix("savexml");
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+
+        if (getView() != null) {
+            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveXMLMessage());
+        }
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
+
+    @Override
+    public String getAuthor() {
+        return AUTHOR;
+    }
 }

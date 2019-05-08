@@ -58,5 +58,4 @@ public class FormData {
     public void setFormItems(Map<String, FormDataItem> formItems) {
         this.formItems = formItems;
     }
-
 }

@@ -32,7 +32,8 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
             throw new IllegalArgumentException("Parameter value must not be null.");
         }
         if (numberOfPayloads <= 0) {
-            throw new IllegalArgumentException("Parameter numberOfPayloads must be greater than zero.");
+            throw new IllegalArgumentException(
+                    "Parameter numberOfPayloads must be greater than zero.");
         }
 
         this.value = value;
@@ -54,7 +55,8 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
         return this;
     }
 
-    private static class ValueRepeaterIterator<E extends Payload> implements ResettableAutoCloseableIterator<E> {
+    private static class ValueRepeaterIterator<E extends Payload>
+            implements ResettableAutoCloseableIterator<E> {
 
         private final E value;
         private final int repeat;
@@ -77,8 +79,7 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
         }
 
         @Override
-        public void remove() {
-        }
+        public void remove() {}
 
         @Override
         public void reset() {
@@ -86,7 +87,6 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
         }
 
         @Override
-        public void close() {
-        }
+        public void close() {}
     }
 }

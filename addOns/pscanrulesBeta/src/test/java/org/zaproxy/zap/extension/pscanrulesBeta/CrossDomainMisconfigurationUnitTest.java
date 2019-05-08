@@ -24,14 +24,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Locale;
-
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class CrossDomainMisconfigurationUnitTest extends PassiveScannerTest<CrossDomainMisconfiguration> {
+public class CrossDomainMisconfigurationUnitTest
+        extends PassiveScannerTest<CrossDomainMisconfiguration> {
 
     private static final String URI = "http://example.com/";
 
@@ -78,7 +78,9 @@ public class CrossDomainMisconfigurationUnitTest extends PassiveScannerTest<Cros
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
         assertThat(alertsRaised.size(), is(1));
-        assertThat(alertsRaised.get(0).getEvidence(), is(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN + ": *"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                is(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN + ": *"));
         assertThat(alertsRaised.get(0).getOtherInfo(), containsString("CORS misconfiguration"));
         assertThat(alertsRaised.get(0).getRisk(), is(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), is(Alert.CONFIDENCE_MEDIUM));
@@ -88,12 +90,15 @@ public class CrossDomainMisconfigurationUnitTest extends PassiveScannerTest<Cros
     public void shouldRaiseAlertIfCorsAllowOriginHeaderWithDifferentCaseIsTooPermissive() {
         // Given
         HttpMessage msg = createResponse(URI, null);
-        msg.getResponseHeader().addHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN.toUpperCase(Locale.ROOT), "*");
+        msg.getResponseHeader()
+                .addHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN.toUpperCase(Locale.ROOT), "*");
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
         assertThat(alertsRaised.size(), is(1));
-        assertThat(alertsRaised.get(0).getEvidence(), is(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN.toUpperCase(Locale.ROOT) + ": *"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                is(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN.toUpperCase(Locale.ROOT) + ": *"));
     }
 
     private static HttpMessage createResponse(String uri, String corsAllowOriginValue) {
@@ -103,7 +108,10 @@ public class CrossDomainMisconfigurationUnitTest extends PassiveScannerTest<Cros
             StringBuilder responseBuilder = new StringBuilder(75);
             responseBuilder.append("HTTP/1.1 200 OK\r\n");
             if (corsAllowOriginValue != null) {
-                responseBuilder.append(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN).append(": ").append(corsAllowOriginValue);
+                responseBuilder
+                        .append(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN)
+                        .append(": ")
+                        .append(corsAllowOriginValue);
             }
             msg.setResponseHeader(responseBuilder.toString());
 

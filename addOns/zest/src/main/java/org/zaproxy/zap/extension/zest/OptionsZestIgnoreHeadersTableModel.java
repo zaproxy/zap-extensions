@@ -22,25 +22,22 @@ package org.zaproxy.zap.extension.zest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.table.AbstractTableModel;
-
 import org.parosproxy.paros.Constant;
 
 public class OptionsZestIgnoreHeadersTableModel extends AbstractTableModel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String[] columnNames = {
-				Constant.messages.getString("zest.options.label.ignore"),
-				Constant.messages.getString("zest.options.label.header")};
-    
+    private static final String[] columnNames = {
+        Constant.messages.getString("zest.options.label.ignore"),
+        Constant.messages.getString("zest.options.label.header")
+    };
+
     private List<String> allHeaders = Collections.emptyList();
     private List<String> ignoredHeaders = Collections.emptyList();
-    
-    /**
-     * 
-     */
+
+    /** */
     public OptionsZestIgnoreHeadersTableModel() {
         super();
     }
@@ -57,68 +54,68 @@ public class OptionsZestIgnoreHeadersTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-		switch (col) {
-		case 0:	return this.isIgnored(row);
-		case 1: return this.getHeader(row);
-		}
+        switch (col) {
+            case 0:
+                return this.isIgnored(row);
+            case 1:
+                return this.getHeader(row);
+        }
         return null;
     }
-    
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-    	if (columnIndex == 0) {
-    		return true;
-    	}
+        if (columnIndex == 0) {
+            return true;
+        }
         return false;
     }
-    
+
     @Override
     public void setValueAt(Object value, int row, int col) {
-    	if (col == 0) {
-    		if ((boolean)value) {
-    			this.ignoredHeaders.add(this.getHeader(row));
-    		} else {
-    			this.ignoredHeaders.remove(this.getHeader(row));
-    		}
-    	}
+        if (col == 0) {
+            if ((boolean) value) {
+                this.ignoredHeaders.add(this.getHeader(row));
+            } else {
+                this.ignoredHeaders.remove(this.getHeader(row));
+            }
+        }
     }
 
-	@Override
-	public String getColumnName(int col) {
+    @Override
+    public String getColumnName(int col) {
         return columnNames[col];
     }
-    
-	@Override
-	public Class<?> getColumnClass(int c) {
-    	if (c == 0) {
-    		return Boolean.class;
-    	}
+
+    @Override
+    public Class<?> getColumnClass(int c) {
+        if (c == 0) {
+            return Boolean.class;
+        }
         return String.class;
-        
     }
-	
-	protected String getHeader (int row) {
+
+    protected String getHeader(int row) {
         return this.allHeaders.get(row);
-	}
-	
-	protected boolean isIgnored (int row) {
-		String header = this.getHeader(row);
-		if (header != null) {
-	    	return this.ignoredHeaders.contains(header);
-		}
-		return false;
-	}
+    }
 
-	public void setAllHeaders(List<String> allHeaders) {
-		this.allHeaders = allHeaders;
-	}
+    protected boolean isIgnored(int row) {
+        String header = this.getHeader(row);
+        if (header != null) {
+            return this.ignoredHeaders.contains(header);
+        }
+        return false;
+    }
 
-	public void setIgnoredHeaders(List<String> ignoredHeaders) {
-		this.ignoredHeaders = new ArrayList<String>(ignoredHeaders);
-	}
-	
-	public List<String> getIgnoredHeaders() {
-		return Collections.unmodifiableList(this.ignoredHeaders);
-	}
+    public void setAllHeaders(List<String> allHeaders) {
+        this.allHeaders = allHeaders;
+    }
 
+    public void setIgnoredHeaders(List<String> ignoredHeaders) {
+        this.ignoredHeaders = new ArrayList<String>(ignoredHeaders);
+    }
+
+    public List<String> getIgnoredHeaders() {
+        return Collections.unmodifiableList(this.ignoredHeaders);
+    }
 }

@@ -26,6 +26,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
@@ -33,28 +36,22 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-import fi.iki.elonen.NanoHTTPD;
-import fi.iki.elonen.NanoHTTPD.IHTTPSession;
-import fi.iki.elonen.NanoHTTPD.Response;
-
-/**
- * Unit test for {@link TestSQLInjection}.
- */
+/** Unit test for {@link TestSQLInjection}. */
 public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLInjection> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
         int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
         switch (strength) {
-        case LOW:
-            return recommendMax + 1;
-        case MEDIUM:
-        default:
-            return recommendMax + 14;
-        case HIGH:
-            return recommendMax + 22;
-        case INSANE:
-            return recommendMax + 5;
+            case LOW:
+                return recommendMax + 1;
+            case MEDIUM:
+            default:
+                return recommendMax + 14;
+            case HIGH:
+                return recommendMax + 22;
+            case INSANE:
+                return recommendMax + 5;
         }
     }
 
@@ -98,8 +95,11 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
     public void shouldAlertIfSumExpressionsAreSuccessful() throws Exception {
         // Given
         String param = "id";
-        nano.addHandler(new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.SUM));
-        rule.init(getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value), parent);
+        nano.addHandler(
+                new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.SUM));
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
+                parent);
         // When
         rule.scan();
         // Then
@@ -107,7 +107,9 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("")));
         assertThat(alertsRaised.get(0).getParam(), is(equalTo(param)));
-        assertThat(alertsRaised.get(0).getAttack(), is(equalTo(ExpressionBasedHandler.Expression.SUM.baseExpression)));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(equalTo(ExpressionBasedHandler.Expression.SUM.baseExpression)));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
@@ -116,14 +118,17 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
     public void shouldAlertIfSumExpressionsAreSuccessfulAndReflectedInResponse() throws Exception {
         // Given
         String param = "id";
-        nano.addHandler(new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.SUM) {
+        nano.addHandler(
+                new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.SUM) {
 
-            @Override
-            protected String getContent(String value) {
-                return super.getContent(value) + ": " + value;
-            }
-        });
-        rule.init(getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value), parent);
+                    @Override
+                    protected String getContent(String value) {
+                        return super.getContent(value) + ": " + value;
+                    }
+                });
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
+                parent);
         // When
         rule.scan();
         // Then
@@ -131,7 +136,9 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("")));
         assertThat(alertsRaised.get(0).getParam(), is(equalTo(param)));
-        assertThat(alertsRaised.get(0).getAttack(), is(equalTo(ExpressionBasedHandler.Expression.SUM.baseExpression)));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(equalTo(ExpressionBasedHandler.Expression.SUM.baseExpression)));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
@@ -140,8 +147,12 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
     public void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessful() throws Exception {
         // Given
         String param = "id";
-        nano.addHandler(new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.SUM, true));
-        rule.init(getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value), parent);
+        nano.addHandler(
+                new ExpressionBasedHandler(
+                        "/", param, ExpressionBasedHandler.Expression.SUM, true));
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
+                parent);
         // When
         rule.scan();
         // Then
@@ -153,8 +164,11 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
     public void shouldAlertIfMultExpressionsAreSuccessful() throws Exception {
         // Given
         String param = "id";
-        nano.addHandler(new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.MULT));
-        rule.init(getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value), parent);
+        nano.addHandler(
+                new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.MULT));
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
+                parent);
         // When
         rule.scan();
         // Then
@@ -162,7 +176,9 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("")));
         assertThat(alertsRaised.get(0).getParam(), is(equalTo(param)));
-        assertThat(alertsRaised.get(0).getAttack(), is(equalTo(ExpressionBasedHandler.Expression.MULT.baseExpression)));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(equalTo(ExpressionBasedHandler.Expression.MULT.baseExpression)));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
@@ -171,14 +187,17 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
     public void shouldAlertIfMultExpressionsAreSuccessfulAndReflectedInResponse() throws Exception {
         // Given
         String param = "id";
-        nano.addHandler(new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.MULT) {
+        nano.addHandler(
+                new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.MULT) {
 
-            @Override
-            protected String getContent(String value) {
-                return super.getContent(value) + ": " + value;
-            }
-        });
-        rule.init(getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value), parent);
+                    @Override
+                    protected String getContent(String value) {
+                        return super.getContent(value) + ": " + value;
+                    }
+                });
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
+                parent);
         // When
         rule.scan();
         // Then
@@ -186,7 +205,9 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("")));
         assertThat(alertsRaised.get(0).getParam(), is(equalTo(param)));
-        assertThat(alertsRaised.get(0).getAttack(), is(equalTo(ExpressionBasedHandler.Expression.MULT.baseExpression)));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(equalTo(ExpressionBasedHandler.Expression.MULT.baseExpression)));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
@@ -195,8 +216,12 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
     public void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessful() throws Exception {
         // Given
         String param = "id";
-        nano.addHandler(new ExpressionBasedHandler("/", param, ExpressionBasedHandler.Expression.SUM, true));
-        rule.init(getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value), parent);
+        nano.addHandler(
+                new ExpressionBasedHandler(
+                        "/", param, ExpressionBasedHandler.Expression.SUM, true));
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
+                parent);
         // When
         rule.scan();
         // Then
@@ -229,7 +254,8 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
             this(path, param, expression, false);
         }
 
-        public ExpressionBasedHandler(String path, String param, Expression expression, boolean confirmationFails) {
+        public ExpressionBasedHandler(
+                String path, String param, Expression expression, boolean confirmationFails) {
             super(path);
 
             this.param = param;
@@ -239,11 +265,13 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
 
         @Override
         protected Response serve(IHTTPSession session) {
-            String value = getFirstParamValue(session,param);
+            String value = getFirstParamValue(session, param);
             if (isValidValue(value)) {
-                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(value));
+                return newFixedLengthResponse(
+                        Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(value));
             }
-            return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
+            return newFixedLengthResponse(
+                    Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
         }
 
         private boolean isValidValue(String value) {

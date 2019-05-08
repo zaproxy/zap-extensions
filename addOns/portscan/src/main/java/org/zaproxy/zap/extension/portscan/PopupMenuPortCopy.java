@@ -26,68 +26,63 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 
 public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements ClipboardOwner {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionPortScan extension = null;
+    private static final long serialVersionUID = 1L;
+    private ExtensionPortScan extension = null;
     private static Logger log = Logger.getLogger(PopupMenuPortCopy.class);
-    
-    /**
-     * 
-     */
+
+    /** */
     public PopupMenuPortCopy() {
         super();
- 		initialize();
+        initialize();
     }
 
-    /**
-     * @param label
-     */
+    /** @param label */
     public PopupMenuPortCopy(String label) {
         super(label);
- 		initialize();
+        initialize();
     }
 
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
+    /** This method initializes this */
+    private void initialize() {
         this.setText(Constant.messages.getString("ports.copy.popup"));
 
-        this.addActionListener(new java.awt.event.ActionListener() { 
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
 
-        	@Override
-        	public void actionPerformed(java.awt.event.ActionEvent e) {
-                
-                if (extension.getPortScanPanel().isResultsSelectionEmpty()) {
-                    return;
-                }
-                
-                List<PortScanResultEntry> results = extension.getPortScanPanel().getSelectedResults();
-                
-                StringBuilder sb = new StringBuilder();
-                for (PortScanResultEntry result : results) {
-                	sb.append(result.getPort());
-                	sb.append('\t');
-            		sb.append(result.getDescription());
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
 
-                	sb.append('\n');
-                }
-                setClipboardContents(sb.toString());
-        	}
-        });
-	}
-	
-	private void setClipboardContents (String str) {
+                        if (extension.getPortScanPanel().isResultsSelectionEmpty()) {
+                            return;
+                        }
+
+                        List<PortScanResultEntry> results =
+                                extension.getPortScanPanel().getSelectedResults();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (PortScanResultEntry result : results) {
+                            sb.append(result.getPort());
+                            sb.append('\t');
+                            sb.append(result.getDescription());
+
+                            sb.append('\n');
+                        }
+                        setClipboardContents(sb.toString());
+                    }
+                });
+    }
+
+    private void setClipboardContents(String str) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents( new StringSelection(str), this );
-	}
-	
+        clipboard.setContents(new StringSelection(str), this);
+    }
+
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (PortScanPanel.RESULTS_TABLE_NAME.equals(invoker.getName())) {
@@ -99,26 +94,24 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
                 }
 
             } catch (Exception e) {
-            	log.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
             return true;
         }
         return false;
     }
 
-        
     void setExtension(ExtensionPortScan extension) {
         this.extension = extension;
     }
 
-	@Override
-	public void lostOwnership(Clipboard arg0, Transferable arg1) {
-		// Do nothing
-	}
+    @Override
+    public void lostOwnership(Clipboard arg0, Transferable arg1) {
+        // Do nothing
+    }
 
-	@Override
-	public boolean isSafe() {
-		return true;
-	}
-
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
 }

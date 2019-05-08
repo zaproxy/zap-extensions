@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.exportreport.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -31,7 +30,19 @@ import javax.xml.bind.annotation.XmlType;
  * SPONSOR: RYERSON UNIVERSITY
  */
 
-@XmlType(name = "", propOrder = { "title", "by", "for", "scanDate", "scanVersion", "reportDate", "reportVersion", "desc", "sites" })
+@XmlType(
+        name = "",
+        propOrder = {
+            "title",
+            "by",
+            "for",
+            "scanDate",
+            "scanVersion",
+            "reportDate",
+            "reportVersion",
+            "desc",
+            "sites"
+        })
 @XmlRootElement(name = "Report")
 public class Report {
     String title;
@@ -130,7 +141,5 @@ public class Report {
             this.sites = new ArrayList<Sites>();
         }
         this.sites.add(sites);
-
     }
-
 }

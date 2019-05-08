@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.jxbrowsermacos.selenium;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -31,7 +30,8 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
 /**
- * An {@link org.parosproxy.paros.extension.Extension Extension} that installs a {@link JxBrowserProvider}, if in macOS.
+ * An {@link org.parosproxy.paros.extension.Extension Extension} that installs a {@link
+ * JxBrowserProvider}, if in macOS.
  */
 public class ExtSelJxBrowserMacOs extends ExtensionAdaptor {
 
@@ -58,7 +58,10 @@ public class ExtSelJxBrowserMacOs extends ExtensionAdaptor {
         if (Constant.isMacOsX()) {
             webDriverProvider = new MacOsJxBrowserProvider();
 
-            ExtensionSelenium extSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+            ExtensionSelenium extSelenium =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionSelenium.class);
             extSelenium.addWebDriverProvider(webDriverProvider);
         }
     }
@@ -73,7 +76,10 @@ public class ExtSelJxBrowserMacOs extends ExtensionAdaptor {
         super.unload();
 
         if (webDriverProvider != null) {
-            ExtensionSelenium extSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+            ExtensionSelenium extSelenium =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionSelenium.class);
             extSelenium.removeWebDriverProvider(webDriverProvider);
         }
     }

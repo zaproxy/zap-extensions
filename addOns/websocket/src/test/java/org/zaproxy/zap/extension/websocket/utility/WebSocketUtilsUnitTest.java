@@ -27,15 +27,15 @@ import org.junit.Test;
 
 public class WebSocketUtilsUnitTest {
 
-	@Test
-	public void shouldEncodeTest1() throws Exception {
-		// given
-	    String key = "JIUetocUsIRxbzKP6sOH5Q==";
-		// when
-		String enc = WebSocketUtils.encodeWebSocketKey(key);
-		// then
-		assertThat(enc, is(equalTo("N4KbpT4uCJELr4IfJWm1xgkLQDA=")));
-	}
+    @Test
+    public void shouldEncodeTest1() throws Exception {
+        // given
+        String key = "JIUetocUsIRxbzKP6sOH5Q==";
+        // when
+        String enc = WebSocketUtils.encodeWebSocketKey(key);
+        // then
+        assertThat(enc, is(equalTo("N4KbpT4uCJELr4IfJWm1xgkLQDA=")));
+    }
 
     @Test
     public void shouldEncodeTest2() throws Exception {

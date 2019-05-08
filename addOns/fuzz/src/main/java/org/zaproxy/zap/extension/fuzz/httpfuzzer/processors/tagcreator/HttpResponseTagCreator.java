@@ -28,7 +28,8 @@ public class HttpResponseTagCreator {
     private String responseMessage;
     private List<String> existingTags;
 
-    public HttpResponseTagCreator(TagRule tagRule, String responseMessage, List<String> existingTags) {
+    public HttpResponseTagCreator(
+            TagRule tagRule, String responseMessage, List<String> existingTags) {
         this.tagRule = tagRule;
         this.responseMessage = responseMessage;
         this.existingTags = existingTags;
@@ -36,7 +37,7 @@ public class HttpResponseTagCreator {
 
     public List<String> create() {
         String tag = tagRule.createTag(responseMessage);
-        if(tag != null){
+        if (tag != null) {
             return existingTagsUnionNewTag(tag);
         }
         return existingTags;

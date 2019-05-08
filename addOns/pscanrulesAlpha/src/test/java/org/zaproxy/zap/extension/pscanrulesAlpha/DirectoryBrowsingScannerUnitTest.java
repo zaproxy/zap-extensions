@@ -32,64 +32,63 @@ import org.parosproxy.paros.network.HttpStatusCode;
 
 public class DirectoryBrowsingScannerUnitTest extends PassiveScannerTest<DirectoryBrowsingScanner> {
 
-	private HttpMessage createMessage() throws URIException {
-		HttpRequestHeader requestHeader = new HttpRequestHeader();
-		requestHeader.setURI(new URI("http://example.com", false));
+    private HttpMessage createMessage() throws URIException {
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        requestHeader.setURI(new URI("http://example.com", false));
 
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader(requestHeader);
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
-		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
-		return msg;
-	}
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
+        return msg;
+    }
 
-	@Override
-	protected DirectoryBrowsingScanner createScanner() {
-		return new DirectoryBrowsingScanner();
-	}
+    @Override
+    protected DirectoryBrowsingScanner createScanner() {
+        return new DirectoryBrowsingScanner();
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseBodyIsEmpty() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
-	
-	@Test
-	public void shouldNotRaiseAlertIfResponseBodyIsIrrelevant() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.setResponseBody("<html><H1>Some Title</H1></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
-	
+    @Test
+    public void shouldNotRaiseAlertIfResponseBodyIsEmpty() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfResponseContainsApacheStyleIndex() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.setResponseBody("<html><title>Index of /htdocs</title></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-	}
-	
-	@Test
-	public void shouldRaiseAlertIfResponseContainsIisStyleIndex() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.setResponseBody("<html><head><title>somesite.net - /site/</title></head><body><H1>somesite.net - /site/</H1><hr><pre><A HREF=\"/\">[To Parent Directory]</A><br><br> 6/12/2014  3:25 AM        &lt;dir&gt; <A HREF=\"/site/file.ext/\">file.ext</A><br></pre><hr></body></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseBodyIsIrrelevant() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody("<html><H1>Some Title</H1></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
+    @Test
+    public void shouldRaiseAlertIfResponseContainsApacheStyleIndex() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody("<html><title>Index of /htdocs</title></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseContainsIisStyleIndex() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><head><title>somesite.net - /site/</title></head><body><H1>somesite.net - /site/</H1><hr><pre><A HREF=\"/\">[To Parent Directory]</A><br><br> 6/12/2014  3:25 AM        &lt;dir&gt; <A HREF=\"/site/file.ext/\">file.ext</A><br></pre><hr></body></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+    }
 }

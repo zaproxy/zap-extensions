@@ -26,11 +26,11 @@ import org.zaproxy.zap.extension.sse.ServerSentEvent;
 public abstract class AbstractEventStreamBytePanelViewModel extends AbstractByteHttpPanelViewModel {
 
     protected ServerSentEvent event;
-    
+
     @Override
     public void setMessage(Message aMessage) {
         event = (ServerSentEvent) aMessage;
-        
+
         super.setMessage(aMessage);
     }
 }

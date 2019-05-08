@@ -21,9 +21,7 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.util.List;
 
-/**
- * Interface to allow the Ajax Spider to be plugged into the Quick Start panels
- */
+/** Interface to allow the Ajax Spider to be plugged into the Quick Start panels */
 public interface PlugableHud {
     boolean isHudEnabled();
 

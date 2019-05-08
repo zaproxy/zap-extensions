@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.parosproxy.paros.network.HttpMessage;
 
 public class HttpFuzzResult {
@@ -80,5 +79,4 @@ public class HttpFuzzResult {
     public Map<String, Object> getCustomStates() {
         return Collections.unmodifiableMap(customStates);
     }
-
 }

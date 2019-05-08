@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.exportreport.filechooser;
 
 import java.io.File;
-
 import javax.swing.Icon;
 import javax.swing.filechooser.FileView;
 

@@ -27,5 +27,4 @@ public interface WebSocketFuzzerMessageProcessorUI<T extends WebSocketFuzzerMess
 
     @Override
     T getFuzzerMessageProcessor();
-
 }

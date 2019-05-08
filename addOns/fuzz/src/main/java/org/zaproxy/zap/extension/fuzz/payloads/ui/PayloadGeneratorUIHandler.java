@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 
-public interface PayloadGeneratorUIHandler<T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> {
+public interface PayloadGeneratorUIHandler<
+        T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> {
 
     String getName();
 

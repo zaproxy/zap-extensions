@@ -22,19 +22,19 @@ package org.zaproxy.zap.extension.websocket;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 
 public class WebSocketSenderScriptHelper {
-	private final int channelId;
-	private final Initiator initiator;
+    private final int channelId;
+    private final Initiator initiator;
 
-	WebSocketSenderScriptHelper(int channelId, Initiator initiator) {
-		this.channelId = channelId;
-		this.initiator = initiator;
-	}
+    WebSocketSenderScriptHelper(int channelId, Initiator initiator) {
+        this.channelId = channelId;
+        this.initiator = initiator;
+    }
 
-	public int getChannelId() {
-		return channelId;
-	}
+    public int getChannelId() {
+        return channelId;
+    }
 
-	public Initiator getInitiator() {
-		return initiator;
-	}
+    public Initiator getInitiator() {
+        return initiator;
+    }
 }

@@ -1,19 +1,19 @@
 /*
  *
  * Paros and its related class files.
- * 
+ *
  * Paros is an HTTP/HTTPS proxy for assessing web application security.
  * Copyright (C) 2003-2004 Chinotec Technologies Company
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the Clarified Artistic License
  * as published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * Clarified Artistic License for more details.
- * 
+ *
  * You should have received a copy of the Clarified Artistic License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -25,12 +25,11 @@
 // ZAP: 2015/07/27 Issue 1618: Target Technology Not Honored
 // ZAP: 2016/02/02 Add isStop() checks and refactor the code to reduce code duplication
 // ZAP: 2018/02/01 Issue 1366: Change match pattern slightly, and implement pre-check
-
+// ZAP: 2019/05/08 Normalise format/indentation.
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -40,25 +39,23 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-
 public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     private static final Logger LOGGER = Logger.getLogger(TestServerSideInclude.class);
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "ascanrules.testserversideinclude.";
+    /** Prefix for internationalised messages used by this rule */
+    private static final String MESSAGE_PREFIX = "ascanrules.testserversideinclude.";
 
     private static final String SSI_UNIX = "<!--#EXEC cmd=\"ls /\"-->";
-    private static final String SSI_UNIX2 = "\">" +SSI_UNIX + "<";
+    private static final String SSI_UNIX2 = "\">" + SSI_UNIX + "<";
     private static final String SSI_WIN = "<!--#EXEC cmd=\"dir \\\"-->";
-    private static final String SSI_WIN2 = "\">" +SSI_WIN + "<";
+    private static final String SSI_WIN2 = "\">" + SSI_WIN + "<";
 
-	
-	private static Pattern patternSSIUnix = Pattern.compile("\\broot\\b.*\\busr\\b", PATTERN_PARAM|Pattern.DOTALL);
-	private static Pattern patternSSIWin = Pattern.compile("\\bprogram files\\b.*\\b(WINDOWS|WINNT)\\b",
-			PATTERN_PARAM | Pattern.DOTALL);
+    private static Pattern patternSSIUnix =
+            Pattern.compile("\\broot\\b.*\\busr\\b", PATTERN_PARAM | Pattern.DOTALL);
+    private static Pattern patternSSIWin =
+            Pattern.compile(
+                    "\\bprogram files\\b.*\\b(WINDOWS|WINNT)\\b", PATTERN_PARAM | Pattern.DOTALL);
 
     @Override
     public int getId() {
@@ -70,7 +67,6 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-
     @Override
     public String[] getDependency() {
         return null;
@@ -78,7 +74,8 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     @Override
     public boolean targets(TechSet technologies) {
-        if (technologies.includes(Tech.Linux) || technologies.includes(Tech.MacOS)
+        if (technologies.includes(Tech.Linux)
+                || technologies.includes(Tech.MacOS)
                 || technologies.includes(Tech.Windows)) {
             return true;
         }
@@ -97,7 +94,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     @Override
@@ -106,42 +103,39 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
     }
 
     @Override
-    public void init() {
+    public void init() {}
 
+    // Pre-check the original response for the detection pattern (to avoid false positives)
+    private boolean isEvidencePresent(Pattern pattern) {
+        return matchBodyPattern(getBaseMsg(), pattern, null);
     }
-    
-	// Pre-check the original response for the detection pattern (to avoid false positives)
-	private boolean isEvidencePresent(Pattern pattern) {
-		return matchBodyPattern(getBaseMsg(), pattern, null);
-	}
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        
-		if ((this.inScope(Tech.Linux) || this.inScope(Tech.MacOS))
-				&& !isEvidencePresent(patternSSIUnix)) {
 
-			if (testServerSideInclude(param, SSI_UNIX, patternSSIUnix)) {
-				return;
-			}
+        if ((this.inScope(Tech.Linux) || this.inScope(Tech.MacOS))
+                && !isEvidencePresent(patternSSIUnix)) {
 
-			if (testServerSideInclude(param, SSI_UNIX2, patternSSIUnix)) {
-				return;
-			}
-		}
+            if (testServerSideInclude(param, SSI_UNIX, patternSSIUnix)) {
+                return;
+            }
 
-		if (this.inScope(Tech.Windows) && !isEvidencePresent(patternSSIWin)) {
-			
-			if (testServerSideInclude(param, SSI_WIN, patternSSIWin)) {
-				return;
-			}
+            if (testServerSideInclude(param, SSI_UNIX2, patternSSIUnix)) {
+                return;
+            }
+        }
 
-			if (testServerSideInclude(param, SSI_WIN2, patternSSIWin)) {
-				return;
-			}
-		}
+        if (this.inScope(Tech.Windows) && !isEvidencePresent(patternSSIWin)) {
 
-	}
+            if (testServerSideInclude(param, SSI_WIN, patternSSIWin)) {
+                return;
+            }
+
+            if (testServerSideInclude(param, SSI_WIN2, patternSSIWin)) {
+                return;
+            }
+        }
+    }
 
     /**
      * Tests for SSI vulnerability in the give {@code parameter} with the given {@code value}.
@@ -149,8 +143,8 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
      * @param parameter the name of the parameter that will be used for testing SSI
      * @param value the value of the parameter that will be used for testing SSI
      * @param testEvidence the pattern used to assert that the test worked
-     * @return {@code true} if the test should stop, either because a vulnerability was found or the scanner was stopped,
-     *         {@code false} otherwise.
+     * @return {@code true} if the test should stop, either because a vulnerability was found or the
+     *     scanner was stopped, {@code false} otherwise.
      */
     private boolean testServerSideInclude(String parameter, String value, Pattern testEvidence) {
         if (isStop()) {
@@ -164,31 +158,45 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
             StringBuilder evidence = new StringBuilder();
             if (matchBodyPattern(message, testEvidence, evidence)) {
-                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, parameter, value, null, evidence.toString(), message);
+                bingo(
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_MEDIUM,
+                        null,
+                        parameter,
+                        value,
+                        null,
+                        evidence.toString(),
+                        message);
                 return true;
             }
         } catch (IOException e) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("IO exception while sending a message [URI=" + getBaseMsg().getRequestHeader().getURI()
-                              + ", parameter=" + parameter + ", value=" + value + "]:", e);
+                LOGGER.debug(
+                        "IO exception while sending a message [URI="
+                                + getBaseMsg().getRequestHeader().getURI()
+                                + ", parameter="
+                                + parameter
+                                + ", value="
+                                + value
+                                + "]:",
+                        e);
             }
         }
         return false;
     }
 
-	@Override
-	public int getRisk() {
-		return Alert.RISK_HIGH;
-	}
+    @Override
+    public int getRisk() {
+        return Alert.RISK_HIGH;
+    }
 
-	@Override
-	public int getCweId() {
-		return 97;
-	}
+    @Override
+    public int getCweId() {
+        return 97;
+    }
 
-	@Override
-	public int getWascId() {
-		return 31;
-	}
-       
+    @Override
+    public int getWascId() {
+        return 31;
+    }
 }

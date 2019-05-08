@@ -14,19 +14,14 @@ zapAddOn {
 }
 
 spotless {
-    java {
-        target(fileTree(projectDir) {
-            include("**/*.java")
-            exclude(
-                "**/DBMSHelper.java",
-                "**/SQLiBoundary.java",
-                "**/SQLInjectionPlugin.java",
-                "**/SQLiPayloadManager.java",
-                "**/SQLiTest.java",
-                "**/SQLiTestDetails.java",
-                "**/SQLiTestRequest.java",
-                "**/SQLiTestResponse.java",
-                "**/SQLiUnionEngine.java")
-        })
-    }
+    javaWith3rdPartyFormatted(project, listOf(
+        "**/DBMSHelper.java",
+        "**/SQLiBoundary.java",
+        "**/SQLInjectionPlugin.java",
+        "**/SQLiPayloadManager.java",
+        "**/SQLiTest.java",
+        "**/SQLiTestDetails.java",
+        "**/SQLiTestRequest.java",
+        "**/SQLiTestResponse.java",
+        "**/SQLiUnionEngine.java"))
 }

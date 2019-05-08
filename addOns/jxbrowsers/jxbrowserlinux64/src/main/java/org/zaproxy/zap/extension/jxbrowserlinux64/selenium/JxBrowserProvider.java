@@ -19,6 +19,11 @@
  */
 package org.zaproxy.zap.extension.jxbrowserlinux64.selenium;
 
+import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.BrowserContext;
+import com.teamdev.jxbrowser.chromium.BrowserContextParams;
+import com.teamdev.jxbrowser.chromium.BrowserPreferences;
+import com.teamdev.jxbrowser.chromium.CustomProxyConfig;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +37,6 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -49,26 +53,18 @@ import org.zaproxy.zap.extension.jxbrowser.ZapBrowserFrame;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowser;
 import org.zaproxy.zap.extension.selenium.SingleWebDriverProvider;
 
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.BrowserContext;
-import com.teamdev.jxbrowser.chromium.BrowserContextParams;
-import com.teamdev.jxbrowser.chromium.BrowserPreferences;
-import com.teamdev.jxbrowser.chromium.CustomProxyConfig;
-
 /**
  * A {@link SingleWebDriverProvider} for JxBrowser.
- * 
- * Note that this class is duplicated in:
- *  - org.zaproxy.zap.extension.jxbrowserlinux32.selenium
- *  - org.zaproxy.zap.extension.jxbrowserlinux64.selenium
- *  - org.zaproxy.zap.extension.jxbrowsermacos.selenium
- *  - org.zaproxy.zap.extension.jxbrowserwindows.selenium
- * 
- * Ideally it should be defined just once in org.zaproxy.zap.extension.jxbrowser.selenium
- * but that currently doesnt work due to class loading issues.
- * If you need to change this file them make sure you update it in all 4 locations.
- * If you need to make platform specific changes then make them in a class that
- * extends this one.
+ *
+ * <p>Note that this class is duplicated in: - org.zaproxy.zap.extension.jxbrowserlinux32.selenium -
+ * org.zaproxy.zap.extension.jxbrowserlinux64.selenium -
+ * org.zaproxy.zap.extension.jxbrowsermacos.selenium -
+ * org.zaproxy.zap.extension.jxbrowserwindows.selenium
+ *
+ * <p>Ideally it should be defined just once in org.zaproxy.zap.extension.jxbrowser.selenium but
+ * that currently doesnt work due to class loading issues. If you need to change this file them make
+ * sure you update it in all 4 locations. If you need to make platform specific changes then make
+ * them in a class that extends this one.
  */
 public class JxBrowserProvider implements SingleWebDriverProvider {
 
@@ -109,10 +105,12 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
         return getRemoteWebDriver(requesterId, null, 0);
     }
 
-    private RemoteWebDriver getRemoteWebDriver(final int requesterId, final String proxyAddress, final int proxyPort) {
+    private RemoteWebDriver getRemoteWebDriver(
+            final int requesterId, final String proxyAddress, final int proxyPort) {
         if (View.isInitialised()) {
             try {
-                GetWebDriverRunnable wb = new GetWebDriverRunnable(requesterId, proxyAddress, proxyPort);
+                GetWebDriverRunnable wb =
+                        new GetWebDriverRunnable(requesterId, proxyAddress, proxyPort);
                 EventQueue.invokeAndWait(wb);
                 return wb.getWebDriver();
             } catch (InvocationTargetException | InterruptedException e) {
@@ -124,22 +122,23 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
             return getRemoteWebDriverImpl(requesterId, proxyAddress, proxyPort);
         }
     }
-    
+
     private boolean isNotAutomated(int requesterId) {
         switch (requesterId) {
-        case HttpSender.MANUAL_REQUEST_INITIATOR:
-        case HttpSender.PROXY_INITIATOR:
-            return true;
-        default:
-            return false;
+            case HttpSender.MANUAL_REQUEST_INITIATOR:
+            case HttpSender.PROXY_INITIATOR:
+                return true;
+            default:
+                return false;
         }
     }
-    
+
     private ZapBrowserFrame getZapBrowserFrame(int requesterId) {
         ZapBrowserFrame zbf = this.requesterToZbf.get(requesterId);
         if (zbf == null || zbf.isClosed()) {
-            zbf = new ZapBrowserFrame(isNotAutomated(requesterId), true, 
-                    false, isNotAutomated(requesterId));
+            zbf =
+                    new ZapBrowserFrame(
+                            isNotAutomated(requesterId), true, false, isNotAutomated(requesterId));
             this.requesterToZbf.put(requesterId, zbf);
             chromePort = getFreePort();
         } else if (!zbf.isVisible()) {
@@ -151,13 +150,15 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
         return zbf;
     }
 
-    private RemoteWebDriver getRemoteWebDriverImpl(final int requesterId, String proxyAddress, int proxyPort) {
+    private RemoteWebDriver getRemoteWebDriverImpl(
+            final int requesterId, String proxyAddress, int proxyPort) {
         try {
             ZapBrowserFrame zbf = this.getZapBrowserFrame(requesterId);
 
             File dataDir = Files.createTempDirectory("zap-jxbrowser").toFile();
             dataDir.deleteOnExit();
-            BrowserContextParams contextParams = new BrowserContextParams(dataDir.getAbsolutePath());
+            BrowserContextParams contextParams =
+                    new BrowserContextParams(dataDir.getAbsolutePath());
 
             if (proxyAddress != null && !proxyAddress.isEmpty()) {
                 String hostPort = proxyAddress + ":" + proxyPort;
@@ -167,15 +168,17 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
 
             BrowserPreferences.setChromiumSwitches("--remote-debugging-port=" + chromePort);
             Browser browser = new Browser(new BrowserContext(contextParams));
-            final BrowserPanel browserPanel = zbf.addNewBrowserPanel(isNotAutomated(requesterId), browser);
+            final BrowserPanel browserPanel =
+                    zbf.addNewBrowserPanel(isNotAutomated(requesterId), browser);
 
             if (!ensureExecutable(webdriver)) {
                 throw new IllegalStateException("Failed to ensure WebDriver is executable.");
             }
-            final ChromeDriverService service = new ChromeDriverService.Builder()
-                    .usingDriverExecutable(webdriver.toFile())
-                    .usingAnyFreePort()
-                    .build();
+            final ChromeDriverService service =
+                    new ChromeDriverService.Builder()
+                            .usingDriverExecutable(webdriver.toFile())
+                            .usingAnyFreePort()
+                            .build();
             service.start();
 
             DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -218,7 +221,8 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
             return;
         }
 
-        Set<PosixFilePermission> perms = Files.readAttributes(file, PosixFileAttributes.class).permissions();
+        Set<PosixFilePermission> perms =
+                Files.readAttributes(file, PosixFileAttributes.class).permissions();
         if (perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
             return;
         }
@@ -239,20 +243,21 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
 
     private void cleanUpBrowser(final int requesterId, final BrowserPanel browserPanel) {
         if (View.isInitialised()) {
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                @Override
-                public void run() {
-                    if (! requesterToZbf.containsKey(requesterId)) {
-                        return;
-                    }
+                        @Override
+                        public void run() {
+                            if (!requesterToZbf.containsKey(requesterId)) {
+                                return;
+                            }
 
-                    cleanUpBrowserImpl(requesterId, browserPanel);
-                }
-            });
+                            cleanUpBrowserImpl(requesterId, browserPanel);
+                        }
+                    });
         } else {
             synchronized (this) {
-                if (! requesterToZbf.containsKey(requesterId)) {
+                if (!requesterToZbf.containsKey(requesterId)) {
                     return;
                 }
                 cleanUpBrowserImpl(requesterId, browserPanel);
@@ -273,7 +278,8 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
     }
 
     @Override
-    public synchronized WebDriver getWebDriver(int requesterId, String proxyAddress, int proxyPort) {
+    public synchronized WebDriver getWebDriver(
+            int requesterId, String proxyAddress, int proxyPort) {
         return getRemoteWebDriver(requesterId, proxyAddress, proxyPort);
     }
 
@@ -309,7 +315,7 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
 
         @Override
         public boolean isConfigured() {
-            // It should always work;) 
+            // It should always work;)
             return true;
         }
     }

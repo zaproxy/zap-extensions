@@ -73,5 +73,4 @@ class AjaxSpiderParamElem extends Enableable {
         }
         return true;
     }
-
 }

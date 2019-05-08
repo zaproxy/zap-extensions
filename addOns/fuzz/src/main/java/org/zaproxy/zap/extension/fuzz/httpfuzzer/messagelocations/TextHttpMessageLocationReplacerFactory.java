@@ -25,7 +25,8 @@ import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacerFa
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.model.TextHttpMessageLocation;
 
-public class TextHttpMessageLocationReplacerFactory implements MessageLocationReplacerFactory<HttpMessage> {
+public class TextHttpMessageLocationReplacerFactory
+        implements MessageLocationReplacerFactory<HttpMessage> {
 
     @Override
     public Class<? extends MessageLocation> getTargetMessageLocation() {
@@ -36,5 +37,4 @@ public class TextHttpMessageLocationReplacerFactory implements MessageLocationRe
     public MessageLocationReplacer<HttpMessage> createReplacer() {
         return new TextHttpMessageLocationReplacer();
     }
-
 }

@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.openapi.converter;
 
 import java.util.List;
-
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerException;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
 

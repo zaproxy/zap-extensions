@@ -19,10 +19,5 @@ dependencies {
 }
 
 spotless {
-    java {
-        target(fileTree(projectDir) {
-            include("**/*.java")
-            exclude("**/IntegerOverflow.java")
-        })
-    }
+    javaWith3rdPartyFormatted(project, listOf("**/IntegerOverflow.java"))
 }

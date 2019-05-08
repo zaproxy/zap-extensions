@@ -74,5 +74,4 @@ public class PortScanResultEntry {
         }
         return true;
     }
-
 }

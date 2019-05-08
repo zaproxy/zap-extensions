@@ -22,9 +22,7 @@ package org.zaproxy.zap.extension.websocket.brk;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JTable;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -34,46 +32,51 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
 
 public class PopupMenuAddBreakWebSocket extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionBreak extension = null;
+    private static final long serialVersionUID = 1L;
+    private ExtensionBreak extension = null;
     private JTable tableWebSocket = null;
     private static Logger log = Logger.getLogger(PopupMenuAddBreakWebSocket.class);
-    
+
     public PopupMenuAddBreakWebSocket(ExtensionBreak extension) {
         super(Constant.messages.getString("brk.add.popup"));
-        
+
         this.extension = extension;
-        
- 		initialize();
+
+        initialize();
     }
 
-	private void initialize() {
+    private void initialize() {
 
-        this.addActionListener(new ActionListener() {
+        this.addActionListener(
+                new ActionListener() {
 
-        	@Override
-        	public void actionPerformed(ActionEvent evt) {
-                
-                int[] rows = tableWebSocket.getSelectedRows();
-                if (rows.length != 1) {
-                    return;
-                }
-                
-                try {
-                    WebSocketMessagesViewModel model = (WebSocketMessagesViewModel)tableWebSocket.getModel();
-                    WebSocketMessageDTO message = model.getDTO(rows[0]);
-                    extension.addUiBreakpoint(message);
-                    
-                } catch (Exception e) {
-                    extension.getView().showWarningDialog(Constant.messages.getString("brk.add.error.history"));
-                }
-        	}
-        });
-	}
-	
+                    @Override
+                    public void actionPerformed(ActionEvent evt) {
+
+                        int[] rows = tableWebSocket.getSelectedRows();
+                        if (rows.length != 1) {
+                            return;
+                        }
+
+                        try {
+                            WebSocketMessagesViewModel model =
+                                    (WebSocketMessagesViewModel) tableWebSocket.getModel();
+                            WebSocketMessageDTO message = model.getDTO(rows[0]);
+                            extension.addUiBreakpoint(message);
+
+                        } catch (Exception e) {
+                            extension
+                                    .getView()
+                                    .showWarningDialog(
+                                            Constant.messages.getString("brk.add.error.history"));
+                        }
+                    }
+                });
+    }
+
     @Override
     public boolean isEnableForComponent(Component invoker) {
-        
+
         if (invoker.getName() != null && invoker.getName().equals("websocket.table")) {
             try {
                 tableWebSocket = (JTable) invoker;
@@ -85,10 +88,9 @@ public class PopupMenuAddBreakWebSocket extends ExtensionPopupMenuItem {
                 }
 
             } catch (Exception e) {
-            	log.warn(e.getMessage(), e);
+                log.warn(e.getMessage(), e);
             }
             return true;
-            
         }
         return false;
     }

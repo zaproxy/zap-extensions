@@ -20,29 +20,26 @@
 package org.zaproxy.zap.extension.tokengen;
 
 import javax.swing.ImageIcon;
-
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 public class TokenGenPopupMenu extends PopupMenuItemHttpMessageContainer {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionTokenGen extension = null;
+    private static final long serialVersionUID = 1L;
+    private ExtensionTokenGen extension = null;
 
-    /**
-     * @param label
-     */
+    /** @param label */
     public TokenGenPopupMenu(String label) {
         super(label);
         setIcon(new ImageIcon(getClass().getResource("/resource/icon/fugue/barcode.png")));
     }
-	
-	@Override
-	public void performAction(HttpMessage msg) {
-		this.extension.showGenerateTokensDialog(msg);
-	}
 
-	public void setExtension(ExtensionTokenGen extension) {
-		this.extension = extension;
-	}
+    @Override
+    public void performAction(HttpMessage msg) {
+        this.extension.showGenerateTokensDialog(msg);
+    }
+
+    public void setExtension(ExtensionTokenGen extension) {
+        this.extension = extension;
+    }
 }

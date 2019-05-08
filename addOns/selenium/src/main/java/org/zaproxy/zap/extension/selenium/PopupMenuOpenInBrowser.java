@@ -51,9 +51,9 @@ public class PopupMenuOpenInBrowser extends PopupMenuHttpMessageContainer {
         for (ProvidedBrowserUI bui : ext.getProvidedBrowserUIList()) {
             ProvidedBrowser pbrowser = bui.getBrowser();
             Browser browser = Browser.getBrowserWithId(bui.getBrowser().getId());
-            if (! pbrowser.isHeadless()) {
+            if (!pbrowser.isHeadless()) {
                 if (browser != null) {
-                    add (new PopupMenuItemOpenInBrowser(bui.getName(), ext, bui.getBrowser()));
+                    add(new PopupMenuItemOpenInBrowser(bui.getName(), ext, bui.getBrowser()));
                 }
             }
         }

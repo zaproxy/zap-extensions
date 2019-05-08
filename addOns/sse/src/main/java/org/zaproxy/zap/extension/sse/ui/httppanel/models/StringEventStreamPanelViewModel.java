@@ -20,19 +20,19 @@
 package org.zaproxy.zap.extension.sse.ui.httppanel.models;
 
 public class StringEventStreamPanelViewModel extends AbstractEventStreamStringPanelViewModel {
-	
+
     @Override
     public String getData() {
-    	String data = "";
+        String data = "";
         if (event != null) {
-        	data = event.getRawEvent();
+            data = event.getRawEvent();
         }
         return data;
     }
 
     @Override
     public void setData(String data) {
-    	event.setRawEvent(data);
-    	event.setRawEventLength((long) data.getBytes().length);
+        event.setRawEvent(data);
+        event.setRawEventLength((long) data.getBytes().length);
     }
 }

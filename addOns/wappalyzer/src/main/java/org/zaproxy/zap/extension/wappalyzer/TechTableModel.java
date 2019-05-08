@@ -23,168 +23,187 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
-
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
-
 import org.parosproxy.paros.Constant;
 
 public class TechTableModel extends AbstractTableModel {
 
-	private static final long serialVersionUID = 1L;
-	
-	private final Vector<String> columnNames;
-	private List<ApplicationMatch> apps = new ArrayList<ApplicationMatch>();
+    private static final long serialVersionUID = 1L;
 
-	private int lastAddedRow;
-	private int lastEditedRow;
-	
-	public TechTableModel() {
-		super();
-		columnNames = new Vector<>();
-		columnNames.add(Constant.messages.getString("wappalyzer.table.header.icon"));
-		columnNames.add(Constant.messages.getString("wappalyzer.table.header.name"));
-		columnNames.add(Constant.messages.getString("wappalyzer.table.header.version"));
-		columnNames.add(Constant.messages.getString("wappalyzer.table.header.category"));
-		columnNames.add(Constant.messages.getString("wappalyzer.table.header.website"));
-		columnNames.add(Constant.messages.getString("wappalyzer.table.header.implies"));
-		// Dont currently support confidence
-		//columnNames.add(Constant.messages.getString("wappalyzer.table.header.confidence"));
+    private final Vector<String> columnNames;
+    private List<ApplicationMatch> apps = new ArrayList<ApplicationMatch>();
 
-		apps = Collections.synchronizedList(new ArrayList<ApplicationMatch>());
-		
-		lastAddedRow = -1;
-		lastEditedRow = -1;
-	}
+    private int lastAddedRow;
+    private int lastEditedRow;
 
-	@Override
-	public int getColumnCount() {
-		return columnNames.size();
-	}
+    public TechTableModel() {
+        super();
+        columnNames = new Vector<>();
+        columnNames.add(Constant.messages.getString("wappalyzer.table.header.icon"));
+        columnNames.add(Constant.messages.getString("wappalyzer.table.header.name"));
+        columnNames.add(Constant.messages.getString("wappalyzer.table.header.version"));
+        columnNames.add(Constant.messages.getString("wappalyzer.table.header.category"));
+        columnNames.add(Constant.messages.getString("wappalyzer.table.header.website"));
+        columnNames.add(Constant.messages.getString("wappalyzer.table.header.implies"));
+        // Dont currently support confidence
+        // columnNames.add(Constant.messages.getString("wappalyzer.table.header.confidence"));
 
-	@Override
-	public int getRowCount() {
-		return apps.size();
-	}
+        apps = Collections.synchronizedList(new ArrayList<ApplicationMatch>());
 
-	@Override
-	public String getColumnName(int col) {
-		return columnNames.get(col);
-	}
+        lastAddedRow = -1;
+        lastEditedRow = -1;
+    }
 
-	@Override
-	public Object getValueAt(int row, int col) {
-		Object obj = null;
-		if (row >= apps.size()) {
-			return null;
-		}
-		ApplicationMatch app = apps.get(row);
-		switch (col) {
-		case 0: obj = app.getApplication().getIcon(); break;
-		case 1:	obj = app.getApplication().getName(); break;
-		case 2:	obj = app.getVersion(); break;
-		case 3:	obj = categoriesToString (app.getApplication().getCategories()); break;
-		case 4:	obj = app.getApplication().getWebsite(); break;
-		case 5:	obj = listToString (app.getApplication().getImplies()); break;
-		//case 5: obj = app.getConfidence(); break;
-		}
-		return obj;
-	}
-	
-	private String categoriesToString (List<String> list) {
-		if (list == null) {
-			return null;
-		}
-		StringBuilder sb = new StringBuilder();
-		for (String str : list) {
-			// See if we can i18n them
-			if (Constant.messages.containsKey("wappalyzer.category." + str)) {
-				sb.append(Constant.messages.getString("wappalyzer.category." + str));
-			} else {
-				sb.append(str);
-			}
-			sb.append(" ");
-		}
-		return sb.toString();
-	}
-	
-	private String listToString (List<String> list) {
-		if (list == null) {
-			return null;
-		}
-		StringBuilder sb = new StringBuilder();
-		for (String str : list) {
-			sb.append(str);
-			sb.append(" ");
-		}
-		return sb.toString();
-	}
-	
-	public ApplicationMatch getApplicationAtRow(int row) {
-		return apps.get(row);
-	}
+    @Override
+    public int getColumnCount() {
+        return columnNames.size();
+    }
 
-	public void addApplication(ApplicationMatch app) {
-		lastAddedRow = -1;
+    @Override
+    public int getRowCount() {
+        return apps.size();
+    }
 
-		for (int i = 0; i < apps.size(); i++) {
-			int cmp = app.getApplication().getName().toLowerCase().compareTo(apps.get(i).getApplication().getName().toLowerCase());
-			if (cmp < 0) {
-				apps.add(i, app);
-				this.fireTableRowsInserted(i, i);
+    @Override
+    public String getColumnName(int col) {
+        return columnNames.get(col);
+    }
 
-				lastAddedRow = i;
-				return;
-				
-			} else if (cmp == 0) {
-				// Already matches, so ignore
-				ApplicationMatch existing = apps.get(i);
-				existing.getVersions().addAll(app.getVersions());
-				lastAddedRow = i;
-				return;
-			}
-		}
+    @Override
+    public Object getValueAt(int row, int col) {
+        Object obj = null;
+        if (row >= apps.size()) {
+            return null;
+        }
+        ApplicationMatch app = apps.get(row);
+        switch (col) {
+            case 0:
+                obj = app.getApplication().getIcon();
+                break;
+            case 1:
+                obj = app.getApplication().getName();
+                break;
+            case 2:
+                obj = app.getVersion();
+                break;
+            case 3:
+                obj = categoriesToString(app.getApplication().getCategories());
+                break;
+            case 4:
+                obj = app.getApplication().getWebsite();
+                break;
+            case 5:
+                obj = listToString(app.getApplication().getImplies());
+                break;
+                // case 5: obj = app.getConfidence(); break;
+        }
+        return obj;
+    }
 
-		if (!apps.contains(app)) {
-			apps.add(app);
-			this.fireTableRowsInserted(apps.size()-1, apps.size()-1);
-			
-			lastAddedRow = apps.size()-1;
-		}
-	}
-	
-	public int getLastAddedRow() {
-		return lastAddedRow;
-	}
-	
-	public int getLastEditedRow() {
-		return lastEditedRow;
-	}
-	
-	@Override
-	public boolean isCellEditable(int row, int col) {
-		return false;
-	}
+    private String categoriesToString(List<String> list) {
+        if (list == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String str : list) {
+            // See if we can i18n them
+            if (Constant.messages.containsKey("wappalyzer.category." + str)) {
+                sb.append(Constant.messages.getString("wappalyzer.category." + str));
+            } else {
+                sb.append(str);
+            }
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
 
-	@Override
-	public Class<? extends Object> getColumnClass(int c) {
-		switch (c) {
-		case 0: return ImageIcon.class;
-		case 1:	return String.class;
-		case 2:	return String.class;
-		case 3:	return String.class;
-		case 4:	return String.class;
-		case 5:	return String.class;
-		}
-		return null;
-	}
+    private String listToString(List<String> list) {
+        if (list == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String str : list) {
+            sb.append(str);
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
 
-	public void removeAllElements() {
-		apps.clear();
-	}
+    public ApplicationMatch getApplicationAtRow(int row) {
+        return apps.get(row);
+    }
 
-	public List<ApplicationMatch> getApps() {
-		return apps;
-	}
+    public void addApplication(ApplicationMatch app) {
+        lastAddedRow = -1;
 
+        for (int i = 0; i < apps.size(); i++) {
+            int cmp =
+                    app.getApplication()
+                            .getName()
+                            .toLowerCase()
+                            .compareTo(apps.get(i).getApplication().getName().toLowerCase());
+            if (cmp < 0) {
+                apps.add(i, app);
+                this.fireTableRowsInserted(i, i);
+
+                lastAddedRow = i;
+                return;
+
+            } else if (cmp == 0) {
+                // Already matches, so ignore
+                ApplicationMatch existing = apps.get(i);
+                existing.getVersions().addAll(app.getVersions());
+                lastAddedRow = i;
+                return;
+            }
+        }
+
+        if (!apps.contains(app)) {
+            apps.add(app);
+            this.fireTableRowsInserted(apps.size() - 1, apps.size() - 1);
+
+            lastAddedRow = apps.size() - 1;
+        }
+    }
+
+    public int getLastAddedRow() {
+        return lastAddedRow;
+    }
+
+    public int getLastEditedRow() {
+        return lastEditedRow;
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return false;
+    }
+
+    @Override
+    public Class<? extends Object> getColumnClass(int c) {
+        switch (c) {
+            case 0:
+                return ImageIcon.class;
+            case 1:
+                return String.class;
+            case 2:
+                return String.class;
+            case 3:
+                return String.class;
+            case 4:
+                return String.class;
+            case 5:
+                return String.class;
+        }
+        return null;
+    }
+
+    public void removeAllElements() {
+        apps.clear();
+    }
+
+    public List<ApplicationMatch> getApps() {
+        return apps;
+    }
 }

@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Random;
-
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -33,23 +32,25 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
- * CWE-917: Improper Neutralization of Special Elements used in an 
- * Expression Language Statement ('Expression Language Injection')
- * 
- * http://cwe.mitre.org/data/definitions/917.html
+ * CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement
+ * ('Expression Language Injection')
+ *
+ * <p>http://cwe.mitre.org/data/definitions/917.html
+ *
  * @author yhawke (2014)
  */
 public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
 
     // Logger object
-    private static final Logger log = Logger.getLogger(ExpressionLanguageInjectionPlugin.class);    
+    private static final Logger log = Logger.getLogger(ExpressionLanguageInjectionPlugin.class);
 
-    private static final int MAX_NUM_TRIES   = 1000;
+    private static final int MAX_NUM_TRIES = 1000;
     private static final int DEVIATION_VALUE = 999999;
-    private static final int MEAN_VALUE      = 100000;
-    
+    private static final int MEAN_VALUE = 100000;
+
     /**
      * Get the unique identifier of this plugin
+     *
      * @return this plugin identifier
      */
     @Override
@@ -59,6 +60,7 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Get the name of this plugin
+     *
      * @return the plugin name
      */
     @Override
@@ -68,15 +70,17 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Give back specific pugin dependancies (none for this)
+     *
      * @return the list of plugins that need to be executed before
      */
     @Override
     public String[] getDependency() {
-        return new String[]{};
+        return new String[] {};
     }
 
     /**
      * Get the description of the vulnerbaility when found
+     *
      * @return the vulnerability description
      */
     @Override
@@ -85,10 +89,11 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Give back the categorization of the vulnerability 
-     * checked by this plugin (it's an injection category for CODEi)
-     * @return a category from the Category enum list 
-     */    
+     * Give back the categorization of the vulnerability checked by this plugin (it's an injection
+     * category for CODEi)
+     *
+     * @return a category from the Category enum list
+     */
     @Override
     public int getCategory() {
         return Category.INJECTION;
@@ -96,6 +101,7 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Give back a general solution for the found vulnerability
+     *
      * @return the solution that can be put in place
      */
     @Override
@@ -110,6 +116,7 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * http://cwe.mitre.org/data/definitions/917.html
+     *
      * @return the official CWE id
      */
     @Override
@@ -117,38 +124,34 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
         return 917;
     }
 
-    /**
-     * @return the official WASC id
-     */
+    /** @return the official WASC id */
     @Override
     public int getWascId() {
         // There's not a real classification for this
-        // so we consider the general "Improper Input Handling" class 
+        // so we consider the general "Improper Input Handling" class
         // http://projects.webappsec.org/w/page/13246933/Improper%20Input%20Handling
         return 20;
     }
-        
+
     /**
      * Give back the risk associated to this vulnerability (high)
+     *
      * @return the risk according to the Alert enum
      */
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
     }
-    
-    /**
-     * Initialize the plugin according to
-     * the overall environment configuration
-     */
+
+    /** Initialize the plugin according to the overall environment configuration */
     @Override
     public void init() {
         // do nothing
     }
-    
+
     /**
      * Scan for Expression Language Injection Vulnerabilites
-     * 
+     *
      * @param msg a request only copy of the original message (the response isn't copied)
      * @param paramName the parameter name that need to be exploited
      * @param value the original parameter value
@@ -178,21 +181,33 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
             // Set the expression value
             setParameter(msg, paramName, payload);
             try {
-            // Send the request and retrieve the response
-            sendAndReceive(msg);
-            } catch (InvalidRedirectLocationException|URIException|
-            		UnknownHostException|IllegalArgumentException ex) {
-            	if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-						" when accessing: " + msg.getRequestHeader().getURI().toString() + 
-						"\n The target may have replied with a poorly formed redirect due to our input.");
-            	return;
+                // Send the request and retrieve the response
+                sendAndReceive(msg);
+            } catch (InvalidRedirectLocationException
+                    | URIException
+                    | UnknownHostException
+                    | IllegalArgumentException ex) {
+                if (log.isDebugEnabled())
+                    log.debug(
+                            "Caught "
+                                    + ex.getClass().getName()
+                                    + " "
+                                    + ex.getMessage()
+                                    + " when accessing: "
+                                    + msg.getRequestHeader().getURI().toString()
+                                    + "\n The target may have replied with a poorly formed redirect due to our input.");
+                return;
             }
             // Check if the resulting content contains the executed addition
             if (msg.getResponseBody().toString().contains(addedString)) {
                 // We Found IT!
                 // First do logging
-                log.debug("[Expression Langage Injection Found] on parameter [" + paramName
-                        + "]  with payload [" + payload + "]");
+                log.debug(
+                        "[Expression Langage Injection Found] on parameter ["
+                                + paramName
+                                + "]  with payload ["
+                                + payload
+                                + "]");
 
                 // Now create the alert message
                 this.bingo(
@@ -203,15 +218,19 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
                         payload,
                         null,
                         addedString,
-                        msg
-                );                
+                        msg);
             }
 
         } catch (IOException ex) {
-                //Do not try to internationalise this.. we need an error message in any event..
-            //if it's in English, it's still better than not having it at all.
-            log.error("Expression Language Injection vulnerability check failed for parameter ["
-                    + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
+            // Do not try to internationalise this.. we need an error message in any event..
+            // if it's in English, it's still better than not having it at all.
+            log.error(
+                    "Expression Language Injection vulnerability check failed for parameter ["
+                            + paramName
+                            + "] and payload ["
+                            + payload
+                            + "] due to an I/O error",
+                    ex);
         }
     }
 }

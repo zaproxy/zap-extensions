@@ -24,22 +24,22 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-public class SourceCodeDisclosureScannerUnitTest extends PassiveScannerTest<SourceCodeDisclosureScanner> {
+public class SourceCodeDisclosureScannerUnitTest
+        extends PassiveScannerTest<SourceCodeDisclosureScanner> {
 
-	@Override
-	protected SourceCodeDisclosureScanner createScanner() {
-		return new SourceCodeDisclosureScanner();
-	}
+    @Override
+    protected SourceCodeDisclosureScanner createScanner() {
+        return new SourceCodeDisclosureScanner();
+    }
 
-	@Test
-	public void scannerNameShouldMatch() {
-		// Quick test to verify scanner name which is used in the policy dialog but not 
-		// alone in alerts
+    @Test
+    public void scannerNameShouldMatch() {
+        // Quick test to verify scanner name which is used in the policy dialog but not
+        // alone in alerts
 
-		// Given
-		SourceCodeDisclosureScanner thisScanner = createScanner();
-		// Then
-		assertThat(thisScanner.getName(), equalTo("Source Code Disclosure"));
-	}
-	
+        // Given
+        SourceCodeDisclosureScanner thisScanner = createScanner();
+        // Then
+        assertThat(thisScanner.getName(), equalTo("Source Code Disclosure"));
+    }
 }

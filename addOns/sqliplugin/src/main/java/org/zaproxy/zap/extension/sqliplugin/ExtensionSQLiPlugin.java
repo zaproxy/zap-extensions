@@ -23,7 +23,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 
 /**
- * A helper extension to force the load, done by core, of the resource messages bundled in the add-on.
+ * A helper extension to force the load, done by core, of the resource messages bundled in the
+ * add-on.
  */
 public class ExtensionSQLiPlugin extends ExtensionAdaptor {
 
@@ -52,5 +53,4 @@ public class ExtensionSQLiPlugin extends ExtensionAdaptor {
     public boolean canUnload() {
         return true;
     }
-
 }

@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.sse.ui.httppanel.views;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
@@ -31,38 +30,47 @@ import org.zaproxy.zap.extension.search.SearchMatch;
 
 public class EventStreamSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTextView {
 
-	public EventStreamSyntaxHighlightTextView(org.zaproxy.zap.extension.sse.ui.httppanel.models.StringEventStreamPanelViewModel model) {
-		super(model);
-	}
-	
-	@Override
-	protected HttpPanelSyntaxHighlightTextArea createHttpPanelTextArea() {
-		return new EventStreamSyntaxHighlightTextArea();
-	}
-	
-	protected static class EventStreamSyntaxHighlightTextArea extends HttpPanelSyntaxHighlightTextArea {
+    public EventStreamSyntaxHighlightTextView(
+            org.zaproxy.zap.extension.sse.ui.httppanel.models.StringEventStreamPanelViewModel
+                    model) {
+        super(model);
+    }
+
+    @Override
+    protected HttpPanelSyntaxHighlightTextArea createHttpPanelTextArea() {
+        return new EventStreamSyntaxHighlightTextArea();
+    }
+
+    protected static class EventStreamSyntaxHighlightTextArea
+            extends HttpPanelSyntaxHighlightTextArea {
 
         private static final long serialVersionUID = -6469629120424801024L;
 
-        private static final String CSS = Constant.messages.getString("http.panel.view.syntaxtext.syntax.css");
-        private static final String HTML = Constant.messages.getString("http.panel.view.syntaxtext.syntax.html");
-        private static final String JAVASCRIPT = Constant.messages.getString("http.panel.view.syntaxtext.syntax.javascript");
-        private static final String JSON = Constant.messages.getString("http.panel.view.syntaxtext.syntax.json");
-        private static final String XML = Constant.messages.getString("http.panel.view.syntaxtext.syntax.xml");
-        
+        private static final String CSS =
+                Constant.messages.getString("http.panel.view.syntaxtext.syntax.css");
+        private static final String HTML =
+                Constant.messages.getString("http.panel.view.syntaxtext.syntax.html");
+        private static final String JAVASCRIPT =
+                Constant.messages.getString("http.panel.view.syntaxtext.syntax.javascript");
+        private static final String JSON =
+                Constant.messages.getString("http.panel.view.syntaxtext.syntax.json");
+        private static final String XML =
+                Constant.messages.getString("http.panel.view.syntaxtext.syntax.xml");
+
         private static EventStreamTokenMakerFactory tokenMakerFactory = null;
 
-//		private final ExtensionServerSentEvents extEventStream;
-		
-		public EventStreamSyntaxHighlightTextArea() {
+        //		private final ExtensionServerSentEvents extEventStream;
+
+        public EventStreamSyntaxHighlightTextArea() {
             addSyntaxStyle(CSS, SyntaxConstants.SYNTAX_STYLE_CSS);
             addSyntaxStyle(HTML, SyntaxConstants.SYNTAX_STYLE_HTML);
             addSyntaxStyle(JAVASCRIPT, SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
             addSyntaxStyle(JSON, SyntaxConstants.SYNTAX_STYLE_JSON);
             addSyntaxStyle(XML, SyntaxConstants.SYNTAX_STYLE_XML);
-            
-//    		this.extEventStream = (ExtensionServerSentEvents) Control.getSingleton().getExtensionLoader().getExtension(ExtensionServerSentEvents.NAME);
-		}
+
+            //    		this.extEventStream = (ExtensionServerSentEvents)
+            // Control.getSingleton().getExtensionLoader().getExtension(ExtensionServerSentEvents.NAME);
+        }
 
         @Override
         public void search(Pattern p, List<SearchMatch> matches) {
@@ -71,36 +79,36 @@ public class EventStreamSyntaxHighlightTextView extends HttpPanelSyntaxHighlight
                 matches.add(new SearchMatch(null, m.start(), m.end()));
             }
         }
-        
+
         @Override
         public void highlight(SearchMatch sm) {
             int len = getText().length();
             if (sm.getStart() > len || sm.getEnd() > len) {
                 return;
             }
-            
+
             highlight(sm.getStart(), sm.getEnd());
         }
-		
-		@Override
-		protected synchronized CustomTokenMakerFactory getTokenMakerFactory() {
-			if (tokenMakerFactory == null) {
-				tokenMakerFactory = new EventStreamTokenMakerFactory();
-			}
-			return tokenMakerFactory;
-		}
-		
-		private static class EventStreamTokenMakerFactory extends CustomTokenMakerFactory {
-			
-			public EventStreamTokenMakerFactory() {
+
+        @Override
+        protected synchronized CustomTokenMakerFactory getTokenMakerFactory() {
+            if (tokenMakerFactory == null) {
+                tokenMakerFactory = new EventStreamTokenMakerFactory();
+            }
+            return tokenMakerFactory;
+        }
+
+        private static class EventStreamTokenMakerFactory extends CustomTokenMakerFactory {
+
+            public EventStreamTokenMakerFactory() {
                 String pkg = "org.fife.ui.rsyntaxtextarea.modes.";
-                
+
                 putMapping(SYNTAX_STYLE_CSS, pkg + "CSSTokenMaker");
                 putMapping(SYNTAX_STYLE_HTML, pkg + "HTMLTokenMaker");
                 putMapping(SYNTAX_STYLE_JAVASCRIPT, pkg + "JavaScriptTokenMaker");
                 putMapping(SYNTAX_STYLE_JSON, pkg + "JsonTokenMaker");
                 putMapping(SYNTAX_STYLE_XML, pkg + "XMLTokenMaker");
-			}
-		}
-	}
+            }
+        }
+    }
 }

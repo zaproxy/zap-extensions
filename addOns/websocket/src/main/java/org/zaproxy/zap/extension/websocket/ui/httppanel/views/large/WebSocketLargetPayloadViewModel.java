@@ -24,17 +24,15 @@ import org.zaproxy.zap.extension.websocket.ui.httppanel.models.StringWebSocketPa
 
 public class WebSocketLargetPayloadViewModel extends StringWebSocketPanelViewModel {
 
-	@Override
-	public String getData() {
-		if (webSocketMessage == null || webSocketMessage.payloadLength == 0) {
-			return "";
-		}
-		
-		return Constant.messages.getString("websocket.panel.view.largepayload.all.warning");
-	}
+    @Override
+    public String getData() {
+        if (webSocketMessage == null || webSocketMessage.payloadLength == 0) {
+            return "";
+        }
 
-	@Override
-	public void setData(String data) {
-	}
+        return Constant.messages.getString("websocket.panel.view.largepayload.all.warning");
+    }
 
+    @Override
+    public void setData(String data) {}
 }

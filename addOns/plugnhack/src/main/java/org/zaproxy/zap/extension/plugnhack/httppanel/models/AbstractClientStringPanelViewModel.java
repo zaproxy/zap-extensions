@@ -26,11 +26,11 @@ import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 public abstract class AbstractClientStringPanelViewModel extends AbstractStringHttpPanelViewModel {
 
     protected ClientMessage monitoredPageMessage;
-    
+
     @Override
     public void setMessage(Message aMessage) {
         this.monitoredPageMessage = (ClientMessage) aMessage;
-        
+
         super.setMessage(aMessage);
     }
 }

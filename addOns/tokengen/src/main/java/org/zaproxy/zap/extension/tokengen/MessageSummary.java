@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.tokengen;
 
 import java.util.Date;
-
 import org.parosproxy.paros.network.HttpMessage;
 
 public class MessageSummary {
@@ -33,57 +32,55 @@ public class MessageSummary {
     private final Long timeElapsedMillis;
     private final Long responseBodyLength;
     private final String token;
-    private boolean goodResponse=true;
+    private boolean goodResponse = true;
 
-	public MessageSummary(HttpMessage msg) {
-	    this.requestTimestamp = new Date(msg.getTimeSentMillis());
-		this.method = msg.getRequestHeader().getMethod();
+    public MessageSummary(HttpMessage msg) {
+        this.requestTimestamp = new Date(msg.getTimeSentMillis());
+        this.method = msg.getRequestHeader().getMethod();
         this.uriString = msg.getRequestHeader().getURI().toString();
         this.statusCodeStr = Integer.valueOf(msg.getResponseHeader().getStatusCode());
         this.reasonPhrase = msg.getResponseHeader().getReasonPhrase();
         this.timeElapsedMillis = Long.valueOf(msg.getTimeElapsedMillis());
         this.responseBodyLength = Long.valueOf(msg.getResponseBody().toString().length());
-        this.token = msg.getNote();        // The note is used to store the token
-        if (msg.getResponseHeader().isEmpty()){
-        	this.goodResponse=false;
+        this.token = msg.getNote(); // The note is used to store the token
+        if (msg.getResponseHeader().isEmpty()) {
+            this.goodResponse = false;
         }
-	}
+    }
 
-	public String getMethod() {
-		return method;
-	}
+    public String getMethod() {
+        return method;
+    }
 
-	public String getUri() {
-		return uriString;
-	}
+    public String getUri() {
+        return uriString;
+    }
 
-	public Integer getStatusCode() {
-		return statusCodeStr;
-	}
+    public Integer getStatusCode() {
+        return statusCodeStr;
+    }
 
-	public String getReasonPhrase() {
-		return reasonPhrase;
-	}
+    public String getReasonPhrase() {
+        return reasonPhrase;
+    }
 
-	public Long getTimeElapsedMillis() {
-		return timeElapsedMillis;
-	}
+    public Long getTimeElapsedMillis() {
+        return timeElapsedMillis;
+    }
 
-	public Long getResponseBodyLength() {
-		return responseBodyLength;
-	}
+    public Long getResponseBodyLength() {
+        return responseBodyLength;
+    }
 
-	public String getToken() {
-		return token;
-	}
+    public String getToken() {
+        return token;
+    }
 
     public Date getRequestTimestamp() {
         return requestTimestamp;
     }
-    
-    public boolean isGoodResponse() {
-    	return goodResponse;
-    }
 
-    
+    public boolean isGoodResponse() {
+        return goodResponse;
+    }
 }

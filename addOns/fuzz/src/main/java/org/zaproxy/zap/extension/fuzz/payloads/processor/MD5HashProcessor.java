@@ -75,5 +75,4 @@ public class MD5HashProcessor extends AbstractStringHashProcessor {
     public MD5HashProcessor copy() {
         return new MD5HashProcessor(getCharset(), isUpperCase());
     }
-
 }

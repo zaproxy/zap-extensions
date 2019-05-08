@@ -23,9 +23,8 @@ import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
 /**
  * Tagging interface for {@code PayloadProcessor}s of {@code DefaultPayload}s.
- * 
+ *
  * @see PayloadProcessor
  * @see DefaultPayload
  */
-public interface DefaultPayloadProcessor extends PayloadProcessor<DefaultPayload> {
-}
+public interface DefaultPayloadProcessor extends PayloadProcessor<DefaultPayload> {}

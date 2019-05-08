@@ -20,40 +20,39 @@
 package org.zaproxy.zap.extension.websocket.ui.httppanel.models;
 
 import java.nio.charset.Charset;
-
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 
 public class ByteWebSocketPanelViewModel extends AbstractWebSocketBytePanelViewModel {
-	
-	@Override
-	public byte[] getData() {
-		if (webSocketMessage == null || webSocketMessage.payload == null)  {
-			return new byte[0];
-		}
-		
-		if (webSocketMessage.payload instanceof String) {
-			return ((String) webSocketMessage.payload).getBytes();
-		} else if (webSocketMessage.payload instanceof byte[]) {
-			return (byte[]) webSocketMessage.payload;
-		}
-		
-		return new byte[0];
-	}
 
-	@Override
-	public void setData(byte[] data) {
-		if (webSocketMessage.opcode != null) {
-			if (webSocketMessage.opcode == WebSocketMessage.OPCODE_BINARY) {
-				webSocketMessage.payload = data;
-			} else {
-				webSocketMessage.payload = new String(data, Charset.forName("UTF-8"));
-			}
-		} else {
-			if (webSocketMessage.payload instanceof String) {
-				webSocketMessage.payload = new String(data, Charset.forName("UTF-8"));
-			} else if (webSocketMessage.payload instanceof byte[]) {
-				webSocketMessage.payload = data;
-			}
-		}
-	}
+    @Override
+    public byte[] getData() {
+        if (webSocketMessage == null || webSocketMessage.payload == null) {
+            return new byte[0];
+        }
+
+        if (webSocketMessage.payload instanceof String) {
+            return ((String) webSocketMessage.payload).getBytes();
+        } else if (webSocketMessage.payload instanceof byte[]) {
+            return (byte[]) webSocketMessage.payload;
+        }
+
+        return new byte[0];
+    }
+
+    @Override
+    public void setData(byte[] data) {
+        if (webSocketMessage.opcode != null) {
+            if (webSocketMessage.opcode == WebSocketMessage.OPCODE_BINARY) {
+                webSocketMessage.payload = data;
+            } else {
+                webSocketMessage.payload = new String(data, Charset.forName("UTF-8"));
+            }
+        } else {
+            if (webSocketMessage.payload instanceof String) {
+                webSocketMessage.payload = new String(data, Charset.forName("UTF-8"));
+            } else if (webSocketMessage.payload instanceof byte[]) {
+                webSocketMessage.payload = data;
+            }
+        }
+    }
 }

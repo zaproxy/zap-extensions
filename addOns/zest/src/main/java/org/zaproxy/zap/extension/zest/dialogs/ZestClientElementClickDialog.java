@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-
 import org.mozilla.zest.core.v1.ZestClientElement;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
@@ -31,34 +30,37 @@ import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
 public class ZestClientElementClickDialog extends ZestClientElementDialog implements ZestDialog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ZestClientElementClickDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(ext, owner, "zest.dialog.clientElementClick.add.title", dim);
-	}
+    public ZestClientElementClickDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(ext, owner, "zest.dialog.clientElementClick.add.title", dim);
+    }
 
-	@Override
-	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestStatement req, ZestClientElement client, boolean add) {
-		super.init(script, parent, child, req, client, add);
-		
-		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientElementClick.add.title"));
-		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientElementClick.edit.title"));
-		}
-	}
+    @Override
+    public void init(
+            ZestScriptWrapper script,
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientElement client,
+            boolean add) {
+        super.init(script, parent, child, req, client, add);
 
-	@Override
-	public void saveFields() {
-		// Nothing extra to do
-	}
+        if (add) {
+            this.setTitle(Constant.messages.getString("zest.dialog.clientElementClick.add.title"));
+        } else {
+            this.setTitle(Constant.messages.getString("zest.dialog.clientElementClick.edit.title"));
+        }
+    }
 
-	@Override
-	public String validateFields() {
-		// Nothing extra to do
-		return super.validateFields();
-	}
+    @Override
+    public void saveFields() {
+        // Nothing extra to do
+    }
 
-	
+    @Override
+    public String validateFields() {
+        // Nothing extra to do
+        return super.validateFields();
+    }
 }

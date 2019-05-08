@@ -19,21 +19,19 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import java.util.ArrayList;
-
-import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
-import org.zaproxy.zap.extension.openapi.network.FormData;
-import org.zaproxy.zap.extension.openapi.network.FormDataItem;
-
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.Parameter;
+import java.util.ArrayList;
+import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
+import org.zaproxy.zap.extension.openapi.network.FormData;
+import org.zaproxy.zap.extension.openapi.network.FormDataItem;
 
 public class FormGenerator {
 
     private DataGenerator dataGenerator;
 
-    public FormGenerator (DataGenerator dataGenerator) {
+    public FormGenerator(DataGenerator dataGenerator) {
         this.dataGenerator = dataGenerator;
     }
 
@@ -48,7 +46,11 @@ public class FormGenerator {
                 String type = ((AbstractSerializableParameter<?>) parameter).getType();
                 FormDataItem item = new FormDataItem();
                 item.setIsFile(type != null && type.equals("file"));
-                item.setValue(dataGenerator.generate(parameter.getName(), (FormParameter) parameter, new ArrayList<String>()));
+                item.setValue(
+                        dataGenerator.generate(
+                                parameter.getName(),
+                                (FormParameter) parameter,
+                                new ArrayList<String>()));
                 formData.addFormItem(parameter.getName(), item);
             }
         }

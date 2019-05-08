@@ -27,9 +27,7 @@ import org.junit.Test;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-/**
- * Unit test for {@link SQLInjectionHypersonic}.
- */
+/** Unit test for {@link SQLInjectionHypersonic}. */
 public class SQLInjectionHypersonicUnitTest extends ActiveScannerTest<SQLInjectionHypersonic> {
 
     @Override

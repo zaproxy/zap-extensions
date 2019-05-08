@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.bugtracker;
 
 import java.awt.BorderLayout;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
@@ -57,9 +56,7 @@ public class BugTrackerBugzillaOptionsPanel extends AbstractParamPanel {
     }
 
     @Override
-    public void validateParam(Object obj) throws Exception {
-
-    }
+    public void validateParam(Object obj) throws Exception {}
 
     @Override
     public void saveParam(Object obj) throws Exception {

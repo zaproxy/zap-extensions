@@ -27,7 +27,9 @@ import javax.xml.bind.annotation.XmlType;
  * SPONSOR: RYERSON UNIVERSITY
  */
 
-@XmlType(name = "", propOrder = { "name" })
+@XmlType(
+        name = "",
+        propOrder = {"name"})
 public class Placeholder {
     private String name;
 

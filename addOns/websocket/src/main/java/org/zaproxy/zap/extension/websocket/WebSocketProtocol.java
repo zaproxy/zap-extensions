@@ -19,11 +19,9 @@
  */
 package org.zaproxy.zap.extension.websocket;
 
-/**
- * Collects various names for the WebSocket protocol. Cannot be instantiated.
- */
+/** Collects various names for the WebSocket protocol. Cannot be instantiated. */
 public abstract class WebSocketProtocol {
-	public static final String HEADER_PROTOCOL = "sec-websocket-protocol";
-	public static final String HEADER_EXTENSION = "sec-websocket-extension";
-	public static final String HEADER_VERSION = "sec-websocket-version";
+    public static final String HEADER_PROTOCOL = "sec-websocket-protocol";
+    public static final String HEADER_EXTENSION = "sec-websocket-extension";
+    public static final String HEADER_VERSION = "sec-websocket-version";
 }

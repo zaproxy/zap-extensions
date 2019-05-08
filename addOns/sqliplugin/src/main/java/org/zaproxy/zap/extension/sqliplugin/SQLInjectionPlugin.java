@@ -1,19 +1,19 @@
 /*
  * Derivative Work based upon SQLMap source code implementation
- * 
+ *
  * Copyright (c) 2006-2012 sqlmap developers (http://sqlmap.org/)
  * Bernardo Damele Assumpcao Guimaraes, Miroslav Stampar.
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -42,7 +42,7 @@ import org.zaproxy.zap.model.TechSet;
 
 /**
  * Active Plugin for SQL injection testing and verification.
- * 
+ *
  * @author yhawke (2013)
  */
 public class SQLInjectionPlugin extends AbstractAppParamPlugin {
@@ -61,11 +61,12 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     // Minimum time response set needed for time-comparison based on standard deviation
     public static final int MIN_TIME_RESPONSES = 10;
     // Payload used for checking of existence of IDS/WAF (dummier the better)
-    // IDS_WAF_CHECK_PAYLOAD = "AND 1=1 UNION ALL SELECT 1,2,3,table_name FROM information_schema.tables"
+    // IDS_WAF_CHECK_PAYLOAD = "AND 1=1 UNION ALL SELECT 1,2,3,table_name FROM
+    // information_schema.tables"
 
     // ------------------------------------------------------------------
     // Configuration properties
-    // ------------------------------------------------------------------  
+    // ------------------------------------------------------------------
     // --union-char=UCHAR  Character to use for bruteforcing number of columns
     private String unionChar = null;
     // --union-cols=UCOLS  Range of columns to test for UNION preparePrefix SQL injection
@@ -74,7 +75,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     private List<Integer> techniques = null;
     // --risk=RISK         Risk of tests to perform (0-3, default 1)
     private int risk = 1;
-    //--level=LEVEL       Level of tests to perform (1-5, default 1)
+    // --level=LEVEL       Level of tests to perform (1-5, default 1)
     private int level = 1;
     // --prefix=PREFIX     Injection payload prefix string
     private String prefix = null;
@@ -82,39 +83,36 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     private String suffix = null;
     // --invalid-bignum    Use big numbers for invalidating values
     private boolean invalidBignum = false;
-    // --invalid-logical   Use logical operations for invalidating values    
+    // --invalid-logical   Use logical operations for invalidating values
     private boolean invalidLogical = false;
     // --time-sec=TIMESEC  Seconds to delay the DBMS response (default 5)
     private int timeSec = 5;
     // --keep-alive Use persistent HTTP(s) connections
-    // By default set connection behavior to close 
+    // By default set connection behavior to close
     // to avoid troubles related to WAF or lagging
     // which can make things very slow...
     private boolean keepAlive = false;
 
-    // ---------------------------------------------------------    
+    // ---------------------------------------------------------
     // Plugin internal properties
-    // ---------------------------------------------------------        
+    // ---------------------------------------------------------
     // Logger instance
-    private static final Logger log 
-            = Logger.getLogger(SQLInjectionPlugin.class);
-    
+    private static final Logger log = Logger.getLogger(SQLInjectionPlugin.class);
+
     // Generic SQL error pattern (used for boolean based checks)
-    private static final Pattern errorPattern 
-            = Pattern.compile("SQL (warning|error|syntax)", Pattern.CASE_INSENSITIVE);
-    
+    private static final Pattern errorPattern =
+            Pattern.compile("SQL (warning|error|syntax)", Pattern.CASE_INSENSITIVE);
+
     // Generic pattern for RandNum tag retrieval
-    private static final Pattern randnumPattern 
-            = Pattern.compile("\\[RANDNUM(?:\\d+)?\\]");
-    
+    private static final Pattern randnumPattern = Pattern.compile("\\[RANDNUM(?:\\d+)?\\]");
+
     // Generic pattern for RandStr tag retrieval
-    private static final Pattern randstrPattern 
-            = Pattern.compile("\\[RANDSTR(?:\\d+)?\\]");
-    
+    private static final Pattern randstrPattern = Pattern.compile("\\[RANDSTR(?:\\d+)?\\]");
+
     // Internal dynamic properties
     private final ResponseMatcher responseMatcher;
     private final List<Long> responseTimes;
-    
+
     private int lastRequestUID;
     private int lastErrorPageUID;
     private long lastResponseTime;
@@ -124,8 +122,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     private String uChars;
 
     /**
-     * Create an empty plugin for SQLinjection active testing.
-     * Should be called by each constructor for initial parameter setting.
+     * Create an empty plugin for SQLinjection active testing. Should be called by each constructor
+     * for initial parameter setting.
      */
     public SQLInjectionPlugin() {
         responseTimes = new ArrayList<>();
@@ -136,6 +134,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Get the unique identifier of this plugin
+     *
      * @return this plugin identifier
      */
     @Override
@@ -145,6 +144,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Get the name of this plugin
+     *
      * @return the plugin name
      */
     @Override
@@ -154,6 +154,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Get the description of the vulnerbaility when found
+     *
      * @return the vulnerability description
      */
     @Override
@@ -163,6 +164,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Give back a general solution for the found vulnerability
+     *
      * @return the solution that can be put in place
      */
     @Override
@@ -172,6 +174,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Reports all links and documentation which refers to this vulnerability
+     *
      * @return a string based list of references
      */
     @Override
@@ -181,11 +184,12 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Give back specific pugin dependancies (none for this)
+     *
      * @return the list of plugins that need to be executed before
      */
     @Override
     public String[] getDependency() {
-        return new String[]{};
+        return new String[] {};
     }
 
     @Override
@@ -209,9 +213,10 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Give back the categorization of the vulnerability 
-     * checked by this plugin (it's an injection category for SQLi)
-     * @return a category from the Category enum list 
+     * Give back the categorization of the vulnerability checked by this plugin (it's an injection
+     * category for SQLi)
+     *
+     * @return a category from the Category enum list
      */
     @Override
     public int getCategory() {
@@ -219,23 +224,21 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Give back the CWE (Common Weakness Enumeration) id 
-     * for the SQL Injection vulnerability as described in
-     * http://cwe.mitre.org/data/definitions/89.html
-     * 
+     * Give back the CWE (Common Weakness Enumeration) id for the SQL Injection vulnerability as
+     * described in http://cwe.mitre.org/data/definitions/89.html
+     *
      * @return the official CWE id for SQLi
      */
     @Override
     public int getCweId() {
         return 89;
     }
-    
+
     /**
-     * Give back the WASC (Web Application Security Consortium) 
-     * threat id for SQL Injection as described in
-     * http://projects.webappsec.org/w/page/13246963/SQL%20Injection
-     * 
-     * @return the official WASC id for SQLi 
+     * Give back the WASC (Web Application Security Consortium) threat id for SQL Injection as
+     * described in http://projects.webappsec.org/w/page/13246963/SQL%20Injection
+     *
+     * @return the official WASC id for SQLi
      */
     @Override
     public int getWascId() {
@@ -244,6 +247,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Give back the risk associated to this vulnerability (high)
+     *
      * @return the risk according to the Alert enum
      */
     @Override
@@ -252,10 +256,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Initialise the plugin according to general configuration settings.
-     * Note that this method gets called each time the scanner is called.
-     * TODO: set all parametres through interface plugin or a configuration file
-     * e.g. prefixes/suffixes or forced DBMS, etc.
+     * Initialise the plugin according to general configuration settings. Note that this method gets
+     * called each time the scanner is called. TODO: set all parametres through interface plugin or
+     * a configuration file e.g. prefixes/suffixes or forced DBMS, etc.
      */
     @Override
     public void init() {
@@ -267,7 +270,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         invalidBignum = false;
         invalidLogical = false;
         timeSec = 5;
-        
+
         // Set level according to general plugin environment
         // --------------------------
         // 1: Always (<100 requests)
@@ -279,21 +282,21 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             case LOW:
                 level = 1;
                 break;
-                
+
             case MEDIUM:
                 // Default setting
                 level = 1;
                 break;
-                
+
             case HIGH:
                 level = 2;
                 break;
-                
+
             case INSANE:
                 level = 3;
                 break;
         }
-        
+
         // Set plugin risk constraint:
         // it's an active scanner so set it to the safest one
         // --------------------------
@@ -305,27 +308,25 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Scans for SQL Injection vulnerabilities according to SQLMap payload
-     * definitions. Current implemented tests are: Boolean-Based, Error-Based,
-     * Union-query, OrderBy-query, Stacked-Query and Time-based.
-     * This plugin only test for the existence of a SQLi according to these
-     * injection methods and exploit it generating less effects as possible.
-     * All revealed vulnerabilities are then without false positives, and the
-     * detected payload could be used for further attacks. After this detection 
-     * we suggest to use exploiting tools like SQLmap itself or SQLNinja, 
-     * Havij, etc. for this vulnerability usage and control.
-     * 
+     * Scans for SQL Injection vulnerabilities according to SQLMap payload definitions. Current
+     * implemented tests are: Boolean-Based, Error-Based, Union-query, OrderBy-query, Stacked-Query
+     * and Time-based. This plugin only test for the existence of a SQLi according to these
+     * injection methods and exploit it generating less effects as possible. All revealed
+     * vulnerabilities are then without false positives, and the detected payload could be used for
+     * further attacks. After this detection we suggest to use exploiting tools like SQLmap itself
+     * or SQLNinja, Havij, etc. for this vulnerability usage and control.
+     *
      * @param msg a request only copy of the original message (the response isn't copied)
      * @param parameter the parameter name that need to be exploited
      * @param value the original parameter value
      */
     @Override
     public void scan(HttpMessage msg, String parameter, String value) {
-        
+
         // First of all get the SQLi payloads list
         // using the embedded configuration file
         SQLiPayloadManager manager = SQLiPayloadManager.getInstance();
-        
+
         // Internal engine variable definition
         HttpMessage origMsg;
         HttpMessage tempMsg;
@@ -337,7 +338,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         String cmpPayload;
         String content;
         String title;
-        
+
         boolean injectable;
         int injectableTechniques = 0;
 
@@ -345,9 +346,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         // according to the behavior and the heaviness
         // TODO: define a compare logic and sort it according to that
         for (SQLiTest test : manager.getTests()) {
-            
+
             title = test.getTitle();
-            //unionExtended = false;
+            // unionExtended = false;
 
             // If it's a union based query test
             // first prepare all the needed elements
@@ -359,10 +360,12 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 if (title.contains("[CHAR]")) {
                     if (unionChar == null) {
                         if (log.isDebugEnabled()) {
-                            log.debug("skipping test '" + title
-                                    + "' because the user didn't provide a custom charset");
+                            log.debug(
+                                    "skipping test '"
+                                            + title
+                                            + "' because the user didn't provide a custom charset");
                         }
-                        
+
                         continue;
 
                     } else {
@@ -388,16 +391,18 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                     title = title.replace("[RANDNUM]", "random number");
                 }
 
-                // Set the union column range according to the specific 
+                // Set the union column range according to the specific
                 // payload definition (custom based or constrained)
                 // ----------------------------------------------------
                 if (test.getRequest().getColumns().equals("[COLSTART]-[COLSTOP]")) {
                     if (unionCols == null) {
                         if (log.isDebugEnabled()) {
-                            log.debug("skipping test '" + title
-                                    + "' because the user didn't provide a column range");
+                            log.debug(
+                                    "skipping test '"
+                                            + title
+                                            + "' because the user didn't provide a column range");
                         }
-                        
+
                         continue;
 
                     } else {
@@ -412,7 +417,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                     setUnionRange(test.getRequest().getColumns());
                 }
 
-                /* 
+                /*
                 // Seems useless (double the starting and ending column number value)
                 match = re.search(r"(\d+)-(\d+)", test.request.columns)
                 if injection.data and match:
@@ -426,7 +431,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 */
             }
 
-            // Skip test if the user's wants to test only 
+            // Skip test if the user's wants to test only
             // for a specific technique
             if ((techniques != null) && !techniques.contains(test.getStype())) {
                 if (log.isDebugEnabled()) {
@@ -443,7 +448,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                     message.append(" techniques");
                     log.debug(message);
                 }
-                
+
                 continue;
             }
 
@@ -451,23 +456,31 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             // identified by another test
             if ((injectableTechniques & (1 << test.getStype())) != 0) {
                 if (log.isDebugEnabled()) {
-                    log.debug("skipping test '" + title 
-                            + "' because the payload for " + SQLiPayloadManager.SQLI_TECHNIQUES.get(test.getStype()) 
-                            + " has already been identified");
+                    log.debug(
+                            "skipping test '"
+                                    + title
+                                    + "' because the payload for "
+                                    + SQLiPayloadManager.SQLI_TECHNIQUES.get(test.getStype())
+                                    + " has already been identified");
                 }
-                
+
                 continue;
             }
-                        
+
             // Skip test if the risk is higher than the provided (or default) value
             // Parse test's <risk>
             if (test.getRisk() > risk) {
                 if (log.isDebugEnabled()) {
-                    log.debug("skipping test '" + title
-                            + "' because the risk (" + test.getRisk()
-                            + ") is higher than the provided (" + risk + ")");
+                    log.debug(
+                            "skipping test '"
+                                    + title
+                                    + "' because the risk ("
+                                    + test.getRisk()
+                                    + ") is higher than the provided ("
+                                    + risk
+                                    + ")");
                 }
-                
+
                 continue;
             }
 
@@ -475,11 +488,16 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             // Parse test's <level>
             if (test.getLevel() > level) {
                 if (log.isDebugEnabled()) {
-                    log.debug("skipping test '" + title
-                            + "' because the level (" + test.getLevel()
-                            + ") is higher than the provided (" + level + ")");
+                    log.debug(
+                            "skipping test '"
+                                    + title
+                                    + "' because the level ("
+                                    + test.getLevel()
+                                    + ") is higher than the provided ("
+                                    + level
+                                    + ")");
                 }
-                
+
                 continue;
             }
 
@@ -489,21 +507,21 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             // ------------------------------------------------------------
             // Initially set the current Tech value to null
             currentDbms = null;
-                
+
             if ((test.getDetails() != null) && !(test.getDetails().getDbms().isEmpty())) {
 
-                // If the global techset hasn't been populated this 
+                // If the global techset hasn't been populated this
                 // mean that all technologies should be scanned...
                 if (getTechSet() == null) {
                     currentDbms = test.getDetails().getDbms().get(0);
-                    
-                } else {    
+
+                } else {
                     // Check if DBMS scope has been restricted
                     // using the Tech tab inside the scanner
                     // --------------------------
                     for (DBMSHelper dbms : test.getDetails().getDbms()) {
-                    
-                        if (getTechSet().includes(dbms.getTech())) {                        
+
+                        if (getTechSet().includes(dbms.getTech())) {
                             // Force back-end DBMS according to the current
                             // test value for proper payload unescaping
                             currentDbms = dbms;
@@ -511,50 +529,56 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                         }
                     }
                 }
-                
-                // Skip this test if the specific Dbms is not include 
+
+                // Skip this test if the specific Dbms is not include
                 // inside the list of the allowed one
                 if (currentDbms == null) {
                     if (log.isDebugEnabled()) {
-                        log.debug("skipping test '" + title + "' because the db is not included in the Technology list");
+                        log.debug(
+                                "skipping test '"
+                                        + title
+                                        + "' because the db is not included in the Technology list");
                     }
 
                     continue;
                 }
 
                 /* Check if the KB knows what's the current DB
-                 * I escaped it because there's no user interaction and
-                 * all tests should be performed... to be verified if
-                 * there should exists a specific configuration for this
-                 * 
-                 if len(Backend.getErrorParsedDBMSes()) > 0 and not intersect(dbms, Backend.getErrorParsedDBMSes()) and kb.skipOthersDbms is None:
-                 msg = "parsed error message(s) showed that the "
-                 msg += "back-end DBMS could be %s. " % Format.getErrorParsedDBMSes()
-                 msg += "Do you want to skip test payloads specific for other DBMSes? [Y/n]"
+                * I escaped it because there's no user interaction and
+                * all tests should be performed... to be verified if
+                * there should exists a specific configuration for this
+                *
+                if len(Backend.getErrorParsedDBMSes()) > 0 and not intersect(dbms, Backend.getErrorParsedDBMSes()) and kb.skipOthersDbms is None:
+                msg = "parsed error message(s) showed that the "
+                msg += "back-end DBMS could be %s. " % Format.getErrorParsedDBMSes()
+                msg += "Do you want to skip test payloads specific for other DBMSes? [Y/n]"
 
-                 if readInput(msg, default="Y") in ("y", "Y"):
-                 kb.skipOthersDbms = Backend.getErrorParsedDBMSes()
-                 else:
-                 kb.skipOthersDbms = []
+                if readInput(msg, default="Y") in ("y", "Y"):
+                kb.skipOthersDbms = Backend.getErrorParsedDBMSes()
+                else:
+                kb.skipOthersDbms = []
 
-                 if kb.skipOthersDbms and not intersect(dbms, kb.skipOthersDbms):
-                 debugMsg = "skipping test '%s' because " % title
-                 debugMsg += "the parsed error message(s) showed "
-                 debugMsg += "that the back-end DBMS could be "
-                 debugMsg += "%s" % Format.getErrorParsedDBMSes()
-                 logger.debug(debugMsg)
-                 continue
-                 */                
+                if kb.skipOthersDbms and not intersect(dbms, kb.skipOthersDbms):
+                debugMsg = "skipping test '%s' because " % title
+                debugMsg += "the parsed error message(s) showed "
+                debugMsg += "that the back-end DBMS could be "
+                debugMsg += "%s" % Format.getErrorParsedDBMSes()
+                logger.debug(debugMsg)
+                continue
+                */
             }
 
             // Skip test if the user provided custom character
-            if ((unionChar != null) && (title.contains("random number") || title.contains("(NULL)"))) {
+            if ((unionChar != null)
+                    && (title.contains("random number") || title.contains("(NULL)"))) {
                 if (log.isDebugEnabled()) {
-                    log.debug("skipping test '" + title
-                            + "' because the user provided a specific character, "
-                            + unionChar);
+                    log.debug(
+                            "skipping test '"
+                                    + title
+                                    + "' because the user provided a specific character, "
+                                    + unionChar);
                 }
-                
+
                 continue;
             }
 
@@ -565,14 +589,15 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             }
 
             // Parse test's <request>
-            currentComment = (manager.getBoundaries().size() > 1) ? test.getRequest().getComment() : null;
+            currentComment =
+                    (manager.getBoundaries().size() > 1) ? test.getRequest().getComment() : null;
 
             // Start iterating through applicable boundaries
             for (SQLiBoundary boundary : manager.getBoundaries()) {
 
                 // First set to false the injectable param
                 injectable = false;
-                
+
                 // Skip boundary if the level is higher than the provided (or
                 // default) value
                 // Parse boundary's <level>
@@ -604,7 +629,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                     // Get the complete original message
                     // including previously retrieved content
                     // that could be considered trusted also after
-                    // other plugins execution thanks to the removal 
+                    // other plugins execution thanks to the removal
                     // of reflective values from the content...
                     // But if we decide to rerun sendAndReceive()
                     // each plugin execution, then we have to work
@@ -623,13 +648,18 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             // one as we are changing parameters value, which
                             // will likely result in a different content
                             if (invalidLogical) {
-                                payloadValue = value 
-                                        + " AND " + SQLiPayloadManager.randomInt() 
-                                        + "=" + SQLiPayloadManager.randomInt();
+                                payloadValue =
+                                        value
+                                                + " AND "
+                                                + SQLiPayloadManager.randomInt()
+                                                + "="
+                                                + SQLiPayloadManager.randomInt();
 
                             } else if (invalidBignum) {
-                                payloadValue = SQLiPayloadManager.randomInt(6) 
-                                        + "." + SQLiPayloadManager.randomInt(1);
+                                payloadValue =
+                                        SQLiPayloadManager.randomInt(6)
+                                                + "."
+                                                + SQLiPayloadManager.randomInt(1);
 
                             } else {
                                 payloadValue = "-" + SQLiPayloadManager.randomInt();
@@ -643,26 +673,28 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // exit the plugin
                                 return;
                             }
-                            
+
                             break;
 
                         case SQLiPayloadManager.WHERE_REPLACE:
                             payloadValue = "";
                             break;
-                            
+
                         default:
                             // Act as original value need to be set
                             payloadValue = value;
                     }
-                    
+
                     // Hint from ZAP TestSQLInjection active plugin:
-                    // Since the previous checks are attempting SQL injection, 
-                    // and may have actually succeeded in modifying the database (ask me how I know?!)
-                    // then we cannot rely on the database contents being the same as when the original 
+                    // Since the previous checks are attempting SQL injection,
+                    // and may have actually succeeded in modifying the database (ask me how I
+                    // know?!)
+                    // then we cannot rely on the database contents being the same as when the
+                    // original
                     // query was last run (could be hours ago)
                     // so re-run the query again now at this point.
                     // Here is the best place to do it...
-                    //sendAndReceive(origMsg);
+                    // sendAndReceive(origMsg);
 
                     // Forge request payload by prepending with boundary's
                     // prefix and appending the boundary's suffix to the
@@ -677,10 +709,10 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                     // payload was successful
                     // Parse test's <response>
                     if (test.getResponse() != null) {
-                        
+
                         // prepare string diff matcher
                         // cleaned by reflective values
-                        // and according to the replacement 
+                        // and according to the replacement
                         // logic set by the plugin
                         content = origMsg.getResponseBody().toString();
                         content = SQLiPayloadManager.removeReflectiveValues(content, payloadValue);
@@ -697,14 +729,17 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                         if (test.getResponse().getComparison() != null) {
 
                             // Generate payload used for comparison
-                            cmpPayload = prepareCleanPayload(test.getResponse().getComparison(), payloadValue);
+                            cmpPayload =
+                                    prepareCleanPayload(
+                                            test.getResponse().getComparison(), payloadValue);
 
                             // Forge response payload by prepending with
                             // boundary's prefix and appending the boundary's
                             // suffix to the test's ' <payload><comment> '
                             // string
                             cmpPayload = preparePrefix(cmpPayload, currentPrefix, where, test);
-                            cmpPayload = prepareSuffix(cmpPayload, currentComment, currentSuffix, where);
+                            cmpPayload =
+                                    prepareSuffix(cmpPayload, currentComment, currentSuffix, where);
                             // Now prefix the parameter value
                             cmpPayload = payloadValue + cmpPayload;
 
@@ -717,9 +752,10 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // exit the plugin
                                 return;
                             }
-                            
+
                             content = tempMsg.getResponseBody().toString();
-                            content = SQLiPayloadManager.removeReflectiveValues(content, cmpPayload);
+                            content =
+                                    SQLiPayloadManager.removeReflectiveValues(content, cmpPayload);
                             responseMatcher.setInjectedResponse(content);
                             // set initial matchRatio
                             responseMatcher.isComparable();
@@ -731,13 +767,14 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // exit the plugin
                                 return;
                             }
-                            
+
                             content = tempMsg.getResponseBody().toString();
-                            content = SQLiPayloadManager.removeReflectiveValues(content, reqPayload);                            
+                            content =
+                                    SQLiPayloadManager.removeReflectiveValues(content, reqPayload);
                             responseMatcher.setInjectedResponse(content);
 
-                            // Check if the TRUE response is equal or 
-                            // at less strongly comparable respect to 
+                            // Check if the TRUE response is equal or
+                            // at less strongly comparable respect to
                             // the Original response value
                             if (responseMatcher.isComparable()) {
 
@@ -748,9 +785,11 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // exit the plugin
                                     return;
                                 }
-                                
+
                                 content = tempMsg.getResponseBody().toString();
-                                content = SQLiPayloadManager.removeReflectiveValues(content, cmpPayload);                            
+                                content =
+                                        SQLiPayloadManager.removeReflectiveValues(
+                                                content, cmpPayload);
                                 responseMatcher.setInjectedResponse(content);
 
                                 // Now check if the FALSE response is
@@ -758,18 +797,26 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // Original response according to the
                                 // responseMatcher ratio criteria
                                 if (!responseMatcher.isComparable()) {
-                                    // We Found IT! 
+                                    // We Found IT!
                                     // Now create the alert message
-                                    String info = Constant.messages.getString(
-                                            ALERT_MESSAGE_PREFIX + "info.booleanbased",
-                                            reqPayload,
-                                            cmpPayload);
+                                    String info =
+                                            Constant.messages.getString(
+                                                    ALERT_MESSAGE_PREFIX + "info.booleanbased",
+                                                    reqPayload,
+                                                    cmpPayload);
 
                                     // Do logging
                                     if (log.isDebugEnabled()) {
-                                        log.debug("[BOOLEAN-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                        log.debug(
+                                                "[BOOLEAN-BASED Injection Found] "
+                                                        + title
+                                                        + " with payload ["
+                                                        + reqPayload
+                                                        + "] on parameter '"
+                                                        + parameter
+                                                        + "'");
                                     }
-                                    
+
                                     // Alert the vulnerability to the main core
                                     raiseAlert(title, parameter, reqPayload, info, tempMsg);
 
@@ -778,27 +825,27 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 }
 
                                 /*
-                                 if not injectable and not any((conf.string, conf.notString, conf.regexp)) and kb.pageStable:
-                                 trueSet = set(extractTextTagContent(truePage))
-                                 falseSet = set(extractTextTagContent(falsePage))
-                                 candidates = filter(None, (_.strip() if _.strip() in (kb.pageTemplate or "") and _.strip() not in falsePage else None for _ in (trueSet - falseSet)))
-                                 if candidates:
-                                 conf.string = random.sample(candidates, 1)[0]
-                                 infoMsg = "%s parameter '%s' seems to be '%s' injectable (with --string=\"%s\")" % (place, parameter, title, repr(conf.string).lstrip('u').strip("'"))
-                                 logger.info(infoMsg)
-                                 */
+                                if not injectable and not any((conf.string, conf.notString, conf.regexp)) and kb.pageStable:
+                                trueSet = set(extractTextTagContent(truePage))
+                                falseSet = set(extractTextTagContent(falsePage))
+                                candidates = filter(None, (_.strip() if _.strip() in (kb.pageTemplate or "") and _.strip() not in falsePage else None for _ in (trueSet - falseSet)))
+                                if candidates:
+                                conf.string = random.sample(candidates, 1)[0]
+                                infoMsg = "%s parameter '%s' seems to be '%s' injectable (with --string=\"%s\")" % (place, parameter, title, repr(conf.string).lstrip('u').strip("'"))
+                                logger.info(infoMsg)
+                                */
                             }
 
-                        // -----------------------------------------------
-                        // Check 2: Error-based SQL injection
-                        // -----------------------------------------------
-                        // try error based check sending a specific payload
-                        // and verifying if it should return back inside
-                        // the response content
-                        // -----------------------------------------------
+                            // -----------------------------------------------
+                            // Check 2: Error-based SQL injection
+                            // -----------------------------------------------
+                            // try error based check sending a specific payload
+                            // and verifying if it should return back inside
+                            // the response content
+                            // -----------------------------------------------
                         } else if (test.getResponse().getGrep() != null) {
                             // Perform the test's request and grep the response
-                            // body for the test's <grep> regular expression                            
+                            // body for the test's <grep> regular expression
                             tempMsg = sendPayload(parameter, reqPayload, true);
                             if (tempMsg == null) {
                                 // Probably a Circular Exception occurred
@@ -808,21 +855,27 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
                             // Get the payload that need to be checked
                             // inside the response content
-                            String checkString = prepareCleanPayload(test.getResponse().getGrep(), payloadValue);
-                            Pattern checkPattern = Pattern.compile(checkString, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+                            String checkString =
+                                    prepareCleanPayload(test.getResponse().getGrep(), payloadValue);
+                            Pattern checkPattern =
+                                    Pattern.compile(
+                                            checkString, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
                             String output = null;
 
                             // Remove reflective values to avoid false positives
                             content = tempMsg.getResponseBody().toString();
-                            content = SQLiPayloadManager.removeReflectiveValues(content, reqPayload);
-                            
+                            content =
+                                    SQLiPayloadManager.removeReflectiveValues(content, reqPayload);
+
                             // Find the checkString inside page and headers
                             Matcher matcher = checkPattern.matcher(content);
                             if (matcher.find()) {
                                 output = matcher.group("result");
 
                             } else {
-                                matcher = checkPattern.matcher(tempMsg.getResponseHeader().toString());
+                                matcher =
+                                        checkPattern.matcher(
+                                                tempMsg.getResponseHeader().toString());
                                 if (matcher.find()) {
                                     output = matcher.group("result");
                                 }
@@ -835,47 +888,55 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             // threadData.lastRequestUID else None, re.DOTALL | re.IGNORECASE)
 
                             // Verify if the response extracted content
-                            // contains the evaluated expression 
+                            // contains the evaluated expression
                             // (which should be the value "1")
                             if ((output != null) && output.equals("1")) {
-                                // We Found IT! 
+                                // We Found IT!
                                 // Now create the alert message
-                                String info = Constant.messages.getString(
-                                        ALERT_MESSAGE_PREFIX + "info.errorbased",
-                                        currentDbms.getName(),
-                                        checkString);
+                                String info =
+                                        Constant.messages.getString(
+                                                ALERT_MESSAGE_PREFIX + "info.errorbased",
+                                                currentDbms.getName(),
+                                                checkString);
 
                                 // Do logging
                                 if (log.isDebugEnabled()) {
-                                    log.debug("[ERROR-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                    log.debug(
+                                            "[ERROR-BASED Injection Found] "
+                                                    + title
+                                                    + " with payload ["
+                                                    + reqPayload
+                                                    + "] on parameter '"
+                                                    + parameter
+                                                    + "'");
                                 }
 
                                 raiseAlert(title, parameter, reqPayload, info, tempMsg);
-                                
-                                
-                                // Close the boundary/where iteration                                    
+
+                                // Close the boundary/where iteration
                                 injectable = true;
                             }
 
-                        // -----------------------------------------------
-                        // Check 3: Time-based Blind or Stacked Queries
-                        // -----------------------------------------------
-                        // Check for the sleep() execution according to
-                        // a collection of MIN_TIME_RESPONSES requestTime
-                        // It uses deviations and average for the real
-                        // delay checking.
-                        // 99.9999999997440% of all non time-based SQL injection affected
-                        // response times should be inside +-7*stdev([normal response times])
-                        // Math reference: http://www.answers.com/topic/standard-deviation                            
-                        // -----------------------------------------------
+                            // -----------------------------------------------
+                            // Check 3: Time-based Blind or Stacked Queries
+                            // -----------------------------------------------
+                            // Check for the sleep() execution according to
+                            // a collection of MIN_TIME_RESPONSES requestTime
+                            // It uses deviations and average for the real
+                            // delay checking.
+                            // 99.9999999997440% of all non time-based SQL injection affected
+                            // response times should be inside +-7*stdev([normal response times])
+                            // Math reference: http://www.answers.com/topic/standard-deviation
+                            // -----------------------------------------------
                         } else if (test.getResponse().getTime() != null) {
                             // First check if we have enough sample for the test
                             if (responseTimes.size() < MIN_TIME_RESPONSES) {
                                 // We need some dummy requests to have a correct
                                 // deviation model for this page
-                                log.warn("Time-based comparison needs larger statistical model: "
-                                        + "making a few dummy requests");
-                                
+                                log.warn(
+                                        "Time-based comparison needs larger statistical model: "
+                                                + "making a few dummy requests");
+
                                 do {
                                     tempMsg = sendPayload(null, null, true);
                                     if (tempMsg == null) {
@@ -883,7 +944,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                         // exit the plugin
                                         return;
                                     }
-                                    
+
                                 } while (responseTimes.size() < MIN_TIME_RESPONSES);
                             }
 
@@ -897,10 +958,14 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             // lowerLimit = Math.max(MIN_VALID_DELAYED_RESPONSE, lowerLimit);
 
                             // Get the maximum value to avoid false positives related
-                            // to slow pages that can take an average time 
+                            // to slow pages that can take an average time
                             // worse than the timeSec waiting period
                             if (deviation >= 0) {
-                                lowerLimit = Math.max(lowerLimit, getResponseTimeAverage() + TIME_STDEV_COEFF * deviation);
+                                lowerLimit =
+                                        Math.max(
+                                                lowerLimit,
+                                                getResponseTimeAverage()
+                                                        + TIME_STDEV_COEFF * deviation);
                             }
 
                             // Perform the test's request
@@ -911,8 +976,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // exit the plugin
                                 return;
                             }
-                            
-                            // Check if enough time has passed 
+
+                            // Check if enough time has passed
                             if (lastResponseTime >= lowerLimit) {
 
                                 // Confirm again test's results
@@ -922,21 +987,29 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // exit the plugin
                                     return;
                                 }
-                                
-                                // Check if enough time has passed                            
+
+                                // Check if enough time has passed
                                 if (lastResponseTime >= lowerLimit) {
-                                    // We Found IT! 
+                                    // We Found IT!
                                     // Now create the alert message
-                                    String info = Constant.messages.getString(
-                                            ALERT_MESSAGE_PREFIX + "info.timebased",
-                                            reqPayload,
-                                            lastResponseTime,
-                                            payloadValue,
-                                            getResponseTimeAverage());
+                                    String info =
+                                            Constant.messages.getString(
+                                                    ALERT_MESSAGE_PREFIX + "info.timebased",
+                                                    reqPayload,
+                                                    lastResponseTime,
+                                                    payloadValue,
+                                                    getResponseTimeAverage());
 
                                     // Do logging
                                     if (log.isDebugEnabled()) {
-                                        log.debug("[TIME-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                        log.debug(
+                                                "[TIME-BASED Injection Found] "
+                                                        + title
+                                                        + " with payload ["
+                                                        + reqPayload
+                                                        + "] on parameter '"
+                                                        + parameter
+                                                        + "'");
                                     }
 
                                     raiseAlert(title, parameter, reqPayload, info, tempMsg);
@@ -946,32 +1019,32 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 }
                             }
 
-                        // -----------------------------------------------
-                        // Check 4: UNION preparePrefix SQL injection
-                        // -----------------------------------------------
-                        // Test for UNION injection and set the sample
-                        // payload as well as the vector.
-                        // NOTE: vector is set to a tuple with 6 elements,
-                        // used afterwards by Agent.forgeUnionQuery()
-                        // method to forge the UNION preparePrefix payload
-                        // -----------------------------------------------
+                            // -----------------------------------------------
+                            // Check 4: UNION preparePrefix SQL injection
+                            // -----------------------------------------------
+                            // Test for UNION injection and set the sample
+                            // payload as well as the vector.
+                            // NOTE: vector is set to a tuple with 6 elements,
+                            // used afterwards by Agent.forgeUnionQuery()
+                            // method to forge the UNION preparePrefix payload
+                            // -----------------------------------------------
                         } else if (test.getResponse().isUnion()) {
 
                             /*
-                             if not Backend.getIdentifiedDbms():
-                                 warnMsg = "using unescaped version of the test "
-                                 warnMsg += "because of zero knowledge of the "
-                                 warnMsg += "back-end DBMS. You can try to "
-                                warnMsg += "explicitly set it using option '--dbms'"
-                                singleTimeWarnMessage(warnMsg)
+                            if not Backend.getIdentifiedDbms():
+                                warnMsg = "using unescaped version of the test "
+                                warnMsg += "because of zero knowledge of the "
+                                warnMsg += "back-end DBMS. You can try to "
+                               warnMsg += "explicitly set it using option '--dbms'"
+                               singleTimeWarnMessage(warnMsg)
 
-                             if unionExtended:
-                                 infoMsg = "automatically extending ranges "
-                                 infoMsg += "for UNION query injection technique tests as "
-                                 infoMsg += "there is at least one other potential "
-                                 infoMsg += "injection technique found"
-                                 singleTimeLogMessage(infoMsg)
-                             */
+                            if unionExtended:
+                                infoMsg = "automatically extending ranges "
+                                infoMsg += "for UNION query injection technique tests as "
+                                infoMsg += "there is at least one other potential "
+                                infoMsg += "injection technique found"
+                                singleTimeLogMessage(infoMsg)
+                            */
 
                             // Test for UNION query SQL injection
                             // use a specific engine containing
@@ -991,40 +1064,53 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             // Use the engine to search for
                             // Union-based and OrderBy-based SQli
                             if (engine.isUnionPayloadExploitable()) {
-                                // We Found IT! 
+                                // We Found IT!
                                 // Now create the alert message
-                                String info = Constant.messages.getString(
-                                        ALERT_MESSAGE_PREFIX + "info.unionbased",
-                                        currentDbms.getName(),
-                                        engine.getExploitColumnsCount());
+                                String info =
+                                        Constant.messages.getString(
+                                                ALERT_MESSAGE_PREFIX + "info.unionbased",
+                                                currentDbms.getName(),
+                                                engine.getExploitColumnsCount());
 
                                 // Do logging
                                 if (log.isDebugEnabled()) {
-                                    log.debug("[UNION-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                    log.debug(
+                                            "[UNION-BASED Injection Found] "
+                                                    + title
+                                                    + " with payload ["
+                                                    + reqPayload
+                                                    + "] on parameter '"
+                                                    + parameter
+                                                    + "'");
                                 }
 
                                 // Alert the vulnerability to the main core
-                                raiseAlert(title, parameter, engine.getExploitPayload(), info, engine.getExploitMessage());
-                                
-                                // Close the boundary/where iteration                                    
+                                raiseAlert(
+                                        title,
+                                        parameter,
+                                        engine.getExploitPayload(),
+                                        info,
+                                        engine.getExploitMessage());
+
+                                // Close the boundary/where iteration
                                 injectable = true;
                             }
                         }
                     }
-                    
+
                     // If the injection test was successful feed the injection
                     // object with the test's details
-                    //if injection:
+                    // if injection:
                     //  injection = checkFalsePositives(injection)
-                    //if injection:
+                    // if injection:
                     //  checkSuhoshinPatch(injection)
 
-                    // There is no need to perform this test for other                                
+                    // There is no need to perform this test for other
                     // <where> tags
                     if (injectable) {
                         break;
                     }
-                    
+
                     // Check if the scan has been stopped
                     // if yes dispose resources and exit
                     if (isStop()) {
@@ -1033,25 +1119,30 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                         return;
                     }
                 }
-                
+
                 // If injectable skip other boundary checks
-                if (injectable) {                        
+                if (injectable) {
                     injectableTechniques |= 1 << test.getStype();
-                    break;                    
-                }                                 
+                    break;
+                }
             }
         }
-        
+
         // check if the parameter is not injectable
         if (injectableTechniques == 0 && log.isDebugEnabled()) {
             log.debug("Parameter '" + parameter + "' is not injectable");
         }
     }
 
-    private void raiseAlert(String subTitle, String parameter, String payload, String otherInfo, HttpMessage message) {
+    private void raiseAlert(
+            String subTitle,
+            String parameter,
+            String payload,
+            String otherInfo,
+            HttpMessage message) {
         this.bingo(
                 Alert.RISK_HIGH,
-                Alert.CONFIDENCE_MEDIUM, 
+                Alert.CONFIDENCE_MEDIUM,
                 Constant.messages.getString(ALERT_MESSAGE_PREFIX + "name", subTitle),
                 getDescription(),
                 null,
@@ -1063,8 +1154,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Launch the requested payload. If null values sent in paramName or payload
-     * launch again the original message
+     * Launch the requested payload. If null values sent in paramName or payload launch again the
+     * original message
      *
      * @param paramName
      * @param payload
@@ -1088,15 +1179,18 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             // and instantiate one choosen SQLiTamper or more than one
             // who should set it? Acccording to SQLMap it's something
             // that depends by the pentester...
-            // Maybe create a metalanguage for this? 
+            // Maybe create a metalanguage for this?
             // At last it's only a find and replace schema
             // --
-            
-            //REMOVED - encoding should be done by Variants -
-            //payload = AbstractPlugin.getURLEncode(payload);
-            
-            setParameter(tempMsg, paramName, payload);            
-            tempMsg.getRequestHeader().setHeader(HttpHeader.CONNECTION, keepAlive ? HttpHeader._KEEP_ALIVE : HttpHeader._CLOSE);
+
+            // REMOVED - encoding should be done by Variants -
+            // payload = AbstractPlugin.getURLEncode(payload);
+
+            setParameter(tempMsg, paramName, payload);
+            tempMsg.getRequestHeader()
+                    .setHeader(
+                            HttpHeader.CONNECTION,
+                            keepAlive ? HttpHeader._KEEP_ALIVE : HttpHeader._CLOSE);
 
         } else {
             tempMsg = getBaseMsg();
@@ -1114,18 +1208,22 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
             // If debug is enabled log the entire request sent to the target
             if (log.isDebugEnabled()) {
-                log.debug(tempMsg.getRequestHeader().toString() + "\n" + tempMsg.getRequestBody().toString());
+                log.debug(
+                        tempMsg.getRequestHeader().toString()
+                                + "\n"
+                                + tempMsg.getRequestBody().toString());
             }
 
-            // generic SQL warning/error messages            
+            // generic SQL warning/error messages
             if (errorPattern.matcher(tempMsg.getResponseBody().toString()).find()) {
                 lastErrorPageUID = lastRequestUID;
             }
-            
+
         } catch (RedirectException | URIException e) {
             if (log.isDebugEnabled()) {
                 StringBuilder strBuilder = new StringBuilder(150);
-                strBuilder.append("SQL Injection vulnerability check failed for parameter [")
+                strBuilder
+                        .append("SQL Injection vulnerability check failed for parameter [")
                         .append(paramName)
                         .append("] and payload [")
                         .append(payload)
@@ -1134,17 +1232,22 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 log.debug(strBuilder.toString(), e);
             }
             return null;
-            
+
         } catch (IOException ex) {
-            //Ok we got an error, but take in care always the given response
-            //Previously this could cause a deadlock because the requests
-            //went in exception and the minimum amount of requests should never be reached
+            // Ok we got an error, but take in care always the given response
+            // Previously this could cause a deadlock because the requests
+            // went in exception and the minimum amount of requests should never be reached
             lastResponseTime = System.currentTimeMillis() - lastResponseTime;
-            
-            //Do not try to internationalise this.. we need an error message in any event..
-            //if it's in English, it's still better than not having it at all.
-            log.warn("SQL Injection vulnerability check failed for parameter ["
-                    + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
+
+            // Do not try to internationalise this.. we need an error message in any event..
+            // if it's in English, it's still better than not having it at all.
+            log.warn(
+                    "SQL Injection vulnerability check failed for parameter ["
+                            + paramName
+                            + "] and payload ["
+                            + payload
+                            + "] due to an I/O error",
+                    ex);
         }
 
         // record the response time if needed
@@ -1157,19 +1260,18 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Returns True if the last web request resulted in a (recognized) DBMS error page
-     * 
-     * @return true if the last request raised a DBMS explicit error 
+     *
+     * @return true if the last request raised a DBMS explicit error
      */
     public boolean wasLastRequestDBMSError() {
         return (lastErrorPageUID == lastRequestUID);
     }
-    
+
     // --------------------------------------------------------------------
     /**
      * Get page comparison against the original content
      *
      * @param pageContent the content that need to be compared
-     *
      * @return true if similar, false otherwise
      */
     protected boolean isComparableToOriginal(String pageContent) {
@@ -1181,7 +1283,6 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      * Get the page comparison ration against the original content
      *
      * @param pageContent the content that need to be compared
-     *
      * @return a ratio value for this comparison
      */
     protected double compareToOriginal(String pageContent) {
@@ -1212,10 +1313,14 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
         // Check if there is too much deviation
         if (result > WARN_TIME_STDEV) {
-            log.warn("There is considerable lagging "
-                    + "in connection response(s) which gives a standard deviation of " 
-                    + result + "ms on the sample set which is more than " 
-                    + WARN_TIME_STDEV + "ms");        }
+            log.warn(
+                    "There is considerable lagging "
+                            + "in connection response(s) which gives a standard deviation of "
+                            + result
+                            + "ms on the sample set which is more than "
+                            + WARN_TIME_STDEV
+                            + "ms");
+        }
 
         return result;
     }
@@ -1249,12 +1354,11 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Prepare a clean attack payload setting all variables and customizing
-     * contents according to the specific environment
+     * Prepare a clean attack payload setting all variables and customizing contents according to
+     * the specific environment
      *
      * @param payload the payload that need to be prepared
-     * @param paramValue the value that need to be set for the original
-     * parameter
+     * @param paramValue the value that need to be set for the original parameter
      * @return a prepared payload that need to be prefixed and suffixed
      */
     private String prepareCleanPayload(String payload, String paramValue) {
@@ -1306,35 +1410,35 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         }
 
         // Inferenced payload seems used only to exploit
-        // the vulnerability, not to test it. 
+        // the vulnerability, not to test it.
         // So we skip this replacement
-        //if (result.contains("[INFERENCE]")) {
-            /*
-             if Backend.getIdentifiedDbms() is not None:
-             inference = queries[Backend.getIdentifiedDbms()].inference
+        // if (result.contains("[INFERENCE]")) {
+        /*
+        if Backend.getIdentifiedDbms() is not None:
+        inference = queries[Backend.getIdentifiedDbms()].inference
 
-             if "dbms_version" in inference:
-             if isDBMSVersionAtLeast(inference.dbms_version):
-             inferenceQuery = inference.query
-             else:
-             inferenceQuery = inference.query2
-             else:
-             inferenceQuery = inference.query
+        if "dbms_version" in inference:
+        if isDBMSVersionAtLeast(inference.dbms_version):
+        inferenceQuery = inference.query
+        else:
+        inferenceQuery = inference.query2
+        else:
+        inferenceQuery = inference.query
 
-             payload = payload.replace("[INFERENCE]", inferenceQuery)
-             else:
-             errMsg = "invalid usage of inference payload without "
-             errMsg += "knowledge of underlying DBMS"
-             raise SqlmapNoneDataException, errMsg
-             */
-        //}
+        payload = payload.replace("[INFERENCE]", inferenceQuery)
+        else:
+        errMsg = "invalid usage of inference payload without "
+        errMsg += "knowledge of underlying DBMS"
+        raise SqlmapNoneDataException, errMsg
+        */
+        // }
 
         return result;
     }
 
     /**
-     * Prepare the Payload prepending the choosen prefix element according to
-     * the used injection model
+     * Prepare the Payload prepending the choosen prefix element according to the used injection
+     * model
      *
      * @param payload
      * @param prefix
@@ -1355,8 +1459,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             prefixQuery = "";
 
             // If the technique is stacked queries (<stype>) do not put a space
-            // after the prefix or it is in GROUP BY / ORDER BY (<clause>)            
-        } else if (test.matchClauseList(new int[]{2,3})) {
+            // after the prefix or it is in GROUP BY / ORDER BY (<clause>)
+        } else if (test.matchClauseList(new int[] {2, 3})) {
             prefixQuery = prefix;
 
             // In any other case prepend with the full prefix
@@ -1372,8 +1476,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Prepare the payload attaching the suffix element according to the used
-     * injection scheme
+     * Prepare the payload attaching the suffix element according to the used injection scheme
      *
      * @param payload
      * @param comment
@@ -1404,7 +1507,6 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     *
      * @param columns
      * @return
      */
@@ -1412,13 +1514,18 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
         if (columns != null) {
 
-            String[] values = (columns.contains("-")) ? columns.split("-") : new String[]{columns, columns};
+            String[] values =
+                    (columns.contains("-")) ? columns.split("-") : new String[] {columns, columns};
             this.uColsStart = Integer.parseInt(values[0]);
             this.uColsStop = Integer.parseInt(values[1]);
 
             if (uColsStart > uColsStop) {
-                log.warn("Columns range has to be from lower to higher number of cols. "
-                        + "Process will continue inverting the values from " + values[1] + " to " + values[0]);
+                log.warn(
+                        "Columns range has to be from lower to higher number of cols. "
+                                + "Process will continue inverting the values from "
+                                + values[1]
+                                + " to "
+                                + values[0]);
 
                 int tmp = uColsStart;
                 uColsStart = uColsStop;
@@ -1428,18 +1535,18 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Set the character sequence to use 
-     * for bruteforcing number of columns
-     * @param charSequence a sequence of characters 
+     * Set the character sequence to use for bruteforcing number of columns
+     *
+     * @param charSequence a sequence of characters
      */
     public void setUnionChar(String charSequence) {
         this.unionChar = charSequence;
     }
 
     /**
-     * Set the range of columns to test for 
-     * UNION preparePrefix SQL injection 
-     * (using the form [START]-[END])
+     * Set the range of columns to test for UNION preparePrefix SQL injection (using the form
+     * [START]-[END])
+     *
      * @param columnRange the range of columns that need to be iterated
      */
     public void setUnionCols(String columnRange) {
@@ -1448,6 +1555,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Set the Risk of tests to perform (0-3, default 1)
+     *
      * @param risk a risk value from 0 to 3 (0 means no risk, 3 high risk)
      */
     public void setRisk(int risk) {
@@ -1461,7 +1569,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      * 3: Good number of requests (200-500 requests)<br>
      * 4: Extensive test (500-1000 requests)<br>
      * 5: You have plenty of time (>1000 requests)<br>
-     * 
+     *
      * @param level a level value from 1 to 5
      */
     public void setLevel(int level) {
@@ -1469,26 +1577,27 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Set the injection payload prefix string that will be put
-     * before each SQLi payload
-     * @param prefix the prefix string 
+     * Set the injection payload prefix string that will be put before each SQLi payload
+     *
+     * @param prefix the prefix string
      */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
 
     /**
-     * Set the injection payload suffix string that will be put
-     * at the end of each SQLi payload
-     * @param suffix 
+     * Set the injection payload suffix string that will be put at the end of each SQLi payload
+     *
+     * @param suffix
      */
     public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
 
     /**
-     * Use big numbers for invalidating values in place of the original
-     * parameter value (usually a float based 6 digit value)
+     * Use big numbers for invalidating values in place of the original parameter value (usually a
+     * float based 6 digit value)
+     *
      * @param invalidBignum set to true if you want to use a big number replacement
      */
     public void setInvalidBignum(boolean invalidBignum) {
@@ -1496,8 +1605,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Use logical operations for invalidating values in place of the original
-     * parameter value (for example ' AND 45=67')
+     * Use logical operations for invalidating values in place of the original parameter value (for
+     * example ' AND 45=67')
+     *
      * @param invalidLogical set to true if you want to use an invalid logical replacement
      */
     public void setInvalidLogical(boolean invalidLogical) {
@@ -1506,15 +1616,17 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Set the Seconds to delay for the DBMS response in case of Time based SQLi (default 5 secs)
-     * @param seconds the number of seconds the system should wait for 
+     *
+     * @param seconds the number of seconds the system should wait for
      */
     public void setTimeSec(int seconds) {
         this.timeSec = seconds;
     }
 
     /**
-     * Set the keepalive directive for all the HTTP Connections. Using it can optimize performances, but
-     * can slow down everything if a WAF is in place
+     * Set the keepalive directive for all the HTTP Connections. Using it can optimize performances,
+     * but can slow down everything if a WAF is in place
+     *
      * @param keepAlive true if keep-alive directive should be used
      */
     public void setKeepAlive(boolean keepAlive) {

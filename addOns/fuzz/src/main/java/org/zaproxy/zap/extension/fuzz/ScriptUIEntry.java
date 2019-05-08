@@ -80,5 +80,4 @@ public class ScriptUIEntry implements Comparable<ScriptUIEntry> {
         }
         return scriptName.compareTo(other.scriptName);
     }
-
 }

@@ -23,9 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
 import java.util.TreeSet;
-
 import net.htmlparser.jericho.Source;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -36,62 +34,63 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/)
- * rule {@code CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledOpenRedirect}
+ * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
+ * CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledOpenRedirect}
  */
 public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 
-	private PassiveScanThread parent = null;
+    private PassiveScanThread parent = null;
 
-	/**
-	 * Prefix for internationalized messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledopenredirect.";
+    /** Prefix for internationalized messages used by this rule */
+    private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledopenredirect.";
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
 
-	@Override
-	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		// do nothing
-	}
+    @Override
+    public void scanHttpRequestSend(HttpMessage msg, int id) {
+        // do nothing
+    }
 
-	@Override
-	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.MOVED_PERMANENTLY || 
-        		msg.getResponseHeader().getStatusCode() == HttpStatusCode.FOUND) {
+    @Override
+    public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.MOVED_PERMANENTLY
+                || msg.getResponseHeader().getStatusCode() == HttpStatusCode.FOUND) {
             if (msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION) != null) {
-            	Set<HtmlParameter> params = new TreeSet<>(msg.getUrlParams());
-            	params.addAll(msg.getFormParams());
-            	
-            	if (!params.isEmpty()) {
-                	checkUserControllableLocationHeaderValue(msg, id, params, 
-                			msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION));
-            	}
-            }
-        }	
-	}
+                Set<HtmlParameter> params = new TreeSet<>(msg.getUrlParams());
+                params.addAll(msg.getFormParams());
 
-    private void checkUserControllableLocationHeaderValue(HttpMessage msg, int id, 
-    		Set<HtmlParameter> params, String responseLocation) {
-    	if (responseLocation.length() == 0) {
-    		return;
-    	}
-    	
+                if (!params.isEmpty()) {
+                    checkUserControllableLocationHeaderValue(
+                            msg,
+                            id,
+                            params,
+                            msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION));
+                }
+            }
+        }
+    }
+
+    private void checkUserControllableLocationHeaderValue(
+            HttpMessage msg, int id, Set<HtmlParameter> params, String responseLocation) {
+        if (responseLocation.length() == 0) {
+            return;
+        }
+
         String protocol = null;
         String domain = null;
         String token = null;
 
         // if contains protocol/domain name separator
         if (responseLocation.indexOf("://") > 0) {
-        	URL responseURL;
-			try {
-				responseURL = new URL(responseLocation);
-			} catch (MalformedURLException e) {
-				return;
-			}
+            URL responseURL;
+            try {
+                responseURL = new URL(responseLocation);
+            } catch (MalformedURLException e) {
+                return;
+            }
             // get protocol
             protocol = responseURL.getProtocol();
 
@@ -102,83 +101,92 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
         else {
             // get up to first slash
             if (responseLocation.indexOf("/") > 0) {
-            	token = responseLocation.substring(0, responseLocation.indexOf("/"));
-            }
-            else {
-            	token = responseLocation;
+                token = responseLocation.substring(0, responseLocation.indexOf("/"));
+            } else {
+                token = responseLocation;
             }
         }
 
-        for (HtmlParameter param: params) {
+        for (HtmlParameter param : params) {
             String paramValue = param.getValue();
 
             if (paramValue == null || paramValue.length() == 0) {
-            	continue;
+                continue;
             }
-            
-            if (paramValue.equalsIgnoreCase(protocol) || paramValue.equalsIgnoreCase(domain) ||
-            		paramValue.equalsIgnoreCase(token) || 
-            		(responseLocation.indexOf("://") > 0 && paramValue.indexOf(responseLocation) >= 0)) {
-            	raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
+
+            if (paramValue.equalsIgnoreCase(protocol)
+                    || paramValue.equalsIgnoreCase(domain)
+                    || paramValue.equalsIgnoreCase(token)
+                    || (responseLocation.indexOf("://") > 0
+                            && paramValue.indexOf(responseLocation) >= 0)) {
+                raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
             }
         }
     }
-	
-	private void raiseAlert(HttpMessage msg, int id, String paramName, String paramValue, 
-			String responseLocation) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
-				getName());		
 
-		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), paramName, "", // No attack
-				getExtraInfoMessage(msg, paramName, paramValue, responseLocation),
-				getSolutionMessage(), getReferenceMessage(),  
-				"",	// No evidence
-				601, // CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
-				38,	// WASC Id
-				msg);  
+    private void raiseAlert(
+            HttpMessage msg, int id, String paramName, String paramValue, String responseLocation) {
+        Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName());
 
-		parent.raiseAlert(id, alert);
-	}
+        alert.setDetail(
+                getDescriptionMessage(),
+                msg.getRequestHeader().getURI().toString(),
+                paramName,
+                "", // No attack
+                getExtraInfoMessage(msg, paramName, paramValue, responseLocation),
+                getSolutionMessage(),
+                getReferenceMessage(),
+                "", // No evidence
+                601, // CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
+                38, // WASC Id
+                msg);
 
-	@Override
-	public int getPluginId() {
-		return 10028;
-	}
+        parent.raiseAlert(id, alert);
+    }
 
-	@Override
-	public void setParent(PassiveScanThread parent) {
-		this.parent = parent;
-	}
+    @Override
+    public int getPluginId() {
+        return 10028;
+    }
 
-	/*
-	 * Rule-associated messages
-	 */
+    @Override
+    public void setParent(PassiveScanThread parent) {
+        this.parent = parent;
+    }
 
-	private String getDescriptionMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
+    /*
+     * Rule-associated messages
+     */
 
-	private String getSolutionMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
+    private String getDescriptionMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
 
-	private String getReferenceMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
+    private String getSolutionMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
 
-	private String getExtraInfoMessage(HttpMessage msg, String paramName,
-			String paramValue, String responseLocation) {
-		StringBuilder extraInfoSB = new StringBuilder();
-        if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {      	        	
-        	extraInfoSB.append(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.get"));
+    private String getReferenceMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    private String getExtraInfoMessage(
+            HttpMessage msg, String paramName, String paramValue, String responseLocation) {
+        StringBuilder extraInfoSB = new StringBuilder();
+        if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
+            extraInfoSB.append(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.get"));
         } else if ("POST".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
-        	extraInfoSB.append(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.post"));
+            extraInfoSB.append(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.post"));
         }
-        
-        extraInfoSB.append(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.common", 
-        		msg.getRequestHeader().getURI().toString(), paramName, paramValue, responseLocation));
-        
-		return extraInfoSB.toString();
-	}
+
+        extraInfoSB.append(
+                Constant.messages.getString(
+                        MESSAGE_PREFIX + "extrainfo.common",
+                        msg.getRequestHeader().getURI().toString(),
+                        paramName,
+                        paramValue,
+                        responseLocation));
+
+        return extraInfoSB.toString();
+    }
 }

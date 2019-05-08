@@ -19,23 +19,21 @@
  */
 package org.zaproxy.zap.extension.jxbrowser;
 
+import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.ContextMenuHandler;
+import com.teamdev.jxbrowser.chromium.ContextMenuParams;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.ContextMenuHandler;
-import com.teamdev.jxbrowser.chromium.ContextMenuParams;
-
 /**
  * A browser context menu. It is not i18n but can be run from the commandline for testing purposes.
- * @author psiinon
  *
+ * @author psiinon
  */
 public class BrowserContextMenuHandler implements ContextMenuHandler {
 
@@ -46,7 +44,7 @@ public class BrowserContextMenuHandler implements ContextMenuHandler {
         this.frame = frame;
         this.component = parentComponent;
     }
-    
+
     protected String getOpenInNewTabLabel() {
         return "Open link in new tab";
     }
@@ -58,35 +56,43 @@ public class BrowserContextMenuHandler implements ContextMenuHandler {
     public void showContextMenu(final ContextMenuParams params) {
         final JPopupMenu popupMenu = new JPopupMenu();
         if (!params.getLinkText().isEmpty()) {
-            popupMenu.add(createMenuItem(getOpenInNewTabLabel(), new Runnable() {
-                public void run() {
-                    frame.addNewBrowserPanel(params.getLinkURL());
-                }
-            }));
+            popupMenu.add(
+                    createMenuItem(
+                            getOpenInNewTabLabel(),
+                            new Runnable() {
+                                public void run() {
+                                    frame.addNewBrowserPanel(params.getLinkURL());
+                                }
+                            }));
         }
 
         final Browser browser = params.getBrowser();
-        popupMenu.add(createMenuItem(getReloadLabel(), new Runnable() {
-            public void run() {
-                browser.reload();
-            }
-        }));
+        popupMenu.add(
+                createMenuItem(
+                        getReloadLabel(),
+                        new Runnable() {
+                            public void run() {
+                                browser.reload();
+                            }
+                        }));
 
         final Point location = params.getLocation();
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                popupMenu.show(component, location.x, location.y);
-            }
-        });
+        SwingUtilities.invokeLater(
+                new Runnable() {
+                    public void run() {
+                        popupMenu.show(component, location.x, location.y);
+                    }
+                });
     }
 
     private JMenuItem createMenuItem(String title, final Runnable action) {
         JMenuItem reloadMenuItem = new JMenuItem(title);
-        reloadMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                action.run();
-            }
-        });
+        reloadMenuItem.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        action.run();
+                    }
+                });
         return reloadMenuItem;
     }
 }

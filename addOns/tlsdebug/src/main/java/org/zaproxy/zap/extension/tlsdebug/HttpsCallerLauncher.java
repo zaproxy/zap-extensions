@@ -26,76 +26,75 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 
 public class HttpsCallerLauncher {
 
-	private static String SEP = System.getProperty("path.separator");
-	private static final Logger logger = Logger.getLogger(HttpsCallerLauncher.class);
-	
-	private ExtensionTlsDebug extension;
+    private static String SEP = System.getProperty("path.separator");
+    private static final Logger logger = Logger.getLogger(HttpsCallerLauncher.class);
 
-	public HttpsCallerLauncher(ExtensionTlsDebug extension) {
-		this.extension = extension;
-	}
+    private ExtensionTlsDebug extension;
 
-	public void startProcess(URL url, String debugStatus) throws IOException {
+    public HttpsCallerLauncher(ExtensionTlsDebug extension) {
+        this.extension = extension;
+    }
 
-		ProcessBuilder pb = new ProcessBuilder(getArgumentsList(url, debugStatus));
-		Process p = pb.start();
-		pb.redirectErrorStream(true);
+    public void startProcess(URL url, String debugStatus) throws IOException {
 
-		Thread tout = new Thread(new StreamController(p.getInputStream()));
-		tout.start();
-		try {
-			tout.join();
-		} catch (InterruptedException e) {
-			logger.debug(e);
-		}
-	}
+        ProcessBuilder pb = new ProcessBuilder(getArgumentsList(url, debugStatus));
+        Process p = pb.start();
+        pb.redirectErrorStream(true);
 
-	private List<String> getArgumentsList(URL url, String debugStatus) throws IOException {
-		List<String> argumentsList = new ArrayList<String>();
-		argumentsList.add(System.getProperty("java.home") + "/bin/java");
-		argumentsList.add("-classpath");
-		argumentsList.add(getClasspath());
-		argumentsList.add("-Djavax.net.debug=" + debugStatus);
-		argumentsList.add(HttpsCallerProcess.class.getName());
-		argumentsList.add(url.toString());
-		return argumentsList;
-	}
+        Thread tout = new Thread(new StreamController(p.getInputStream()));
+        tout.start();
+        try {
+            tout.join();
+        } catch (InterruptedException e) {
+            logger.debug(e);
+        }
+    }
 
-	private String getClasspath() throws IOException {
-		StringBuilder classpath = new StringBuilder(System.getProperty("java.class.path"));
-		// /lang for message bundles
-		classpath.append(SEP).append(Constant.getZapInstall()).append("lang");
-		// path to TLS Debug extension
-		String pluginPath = extension.getAddOn().getFile().getCanonicalPath();
-		classpath.append(SEP).append(pluginPath);
-		return classpath.toString();
-	}
+    private List<String> getArgumentsList(URL url, String debugStatus) throws IOException {
+        List<String> argumentsList = new ArrayList<String>();
+        argumentsList.add(System.getProperty("java.home") + "/bin/java");
+        argumentsList.add("-classpath");
+        argumentsList.add(getClasspath());
+        argumentsList.add("-Djavax.net.debug=" + debugStatus);
+        argumentsList.add(HttpsCallerProcess.class.getName());
+        argumentsList.add(url.toString());
+        return argumentsList;
+    }
 
-	private class StreamController implements Runnable {
+    private String getClasspath() throws IOException {
+        StringBuilder classpath = new StringBuilder(System.getProperty("java.class.path"));
+        // /lang for message bundles
+        classpath.append(SEP).append(Constant.getZapInstall()).append("lang");
+        // path to TLS Debug extension
+        String pluginPath = extension.getAddOn().getFile().getCanonicalPath();
+        classpath.append(SEP).append(pluginPath);
+        return classpath.toString();
+    }
 
-		private BufferedReader reader;
+    private class StreamController implements Runnable {
 
-		public StreamController(InputStream in) {
-			InputStreamReader inr = new InputStreamReader(in);
-			reader = new BufferedReader(inr);
-		}
+        private BufferedReader reader;
 
-		@Override
-		public void run() {
-			try {
-				String line = null;
-				while ((line = reader.readLine()) != null) {
-					extension.notifyResponse(line + "\n");
-				}
-			} catch (IOException e) {
-				logger.debug(e);
-			}
-		}
-	}
+        public StreamController(InputStream in) {
+            InputStreamReader inr = new InputStreamReader(in);
+            reader = new BufferedReader(inr);
+        }
+
+        @Override
+        public void run() {
+            try {
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    extension.notifyResponse(line + "\n");
+                }
+            } catch (IOException e) {
+                logger.debug(e);
+            }
+        }
+    }
 }

@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
 import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -32,118 +31,123 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 /**
- * Active scan rule which checks whether or not POST requests with parameters
- * are accepted as GET equivalent requests.
- * 
+ * Active scan rule which checks whether or not POST requests with parameters are accepted as GET
+ * equivalent requests.
+ *
  * @author kingthorin+owaspzap@gmail.com
  */
 public class GetForPostScanner extends AbstractAppPlugin {
 
-	private static final Logger LOG = Logger.getLogger(GetForPostScanner.class);
-	private static final String MESSAGE_PREFIX = "ascanalpha.getforpostscanner.";
-	private static final int PLUGIN_ID = 10058; 
+    private static final Logger LOG = Logger.getLogger(GetForPostScanner.class);
+    private static final String MESSAGE_PREFIX = "ascanalpha.getforpostscanner.";
+    private static final int PLUGIN_ID = 10058;
 
-	@Override
-	public int getId() {
-		return PLUGIN_ID;
-	}
+    @Override
+    public int getId() {
+        return PLUGIN_ID;
+    }
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
 
-	@Override
-	public int getCategory() {
-		return Category.MISC;
-	}
+    @Override
+    public int getCategory() {
+        return Category.MISC;
+    }
 
-	@Override
-	public String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
-	
-	@Override
-	public String getReference() {
-		return null;
-	}
+    @Override
+    public String getSolution() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
 
-	@Override
-	public void init() {
+    @Override
+    public String getReference() {
+        return null;
+    }
 
-	}
+    @Override
+    public void init() {}
 
-	@Override
-	public void scan() {
-		// Check if the user stopped things. One request per URL so check before
-		// sending the request
-		if (isStop()) {
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Scanner " + getName() + " Stopping.");
-			}
-			return;
-		}
-		
-		HttpMessage baseMsg = getBaseMsg();
-		TreeSet<HtmlParameter> postParams = baseMsg.getFormParams();
-		if (!baseMsg.getRequestHeader().getMethod().equalsIgnoreCase(HttpRequestHeader.POST)
-				|| postParams.isEmpty()) {
-			return; //Not a POST or no form params, no reason to continue
-		}
-		
-		HttpMessage newRequest = getNewMsg();
-		newRequest.getRequestHeader().setMethod(HttpRequestHeader.GET);
-		newRequest.setFormParams(new TreeSet<HtmlParameter>());
-		for (HtmlParameter param : postParams) {
-			param.setType(HtmlParameter.Type.url);
-		}
-		newRequest.getRequestHeader().setGetParams(postParams);
-		
-		try {
-			sendAndReceive(newRequest);
-		} catch (IOException e) {
-			LOG.warn("An error occurred while checking [" + newRequest.getRequestHeader().getMethod() + "] ["
-					+ newRequest.getRequestHeader().getURI().toString() + "] for " + getName() + " Caught "
-					+ e.getClass().getName() + " " + e.getMessage());
-			return;
-		}
-		
-		if (newRequest.getResponseBody().equals(baseMsg.getResponseBody())) {
-			bingo(getRisk(), // Risk
-					Alert.CONFIDENCE_HIGH, // Confidence
-					getName(), // Name
-					getDescription(), // Description
-					baseMsg.getRequestHeader().getURI().toString(), // URI
-					null, // Param
-					"", // Attack
-					"", // OtherInfo
-					getSolution(), // Solution
-					newRequest.getRequestHeader().getPrimeHeader(), // Evidence
-					getCweId(), // CWE ID
-					getWascId(), // WASC ID
-					newRequest); // HTTPMessage
-		}
-		
-	}
-	
-	@Override
-	public int getRisk() {
-		return Alert.RISK_INFO;
-	}
+    @Override
+    public void scan() {
+        // Check if the user stopped things. One request per URL so check before
+        // sending the request
+        if (isStop()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Scanner " + getName() + " Stopping.");
+            }
+            return;
+        }
 
-	@Override
-	public int getCweId() {
-		return 16;//Configuration
-	}
+        HttpMessage baseMsg = getBaseMsg();
+        TreeSet<HtmlParameter> postParams = baseMsg.getFormParams();
+        if (!baseMsg.getRequestHeader().getMethod().equalsIgnoreCase(HttpRequestHeader.POST)
+                || postParams.isEmpty()) {
+            return; // Not a POST or no form params, no reason to continue
+        }
 
-	@Override
-	public int getWascId() {
-		return 20; //Improper Input Handling
-	}
+        HttpMessage newRequest = getNewMsg();
+        newRequest.getRequestHeader().setMethod(HttpRequestHeader.GET);
+        newRequest.setFormParams(new TreeSet<HtmlParameter>());
+        for (HtmlParameter param : postParams) {
+            param.setType(HtmlParameter.Type.url);
+        }
+        newRequest.getRequestHeader().setGetParams(postParams);
 
+        try {
+            sendAndReceive(newRequest);
+        } catch (IOException e) {
+            LOG.warn(
+                    "An error occurred while checking ["
+                            + newRequest.getRequestHeader().getMethod()
+                            + "] ["
+                            + newRequest.getRequestHeader().getURI().toString()
+                            + "] for "
+                            + getName()
+                            + " Caught "
+                            + e.getClass().getName()
+                            + " "
+                            + e.getMessage());
+            return;
+        }
+
+        if (newRequest.getResponseBody().equals(baseMsg.getResponseBody())) {
+            bingo(
+                    getRisk(), // Risk
+                    Alert.CONFIDENCE_HIGH, // Confidence
+                    getName(), // Name
+                    getDescription(), // Description
+                    baseMsg.getRequestHeader().getURI().toString(), // URI
+                    null, // Param
+                    "", // Attack
+                    "", // OtherInfo
+                    getSolution(), // Solution
+                    newRequest.getRequestHeader().getPrimeHeader(), // Evidence
+                    getCweId(), // CWE ID
+                    getWascId(), // WASC ID
+                    newRequest); // HTTPMessage
+        }
+    }
+
+    @Override
+    public int getRisk() {
+        return Alert.RISK_INFO;
+    }
+
+    @Override
+    public int getCweId() {
+        return 16; // Configuration
+    }
+
+    @Override
+    public int getWascId() {
+        return 20; // Improper Input Handling
+    }
 }

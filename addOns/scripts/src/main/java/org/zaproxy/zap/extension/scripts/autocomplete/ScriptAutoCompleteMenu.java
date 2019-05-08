@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JMenuItem;
 import javax.swing.MenuElement;
 import javax.swing.MenuSelectionManager;
@@ -48,34 +47,37 @@ public class ScriptAutoCompleteMenu extends JScrollPopupMenu {
 
     public void addMenu(final String text) {
         JMenuItem menu = new JMenuItem(text);
-        menu.addActionListener(new ActionListener() {
+        menu.addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parent.insertText(text);
-            }
-        });
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        parent.insertText(text);
+                    }
+                });
         this.add(menu);
         menus.add(menu);
     }
 
     public void addMenu(Method method) {
         final JMenuItemMethod menu = new JMenuItemMethod(method);
-        menu.addActionListener(new ActionListener() {
+        menu.addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parent.insertText(menu.getText());
-                parent.setLastReturnType(menu.method.getReturnType());
-            }
-        });
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        parent.insertText(menu.getText());
+                        parent.setLastReturnType(menu.method.getReturnType());
+                    }
+                });
         this.add(menu);
         menus.add(menu);
     }
 
     public void selectFirstMenu() {
         if (this.menus.size() > 0) {
-            MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[] { this, menus.get(0) });
+            MenuSelectionManager.defaultManager()
+                    .setSelectedPath(new MenuElement[] {this, menus.get(0)});
             setFocusable(true);
             this.selectMenu(0);
         }

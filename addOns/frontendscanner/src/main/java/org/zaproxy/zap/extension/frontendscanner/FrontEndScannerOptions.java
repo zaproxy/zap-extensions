@@ -21,29 +21,28 @@ package org.zaproxy.zap.extension.frontendscanner;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 /**
  * Manages the options saved in the configuration file.
- * <p>
- * It allows to change, programmatically, the following options:
+ *
+ * <p>It allows to change, programmatically, the following options:
+ *
  * <ul>
- * <li>Enabled state;</li>
+ *   <li>Enabled state;
  * </ul>
  */
 public class FrontEndScannerOptions extends VersionedAbstractParam {
 
     /**
-     * The version of the configurations. Used to keep track of configurations changes between releases, if updates are needed.
-     * <p>
-     * It only needs to be updated for configurations changes (not releases of the add-on).
+     * The version of the configurations. Used to keep track of configurations changes between
+     * releases, if updates are needed.
+     *
+     * <p>It only needs to be updated for configurations changes (not releases of the add-on).
      */
     private static final int PARAM_CURRENT_VERSION = 1;
 
-    /**
-     * The base configuration key for all configurations.
-     */
+    /** The base configuration key for all configurations. */
     private static final String PARAM_BASE_KEY = "frontendscanner";
 
     private static final String ENABLED_KEY = PARAM_BASE_KEY + ".enabled";
@@ -52,8 +51,8 @@ public class FrontEndScannerOptions extends VersionedAbstractParam {
 
     /**
      * Flag that indicates if the front-end scanner is enabled.
-     * <p>
-     * Default value is {@code false}.
+     *
+     * <p>Default value is {@code false}.
      */
     private boolean enabled;
 
@@ -94,7 +93,8 @@ public class FrontEndScannerOptions extends VersionedAbstractParam {
     /**
      * Sets whether or not the front-end scanner is enabled.
      *
-     * @param enabled {@code true} if the front-end scanner should be enabled, {@code false} otherwise.
+     * @param enabled {@code true} if the front-end scanner should be enabled, {@code false}
+     *     otherwise.
      * @see #isEnabled()
      */
     public void setEnabled(boolean enabled) {

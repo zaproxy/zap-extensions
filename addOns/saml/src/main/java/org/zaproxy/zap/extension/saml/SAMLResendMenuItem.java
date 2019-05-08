@@ -29,7 +29,7 @@ import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 public class SAMLResendMenuItem extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(SAMLResendMenuItem.class); 
+    private static final Logger LOGGER = Logger.getLogger(SAMLResendMenuItem.class);
 
     public SAMLResendMenuItem(String label) {
         super(label);
@@ -51,8 +51,7 @@ public class SAMLResendMenuItem extends PopupMenuItemHttpMessageContainer {
 
     @Override
     public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-        //TODO filter out the unnecessary invokers
+        // TODO filter out the unnecessary invokers
         return true;
     }
-
 }

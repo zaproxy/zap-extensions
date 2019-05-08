@@ -26,41 +26,38 @@ import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 public class PopupMenuOpenAndMonitorUrl extends PopupMenuItemHttpMessageContainer {
 
-	private static final long serialVersionUID = 1L;
-	private MonitoredPagesManager mpm = null;
+    private static final long serialVersionUID = 1L;
+    private MonitoredPagesManager mpm = null;
 
-    /**
-     * @param label
-     */
+    /** @param label */
     public PopupMenuOpenAndMonitorUrl(MonitoredPagesManager mpm) {
         super(Constant.messages.getString("plugnhack.menu.monitor.open"));
         this.mpm = mpm;
     }
-    
+
     @Override
     public String getParentMenuName() {
-    	return Constant.messages.getString("plugnhack.menu.monitor");
+        return Constant.messages.getString("plugnhack.menu.monitor");
     }
 
     @Override
     public boolean isSubMenu() {
-    	return true;
+        return true;
     }
 
-    
-	@Override
-	public void performAction(HttpMessage msg) {
-		this.mpm.setMonitorOnetimeURL(msg.getRequestHeader().getURI());
-		DesktopUtils.openUrlInBrowser(msg.getRequestHeader().getURI());
-	}
-	
-	@Override
+    @Override
+    public void performAction(HttpMessage msg) {
+        this.mpm.setMonitorOnetimeURL(msg.getRequestHeader().getURI());
+        DesktopUtils.openUrlInBrowser(msg.getRequestHeader().getURI());
+    }
+
+    @Override
     protected boolean isButtonEnabledForSelectedHttpMessage(HttpMessage msg) {
-		return DesktopUtils.canOpenUrlInBrowser();
+        return DesktopUtils.canOpenUrlInBrowser();
     }
 
     @Override
     public boolean isSafe() {
-    	return true;
+        return true;
     }
 }

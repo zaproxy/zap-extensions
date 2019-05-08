@@ -27,152 +27,158 @@ import org.zaproxy.zap.utils.Enableable;
 
 public class AlertFilter extends Enableable {
 
-	/** The Constant FIELD_SEPARATOR used for separating AlertFilter's field during serialization. */
-	private static final String FIELD_SEPARATOR = ";";
+    /**
+     * The Constant FIELD_SEPARATOR used for separating AlertFilter's field during serialization.
+     */
+    private static final String FIELD_SEPARATOR = ";";
 
-	private int contextId;
-	private int ruleId;
-	// Use -1 as false positive
-	private int newRisk;
-	private String parameter;
-	private String url;
-	private boolean regex;
+    private int contextId;
+    private int ruleId;
+    // Use -1 as false positive
+    private int newRisk;
+    private String parameter;
+    private String url;
+    private boolean regex;
 
-	private static final Logger log = Logger.getLogger(AlertFilter.class);
+    private static final Logger log = Logger.getLogger(AlertFilter.class);
 
-	public AlertFilter() {
-	}
+    public AlertFilter() {}
 
-	public AlertFilter(int contextId, int ruleId, int newRisk, String url,
-			boolean regex, String parameter, boolean enabled) {
-		super();
-		this.contextId = contextId;
-		this.ruleId = ruleId;
-		this.newRisk = newRisk;
-		this.parameter = parameter;
-		this.url = url;
-		this.regex = regex;
-		this.setEnabled(enabled);
-	}
+    public AlertFilter(
+            int contextId,
+            int ruleId,
+            int newRisk,
+            String url,
+            boolean regex,
+            String parameter,
+            boolean enabled) {
+        super();
+        this.contextId = contextId;
+        this.ruleId = ruleId;
+        this.newRisk = newRisk;
+        this.parameter = parameter;
+        this.url = url;
+        this.regex = regex;
+        this.setEnabled(enabled);
+    }
 
-	public int getContextId() {
-		return contextId;
-	}
+    public int getContextId() {
+        return contextId;
+    }
 
-	public void setContextId(int contextId) {
-		this.contextId = contextId;
-	}
+    public void setContextId(int contextId) {
+        this.contextId = contextId;
+    }
 
-	public int getRuleId() {
-		return ruleId;
-	}
+    public int getRuleId() {
+        return ruleId;
+    }
 
-	public void setRuleId(int ruleId) {
-		this.ruleId = ruleId;
-	}
+    public void setRuleId(int ruleId) {
+        this.ruleId = ruleId;
+    }
 
-	public static String getNameForRisk(int risk) {
-		switch (risk) {
-		case -1:
-			return Constant.messages.getString("alertFilters.panel.newalert.fp");
-		case Alert.RISK_INFO:	
-			return Constant.messages.getString("alertFilters.panel.newalert.info");
-		case Alert.RISK_LOW:
-			return Constant.messages.getString("alertFilters.panel.newalert.low");
-		case Alert.RISK_MEDIUM:
-			return Constant.messages.getString("alertFilters.panel.newalert.medium");
-		case Alert.RISK_HIGH:
-			return Constant.messages.getString("alertFilters.panel.newalert.high");
-		default:
-			return "";	
-		}
-	}
+    public static String getNameForRisk(int risk) {
+        switch (risk) {
+            case -1:
+                return Constant.messages.getString("alertFilters.panel.newalert.fp");
+            case Alert.RISK_INFO:
+                return Constant.messages.getString("alertFilters.panel.newalert.info");
+            case Alert.RISK_LOW:
+                return Constant.messages.getString("alertFilters.panel.newalert.low");
+            case Alert.RISK_MEDIUM:
+                return Constant.messages.getString("alertFilters.panel.newalert.medium");
+            case Alert.RISK_HIGH:
+                return Constant.messages.getString("alertFilters.panel.newalert.high");
+            default:
+                return "";
+        }
+    }
 
-	public String getNewRiskName() {
-		return getNameForRisk(this.newRisk);
-	}
+    public String getNewRiskName() {
+        return getNameForRisk(this.newRisk);
+    }
 
-	public int getNewRisk() {
-		return newRisk;
-	}
+    public int getNewRisk() {
+        return newRisk;
+    }
 
-	public void setNewRisk(int newRisk) {
-		this.newRisk = newRisk;
-	}
+    public void setNewRisk(int newRisk) {
+        this.newRisk = newRisk;
+    }
 
-	public String getParameter() {
-		return parameter;
-	}
+    public String getParameter() {
+        return parameter;
+    }
 
-	public void setParameter(String parameter) {
-		this.parameter = parameter;
-	}
+    public void setParameter(String parameter) {
+        this.parameter = parameter;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public boolean isRegex() {
-		return regex;
-	}
+    public boolean isRegex() {
+        return regex;
+    }
 
-	public void setRegex(boolean regex) {
-		this.regex = regex;
-	}
-	
-	/**
-	 * Encodes the AlertFilter in a String. Fields that contain strings are Base64 encoded.
-	 * 
-	 * @param alertFilter the AlertFilter
-	 * @return the encoded string
-	 */
-	public static String encode(AlertFilter alertFilter) {
-		StringBuilder out = new StringBuilder();
-		out.append(alertFilter.isEnabled()).append(FIELD_SEPARATOR);
-		out.append(alertFilter.getRuleId()).append(FIELD_SEPARATOR);
-		out.append(alertFilter.getNewRisk()).append(FIELD_SEPARATOR);
-		if (alertFilter.url != null) {
-			out.append(Base64.encodeBase64String(alertFilter.url.getBytes()));
-		}
-		out.append(FIELD_SEPARATOR);
-		out.append(alertFilter.isRegex()).append(FIELD_SEPARATOR);
-		if (alertFilter.parameter != null) {
-			out.append(Base64.encodeBase64String(alertFilter.parameter.getBytes()));
-		}
-		out.append(FIELD_SEPARATOR);
-		// log.debug("Encoded AlertFilter: " + out.toString());
-		return out.toString();
-	}
+    public void setRegex(boolean regex) {
+        this.regex = regex;
+    }
 
-	/**
-	 * Decodes an alert filter from an encoded string. The string provided as input should have been
-	 * obtained through calls to {@link #encode(AlertFilter)}.
-	 * @param encodedString the encoded string
-	 * @return the decoded alert filter
-	 */
-	protected static AlertFilter decode(int contextId, String encodedString) {
-		String[] pieces = encodedString.split(FIELD_SEPARATOR, -1);
-		AlertFilter alertFilter = null;
-		try {
-			alertFilter = new AlertFilter();
-			alertFilter.setContextId(contextId);
-			alertFilter.setEnabled(Boolean.parseBoolean(pieces[0]));
-			alertFilter.setRuleId(Integer.parseInt(pieces[1]));
-			alertFilter.setNewRisk(Integer.parseInt(pieces[2]));
-			alertFilter.setUrl(new String(Base64.decodeBase64(pieces[3])));
-			alertFilter.setRegex(Boolean.parseBoolean(pieces[4]));
-			alertFilter.setParameter(new String(Base64.decodeBase64(pieces[5])));
-		} catch (Exception ex) {
-			log.error("An error occured while decoding alertFilter from: " + encodedString, ex);
-			return null;
-		}
-		// log.debug("Decoded alertFilter: " + alertFilter);
-		return alertFilter;
-	}
+    /**
+     * Encodes the AlertFilter in a String. Fields that contain strings are Base64 encoded.
+     *
+     * @param alertFilter the AlertFilter
+     * @return the encoded string
+     */
+    public static String encode(AlertFilter alertFilter) {
+        StringBuilder out = new StringBuilder();
+        out.append(alertFilter.isEnabled()).append(FIELD_SEPARATOR);
+        out.append(alertFilter.getRuleId()).append(FIELD_SEPARATOR);
+        out.append(alertFilter.getNewRisk()).append(FIELD_SEPARATOR);
+        if (alertFilter.url != null) {
+            out.append(Base64.encodeBase64String(alertFilter.url.getBytes()));
+        }
+        out.append(FIELD_SEPARATOR);
+        out.append(alertFilter.isRegex()).append(FIELD_SEPARATOR);
+        if (alertFilter.parameter != null) {
+            out.append(Base64.encodeBase64String(alertFilter.parameter.getBytes()));
+        }
+        out.append(FIELD_SEPARATOR);
+        // log.debug("Encoded AlertFilter: " + out.toString());
+        return out.toString();
+    }
 
-	
+    /**
+     * Decodes an alert filter from an encoded string. The string provided as input should have been
+     * obtained through calls to {@link #encode(AlertFilter)}.
+     *
+     * @param encodedString the encoded string
+     * @return the decoded alert filter
+     */
+    protected static AlertFilter decode(int contextId, String encodedString) {
+        String[] pieces = encodedString.split(FIELD_SEPARATOR, -1);
+        AlertFilter alertFilter = null;
+        try {
+            alertFilter = new AlertFilter();
+            alertFilter.setContextId(contextId);
+            alertFilter.setEnabled(Boolean.parseBoolean(pieces[0]));
+            alertFilter.setRuleId(Integer.parseInt(pieces[1]));
+            alertFilter.setNewRisk(Integer.parseInt(pieces[2]));
+            alertFilter.setUrl(new String(Base64.decodeBase64(pieces[3])));
+            alertFilter.setRegex(Boolean.parseBoolean(pieces[4]));
+            alertFilter.setParameter(new String(Base64.decodeBase64(pieces[5])));
+        } catch (Exception ex) {
+            log.error("An error occured while decoding alertFilter from: " + encodedString, ex);
+            return null;
+        }
+        // log.debug("Decoded alertFilter: " + alertFilter);
+        return alertFilter;
+    }
 }

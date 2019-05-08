@@ -25,29 +25,29 @@ import org.parosproxy.paros.extension.ExtensionHook;
 
 public class ExtensionSaveRawHttpMessage extends ExtensionAdaptor {
 
-	private static final String NAME = "ExtensionSaveRawHttpMessage";
-	
-	public ExtensionSaveRawHttpMessage() {
-		super(NAME);
-		setI18nPrefix("saveraw");
-	}
-	
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-		super.hook(extensionHook);
-		
-		if (getView() != null) {
-			extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveRawMessage());
-		}
-	}
-	
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
-	
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    private static final String NAME = "ExtensionSaveRawHttpMessage";
+
+    public ExtensionSaveRawHttpMessage() {
+        super(NAME);
+        setI18nPrefix("saveraw");
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+
+        if (getView() != null) {
+            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveRawMessage());
+        }
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
+
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
 }

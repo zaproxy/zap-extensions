@@ -23,11 +23,9 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.KeyListener;
-
-import javax.swing.JScrollPane;
-import javax.swing.JPanel;
 import javax.swing.JLabel;
-
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
@@ -37,145 +35,142 @@ import org.zaproxy.zap.utils.FontUtils;
 
 public class CommandPanel extends AbstractPanel {
 
-	private static final long serialVersionUID = -947074835463140074L;
-	/**
-	 * Max amount of data(byte) before editor usage is disable
-	 */
-	private static final int EDITOR_SCRIPT_MAX_SIZE_THRESHOLD = 1_000_000;
-	/**
-	 * Max amount of data(byte) before highlight feature is deactivated
-	 */
-	private static final int HIGHLIGHT_SCRIPT_MAX_SIZE_THRESHOLD = 500_000;
+    private static final long serialVersionUID = -947074835463140074L;
+    /** Max amount of data(byte) before editor usage is disable */
+    private static final int EDITOR_SCRIPT_MAX_SIZE_THRESHOLD = 1_000_000;
+    /** Max amount of data(byte) before highlight feature is deactivated */
+    private static final int HIGHLIGHT_SCRIPT_MAX_SIZE_THRESHOLD = 500_000;
 
-	private JScrollPane jScrollPane = null;
-	private SyntaxHighlightTextArea syntaxTxtArea = null;
-	private KeyListener listener = null;
-	private ScriptAutoCompleteKeyListener autocompleteListener;
+    private JScrollPane jScrollPane = null;
+    private SyntaxHighlightTextArea syntaxTxtArea = null;
+    private KeyListener listener = null;
+    private ScriptAutoCompleteKeyListener autocompleteListener;
 
-	private boolean largeScriptContentSet = false;
-	private String largeScriptContent = "";
-	private JPanel largeScriptPanel = new JPanel(new BorderLayout());
-	private JLabel largeScriptLabel = new JLabel();
+    private boolean largeScriptContentSet = false;
+    private String largeScriptContent = "";
+    private JPanel largeScriptPanel = new JPanel(new BorderLayout());
+    private JLabel largeScriptLabel = new JLabel();
 
-	/**
-     * 
-     */
+    /** */
     public CommandPanel(KeyListener listener) {
         super();
         this.listener = listener;
- 		initialize();
+        initialize();
     }
 
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
+    /** This method initializes this */
+    private void initialize() {
         this.setLayout(new CardLayout());
         this.setName("ConsoleCommandPanel");
 
         this.add(getJScrollPane(), getJScrollPane().getName());
-		largeScriptPanel.add(largeScriptLabel);	
-	}
-	/**
-	 * This method initializes jScrollPane	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
-	private JScrollPane getJScrollPane() {
-		if (jScrollPane == null) {
-			jScrollPane = new RTextScrollPane((Component) getTxtOutput(), false);
-			
-			((RTextScrollPane)jScrollPane).setLineNumbersEnabled(true);
+        largeScriptPanel.add(largeScriptLabel);
+    }
+    /**
+     * This method initializes jScrollPane
+     *
+     * @return javax.swing.JScrollPane
+     */
+    private JScrollPane getJScrollPane() {
+        if (jScrollPane == null) {
+            jScrollPane = new RTextScrollPane((Component) getTxtOutput(), false);
 
-			jScrollPane.setName("ConsoleCommandjScrollPane");
-			jScrollPane.setFont(FontUtils.getFont("Dialog"));
-		}
-		return jScrollPane;
-	}
+            ((RTextScrollPane) jScrollPane).setLineNumbersEnabled(true);
 
-	private SyntaxHighlightTextArea getTxtOutput() {
-		if (this.syntaxTxtArea == null) {
-			this.syntaxTxtArea = new SyntaxHighlightTextArea();
-			
-			this.syntaxTxtArea.setComponentPopupMenu(ZapPopupMenu.INSTANCE);
+            jScrollPane.setName("ConsoleCommandjScrollPane");
+            jScrollPane.setFont(FontUtils.getFont("Dialog"));
+        }
+        return jScrollPane;
+    }
 
-			this.autocompleteListener = new ScriptAutoCompleteKeyListener(this.syntaxTxtArea);
-			this.syntaxTxtArea.addKeyListener(this.autocompleteListener);
-			if (listener != null) {
-				this.syntaxTxtArea.addKeyListener(listener);
-			}
-		}
-		return this.syntaxTxtArea;
-	}
-	
-	@Override
-	public void addKeyListener(KeyListener l) {
-		// Don't do anything, the (only) listener is specified through the constructor.
-	}
-	
-	public void setSyntax (String syntax) {
-		boolean highlightEnabled = getTxtOutput().getDocument().getLength() < HIGHLIGHT_SCRIPT_MAX_SIZE_THRESHOLD && !largeScriptContentSet;
-		getTxtOutput().setSyntaxEditingStyle(highlightEnabled ? syntax : SyntaxConstants.SYNTAX_STYLE_NONE);
-	}
+    private SyntaxHighlightTextArea getTxtOutput() {
+        if (this.syntaxTxtArea == null) {
+            this.syntaxTxtArea = new SyntaxHighlightTextArea();
 
+            this.syntaxTxtArea.setComponentPopupMenu(ZapPopupMenu.INSTANCE);
 
-	public void clear() {
-		setCommandScriptContent("");
-	    getTxtOutput().discardAllEdits();
-	    setSyntax(SyntaxConstants.SYNTAX_STYLE_NONE);
-	}
+            this.autocompleteListener = new ScriptAutoCompleteKeyListener(this.syntaxTxtArea);
+            this.syntaxTxtArea.addKeyListener(this.autocompleteListener);
+            if (listener != null) {
+                this.syntaxTxtArea.addKeyListener(listener);
+            }
+        }
+        return this.syntaxTxtArea;
+    }
 
-	public String getCommandScript() {
-		return largeScriptContentSet ? largeScriptContent : getTxtOutput().getText();
-	}
+    @Override
+    public void addKeyListener(KeyListener l) {
+        // Don't do anything, the (only) listener is specified through the constructor.
+    }
 
-	protected void setCommandScript(String str) {
-		setCommandScriptContent(str);
-		getTxtOutput().discardAllEdits();
-		getTxtOutput().requestFocus();
-	}
-	
-	protected void setCommandCursorPosition (int offset) {
-		getTxtOutput().setCaretPosition(offset);
-	}
-	
-	void unload() {
-		getTxtOutput().unload();
-	}
-	
-	public void setEditable(boolean editable) {
-		getTxtOutput().setEditable(editable);
-	}
+    public void setSyntax(String syntax) {
+        boolean highlightEnabled =
+                getTxtOutput().getDocument().getLength() < HIGHLIGHT_SCRIPT_MAX_SIZE_THRESHOLD
+                        && !largeScriptContentSet;
+        getTxtOutput()
+                .setSyntaxEditingStyle(
+                        highlightEnabled ? syntax : SyntaxConstants.SYNTAX_STYLE_NONE);
+    }
+
+    public void clear() {
+        setCommandScriptContent("");
+        getTxtOutput().discardAllEdits();
+        setSyntax(SyntaxConstants.SYNTAX_STYLE_NONE);
+    }
+
+    public String getCommandScript() {
+        return largeScriptContentSet ? largeScriptContent : getTxtOutput().getText();
+    }
+
+    protected void setCommandScript(String str) {
+        setCommandScriptContent(str);
+        getTxtOutput().discardAllEdits();
+        getTxtOutput().requestFocus();
+    }
+
+    protected void setCommandCursorPosition(int offset) {
+        getTxtOutput().setCaretPosition(offset);
+    }
+
+    void unload() {
+        getTxtOutput().unload();
+    }
+
+    public void setEditable(boolean editable) {
+        getTxtOutput().setEditable(editable);
+    }
 
     public void setScriptType(String typeName) {
         if (this.autocompleteListener != null) {
             this.autocompleteListener.setScriptType(typeName);
         }
     }
-    
+
     public void setAutoCompleteEnabled(boolean enable) {
         if (this.autocompleteListener != null) {
             this.autocompleteListener.setEnabled(enable);
         }
     }
 
-	private void setCommandScriptContent(String str) {
-		if (str.length() > EDITOR_SCRIPT_MAX_SIZE_THRESHOLD) {
-			getTxtOutput().setText("");
-			largeScriptContent = str;
-			largeScriptContentSet = true;
-		} else {
-			getTxtOutput().setText(str);
-			largeScriptContent = "";
-			largeScriptContentSet = false;
-		}
-		if (largeScriptContentSet) {
-			this.remove(getJScrollPane());
-			this.add(largeScriptPanel, largeScriptPanel.getName());
-			largeScriptLabel.setText(Constant.messages.getString("scripts.dialog.script.large.warning", largeScriptContent.length()));
-		} else {
-			this.remove(largeScriptPanel);
-			this.add(getJScrollPane(), getJScrollPane().getName());
-		}
-	}
+    private void setCommandScriptContent(String str) {
+        if (str.length() > EDITOR_SCRIPT_MAX_SIZE_THRESHOLD) {
+            getTxtOutput().setText("");
+            largeScriptContent = str;
+            largeScriptContentSet = true;
+        } else {
+            getTxtOutput().setText(str);
+            largeScriptContent = "";
+            largeScriptContentSet = false;
+        }
+        if (largeScriptContentSet) {
+            this.remove(getJScrollPane());
+            this.add(largeScriptPanel, largeScriptPanel.getName());
+            largeScriptLabel.setText(
+                    Constant.messages.getString(
+                            "scripts.dialog.script.large.warning", largeScriptContent.length()));
+        } else {
+            this.remove(largeScriptPanel);
+            this.add(getJScrollPane(), getJScrollPane().getName());
+        }
+    }
 }

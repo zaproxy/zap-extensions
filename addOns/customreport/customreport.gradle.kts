@@ -11,10 +11,7 @@ zapAddOn {
 }
 
 spotless {
-    java {
-        target(fileTree(projectDir) {
-            include("**/*.java")
-            exclude("**/ReportGenerator.java", "**/ReportLastScan.java")
-        })
-    }
+    javaWith3rdPartyFormatted(project, listOf(
+        "**/ReportGenerator.java",
+        "**/ReportLastScan.java"))
 }

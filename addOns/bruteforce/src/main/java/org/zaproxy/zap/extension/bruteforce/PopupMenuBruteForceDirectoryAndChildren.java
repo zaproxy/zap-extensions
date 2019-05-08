@@ -21,20 +21,18 @@ package org.zaproxy.zap.extension.bruteforce;
 
 import org.parosproxy.paros.model.SiteNode;
 
-
 class PopupMenuBruteForceDirectoryAndChildren extends PopupMenuBruteForceSite {
 
-	private static final long serialVersionUID = 1L;
-    
+    private static final long serialVersionUID = 1L;
+
     public PopupMenuBruteForceDirectoryAndChildren(String label) {
         super(label);
     }
-    
+
     @Override
     public void performAction(SiteNode node) {
         if (node != null) {
             getExtensionBruteForce().bruteForceDirectoryAndChildren(node);
         }
     }
-
 }

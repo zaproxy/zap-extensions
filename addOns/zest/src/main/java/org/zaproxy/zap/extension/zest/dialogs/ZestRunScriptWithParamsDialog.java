@@ -24,10 +24,8 @@ import java.awt.Frame;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
@@ -38,51 +36,51 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implements ZestDialog {
 
-	private static final String FIELD_PARAMS = "zest.dialog.run.label.params"; 
+    private static final String FIELD_PARAMS = "zest.dialog.run.label.params";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ZestZapRunner runner = null;
-	private ZestScript script = null;
+    private ZestZapRunner runner = null;
+    private ZestScript script = null;
 
     private JTable paramsTable = null;
     private ScriptTokensTableModel paramsModel = null;
 
-	private static final Logger logger = Logger.getLogger(ZestRunScriptWithParamsDialog.class);
+    private static final Logger logger = Logger.getLogger(ZestRunScriptWithParamsDialog.class);
 
-	public ZestRunScriptWithParamsDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.run.title", dim);
-		this.setXWeights(0.2D, 0.8D);
-	}
+    public ZestRunScriptWithParamsDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(owner, "zest.dialog.run.title", dim);
+        this.setXWeights(0.2D, 0.8D);
+    }
 
-	public void init (ZestZapRunner runner, ZestScript script, Map<String, String> params) {
-		this.runner = runner;
-		this.script = script;
+    public void init(ZestZapRunner runner, ZestScript script, Map<String, String> params) {
+        this.runner = runner;
+        this.script = script;
 
-		this.removeAllFields();
-		
+        this.removeAllFields();
+
         this.getParamsModel().setValues(script.getParameters().getVariables());
-        
+
         for (Entry<String, String> param : params.entrySet()) {
-        	if (param.getValue().length() > 0) {
-        		// Override any defaults in the script
-        		this.getParamsModel().setValue(param.getKey(), param.getValue());
-        	}
+            if (param.getValue().length() > 0) {
+                // Override any defaults in the script
+                this.getParamsModel().setValue(param.getKey(), param.getValue());
+            }
         }
         this.addTableField(FIELD_PARAMS, this.getParamsTable());
-	}
-	
-	@Override
-	public String getSaveButtonText() {
-		return Constant.messages.getString("zest.dialog.run.button.run");
-	}
-    
+    }
+
+    @Override
+    public String getSaveButtonText() {
+        return Constant.messages.getString("zest.dialog.run.button.run");
+    }
+
     private JTable getParamsTable() {
-    	if (paramsTable == null) {
-    		paramsTable = new JTable();
-    		paramsTable.setModel(getParamsModel());
-    	}
-    	return paramsTable;
+        if (paramsTable == null) {
+            paramsTable = new JTable();
+            paramsTable.setModel(getParamsModel());
+        }
+        return paramsTable;
     }
 
     private ScriptTokensTableModel getParamsModel() {
@@ -92,43 +90,43 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
         }
         return paramsModel;
     }
-    
+
     public Map<String, String> getParams() {
-    	Map<String, String> map = new HashMap<String, String>();
-    	for (String[] param : this.getParamsModel().getValues()) {
-    		map.put(param[0], param[1]);
-    	}
-    	return map;
+        Map<String, String> map = new HashMap<String, String>();
+        for (String[] param : this.getParamsModel().getValues()) {
+            map.put(param[0], param[1]);
+        }
+        return map;
     }
 
-	@Override
-	public void save() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					runner.run(script, getParams());
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-				
-			}});
-	}
+    @Override
+    public void save() {
+        SwingUtilities.invokeLater(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            runner.run(script, getParams());
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    }
+                });
+    }
 
-	@Override
-	public String validateFields() {
-		// Check all variables are specified
-    	for (String[] param : this.getParamsModel().getValues()) {
-    		if (param[1].length() == 0) {
-    			return Constant.messages.getString("zest.dialog.run.error.missingvals");
-    		}
-    	}
-		return null;
-	}
+    @Override
+    public String validateFields() {
+        // Check all variables are specified
+        for (String[] param : this.getParamsModel().getValues()) {
+            if (param[1].length() == 0) {
+                return Constant.messages.getString("zest.dialog.run.error.missingvals");
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public ZestScriptWrapper getScript() {
-		return null;
-	}
-	
+    @Override
+    public ZestScriptWrapper getScript() {
+        return null;
+    }
 }

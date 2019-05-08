@@ -19,15 +19,13 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
-
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
 
 public class BodyGenerator {
 
@@ -53,18 +51,20 @@ public class BodyGenerator {
     }
 
     @SuppressWarnings("serial")
-    private final Map<Element, String> SYNTAX = Collections.unmodifiableMap(new HashMap<Element, String>() {
+    private final Map<Element, String> SYNTAX =
+            Collections.unmodifiableMap(
+                    new HashMap<Element, String>() {
 
-        {
-            put(Element.OBJECT_BEGIN, "{");
-            put(Element.OBJECT_END, "}");
-            put(Element.ARRAY_BEGIN, "[");
-            put(Element.ARRAY_END, "]");
-            put(Element.PROPERTY_CONTAINER, "\"");
-            put(Element.INNER_SEPARATOR, ":");
-            put(Element.OUTER_SEPARATOR, ",");
-        }
-    });
+                        {
+                            put(Element.OBJECT_BEGIN, "{");
+                            put(Element.OBJECT_END, "}");
+                            put(Element.ARRAY_BEGIN, "[");
+                            put(Element.ARRAY_END, "]");
+                            put(Element.PROPERTY_CONTAINER, "\"");
+                            put(Element.INNER_SEPARATOR, ":");
+                            put(Element.OUTER_SEPARATOR, ",");
+                        }
+                    });
 
     public String generate(String name, boolean isArray, List<String> refs) {
         if (LOG.isDebugEnabled()) {
@@ -87,26 +87,43 @@ public class BodyGenerator {
                 json.append(SYNTAX.get(Element.INNER_SEPARATOR));
                 String value;
                 if (dataGenerator.isSupported(property.getValue().getType())) {
-                    value = dataGenerator.generateBodyValue(property.getKey(), property.getValue(), refs);
+                    value =
+                            dataGenerator.generateBodyValue(
+                                    property.getKey(), property.getValue(), refs);
                 } else {
                     if (property.getValue() instanceof RefProperty) {
-                        value = generate(((RefProperty) property.getValue()).getSimpleRef(), false, refs);
+                        value =
+                                generate(
+                                        ((RefProperty) property.getValue()).getSimpleRef(),
+                                        false,
+                                        refs);
                     } else {
-                        value = generators.getValueGenerator().getValue(property.getKey(), property.getValue().getType(), 
-                                generate(property.getValue().getName(), false, refs));
+                        value =
+                                generators
+                                        .getValueGenerator()
+                                        .getValue(
+                                                property.getKey(),
+                                                property.getValue().getType(),
+                                                generate(
+                                                        property.getValue().getName(),
+                                                        false,
+                                                        refs));
                     }
                 }
-    
+
                 json.append(value);
             }
         }
         json.append(SYNTAX.get(Element.OBJECT_END));
         String jsonStr = json.toString();
         if (isArray) {
-            jsonStr = SYNTAX.get(Element.ARRAY_BEGIN) + jsonStr + SYNTAX.get(Element.OUTER_SEPARATOR) + jsonStr
-                    + SYNTAX.get(Element.ARRAY_END);
+            jsonStr =
+                    SYNTAX.get(Element.ARRAY_BEGIN)
+                            + jsonStr
+                            + SYNTAX.get(Element.OUTER_SEPARATOR)
+                            + jsonStr
+                            + SYNTAX.get(Element.ARRAY_END);
         }
         return jsonStr;
     }
-
 }

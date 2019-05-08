@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
@@ -33,78 +32,82 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestClientWindowHandleDialog extends StandardFieldsDialog implements ZestDialog {
 
-	private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle"; 
-	private static final String FIELD_URL = "zest.dialog.client.label.url"; 
-	private static final String FIELD_REGEX = "zest.dialog.client.label.regex"; 
+    private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle";
+    private static final String FIELD_URL = "zest.dialog.client.label.url";
+    private static final String FIELD_REGEX = "zest.dialog.client.label.regex";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionZest extension = null;
-	private ScriptNode parent = null;
-	private ScriptNode child = null;
-	private ZestScriptWrapper script = null;
-	private ZestStatement request = null;
-	private ZestClientWindowHandle client = null;
-	private boolean add = false;
+    private ExtensionZest extension = null;
+    private ScriptNode parent = null;
+    private ScriptNode child = null;
+    private ZestScriptWrapper script = null;
+    private ZestStatement request = null;
+    private ZestClientWindowHandle client = null;
+    private boolean add = false;
 
-	public ZestClientWindowHandleDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.clientWindowHandle.add.title", dim);
-		this.extension = ext;
-	}
+    public ZestClientWindowHandleDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(owner, "zest.dialog.clientWindowHandle.add.title", dim);
+        this.extension = ext;
+    }
 
-	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestStatement req, ZestClientWindowHandle client, boolean add) {
-		this.script = script;
-		this.add = add;
-		this.parent = parent;
-		this.child = child;
-		this.request = req;
-		this.client = client;
+    public void init(
+            ZestScriptWrapper script,
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientWindowHandle client,
+            boolean add) {
+        this.script = script;
+        this.add = add;
+        this.parent = parent;
+        this.child = child;
+        this.request = req;
+        this.client = client;
 
-		this.removeAllFields();
-		
-		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindowHandle.add.title"));
-		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindowHandle.edit.title"));
-		}
+        this.removeAllFields();
 
-		this.addTextField(FIELD_WINDOW_HANDLE, client.getWindowHandle());
-		this.addTextField(FIELD_URL, client.getUrl());
-		this.addCheckBoxField(FIELD_REGEX, client.isRegex());
-		
-		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_URL)); 
-	}
+        if (add) {
+            this.setTitle(Constant.messages.getString("zest.dialog.clientWindowHandle.add.title"));
+        } else {
+            this.setTitle(Constant.messages.getString("zest.dialog.clientWindowHandle.edit.title"));
+        }
 
-	@Override
-	public void save() {
-		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
-		client.setUrl(this.getStringValue(FIELD_URL));
-		client.setRegex(this.getBoolValue(FIELD_REGEX));
+        this.addTextField(FIELD_WINDOW_HANDLE, client.getWindowHandle());
+        this.addTextField(FIELD_URL, client.getUrl());
+        this.addCheckBoxField(FIELD_REGEX, client.isRegex());
 
-		if (add) {
-			if (request == null) {
-				extension.addToParent(parent, client);
-			} else {
-				extension.addAfterRequest(parent, child, request, client);
-			}
-		} else {
-			extension.updated(child);
-			extension.display(child, false);
-		}
-	}
+        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_URL));
+    }
 
-	@Override
-	public String validateFields() {
-		if (! ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_WINDOW_HANDLE))) {
-			return Constant.messages.getString("zest.dialog.client.error.windowHandle");
-		}
-		return null;
-	}
+    @Override
+    public void save() {
+        client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
+        client.setUrl(this.getStringValue(FIELD_URL));
+        client.setRegex(this.getBoolValue(FIELD_REGEX));
 
-	@Override
-	public ZestScriptWrapper getScript() {
-		return this.script;
-	}
-	
+        if (add) {
+            if (request == null) {
+                extension.addToParent(parent, client);
+            } else {
+                extension.addAfterRequest(parent, child, request, client);
+            }
+        } else {
+            extension.updated(child);
+            extension.display(child, false);
+        }
+    }
+
+    @Override
+    public String validateFields() {
+        if (!ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_WINDOW_HANDLE))) {
+            return Constant.messages.getString("zest.dialog.client.error.windowHandle");
+        }
+        return null;
+    }
+
+    @Override
+    public ZestScriptWrapper getScript() {
+        return this.script;
+    }
 }

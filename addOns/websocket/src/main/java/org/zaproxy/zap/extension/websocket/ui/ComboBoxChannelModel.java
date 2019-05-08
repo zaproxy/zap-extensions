@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.websocket.ui;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
-
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 
 public class ComboBoxChannelModel implements ComboBoxModel<WebSocketChannelDTO> {
@@ -86,5 +85,4 @@ public class ComboBoxChannelModel implements ComboBoxModel<WebSocketChannelDTO> 
     public void removeListDataListener(ListDataListener l) {
         delegate.removeListDataListener(l);
     }
-    
 }

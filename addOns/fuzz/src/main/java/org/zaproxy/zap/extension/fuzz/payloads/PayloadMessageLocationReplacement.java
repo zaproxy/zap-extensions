@@ -24,11 +24,12 @@ import org.zaproxy.zap.model.MessageLocation;
 
 /**
  * A {@code MessageLocationReplacement} with a {@code Payload}.
- * 
+ *
  * @param <T> the type of payloads used during replacement
  * @see MessageLocationReplacement
  */
-public class PayloadMessageLocationReplacement<T extends Payload> implements MessageLocationReplacement<T> {
+public class PayloadMessageLocationReplacement<T extends Payload>
+        implements MessageLocationReplacement<T> {
 
     private final MessageLocation messageLocation;
     private final T payload;

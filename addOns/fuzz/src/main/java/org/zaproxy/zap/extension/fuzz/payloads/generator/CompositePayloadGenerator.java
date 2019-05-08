@@ -22,15 +22,14 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.commons.collections.iterators.IteratorChain;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.EmptyResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 /**
- * A {@code PayloadGenerator} composed of several {@code PayloadGenerator}s, allowing them to be viewed/handled as a single
- * {@code PayloadGenerator}.
+ * A {@code PayloadGenerator} composed of several {@code PayloadGenerator}s, allowing them to be
+ * viewed/handled as a single {@code PayloadGenerator}.
  */
 public class CompositePayloadGenerator<E extends Payload> implements PayloadGenerator<E> {
 
@@ -69,7 +68,8 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
         return new CompositePayloadGenerator<>(payloadGenerators);
     }
 
-    private static class CompositeIterator<E extends Payload> implements ResettableAutoCloseableIterator<E> {
+    private static class CompositeIterator<E extends Payload>
+            implements ResettableAutoCloseableIterator<E> {
 
         private final List<ResettableAutoCloseableIterator<E>> allIterators;
         private Iterator<E> iteratorChain;
@@ -99,8 +99,7 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
         }
 
         @Override
-        public void remove() {
-        }
+        public void remove() {}
 
         @Override
         public void reset() {

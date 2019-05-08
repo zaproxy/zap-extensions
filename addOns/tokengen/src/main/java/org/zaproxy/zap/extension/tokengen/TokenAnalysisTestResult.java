@@ -23,68 +23,96 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class TokenAnalysisTestResult {
-	
-	public enum Type {MAX_ENTROPY, CHR_UNIFORMITY, CHR_TRANSITIONS, COUNT_1_BIT, COUNT_2_BITS, COUNT_3_BITS, COUNT_4_BITS, COUNT_8_BITS, COUNT_16_BITS};
-	public enum Result {FAIL, LOW, MEDIUM, HIGH, PASS};
 
-	private static ResourceBundle resourceBundle;
+    public enum Type {
+        MAX_ENTROPY,
+        CHR_UNIFORMITY,
+        CHR_TRANSITIONS,
+        COUNT_1_BIT,
+        COUNT_2_BITS,
+        COUNT_3_BITS,
+        COUNT_4_BITS,
+        COUNT_8_BITS,
+        COUNT_16_BITS
+    };
 
-	private static final String BASE_RSRC_KEY = "tokengen.analyse.test.";
+    public enum Result {
+        FAIL,
+        LOW,
+        MEDIUM,
+        HIGH,
+        PASS
+    };
 
-	private Type type;
-	private String name;
-	private String summary;
-	private Result result;
-	private List<String> details;
-	private List<String> failures;
-	
-	public TokenAnalysisTestResult (Type type) {
-		this.type = type;
-		this.name = resourceBundle != null ? resourceBundle.getString(BASE_RSRC_KEY + type.name().toLowerCase()) : type.name();
-	}
-	
-	public Type getType() {
-		return type;
-	}
-	public String getName() {
-		return name;
-	}
-	public String getSummary() {
-		return summary;
-	}
+    private static ResourceBundle resourceBundle;
 
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
+    private static final String BASE_RSRC_KEY = "tokengen.analyse.test.";
 
-	public Result getResult() {
-		return result;
-	}
-	public void setResult(Result result) {
-		this.result = result;
-	}
-	public List<String> getDetails() {
-		return details;
-	}
-	public void setDetails(List<String> details) {
-		this.details = details;
-	}
-	public List<String> getFailures() {
-		return failures;
-	}
-	public void setFailures(List<String> failures) {
-		this.failures = failures;
-	}
+    private Type type;
+    private String name;
+    private String summary;
+    private Result result;
+    private List<String> details;
+    private List<String> failures;
 
-	/**
-	 * Sets the {@code ResourceBundle} used to obtain the internationalised name of the result.
-	 * <p>
-	 * It's used the {@link TokenAnalysisTestResult.Type Type}'s name if no {@code ResourceBundle} is set.
-	 *
-	 * @param resourceBundle the {@code ResourceBundle} to obtain the name of the result
-	 * @see #getName()
-	 */
-	static void setResourceBundle(ResourceBundle resourceBundle) {
-		TokenAnalysisTestResult.resourceBundle = resourceBundle;
-	}
+    public TokenAnalysisTestResult(Type type) {
+        this.type = type;
+        this.name =
+                resourceBundle != null
+                        ? resourceBundle.getString(BASE_RSRC_KEY + type.name().toLowerCase())
+                        : type.name();
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public Result getResult() {
+        return result;
+    }
+
+    public void setResult(Result result) {
+        this.result = result;
+    }
+
+    public List<String> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<String> details) {
+        this.details = details;
+    }
+
+    public List<String> getFailures() {
+        return failures;
+    }
+
+    public void setFailures(List<String> failures) {
+        this.failures = failures;
+    }
+
+    /**
+     * Sets the {@code ResourceBundle} used to obtain the internationalised name of the result.
+     *
+     * <p>It's used the {@link TokenAnalysisTestResult.Type Type}'s name if no {@code
+     * ResourceBundle} is set.
+     *
+     * @param resourceBundle the {@code ResourceBundle} to obtain the name of the result
+     * @see #getName()
+     */
+    static void setResourceBundle(ResourceBundle resourceBundle) {
+        TokenAnalysisTestResult.resourceBundle = resourceBundle;
+    }
 }

@@ -51,73 +51,81 @@ public class CookieHttpOnlyScannerUnitTest extends PassiveScannerTest<CookieHttp
 
     @Test
     public void noHttpOnlyAttribute() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Set-Cookie: test=123; Path=/;\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=123; Path=/;\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
     }
-    
+
     @Test
     public void noCookie() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
-    
+
     @Test
     public void httpOnlyAttribute() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Set-Cookie: test=123; Path=/; HttpOnly\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=123; Path=/; HttpOnly\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
-    
+
     @Test
     public void secondCookieNoHttpOnlyAttribute() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Set-Cookie: hasatt=test123; Path=/; HttpOnly\r\n" +
-                "Set-Cookie: test=123; Path=/;\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: hasatt=test123; Path=/; HttpOnly\r\n"
+                        + "Set-Cookie: test=123; Path=/;\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
@@ -127,45 +135,51 @@ public class CookieHttpOnlyScannerUnitTest extends PassiveScannerTest<CookieHttp
 
     @Test
     public void cookieOnIgnoreList() throws HttpMalformedHeaderException {
-        
-        model.getOptionsParam().getConfig().setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,test,bbb");
-        
+
+        model.getOptionsParam()
+                .getConfig()
+                .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,test,bbb");
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Set-Cookie: test=123; Path=/;\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=123; Path=/;\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
-
     @Test
     public void cookieNotOnIgnoreList() throws HttpMalformedHeaderException {
-        
-        model.getOptionsParam().getConfig().setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,bbb,ccc");
-        
+
+        model.getOptionsParam()
+                .getConfig()
+                .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,bbb,ccc");
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Set-Cookie: test=123; Path=/;\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=123; Path=/;\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
     }
-
 }

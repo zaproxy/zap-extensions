@@ -33,5 +33,4 @@ public class RequestAMFTextView extends AbstractAMFTextView {
     public String getName() {
         return NAME;
     }
-
 }

@@ -25,9 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.TreeSet;
-
 import net.htmlparser.jericho.Source;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -38,47 +36,43 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/)
- * rule {@code CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledCookie}
+ * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
+ * CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledCookie}
  */
 public class UserControlledCookieScanner extends PluginPassiveScanner {
 
-	private PassiveScanThread parent = null;
+    private PassiveScanThread parent = null;
 
-	/**
-	 * Prefix for internationalized messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledcookie.";
+    /** Prefix for internationalized messages used by this rule */
+    private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledcookie.";
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
 
-	@Override
-	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		// do nothing
-	}
+    @Override
+    public void scanHttpRequestSend(HttpMessage msg, int id) {
+        // do nothing
+    }
 
-	@Override
-	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		if (msg.getResponseHeader().getHeader(HttpResponseHeader.SET_COOKIE) != null) {
-			
-		}
-		
-    	Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
-    	params.addAll(msg.getUrlParams());
+    @Override
+    public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (msg.getResponseHeader().getHeader(HttpResponseHeader.SET_COOKIE) != null) {}
+
+        Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
+        params.addAll(msg.getUrlParams());
 
         if (msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE) == null) {
-        	return;
+            return;
         }
-        
-    	for (String cookie: msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE)) {
-    		cookie = decodeCookie(cookie, msg.getResponseHeader().getCharset());
-    		if (cookie == null) {
-    			continue;
-    		}
-    		
+
+        for (String cookie : msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE)) {
+            cookie = decodeCookie(cookie, msg.getResponseHeader().getCharset());
+            if (cookie == null) {
+                continue;
+            }
+
             // Now we have a cookie.  Parse it out into an array.
             // I'm doing this to avoid false positives.  By parsing
             // the cookie at each delimiter, I'm checking to see that
@@ -88,125 +82,133 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
             // For example, if user input was 'number=20' and the cookie was
             // value=82384920 then we don't want to match.  I want precise
             // matches such as value=20.
-    		//
-    		// Common delimiters in cookies.  E.g. name=value;name2=v1|v2|v3
+            //
+            // Common delimiters in cookies.  E.g. name=value;name2=v1|v2|v3
             String[] cookieSplit = cookie.split("[;=|]");
-            for (String cookiePart: cookieSplit) {
+            for (String cookiePart : cookieSplit) {
                 if (params != null && params.size() > 0) {
                     checkUserControllableCookieHeaderValue(msg, id, params, cookiePart, cookie);
                 }
             }
-    	}
-	}
-	
-    // Cookies are commonly URL encoded, maybe other encodings.
-    // TODO: apply other decodings?  htmlDecode, etc.	
-	private String decodeCookie(String cookie, String charset) {
-		if (charset != null) {
-			try {
-				return URLDecoder.decode(cookie, charset);
-			} catch (UnsupportedEncodingException e) {
-				// try other possible charsets
-			}						
-		}
-
-		// if charset is not defined for response, or is defined incorrectly,
-		// try standard charsets
-		
-		Charset[] possibleCharsets = {
-				StandardCharsets.ISO_8859_1,
-				StandardCharsets.US_ASCII,
-				StandardCharsets.UTF_16,
-				StandardCharsets.UTF_16BE,
-				StandardCharsets.UTF_16LE,
-				StandardCharsets.UTF_8
-		};
-		
-		for (Charset possibleCharset: possibleCharsets) {			
-			try {
-				return URLDecoder.decode(cookie, possibleCharset.name());
-			} catch (UnsupportedEncodingException e) {
-			}		
-		}
-		
-		return null;
-	}
-    
-    private void checkUserControllableCookieHeaderValue(HttpMessage msg, int id, 
-    		Set<HtmlParameter> params, String cookiePart, String cookie) {
-        if (cookie.length() == 0) {
-        	return;
         }
-        	
-        for (HtmlParameter param: params) {
+    }
+
+    // Cookies are commonly URL encoded, maybe other encodings.
+    // TODO: apply other decodings?  htmlDecode, etc.
+    private String decodeCookie(String cookie, String charset) {
+        if (charset != null) {
+            try {
+                return URLDecoder.decode(cookie, charset);
+            } catch (UnsupportedEncodingException e) {
+                // try other possible charsets
+            }
+        }
+
+        // if charset is not defined for response, or is defined incorrectly,
+        // try standard charsets
+
+        Charset[] possibleCharsets = {
+            StandardCharsets.ISO_8859_1,
+            StandardCharsets.US_ASCII,
+            StandardCharsets.UTF_16,
+            StandardCharsets.UTF_16BE,
+            StandardCharsets.UTF_16LE,
+            StandardCharsets.UTF_8
+        };
+
+        for (Charset possibleCharset : possibleCharsets) {
+            try {
+                return URLDecoder.decode(cookie, possibleCharset.name());
+            } catch (UnsupportedEncodingException e) {
+            }
+        }
+
+        return null;
+    }
+
+    private void checkUserControllableCookieHeaderValue(
+            HttpMessage msg, int id, Set<HtmlParameter> params, String cookiePart, String cookie) {
+        if (cookie.length() == 0) {
+            return;
+        }
+
+        for (HtmlParameter param : params) {
             // False Positive Reduction
             // Need to ignore parameters equal to empty value (e.g. name= )
             // otherwise we'll wind up with false positives when cookie
-            // values are also set to empty.  
-            // 
+            // values are also set to empty.
+            //
             // False Positive Reduction
             // Ignore values not greater than 1 character long.  It seems to
             // be common that value=0 and value=/ type stuff raise a false
             // positive.
-            if (param.getValue() != null && param.getValue().length() > 1 &&
-            		param.getValue().equals(cookiePart)) {
-            	raiseAlert(msg, id, param, cookie);
+            if (param.getValue() != null
+                    && param.getValue().length() > 1
+                    && param.getValue().equals(cookiePart)) {
+                raiseAlert(msg, id, param, cookie);
             }
         }
-    }    
-	
-	private void raiseAlert(HttpMessage msg, int id, HtmlParameter param,
-			String cookie) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM,
-				getName());		
-		     
-		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), param.getName(), "",
-				getExtraInfoMessage(msg, param, cookie),
-				getSolutionMessage(), getReferenceMessage(),  
-				"",	// No evidence
-				20,	// CWE-20: Improper Input Validation
-				20,	// WASC-20: Improper Input Handling
-				msg);  
+    }
 
-		parent.raiseAlert(id, alert);
-	}
+    private void raiseAlert(HttpMessage msg, int id, HtmlParameter param, String cookie) {
+        Alert alert =
+                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
 
-	@Override
-	public int getPluginId() {
-		return 10029;
-	}
+        alert.setDetail(
+                getDescriptionMessage(),
+                msg.getRequestHeader().getURI().toString(),
+                param.getName(),
+                "",
+                getExtraInfoMessage(msg, param, cookie),
+                getSolutionMessage(),
+                getReferenceMessage(),
+                "", // No evidence
+                20, // CWE-20: Improper Input Validation
+                20, // WASC-20: Improper Input Handling
+                msg);
 
-	@Override
-	public void setParent(PassiveScanThread parent) {
-		this.parent = parent;
-	}
+        parent.raiseAlert(id, alert);
+    }
 
-	/*
-	 * Rule-associated messages
-	 */
+    @Override
+    public int getPluginId() {
+        return 10029;
+    }
 
-	private String getDescriptionMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
+    @Override
+    public void setParent(PassiveScanThread parent) {
+        this.parent = parent;
+    }
 
-	private String getSolutionMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
+    /*
+     * Rule-associated messages
+     */
 
-	private String getReferenceMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
+    private String getDescriptionMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
 
-	private String getExtraInfoMessage(HttpMessage msg, HtmlParameter param, String cookie) {        
+    private String getSolutionMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    private String getReferenceMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    private String getExtraInfoMessage(HttpMessage msg, HtmlParameter param, String cookie) {
         String introMessage = "";
-	    if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {                   
-	        introMessage = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.get");
+        if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
+            introMessage = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.get");
         } else if ("POST".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
             introMessage = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.post");
         }
-        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", introMessage,
-        		msg.getRequestHeader().getURI().toString(), cookie, 
-        		param.getName(), param.getValue());        
-	}
+        return Constant.messages.getString(
+                MESSAGE_PREFIX + "extrainfo",
+                introMessage,
+                msg.getRequestHeader().getURI().toString(),
+                cookie,
+                param.getName(),
+                param.getValue());
+    }
 }

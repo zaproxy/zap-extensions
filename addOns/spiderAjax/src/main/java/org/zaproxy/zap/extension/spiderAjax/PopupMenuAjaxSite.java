@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import javax.swing.ImageIcon;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -28,106 +27,83 @@ import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
-
 public class PopupMenuAjaxSite extends PopupMenuItemSiteNodeContainer {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     private ExtensionAjax extension = null;
     private static Logger logger = Logger.getLogger(PopupMenuAjaxSite.class);
 
-    
-    /**
-     * @param label
-     */
+    /** @param label */
     public PopupMenuAjaxSite(String label, ExtensionAjax extension) {
         super(label);
         this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/spiderAjax.png")));
-        this.extension=extension;
+        this.extension = extension;
     }
-    
-    
-    /**
-     * 
-     * @return
-     */
+
+    /** @return */
     private ExtensionAjax getExtensionSpider() {
-    	if (extension == null) {
-    		extension = (ExtensionAjax) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAjax.NAME);
-    	}
-    	return extension;
+        if (extension == null) {
+            extension =
+                    (ExtensionAjax)
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionAjax.NAME);
+        }
+        return extension;
     }
-    
-    
-	/**
-	 * 
-	 */
+
+    /** */
     @Override
     public boolean isSubMenu() {
-    	return true;
+        return true;
     }
-    
-    
-    /**
-     * 
-     */
+
+    /** */
     @Override
     public String getParentMenuName() {
-    	return Constant.messages.getString("attack.site.popup");
+        return Constant.messages.getString("attack.site.popup");
     }
 
-    
-    /**
-     * 
-     */
+    /** */
     @Override
     public int getParentMenuIndex() {
-    	return ATTACK_MENU_INDEX;
+        return ATTACK_MENU_INDEX;
     }
 
-    
-    /**
-     * 
-     */
-	@Override
-	public void performAction(SiteNode node) {
-	    if (node != null) {
-	    	extension.showScanDialog(node);
-	    }
-	}
-	
-	
-	/**
-	 * 
-	 */
-	@Override
-    public boolean isButtonEnabledForSiteNode (SiteNode node) {
-	    if (!extension.isSpiderRunning() && ! node.isRoot() ) {
-	        return true;
-	    }
+    /** */
+    @Override
+    public void performAction(SiteNode node) {
+        if (node != null) {
+            extension.showScanDialog(node);
+        }
+    }
+
+    /** */
+    @Override
+    public boolean isButtonEnabledForSiteNode(SiteNode node) {
+        if (!extension.isSpiderRunning() && !node.isRoot()) {
+            return true;
+        }
         return false;
     }
-	
-	
-	/**
-	 * 
-	 */
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-	    if (getExtensionSpider() == null) {
-			return false;
-		}
-		switch (invoker) {
-		case ALERTS_PANEL:
-		case ACTIVE_SCANNER_PANEL:
-		case FORCED_BROWSE_PANEL:
-		case FUZZER_PANEL:
-			return false;
-		case HISTORY_PANEL:
-		case SITES_PANEL:
-		case SEARCH_PANEL:
-		default:
-			return true;
-		}
-	}
 
+    /** */
+    @Override
+    public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
+        if (getExtensionSpider() == null) {
+            return false;
+        }
+        switch (invoker) {
+            case ALERTS_PANEL:
+            case ACTIVE_SCANNER_PANEL:
+            case FORCED_BROWSE_PANEL:
+            case FUZZER_PANEL:
+                return false;
+            case HISTORY_PANEL:
+            case SITES_PANEL:
+            case SEARCH_PANEL:
+            default:
+                return true;
+        }
+    }
 }

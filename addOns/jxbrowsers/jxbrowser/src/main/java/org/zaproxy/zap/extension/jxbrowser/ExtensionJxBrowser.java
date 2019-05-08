@@ -19,11 +19,10 @@
  */
 package org.zaproxy.zap.extension.jxbrowser;
 
+import com.teamdev.jxbrowser.chromium.ProductInfo;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
-
-import com.teamdev.jxbrowser.chromium.ProductInfo;
 
 public class ExtensionJxBrowser extends ExtensionAdaptor {
 
@@ -33,9 +32,7 @@ public class ExtensionJxBrowser extends ExtensionAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(ExtensionJxBrowser.class);
 
-    /**
-     * A minimal extension, just needed to load the messages correctly;)
-     */
+    /** A minimal extension, just needed to load the messages correctly;) */
     public ExtensionJxBrowser() {
         super(NAME);
     }

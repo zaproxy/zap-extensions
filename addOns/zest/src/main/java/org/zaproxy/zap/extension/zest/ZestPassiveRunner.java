@@ -20,9 +20,7 @@
 package org.zaproxy.zap.extension.zest;
 
 import javax.script.ScriptException;
-
 import net.htmlparser.jericho.Source;
-
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -31,44 +29,56 @@ import org.zaproxy.zap.extension.pscan.PassiveScript;
 import org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner;
 
 public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
-	
-	private ZestScriptWrapper script = null;
-	private ScriptsPassiveScanner sps = null;
-	private HttpMessage msg = null;
-	private ExtensionZest extension = null;
 
-	private Logger logger = Logger.getLogger(ZestPassiveRunner.class);
+    private ZestScriptWrapper script = null;
+    private ScriptsPassiveScanner sps = null;
+    private HttpMessage msg = null;
+    private ExtensionZest extension = null;
 
-	public ZestPassiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
-		super(extension, script);
-		this.extension = extension;
-		//this.runner = this.getExtension().getRunner(script);
-		this.script = script;
-	}
+    private Logger logger = Logger.getLogger(ZestPassiveRunner.class);
 
-	@Override
-	public void scan(ScriptsPassiveScanner scriptsPassiveScanner, HttpMessage msg, Source source) throws ScriptException{
-		logger.debug("Zest PassiveScan script: " + this.script.getName());
-		this.sps = scriptsPassiveScanner;
-		this.msg = msg;
+    public ZestPassiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
+        super(extension, script);
+        this.extension = extension;
+        // this.runner = this.getExtension().getRunner(script);
+        this.script = script;
+    }
 
-		try {
-			// Create the previous request so the script has something to run against
-			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true, extension.getParam());
-			req.setResponse(ZestZapUtils.toZestResponse(msg));
-				
-			this.run(script.getZestScript(), req, null);
+    @Override
+    public void scan(ScriptsPassiveScanner scriptsPassiveScanner, HttpMessage msg, Source source)
+            throws ScriptException {
+        logger.debug("Zest PassiveScan script: " + this.script.getName());
+        this.sps = scriptsPassiveScanner;
+        this.msg = msg;
 
-		} catch (Exception e) {
-			throw new ScriptException(e);
-		}
-	}
-	
-	@Override
-	public void alertFound(Alert alert) {
-		// Override this as we can put in more info from the script and message
-		sps.raiseAlert(alert.getRisk(), alert.getConfidence(), alert.getName(), script.getDescription(), 
-				msg.getRequestHeader().getURI().toString(), "", "", "", "", "", -1, -1, msg);
-	}
+        try {
+            // Create the previous request so the script has something to run against
+            ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true, extension.getParam());
+            req.setResponse(ZestZapUtils.toZestResponse(msg));
 
+            this.run(script.getZestScript(), req, null);
+
+        } catch (Exception e) {
+            throw new ScriptException(e);
+        }
+    }
+
+    @Override
+    public void alertFound(Alert alert) {
+        // Override this as we can put in more info from the script and message
+        sps.raiseAlert(
+                alert.getRisk(),
+                alert.getConfidence(),
+                alert.getName(),
+                script.getDescription(),
+                msg.getRequestHeader().getURI().toString(),
+                "",
+                "",
+                "",
+                "",
+                "",
+                -1,
+                -1,
+                msg);
+    }
 }

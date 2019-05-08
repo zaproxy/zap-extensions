@@ -20,63 +20,56 @@
 package org.zaproxy.zap.extension.importurls;
 
 import java.io.File;
-
 import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
-import org.zaproxy.zap.utils.ApiUtils;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.utils.ApiUtils;
 
-/**
- * The API for importing URLs from a file.
- */
+/** The API for importing URLs from a file. */
 public class ImportUrlsAPI extends ApiImplementor {
 
-	private static final Logger LOG = Logger.getLogger(ImportUrlsAPI.class);
+    private static final Logger LOG = Logger.getLogger(ImportUrlsAPI.class);
 
-	private static final String PREFIX = "importurls";
+    private static final String PREFIX = "importurls";
 
-	private static final String ACTION_IMPORTURLS = "importurls";
+    private static final String ACTION_IMPORTURLS = "importurls";
 
-	private static final String PARAM_FILE_PATH = "filePath";
+    private static final String PARAM_FILE_PATH = "filePath";
 
-	private ExtensionImportUrls extension;
+    private ExtensionImportUrls extension;
 
-	/**
-	 * Provided only for API client generator usage.
-	 */
-	public ImportUrlsAPI() {
-		this(null);
-	}
+    /** Provided only for API client generator usage. */
+    public ImportUrlsAPI() {
+        this(null);
+    }
 
-	public ImportUrlsAPI(ExtensionImportUrls extension) {
-		super();
-		this.extension = extension;
-		this.addApiAction(new ApiAction(ACTION_IMPORTURLS, new String[] { PARAM_FILE_PATH }));
-	}
+    public ImportUrlsAPI(ExtensionImportUrls extension) {
+        super();
+        this.extension = extension;
+        this.addApiAction(new ApiAction(ACTION_IMPORTURLS, new String[] {PARAM_FILE_PATH}));
+    }
 
-	@Override
-	public String getPrefix() {
-		return PREFIX;
-	}
+    @Override
+    public String getPrefix() {
+        return PREFIX;
+    }
 
-	@Override
-	public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-		LOG.debug("handleApiAction " + name + " " + params.toString());
+    @Override
+    public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
+        LOG.debug("handleApiAction " + name + " " + params.toString());
 
-		switch (name) {
-		case ACTION_IMPORTURLS:
-			extension.importUrlFile(new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH)));
-			return ApiResponseElement.OK;
-		default:
-			throw new ApiException(Type.BAD_ACTION);
-		}
-
-	}
-
+        switch (name) {
+            case ACTION_IMPORTURLS:
+                extension.importUrlFile(
+                        new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH)));
+                return ApiResponseElement.OK;
+            default:
+                throw new ApiException(Type.BAD_ACTION);
+        }
+    }
 }

@@ -21,25 +21,23 @@ package org.zaproxy.zap.extension.sse;
 
 import java.io.IOException;
 
-/**
- * Reports a Server-Sent-Event-specific error.
- */
+/** Reports a Server-Sent-Event-specific error. */
 public class EventStreamException extends IOException {
-	private static final long serialVersionUID = -4708303277965511632L;
+    private static final long serialVersionUID = -4708303277965511632L;
 
-	public EventStreamException() {
-		super();
-	}
+    public EventStreamException() {
+        super();
+    }
 
-	public EventStreamException(String msg) {
-		super(msg);
-	}
+    public EventStreamException(String msg) {
+        super(msg);
+    }
 
-	public EventStreamException(Exception e) {
-		super(e);
-	}
+    public EventStreamException(Exception e) {
+        super(e);
+    }
 
-	public EventStreamException(String msg, Exception e) {
-		super(msg, e);
-	}
+    public EventStreamException(String msg, Exception e) {
+        super(msg, e);
+    }
 }

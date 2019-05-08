@@ -20,43 +20,40 @@
 package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.Component;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.popup.PopupMenuItemContextInclude;
 
-/**
- * Allows to reuse the existing 'Include in Context' menu for WebSocket URLs.
- */
+/** Allows to reuse the existing 'Include in Context' menu for WebSocket URLs. */
 public class PopupIncludeWebSocketContextMenu extends PopupMenuItemContextInclude {
-	
-	private static final long serialVersionUID = -5195960463302710531L;
-	
-	static final String MENU_NAME = Constant.messages.getString("websocket.context.include.popup");
-	
+
+    private static final long serialVersionUID = -5195960463302710531L;
+
+    static final String MENU_NAME = Constant.messages.getString("websocket.context.include.popup");
+
     @Override
     public String getParentMenuName() {
-    	return MENU_NAME;
+        return MENU_NAME;
     }
-	
-	@Override
-	public boolean isEnableForComponent(Component invoker) {
-		String invokerName = invoker.getName();
-		if (invokerName != null && invokerName.equals(WebSocketMessagesView.PANEL_NAME)) {
-	        reCreateSubMenu();
-	        return true;
-	    }
-		return false;
-	}
+
+    @Override
+    public boolean isEnableForComponent(Component invoker) {
+        String invokerName = invoker.getName();
+        if (invokerName != null && invokerName.equals(WebSocketMessagesView.PANEL_NAME)) {
+            reCreateSubMenu();
+            return true;
+        }
+        return false;
+    }
 
     @Override
     protected ExtensionPopupMenuItem createPopupIncludeInContextMenu() {
-    	return new PopupIncludeWebSocketInContextMenu();
-	}
-	
+        return new PopupIncludeWebSocketInContextMenu();
+    }
+
     @Override
     protected ExtensionPopupMenuItem createPopupIncludeInContextMenu(Context context) {
-    	return new PopupIncludeWebSocketInContextMenu(context);
-	}
+        return new PopupIncludeWebSocketInContextMenu(context);
+    }
 }

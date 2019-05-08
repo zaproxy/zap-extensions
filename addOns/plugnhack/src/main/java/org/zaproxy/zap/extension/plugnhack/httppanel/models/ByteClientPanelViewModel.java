@@ -22,23 +22,23 @@ package org.zaproxy.zap.extension.plugnhack.httppanel.models;
 import java.nio.charset.Charset;
 
 public class ByteClientPanelViewModel extends AbstractClientBytePanelViewModel {
-	
-	@Override
-	public byte[] getData() {
-		if (this.monitoredPageMessage == null)  {
-			return new byte[0];
-		}
-        return this.monitoredPageMessage.getData().getBytes();
-	}
 
-	@Override
-	public void setData(byte[] data) {
-    	if (this.monitoredPageMessage != null) {
-    		String dataStr = new String(data, Charset.forName("UTF-8"));
-			if ( ! monitoredPageMessage.getData().equals(dataStr)) {
-    			this.monitoredPageMessage.setData(dataStr);
-    			this.monitoredPageMessage.setChanged(true);
-			}
-    	}
-	}
+    @Override
+    public byte[] getData() {
+        if (this.monitoredPageMessage == null) {
+            return new byte[0];
+        }
+        return this.monitoredPageMessage.getData().getBytes();
+    }
+
+    @Override
+    public void setData(byte[] data) {
+        if (this.monitoredPageMessage != null) {
+            String dataStr = new String(data, Charset.forName("UTF-8"));
+            if (!monitoredPageMessage.getData().equals(dataStr)) {
+                this.monitoredPageMessage.setData(dataStr);
+                this.monitoredPageMessage.setChanged(true);
+            }
+        }
+    }
 }

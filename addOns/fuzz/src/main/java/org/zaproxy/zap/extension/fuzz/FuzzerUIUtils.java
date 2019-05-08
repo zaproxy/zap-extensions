@@ -23,10 +23,8 @@ import javax.swing.ImageIcon;
 
 public final class FuzzerUIUtils {
 
-    public static final ImageIcon FUZZER_ICON = new ImageIcon(
-            FuzzersStatusPanel.class.getResource("resources/icons/fuzzer.png"));
+    public static final ImageIcon FUZZER_ICON =
+            new ImageIcon(FuzzersStatusPanel.class.getResource("resources/icons/fuzzer.png"));
 
-    private FuzzerUIUtils() {
-    }
-
+    private FuzzerUIUtils() {}
 }

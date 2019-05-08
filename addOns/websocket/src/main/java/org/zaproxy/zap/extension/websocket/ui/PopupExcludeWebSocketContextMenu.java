@@ -20,38 +20,35 @@
 package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.Component;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.popup.PopupMenuItemContextExclude;
 
-/**
- * Allows to reuse the existing 'Exclude in Context' menu for WebSocket URLs.
- */
+/** Allows to reuse the existing 'Exclude in Context' menu for WebSocket URLs. */
 public class PopupExcludeWebSocketContextMenu extends PopupMenuItemContextExclude {
-	
-	private static final long serialVersionUID = -5195960463302710531L;
-	
-	static final String MENU_NAME = Constant.messages.getString("websocket.context.exclude.popup");
-	
+
+    private static final long serialVersionUID = -5195960463302710531L;
+
+    static final String MENU_NAME = Constant.messages.getString("websocket.context.exclude.popup");
+
     @Override
     public String getParentMenuName() {
-    	return MENU_NAME;
+        return MENU_NAME;
     }
-	
-	@Override
-	public boolean isEnableForComponent(Component invoker) {
-		String invokerName = invoker.getName();
-		if (invokerName != null && invokerName.equals(WebSocketMessagesView.PANEL_NAME)) {
-	        reCreateSubMenu();
-	        return true;
-	    }
-		return false;
-	}
-	
+
+    @Override
+    public boolean isEnableForComponent(Component invoker) {
+        String invokerName = invoker.getName();
+        if (invokerName != null && invokerName.equals(WebSocketMessagesView.PANEL_NAME)) {
+            reCreateSubMenu();
+            return true;
+        }
+        return false;
+    }
+
     @Override
     protected ExtensionPopupMenuItem createPopupExcludeFromContextMenu(Context context) {
-    	return new PopupExcludeWebSocketFromContextMenu(context);
-	}
+        return new PopupExcludeWebSocketFromContextMenu(context);
+    }
 }

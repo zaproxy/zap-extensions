@@ -19,26 +19,24 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.parosproxy.paros.network.HttpHeader;
-import org.parosproxy.paros.network.HttpHeaderField;
-import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
-
 import io.swagger.models.Operation;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpHeaderField;
+import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 
 public class HeadersGenerator {
 
     private static final String ACCEPT = "Accept";
     private static final String HEADER = "header";
-    
+
     private DataGenerator dataGenerator;
-    
-    public HeadersGenerator (DataGenerator dataGenerator) {
+
+    public HeadersGenerator(DataGenerator dataGenerator) {
         this.dataGenerator = dataGenerator;
     }
 
@@ -58,7 +56,9 @@ public class HeadersGenerator {
                 }
                 if (HEADER.equals(parameter.getIn())) {
                     String name = parameter.getName();
-                    String value = dataGenerator.generate(name, (HeaderParameter) parameter, new ArrayList<String>());
+                    String value =
+                            dataGenerator.generate(
+                                    name, (HeaderParameter) parameter, new ArrayList<String>());
                     HttpHeaderField header = new HttpHeaderField(name, value);
                     headers.add(header);
                 }
@@ -91,5 +91,4 @@ public class HeadersGenerator {
             headers.add(new HttpHeaderField(ACCEPT, sb.toString()));
         }
     }
-
 }

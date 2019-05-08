@@ -22,12 +22,10 @@ package org.zaproxy.zap.extension.websocket.ui.httppanel.component;
 import java.awt.BorderLayout;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-
 import org.apache.commons.configuration.FileConfiguration;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -46,229 +44,234 @@ import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.view.messagelocation.MessageLocationHighlight;
 import org.zaproxy.zap.view.messagelocation.MessageLocationHighlighter;
 
-public class WebSocketComponent implements HttpPanelComponentInterface, SearchableHttpPanelComponent, MessageLocationHighlighter {
-	
-	public static final String NAME = "WebSocketComponent";
+public class WebSocketComponent
+        implements HttpPanelComponentInterface,
+                SearchableHttpPanelComponent,
+                MessageLocationHighlighter {
 
-	private static final String BUTTON_TOOL_TIP = Constant.messages.getString("websocket.panel.component.all.tooltip");
-	
-	protected JToggleButton buttonShowView;
-	
-	protected JPanel panelOptions;
-	protected JPanel panelMoreOptions;
-	protected JPanel panelMain;
+    public static final String NAME = "WebSocketComponent";
 
-	private JLabel informationLabel;
- 	
-	protected WebSocketMessageDTO message;
-	
-	protected HttpPanelComponentViewsManager views;
+    private static final String BUTTON_TOOL_TIP =
+            Constant.messages.getString("websocket.panel.component.all.tooltip");
 
-	public WebSocketComponent() {
-		this.message = null;
-		
-		views = new HttpPanelComponentViewsManager("websocket");
-		
-		initUi();
-	}
-	
-	protected void initUi() {
-		// Common
-		buttonShowView = new JToggleButton(WebSocketPanel.connectIcon);
-		buttonShowView.setToolTipText(BUTTON_TOOL_TIP);
+    protected JToggleButton buttonShowView;
 
-		panelOptions = new JPanel();
- 		panelOptions.add(views.getSelectableViewsComponent());
-		
-		informationLabel = new JLabel();
-		panelMoreOptions = new JPanel();
-		panelMoreOptions.add(informationLabel);
-		
-		initViews();
+    protected JPanel panelOptions;
+    protected JPanel panelMoreOptions;
+    protected JPanel panelMain;
 
-		// All
-		panelMain = new JPanel(new BorderLayout());
-		panelMain.add(views.getViewsPanel());
+    private JLabel informationLabel;
 
-		setSelected(false);
-	}
-	
-	@Override
-	public void setParentConfigurationKey(String configurationKey) {
-		views.setConfigurationKey(configurationKey);
-	}
-	
-	@Override
-	public JToggleButton getButton() {
-		return buttonShowView;
-	}
+    protected WebSocketMessageDTO message;
 
-	@Override
-	public JPanel getOptionsPanel() {
-		return panelOptions;
-	}
+    protected HttpPanelComponentViewsManager views;
 
-	@Override
-	public JPanel getMoreOptionsPanel() {
-		return panelMoreOptions;
-	}
+    public WebSocketComponent() {
+        this.message = null;
 
-	@Override
-	public JPanel getMainPanel() {
-		return panelMain;
-	}
-	
-	@Override
-	public void setSelected(boolean selected) {
-		buttonShowView.setSelected(selected);
+        views = new HttpPanelComponentViewsManager("websocket");
 
-		views.setSelected(selected);
-	}
+        initUi();
+    }
+
+    protected void initUi() {
+        // Common
+        buttonShowView = new JToggleButton(WebSocketPanel.connectIcon);
+        buttonShowView.setToolTipText(BUTTON_TOOL_TIP);
+
+        panelOptions = new JPanel();
+        panelOptions.add(views.getSelectableViewsComponent());
+
+        informationLabel = new JLabel();
+        panelMoreOptions = new JPanel();
+        panelMoreOptions.add(informationLabel);
+
+        initViews();
+
+        // All
+        panelMain = new JPanel(new BorderLayout());
+        panelMain.add(views.getViewsPanel());
+
+        setSelected(false);
+    }
+
+    @Override
+    public void setParentConfigurationKey(String configurationKey) {
+        views.setConfigurationKey(configurationKey);
+    }
+
+    @Override
+    public JToggleButton getButton() {
+        return buttonShowView;
+    }
+
+    @Override
+    public JPanel getOptionsPanel() {
+        return panelOptions;
+    }
+
+    @Override
+    public JPanel getMoreOptionsPanel() {
+        return panelMoreOptions;
+    }
+
+    @Override
+    public JPanel getMainPanel() {
+        return panelMain;
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        buttonShowView.setSelected(selected);
+
+        views.setSelected(selected);
+    }
 
     @Override
     public boolean isEnabled(Message aMessage) {
         return (aMessage instanceof WebSocketMessageDTO);
     }
-	
-	protected void initViews() {
-		views.addView(new WebSocketPanelTextView(new StringWebSocketPanelViewModel()));
-	}
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    protected void initViews() {
+        views.addView(new WebSocketPanelTextView(new StringWebSocketPanelViewModel()));
+    }
 
-	@Override
-	public int getPosition() {
-	    return 2;
-	}
-	
-	@Override
-	public void setMessage(Message aMessage) {
-		this.message = (WebSocketMessageDTO) aMessage;
-		
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append(message.toString()).append(" - ");
-		if (message.dateTime != null) {
-			sb.append(message.dateTime).append(" - ");
-		}
-		if (message.readableOpcode != null) {
-			sb.append(message.readableOpcode);
-		}
-		
-		informationLabel.setText(sb.toString());
-		
-		views.setMessage(message);
-		if (message.tempUserObj instanceof Boolean) {
-			Boolean isConnected = (Boolean) message.tempUserObj;
-			
-			ImageIcon icon;
-			if (isConnected) {
-				if (aMessage.isInScope()) {
-					icon = WebSocketPanel.connectTargetIcon;
-				} else {
-					icon = WebSocketPanel.connectIcon;
-				}
-			} else {
-				if (aMessage.isInScope()) {
-					icon = WebSocketPanel.disconnectTargetIcon;
-				} else {
-					icon = WebSocketPanel.disconnectIcon;
-				}
-			}
-			buttonShowView.setIcon(icon);
-		}
-	}
-	
-	@Override
-	public void save() {
-		if (message == null) {
-			return;
-		}
-		
-		views.save();
-	}
-	
-	@Override
-	public void addView(HttpPanelView view, Object options, FileConfiguration fileConfiguration) {
-		views.addView(view, fileConfiguration);
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public void removeView(String viewName, Object options) {
-		views.removeView(viewName);
-	}
-	
-	@Override
-	public void clearView() {
-		views.clearView();
-		
-		informationLabel.setText("");
-	}
+    @Override
+    public int getPosition() {
+        return 2;
+    }
 
-	@Override
-	public void clearView(boolean enableViewSelect) {
-	    clearView();
-		
-		setEnableViewSelect(enableViewSelect);
-	}
-	
-	@Override
-	public void setEnableViewSelect(boolean enableViewSelect) {
-		views.setEnableViewSelect(enableViewSelect);
-	}
+    @Override
+    public void setMessage(Message aMessage) {
+        this.message = (WebSocketMessageDTO) aMessage;
 
-	@Override
-	public void addDefaultViewSelector(HttpPanelDefaultViewSelector defaultViewSelector, Object options) {
-		views.addDefaultViewSelector(defaultViewSelector);
-	}
+        StringBuilder sb = new StringBuilder();
 
-	@Override
-	public void removeDefaultViewSelector(String defaultViewSelectorName, Object options) {
-		views.removeDefaultViewSelector(defaultViewSelectorName);
-	}
+        sb.append(message.toString()).append(" - ");
+        if (message.dateTime != null) {
+            sb.append(message.dateTime).append(" - ");
+        }
+        if (message.readableOpcode != null) {
+            sb.append(message.readableOpcode);
+        }
 
-	@Override
-	public void loadConfig(FileConfiguration fileConfiguration) {
-		views.loadConfig(fileConfiguration);
-	}
+        informationLabel.setText(sb.toString());
 
-	@Override
-	public void saveConfig(FileConfiguration fileConfiguration) {
-		views.saveConfig(fileConfiguration);
-	}
+        views.setMessage(message);
+        if (message.tempUserObj instanceof Boolean) {
+            Boolean isConnected = (Boolean) message.tempUserObj;
 
-	@Override
-	public void setEditable(boolean editable) {
-		views.setEditable(editable);
-	}
+            ImageIcon icon;
+            if (isConnected) {
+                if (aMessage.isInScope()) {
+                    icon = WebSocketPanel.connectTargetIcon;
+                } else {
+                    icon = WebSocketPanel.connectIcon;
+                }
+            } else {
+                if (aMessage.isInScope()) {
+                    icon = WebSocketPanel.disconnectTargetIcon;
+                } else {
+                    icon = WebSocketPanel.disconnectIcon;
+                }
+            }
+            buttonShowView.setIcon(icon);
+        }
+    }
 
-	@Override
-	public void highlightHeader(SearchMatch sm) {
-		views.highlight(sm);
-	}
+    @Override
+    public void save() {
+        if (message == null) {
+            return;
+        }
 
-	@Override
-	public void highlightBody(SearchMatch sm) {
-		views.highlight(sm);
-	}
+        views.save();
+    }
 
-	@Override
-	public void searchHeader(Pattern p, List<SearchMatch> matches) {
-		views.search(p, matches);
-	}
+    @Override
+    public void addView(HttpPanelView view, Object options, FileConfiguration fileConfiguration) {
+        views.addView(view, fileConfiguration);
+    }
 
-	@Override
-	public void searchBody(Pattern p, List<SearchMatch> matches) {
-		views.search(p, matches);
-	}
+    @Override
+    public void removeView(String viewName, Object options) {
+        views.removeView(viewName);
+    }
 
-	@Override
-	public HttpPanelView setSelectedView(String viewName) {
-		return views.setSelectedView(viewName);
-	}
+    @Override
+    public void clearView() {
+        views.clearView();
+
+        informationLabel.setText("");
+    }
+
+    @Override
+    public void clearView(boolean enableViewSelect) {
+        clearView();
+
+        setEnableViewSelect(enableViewSelect);
+    }
+
+    @Override
+    public void setEnableViewSelect(boolean enableViewSelect) {
+        views.setEnableViewSelect(enableViewSelect);
+    }
+
+    @Override
+    public void addDefaultViewSelector(
+            HttpPanelDefaultViewSelector defaultViewSelector, Object options) {
+        views.addDefaultViewSelector(defaultViewSelector);
+    }
+
+    @Override
+    public void removeDefaultViewSelector(String defaultViewSelectorName, Object options) {
+        views.removeDefaultViewSelector(defaultViewSelectorName);
+    }
+
+    @Override
+    public void loadConfig(FileConfiguration fileConfiguration) {
+        views.loadConfig(fileConfiguration);
+    }
+
+    @Override
+    public void saveConfig(FileConfiguration fileConfiguration) {
+        views.saveConfig(fileConfiguration);
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        views.setEditable(editable);
+    }
+
+    @Override
+    public void highlightHeader(SearchMatch sm) {
+        views.highlight(sm);
+    }
+
+    @Override
+    public void highlightBody(SearchMatch sm) {
+        views.highlight(sm);
+    }
+
+    @Override
+    public void searchHeader(Pattern p, List<SearchMatch> matches) {
+        views.search(p, matches);
+    }
+
+    @Override
+    public void searchBody(Pattern p, List<SearchMatch> matches) {
+        views.search(p, matches);
+    }
+
+    @Override
+    public HttpPanelView setSelectedView(String viewName) {
+        return views.setSelectedView(viewName);
+    }
 
     @Override
     public boolean supports(MessageLocation location) {
@@ -297,7 +300,8 @@ public class WebSocketComponent implements HttpPanelComponentInterface, Searchab
     }
 
     @Override
-    public MessageLocationHighlight highlight(MessageLocation location, MessageLocationHighlight highlight) {
+    public MessageLocationHighlight highlight(
+            MessageLocation location, MessageLocationHighlight highlight) {
         if (!(location instanceof WebSocketMessageLocation)) {
             return null;
         }
@@ -306,7 +310,8 @@ public class WebSocketComponent implements HttpPanelComponentInterface, Searchab
     }
 
     @Override
-    public void removeHighlight(MessageLocation location, MessageLocationHighlight highlightReference) {
+    public void removeHighlight(
+            MessageLocation location, MessageLocationHighlight highlightReference) {
         if (!(location instanceof WebSocketMessageLocation)) {
             return;
         }

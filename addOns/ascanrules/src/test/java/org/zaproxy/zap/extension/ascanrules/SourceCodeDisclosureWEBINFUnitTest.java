@@ -26,8 +26,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
 
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import java.io.ByteArrayInputStream;
-
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.URIException;
@@ -38,13 +39,9 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-import fi.iki.elonen.NanoHTTPD.IHTTPSession;
-import fi.iki.elonen.NanoHTTPD.Response;
-
-/**
- * Unit test for {@link SourceCodeDisclosureWEBINF}.
- */
-public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<SourceCodeDisclosureWEBINF> {
+/** Unit test for {@link SourceCodeDisclosureWEBINF}. */
+public class SourceCodeDisclosureWEBINFUnitTest
+        extends ActiveScannerTest<SourceCodeDisclosureWEBINF> {
 
     private static final String JAVA_LIKE_FILE_NAME_PATH = "/WEB-INF/classes/about/html.class";
 
@@ -71,11 +68,14 @@ public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<Source
         // Then
         assertThat(httpMessagesSent, hasSize(2));
         assertThat(requestPath(httpMessagesSent.get(0)), is(equalTo("/WEB-INF/web.xml")));
-        assertThat(requestPath(httpMessagesSent.get(1)), is(equalTo("/WEB-INF/applicationContext.xml")));
+        assertThat(
+                requestPath(httpMessagesSent.get(1)),
+                is(equalTo("/WEB-INF/applicationContext.xml")));
     }
 
     @Test
-    public void shouldNotContinueScanningIfReturnedContentHasNoJavaLikeFileNames() throws Exception {
+    public void shouldNotContinueScanningIfReturnedContentHasNoJavaLikeFileNames()
+            throws Exception {
         // Given
         nano.addHandler(new NotFoundResponse(""));
         rule.init(getHttpMessage(""), parent);
@@ -86,7 +86,8 @@ public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<Source
     }
 
     @Test
-    public void shouldContinueScanningIfReturnedContentHasJavaLikeFileNamesEvenIfNotWebInfData() throws Exception {
+    public void shouldContinueScanningIfReturnedContentHasJavaLikeFileNamesEvenIfNotWebInfData()
+            throws Exception {
         // Given
         nano.addHandler(new NonWebInfWithJavaLikeFileNameResponse());
         rule.init(getHttpMessage(""), parent);
@@ -173,13 +174,15 @@ public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<Source
 
         static {
             try {
-                JAVA_CLASS = Hex.decodeHex(
-                        ("cafebabe00000034000d0a0003000a07000b07000c0100063c696e69743e0100"
-                                + "03282956010004436f646501000f4c696e654e756d6265725461626c6501000a"
-                                + "536f7572636546696c65010006412e6a6176610c00040005010001410100106a"
-                                + "6176612f6c616e672f4f626a6563740020000200030000000000010000000400"
-                                + "05000100060000001d00010001000000052ab70001b100000001000700000006"
-                                + "00010000000100010008000000020009").toCharArray());
+                JAVA_CLASS =
+                        Hex.decodeHex(
+                                ("cafebabe00000034000d0a0003000a07000b07000c0100063c696e69743e0100"
+                                                + "03282956010004436f646501000f4c696e654e756d6265725461626c6501000a"
+                                                + "536f7572636546696c65010006412e6a6176610c00040005010001410100106a"
+                                                + "6176612f6c616e672f4f626a6563740020000200030000000000010000000400"
+                                                + "05000100060000001d00010001000000052ab70001b100000001000700000006"
+                                                + "00010000000100010008000000020009")
+                                        .toCharArray());
             } catch (DecoderException e) {
                 throw new RuntimeException(e);
             }
@@ -191,7 +194,11 @@ public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<Source
 
         @Override
         public Response serve(IHTTPSession session) {
-            return newFixedLengthResponse(Response.Status.OK, "application/class", new ByteArrayInputStream(JAVA_CLASS), JAVA_CLASS.length);
+            return newFixedLengthResponse(
+                    Response.Status.OK,
+                    "application/class",
+                    new ByteArrayInputStream(JAVA_CLASS),
+                    JAVA_CLASS.length);
         }
     }
 
@@ -224,5 +231,4 @@ public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<Source
                     "<html><body><h1>Some Title</h1>\nSome content.</body></html>");
         }
     }
-
 }

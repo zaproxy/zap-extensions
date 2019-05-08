@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.fuzz;
 
 import org.zaproxy.zap.extension.httppanel.Message;
 
-public interface FuzzerMessageProcessorUI<T1 extends Message, T2 extends FuzzerMessageProcessor<T1>> {
+public interface FuzzerMessageProcessorUI<
+        T1 extends Message, T2 extends FuzzerMessageProcessor<T1>> {
 
     boolean isMutable();
 
@@ -32,5 +33,4 @@ public interface FuzzerMessageProcessorUI<T1 extends Message, T2 extends FuzzerM
     T2 getFuzzerMessageProcessor();
 
     FuzzerMessageProcessorUI<T1, T2> copy();
-
 }

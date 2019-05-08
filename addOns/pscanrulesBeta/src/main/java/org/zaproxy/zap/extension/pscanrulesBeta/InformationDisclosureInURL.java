@@ -27,167 +27,179 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.*;
-
 import net.htmlparser.jericho.Source;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureInURL extends PluginPassiveScanner {
 
-	private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosureinurl.";
-	private static final int PLUGIN_ID = 10024;
-	
-	private PassiveScanThread parent = null;
-	private static final String URLSensitiveInformationFile = "xml/URL-information-disclosure-messages.txt";
-	private static final Logger logger = Logger.getLogger(InformationDisclosureInURL.class);
-	private List<String> messages = null;
+    private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosureinurl.";
+    private static final int PLUGIN_ID = 10024;
 
-	
-	@Override
-	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
-		for (HtmlParameter urlParam : urlParams) {
-			if (doesParamNameContainsSensitiveInformation(urlParam.getName())) {
-				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(), 
-						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.sensitiveinfo"));
-			}
-			if (isCreditCard(urlParam.getValue())) {
-				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(),
-						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"));
-			}
-			if (isEmailAddress(urlParam.getValue())) {
-				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(),
-						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.email"));
-			}
-			if (isUsSSN(urlParam.getValue())) {
-				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(),
-						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn"));
-			}
-		}
-	}
+    private PassiveScanThread parent = null;
+    private static final String URLSensitiveInformationFile =
+            "xml/URL-information-disclosure-messages.txt";
+    private static final Logger logger = Logger.getLogger(InformationDisclosureInURL.class);
+    private List<String> messages = null;
 
-	@Override
-	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		
-	}
-	
-	private void raiseAlert(HttpMessage msg, int id, String param, String evidence, String other) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, 
-		    	getName());
-		    	alert.setDetail(
-		    		getDescription(), 
-		    	    msg.getRequestHeader().getURI().toString(),
-		    	    param,
-		    	    "",
-		    	    other,
-		    	    getSolution(), 
-		            "", 
-					evidence,	// Evidence
-					200,	// CWE Id 200 - Information Exposure
-		            13,	// WASC Id 13 - Info leakage
-		            msg);
-	
-    	parent.raiseAlert(id, alert);
-	}
-	
-	private List<String> loadFile(String file) {
-		List<String> strings = new ArrayList<String>();
-		BufferedReader reader = null;
-		File f = new File(Constant.getZapHome() + File.separator + file);
-		if (! f.exists()) {
-			logger.error("No such file: " + f.getAbsolutePath());
-			return strings;
-		}
-		try {
-			String line;
-			reader = new BufferedReader(new FileReader(f));
-			while ((line = reader.readLine()) != null) {
-				if (!line.startsWith("#")) {
-					strings.add(line.trim().toLowerCase());
-				}
-			}
-		} catch (IOException e) {
-			logger.debug("Error on opening/reading debug error file. Error: " + e.getMessage(), e);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();			
-				}
-				catch (IOException e) {
-					logger.debug("Error on closing the file reader. Error: " + e.getMessage(), e);
-				}
-			}
-		}
-		return strings;
-	}
-	
-	private boolean doesParamNameContainsSensitiveInformation (String paramName) {
-		if (this.messages == null) {
-			this.messages = loadFile(URLSensitiveInformationFile);
-		}
-		String ciParamName = paramName.toLowerCase();
-		for (String msg : this.messages) {
-			if (ciParamName.contains(msg)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    public void scanHttpRequestSend(HttpMessage msg, int id) {
+        TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
+        for (HtmlParameter urlParam : urlParams) {
+            if (doesParamNameContainsSensitiveInformation(urlParam.getName())) {
+                this.raiseAlert(
+                        msg,
+                        id,
+                        urlParam.getName(),
+                        urlParam.getValue(),
+                        Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.sensitiveinfo"));
+            }
+            if (isCreditCard(urlParam.getValue())) {
+                this.raiseAlert(
+                        msg,
+                        id,
+                        urlParam.getName(),
+                        urlParam.getValue(),
+                        Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"));
+            }
+            if (isEmailAddress(urlParam.getValue())) {
+                this.raiseAlert(
+                        msg,
+                        id,
+                        urlParam.getName(),
+                        urlParam.getValue(),
+                        Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.email"));
+            }
+            if (isUsSSN(urlParam.getValue())) {
+                this.raiseAlert(
+                        msg,
+                        id,
+                        urlParam.getName(),
+                        urlParam.getValue(),
+                        Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn"));
+            }
+        }
+    }
 
-	@Override
-	public void setParent(PassiveScanThread parent) {
-		this.parent = parent;
-	}
+    @Override
+    public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {}
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
-	
-	private String getDescription() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
-	
-	private String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
-	
-	@Override
-	public int getPluginId() {
-		return PLUGIN_ID;
-	}
-	
-	private boolean isEmailAddress(String emailAddress) {
-		Pattern emailAddressPattern = Pattern.compile("\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\b");
-		Matcher matcher = emailAddressPattern.matcher(emailAddress);
-		if (matcher.find()) {
-			return true;
-		}
-		return false;
-	}
-	
-	private boolean isCreditCard(String creditCard) {
-		Pattern creditCardPattern = Pattern.compile("\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})\\b");
-		Matcher matcher = creditCardPattern.matcher(creditCard);
-		if (matcher.find()) {
-			return true;
-		}
-		return false;
-	}
-	
-	private boolean isUsSSN(String usSSN) {
-		Pattern usSSNPattern = Pattern.compile("\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b");
-		Matcher matcher = usSSNPattern.matcher(usSSN);
-		if (matcher.find()){
-			return true;
-		}
-		return false;
-	}
+    private void raiseAlert(HttpMessage msg, int id, String param, String evidence, String other) {
+        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getName());
+        alert.setDetail(
+                getDescription(),
+                msg.getRequestHeader().getURI().toString(),
+                param,
+                "",
+                other,
+                getSolution(),
+                "",
+                evidence, // Evidence
+                200, // CWE Id 200 - Information Exposure
+                13, // WASC Id 13 - Info leakage
+                msg);
 
+        parent.raiseAlert(id, alert);
+    }
+
+    private List<String> loadFile(String file) {
+        List<String> strings = new ArrayList<String>();
+        BufferedReader reader = null;
+        File f = new File(Constant.getZapHome() + File.separator + file);
+        if (!f.exists()) {
+            logger.error("No such file: " + f.getAbsolutePath());
+            return strings;
+        }
+        try {
+            String line;
+            reader = new BufferedReader(new FileReader(f));
+            while ((line = reader.readLine()) != null) {
+                if (!line.startsWith("#")) {
+                    strings.add(line.trim().toLowerCase());
+                }
+            }
+        } catch (IOException e) {
+            logger.debug("Error on opening/reading debug error file. Error: " + e.getMessage(), e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    logger.debug("Error on closing the file reader. Error: " + e.getMessage(), e);
+                }
+            }
+        }
+        return strings;
+    }
+
+    private boolean doesParamNameContainsSensitiveInformation(String paramName) {
+        if (this.messages == null) {
+            this.messages = loadFile(URLSensitiveInformationFile);
+        }
+        String ciParamName = paramName.toLowerCase();
+        for (String msg : this.messages) {
+            if (ciParamName.contains(msg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void setParent(PassiveScanThread parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
+
+    private String getDescription() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
+
+    private String getSolution() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    @Override
+    public int getPluginId() {
+        return PLUGIN_ID;
+    }
+
+    private boolean isEmailAddress(String emailAddress) {
+        Pattern emailAddressPattern =
+                Pattern.compile("\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\b");
+        Matcher matcher = emailAddressPattern.matcher(emailAddress);
+        if (matcher.find()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isCreditCard(String creditCard) {
+        Pattern creditCardPattern =
+                Pattern.compile(
+                        "\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})\\b");
+        Matcher matcher = creditCardPattern.matcher(creditCard);
+        if (matcher.find()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isUsSSN(String usSSN) {
+        Pattern usSSNPattern = Pattern.compile("\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b");
+        Matcher matcher = usSSNPattern.matcher(usSSN);
+        if (matcher.find()) {
+            return true;
+        }
+        return false;
+    }
 }

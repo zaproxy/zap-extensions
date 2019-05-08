@@ -20,9 +20,7 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.nio.charset.Charset;
-
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.SHA512HashProcessor;
@@ -30,9 +28,11 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractStringHashP
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.SHA512HashProcessorUIHandler.SHA512HashProcessorUI;
 
 public class SHA512HashProcessorUIHandler
-        implements PayloadProcessorUIHandler<DefaultPayload, SHA512HashProcessor, SHA512HashProcessorUI> {
+        implements PayloadProcessorUIHandler<
+                DefaultPayload, SHA512HashProcessor, SHA512HashProcessorUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.sha512Hash.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.payload.processor.sha512Hash.name");
 
     @Override
     public String getName() {
@@ -54,7 +54,8 @@ public class SHA512HashProcessorUIHandler
         return new SHA512HashProcessorUIPanel();
     }
 
-    public static class SHA512HashProcessorUI extends AbstractStringHashProcessorUI<SHA512HashProcessor> {
+    public static class SHA512HashProcessorUI
+            extends AbstractStringHashProcessorUI<SHA512HashProcessor> {
 
         public SHA512HashProcessorUI(Charset charset, boolean upperCase) {
             super(charset, upperCase);
@@ -77,7 +78,8 @@ public class SHA512HashProcessorUIHandler
 
         @Override
         public String getDescription() {
-            return Constant.messages.getString("fuzz.payload.processor.sha512Hash.description", getCharset().name());
+            return Constant.messages.getString(
+                    "fuzz.payload.processor.sha512Hash.description", getCharset().name());
         }
 
         @Override
@@ -89,7 +91,6 @@ public class SHA512HashProcessorUIHandler
         public SHA512HashProcessorUI copy() {
             return this;
         }
-
     }
 
     public static class SHA512HashProcessorUIPanel

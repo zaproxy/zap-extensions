@@ -24,38 +24,26 @@ package com.sittinglittleduck.DirBuster;
 
 import java.util.Vector;
 
-/**
- *
- * @author james
- */
-public class DirToCheck
-{
+/** @author james */
+public class DirToCheck {
     String name = "";
-    private Vector exts = new Vector(10,10);
-    
-    /**
-     * Creates a new instance of DirToCheck
-     */
-    public DirToCheck(String name, Vector exts)
-    {
+    private Vector exts = new Vector(10, 10);
+
+    /** Creates a new instance of DirToCheck */
+    public DirToCheck(String name, Vector exts) {
         this.name = name;
         this.exts = exts;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public Vector getExts()
-    {
+    public Vector getExts() {
         return exts;
-    }  
+    }
 
-    public void setExts(Vector exts)
-    {
+    public void setExts(Vector exts) {
         this.exts = exts;
     }
-    
-
 }

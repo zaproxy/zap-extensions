@@ -22,27 +22,27 @@ package org.zaproxy.zap.extension.zest;
 import org.mozilla.zest.core.v1.ZestElement;
 
 public class ZestElementWrapper {
-	private ZestElement element;
-	private int shadowLevel = 0;
+    private ZestElement element;
+    private int shadowLevel = 0;
 
-	public ZestElementWrapper(ZestElement element) {
-		this(element, 0);
-	}
-	
-	public ZestElementWrapper(ZestElement element, int shadowLevel) {
-		super();
-		this.element = element;
-		this.shadowLevel = shadowLevel;
-	}
+    public ZestElementWrapper(ZestElement element) {
+        this(element, 0);
+    }
 
-	public ZestElement getElement() {
-		return element;
-	}
+    public ZestElementWrapper(ZestElement element, int shadowLevel) {
+        super();
+        this.element = element;
+        this.shadowLevel = shadowLevel;
+    }
 
-//	public boolean isShadow() {
-//		return shadowLevel>0;
-//	}
-	public int getShadowLevel(){
-		return this.shadowLevel;
-	}
+    public ZestElement getElement() {
+        return element;
+    }
+
+    //	public boolean isShadow() {
+    //		return shadowLevel>0;
+    //	}
+    public int getShadowLevel() {
+        return this.shadowLevel;
+    }
 }

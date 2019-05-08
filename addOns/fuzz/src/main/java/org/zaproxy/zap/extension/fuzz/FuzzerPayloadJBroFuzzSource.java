@@ -63,11 +63,13 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
                 throw new IllegalArgumentException("Parameter database must not be null.");
             }
             if (prototypeId == null || prototypeId.isEmpty()) {
-                throw new IllegalArgumentException("Parameter prototypeId must not be null nor empty.");
+                throw new IllegalArgumentException(
+                        "Parameter prototypeId must not be null nor empty.");
             }
 
             if (!database.containsPrototype(prototypeId)) {
-                throw new IllegalArgumentException("Provided prototype ID was not found in database: " + prototypeId);
+                throw new IllegalArgumentException(
+                        "Provided prototype ID was not found in database: " + prototypeId);
             }
 
             this.database = database;
@@ -93,7 +95,8 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
         @Override
         public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
             try {
-                return new JBroFuzzerIterator(database.createFuzzer(prototypeId, 1), numberOfPayloads);
+                return new JBroFuzzerIterator(
+                        database.createFuzzer(prototypeId, 1), numberOfPayloads);
             } catch (NoSuchFuzzerException ignore) {
                 // The existence was already validated.
                 return null;
@@ -105,7 +108,8 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
             return this;
         }
 
-        private static class JBroFuzzerIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
+        private static class JBroFuzzerIterator
+                implements ResettableAutoCloseableIterator<DefaultPayload> {
 
             private final Fuzzer fuzzer;
             private final long limit;
@@ -138,13 +142,10 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
             }
 
             @Override
-            public void remove() {
-            }
+            public void remove() {}
 
             @Override
-            public void close() {
-            }
-
+            public void close() {}
         }
     }
 }

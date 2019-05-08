@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.openapi;
 
 import java.awt.EventQueue;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
@@ -40,28 +39,36 @@ public class HistoryPersister implements RequesterListener {
         final HistoryReference historyRef;
 
         try {
-            historyRef = new HistoryReference(Model.getSingleton().getSession(), initiator == HttpSender.SPIDER_INITIATOR
-                    ? HistoryReference.TYPE_SPIDER
-                    : HistoryReference.TYPE_ZAP_USER, message);
+            historyRef =
+                    new HistoryReference(
+                            Model.getSingleton().getSession(),
+                            initiator == HttpSender.SPIDER_INITIATOR
+                                    ? HistoryReference.TYPE_SPIDER
+                                    : HistoryReference.TYPE_ZAP_USER,
+                            message);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return;
         }
 
-        final ExtensionHistory extHistory = (ExtensionHistory) Control.getSingleton()
-                .getExtensionLoader()
-                .getExtension(ExtensionHistory.NAME);
+        final ExtensionHistory extHistory =
+                (ExtensionHistory)
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionHistory.NAME);
         if (extHistory != null) {
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                @Override
-                public void run() {
-                    extHistory.addHistory(historyRef);
-                    Model.getSingleton().getSession().getSiteTree().addPath(historyRef, message);
-                }
-            });
+                        @Override
+                        public void run() {
+                            extHistory.addHistory(historyRef);
+                            Model.getSingleton()
+                                    .getSession()
+                                    .getSiteTree()
+                                    .addPath(historyRef, message);
+                        }
+                    });
         }
-
     }
-
 }

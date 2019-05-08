@@ -24,14 +24,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.InvalidMessageException;
 
-public class MultipleMessageLocationsDepthFirstReplacer<T extends Message> implements MultipleMessageLocationsReplacer<T> {
+public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
+        implements MultipleMessageLocationsReplacer<T> {
 
-    private static final Logger LOGGER = Logger.getLogger(MultipleMessageLocationsDepthFirstReplacer.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(MultipleMessageLocationsDepthFirstReplacer.class);
 
     private MessageLocationReplacer<T> replacer;
     private List<MessageLocationReplacementGenerator<?, ?>> replacementGenerators;
@@ -55,18 +56,21 @@ public class MultipleMessageLocationsDepthFirstReplacer<T extends Message> imple
     @Override
     public void init(
             MessageLocationReplacer<T> replacer,
-            SortedSet<? extends MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerator) {
+            SortedSet<? extends MessageLocationReplacementGenerator<?, ?>>
+                    messageLocationReplacementGenerator) {
         this.replacer = replacer;
 
         currentReplacements = new TreeSet<>();
-        listCurrentReplacements = new MessageLocationReplacement<?>[messageLocationReplacementGenerator.size()];
+        listCurrentReplacements =
+                new MessageLocationReplacement<?>[messageLocationReplacementGenerator.size()];
 
         numberOfReplacements = 1;
         replacementGenerators = new ArrayList<>(messageLocationReplacementGenerator.size());
         for (MessageLocationReplacementGenerator<?, ?> mlr : messageLocationReplacementGenerator) {
             if (mlr.hasNext()) {
                 long replacements = mlr.getNumberOfReplacements();
-                if (replacements != MessageLocationReplacementGenerator.UNKNOWN_NUMBER_OF_REPLACEMENTS) {
+                if (replacements
+                        != MessageLocationReplacementGenerator.UNKNOWN_NUMBER_OF_REPLACEMENTS) {
                     numberOfReplacements *= replacements;
                 }
                 replacementGenerators.add(mlr);

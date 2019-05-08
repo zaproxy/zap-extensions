@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz;
 
 import java.util.concurrent.TimeUnit;
-
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationsReplacementStrategy;
 
 public class FuzzerOptions {

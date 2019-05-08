@@ -26,29 +26,23 @@ import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
 public class ZestRecordFromNodePopupMenu extends PopupMenuItemSiteNodeContainer {
 
-	private static final long serialVersionUID = 2282358266003940700L;
+    private static final long serialVersionUID = 2282358266003940700L;
 
-	private ExtensionZest extension;
+    private ExtensionZest extension;
 
-	/**
-	 * This method initializes 
-	 * 
-	 */
-	public ZestRecordFromNodePopupMenu(ExtensionZest extension) {
-		super(Constant.messages.getString("zest.record.node.popup"), true);
-		this.extension = extension;
-	}
-	
-
-	@Override
-    public boolean isSafe() {
-    	return true;
+    /** This method initializes */
+    public ZestRecordFromNodePopupMenu(ExtensionZest extension) {
+        super(Constant.messages.getString("zest.record.node.popup"), true);
+        this.extension = extension;
     }
 
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
 
-	@Override
-	protected void performAction(SiteNode node) {
-		extension.getDialogManager().showZestRecordScriptDialog(node);
-	}
-
+    @Override
+    protected void performAction(SiteNode node) {
+        extension.getDialogManager().showZestRecordScriptDialog(node);
+    }
 }

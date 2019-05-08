@@ -38,17 +38,17 @@ public abstract class BaseEventStreamTest {
         // ServerSentEvent relies on this attribute to be initialized
         Constant.messages = Mockito.mock(I18N.class);
     }
-    
+
     protected HttpMessage getMockHttpMessage() throws URIException {
         HistoryReference mockHistoryRef = Mockito.mock(HistoryReference.class);
-        
+
         HttpRequestHeader mockReqHeader = Mockito.mock(HttpRequestHeader.class);
         when(mockReqHeader.getURI()).thenReturn(new URI("http", "example.com", "/", ""));
-        
+
         HttpMessage mockMessage = Mockito.mock(HttpMessage.class);
         when(mockMessage.getHistoryRef()).thenReturn(mockHistoryRef);
         when(mockMessage.getRequestHeader()).thenReturn(mockReqHeader);
-        
+
         return mockMessage;
     }
 }

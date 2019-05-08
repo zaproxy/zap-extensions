@@ -19,202 +19,204 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
-import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
-import org.parosproxy.paros.network.HttpResponseHeader;
-import org.parosproxy.paros.Constant;
-
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import javax.net.ssl.SSLException;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpStatusCode;
 
 /**
- * Active scan rule which raises an alert if a site accessed via HTTP is not served under HTTPS 
+ * Active scan rule which raises an alert if a site accessed via HTTP is not served under HTTPS
  * https://github.com/zaproxy/zaproxy/issues/2207
+ *
  * @author sanchitlucknow@gmail.com
  */
 public class HttpOnlySite extends AbstractHostPlugin {
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "ascanalpha.httponlysite.";
-	private static final int PLUGIN_ID = 10106;
-	private static final int REDIR_LIMIT = 10;
+    /** Prefix for internationalised messages used by this rule */
+    private static final String MESSAGE_PREFIX = "ascanalpha.httponlysite.";
 
-	private static final Logger log = Logger.getLogger(HttpOnlySite.class);
-	
-	@Override
-	public int getId() {
-		return PLUGIN_ID;
-	}
+    private static final int PLUGIN_ID = 10106;
+    private static final int REDIR_LIMIT = 10;
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
-	
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
+    private static final Logger log = Logger.getLogger(HttpOnlySite.class);
 
-	@Override
-	public String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
+    @Override
+    public int getId() {
+        return PLUGIN_ID;
+    }
 
-	@Override
-	public String getReference() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
 
-	@Override
-	public String[] getDependency() {
-		return null;
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
 
-	@Override
-	public int getCategory() {
-		return Category.MISC;
-	}
-	
-	@Override
-	public int getRisk() {
-		return Alert.RISK_MEDIUM;
-	}
+    @Override
+    public String getSolution() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
 
-	@Override
-	public int getCweId() {
-		return 311; // CWE-311: Missing Encryption of Sensitive Data
-	}
+    @Override
+    public String getReference() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
 
-	@Override
-	public int getWascId() {
-		return 4; // WASC-04: Insufficient Transport Layer Protection
-	}
+    @Override
+    public String[] getDependency() {
+        return null;
+    }
 
-	@Override
-	public void init() {
+    @Override
+    public int getCategory() {
+        return Category.MISC;
+    }
 
-	}
+    @Override
+    public int getRisk() {
+        return Alert.RISK_MEDIUM;
+    }
 
-	public void raiseAlert(HttpMessage newRequest, String message) {
-		String newUri = newRequest.getRequestHeader().getURI().toString();
-		String otherInfoDetail = Constant.messages.getString(MESSAGE_PREFIX+"otherinfo." + message);
-		bingo(getRisk(), //Risk
-				Alert.CONFIDENCE_MEDIUM, //Confidence/Reliability
-				getName(), //Name
-				getDescription(), //Description
-				getBaseMsg().getRequestHeader().getURI().toString(), //Original URI
-				null, //Param
-				"", //Attack
-				Constant.messages.getString(MESSAGE_PREFIX+"otherinfo", otherInfoDetail, newUri), //OtherInfo 
-				getSolution(), //Solution
-				"", //Evidence
-				getCweId(), //CWE ID
-				getWascId(), //WASC ID
-				newRequest); //HTTPMessage
-	}
+    @Override
+    public int getCweId() {
+        return 311; // CWE-311: Missing Encryption of Sensitive Data
+    }
 
-	public URI constructURI(String redirect, URI oldURI) {
-		try {
-			return new URI(oldURI, redirect, true);
-		} catch (URIException err) {
-			try {
-				return new URI(oldURI, redirect, true);
-			} catch (URIException ex) {
-				return null;
-			}
-		}
-	}
+    @Override
+    public int getWascId() {
+        return 4; // WASC-04: Insufficient Transport Layer Protection
+    }
 
-	@Override
-	public void scan() {
-		
-		if (getBaseMsg().getRequestHeader().isSecure()) { //Base request is HTTPS
-			if (log.isDebugEnabled()){
-				log.debug ("The original request was HTTPS, so there is not much point in looking further.");
-			}
-			return;
-		}
+    @Override
+    public void init() {}
 
-		HttpMessage newRequest = getNewMsg();
-		try{
-			String host = newRequest.getRequestHeader().getURI().getHost();
-			String path = newRequest.getRequestHeader().getURI().getPath();
-			newRequest.getRequestHeader().setURI(new URI("https",null, host, 443, path));
-		} catch (URIException e) {
-			log.error("Error creating HTTPS URL from HTTP URL:", e);
-			return;
-		}
+    public void raiseAlert(HttpMessage newRequest, String message) {
+        String newUri = newRequest.getRequestHeader().getURI().toString();
+        String otherInfoDetail =
+                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo." + message);
+        bingo(
+                getRisk(), // Risk
+                Alert.CONFIDENCE_MEDIUM, // Confidence/Reliability
+                getName(), // Name
+                getDescription(), // Description
+                getBaseMsg().getRequestHeader().getURI().toString(), // Original URI
+                null, // Param
+                "", // Attack
+                Constant.messages.getString(
+                        MESSAGE_PREFIX + "otherinfo", otherInfoDetail, newUri), // OtherInfo
+                getSolution(), // Solution
+                "", // Evidence
+                getCweId(), // CWE ID
+                getWascId(), // WASC ID
+                newRequest); // HTTPMessage
+    }
 
-		if (isStop()) {
-			if (log.isDebugEnabled()) {
-				log.debug("Scanner "+getName()+" Stopping.");
-			}
-			return;
-		}
+    public URI constructURI(String redirect, URI oldURI) {
+        try {
+            return new URI(oldURI, redirect, true);
+        } catch (URIException err) {
+            try {
+                return new URI(oldURI, redirect, true);
+            } catch (URIException ex) {
+                return null;
+            }
+        }
+    }
 
-		try {
-			int count = 0;
-			while(count < REDIR_LIMIT) {
-				if (isStop()) {
-					if (log.isDebugEnabled()) {
-						log.debug("Scanner "+getName()+" Stopping.");
-					}
-					return;
-				}
-				sendAndReceive(newRequest, false);
-				int status = newRequest.getResponseHeader().getStatusCode();
-				if(!HttpStatusCode.isRedirection(status)) {
-					break;
-				}
-				String redirect = newRequest.getResponseHeader().getHeader(HttpResponseHeader.LOCATION);
-				if(redirect == null || redirect.isEmpty()) {
-					raiseAlert(newRequest, "noredirection");
-					return;
-				}
-				URI oldURI = newRequest.getRequestHeader().getURI();
-				URI newURI = constructURI(redirect, oldURI);
-				if(newURI == null) {
-					raiseAlert(newRequest, "urinotencoded");
-					return;
-				}
-				newRequest.getRequestHeader().setURI(newURI);
-				if(!oldURI.getHost().equals(newURI.getHost())) {
-					raiseAlert(newRequest, "differenthosts");
-					return;
-				}
-				if(newRequest.getRequestHeader().isSecure()) {
-				    count++;
-				} else {
-					raiseAlert(newRequest, "redirecttohttp");
-					return;
-				}
-			}
-			if(count == REDIR_LIMIT) { //When redirection limit is exceeded
-				raiseAlert(newRequest, "redirectionlimit");
-				return;
-			}
-		} catch (SocketException | SocketTimeoutException e) {
-			raiseAlert(newRequest, "connectionfail");
-			return; 
-		} catch (SSLException e) {
-			if(e.getMessage().contains("plaintext")) {
-				raiseAlert(newRequest, "nossl");
-			}
-			return; 
-		} catch (IOException e) {
-			log.error("Request couldn't go through:", e);
-			return; 
-		}
-	}
+    @Override
+    public void scan() {
+
+        if (getBaseMsg().getRequestHeader().isSecure()) { // Base request is HTTPS
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "The original request was HTTPS, so there is not much point in looking further.");
+            }
+            return;
+        }
+
+        HttpMessage newRequest = getNewMsg();
+        try {
+            String host = newRequest.getRequestHeader().getURI().getHost();
+            String path = newRequest.getRequestHeader().getURI().getPath();
+            newRequest.getRequestHeader().setURI(new URI("https", null, host, 443, path));
+        } catch (URIException e) {
+            log.error("Error creating HTTPS URL from HTTP URL:", e);
+            return;
+        }
+
+        if (isStop()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Scanner " + getName() + " Stopping.");
+            }
+            return;
+        }
+
+        try {
+            int count = 0;
+            while (count < REDIR_LIMIT) {
+                if (isStop()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Scanner " + getName() + " Stopping.");
+                    }
+                    return;
+                }
+                sendAndReceive(newRequest, false);
+                int status = newRequest.getResponseHeader().getStatusCode();
+                if (!HttpStatusCode.isRedirection(status)) {
+                    break;
+                }
+                String redirect =
+                        newRequest.getResponseHeader().getHeader(HttpResponseHeader.LOCATION);
+                if (redirect == null || redirect.isEmpty()) {
+                    raiseAlert(newRequest, "noredirection");
+                    return;
+                }
+                URI oldURI = newRequest.getRequestHeader().getURI();
+                URI newURI = constructURI(redirect, oldURI);
+                if (newURI == null) {
+                    raiseAlert(newRequest, "urinotencoded");
+                    return;
+                }
+                newRequest.getRequestHeader().setURI(newURI);
+                if (!oldURI.getHost().equals(newURI.getHost())) {
+                    raiseAlert(newRequest, "differenthosts");
+                    return;
+                }
+                if (newRequest.getRequestHeader().isSecure()) {
+                    count++;
+                } else {
+                    raiseAlert(newRequest, "redirecttohttp");
+                    return;
+                }
+            }
+            if (count == REDIR_LIMIT) { // When redirection limit is exceeded
+                raiseAlert(newRequest, "redirectionlimit");
+                return;
+            }
+        } catch (SocketException | SocketTimeoutException e) {
+            raiseAlert(newRequest, "connectionfail");
+            return;
+        } catch (SSLException e) {
+            if (e.getMessage().contains("plaintext")) {
+                raiseAlert(newRequest, "nossl");
+            }
+            return;
+        } catch (IOException e) {
+            log.error("Request couldn't go through:", e);
+            return;
+        }
+    }
 }

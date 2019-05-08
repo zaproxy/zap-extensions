@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 import javax.script.ScriptException;
 
 /**
- * An interface for scripts that generate {@code String}s payloads for use in a {@code StringPayloadGenerator}.
+ * An interface for scripts that generate {@code String}s payloads for use in a {@code
+ * StringPayloadGenerator}.
  *
  * @see #TYPE_NAME
  * @see StringPayloadGenerator
@@ -30,10 +31,8 @@ import javax.script.ScriptException;
  */
 public interface ScriptStringPayloadGenerator {
 
-    /**
-     * The name used to identify the type of this script, for example, in configurations.
-     */
-    final static String TYPE_NAME = "payloadgenerator";
+    /** The name used to identify the type of this script, for example, in configurations. */
+    static final String TYPE_NAME = "payloadgenerator";
 
     public long getNumberOfPayloads() throws ScriptException;
 

@@ -23,38 +23,37 @@ import org.parosproxy.paros.common.AbstractParam;
 
 /**
  * Manages the requester configurations saved in the configuration file.
- * <p>
- * It allows to change, programmatically, the following requester option:
+ *
+ * <p>It allows to change, programmatically, the following requester option:
+ *
  * <ul>
- * <li>Set focus on Requester - Allows you to configure if ZAP should set the focus on Requester after creating a new tab.</li>
+ *   <li>Set focus on Requester - Allows you to configure if ZAP should set the focus on Requester
+ *       after creating a new tab.
  * </ul>
- * </p> 
- * 
  */
 public class RequesterParam extends AbstractParam {
-	
+
     private static final String PARAM_BASE_KEY = "requester";
-    
+
     private static final String PARAM_REQUESTER_AUTO_FOCUS = PARAM_BASE_KEY + ".autoFocus";
 
     private boolean autoFocus = true;
 
     public RequesterParam() {
-        super();        
+        super();
     }
 
     @Override
-    protected void parse() {        
+    protected void parse() {
         autoFocus = getConfig().getBoolean(PARAM_REQUESTER_AUTO_FOCUS, true);
     }
-    
-	public boolean isAutoFocus() {
-		return autoFocus;
-	}
 
-	public void setAutoFocus(boolean autoFocus) {
-		this.autoFocus = autoFocus;
+    public boolean isAutoFocus() {
+        return autoFocus;
+    }
+
+    public void setAutoFocus(boolean autoFocus) {
+        this.autoFocus = autoFocus;
         getConfig().setProperty(PARAM_REQUESTER_AUTO_FOCUS, Boolean.valueOf(autoFocus));
-	}
-    
+    }
 }

@@ -22,12 +22,12 @@ package org.zaproxy.zap.extension.fuzz.payloads.processor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
-public class Base64EncodeProcessor extends AbstractCharsetProcessor<DefaultPayload> implements DefaultPayloadProcessor {
+public class Base64EncodeProcessor extends AbstractCharsetProcessor<DefaultPayload>
+        implements DefaultPayloadProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(Base64EncodeProcessor.class);
 
@@ -64,9 +64,10 @@ public class Base64EncodeProcessor extends AbstractCharsetProcessor<DefaultPaylo
     @Override
     public DefaultPayload process(DefaultPayload payload) {
         try {
-            payload.setValue(Base64.encodeBytes(getBytes(payload.getValue()), breakLines
-                    ? Base64.DO_BREAK_LINES
-                    : Base64.NO_OPTIONS));
+            payload.setValue(
+                    Base64.encodeBytes(
+                            getBytes(payload.getValue()),
+                            breakLines ? Base64.DO_BREAK_LINES : Base64.NO_OPTIONS));
         } catch (IOException e) {
             LOGGER.warn("An error occurred while encoding the payload: " + e.getMessage());
         }
@@ -87,5 +88,4 @@ public class Base64EncodeProcessor extends AbstractCharsetProcessor<DefaultPaylo
     public Base64EncodeProcessor copy() {
         return this;
     }
-
 }

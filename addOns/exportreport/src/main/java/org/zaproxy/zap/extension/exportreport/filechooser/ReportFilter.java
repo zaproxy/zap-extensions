@@ -20,9 +20,7 @@
 package org.zaproxy.zap.extension.exportreport.filechooser;
 
 import java.io.File;
-
 import javax.swing.filechooser.FileFilter;
-
 import org.parosproxy.paros.Constant;
 
 /*

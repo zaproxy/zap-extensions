@@ -22,26 +22,23 @@ package org.zaproxy.zap.extension.groovy;
 /**
  * This class wraps the AddOnLoader for the GroovyScript execution
  *
- * It is necessary, because the AddOnLoader has no overload for loadClass(String name, boolean resolve),
- * but the GroovyClassLoader calls parent.loadClass(String name, boolean resolve). If this happens no
- * AddOn class would be resolved. So we delegate the loadClass call to the loadClass(String name)
+ * <p>It is necessary, because the AddOnLoader has no overload for loadClass(String name, boolean
+ * resolve), but the GroovyClassLoader calls parent.loadClass(String name, boolean resolve). If this
+ * happens no AddOn class would be resolved. So we delegate the loadClass call to the
+ * loadClass(String name)
  */
-public class AddOnClassLoaderWrapper extends ClassLoader
-{
-  protected AddOnClassLoaderWrapper(ClassLoader parent)
-  {
-    super(parent);
-  }
+public class AddOnClassLoaderWrapper extends ClassLoader {
+    protected AddOnClassLoaderWrapper(ClassLoader parent) {
+        super(parent);
+    }
 
-  @Override
-  public Class<?> loadClass(String name) throws ClassNotFoundException
-  {
-    return getParent().loadClass(name);
-  }
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return getParent().loadClass(name);
+    }
 
-  @Override
-  protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
-  {
-    return getParent().loadClass(name);
-  }
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        return getParent().loadClass(name);
+    }
 }

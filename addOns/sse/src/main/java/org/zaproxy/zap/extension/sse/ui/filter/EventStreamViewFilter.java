@@ -23,77 +23,68 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.sse.ServerSentEvent;
 
 /**
- * Used as filter for the EventStream-Panel restricting types of events
- * shown in the extensions' tab.
+ * Used as filter for the EventStream-Panel restricting types of events shown in the extensions'
+ * tab.
  */
 public class EventStreamViewFilter {
-	
-	private boolean isShowJustInScope = false;
 
-	public void setShowJustInScope(boolean isShowJustInScope) {
-		this.isShowJustInScope = isShowJustInScope;
-	}
+    private boolean isShowJustInScope = false;
 
-	public boolean getShowJustInScope() {
-		return isShowJustInScope;
-	}
+    public void setShowJustInScope(boolean isShowJustInScope) {
+        this.isShowJustInScope = isShowJustInScope;
+    }
 
-	/**
-	 * Resets this filter. Events will no longer be blacklisted.
-	 */
-	public void reset() {
-		
-	}
-	
-	/**
-	 * Checks if the given entry is affected by this filter, i.e. is filtered
-	 * out.
-	 * 
-	 * @param event
-	 * @return True if the given entry is filtered out, false if valid.
-	 */
-	public boolean isBlacklisted(ServerSentEvent event) {
-		if (isShowJustInScope && !event.isInScope()) {
-			return true;
-		}
-		
-		return false;
-	}
+    public boolean getShowJustInScope() {
+        return isShowJustInScope;
+    }
 
-	/**
-	 * @return short description of applied filter
-	 */
-	public String toShortString() {
-		return toString(false);
-	}
-	
-	/**
-	 * @return description of applied filter
-	 */
-	public String toLongString() {
-		return toString(true);
-	}
-	
-	/**
-	 * @param shouldIncludeValues
-	 * @return description of the applied filters
-	 */
-	private String toString(boolean shouldIncludeValues) {
-		StringBuilder sb = new StringBuilder();
+    /** Resets this filter. Events will no longer be blacklisted. */
+    public void reset() {}
 
-		boolean empty = true;
+    /**
+     * Checks if the given entry is affected by this filter, i.e. is filtered out.
+     *
+     * @param event
+     * @return True if the given entry is filtered out, false if valid.
+     */
+    public boolean isBlacklisted(ServerSentEvent event) {
+        if (isShowJustInScope && !event.isInScope()) {
+            return true;
+        }
 
-		sb.insert(0, " ");
-		
-		if (empty) {
-			sb.insert(0, Constant.messages.getString("sse.filter.label.off"));
-		} else {
-			sb.insert(0, Constant.messages.getString("sse.filter.label.on"));			
-		}
+        return false;
+    }
 
-		sb.insert(0, " ");
-		sb.insert(0, Constant.messages.getString("sse.filter.label.filter"));
-		
-		return sb.toString();
-	}
+    /** @return short description of applied filter */
+    public String toShortString() {
+        return toString(false);
+    }
+
+    /** @return description of applied filter */
+    public String toLongString() {
+        return toString(true);
+    }
+
+    /**
+     * @param shouldIncludeValues
+     * @return description of the applied filters
+     */
+    private String toString(boolean shouldIncludeValues) {
+        StringBuilder sb = new StringBuilder();
+
+        boolean empty = true;
+
+        sb.insert(0, " ");
+
+        if (empty) {
+            sb.insert(0, Constant.messages.getString("sse.filter.label.off"));
+        } else {
+            sb.insert(0, Constant.messages.getString("sse.filter.label.on"));
+        }
+
+        sb.insert(0, " ");
+        sb.insert(0, Constant.messages.getString("sse.filter.label.filter"));
+
+        return sb.toString();
+    }
 }

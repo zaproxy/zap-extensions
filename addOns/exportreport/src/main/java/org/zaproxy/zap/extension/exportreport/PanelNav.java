@@ -20,11 +20,9 @@
 package org.zaproxy.zap.extension.exportreport;
 
 import java.awt.GridLayout;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-
 import org.parosproxy.paros.Constant;
 
 /*
@@ -54,32 +52,41 @@ public class PanelNav extends JPanel {
         this.add(navBar);
         navBar.setLayout(new GridLayout(0, 2, 0, 0));
 
-        btnBack = new JButton(Constant.messages.getString("exportreport.previous.back.label")); // -Create the back button and place it into the left row
+        btnBack =
+                new JButton(
+                        Constant.messages.getString(
+                                "exportreport.previous.back.label")); // -Create the back button and
+        // place it into the left row
         btnBack.setEnabled(false);
         navBar.add(btnBack);
 
-        btnNext = new JButton(Constant.messages.getString("exportreport.forward.next.label")); // -Create the next button and place it into the right row
+        btnNext =
+                new JButton(
+                        Constant.messages.getString(
+                                "exportreport.forward.next.label")); // -Create the next button and
+        // place it into the right row
         navBar.add(btnNext);
     }
 
-    void setProgress(int i) // -Setter method accessible from other classes to update the progres bar
-    {
+    void setProgress(
+            int i) // -Setter method accessible from other classes to update the progres bar
+            {
         i = i * (100 / cardCount);
         progressBar.setValue(i);
     }
 
     JProgressBar getProgressBar() // -Retrieve the progress bar
-    {
+            {
         return progressBar;
     }
 
     JButton getBack() // -Retrieve the back button
-    {
+            {
         return btnBack;
     }
 
     JButton getNext() // -Retrieve the next button
-    {
+            {
         return btnNext;
     }
 }

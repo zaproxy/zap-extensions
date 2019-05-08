@@ -21,47 +21,46 @@ package org.zaproxy.zap.extension.requester;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-
 import javax.swing.KeyStroke;
-
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 public class RightClickMsgMenuRequester extends PopupMenuItemHttpMessageContainer {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionRequester extension = null;
-    
-	/**
-     * @param label
-     */
+    private static final long serialVersionUID = 1L;
+    private ExtensionRequester extension = null;
+
+    /** @param label */
     @SuppressWarnings("deprecation")
     public RightClickMsgMenuRequester(String label) {
         super(label);
-        this.setAccelerator(KeyStroke.getKeyStroke(
-				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-				KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+        this.setAccelerator(
+                KeyStroke.getKeyStroke(
+                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
+                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
+                        KeyEvent.VK_W,
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
+                        false));
     }
-	
-	@Override
-	public void performAction(HttpMessage msg) {			
-		getExtension().newRequesterPane(msg);		
-	}
 
-	public ExtensionRequester getExtension() {
-		return extension;
-	}
+    @Override
+    public void performAction(HttpMessage msg) {
+        getExtension().newRequesterPane(msg);
+    }
 
-	public void setExtension(ExtensionRequester extension) {
-		this.extension = extension;
-	}
+    public ExtensionRequester getExtension() {
+        return extension;
+    }
 
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-		// This is enabled for all tabs which list messages
-		// You can examine the invoker is you wish to restrict this to specific tabs
-		return true;
-	}
-	
+    public void setExtension(ExtensionRequester extension) {
+        this.extension = extension;
+    }
+
+    @Override
+    public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
+        // This is enabled for all tabs which list messages
+        // You can examine the invoker is you wish to restrict this to specific tabs
+        return true;
+    }
 }

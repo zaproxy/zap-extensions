@@ -19,11 +19,9 @@
  */
 package org.zaproxy.zap.extension.jxbrowser;
 
-import javax.swing.JComponent;
-
-import org.parosproxy.paros.Constant;
-
 import com.teamdev.jxbrowser.chromium.ContextMenuHandler;
+import javax.swing.JComponent;
+import org.parosproxy.paros.Constant;
 
 public class ZapContextMenuHandler extends BrowserContextMenuHandler implements ContextMenuHandler {
 

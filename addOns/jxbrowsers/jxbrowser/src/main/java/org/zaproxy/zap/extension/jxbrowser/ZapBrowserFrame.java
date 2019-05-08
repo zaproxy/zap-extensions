@@ -19,23 +19,21 @@
  */
 package org.zaproxy.zap.extension.jxbrowser;
 
+import com.teamdev.jxbrowser.chromium.Browser;
 import java.awt.Component;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.TabbedPanel2;
-
-import com.teamdev.jxbrowser.chromium.Browser;
 
 public class ZapBrowserFrame extends BrowserFrame {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon PLUS_ICON = new ImageIcon(TabbedPanel2.class.getResource("/resource/icon/fugue/plus.png"));
+    private static final Icon PLUS_ICON =
+            new ImageIcon(TabbedPanel2.class.getResource("/resource/icon/fugue/plus.png"));
 
     public ZapBrowserFrame() {
         this(true, true);
@@ -45,11 +43,16 @@ public class ZapBrowserFrame extends BrowserFrame {
         super(incToolbar, supportTabs);
     }
 
-    public ZapBrowserFrame(final boolean incToolbar, final boolean supportTabs, boolean createBrowser) {
+    public ZapBrowserFrame(
+            final boolean incToolbar, final boolean supportTabs, boolean createBrowser) {
         super(incToolbar, supportTabs, createBrowser);
     }
 
-    public ZapBrowserFrame(final boolean incToolbar, final boolean supportTabs, boolean createBrowser, boolean showNewTab) {
+    public ZapBrowserFrame(
+            final boolean incToolbar,
+            final boolean supportTabs,
+            boolean createBrowser,
+            boolean showNewTab) {
         super(incToolbar, supportTabs, createBrowser, showNewTab);
     }
 
@@ -121,7 +124,5 @@ public class ZapBrowserFrame extends BrowserFrame {
                 tabbedPane.setTitleAt(index, title);
             }
         }
-
     }
-
 }

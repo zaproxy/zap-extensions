@@ -23,12 +23,11 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.view.messagecontainer.MessageContainer;
 
 /**
- * A {@code MessageContainer} of {@code WebSocketMessageDTO}s and base interface for containers of {@code WebSocketMessageDTO}s.
- * 
+ * A {@code MessageContainer} of {@code WebSocketMessageDTO}s and base interface for containers of
+ * {@code WebSocketMessageDTO}s.
+ *
  * @see WebSocketMessageDTO
  * @see MessageContainer
  * @see SingleWebSocketMessageContainer
  */
-public interface WebSocketMessageContainer extends MessageContainer<WebSocketMessageDTO> {
-
-}
+public interface WebSocketMessageContainer extends MessageContainer<WebSocketMessageDTO> {}

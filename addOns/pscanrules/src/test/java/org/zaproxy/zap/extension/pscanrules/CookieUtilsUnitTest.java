@@ -25,9 +25,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-/**
- * Unit test for {@link CookieUtils}.
- */
+/** Unit test for {@link CookieUtils}. */
 public class CookieUtilsUnitTest {
 
     private static final String EMPTY_HEADER_VALUE = "";

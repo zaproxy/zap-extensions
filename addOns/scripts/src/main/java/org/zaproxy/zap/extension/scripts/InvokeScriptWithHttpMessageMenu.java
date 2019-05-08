@@ -29,71 +29,72 @@ import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 public class InvokeScriptWithHttpMessageMenu extends PopupMenuItemHttpMessageContainer {
 
-	private static final long serialVersionUID = 2282358266003940700L;
+    private static final long serialVersionUID = 2282358266003940700L;
     private static Logger logger = Logger.getLogger(InvokeScriptWithHttpMessageMenu.class);
 
-	private ExtensionScriptsUI extension;
-	private ScriptWrapper script;
-	
-	public InvokeScriptWithHttpMessageMenu(ExtensionScriptsUI extension, ScriptWrapper script) {
-		super(script.getName(), true);
-		this.extension = extension;
-		this.script = script;
-	}
-	
+    private ExtensionScriptsUI extension;
+    private ScriptWrapper script;
+
+    public InvokeScriptWithHttpMessageMenu(ExtensionScriptsUI extension, ScriptWrapper script) {
+        super(script.getName(), true);
+        this.extension = extension;
+        this.script = script;
+    }
+
     @Override
     public String getParentMenuName() {
-    	return Constant.messages.getString("scripts.runscript.popup");
+        return Constant.messages.getString("scripts.runscript.popup");
     }
-    
+
     @Override
     public boolean isSubMenu() {
-    	return true;
+        return true;
     }
 
-	@Override
-	public void performAction(HttpMessage msg) {
-		logger.debug("Invoke script with " + msg.getRequestHeader().getURI());
-		// Execute in another thread to not occupy the EDT.
-		new ScriptExecutorThread(extension, script, msg).start();
-	}
-	
+    @Override
+    public void performAction(HttpMessage msg) {
+        logger.debug("Invoke script with " + msg.getRequestHeader().getURI());
+        // Execute in another thread to not occupy the EDT.
+        new ScriptExecutorThread(extension, script, msg).start();
+    }
+
     @Override
     public boolean isSafe() {
-    	return true;
+        return true;
     }
 
-	@Override
-	public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
-		View.getSingleton().getPopupList().remove(this);
-	}
+    @Override
+    public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
+        View.getSingleton().getPopupList().remove(this);
+    }
 
-	private static class ScriptExecutorThread extends Thread {
+    private static class ScriptExecutorThread extends Thread {
 
-		private static final String BASE_NAME_SCRIPT_EXECUTOR_THREAD = "ZAP-ScriptExecutor-";
+        private static final String BASE_NAME_SCRIPT_EXECUTOR_THREAD = "ZAP-ScriptExecutor-";
 
-		private final ExtensionScriptsUI extension;
-		private final ScriptWrapper script;
-		private final HttpMessage message;
+        private final ExtensionScriptsUI extension;
+        private final ScriptWrapper script;
+        private final HttpMessage message;
 
-		public ScriptExecutorThread(ExtensionScriptsUI extension, ScriptWrapper script, HttpMessage message) {
-			super();
+        public ScriptExecutorThread(
+                ExtensionScriptsUI extension, ScriptWrapper script, HttpMessage message) {
+            super();
 
-			this.script = script;
-			this.extension = extension;
-			this.message = message;
+            this.script = script;
+            this.extension = extension;
+            this.message = message;
 
-			String name = script.getName();
-			if (name.length() > 25) {
-				name = name.substring(0, 25);
-			}
+            String name = script.getName();
+            if (name.length() > 25) {
+                name = name.substring(0, 25);
+            }
 
-			setName(BASE_NAME_SCRIPT_EXECUTOR_THREAD + name);
-		}
+            setName(BASE_NAME_SCRIPT_EXECUTOR_THREAD + name);
+        }
 
-		@Override
-		public void run() {
-			extension.invokeTargetedScript(script, message);
-		}
-	}
+        @Override
+        public void run() {
+            extension.invokeTargetedScript(script, message);
+        }
+    }
 }

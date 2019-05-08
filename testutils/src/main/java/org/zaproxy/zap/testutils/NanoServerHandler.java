@@ -19,26 +19,24 @@
  */
 package org.zaproxy.zap.testutils;
 
-import java.io.IOException;
-
-import org.apache.commons.io.IOUtils;
-import org.parosproxy.paros.network.HttpHeader;
-
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.io.IOException;
+import org.apache.commons.io.IOUtils;
+import org.parosproxy.paros.network.HttpHeader;
 
 public abstract class NanoServerHandler {
 
     private String name;
-    
-    public NanoServerHandler (String name) {
+
+    public NanoServerHandler(String name) {
         this.name = name;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     protected abstract Response serve(IHTTPSession session);
 
     /**
@@ -62,7 +60,8 @@ public abstract class NanoServerHandler {
      * @return the size of the body
      */
     protected int getBodySize(IHTTPSession session) {
-        String contentLengthHeader = session.getHeaders().get(HttpHeader.CONTENT_LENGTH.toLowerCase());
+        String contentLengthHeader =
+                session.getHeaders().get(HttpHeader.CONTENT_LENGTH.toLowerCase());
         if (contentLengthHeader == null) {
             return 0;
         }
@@ -71,7 +70,11 @@ public abstract class NanoServerHandler {
         try {
             contentLength = Integer.parseInt(contentLengthHeader);
         } catch (NumberFormatException e) {
-            System.err.println("Failed to parse " + HttpHeader.CONTENT_LENGTH + " value: " + contentLengthHeader);
+            System.err.println(
+                    "Failed to parse "
+                            + HttpHeader.CONTENT_LENGTH
+                            + " value: "
+                            + contentLengthHeader);
             e.printStackTrace();
             return 0;
         }
@@ -104,14 +107,17 @@ public abstract class NanoServerHandler {
         }
         return new String(bytes);
     }
-    
+
     /**
      * Gets the first parameter which is contained in the parameters list
+     *
      * @param session the session that has the request
      * @param param tha parameter name
      * @return the first value of the parameters
      */
-    static protected String getFirstParamValue(IHTTPSession session, String param){
-        return session.getParameters().get(param) != null ? session.getParameters().get(param).get(0) : null;
+    protected static String getFirstParamValue(IHTTPSession session, String param) {
+        return session.getParameters().get(param) != null
+                ? session.getParameters().get(param).get(0)
+                : null;
     }
 }

@@ -22,10 +22,8 @@ package org.zaproxy.zap.extension.exportreport;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.exportreport.utility.DualListBox;
 import org.zaproxy.zap.extension.exportreport.utility.SharedFunctions;
@@ -66,7 +64,7 @@ public class PanelAlertRisk extends JPanel {
         this.add(top, BorderLayout.PAGE_START);
         SharedFunctions.createLabel(top, strLabel, SharedFunctions.getTitleFont());
 
-        int[] pad = { 0, 0, 295, 360 };
+        int[] pad = {0, 0, 295, 360};
         content.setLayout(new SpringLayout());
         sl = new SpringLayout();
         container.setLayout(sl);

@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
@@ -31,162 +32,163 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-import net.htmlparser.jericho.Source;
+public class UserControlledCharsetScannerUnitTest
+        extends PassiveScannerTest<UserControlledCharsetScanner> {
 
-public class UserControlledCharsetScannerUnitTest extends PassiveScannerTest<UserControlledCharsetScanner> {
+    @Override
+    protected UserControlledCharsetScanner createScanner() {
+        return new UserControlledCharsetScanner();
+    }
 
-	@Override
-	protected UserControlledCharsetScanner createScanner() {
-		return new UserControlledCharsetScanner();
-	}
+    public HttpMessage createMessage() {
+        HttpMessage msg = new HttpMessage();
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        try {
+            requestHeader.setURI(new URI("http://example.com/i.php", false));
+        } catch (URIException | NullPointerException e) {
+        }
+        requestHeader.setMethod(HttpRequestHeader.GET);
 
-	public HttpMessage createMessage() {
-		HttpMessage msg = new HttpMessage();
-		HttpRequestHeader requestHeader = new HttpRequestHeader();
-		try {
-			requestHeader.setURI(new URI("http://example.com/i.php", false));
-		} catch (URIException | NullPointerException e) {
-		}
-		requestHeader.setMethod(HttpRequestHeader.GET);
+        msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        return msg;
+    }
 
-		msg = new HttpMessage();
-		msg.setRequestHeader(requestHeader);
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
-		msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
-		return msg;
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
+        // Given
+        HttpMessage msg = createMessage();
+        // WHen
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
-		// Given
-		HttpMessage msg = createMessage();
-		// WHen
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseIsNotHtmlNorXml() {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseIsNotHtmlNorXml() {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseCharsetIsEmpty() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html; charset=");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseCharsetIsEmpty() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
-		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html; charset=");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldRaiseAlertIfRequestParamsAppearAsCharsetValue() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html; charset=utf-8");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("cs"));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfRequestParamsAppearAsCharsetValue() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
-		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html; charset=utf-8");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getParam(), equalTo("cs"));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseMetaCharsetIsEmpty() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
+        msg.setResponseBody(
+                "<html><META http-equiv=\"Content-Type\" content=\"text/html; charset=\"></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseMetaCharsetIsEmpty() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
-		msg.setResponseBody("<html><META http-equiv=\"Content-Type\" content=\"text/html; charset=\"></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseMetaIsNotContentType() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
+        msg.setResponseBody("<html><META http-equiv=\"info\" content=\"Someinfo\"></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseMetaIsNotContentType() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
-		msg.setResponseBody("<html><META http-equiv=\"info\" content=\"Someinfo\"></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldRaiseAlertIfRequestParamAppearAsMetaCharsetValue() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
+        msg.setResponseBody(
+                "<html><META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("cs"));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfRequestParamAppearAsMetaCharsetValue() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
-		msg.setResponseBody("<html><META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getParam(), equalTo("cs"));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfXmlResponseCharsetIsEmpty() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/xml");
+        msg.setResponseBody("<?xml version='1.0' encoding=?>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfXmlResponseCharsetIsEmpty() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
-		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/xml");
-		msg.setResponseBody("<?xml version='1.0' encoding=?>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
-
-	@Test
-	public void shouldRaiseAlertIfRequestParamsAppearAsXmlCharsetValue() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
-		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/xml");
-		msg.setResponseBody("<?xml version='1.0' encoding='utf-8'?>");
-		Source source = createSource(msg);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, source);
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getParam(), equalTo("cs"));
-	}
-
+    @Test
+    public void shouldRaiseAlertIfRequestParamsAppearAsXmlCharsetValue() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/xml");
+        msg.setResponseBody("<?xml version='1.0' encoding='utf-8'?>");
+        Source source = createSource(msg);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, source);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("cs"));
+    }
 }

@@ -39,5 +39,4 @@ public class PrefixStringProcessor implements DefaultPayloadProcessor {
     public PrefixStringProcessor copy() {
         return this;
     }
-
 }

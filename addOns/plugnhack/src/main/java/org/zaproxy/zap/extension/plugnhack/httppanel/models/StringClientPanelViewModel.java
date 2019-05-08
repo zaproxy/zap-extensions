@@ -20,25 +20,25 @@
 package org.zaproxy.zap.extension.plugnhack.httppanel.models;
 
 public class StringClientPanelViewModel extends AbstractClientStringPanelViewModel {
-	
+
     @Override
     public String getData() {
-    	String data;
-        if (this.monitoredPageMessage == null)  {
+        String data;
+        if (this.monitoredPageMessage == null) {
             data = "";
         } else {
-        	data = this.monitoredPageMessage.getData();
+            data = this.monitoredPageMessage.getData();
         }
         return data;
     }
 
     @Override
     public void setData(String data) {
-    	if (this.monitoredPageMessage != null) {
-			if ( ! monitoredPageMessage.getData().equals(data)) {
-    			this.monitoredPageMessage.setData(data);
-    			this.monitoredPageMessage.setChanged(true);
-			}
-    	}
+        if (this.monitoredPageMessage != null) {
+            if (!monitoredPageMessage.getData().equals(data)) {
+                this.monitoredPageMessage.setData(data);
+                this.monitoredPageMessage.setChanged(true);
+            }
+        }
     }
 }

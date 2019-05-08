@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -32,56 +31,61 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestParameterizeDialog extends StandardFieldsDialog {
 
-	private static final String FIELD_REPLACE_STRING = "zest.dialog.parameterize.label.repstring"; 
-	private static final String FIELD_TOKEN = "zest.dialog.parameterize.label.token"; 
-	private static final String FIELD_IN_CURRENT = "zest.dialog.parameterize.label.current"; 
-	//private static final String FIELD_IN_ADDED = "zest.dialog.parameterize.label.added"; 
+    private static final String FIELD_REPLACE_STRING = "zest.dialog.parameterize.label.repstring";
+    private static final String FIELD_TOKEN = "zest.dialog.parameterize.label.token";
+    private static final String FIELD_IN_CURRENT = "zest.dialog.parameterize.label.current";
+    // private static final String FIELD_IN_ADDED = "zest.dialog.parameterize.label.added";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionZest extension = null;
-	private ZestScriptWrapper script = null;
-	private ScriptNode node = null;
-	private ZestRequest request = null;
-	private boolean replaceInCurrent = true;
-	private boolean replaceInAdded = false;
+    private ExtensionZest extension = null;
+    private ZestScriptWrapper script = null;
+    private ScriptNode node = null;
+    private ZestRequest request = null;
+    private boolean replaceInCurrent = true;
+    private boolean replaceInAdded = false;
 
-	public ZestParameterizeDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.parameterize.title", dim);
-		this.extension = ext;
-	}
+    public ZestParameterizeDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(owner, "zest.dialog.parameterize.title", dim);
+        this.extension = ext;
+    }
 
-	public void init (ZestScriptWrapper script, ScriptNode node, ZestRequest request, String replace) {
-		this.script = script;
-		this.node = node;
-		this.request = request;
+    public void init(
+            ZestScriptWrapper script, ScriptNode node, ZestRequest request, String replace) {
+        this.script = script;
+        this.node = node;
+        this.request = request;
 
-		this.removeAllFields();
+        this.removeAllFields();
 
-		this.addTextField(FIELD_TOKEN, "");
-		this.addTextField(FIELD_REPLACE_STRING, replace);
-		this.addCheckBoxField(FIELD_IN_CURRENT, this.replaceInCurrent);
-		// TODO not yet supported
-		// this.addCheckBoxField(FIELD_IN_ADDED, this.replaceInAdded);
-		this.addPadding();
-	}
-	
+        this.addTextField(FIELD_TOKEN, "");
+        this.addTextField(FIELD_REPLACE_STRING, replace);
+        this.addCheckBoxField(FIELD_IN_CURRENT, this.replaceInCurrent);
+        // TODO not yet supported
+        // this.addCheckBoxField(FIELD_IN_ADDED, this.replaceInAdded);
+        this.addPadding();
+    }
 
-	@Override
-	public void save() {
-		this.extension.perameterize(script, node, request, this.getStringValue(FIELD_REPLACE_STRING),
-			this.getStringValue(FIELD_TOKEN), this.getBoolValue(FIELD_IN_CURRENT), replaceInAdded);
-	}
+    @Override
+    public void save() {
+        this.extension.perameterize(
+                script,
+                node,
+                request,
+                this.getStringValue(FIELD_REPLACE_STRING),
+                this.getStringValue(FIELD_TOKEN),
+                this.getBoolValue(FIELD_IN_CURRENT),
+                replaceInAdded);
+    }
 
-	@Override
-	public String validateFields() {
-		if (! ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_TOKEN))) {
-			return Constant.messages.getString("zest.dialog.parameterize.error.token");
-		}
-		if (this.isEmptyField(FIELD_REPLACE_STRING)) {
-			return Constant.messages.getString("zest.dialog.parameterize.error.repstring");
-		}
-		return null;
-	}
-	
+    @Override
+    public String validateFields() {
+        if (!ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_TOKEN))) {
+            return Constant.messages.getString("zest.dialog.parameterize.error.token");
+        }
+        if (this.isEmptyField(FIELD_REPLACE_STRING)) {
+            return Constant.messages.getString("zest.dialog.parameterize.error.repstring");
+        }
+        return null;
+    }
 }

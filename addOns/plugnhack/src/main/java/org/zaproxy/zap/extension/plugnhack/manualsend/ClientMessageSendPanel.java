@@ -20,25 +20,21 @@
 package org.zaproxy.zap.extension.plugnhack.manualsend;
 
 import javax.swing.JComboBox;
-
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 
-/**
- * Craft custom WebSocket message and send them. Avoid HTTP method panel to
- * appear here.
- */
+/** Craft custom WebSocket message and send them. Avoid HTTP method panel to appear here. */
 public class ClientMessageSendPanel extends HttpPanelRequest {
-	
-	private static final long serialVersionUID = 1L;
 
-	public ClientMessageSendPanel(boolean isEditable, String configurationKey) {
-		super(isEditable, configurationKey);
-	}
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	protected void initComboChangeMethod() {
-		if (comboChangeMethod == null) {
-			comboChangeMethod = new JComboBox<>();
-		}
-	}
+    public ClientMessageSendPanel(boolean isEditable, String configurationKey) {
+        super(isEditable, configurationKey);
+    }
+
+    @Override
+    protected void initComboChangeMethod() {
+        if (comboChangeMethod == null) {
+            comboChangeMethod = new JComboBox<>();
+        }
+    }
 }

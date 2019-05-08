@@ -21,24 +21,22 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 
-/**
- * Unit test for {@link TestInjectionCRLF}.
- */
+/** Unit test for {@link TestInjectionCRLF}. */
 public class TestInjectionCRLFUnitTest extends ActiveScannerAppParamTest<TestInjectionCRLF> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
         int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
         switch (strength) {
-        case LOW:
-            return recommendMax + 1;
-        case MEDIUM:
-        default:
-            return recommendMax;
-        case HIGH:
-            return recommendMax;
-        case INSANE:
-            return recommendMax;
+            case LOW:
+                return recommendMax + 1;
+            case MEDIUM:
+            default:
+                return recommendMax;
+            case HIGH:
+                return recommendMax;
+            case INSANE:
+                return recommendMax;
         }
     }
 
@@ -46,5 +44,4 @@ public class TestInjectionCRLFUnitTest extends ActiveScannerAppParamTest<TestInj
     protected TestInjectionCRLF createScanner() {
         return new TestInjectionCRLF();
     }
-
 }

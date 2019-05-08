@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.exportreport.model;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -29,7 +28,30 @@ import javax.xml.bind.annotation.XmlType;
  * SPONSOR: RYERSON UNIVERSITY
  */
 
-@XmlType(name = "ExhibitionType", propOrder = { "pluginID", "alert", "riskCode", "confidence", "riskDesc", "desc", "solution", "otherInfo", "reference", "CWEID", "WASCID", "URI", "param", "attack", "evidence", "requestHeader", "requestBody", "responseHeader", "responseBody", "placeholder" })
+@XmlType(
+        name = "ExhibitionType",
+        propOrder = {
+            "pluginID",
+            "alert",
+            "riskCode",
+            "confidence",
+            "riskDesc",
+            "desc",
+            "solution",
+            "otherInfo",
+            "reference",
+            "CWEID",
+            "WASCID",
+            "URI",
+            "param",
+            "attack",
+            "evidence",
+            "requestHeader",
+            "requestBody",
+            "responseHeader",
+            "responseBody",
+            "placeholder"
+        })
 public class AlertItem {
     private String pluginid;
     private String alert;

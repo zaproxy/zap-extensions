@@ -22,9 +22,7 @@ package org.zaproxy.zap.extension.plugnhack.brk;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JTable;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -34,45 +32,50 @@ import org.zaproxy.zap.extension.plugnhack.MessageListTableModel;
 
 public class PopupMenuAddBreakClient extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionBreak extension = null;
+    private static final long serialVersionUID = 1L;
+    private ExtensionBreak extension = null;
     private JTable messageTable = null;
     private static Logger log = Logger.getLogger(PopupMenuAddBreakClient.class);
-    
+
     public PopupMenuAddBreakClient(ExtensionBreak extension) {
         super(Constant.messages.getString("brk.add.popup"));
-        
+
         this.extension = extension;
-        
- 		initialize();
+
+        initialize();
     }
 
-	private void initialize() {
+    private void initialize() {
 
-        this.addActionListener(new ActionListener() {
+        this.addActionListener(
+                new ActionListener() {
 
-        	@Override
-        	public void actionPerformed(ActionEvent evt) {
-                
-                int[] rows = messageTable.getSelectedRows();
-                if (rows.length != 1) {
-                    return;
-                }
-                
-                try {
-                	MessageListTableModel model = (MessageListTableModel)messageTable.getModel();
-                	extension.addUiBreakpoint(model.getClientMessageAtRow(rows[0]));
-                    
-                } catch (Exception e) {
-                    extension.getView().showWarningDialog(Constant.messages.getString("brk.add.error.history"));
-                }
-        	}
-        });
-	}
-	
+                    @Override
+                    public void actionPerformed(ActionEvent evt) {
+
+                        int[] rows = messageTable.getSelectedRows();
+                        if (rows.length != 1) {
+                            return;
+                        }
+
+                        try {
+                            MessageListTableModel model =
+                                    (MessageListTableModel) messageTable.getModel();
+                            extension.addUiBreakpoint(model.getClientMessageAtRow(rows[0]));
+
+                        } catch (Exception e) {
+                            extension
+                                    .getView()
+                                    .showWarningDialog(
+                                            Constant.messages.getString("brk.add.error.history"));
+                        }
+                    }
+                });
+    }
+
     @Override
     public boolean isEnableForComponent(Component invoker) {
-        
+
         if (ClientsPanel.CLIENTS_MESSAGE_TABLE_NAME.equals(invoker.getName())) {
             try {
                 messageTable = (JTable) invoker;
@@ -84,10 +87,9 @@ public class PopupMenuAddBreakClient extends ExtensionPopupMenuItem {
                 }
 
             } catch (Exception e) {
-            	log.warn(e.getMessage(), e);
+                log.warn(e.getMessage(), e);
             }
             return true;
-            
         }
         return false;
     }

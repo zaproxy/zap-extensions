@@ -28,13 +28,11 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "ascanrules.testpersistentxssprime.";
-	
+    /** Prefix for internationalised messages used by this rule */
+    private static final String MESSAGE_PREFIX = "ascanrules.testpersistentxssprime.";
+
     private static Logger log = Logger.getLogger(TestPersistentXSSPrime.class);
-	
+
     @Override
     public int getId() {
         return 40016;
@@ -42,7 +40,7 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-    	return Constant.messages.getString(MESSAGE_PREFIX + "name");
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
@@ -71,35 +69,34 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
     }
 
     @Override
-    public void init() {
-    }
-    
+    public void init() {}
+
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-		try {
-			HttpMessage msg1 = msg.cloneRequest();
-			this.setParameter(msg1, param, PersistentXSSUtils.getUniqueValue(msg1, param));
-			if (log.isDebugEnabled()) {
-				log.debug("Prime msg=" + msg1.getRequestHeader().getURI() + " param=" + param);
-			}
-		    sendAndReceive(msg1, false);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-	}
+        try {
+            HttpMessage msg1 = msg.cloneRequest();
+            this.setParameter(msg1, param, PersistentXSSUtils.getUniqueValue(msg1, param));
+            if (log.isDebugEnabled()) {
+                log.debug("Prime msg=" + msg1.getRequestHeader().getURI() + " param=" + param);
+            }
+            sendAndReceive(msg1, false);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public int getRisk() {
-		return Alert.RISK_INFO;
-	}
+    @Override
+    public int getRisk() {
+        return Alert.RISK_INFO;
+    }
 
-	@Override
-	public int getCweId() {
-		return 79;
-	}
+    @Override
+    public int getCweId() {
+        return 79;
+    }
 
-	@Override
-	public int getWascId() {
-		return 8;
-	}
+    @Override
+    public int getWascId() {
+        return 8;
+    }
 }

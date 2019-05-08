@@ -24,36 +24,34 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
 /**
- * 
- * @author 70pointer@gmail.com
- * An extension to allow the user to view a graphical "call graph" of requests for all sites, or for the selected subtree, as appropriate
- *
+ * @author 70pointer@gmail.com An extension to allow the user to view a graphical "call graph" of
+ *     requests for all sites, or for the selected subtree, as appropriate
  */
 public class ExtensionCallGraph extends ExtensionAdaptor {
 
-	private static final String NAME = "ExtensionCallGraph";
-	
-	public ExtensionCallGraph() {
-		super(NAME);
-		setI18nPrefix("callgraph");
-	}
-	
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-		super.hook(extensionHook);
-		
-		if (getView() != null) {
-			extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuCallGraph());
-		}
-	}
-	
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
-	
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    private static final String NAME = "ExtensionCallGraph";
+
+    public ExtensionCallGraph() {
+        super(NAME);
+        setI18nPrefix("callgraph");
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+
+        if (getView() != null) {
+            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuCallGraph());
+        }
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
+
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
 }

@@ -22,13 +22,11 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
- * Abstract interface for plugins that should be managed by a Challenge based
- * Callback API
- * 
+ * Abstract interface for plugins that should be managed by a Challenge based Callback API
+ *
  * @author yhawke (2014)
  */
 public interface ChallengeCallbackPlugin {
-    
+
     public void notifyCallback(String challenge, HttpMessage msg);
-    
 }

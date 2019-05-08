@@ -23,7 +23,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -33,7 +32,8 @@ import org.zaproxy.zap.extension.jxbrowser.Utils;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
 /**
- * An {@link org.parosproxy.paros.extension.Extension Extension} that installs a {@link JxBrowserProvider}, if in Windows 64bits.
+ * An {@link org.parosproxy.paros.extension.Extension Extension} that installs a {@link
+ * JxBrowserProvider}, if in Windows 64bits.
  */
 public class ExtSelJxBrowserWindows64 extends ExtensionAdaptor {
 
@@ -58,10 +58,16 @@ public class ExtSelJxBrowserWindows64 extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         if (Constant.isWindows() && Utils.isOs64Bits()) {
-            webDriverProvider = new JxBrowserProvider(
-                    Paths.get(Constant.getZapHome(), "jxbrowser/webdriver/windows/chromedriver.exe"));
+            webDriverProvider =
+                    new JxBrowserProvider(
+                            Paths.get(
+                                    Constant.getZapHome(),
+                                    "jxbrowser/webdriver/windows/chromedriver.exe"));
 
-            ExtensionSelenium extSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+            ExtensionSelenium extSelenium =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionSelenium.class);
             extSelenium.addWebDriverProvider(webDriverProvider);
         }
     }
@@ -76,7 +82,10 @@ public class ExtSelJxBrowserWindows64 extends ExtensionAdaptor {
         super.unload();
 
         if (webDriverProvider != null) {
-            ExtensionSelenium extSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+            ExtensionSelenium extSelenium =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionSelenium.class);
             extSelenium.removeWebDriverProvider(webDriverProvider);
         }
     }

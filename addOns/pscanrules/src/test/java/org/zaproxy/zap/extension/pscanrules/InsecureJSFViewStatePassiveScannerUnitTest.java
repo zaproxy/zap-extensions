@@ -23,15 +23,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class InsecureJSFViewStatePassiveScannerUnitTest extends
-        PassiveScannerTest<InsecureJSFViewStatePassiveScanner> {
+public class InsecureJSFViewStatePassiveScannerUnitTest
+        extends PassiveScannerTest<InsecureJSFViewStatePassiveScanner> {
 
     private static final String BASE_RESOURCE_KEY = "pscanrules.insecurejsfviewstate.";
     private static final String INSECURE_JSF = BASE_RESOURCE_KEY + "name";
@@ -59,11 +58,12 @@ public class InsecureJSFViewStatePassiveScannerUnitTest extends
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        msg.setResponseBody("<html><head></head>"
-                + "<body>"
-                + "<input type='hidden' id='javax.faces.viewstate' value='_id1231'/>"
-                + "</body>"
-                + "</html>");
+        msg.setResponseBody(
+                "<html><head></head>"
+                        + "<body>"
+                        + "<input type='hidden' id='javax.faces.viewstate' value='_id1231'/>"
+                        + "</body>"
+                        + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -76,13 +76,15 @@ public class InsecureJSFViewStatePassiveScannerUnitTest extends
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("secureValue".getBytes(),
-                Base64.GZIP);
-        msg.setResponseBody("<html><head></head>"
-                + "<body>"
-                + "<input type='hidden' id='javax.faces.viewstate' value='"+ encoded + "'/>"
-                + "</body>" 
-                + "</html>");
+        String encoded = Base64.encodeBytes("secureValue".getBytes(), Base64.GZIP);
+        msg.setResponseBody(
+                "<html><head></head>"
+                        + "<body>"
+                        + "<input type='hidden' id='javax.faces.viewstate' value='"
+                        + encoded
+                        + "'/>"
+                        + "</body>"
+                        + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -97,30 +99,35 @@ public class InsecureJSFViewStatePassiveScannerUnitTest extends
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
         // server side contains :, clear text no base64 or encryption
         String serverSideViewState = "123:123";
-        msg.setResponseBody("<html><head></head>" 
-                + "<body>"
-                + "<input type='hidden' id='javax.faces.viewstate' value='" + serverSideViewState + "'/>" 
-                + "</body>" 
-                + "</html>");
+        msg.setResponseBody(
+                "<html><head></head>"
+                        + "<body>"
+                        + "<input type='hidden' id='javax.faces.viewstate' value='"
+                        + serverSideViewState
+                        + "'/>"
+                        + "</body>"
+                        + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
-    
+
     @Test
     public void shouldRaiseAlertIfViewStateContainsJavaWord() throws IOException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(),
-                Base64.DONT_GUNZIP);
-        msg.setResponseBody("<html><head></head>"
-                + "<body>"
-                + "<input type='hidden' id='javax.faces.viewstate' value='" + encoded + "'/>"
-                + "</body>"
-                + "</html>");
+        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(), Base64.DONT_GUNZIP);
+        msg.setResponseBody(
+                "<html><head></head>"
+                        + "<body>"
+                        + "<input type='hidden' id='javax.faces.viewstate' value='"
+                        + encoded
+                        + "'/>"
+                        + "</body>"
+                        + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -133,19 +140,20 @@ public class InsecureJSFViewStatePassiveScannerUnitTest extends
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
     }
 
-
     @Test
     public void shouldRaiseAlertIfViewStateContainsJavaWordCompressed() throws IOException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(),
-                Base64.GZIP);
-        msg.setResponseBody("<html><head></head>" 
-                + "<body>"
-                + "<input type='hidden' id='javax.faces.viewstate' value='" + encoded + "'/>"
-                + "</body>" 
-                + "</html>");
+        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(), Base64.GZIP);
+        msg.setResponseBody(
+                "<html><head></head>"
+                        + "<body>"
+                        + "<input type='hidden' id='javax.faces.viewstate' value='"
+                        + encoded
+                        + "'/>"
+                        + "</body>"
+                        + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -163,13 +171,15 @@ public class InsecureJSFViewStatePassiveScannerUnitTest extends
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(),
-                Base64.GZIP);
-        msg.setResponseBody("<html><head></head>"
-                + "<body>"
-                + "<input type='hidden' id='j_id1:javax.faces.ViewState:0' value='" + encoded + "'/>" 
-                + "</body>" 
-                + "</html>");
+        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(), Base64.GZIP);
+        msg.setResponseBody(
+                "<html><head></head>"
+                        + "<body>"
+                        + "<input type='hidden' id='j_id1:javax.faces.ViewState:0' value='"
+                        + encoded
+                        + "'/>"
+                        + "</body>"
+                        + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -187,15 +197,19 @@ public class InsecureJSFViewStatePassiveScannerUnitTest extends
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(),
-                Base64.GZIP);
-        msg.setResponseBody("<html><head></head>" + "<body>"
-                + "<input type='text' id='input1' value='input1'/>"
-                + "<input type='text' id='input2' value='input2'/>"
-                + "<input type='hidden' id='input3' value='input3'/>"
-                + "<input type='hidden' id='javax.faces.viewstate' value='" + encoded + "'/>"
-                + "<input type='hidden' id='input4' value='input4'/>"
-                + "</body>" + "</html>");
+        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(), Base64.GZIP);
+        msg.setResponseBody(
+                "<html><head></head>"
+                        + "<body>"
+                        + "<input type='text' id='input1' value='input1'/>"
+                        + "<input type='text' id='input2' value='input2'/>"
+                        + "<input type='hidden' id='input3' value='input3'/>"
+                        + "<input type='hidden' id='javax.faces.viewstate' value='"
+                        + encoded
+                        + "'/>"
+                        + "<input type='hidden' id='input4' value='input4'/>"
+                        + "</body>"
+                        + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -208,10 +222,10 @@ public class InsecureJSFViewStatePassiveScannerUnitTest extends
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
     }
 
-    private void setTextHtmlResponseHeader(HttpMessage msg)
-            throws HttpMalformedHeaderException {
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n"
-                + "Server: Apache-Coyote/1.1\r\n"
-                + "Content-Type: text/html;charset=UTF-8\r\n");
+    private void setTextHtmlResponseHeader(HttpMessage msg) throws HttpMalformedHeaderException {
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=UTF-8\r\n");
     }
 }

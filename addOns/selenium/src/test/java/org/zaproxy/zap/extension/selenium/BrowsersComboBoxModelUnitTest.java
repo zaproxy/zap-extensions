@@ -26,13 +26,10 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- * Unit test for {@link BrowsersComboBoxModel}.
- */
+/** Unit test for {@link BrowsersComboBoxModel}. */
 public class BrowsersComboBoxModelUnitTest {
 
     private static BrowserUI FIREFOX;
@@ -242,5 +239,4 @@ public class BrowsersComboBoxModelUnitTest {
         // Then
         assertThat(browsersComboBoxModel.getSelectedItem(), is(equalTo(null)));
     }
-
 }

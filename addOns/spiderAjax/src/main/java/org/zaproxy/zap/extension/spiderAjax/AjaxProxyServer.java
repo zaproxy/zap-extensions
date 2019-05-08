@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.net.Socket;
-
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.proxy.ProxyThread;
 

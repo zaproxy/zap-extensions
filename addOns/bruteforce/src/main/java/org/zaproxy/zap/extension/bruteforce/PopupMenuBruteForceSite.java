@@ -20,80 +20,79 @@
 package org.zaproxy.zap.extension.bruteforce;
 
 import javax.swing.ImageIcon;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
-
 public class PopupMenuBruteForceSite extends PopupMenuItemSiteNodeContainer {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionBruteForce extension = null;
-    
-    /**
-     * @param label
-     */
+    private static final long serialVersionUID = 1L;
+    private ExtensionBruteForce extension = null;
+
+    /** @param label */
     public PopupMenuBruteForceSite(String label) {
         super(label);
-        this.setIcon(new ImageIcon(PopupMenuBruteForceSite.class.getResource(ExtensionBruteForce.HAMMER_ICON_RESOURCE)));
+        this.setIcon(
+                new ImageIcon(
+                        PopupMenuBruteForceSite.class.getResource(
+                                ExtensionBruteForce.HAMMER_ICON_RESOURCE)));
     }
 
     @Override
     public boolean isSubMenu() {
-    	return true;
+        return true;
     }
-    
+
     @Override
     public String getParentMenuName() {
-    	return Constant.messages.getString("attack.site.popup");
+        return Constant.messages.getString("attack.site.popup");
     }
 
     @Override
     public int getParentMenuIndex() {
-    	return ATTACK_MENU_INDEX;
+        return ATTACK_MENU_INDEX;
     }
-	
-	@Override
-	public void performAction(SiteNode node) {
-		// Loop up to get the top parent
-		while (node.getParent() != null && node.getParent().getParent() != null) {
-			node = node.getParent();
-		}
-		extension.bruteForceSite(node);
-	}
 
-	@Override
-    public boolean isButtonEnabledForSiteNode (SiteNode node) {
-	    if (! node.isRoot() && ! extension.isScanning(node)) {
-	        return true;
-	    }
+    @Override
+    public void performAction(SiteNode node) {
+        // Loop up to get the top parent
+        while (node.getParent() != null && node.getParent().getParent() != null) {
+            node = node.getParent();
+        }
+        extension.bruteForceSite(node);
+    }
+
+    @Override
+    public boolean isButtonEnabledForSiteNode(SiteNode node) {
+        if (!node.isRoot() && !extension.isScanning(node)) {
+            return true;
+        }
         return false;
     }
 
-	@Override
-	protected boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-		switch (invoker) {
-		case ALERTS_PANEL:
-		case ACTIVE_SCANNER_PANEL:
-		case FORCED_BROWSE_PANEL:
-		case FUZZER_PANEL:
-			return false;
-		case HISTORY_PANEL:
-		case SITES_PANEL:
-		case SEARCH_PANEL:
-		default:
-			return true;
-		}
-	}
-    
+    @Override
+    protected boolean isEnableForInvoker(
+            Invoker invoker, HttpMessageContainer httpMessageContainer) {
+        switch (invoker) {
+            case ALERTS_PANEL:
+            case ACTIVE_SCANNER_PANEL:
+            case FORCED_BROWSE_PANEL:
+            case FUZZER_PANEL:
+                return false;
+            case HISTORY_PANEL:
+            case SITES_PANEL:
+            case SEARCH_PANEL:
+            default:
+                return true;
+        }
+    }
+
     void setExtension(ExtensionBruteForce extension) {
         this.extension = extension;
     }
-    
+
     protected ExtensionBruteForce getExtensionBruteForce() {
         return this.extension;
     }
-    	
 }

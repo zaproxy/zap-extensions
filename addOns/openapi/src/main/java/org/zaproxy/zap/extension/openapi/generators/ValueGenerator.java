@@ -21,12 +21,9 @@ package org.zaproxy.zap.extension.openapi.generators;
 
 import java.util.Collections;
 import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 
-/**
- * A wrapper around the core ValueGenerator class
- */
+/** A wrapper around the core ValueGenerator class */
 public class ValueGenerator {
 
     private org.zaproxy.zap.model.ValueGenerator coreValGen;
@@ -36,30 +33,49 @@ public class ValueGenerator {
     public ValueGenerator(org.zaproxy.zap.model.ValueGenerator coreValGen) {
         this.coreValGen = coreValGen;
     }
-    
+
     public String getValue(String name, String type, String defaultValue) {
         if (defaultValue == null) {
             defaultValue = "";
         }
         if (coreValGen == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Name : " + name + " Type : " + type + " Default : " + defaultValue + " Returning default value");
+                LOG.debug(
+                        "Name : "
+                                + name
+                                + " Type : "
+                                + type
+                                + " Default : "
+                                + defaultValue
+                                + " Returning default value");
             }
             return defaultValue;
         }
-        
+
         HashMap<String, String> fieldAtts = new HashMap<String, String>();
         fieldAtts.put("Control Type", type);
-        String value = coreValGen.getValue(null, null, name, defaultValue, 
-                Collections.<String>emptyList(), 
-                Collections.<String, String>emptyMap(), 
-                fieldAtts);
+        String value =
+                coreValGen.getValue(
+                        null,
+                        null,
+                        name,
+                        defaultValue,
+                        Collections.<String>emptyList(),
+                        Collections.<String, String>emptyMap(),
+                        fieldAtts);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Name : " + name + " Type : " + type + " Default : " + defaultValue + " Returning : " + value);
+            LOG.debug(
+                    "Name : "
+                            + name
+                            + " Type : "
+                            + type
+                            + " Default : "
+                            + defaultValue
+                            + " Returning : "
+                            + value);
         }
 
         return value;
     }
-
 }

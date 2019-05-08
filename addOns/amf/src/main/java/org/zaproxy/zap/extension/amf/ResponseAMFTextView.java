@@ -21,10 +21,7 @@ package org.zaproxy.zap.extension.amf;
 
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyByteHttpPanelViewModel;
 
-/**
- * 
- * @author Colm O'Flaherty
- */
+/** @author Colm O'Flaherty */
 public class ResponseAMFTextView extends AbstractAMFTextView {
 
     public static final String NAME = "ResponseAMFView";

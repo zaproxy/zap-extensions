@@ -75,5 +75,4 @@ public class SHA256HashProcessor extends AbstractStringHashProcessor {
     public SHA256HashProcessor copy() {
         return new SHA256HashProcessor(getCharset(), isUpperCase());
     }
-
 }

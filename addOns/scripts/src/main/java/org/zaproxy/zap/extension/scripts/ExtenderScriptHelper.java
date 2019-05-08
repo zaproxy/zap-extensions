@@ -40,5 +40,4 @@ public class ExtenderScriptHelper {
     public API getApi() {
         return api;
     }
-
 }

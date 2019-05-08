@@ -25,28 +25,28 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
 public class ZestPopupMenu extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 2282358266003940700L;
-	
-	private String parentName = null;
-	
-	public ZestPopupMenu(String parentName, String name) {
-		super(name);
-		this.parentName = parentName;
-	}
-	
-	@Override
-    public String getParentMenuName() {
-    	return this.parentName;
+    private static final long serialVersionUID = 2282358266003940700L;
+
+    private String parentName = null;
+
+    public ZestPopupMenu(String parentName, String name) {
+        super(name);
+        this.parentName = parentName;
     }
-    
+
+    @Override
+    public String getParentMenuName() {
+        return this.parentName;
+    }
+
     @Override
     public boolean isSubMenu() {
-    	return true;
+        return true;
     }
 
     @Override
     public boolean isSafe() {
-    	return true;
+        return true;
     }
 
     @Override

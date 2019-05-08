@@ -21,45 +21,42 @@ package org.zaproxy.zap.extension.requester;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JTabbedPane;
 
 public class CloseActionHandler implements ActionListener {
 
-    private String tabName;    
+    private String tabName;
 
-	private NumberedTabbedPane numberedTabbedPane;
+    private NumberedTabbedPane numberedTabbedPane;
 
     public CloseActionHandler(NumberedTabbedPane numberedTabbedPane, String tabName) {
         this.numberedTabbedPane = numberedTabbedPane;
-    	this.tabName = tabName;        
+        this.tabName = tabName;
     }
 
     public NumberedTabbedPane getNumberedTabbedPane() {
-		return numberedTabbedPane;
-	}
+        return numberedTabbedPane;
+    }
 
     public String getTabName() {
-		return tabName;
-	}
+        return tabName;
+    }
 
     @Override
     public void actionPerformed(ActionEvent evt) {
-    	
-    	JTabbedPane ntp = getNumberedTabbedPane();
+
+        JTabbedPane ntp = getNumberedTabbedPane();
 
         int index = ntp.indexOfTab(getTabName());
-        if (index >= 0) {        	
-        	if (ntp.getTabCount() > 2 && index == ntp.getTabCount() -2) {
-        		ntp.setSelectedIndex(index - 1);
-        	}        	
-        	ManualHttpRequestEditorPanel currentEditor = (ManualHttpRequestEditorPanel) ntp.getComponentAt(index);
-        	currentEditor.beforeClose();
-        	currentEditor.saveConfig();
-        	ntp.removeTabAt(index);
+        if (index >= 0) {
+            if (ntp.getTabCount() > 2 && index == ntp.getTabCount() - 2) {
+                ntp.setSelectedIndex(index - 1);
+            }
+            ManualHttpRequestEditorPanel currentEditor =
+                    (ManualHttpRequestEditorPanel) ntp.getComponentAt(index);
+            currentEditor.beforeClose();
+            currentEditor.saveConfig();
+            ntp.removeTabAt(index);
         }
-
     }
-
 }
-

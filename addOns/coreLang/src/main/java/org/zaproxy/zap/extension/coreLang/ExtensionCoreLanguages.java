@@ -20,42 +20,41 @@
 package org.zaproxy.zap.extension.coreLang;
 
 import java.nio.file.Paths;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.zaproxy.zap.extension.lang.LangImporter;
 
 /**
- * An extension which just installs the bundled language file 
- * @author psiinon
+ * An extension which just installs the bundled language file
  *
+ * @author psiinon
  */
 public class ExtensionCoreLanguages extends ExtensionAdaptor {
 
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
-
-	@Override
-	public String getName() {
-		return "ExtensionCoreLang";
-	}
-
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("coreLang.desc");
-	}
-	
     @Override
-	public boolean canUnload() {
-    	return true;
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
+
+    @Override
+    public String getName() {
+        return "ExtensionCoreLang";
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("coreLang.desc");
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
     }
 
     @Override
     public void postInstall() {
-    	// Import the language file
-    	LangImporter.importLanguagePack(Paths.get(Constant.getZapHome(), getAddOn().getFiles().get(0)).toString());
+        // Import the language file
+        LangImporter.importLanguagePack(
+                Paths.get(Constant.getZapHome(), getAddOn().getFiles().get(0)).toString());
     }
-
 }

@@ -20,16 +20,17 @@
 package org.zaproxy.zap.extension.formhandler;
 
 import java.awt.Dialog;
-
 import org.parosproxy.paros.Constant;
 
 class DialogModifyField extends DialogAddField {
 
     private static final long serialVersionUID = 6675509994290748494L;
 
-    private static final String DIALOG_TITLE = Constant.messages.getString("formhandler.options.dialog.field.modify.title");
+    private static final String DIALOG_TITLE =
+            Constant.messages.getString("formhandler.options.dialog.field.modify.title");
 
-    private static final String CONFIRM_BUTTON_LABEL = Constant.messages.getString("formhandler.options.dialog.field.modify.button.confirm");
+    private static final String CONFIRM_BUTTON_LABEL =
+            Constant.messages.getString("formhandler.options.dialog.field.modify.button.confirm");
 
     protected DialogModifyField(Dialog owner) {
         super(owner, DIALOG_TITLE);
@@ -62,5 +63,4 @@ class DialogModifyField extends DialogAddField {
 
         getEnabledCheckBox().setSelected(field.isEnabled());
     }
-
 }

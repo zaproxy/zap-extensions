@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerationException;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
@@ -29,7 +28,8 @@ import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessingExcept
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-class PayloadsProcessedIterator<E extends Payload> implements ResettableAutoCloseableIterator<E>, PayloadGenerator<E> {
+class PayloadsProcessedIterator<E extends Payload>
+        implements ResettableAutoCloseableIterator<E>, PayloadGenerator<E> {
 
     private final List<PayloadProcessor<E>> processors;
     private ResettableAutoCloseableIterator<E> payloadIterator;
@@ -53,15 +53,15 @@ class PayloadsProcessedIterator<E extends Payload> implements ResettableAutoClos
             try {
                 value = processor.process(value);
             } catch (PayloadProcessingException e) {
-                throw new PayloadGenerationException("An error occurred while processing the payload: " + e.toString(), e);
+                throw new PayloadGenerationException(
+                        "An error occurred while processing the payload: " + e.toString(), e);
             }
         }
         return value;
     }
 
     @Override
-    public void remove() {
-    }
+    public void remove() {}
 
     @Override
     public void reset() {

@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz;
 
 import java.nio.file.Path;
-
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.StringPayloadGenerator;
 
@@ -46,5 +45,4 @@ public class FuzzerPayloadFileSource extends FuzzerPayloadSource {
     public StringPayloadGenerator getPayloadGenerator(int limit) {
         return new FileStringPayloadGenerator(file, limit);
     }
-
 }

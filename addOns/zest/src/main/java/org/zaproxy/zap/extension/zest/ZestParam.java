@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.zest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
@@ -30,136 +29,131 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.zap.extension.httpsessions.ExtensionHttpSessions;
 
 /**
- * The HttpSessionsParam is used to store the parameters (options) for the
- * {@link ExtensionHttpSessions} and related classes.
+ * The HttpSessionsParam is used to store the parameters (options) for the {@link
+ * ExtensionHttpSessions} and related classes.
  */
 public class ZestParam extends AbstractParam {
 
-	/** The Constant defining the key for the default session tokens used in the application. */
-	private static final String DEFAULT_ZEST_KEY = "zest";
+    /** The Constant defining the key for the default session tokens used in the application. */
+    private static final String DEFAULT_ZEST_KEY = "zest";
 
-	/** The full list of headers that can be ignored. */
-	private static final String[] ALL_HEADERS = { 
-		"Accept",
-		HttpHeader.ACCEPT_ENCODING,
-		"Accept-Language",
-		HttpHeader.AUTHORIZATION,
-		HttpHeader.CACHE_CONTROL,
-		HttpHeader.CONNECTION,
-		HttpHeader.CONTENT_ENCODING,
-		HttpHeader.CONTENT_LENGTH,
-		HttpHeader.CONTENT_TYPE,
-		HttpHeader.COOKIE,
-		"Host",
-		HttpHeader.IF_MODIFIED_SINCE,
-		HttpHeader.IF_NONE_MATCH,
-		HttpHeader.LOCATION,
-		HttpHeader.PRAGMA,
-		HttpHeader.PROXY_AUTHENTICATE,
-		HttpHeader.REFERER,
-		HttpHeader.SET_COOKIE,
-		HttpHeader.SET_COOKIE2,
-		HttpHeader.USER_AGENT,
-		HttpHeader.WWW_AUTHENTICATE,
-	};
+    /** The full list of headers that can be ignored. */
+    private static final String[] ALL_HEADERS = {
+        "Accept",
+        HttpHeader.ACCEPT_ENCODING,
+        "Accept-Language",
+        HttpHeader.AUTHORIZATION,
+        HttpHeader.CACHE_CONTROL,
+        HttpHeader.CONNECTION,
+        HttpHeader.CONTENT_ENCODING,
+        HttpHeader.CONTENT_LENGTH,
+        HttpHeader.CONTENT_TYPE,
+        HttpHeader.COOKIE,
+        "Host",
+        HttpHeader.IF_MODIFIED_SINCE,
+        HttpHeader.IF_NONE_MATCH,
+        HttpHeader.LOCATION,
+        HttpHeader.PRAGMA,
+        HttpHeader.PROXY_AUTHENTICATE,
+        HttpHeader.REFERER,
+        HttpHeader.SET_COOKIE,
+        HttpHeader.SET_COOKIE2,
+        HttpHeader.USER_AGENT,
+        HttpHeader.WWW_AUTHENTICATE,
+    };
 
-	private static final String[] DEFAULT_IGNORED_HEADERS = {
-		"Accept",
-		HttpHeader.ACCEPT_ENCODING,
-		"Accept-Language",
-		HttpHeader.CACHE_CONTROL,
-		HttpHeader.CONNECTION,
-		HttpHeader.COOKIE,
-		"Host",
-		HttpHeader.IF_MODIFIED_SINCE,
-		HttpHeader.IF_NONE_MATCH,
-		HttpHeader.LOCATION,
-		HttpHeader.PRAGMA,
-		HttpHeader.REFERER,
-		HttpHeader.SET_COOKIE,
-		HttpHeader.SET_COOKIE2,
-		HttpHeader.USER_AGENT,
-	};
-	
-	private static final String IGNORE_HEADERS_KEY = DEFAULT_ZEST_KEY + ".ignoreHeaders";
-	private static final String INCLUDE_RESPONSES_KEY = DEFAULT_ZEST_KEY + ".incResponses";
-	
-	/** The Constant log. */
-	private static final Logger log = Logger.getLogger(ZestParam.class);
+    private static final String[] DEFAULT_IGNORED_HEADERS = {
+        "Accept",
+        HttpHeader.ACCEPT_ENCODING,
+        "Accept-Language",
+        HttpHeader.CACHE_CONTROL,
+        HttpHeader.CONNECTION,
+        HttpHeader.COOKIE,
+        "Host",
+        HttpHeader.IF_MODIFIED_SINCE,
+        HttpHeader.IF_NONE_MATCH,
+        HttpHeader.LOCATION,
+        HttpHeader.PRAGMA,
+        HttpHeader.REFERER,
+        HttpHeader.SET_COOKIE,
+        HttpHeader.SET_COOKIE2,
+        HttpHeader.USER_AGENT,
+    };
 
-	/** The full list of headers that can be ignored. */
-	private List<String> allHeaders = new ArrayList<String>();
-	
-	/** The list of headers that will be ignored. */
-	private List<String> ignoredHeaders = new ArrayList<String>();
-	
-	private boolean includeResponses = true;
+    private static final String IGNORE_HEADERS_KEY = DEFAULT_ZEST_KEY + ".ignoreHeaders";
+    private static final String INCLUDE_RESPONSES_KEY = DEFAULT_ZEST_KEY + ".incResponses";
 
-	/**
-	 * Instantiates a new Zest param.
-	 * 
-	 */
-	public ZestParam() {
-	}
+    /** The Constant log. */
+    private static final Logger log = Logger.getLogger(ZestParam.class);
 
-	@Override
-	protected void parse() {
-		// Parse the params
-		try {
-			this.includeResponses = getConfig().getBoolean(INCLUDE_RESPONSES_KEY, true);
-			
-			this.allHeaders.clear();
-			for (String header : ALL_HEADERS) {
-				this.allHeaders.add(header);
-			}
-			
-			this.ignoredHeaders.clear();
-			List<Object> ignoreList = getConfig().getList(IGNORE_HEADERS_KEY);
-			if (ignoreList == null || ignoreList.size() == 0) {
-				// Use the defaults
-				for (String header : DEFAULT_IGNORED_HEADERS) {
-					this.ignoredHeaders.add(header);
-				}
-			} else {
-				for (Object header : ignoreList) {
-					this.ignoredHeaders.add(header.toString());
-				}
-			}
-			
-		} catch (ConversionException e) {
-			log.error("Error while parsing config file: " + e.getMessage(), e);
-			// Use the defaults
-			for (String header : DEFAULT_IGNORED_HEADERS) {
-				this.ignoredHeaders.add(header);
-			}
-		}
-	}
+    /** The full list of headers that can be ignored. */
+    private List<String> allHeaders = new ArrayList<String>();
 
-	public final List<String> getAllHeaders() {
-		return Collections.unmodifiableList(allHeaders);
-	}
+    /** The list of headers that will be ignored. */
+    private List<String> ignoredHeaders = new ArrayList<String>();
 
-	public final List<String> getIgnoredHeaders() {
-		return Collections.unmodifiableList(this.ignoredHeaders);
-	}
+    private boolean includeResponses = true;
 
-	/**
-	 * Sets the ignored headers.
-	 * 
-	 * @param ignoredHeaders the ignored Headers
-	 */
-	public void setIgnoredHeaders(final List<String> ignoredHeaders) {
-		this.ignoredHeaders = new ArrayList<String>(ignoredHeaders);
-		getConfig().setProperty(IGNORE_HEADERS_KEY, this.ignoredHeaders);
-	}
+    /** Instantiates a new Zest param. */
+    public ZestParam() {}
 
-	public boolean isIncludeResponses() {
-		return includeResponses;
-	}
+    @Override
+    protected void parse() {
+        // Parse the params
+        try {
+            this.includeResponses = getConfig().getBoolean(INCLUDE_RESPONSES_KEY, true);
 
-	public void setIncludeResponses(boolean includeResponses) {
-		this.includeResponses = includeResponses;
-		getConfig().setProperty(INCLUDE_RESPONSES_KEY, this.includeResponses);
-	}
+            this.allHeaders.clear();
+            for (String header : ALL_HEADERS) {
+                this.allHeaders.add(header);
+            }
 
+            this.ignoredHeaders.clear();
+            List<Object> ignoreList = getConfig().getList(IGNORE_HEADERS_KEY);
+            if (ignoreList == null || ignoreList.size() == 0) {
+                // Use the defaults
+                for (String header : DEFAULT_IGNORED_HEADERS) {
+                    this.ignoredHeaders.add(header);
+                }
+            } else {
+                for (Object header : ignoreList) {
+                    this.ignoredHeaders.add(header.toString());
+                }
+            }
+
+        } catch (ConversionException e) {
+            log.error("Error while parsing config file: " + e.getMessage(), e);
+            // Use the defaults
+            for (String header : DEFAULT_IGNORED_HEADERS) {
+                this.ignoredHeaders.add(header);
+            }
+        }
+    }
+
+    public final List<String> getAllHeaders() {
+        return Collections.unmodifiableList(allHeaders);
+    }
+
+    public final List<String> getIgnoredHeaders() {
+        return Collections.unmodifiableList(this.ignoredHeaders);
+    }
+
+    /**
+     * Sets the ignored headers.
+     *
+     * @param ignoredHeaders the ignored Headers
+     */
+    public void setIgnoredHeaders(final List<String> ignoredHeaders) {
+        this.ignoredHeaders = new ArrayList<String>(ignoredHeaders);
+        getConfig().setProperty(IGNORE_HEADERS_KEY, this.ignoredHeaders);
+    }
+
+    public boolean isIncludeResponses() {
+        return includeResponses;
+    }
+
+    public void setIncludeResponses(boolean includeResponses) {
+        this.includeResponses = includeResponses;
+        getConfig().setProperty(INCLUDE_RESPONSES_KEY, this.includeResponses);
+    }
 }

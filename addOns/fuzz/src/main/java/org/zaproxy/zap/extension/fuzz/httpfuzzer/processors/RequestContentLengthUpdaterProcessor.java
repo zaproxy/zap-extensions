@@ -28,7 +28,9 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerTaskProcessorUtils;
 
 public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessageProcessor {
 
-    public static final String NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.requestContentLengthUpdater.name");
+    public static final String NAME =
+            Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.requestContentLengthUpdater.name");
 
     private static RequestContentLengthUpdaterProcessor instance;
 
@@ -66,7 +68,8 @@ public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessagePr
             return message;
         }
 
-        if (message.getRequestHeader().getHeader(HttpHeader.CONTENT_LENGTH) != null || message.getRequestBody().length() != 0) {
+        if (message.getRequestHeader().getHeader(HttpHeader.CONTENT_LENGTH) != null
+                || message.getRequestBody().length() != 0) {
             message.getRequestHeader().setContentLength(message.getRequestBody().length());
         }
 
@@ -77,5 +80,4 @@ public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessagePr
     public boolean processResult(HttpFuzzerTaskProcessorUtils utils, HttpFuzzResult fuzzResult) {
         return true;
     }
-
 }

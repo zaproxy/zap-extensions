@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-
 import org.mozilla.zest.core.v1.ZestClientElement;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestStatement;
@@ -33,41 +32,44 @@ import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
 public class ZestClientElementSendKeysDialog extends ZestClientElementDialog implements ZestDialog {
 
-	private static final String FIELD_VALUE = "zest.dialog.client.label.value"; 
+    private static final String FIELD_VALUE = "zest.dialog.client.label.value";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ZestClientElementSendKeysDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(ext, owner, "zest.dialog.clientElementSendKeys.add.title", dim);
-	}
+    public ZestClientElementSendKeysDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(ext, owner, "zest.dialog.clientElementSendKeys.add.title", dim);
+    }
 
-	@Override
-	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestStatement req, ZestClientElement client, boolean add) {
-		super.init(script, parent, child, req, client, add);
-		
-		this.addTextField(FIELD_VALUE, ((ZestClientElementSendKeys)client).getValue());
+    @Override
+    public void init(
+            ZestScriptWrapper script,
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientElement client,
+            boolean add) {
+        super.init(script, parent, child, req, client, add);
 
-		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientElementSendKeys.add.title"));
-		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientElementSendKeys.edit.title"));
-		}
-		
-		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE)); 
+        this.addTextField(FIELD_VALUE, ((ZestClientElementSendKeys) client).getValue());
 
-	}
+        if (add) {
+            this.setTitle(
+                    Constant.messages.getString("zest.dialog.clientElementSendKeys.add.title"));
+        } else {
+            this.setTitle(
+                    Constant.messages.getString("zest.dialog.clientElementSendKeys.edit.title"));
+        }
 
-	@Override
-	public void saveFields() {
-		((ZestClientElementSendKeys)this.getClient()).setValue(this.getStringValue(FIELD_VALUE));
+        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
+    }
 
-	}
+    @Override
+    public void saveFields() {
+        ((ZestClientElementSendKeys) this.getClient()).setValue(this.getStringValue(FIELD_VALUE));
+    }
 
-	@Override
-	public String validateFields() {
-		return super.validateFields();
-	}
-
-	
+    @Override
+    public String validateFields() {
+        return super.validateFields();
+    }
 }

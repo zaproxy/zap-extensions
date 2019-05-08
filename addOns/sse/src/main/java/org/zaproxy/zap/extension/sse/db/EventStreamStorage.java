@@ -26,70 +26,71 @@ import org.zaproxy.zap.extension.sse.EventStreamProxy.State;
 import org.zaproxy.zap.extension.sse.ServerSentEvent;
 
 /**
- * Listens to all Server-Sent Events and utilizes {@link TableEventStream} to
- * store events in database.
+ * Listens to all Server-Sent Events and utilizes {@link TableEventStream} to store events in
+ * database.
  */
 public class EventStreamStorage implements EventStreamObserver {
 
-	private static final Logger logger = Logger
-			.getLogger(EventStreamStorage.class);
+    private static final Logger logger = Logger.getLogger(EventStreamStorage.class);
 
-	/**
-	 * Determines when events are stored in database.
-	 */
-	public static final int EVENT_STREAM_OBSERVING_ORDER = 100;
+    /** Determines when events are stored in database. */
+    public static final int EVENT_STREAM_OBSERVING_ORDER = 100;
 
-	private TableEventStream table;
+    private TableEventStream table;
 
-	public EventStreamStorage(TableEventStream table) {
-		this.table = table;
-	}
+    public EventStreamStorage(TableEventStream table) {
+        this.table = table;
+    }
 
-	@Override
-	public int getServerSentEventObservingOrder() {
-		return EVENT_STREAM_OBSERVING_ORDER;
-	}
+    @Override
+    public int getServerSentEventObservingOrder() {
+        return EVENT_STREAM_OBSERVING_ORDER;
+    }
 
-	@Override
-	public boolean onServerSentEvent(ServerSentEvent event) {
-		boolean continueForwarding = true;
-		try {
-			table.insertEvent(event);
-		} catch (DatabaseException e) {
-			logger.error(e.getMessage(), e);
-		}
-		return continueForwarding;
-	}
+    @Override
+    public boolean onServerSentEvent(ServerSentEvent event) {
+        boolean continueForwarding = true;
+        try {
+            table.insertEvent(event);
+        } catch (DatabaseException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return continueForwarding;
+    }
 
-	@Override
-	public void onServerSentEventStateChange(State state,
-			ServerSentEventStream stream) {
-		if (state.equals(State.OPEN) || state.equals(State.CLOSED) || state.equals(State.INCLUDED)) {
-			try {
-				if (table != null) {
-					table.insertOrUpdateStream(stream);
-				} else if (!state.equals(State.CLOSED)) {
-					logger.warn("Could not update state of Server-Sent Event stream to '" + state.toString() + "'!");
-				}
-			} catch (DatabaseException e) {
-				logger.error(e.getMessage(), e);
-			}
-		} else if (state.equals(State.EXCLUDED)) {
-			// when proxy is excluded from ZAP, then messages are forwarded
-			// but not stored - all existing communication is deleted
+    @Override
+    public void onServerSentEventStateChange(State state, ServerSentEventStream stream) {
+        if (state.equals(State.OPEN)
+                || state.equals(State.CLOSED)
+                || state.equals(State.INCLUDED)) {
             try {
-				table.purgeStream(stream.getId());
-			} catch (DatabaseException e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-	}
+                if (table != null) {
+                    table.insertOrUpdateStream(stream);
+                } else if (!state.equals(State.CLOSED)) {
+                    logger.warn(
+                            "Could not update state of Server-Sent Event stream to '"
+                                    + state.toString()
+                                    + "'!");
+                }
+            } catch (DatabaseException e) {
+                logger.error(e.getMessage(), e);
+            }
+        } else if (state.equals(State.EXCLUDED)) {
+            // when proxy is excluded from ZAP, then messages are forwarded
+            // but not stored - all existing communication is deleted
+            try {
+                table.purgeStream(stream.getId());
+            } catch (DatabaseException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
 
-	public TableEventStream getTable() {
-		return table;
-	}
-	
-	public void setTable(TableEventStream table) {
-		this.table = table;
-	}
+    public TableEventStream getTable() {
+        return table;
+    }
+
+    public void setTable(TableEventStream table) {
+        this.table = table;
+    }
 }

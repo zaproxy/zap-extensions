@@ -25,9 +25,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import javax.script.Compilable;
-
 import org.apache.commons.lang3.SystemUtils;
 import org.jruby.embed.jsr223.JRubyEngineFactory;
 import org.junit.BeforeClass;

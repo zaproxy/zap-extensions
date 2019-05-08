@@ -23,14 +23,15 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.AbstractStringHttpPanelViewModel;
 import org.zaproxy.zap.extension.sse.ServerSentEvent;
 
-public abstract class AbstractEventStreamStringPanelViewModel extends AbstractStringHttpPanelViewModel {
+public abstract class AbstractEventStreamStringPanelViewModel
+        extends AbstractStringHttpPanelViewModel {
 
     protected ServerSentEvent event;
-    
+
     @Override
     public void setMessage(Message aMessage) {
         event = (ServerSentEvent) aMessage;
-        
+
         super.setMessage(aMessage);
     }
 }

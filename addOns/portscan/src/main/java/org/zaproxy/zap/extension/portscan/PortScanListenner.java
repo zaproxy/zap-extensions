@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.portscan;
 
 public interface PortScanListenner {
 
-	public void scanFinshed(String host);
-	
-	public void scanProgress(String host, int progress);
+    public void scanFinshed(String host);
+
+    public void scanProgress(String host, int progress);
 }

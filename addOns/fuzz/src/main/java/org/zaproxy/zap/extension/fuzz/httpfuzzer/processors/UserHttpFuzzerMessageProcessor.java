@@ -28,7 +28,8 @@ import org.zaproxy.zap.users.User;
 
 public class UserHttpFuzzerMessageProcessor implements HttpFuzzerMessageProcessor {
 
-    public static final String NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.userMessageProcessor.name");
+    public static final String NAME =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.userMessageProcessor.name");
 
     private final User user;
 
@@ -54,5 +55,4 @@ public class UserHttpFuzzerMessageProcessor implements HttpFuzzerMessageProcesso
     public boolean processResult(HttpFuzzerTaskProcessorUtils utils, HttpFuzzResult fuzzResult) {
         return true;
     }
-
 }

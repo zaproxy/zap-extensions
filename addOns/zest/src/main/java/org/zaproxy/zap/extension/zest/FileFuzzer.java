@@ -28,78 +28,76 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 
 public class FileFuzzer {
 
-	private File file = null;
-	private int length = -1;
-	private List<String> fuzzStrs = new ArrayList<>();
-	private Iterator<String> iter = null;
+    private File file = null;
+    private int length = -1;
+    private List<String> fuzzStrs = new ArrayList<>();
+    private Iterator<String> iter = null;
     private static Logger log = Logger.getLogger(FileFuzzer.class);
 
-	protected FileFuzzer(File file) {
-		this.file = file;
-	}
-	
-	private void init() {
-		BufferedReader in = null;
-		
-		try {
-			in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+    protected FileFuzzer(File file) {
+        this.file = file;
+    }
 
-			String line;
+    private void init() {
+        BufferedReader in = null;
 
-			while ((line = in.readLine()) != null) {
-				if (line.trim().length() > 0 && ! line.startsWith("#")) {
-					fuzzStrs.add(line);
-				}
-			}
-			
-		} catch (FileNotFoundException e) {
-			log.error(e.getMessage(), e);
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					log.error(e.getMessage(), e);
-				}
-			}
-		}
-		
-		length = fuzzStrs.size();
-		iter = fuzzStrs.iterator();
-	}
-	
-	public Iterator<String> getIterator() {
-		if (length == -1) {
-			init();
-		} else {
-			iter = fuzzStrs.iterator();
-		}
-		return iter;
-	}
-	
-	public int getLength() {
-		if (length == -1) {
-			init();
-		}
-		return length;
-	}
-	
-	public boolean hasNext() {
-		if (length == -1) {
-			init();
-		}
-		return iter.hasNext();
-	}
-	
-	public String getFileName() {
-		return this.file.getName();
-	}
+        try {
+            in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
+            String line;
+
+            while ((line = in.readLine()) != null) {
+                if (line.trim().length() > 0 && !line.startsWith("#")) {
+                    fuzzStrs.add(line);
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            log.error(e.getMessage(), e);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        length = fuzzStrs.size();
+        iter = fuzzStrs.iterator();
+    }
+
+    public Iterator<String> getIterator() {
+        if (length == -1) {
+            init();
+        } else {
+            iter = fuzzStrs.iterator();
+        }
+        return iter;
+    }
+
+    public int getLength() {
+        if (length == -1) {
+            init();
+        }
+        return length;
+    }
+
+    public boolean hasNext() {
+        if (length == -1) {
+            init();
+        }
+        return iter.hasNext();
+    }
+
+    public String getFileName() {
+        return this.file.getName();
+    }
 }

@@ -20,30 +20,30 @@
 package org.zaproxy.zap.extension.zest;
 
 import javax.script.ScriptException;
-
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.script.TargetedScript;
 
 public class ZestTargetedRunner extends ZestZapRunner implements TargetedScript {
 
-	private ExtensionZest extension = null;
-	private ZestScriptWrapper script = null;
-	
-	public ZestTargetedRunner(ExtensionZest extension, ZestScriptWrapper script) {
-		super(extension, script);
-		this.extension = extension;
-		this.script = script;
-	}
+    private ExtensionZest extension = null;
+    private ZestScriptWrapper script = null;
 
-	@Override
-	public void invokeWith(HttpMessage msg) throws ScriptException {
-		try {
-			this.extension.clearResults();
-			this.run(script.getZestScript(), 
-					ZestZapUtils.toZestRequest(msg, false, true, extension.getParam()),
-					null);
-		} catch (Exception e) {
-			throw new ScriptException(e);
-		}
-	}
+    public ZestTargetedRunner(ExtensionZest extension, ZestScriptWrapper script) {
+        super(extension, script);
+        this.extension = extension;
+        this.script = script;
+    }
+
+    @Override
+    public void invokeWith(HttpMessage msg) throws ScriptException {
+        try {
+            this.extension.clearResults();
+            this.run(
+                    script.getZestScript(),
+                    ZestZapUtils.toZestRequest(msg, false, true, extension.getParam()),
+                    null);
+        } catch (Exception e) {
+            throw new ScriptException(e);
+        }
+    }
 }

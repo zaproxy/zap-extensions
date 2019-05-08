@@ -25,7 +25,8 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.messagelocations.WebSocketMessageLocation;
 import org.zaproxy.zap.model.MessageLocation;
 
-public class TextWebSocketMessageLocationReplacerFactory implements MessageLocationReplacerFactory<WebSocketMessageDTO> {
+public class TextWebSocketMessageLocationReplacerFactory
+        implements MessageLocationReplacerFactory<WebSocketMessageDTO> {
 
     @Override
     public Class<? extends MessageLocation> getTargetMessageLocation() {
@@ -36,5 +37,4 @@ public class TextWebSocketMessageLocationReplacerFactory implements MessageLocat
     public MessageLocationReplacer<WebSocketMessageDTO> createReplacer() {
         return new TextWebSocketMessageLocationReplacer();
     }
-
 }

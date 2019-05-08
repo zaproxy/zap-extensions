@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.websocket.fuzz;
 
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.AbstractFuzzerTask;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
@@ -33,7 +32,8 @@ public class WebSocketFuzzerTask extends AbstractFuzzerTask<WebSocketMessageDTO>
 
     private static final Logger LOGGER = Logger.getLogger(WebSocketFuzzerTask.class);
 
-    public WebSocketFuzzerTask(long id, WebSocketFuzzer parent, WebSocketMessageDTO message, List<Object> payloads) {
+    public WebSocketFuzzerTask(
+            long id, WebSocketFuzzer parent, WebSocketMessageDTO message, List<Object> payloads) {
         super(id, parent, message, payloads);
     }
 
@@ -45,7 +45,8 @@ public class WebSocketFuzzerTask extends AbstractFuzzerTask<WebSocketMessageDTO>
     @Override
     protected void runImpl(WebSocketMessageDTO message, List<Object> payloads) {
         getParent().preProcessMessage(getId(), message, payloads);
-        WebSocketFuzzMessageDTO messageSent = sendMessage(getParent().getWebSocketProxies(), (WebSocketFuzzMessageDTO) message);
+        WebSocketFuzzMessageDTO messageSent =
+                sendMessage(getParent().getWebSocketProxies(), (WebSocketFuzzMessageDTO) message);
         if (messageSent == null) {
             return;
         }
@@ -57,7 +58,8 @@ public class WebSocketFuzzerTask extends AbstractFuzzerTask<WebSocketMessageDTO>
         getParent().fuzzResultAvailable(result);
     }
 
-    private WebSocketFuzzMessageDTO sendMessage(Map<Integer, WebSocketProxy> wsProxies, WebSocketFuzzMessageDTO message) {
+    private WebSocketFuzzMessageDTO sendMessage(
+            Map<Integer, WebSocketProxy> wsProxies, WebSocketFuzzMessageDTO message) {
         if (!wsProxies.containsKey(message.channel.id)) {
             getParent().stopScan();
             return null;

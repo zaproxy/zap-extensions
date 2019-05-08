@@ -31,7 +31,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -41,7 +40,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-
 import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
@@ -56,446 +54,485 @@ import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ConsolePanel extends AbstractPanel implements Tab {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String BASE_NAME_SCRIPT_EXECUTOR_THREAD = "ZAP-ScriptExecutor-";
-	private static final ImageIcon AUTO_COMPLETE_ICON = new ImageIcon(OutputPanel.class.getResource(
-			"/org/zaproxy/zap/extension/scripts/resources/icons/ui-text-field-suggestion.png"));
-	private static final String THREAD_NAME = "ZAP-ScriptChangeOnDiskThread";
-	
-	private ExtensionScriptsUI extension;
-	private JPanel panelContent = null;
-	private JToolBar panelToolbar = null;
-	private JButton runButton = null;
-	private JButton stopButton = null;
-	private ZapToggleButton autoCompleteButton = null;
-	private JLabel scriptTitle = null;
-	private CommandPanel commandPanel = null;
-	private OutputPanel outputPanel = null;
-	private KeyListener listener = null;
-	
-	private ScriptWrapper script = null;
-	private ScriptWrapper template = null;
+    private static final String BASE_NAME_SCRIPT_EXECUTOR_THREAD = "ZAP-ScriptExecutor-";
+    private static final ImageIcon AUTO_COMPLETE_ICON =
+            new ImageIcon(
+                    OutputPanel.class.getResource(
+                            "/org/zaproxy/zap/extension/scripts/resources/icons/ui-text-field-suggestion.png"));
+    private static final String THREAD_NAME = "ZAP-ScriptChangeOnDiskThread";
 
-	private Map<ScriptWrapper, WeakReference<ScriptExecutorThread>> runnableScriptsToThreadMap;
+    private ExtensionScriptsUI extension;
+    private JPanel panelContent = null;
+    private JToolBar panelToolbar = null;
+    private JButton runButton = null;
+    private JButton stopButton = null;
+    private ZapToggleButton autoCompleteButton = null;
+    private JLabel scriptTitle = null;
+    private CommandPanel commandPanel = null;
+    private OutputPanel outputPanel = null;
+    private KeyListener listener = null;
 
-	// TODO remove once a later version of ZAP has been published
-	private Boolean after2_7_0 = null;
-	private Method scriptHasChangedOnDiskMethod = null;
-	private Method scriptReloadMethod = null;
-	private Runnable dialogRunnable = null;
-	private Thread changesPollingThread = null;
-	private boolean pollForChanges;
-	private static final Object [] SCRIPT_CHANGED_BUTTONS = new Object[] {
-			Constant.messages.getString("scripts.changed.keep"),
-			Constant.messages.getString("scripts.changed.replace")};
+    private ScriptWrapper script = null;
+    private ScriptWrapper template = null;
 
-	private static final Logger LOG = Logger.getLogger(ConsolePanel.class);
+    private Map<ScriptWrapper, WeakReference<ScriptExecutorThread>> runnableScriptsToThreadMap;
 
-	public ConsolePanel(ExtensionScriptsUI extension) {
-		super();
-		this.extension = extension;
-		initialize();
-	}
+    // TODO remove once a later version of ZAP has been published
+    private Boolean after2_7_0 = null;
+    private Method scriptHasChangedOnDiskMethod = null;
+    private Method scriptReloadMethod = null;
+    private Runnable dialogRunnable = null;
+    private Thread changesPollingThread = null;
+    private boolean pollForChanges;
+    private static final Object[] SCRIPT_CHANGED_BUTTONS =
+            new Object[] {
+                Constant.messages.getString("scripts.changed.keep"),
+                Constant.messages.getString("scripts.changed.replace")
+            };
 
-	@SuppressWarnings("deprecation")
-	private void initialize() {
-		this.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")));	// 'script' icon
-		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-				KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
-		this.setMnemonic(Constant.messages.getChar("scripts.panel.mnemonic"));
-		this.setLayout(new BorderLayout());
-		if (isAfter2_7_0()) {
-			// Scripts changed on disk will now be detected by the core
-			startPollingForChanges();
-		}
+    private static final Logger LOG = Logger.getLogger(ConsolePanel.class);
 
-		runnableScriptsToThreadMap = Collections.synchronizedMap(new HashMap<ScriptWrapper, WeakReference<ScriptExecutorThread>>());
+    public ConsolePanel(ExtensionScriptsUI extension) {
+        super();
+        this.extension = extension;
+        initialize();
+    }
 
-		panelContent = new JPanel(new GridBagLayout());
-		this.add(panelContent, BorderLayout.CENTER);
+    @SuppressWarnings("deprecation")
+    private void initialize() {
+        this.setIcon(
+                new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png"))); // 'script' icon
+        this.setDefaultAccelerator(
+                KeyStroke.getKeyStroke(
+                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
+                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
+                        KeyEvent.VK_C,
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                | KeyEvent.ALT_DOWN_MASK
+                                | KeyEvent.SHIFT_DOWN_MASK,
+                        false));
+        this.setMnemonic(Constant.messages.getChar("scripts.panel.mnemonic"));
+        this.setLayout(new BorderLayout());
+        if (isAfter2_7_0()) {
+            // Scripts changed on disk will now be detected by the core
+            startPollingForChanges();
+        }
 
-		JSplitPane splitPane = new JSplitPane();
-		splitPane.setDividerSize(3);
-		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		splitPane.setResizeWeight(0.5D);
-		splitPane.setTopComponent(getCommandPanel());
-		splitPane.setBottomComponent(getOutputPanel());
+        runnableScriptsToThreadMap =
+                Collections.synchronizedMap(
+                        new HashMap<ScriptWrapper, WeakReference<ScriptExecutorThread>>());
 
-		panelContent.add(this.getPanelToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0D, 0.0D));
-		panelContent.add(splitPane, LayoutHelper.getGBC(0, 1, 1, 1.0D, 1.0D));
-	}
-	
-	
-	private Method getScriptHasChangedOnDiskMethod() {
-		if (after2_7_0 == null) {
-			// not tried yet
-			try {
-				scriptHasChangedOnDiskMethod = ScriptWrapper.class.getMethod("hasChangedOnDisk");
-				after2_7_0 = Boolean.TRUE;
-			} catch (Exception e) {
-				after2_7_0 = Boolean.FALSE;
-			}
-		}
-		return scriptHasChangedOnDiskMethod;
-	}
-	
-	
-	private boolean isAfter2_7_0 () {
-		if (after2_7_0 == null) {
-			// Sets after2_7_0 as a side effect
-			getScriptHasChangedOnDiskMethod();
-		}
-		return after2_7_0;
-	}
-	
-	private boolean isScriptUpdatedOnDisk() {
-		if (script != null) {
-			// Check to see if its also changed on disk
-			try {
-				Object result = getScriptHasChangedOnDiskMethod().invoke(script);
-				if (result instanceof Boolean) {
-					return (Boolean)result;
-				} else {
-					LOG.error("ScriptWrapper.isChanged() unexpected return " + result + " " + result.getClass().getCanonicalName());
-				}
-			} catch (Exception e) {
-				LOG.error(e.getMessage(), e);
-			}
-		}
-	return false;
-	}
+        panelContent = new JPanel(new GridBagLayout());
+        this.add(panelContent, BorderLayout.CENTER);
 
-	private void startPollingForChanges() {
-		changesPollingThread = new Thread() {
-			@Override
-			public void run() {
-				this.setName(THREAD_NAME);
-				pollForChanges = true;
-				while (pollForChanges) {
-					if (dialogRunnable == null && isScriptUpdatedOnDisk() ) {
+        JSplitPane splitPane = new JSplitPane();
+        splitPane.setDividerSize(3);
+        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setResizeWeight(0.5D);
+        splitPane.setTopComponent(getCommandPanel());
+        splitPane.setBottomComponent(getOutputPanel());
 
-						dialogRunnable = new Runnable() {
-							@Override
-							public void run() {
-								String message;
-								if (script.isChanged()) {
-									message = Constant.messages.getString("scripts.console.changedOnDiskAndConsole");
-								} else {
-									message = Constant.messages.getString("scripts.console.changedOnDisk");
-								}
-								
-								if (JOptionPane.showOptionDialog(
-										ConsolePanel.this,
-										message,
-										Constant.PROGRAM_NAME,
-										JOptionPane.YES_NO_OPTION, 
-										JOptionPane.WARNING_MESSAGE, 
-										null, 
-										SCRIPT_CHANGED_BUTTONS,
-										null) == JOptionPane.YES_OPTION) {
-									try {
-										extension.getExtScript().saveScript(script);
-									} catch (IOException e) {
-										LOG.error(e.getMessage(), e);
-									}
-								} else {
-									reloadScript();
-								}
-								dialogRunnable = null;
-							}
-						};
-						try {
-							SwingUtilities.invokeAndWait(dialogRunnable);
-						} catch (Exception e) {
-							LOG.error(e.getMessage(), e);
-						}
-					}
-					try {
-						sleep(5000);
-					} catch (InterruptedException e) {
-						// Ignore
-					}
-				}
-				changesPollingThread = null;
-			}
-		};
-		changesPollingThread.setDaemon(true);
-		changesPollingThread.start();
-		
-		if (dialogRunnable != null) {
-			return;
-		}
-	}
-	
-	private void reloadScript() {
-		if (this.scriptReloadMethod == null) {
-			try {
-				scriptReloadMethod = ScriptWrapper.class.getMethod("reloadScript");
-			} catch (Exception e) {
-				LOG.error(e.getMessage(), e);
-			}
-		}
-		try {
-			this.scriptReloadMethod.invoke(this.script);
-			this.updateCommandPanelState(this.script);
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
-		}
-	}
-	
-	private javax.swing.JToolBar getPanelToolbar() {
-		if (panelToolbar == null) {
-			
-			panelToolbar = new javax.swing.JToolBar();
-			panelToolbar.setLayout(new java.awt.GridBagLayout());
-			panelToolbar.setEnabled(true);
-			panelToolbar.setFloatable(false);
-			panelToolbar.setRollover(true);
-			panelToolbar.setPreferredSize(new java.awt.Dimension(800,30));
-			panelToolbar.setFont(FontUtils.getFont("Dialog"));
-			panelToolbar.setName("ParamsToolbar");
-			
-			panelToolbar.add(this.getRunButton(), LayoutHelper.getGBC(0, 0, 1, 0.0D));
-			panelToolbar.add(this.getStopButton(), LayoutHelper.getGBC(1, 0, 1, 0.0D));
-			panelToolbar.add(this.getAutoCompleteButton(), LayoutHelper.getGBC(2, 0, 1, 0.0D));
-			panelToolbar.add(this.getScriptTitle(), LayoutHelper.getGBC(3, 0, 1, 0.0D));
-			panelToolbar.add(new JLabel(), LayoutHelper.getGBC(20, 0, 1, 1.0D));	// Filler
-		}
-		return panelToolbar;
-	}
-	
-	private JLabel getScriptTitle () {
-		if (scriptTitle == null) {
-			scriptTitle = new JLabel();
-		}
-		return scriptTitle;
-	}
+        panelContent.add(this.getPanelToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0D, 0.0D));
+        panelContent.add(splitPane, LayoutHelper.getGBC(0, 1, 1, 1.0D, 1.0D));
+    }
 
-	private static String getSyntaxForScript (String engine) {
-		String engineLc = engine.toLowerCase(Locale.ROOT);
-		if (engineLc.startsWith("clojure")) {
-			return SyntaxConstants.SYNTAX_STYLE_CLOJURE;
-		} else if (engineLc.startsWith("groovy")) {
-			return SyntaxConstants.SYNTAX_STYLE_GROOVY;
-		} else if (engineLc.startsWith("ecmacript")) {
-			return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
-		} else if (engineLc.startsWith("javascript")) {
-			return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
-		} else if (engineLc.startsWith("python")) {
-			return SyntaxConstants.SYNTAX_STYLE_PYTHON;
-		} else if (engineLc.startsWith("ruby")) {
-			return SyntaxConstants.SYNTAX_STYLE_RUBY;
-		} else if (engineLc.startsWith("scala")) {
-			return SyntaxConstants.SYNTAX_STYLE_SCALA;
-		} else {
-			return SyntaxConstants.SYNTAX_STYLE_NONE;
-		}
-	}
+    private Method getScriptHasChangedOnDiskMethod() {
+        if (after2_7_0 == null) {
+            // not tried yet
+            try {
+                scriptHasChangedOnDiskMethod = ScriptWrapper.class.getMethod("hasChangedOnDisk");
+                after2_7_0 = Boolean.TRUE;
+            } catch (Exception e) {
+                after2_7_0 = Boolean.FALSE;
+            }
+        }
+        return scriptHasChangedOnDiskMethod;
+    }
 
-	private static String getSyntaxForExtension (String name) {
-		String nameLc = name.toLowerCase(Locale.ROOT);
-		if (nameLc.endsWith(".js")) {
-			return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
-		} else if (nameLc.endsWith(".html")) {
-			return SyntaxConstants.SYNTAX_STYLE_HTML;
-		} else if (nameLc.endsWith(".css")) {
-			return SyntaxConstants.SYNTAX_STYLE_CSS;
-		} else {
-			return SyntaxConstants.SYNTAX_STYLE_NONE;
-		}
-	}
+    private boolean isAfter2_7_0() {
+        if (after2_7_0 == null) {
+            // Sets after2_7_0 as a side effect
+            getScriptHasChangedOnDiskMethod();
+        }
+        return after2_7_0;
+    }
 
-	private JButton getRunButton() {
-		if (runButton == null) {
-			runButton = new JButton();
-			runButton.setText(Constant.messages.getString("scripts.toolbar.label.run"));
-			runButton.setIcon(DisplayUtils.getScaledIcon(
-					new ImageIcon(ZAP.class.getResource("/resource/icon/16/131.png"))));	// 'play' icon
-			runButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.run"));
-			runButton.setEnabled(false);
+    private boolean isScriptUpdatedOnDisk() {
+        if (script != null) {
+            // Check to see if its also changed on disk
+            try {
+                Object result = getScriptHasChangedOnDiskMethod().invoke(script);
+                if (result instanceof Boolean) {
+                    return (Boolean) result;
+                } else {
+                    LOG.error(
+                            "ScriptWrapper.isChanged() unexpected return "
+                                    + result
+                                    + " "
+                                    + result.getClass().getCanonicalName());
+                }
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        return false;
+    }
 
-			runButton.addActionListener(new java.awt.event.ActionListener() { 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					runScript();
-				}
-			});
-		}
-		return runButton;
-	}
-	
-	private JButton getStopButton() {
-		if (stopButton == null) {
-			stopButton = new JButton();
-			stopButton.setIcon(DisplayUtils.getScaledIcon(
-					new ImageIcon(ZAP.class.getResource("/resource/icon/16/142.png"))));	// 'stop' icon
-			stopButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.stop"));
-			stopButton.setEnabled(false);
+    private void startPollingForChanges() {
+        changesPollingThread =
+                new Thread() {
+                    @Override
+                    public void run() {
+                        this.setName(THREAD_NAME);
+                        pollForChanges = true;
+                        while (pollForChanges) {
+                            if (dialogRunnable == null && isScriptUpdatedOnDisk()) {
 
-			stopButton.addActionListener(new java.awt.event.ActionListener() { 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					stopScript();
-				}
-			});
-		}
-		return stopButton;
-	}
+                                dialogRunnable =
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                String message;
+                                                if (script.isChanged()) {
+                                                    message =
+                                                            Constant.messages.getString(
+                                                                    "scripts.console.changedOnDiskAndConsole");
+                                                } else {
+                                                    message =
+                                                            Constant.messages.getString(
+                                                                    "scripts.console.changedOnDisk");
+                                                }
 
-	private ZapToggleButton getAutoCompleteButton() {
-		if (autoCompleteButton == null) {
-			autoCompleteButton = new ZapToggleButton();
-			autoCompleteButton.setIcon(DisplayUtils.getScaledIcon(AUTO_COMPLETE_ICON));
-			autoCompleteButton.setSelectedIcon(DisplayUtils.getScaledIcon(AUTO_COMPLETE_ICON));
-			autoCompleteButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.autocomplete.disabled"));
-			autoCompleteButton.setSelectedToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.autocomplete.enabled"));
-			autoCompleteButton.setSelected(true);
+                                                if (JOptionPane.showOptionDialog(
+                                                                ConsolePanel.this,
+                                                                message,
+                                                                Constant.PROGRAM_NAME,
+                                                                JOptionPane.YES_NO_OPTION,
+                                                                JOptionPane.WARNING_MESSAGE,
+                                                                null,
+                                                                SCRIPT_CHANGED_BUTTONS,
+                                                                null)
+                                                        == JOptionPane.YES_OPTION) {
+                                                    try {
+                                                        extension.getExtScript().saveScript(script);
+                                                    } catch (IOException e) {
+                                                        LOG.error(e.getMessage(), e);
+                                                    }
+                                                } else {
+                                                    reloadScript();
+                                                }
+                                                dialogRunnable = null;
+                                            }
+                                        };
+                                try {
+                                    SwingUtilities.invokeAndWait(dialogRunnable);
+                                } catch (Exception e) {
+                                    LOG.error(e.getMessage(), e);
+                                }
+                            }
+                            try {
+                                sleep(5000);
+                            } catch (InterruptedException e) {
+                                // Ignore
+                            }
+                        }
+                        changesPollingThread = null;
+                    }
+                };
+        changesPollingThread.setDaemon(true);
+        changesPollingThread.start();
 
-			autoCompleteButton.addActionListener(new java.awt.event.ActionListener() { 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					getCommandPanel().setAutoCompleteEnabled(autoCompleteButton.isSelected());
-				}
-			});
-		}
-		return autoCompleteButton;
-	}
+        if (dialogRunnable != null) {
+            return;
+        }
+    }
 
-	private void runScript () {
-		if (runnableScriptsToThreadMap.containsKey(script)) {
-			return;
-		}
+    private void reloadScript() {
+        if (this.scriptReloadMethod == null) {
+            try {
+                scriptReloadMethod = ScriptWrapper.class.getMethod("reloadScript");
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        try {
+            this.scriptReloadMethod.invoke(this.script);
+            this.updateCommandPanelState(this.script);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+    }
 
-		getRunButton().setEnabled(false);
-		
-		getOutputPanel().preScriptInvoke();
+    private javax.swing.JToolBar getPanelToolbar() {
+        if (panelToolbar == null) {
 
-		// Update it, in case its been changed
-		script.setContents(getCommandScript());
+            panelToolbar = new javax.swing.JToolBar();
+            panelToolbar.setLayout(new java.awt.GridBagLayout());
+            panelToolbar.setEnabled(true);
+            panelToolbar.setFloatable(false);
+            panelToolbar.setRollover(true);
+            panelToolbar.setPreferredSize(new java.awt.Dimension(800, 30));
+            panelToolbar.setFont(FontUtils.getFont("Dialog"));
+            panelToolbar.setName("ParamsToolbar");
 
-		ScriptExecutorThread scriptExecutorThead = new ScriptExecutorThread(script);
-		runnableScriptsToThreadMap.put(script, new WeakReference<>(scriptExecutorThead));
-		scriptExecutorThead.start();
-		getStopButton().setEnabled(true);
-	}
-	
-	private void stopScript() {
-		WeakReference<ScriptExecutorThread> refScriptExecutorThread = runnableScriptsToThreadMap.get(script);
-		if (refScriptExecutorThread == null) {
-			return;
-		}
+            panelToolbar.add(this.getRunButton(), LayoutHelper.getGBC(0, 0, 1, 0.0D));
+            panelToolbar.add(this.getStopButton(), LayoutHelper.getGBC(1, 0, 1, 0.0D));
+            panelToolbar.add(this.getAutoCompleteButton(), LayoutHelper.getGBC(2, 0, 1, 0.0D));
+            panelToolbar.add(this.getScriptTitle(), LayoutHelper.getGBC(3, 0, 1, 0.0D));
+            panelToolbar.add(new JLabel(), LayoutHelper.getGBC(20, 0, 1, 1.0D)); // Filler
+        }
+        return panelToolbar;
+    }
 
-		ScriptExecutorThread thread = refScriptExecutorThread.get();
-		refScriptExecutorThread.clear();
-		if (thread != null) {
-			thread.terminate();
-		}
-		runnableScriptsToThreadMap.remove(script);
-		updateButtonsState();
-	}
+    private JLabel getScriptTitle() {
+        if (scriptTitle == null) {
+            scriptTitle = new JLabel();
+        }
+        return scriptTitle;
+    }
 
-	private KeyListener getKeyListener () {
-		if (listener == null) {
-			listener = new KeyListener() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					if (script != null && ! script.isChanged()) {
-						extension.getExtScript().setChanged(script, true);
-					}
-				}
-				@Override
-				public void keyPressed(KeyEvent e) {
-					// Ignore
-				}
-				@Override
-				public void keyReleased(KeyEvent e) {
-					// Ignore
-				}};
-		}
-		return listener;
-	}
+    private static String getSyntaxForScript(String engine) {
+        String engineLc = engine.toLowerCase(Locale.ROOT);
+        if (engineLc.startsWith("clojure")) {
+            return SyntaxConstants.SYNTAX_STYLE_CLOJURE;
+        } else if (engineLc.startsWith("groovy")) {
+            return SyntaxConstants.SYNTAX_STYLE_GROOVY;
+        } else if (engineLc.startsWith("ecmacript")) {
+            return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+        } else if (engineLc.startsWith("javascript")) {
+            return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+        } else if (engineLc.startsWith("python")) {
+            return SyntaxConstants.SYNTAX_STYLE_PYTHON;
+        } else if (engineLc.startsWith("ruby")) {
+            return SyntaxConstants.SYNTAX_STYLE_RUBY;
+        } else if (engineLc.startsWith("scala")) {
+            return SyntaxConstants.SYNTAX_STYLE_SCALA;
+        } else {
+            return SyntaxConstants.SYNTAX_STYLE_NONE;
+        }
+    }
 
-	private CommandPanel getCommandPanel() {
-		if (commandPanel == null) {
-			commandPanel = new CommandPanel(getKeyListener());
-			commandPanel.setEditable(false);
-			commandPanel.setCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
-		}
-		return commandPanel;
-	}
+    private static String getSyntaxForExtension(String name) {
+        String nameLc = name.toLowerCase(Locale.ROOT);
+        if (nameLc.endsWith(".js")) {
+            return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+        } else if (nameLc.endsWith(".html")) {
+            return SyntaxConstants.SYNTAX_STYLE_HTML;
+        } else if (nameLc.endsWith(".css")) {
+            return SyntaxConstants.SYNTAX_STYLE_CSS;
+        } else {
+            return SyntaxConstants.SYNTAX_STYLE_NONE;
+        }
+    }
 
-	protected OutputPanel getOutputPanel() {
-		if (outputPanel == null) {
-			outputPanel = new OutputPanel(extension);
-			resetOutputPanel();
-		}
-		return outputPanel;
-	}
+    private JButton getRunButton() {
+        if (runButton == null) {
+            runButton = new JButton();
+            runButton.setText(Constant.messages.getString("scripts.toolbar.label.run"));
+            runButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    ZAP.class.getResource(
+                                            "/resource/icon/16/131.png")))); // 'play' icon
+            runButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.run"));
+            runButton.setEnabled(false);
 
-	protected void resetOutputPanel() {
-		outputPanel.clear();
-		outputPanel.append(Constant.messages.getString("scripts.welcome.results"));
-	}
+            runButton.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            runScript();
+                        }
+                    });
+        }
+        return runButton;
+    }
 
-	public String getCommandScript() {
-		return this.getCommandPanel().getCommandScript();
-	}
-	
-	void unload() {
-		getCommandPanel().unload();
-		this.pollForChanges = false;
-	}
+    private JButton getStopButton() {
+        if (stopButton == null) {
+            stopButton = new JButton();
+            stopButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    ZAP.class.getResource(
+                                            "/resource/icon/16/142.png")))); // 'stop' icon
+            stopButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.stop"));
+            stopButton.setEnabled(false);
 
-	public ScriptWrapper getScript() {
-		return script;
-	}
+            stopButton.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            stopScript();
+                        }
+                    });
+        }
+        return stopButton;
+    }
 
-	public ScriptWrapper getTemplate() {
-		return template;
-	}
+    private ZapToggleButton getAutoCompleteButton() {
+        if (autoCompleteButton == null) {
+            autoCompleteButton = new ZapToggleButton();
+            autoCompleteButton.setIcon(DisplayUtils.getScaledIcon(AUTO_COMPLETE_ICON));
+            autoCompleteButton.setSelectedIcon(DisplayUtils.getScaledIcon(AUTO_COMPLETE_ICON));
+            autoCompleteButton.setToolTipText(
+                    Constant.messages.getString("scripts.toolbar.tooltip.autocomplete.disabled"));
+            autoCompleteButton.setSelectedToolTipText(
+                    Constant.messages.getString("scripts.toolbar.tooltip.autocomplete.enabled"));
+            autoCompleteButton.setSelected(true);
 
-	public void clearScript() {
-		this.script = null;
-		getCommandPanel().setEditable(false);
+            autoCompleteButton.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            getCommandPanel()
+                                    .setAutoCompleteEnabled(autoCompleteButton.isSelected());
+                        }
+                    });
+        }
+        return autoCompleteButton;
+    }
+
+    private void runScript() {
+        if (runnableScriptsToThreadMap.containsKey(script)) {
+            return;
+        }
+
+        getRunButton().setEnabled(false);
+
+        getOutputPanel().preScriptInvoke();
+
+        // Update it, in case its been changed
+        script.setContents(getCommandScript());
+
+        ScriptExecutorThread scriptExecutorThead = new ScriptExecutorThread(script);
+        runnableScriptsToThreadMap.put(script, new WeakReference<>(scriptExecutorThead));
+        scriptExecutorThead.start();
+        getStopButton().setEnabled(true);
+    }
+
+    private void stopScript() {
+        WeakReference<ScriptExecutorThread> refScriptExecutorThread =
+                runnableScriptsToThreadMap.get(script);
+        if (refScriptExecutorThread == null) {
+            return;
+        }
+
+        ScriptExecutorThread thread = refScriptExecutorThread.get();
+        refScriptExecutorThread.clear();
+        if (thread != null) {
+            thread.terminate();
+        }
+        runnableScriptsToThreadMap.remove(script);
+        updateButtonsState();
+    }
+
+    private KeyListener getKeyListener() {
+        if (listener == null) {
+            listener =
+                    new KeyListener() {
+                        @Override
+                        public void keyTyped(KeyEvent e) {
+                            if (script != null && !script.isChanged()) {
+                                extension.getExtScript().setChanged(script, true);
+                            }
+                        }
+
+                        @Override
+                        public void keyPressed(KeyEvent e) {
+                            // Ignore
+                        }
+
+                        @Override
+                        public void keyReleased(KeyEvent e) {
+                            // Ignore
+                        }
+                    };
+        }
+        return listener;
+    }
+
+    private CommandPanel getCommandPanel() {
+        if (commandPanel == null) {
+            commandPanel = new CommandPanel(getKeyListener());
+            commandPanel.setEditable(false);
+            commandPanel.setCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
+        }
+        return commandPanel;
+    }
+
+    protected OutputPanel getOutputPanel() {
+        if (outputPanel == null) {
+            outputPanel = new OutputPanel(extension);
+            resetOutputPanel();
+        }
+        return outputPanel;
+    }
+
+    protected void resetOutputPanel() {
+        outputPanel.clear();
+        outputPanel.append(Constant.messages.getString("scripts.welcome.results"));
+    }
+
+    public String getCommandScript() {
+        return this.getCommandPanel().getCommandScript();
+    }
+
+    void unload() {
+        getCommandPanel().unload();
+        this.pollForChanges = false;
+    }
+
+    public ScriptWrapper getScript() {
+        return script;
+    }
+
+    public ScriptWrapper getTemplate() {
+        return template;
+    }
+
+    public void clearScript() {
+        this.script = null;
+        getCommandPanel().setEditable(false);
         getCommandPanel().clear();
         getCommandPanel().setCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
         setButtonsAllowRunScript(false);
         getScriptTitle().setText("");
-	}
+    }
 
-	public void setScript(ScriptWrapper script) {
-		this.script = script;
-		this.template = null;
-		
-		getCommandPanel().setEditable(script.getEngine().isTextBased());
-		updateButtonsState();
-		updateCommandPanelState(script);
-		
-		if (script.getEngine().isTextBased()) {
-			// This causes a lot of pain when recording client side Zest scripts,
-			// so only do for text based ones
-	        setTabFocus();
-		}
-		
-		if (!isTabVisible()) {
-			setTabFocus();
-		}
-	}
-	
-	/**
-	 * Updates the state of the command panel for the given {@code script}.
-	 * <p>
-	 * It clears and updates the command panel with the contents of the given {@code script}, sets the syntax style to match the
-	 * syntax of the {@code script} and updates the title of the panel with the name of the script engine and name of the
-	 * {@code script}. Finally it request focus to this tab.
-	 * </p>
-	 * 
-	 * @param script the script whose state will be used to update the command panel
-	 * @see #getCommandPanel()
-	 */
-	private void updateCommandPanelState(ScriptWrapper script) {
+    public void setScript(ScriptWrapper script) {
+        this.script = script;
+        this.template = null;
+
+        getCommandPanel().setEditable(script.getEngine().isTextBased());
+        updateButtonsState();
+        updateCommandPanelState(script);
+
+        if (script.getEngine().isTextBased()) {
+            // This causes a lot of pain when recording client side Zest scripts,
+            // so only do for text based ones
+            setTabFocus();
+        }
+
+        if (!isTabVisible()) {
+            setTabFocus();
+        }
+    }
+
+    /**
+     * Updates the state of the command panel for the given {@code script}.
+     *
+     * <p>It clears and updates the command panel with the contents of the given {@code script},
+     * sets the syntax style to match the syntax of the {@code script} and updates the title of the
+     * panel with the name of the script engine and name of the {@code script}. Finally it request
+     * focus to this tab.
+     *
+     * @param script the script whose state will be used to update the command panel
+     * @see #getCommandPanel()
+     */
+    private void updateCommandPanelState(ScriptWrapper script) {
         getCommandPanel().clear();
         getCommandPanel().setCommandScript(script.getContents());
         getCommandPanel().setScriptType(script.getTypeName());
@@ -507,28 +544,29 @@ public class ConsolePanel extends AbstractPanel implements Tab {
         } else {
             getCommandPanel().setSyntax(getSyntaxForScript(script.getEngine().getEngineName()));
         }
-        this.getScriptTitle().setText(script.getEngine().getLanguageName() + " : " + script.getName());
-	}
-	
-	public void setTemplate(ScriptWrapper template) {
-		this.template = template;
-		this.script = null;
-		
-		getCommandPanel().setEditable(false);
-		setButtonsAllowRunScript(false);
-		updateCommandPanelState(template);
+        this.getScriptTitle()
+                .setText(script.getEngine().getLanguageName() + " : " + script.getName());
+    }
+
+    public void setTemplate(ScriptWrapper template) {
+        this.template = template;
+        this.script = null;
+
+        getCommandPanel().setEditable(false);
+        setButtonsAllowRunScript(false);
+        updateCommandPanelState(template);
         setTabFocus();
-	}
+    }
 
     /**
      * Updates the state of the run and stop buttons for the current script.
-     * <p>
-     * If the current script is not runnable ({@code ScriptWrapper#isRunableStandalone()} returns {@code false}) the run and
-     * stop buttons are disabled. If the current script is runnable the state of the buttons will be updated depending whether
-     * the script is already running or not. If the script is already running the run button is disabled and the stop enabled,
-     * otherwise the run button will be enabled and the stop button disabled.
-     * </p>
-     * 
+     *
+     * <p>If the current script is not runnable ({@code ScriptWrapper#isRunableStandalone()} returns
+     * {@code false}) the run and stop buttons are disabled. If the current script is runnable the
+     * state of the buttons will be updated depending whether the script is already running or not.
+     * If the script is already running the run button is disabled and the stop enabled, otherwise
+     * the run button will be enabled and the stop button disabled.
+     *
      * @see #script
      * @see #getRunButton()
      * @see #getStopButton()
@@ -543,7 +581,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
             return;
         }
 
-        WeakReference<ScriptExecutorThread> refScriptExecutorThread = runnableScriptsToThreadMap.get(script);
+        WeakReference<ScriptExecutorThread> refScriptExecutorThread =
+                runnableScriptsToThreadMap.get(script);
         if (refScriptExecutorThread == null) {
             setButtonsAllowRunScript(true);
             return;
@@ -561,11 +600,10 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 
     /**
      * Sets whether or not the state of the buttons should allow to run a script.
-     * <p>
-     * It enables the run button if {@code allow} is {@code true}, disables it otherwise. The stop button is set always to be
-     * disabled.
-     * </p>
-     * 
+     *
+     * <p>It enables the run button if {@code allow} is {@code true}, disables it otherwise. The
+     * stop button is set always to be disabled.
+     *
      * @param allow {@code true} to allow to run a script, {@code false} otherwise
      * @see #getRunButton()
      * @see #getStopButton()
@@ -575,15 +613,13 @@ public class ConsolePanel extends AbstractPanel implements Tab {
     private void setButtonsAllowRunScript(boolean allow) {
         getRunButton().setEnabled(allow);
         getStopButton().setEnabled(false);
-
     }
 
     /**
      * Updates the run and stop buttons to the state of a running script.
-     * <p>
-     * It disables the run button and enables the stop button.
-     * </p>
-     * 
+     *
+     * <p>It disables the run button and enables the stop button.
+     *
      * @see #getRunButton()
      * @see #getStopButton()
      * @see #setButtonsAllowRunScript(boolean)
@@ -621,7 +657,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
             } catch (Exception e) {
                 getOutputPanel().append(e);
             } finally {
-                WeakReference<ScriptExecutorThread> refScriptExecutorThread = runnableScriptsToThreadMap.remove(script);
+                WeakReference<ScriptExecutorThread> refScriptExecutorThread =
+                        runnableScriptsToThreadMap.remove(script);
                 if (refScriptExecutorThread != null) {
                     refScriptExecutorThread.clear();
                 }
@@ -638,7 +675,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
                 } catch (InterruptedException e) {
                     // Ignore
                 }
-                // Yes, its deprecated, but there are no alternatives, and we have to be able to stop scripts
+                // Yes, its deprecated, but there are no alternatives, and we have to be able to
+                // stop scripts
                 stop();
             }
         }

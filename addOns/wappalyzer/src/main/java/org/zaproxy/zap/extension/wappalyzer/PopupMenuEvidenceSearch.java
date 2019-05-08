@@ -21,35 +21,39 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import java.awt.Component;
 import java.util.regex.Pattern;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 
 public class PopupMenuEvidenceSearch extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-    public PopupMenuEvidenceSearch(String label, final ExtensionWappalyzer extension, final Pattern pattern, final ExtensionSearch.Type type) {
+    public PopupMenuEvidenceSearch(
+            String label,
+            final ExtensionWappalyzer extension,
+            final Pattern pattern,
+            final ExtensionSearch.Type type) {
         super(label);
-        this.addActionListener(new java.awt.event.ActionListener() { 
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
 
-        	@Override
-        	public void actionPerformed(java.awt.event.ActionEvent e) {
-        		extension.search(pattern, type);
-        	}
-        });
-	}
-	
-	@Override
-	public boolean isSubMenu () {
-		return true;
-	}
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        extension.search(pattern, type);
+                    }
+                });
+    }
 
-	@Override
-	public String getParentMenuName () {
-		return Constant.messages.getString("wappalyzer.search.popup");
-	}
+    @Override
+    public boolean isSubMenu() {
+        return true;
+    }
+
+    @Override
+    public String getParentMenuName() {
+        return Constant.messages.getString("wappalyzer.search.popup");
+    }
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
@@ -59,9 +63,9 @@ public class PopupMenuEvidenceSearch extends ExtensionPopupMenuItem {
         }
         return false;
     }
-    
+
     @Override
     public boolean isSafe() {
-    	return true;
+        return true;
     }
 }

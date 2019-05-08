@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.openapi.generators;
 import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,9 +37,12 @@ public class ModelGenerator {
         Map<String, String> model = new HashMap<String, String>();
         for (Map.Entry<String, Model> definition : definitions.entrySet()) {
             if (definition.getKey().equals(name)) {
-                for (Map.Entry<String, Property> property : definition.getValue().getProperties().entrySet()) {
+                for (Map.Entry<String, Property> property :
+                        definition.getValue().getProperties().entrySet()) {
                     if (property.getValue().getType().equals("ref")) {
-                        model.put(property.getKey(), ((RefProperty) property.getValue()).getSimpleRef());
+                        model.put(
+                                property.getKey(),
+                                ((RefProperty) property.getValue()).getSimpleRef());
                     } else {
                         model.put(property.getKey(), property.getValue().getType());
                     }

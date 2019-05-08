@@ -30,9 +30,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-/**
- * Unit test for {@link IntegerOverflow}.
- */
+/** Unit test for {@link IntegerOverflow}. */
 public class IntegerOverflowUnitTest extends ActiveScannerTest<IntegerOverflow> {
 
     @Override
@@ -64,7 +62,8 @@ public class IntegerOverflowUnitTest extends ActiveScannerTest<IntegerOverflow> 
     public void shouldSkipScanning500ErrorMessage() throws Exception {
         // Given
         HttpMessage message = getHttpMessage("?param=value");
-        message.setResponseHeader("HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n");
+        message.setResponseHeader(
+                "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n");
         rule.init(message, parent);
         // When
         rule.scan();
@@ -92,5 +91,4 @@ public class IntegerOverflowUnitTest extends ActiveScannerTest<IntegerOverflow> 
         // Then
         assertThat(httpMessagesSent, is(empty()));
     }
-
 }

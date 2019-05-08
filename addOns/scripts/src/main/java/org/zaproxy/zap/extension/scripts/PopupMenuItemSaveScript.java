@@ -20,10 +20,8 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
-
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -54,18 +52,23 @@ public class PopupMenuItemSaveScript extends ExtensionPopupMenuItem {
             throw new IllegalArgumentException("The parameter scriptsPanel must not be null.");
         }
 
-        setIcon(DisplayUtils.getScaledIcon(new ImageIcon(PopupMenuItemSaveScript.class.getResource("/resource/icon/16/096.png"))));
+        setIcon(
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                PopupMenuItemSaveScript.class.getResource(
+                                        "/resource/icon/16/096.png"))));
 
         this.scriptsPanel = scriptsPanel;
 
-        this.addActionListener(new java.awt.event.ActionListener() {
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
 
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                PopupMenuItemSaveScript.this.scriptsPanel.saveScript(selectedScript);
-                selectedScript = null;
-            }
-        });
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        PopupMenuItemSaveScript.this.scriptsPanel.saveScript(selectedScript);
+                        selectedScript = null;
+                    }
+                });
     }
 
     @Override

@@ -23,7 +23,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.Pattern;
-
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
@@ -41,102 +40,107 @@ import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
 public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 2282358266003940700L;
+    private static final long serialVersionUID = 2282358266003940700L;
 
-	private ExtensionZest extension;
+    private ExtensionZest extension;
 
-	/**
-	 * This method initializes 
-	 * 
-	 */
-	public ZestAddAssertionPopupMenu(ExtensionZest extension) {
-		super("AddAssertX");
-		this.extension = extension;
-	}
-	
-	/**/
+    /** This method initializes */
+    public ZestAddAssertionPopupMenu(ExtensionZest extension) {
+        super("AddAssertX");
+        this.extension = extension;
+    }
+
+    /**/
     @Override
     public String getParentMenuName() {
-    	return Constant.messages.getString("zest.assert.add.popup");
+        return Constant.messages.getString("zest.assert.add.popup");
     }
-    
+
     @Override
     public boolean isSubMenu() {
-    	return true;
+        return true;
     }
+
     @Override
-    public boolean isDummyItem () {
-    	return true;
+    public boolean isDummyItem() {
+        return true;
     }
-	    
+
     @Override
     public boolean isEnableForComponent(Component invoker) {
-		String var = ZestVariables.RESPONSE_BODY;
-		if (extension.isScriptTree(invoker)) {
-    		ScriptNode node = extension.getSelectedZestNode();
-    		ZestElement ze = extension.getSelectedZestElement();
-    		if (node == null || node.isTemplate()) {
-    			return false;
-    		} else if (ze != null && ze instanceof ZestRequest) {
-            	reCreateSubMenu(node, (ZestRequest) ZestZapUtils.getElement(node), var, null);
-            	return true;
-    		}
-        } else if (invoker instanceof HttpPanelSyntaxHighlightTextArea && extension.getExtScript().getScriptUI() != null) {
-			HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
-			ScriptNode node = extension.getExtScript().getScriptUI().getSelectedNode();
-			
-			if (node == null || node.isTemplate()) {
-    			return false;
-    		} else if (extension.isSelectedMessage(panel.getMessage()) &&
-					panel.getSelectedText() != null && panel.getSelectedText().length() > 0) {
+        String var = ZestVariables.RESPONSE_BODY;
+        if (extension.isScriptTree(invoker)) {
+            ScriptNode node = extension.getSelectedZestNode();
+            ZestElement ze = extension.getSelectedZestElement();
+            if (node == null || node.isTemplate()) {
+                return false;
+            } else if (ze != null && ze instanceof ZestRequest) {
+                reCreateSubMenu(node, (ZestRequest) ZestZapUtils.getElement(node), var, null);
+                return true;
+            }
+        } else if (invoker instanceof HttpPanelSyntaxHighlightTextArea
+                && extension.getExtScript().getScriptUI() != null) {
+            HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea) invoker;
+            ScriptNode node = extension.getExtScript().getScriptUI().getSelectedNode();
+
+            if (node == null || node.isTemplate()) {
+                return false;
+            } else if (extension.isSelectedMessage(panel.getMessage())
+                    && panel.getSelectedText() != null
+                    && panel.getSelectedText().length() > 0) {
 
                 if (ZestZapUtils.getElement(node) instanceof ZestRequest) {
-					ZestRequest req = (ZestRequest) ZestZapUtils.getElement(node);
-					if (req.getResponse() != null
-							&& req.getResponse().getHeaders() != null
-							&& req.getResponse().getHeaders().indexOf(panel.getSelectedText()) >= 0) {
-						var = ZestVariables.RESPONSE_HEADER;
-					}
+                    ZestRequest req = (ZestRequest) ZestZapUtils.getElement(node);
+                    if (req.getResponse() != null
+                            && req.getResponse().getHeaders() != null
+                            && req.getResponse().getHeaders().indexOf(panel.getSelectedText())
+                                    >= 0) {
+                        var = ZestVariables.RESPONSE_HEADER;
+                    }
 
-                	reCreateSubMenu(node, req, var, Pattern.quote(panel.getSelectedText()));
-                	return true;
+                    reCreateSubMenu(node, req, var, Pattern.quote(panel.getSelectedText()));
+                    return true;
                 }
-			}
+            }
         }
         return false;
     }
 
     private void reCreateSubMenu(ScriptNode parent, ZestRequest req, String variable, String text) {
-		boolean incStatusCode = true;
-		for (ZestAssertion za : req.getAssertions()) {
-			if (za.getRootExpression() instanceof ZestExpressionStatusCode) {
-				incStatusCode = false;
-			}
-		}
-		// Only makes sence to have one of each of these
-		if (incStatusCode) {
-			createPopupAddAssertionMenu (parent,  new ZestAssertion(new ZestExpressionStatusCode()));
-		}
-		// Can be any number of these
-		createPopupAddAssertionMenu (parent, new ZestAssertion(new ZestExpressionLength()));
-		createPopupAddAssertionMenu (parent, new ZestAssertion(new ZestExpressionRegex(variable, text)));
-	}
+        boolean incStatusCode = true;
+        for (ZestAssertion za : req.getAssertions()) {
+            if (za.getRootExpression() instanceof ZestExpressionStatusCode) {
+                incStatusCode = false;
+            }
+        }
+        // Only makes sence to have one of each of these
+        if (incStatusCode) {
+            createPopupAddAssertionMenu(parent, new ZestAssertion(new ZestExpressionStatusCode()));
+        }
+        // Can be any number of these
+        createPopupAddAssertionMenu(parent, new ZestAssertion(new ZestExpressionLength()));
+        createPopupAddAssertionMenu(
+                parent, new ZestAssertion(new ZestExpressionRegex(variable, text)));
+    }
 
     private void createPopupAddAssertionMenu(final ScriptNode req, final ZestAssertion za2) {
-		ZestPopupMenu menu = new ZestPopupMenu(
-				Constant.messages.getString("zest.assert.add.popup"),
-				ZestZapUtils.toUiString(za2, false));
-		menu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				extension.getDialogManager().showZestAssertionDialog(req, null, za2, true);
-			}});
-    	menu.setMenuIndex(this.getMenuIndex());
-		View.getSingleton().getPopupList().add(menu);
-	}
+        ZestPopupMenu menu =
+                new ZestPopupMenu(
+                        Constant.messages.getString("zest.assert.add.popup"),
+                        ZestZapUtils.toUiString(za2, false));
+        menu.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        extension.getDialogManager().showZestAssertionDialog(req, null, za2, true);
+                    }
+                });
+        menu.setMenuIndex(this.getMenuIndex());
+        View.getSingleton().getPopupList().add(menu);
+    }
 
-	@Override
+    @Override
     public boolean isSafe() {
-    	return true;
+        return true;
     }
 }

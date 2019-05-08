@@ -81,5 +81,4 @@ public class ForcedBrowseFile implements Comparable<ForcedBrowseFile> {
         }
         return file.compareTo(o.file);
     }
-
 }

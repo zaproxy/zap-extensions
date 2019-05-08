@@ -19,12 +19,12 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 public class XAspNetVersionScannerUnitTest extends PassiveScannerTest<XAspNetVersionScanner> {
 
@@ -33,9 +33,9 @@ public class XAspNetVersionScannerUnitTest extends PassiveScannerTest<XAspNetVer
         return new XAspNetVersionScanner();
     }
 
-
     @Test
-    public void shouldRaiseAlertWhenResponseContainsXAspNetVersionHeader() throws HttpMalformedHeaderException {
+    public void shouldRaiseAlertWhenResponseContainsXAspNetVersionHeader()
+            throws HttpMalformedHeaderException {
 
         HttpMessage msg = createMessage("X-AspNet-Version");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -45,7 +45,8 @@ public class XAspNetVersionScannerUnitTest extends PassiveScannerTest<XAspNetVer
     }
 
     @Test
-    public void shouldRaiseAlertWhenResponseContainsXAspNetMvcVersionHeader() throws HttpMalformedHeaderException {
+    public void shouldRaiseAlertWhenResponseContainsXAspNetMvcVersionHeader()
+            throws HttpMalformedHeaderException {
 
         HttpMessage msg = createMessage("X-AspNetMvc-Version");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -55,7 +56,8 @@ public class XAspNetVersionScannerUnitTest extends PassiveScannerTest<XAspNetVer
     }
 
     @Test
-    public void shouldNotRaiseAlertWhenResponseDoesNotContainsXAspNetVersionHeader() throws HttpMalformedHeaderException {
+    public void shouldNotRaiseAlertWhenResponseDoesNotContainsXAspNetVersionHeader()
+            throws HttpMalformedHeaderException {
 
         HttpMessage msg = createMessage("dummy");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -68,12 +70,14 @@ public class XAspNetVersionScannerUnitTest extends PassiveScannerTest<XAspNetVer
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
 
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                        header + ": 1/1.1\r\n" +
-                        "X-XSS-Protection: 0\r\n" +
-                        "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                        "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + header
+                        + ": 1/1.1\r\n"
+                        + "X-XSS-Protection: 0\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         return msg;
     }
-
 }

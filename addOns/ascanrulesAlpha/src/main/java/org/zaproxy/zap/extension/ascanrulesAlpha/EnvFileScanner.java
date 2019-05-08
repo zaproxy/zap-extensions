@@ -21,16 +21,15 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 public class EnvFileScanner extends AbstractAppFilePlugin {
 
-	private static final String MESSAGE_PREFIX = "ascanalpha.envfilescanner.";
-	private static final int PLUGIN_ID = 40034;
-	
-	public EnvFileScanner() {
-		super(".env", MESSAGE_PREFIX);
-	}	
+    private static final String MESSAGE_PREFIX = "ascanalpha.envfilescanner.";
+    private static final int PLUGIN_ID = 40034;
 
-	@Override
-	public int getId() {
-		return PLUGIN_ID;
-	}
+    public EnvFileScanner() {
+        super(".env", MESSAGE_PREFIX);
+    }
 
+    @Override
+    public int getId() {
+        return PLUGIN_ID;
+    }
 }

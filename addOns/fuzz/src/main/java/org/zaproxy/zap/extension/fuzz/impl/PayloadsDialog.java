@@ -21,10 +21,8 @@ package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.awt.Dialog;
 import java.util.List;
-
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.impl.MessageLocationPayloadsPanel.PayloadsChangedListener;
 import org.zaproxy.zap.model.MessageLocation;
@@ -34,7 +32,8 @@ public class PayloadsDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 4152587374142222707L;
 
-    private static final String CONFIRM_BUTTON_LABEL = Constant.messages.getString("fuzz.fuzzer.dialog.payloads.button.confirm");
+    private static final String CONFIRM_BUTTON_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.dialog.payloads.button.confirm");
 
     private List<PayloadTableEntry> payloads;
 
@@ -51,21 +50,24 @@ public class PayloadsDialog extends AbstractFormDialog {
 
         this.payloads = payloads;
 
-        payloadsPanel = new MessageLocationPayloadsPanel(parent, messageLocation, payloads, payloadGeneratorsUIHandlers);
-        payloadsPanel.setPayloadsChangedListener(new PayloadsChangedListener() {
+        payloadsPanel =
+                new MessageLocationPayloadsPanel(
+                        parent, messageLocation, payloads, payloadGeneratorsUIHandlers);
+        payloadsPanel.setPayloadsChangedListener(
+                new PayloadsChangedListener() {
 
-            @Override
-            public void payloadAdded(int numberOfPayloads) {
-                setConfirmButtonEnabled(true);
-            }
+                    @Override
+                    public void payloadAdded(int numberOfPayloads) {
+                        setConfirmButtonEnabled(true);
+                    }
 
-            @Override
-            public void payloadRemoved(int numberOfPayloads) {
-                if (numberOfPayloads == 0) {
-                    setConfirmButtonEnabled(false);
-                }
-            }
-        });
+                    @Override
+                    public void payloadRemoved(int numberOfPayloads) {
+                        if (numberOfPayloads == 0) {
+                            setConfirmButtonEnabled(false);
+                        }
+                    }
+                });
 
         initView();
         pack();
@@ -105,5 +107,4 @@ public class PayloadsDialog extends AbstractFormDialog {
     public List<PayloadTableEntry> getPayloads() {
         return payloads;
     }
-
 }

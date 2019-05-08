@@ -21,10 +21,10 @@ package org.zaproxy.zap.extension.fuzz.payloads;
 
 import java.util.Collection;
 import java.util.Iterator;
-
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class PayloadCollectionIterator<E extends Payload> implements ResettableAutoCloseableIterator<E> {
+public class PayloadCollectionIterator<E extends Payload>
+        implements ResettableAutoCloseableIterator<E> {
 
     private final Collection<E> payloads;
     private Iterator<E> payloadIterator;
@@ -50,8 +50,7 @@ public class PayloadCollectionIterator<E extends Payload> implements ResettableA
     }
 
     @Override
-    public void remove() {
-    }
+    public void remove() {}
 
     @Override
     public void reset() {
@@ -59,6 +58,5 @@ public class PayloadCollectionIterator<E extends Payload> implements ResettableA
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 }

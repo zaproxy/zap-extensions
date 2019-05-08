@@ -21,25 +21,23 @@ package org.zaproxy.zap.extension.websocket;
 
 import java.io.IOException;
 
-/**
- * Reports a WebSocket-specific error.
- */
+/** Reports a WebSocket-specific error. */
 public class WebSocketException extends IOException {
-	private static final long serialVersionUID = -4708303277965511632L;
+    private static final long serialVersionUID = -4708303277965511632L;
 
-	public WebSocketException() {
-		super();
-	}
+    public WebSocketException() {
+        super();
+    }
 
-	public WebSocketException(String msg) {
-		super(msg);
-	}
+    public WebSocketException(String msg) {
+        super(msg);
+    }
 
-	public WebSocketException(Exception e) {
-		super(e);
-	}
+    public WebSocketException(Exception e) {
+        super(e);
+    }
 
-	public WebSocketException(String msg, Exception e) {
-		super(msg, e);
-	}
+    public WebSocketException(String msg, Exception e) {
+        super(msg, e);
+    }
 }

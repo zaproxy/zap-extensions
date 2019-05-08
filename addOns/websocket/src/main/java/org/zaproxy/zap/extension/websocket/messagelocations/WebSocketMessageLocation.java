@@ -21,9 +21,5 @@ package org.zaproxy.zap.extension.websocket.messagelocations;
 
 import org.zaproxy.zap.model.MessageLocation;
 
-/**
- * Tag interface for {@code MessageLocation} of a {@code WebSocket} message.
- * 
- */
-public interface WebSocketMessageLocation extends MessageLocation {
-}
+/** Tag interface for {@code MessageLocation} of a {@code WebSocket} message. */
+public interface WebSocketMessageLocation extends MessageLocation {}

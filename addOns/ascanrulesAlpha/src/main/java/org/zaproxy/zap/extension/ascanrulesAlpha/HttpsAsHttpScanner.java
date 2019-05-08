@@ -19,154 +19,158 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.io.IOException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.parosproxy.paros.Constant;
-
-import java.io.IOException;
 
 /**
- * Active scan rule which checks whether or not HTTPS content is also available via HTTP 
+ * Active scan rule which checks whether or not HTTPS content is also available via HTTP
  * https://github.com/zaproxy/zaproxy/issues/174
+ *
  * @author kingthorin+owaspzap@gmail.com
  */
 public class HttpsAsHttpScanner extends AbstractAppPlugin {
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "ascanalpha.httpsashttpscanner.";
-	private static final int PLUGIN_ID = 10047;
+    /** Prefix for internationalised messages used by this rule */
+    private static final String MESSAGE_PREFIX = "ascanalpha.httpsashttpscanner.";
 
-	private static final Logger log = Logger.getLogger(HttpsAsHttpScanner.class);
-	
-	@Override
-	public int getId() {
-		return PLUGIN_ID;
-	}
+    private static final int PLUGIN_ID = 10047;
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
-	
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
+    private static final Logger log = Logger.getLogger(HttpsAsHttpScanner.class);
 
-	@Override
-	public String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
+    @Override
+    public int getId() {
+        return PLUGIN_ID;
+    }
 
-	@Override
-	public String getReference() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
 
-	@Override
-	public String[] getDependency() {
-		return null;
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
 
-	@Override
-	public int getCategory() {
-		return Category.MISC;
-	}
-	
-	@Override
-	public int getRisk() {
-		return Alert.RISK_LOW;
-	}
+    @Override
+    public String getSolution() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
 
-	@Override
-	public int getCweId() {
-		return 311; // CWE-311: Missing Encryption of Sensitive Data
-	}
+    @Override
+    public String getReference() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
 
-	@Override
-	public int getWascId() {
-		return 4; // WASC-04: Insufficient Transport Layer Protection
-	}
+    @Override
+    public String[] getDependency() {
+        return null;
+    }
 
-	@Override
-	public void init() {
+    @Override
+    public int getCategory() {
+        return Category.MISC;
+    }
 
-	}
+    @Override
+    public int getRisk() {
+        return Alert.RISK_LOW;
+    }
 
-	@Override
-	public void scan() {
-		
-		if (!getBaseMsg().getRequestHeader().isSecure()) { //Base request isn't HTTPS
-			if (log.isDebugEnabled()) { 
-				log.debug ("The original request was not HTTPS, so there is not much point in looking further.");
-			}
-			return;	
-		}
-		
-		int originalStatusCode = getBaseMsg().getResponseHeader().getStatusCode();
-		if (originalStatusCode == HttpStatusCode.NOT_FOUND || originalStatusCode == 0) {
-			if (log.isDebugEnabled()) {
-				log.debug ("The original request was not successfuly completed (status = "+ originalStatusCode +"), so there is not much point in looking further.");
-			}
-			return;		
-		}
-		
-		if (log.isDebugEnabled()) {
-			log.debug("Checking if " + getBaseMsg().getRequestHeader().getURI() + " is available via HTTP.");
-		}
-		
-		HttpMessage newRequest = getNewMsg();
-		
-		try{
-			newRequest.getRequestHeader().setSecure(false); //https becomes http
-			if (log.isDebugEnabled()) {
-				log.debug("**"+newRequest.getRequestHeader().getURI());
-			}
-		} catch (URIException e) {
-			log.error("Error creating HTTP URL from HTTPS URL:", e);
-			return; 
-		}
+    @Override
+    public int getCweId() {
+        return 311; // CWE-311: Missing Encryption of Sensitive Data
+    }
 
-		//Check if the user stopped things. One request per URL so check before sending the request
-		if (isStop()) { 
-			if (log.isDebugEnabled()) {
-				log.debug("Scanner "+getName()+" Stopping.");
-			}
-			return; 
-		}
-		
-		try {
-			sendAndReceive(newRequest, false);
-		} catch (IOException e) {
-			log.error("Error scanning a request via HTTP when the original was HTTPS:", e);
-			return; 
-		}
-		
-		if (newRequest.getResponseHeader().getStatusCode() == HttpStatusCode.OK) { // 200 Success
+    @Override
+    public int getWascId() {
+        return 4; // WASC-04: Insufficient Transport Layer Protection
+    }
 
-			String newUri = newRequest.getRequestHeader().getURI().toString();
-			
-			bingo(getRisk(), //Risk
-					Alert.CONFIDENCE_MEDIUM, //Confidence/Reliability
-					getName(), //Name
-					getDescription(), //Description
-					getBaseMsg().getRequestHeader().getURI().toString(), //Original URI
-					null, //Param
-					"", //Attack
-					Constant.messages.getString(MESSAGE_PREFIX+"otherinfo", newUri), //OtherInfo 
-					getSolution(), //Solution
-					newUri, //Evidence
-					getCweId(), //CWE ID
-					getWascId(), //WASC ID
-					newRequest); //HTTPMessage
-		}
-	}
-	
+    @Override
+    public void init() {}
+
+    @Override
+    public void scan() {
+
+        if (!getBaseMsg().getRequestHeader().isSecure()) { // Base request isn't HTTPS
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "The original request was not HTTPS, so there is not much point in looking further.");
+            }
+            return;
+        }
+
+        int originalStatusCode = getBaseMsg().getResponseHeader().getStatusCode();
+        if (originalStatusCode == HttpStatusCode.NOT_FOUND || originalStatusCode == 0) {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "The original request was not successfuly completed (status = "
+                                + originalStatusCode
+                                + "), so there is not much point in looking further.");
+            }
+            return;
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug(
+                    "Checking if "
+                            + getBaseMsg().getRequestHeader().getURI()
+                            + " is available via HTTP.");
+        }
+
+        HttpMessage newRequest = getNewMsg();
+
+        try {
+            newRequest.getRequestHeader().setSecure(false); // https becomes http
+            if (log.isDebugEnabled()) {
+                log.debug("**" + newRequest.getRequestHeader().getURI());
+            }
+        } catch (URIException e) {
+            log.error("Error creating HTTP URL from HTTPS URL:", e);
+            return;
+        }
+
+        // Check if the user stopped things. One request per URL so check before sending the request
+        if (isStop()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Scanner " + getName() + " Stopping.");
+            }
+            return;
+        }
+
+        try {
+            sendAndReceive(newRequest, false);
+        } catch (IOException e) {
+            log.error("Error scanning a request via HTTP when the original was HTTPS:", e);
+            return;
+        }
+
+        if (newRequest.getResponseHeader().getStatusCode() == HttpStatusCode.OK) { // 200 Success
+
+            String newUri = newRequest.getRequestHeader().getURI().toString();
+
+            bingo(
+                    getRisk(), // Risk
+                    Alert.CONFIDENCE_MEDIUM, // Confidence/Reliability
+                    getName(), // Name
+                    getDescription(), // Description
+                    getBaseMsg().getRequestHeader().getURI().toString(), // Original URI
+                    null, // Param
+                    "", // Attack
+                    Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", newUri), // OtherInfo
+                    getSolution(), // Solution
+                    newUri, // Evidence
+                    getCweId(), // CWE ID
+                    getWascId(), // WASC ID
+                    newRequest); // HTTPMessage
+        }
+    }
 }

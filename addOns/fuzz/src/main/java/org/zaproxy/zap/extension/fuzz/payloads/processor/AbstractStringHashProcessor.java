@@ -23,12 +23,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import org.apache.commons.codec.binary.Hex;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
-public abstract class AbstractStringHashProcessor extends AbstractCharsetProcessor<DefaultPayload> implements
-        DefaultPayloadProcessor {
+public abstract class AbstractStringHashProcessor extends AbstractCharsetProcessor<DefaultPayload>
+        implements DefaultPayloadProcessor {
 
     protected static final Hex HEX_ASCII = new Hex(StandardCharsets.US_ASCII.name());
 
@@ -79,8 +78,8 @@ public abstract class AbstractStringHashProcessor extends AbstractCharsetProcess
         return payload;
     }
 
-    protected static MessageDigest createMessageDigest(String algorithm) throws NoSuchAlgorithmException {
+    protected static MessageDigest createMessageDigest(String algorithm)
+            throws NoSuchAlgorithmException {
         return MessageDigest.getInstance(algorithm);
     }
-
 }

@@ -28,6 +28,5 @@ import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
  * @see SelectableContentMessageContainer
  */
 public interface SelectableContentWebSocketMessageContainer
-        extends SingleWebSocketMessageContainer, SelectableContentMessageContainer<WebSocketMessageDTO> {
-
-}
+        extends SingleWebSocketMessageContainer,
+                SelectableContentMessageContainer<WebSocketMessageDTO> {}

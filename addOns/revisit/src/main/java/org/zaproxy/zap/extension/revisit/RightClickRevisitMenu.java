@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.revisit;
 
 import java.util.List;
-
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
@@ -28,18 +27,18 @@ import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
 /*
  * An example ZAP extension which adds a right click menu item to all of the main
- * tabs which list messages. 
- * 
+ * tabs which list messages.
+ *
  * This class is defines the popup menu item.
  */
 public class RightClickRevisitMenu extends PopupMenuItemSiteNodeContainer {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionRevisit extension = null;
-	private boolean enable;
+    private static final long serialVersionUID = 1L;
+    private ExtensionRevisit extension = null;
+    private boolean enable;
 
     /**
-     * @param ext 
+     * @param ext
      * @param label
      */
     public RightClickRevisitMenu(ExtensionRevisit ext, String label, boolean enable) {
@@ -47,7 +46,7 @@ public class RightClickRevisitMenu extends PopupMenuItemSiteNodeContainer {
         this.extension = ext;
         this.enable = enable;
     }
-    
+
     @Override
     public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
         return (invoker == Invoker.SITES_PANEL);
@@ -65,10 +64,10 @@ public class RightClickRevisitMenu extends PopupMenuItemSiteNodeContainer {
 
     @Override
     public void performAction(SiteNode sn) {
-    	if (enable) {
-    		extension.displayRevisitDialog(sn);
-    	} else {
-    		extension.unsetEnabledForSite(sn);
-    	}
+        if (enable) {
+            extension.displayRevisitDialog(sn);
+        } else {
+            extension.unsetEnabledForSite(sn);
+        }
     }
 }

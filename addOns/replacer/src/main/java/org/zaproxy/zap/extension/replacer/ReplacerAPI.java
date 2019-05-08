@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
 import org.apache.commons.configuration.ConfigurationException;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -36,9 +37,6 @@ import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
 import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
-
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 
 public class ReplacerAPI extends ApiImplementor {
 
@@ -59,9 +57,7 @@ public class ReplacerAPI extends ApiImplementor {
 
     private ExtensionReplacer extension = null;
 
-    /**
-     * Provided only for API client generator usage.
-     */
+    /** Provided only for API client generator usage. */
     public ReplacerAPI() {
         this(null);
     }
@@ -75,15 +71,16 @@ public class ReplacerAPI extends ApiImplementor {
                 new ApiAction(
                         ACTION_ADD_RULE,
                         new String[] {
-                                PARAM_DESC,
-                                PARAM_ENABLED,
-                                PARAM_MATCH_TYPE,
-                                PARAM_MATCH_REGEX,
-                                PARAM_MATCH_STRING},
-                        new String[] { PARAM_REPLACEMENT, PARAM_INITIATORS }));
+                            PARAM_DESC,
+                            PARAM_ENABLED,
+                            PARAM_MATCH_TYPE,
+                            PARAM_MATCH_REGEX,
+                            PARAM_MATCH_STRING
+                        },
+                        new String[] {PARAM_REPLACEMENT, PARAM_INITIATORS}));
 
-        this.addApiAction(new ApiAction(ACTION_REMOVE_RULE, new String[] { PARAM_DESC }));
-        this.addApiAction(new ApiAction(ACTION_SET_ENABLED, new String[] { PARAM_DESC, PARAM_BOOL }));
+        this.addApiAction(new ApiAction(ACTION_REMOVE_RULE, new String[] {PARAM_DESC}));
+        this.addApiAction(new ApiAction(ACTION_SET_ENABLED, new String[] {PARAM_DESC, PARAM_BOOL}));
     }
 
     @Override
@@ -111,7 +108,11 @@ public class ReplacerAPI extends ApiImplementor {
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         ApiResponse response = ApiResponseElement.OK;
         if (ACTION_SET_ENABLED.equals(name)) {
-            if (!extension.getParams().setEnabled(params.getString(PARAM_DESC), this.getParam(params, PARAM_BOOL, false))) {
+            if (!extension
+                    .getParams()
+                    .setEnabled(
+                            params.getString(PARAM_DESC),
+                            this.getParam(params, PARAM_BOOL, false))) {
                 throw new ApiException(ApiException.Type.DOES_NOT_EXIST, "description");
             }
             try {
@@ -142,7 +143,8 @@ public class ReplacerAPI extends ApiImplementor {
                 try {
                     Pattern.compile(matchString);
                 } catch (PatternSyntaxException e) {
-                    throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_MATCH_STRING, e);
+                    throw new ApiException(
+                            ApiException.Type.ILLEGAL_PARAMETER, PARAM_MATCH_STRING, e);
                 }
             }
             List<Integer> initiators = null;
@@ -154,7 +156,8 @@ public class ReplacerAPI extends ApiImplementor {
                         initiators.add(Integer.parseInt(str.trim()));
                     }
                 } catch (NumberFormatException e) {
-                    throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_INITIATORS, e);
+                    throw new ApiException(
+                            ApiException.Type.ILLEGAL_PARAMETER, PARAM_INITIATORS, e);
                 }
             }
             boolean enabled;
@@ -164,15 +167,17 @@ public class ReplacerAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_ENABLED, e);
             }
 
-            this.extension.getParams().addRule(
-                    new ReplacerParamRule(
-                            desc,
-                            type,
-                            matchString,
-                            matchRegex,
-                            getParam(params, PARAM_REPLACEMENT, ""),
-                            initiators,
-                            enabled));
+            this.extension
+                    .getParams()
+                    .addRule(
+                            new ReplacerParamRule(
+                                    desc,
+                                    type,
+                                    matchString,
+                                    matchRegex,
+                                    getParam(params, PARAM_REPLACEMENT, ""),
+                                    initiators,
+                                    enabled));
 
             try {
                 this.extension.getParams().getConfig().save();
@@ -215,5 +220,4 @@ public class ReplacerAPI extends ApiImplementor {
         map.put("initiators", sb.toString());
         return new ApiResponseSet<String>("rule", map);
     }
-
 }

@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 
-public interface PayloadProcessorUIHandler<T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>> {
+public interface PayloadProcessorUIHandler<
+        T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>> {
 
     String getName();
 

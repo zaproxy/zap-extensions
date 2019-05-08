@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.websocket.ui.httppanel.views;
 
 import java.util.List;
 import java.util.regex.Pattern;
-
 import org.zaproxy.zap.extension.httppanel.view.text.HttpPanelTextArea;
 import org.zaproxy.zap.extension.httppanel.view.text.HttpPanelTextView;
 import org.zaproxy.zap.extension.search.SearchMatch;
@@ -29,32 +28,29 @@ import org.zaproxy.zap.extension.websocket.ui.httppanel.models.StringWebSocketPa
 
 public class WebSocketPanelTextView extends HttpPanelTextView {
 
-	public WebSocketPanelTextView(StringWebSocketPanelViewModel model) {
-		super(model);
-	}
-	
-	@Override
-	protected HttpPanelTextArea createHttpPanelTextArea() {
-		return new WebSocketPanelTextArea();
-	}
-	
-	protected static class WebSocketPanelTextArea extends HttpPanelTextArea {
+    public WebSocketPanelTextView(StringWebSocketPanelViewModel model) {
+        super(model);
+    }
 
-		private static final long serialVersionUID = 6236551060576387786L;
-		
-		@Override
-		public void search(Pattern p, List<SearchMatch> matches) {
-		}
-		
-		@Override
-		public void highlight(SearchMatch sm) {
-		}
-		
-	}
-	
-	@Override
-	public void setEditable(boolean editable){
-		super.setEditable(editable);
-		((StringWebSocketPanelViewModel) getModel()).setEditable(editable);
-	}
+    @Override
+    protected HttpPanelTextArea createHttpPanelTextArea() {
+        return new WebSocketPanelTextArea();
+    }
+
+    protected static class WebSocketPanelTextArea extends HttpPanelTextArea {
+
+        private static final long serialVersionUID = 6236551060576387786L;
+
+        @Override
+        public void search(Pattern p, List<SearchMatch> matches) {}
+
+        @Override
+        public void highlight(SearchMatch sm) {}
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        super.setEditable(editable);
+        ((StringWebSocketPanelViewModel) getModel()).setEditable(editable);
+    }
 }

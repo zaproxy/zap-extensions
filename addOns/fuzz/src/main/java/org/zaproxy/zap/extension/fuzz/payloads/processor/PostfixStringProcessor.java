@@ -39,5 +39,4 @@ public class PostfixStringProcessor implements DefaultPayloadProcessor {
     public PostfixStringProcessor copy() {
         return this;
     }
-
 }

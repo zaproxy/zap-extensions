@@ -20,17 +20,18 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.Dialog;
-
 import org.parosproxy.paros.Constant;
 
 class DialogModifyElem extends DialogAddElem {
 
     private static final long serialVersionUID = 6675509994290748494L;
 
-    private static final String DIALOG_TITLE = Constant.messages.getString("spiderajax.options.dialog.elem.modify.title");
-    
-    private static final String CONFIRM_BUTTON_LABEL = Constant.messages.getString("spiderajax.options.dialog.elem.modify.button.confirm");
-    
+    private static final String DIALOG_TITLE =
+            Constant.messages.getString("spiderajax.options.dialog.elem.modify.title");
+
+    private static final String CONFIRM_BUTTON_LABEL =
+            Constant.messages.getString("spiderajax.options.dialog.elem.modify.button.confirm");
+
     protected DialogModifyElem(Dialog owner) {
         super(owner, DIALOG_TITLE);
     }
@@ -43,7 +44,7 @@ class DialogModifyElem extends DialogAddElem {
     public void setElem(AjaxSpiderParamElem elem) {
         this.elem = elem;
     }
-    
+
     @Override
     protected boolean validateFields() {
         if (elem.getName().equals(getNameTextField().getText())) {
@@ -59,5 +60,4 @@ class DialogModifyElem extends DialogAddElem {
 
         getEnabledCheckBox().setSelected(elem.isEnabled());
     }
-
 }

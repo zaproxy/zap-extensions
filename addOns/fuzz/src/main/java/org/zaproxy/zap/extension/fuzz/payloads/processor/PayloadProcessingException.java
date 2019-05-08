@@ -44,7 +44,11 @@ public class PayloadProcessingException extends Exception {
         super(cause);
     }
 
-    protected PayloadProcessingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    protected PayloadProcessingException(
+            String message,
+            Throwable cause,
+            boolean enableSuppression,
+            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

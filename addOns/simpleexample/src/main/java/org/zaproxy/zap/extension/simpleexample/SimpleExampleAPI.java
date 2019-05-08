@@ -19,14 +19,13 @@
  */
 package org.zaproxy.zap.extension.simpleexample;
 
+import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-
-import net.sf.json.JSONObject;
 
 public class SimpleExampleAPI extends ApiImplementor {
     private static final String PREFIX = "simpleExample";

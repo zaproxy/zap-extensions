@@ -21,26 +21,23 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.table.AbstractTableModel;
-
 import org.parosproxy.paros.Constant;
 
 public class CookiesTableModel extends AbstractTableModel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String[] columnNames = {
-		Constant.messages.getString("zest.cookies.table.domain"),
-		Constant.messages.getString("zest.cookies.table.name"),
-		Constant.messages.getString("zest.cookies.table.value"),
-		Constant.messages.getString("zest.cookies.table.path")};
+    private static final String[] columnNames = {
+        Constant.messages.getString("zest.cookies.table.domain"),
+        Constant.messages.getString("zest.cookies.table.name"),
+        Constant.messages.getString("zest.cookies.table.value"),
+        Constant.messages.getString("zest.cookies.table.path")
+    };
 
-	private List<String[]> values = new ArrayList<String[]>();
+    private List<String[]> values = new ArrayList<String[]>();
 
-	/**
-     * 
-     */
+    /** */
     public CookiesTableModel() {
         super();
     }
@@ -60,75 +57,74 @@ public class CookiesTableModel extends AbstractTableModel {
         Object[] value = this.values.get(row);
         return value[col];
     }
-    
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-    	return false;
-    }
-    
-    
-    @Override
-    public void setValueAt(Object value, int row, int col) {
-    	if (col == 1) {
-    		this.values.get(row)[col] = (String)value;
-    		fireTableCellUpdated(row, col);
-    	}
+        return false;
     }
 
-	@Override
-	public String getColumnName(int col) {
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+        if (col == 1) {
+            this.values.get(row)[col] = (String) value;
+            fireTableCellUpdated(row, col);
+        }
+    }
+
+    @Override
+    public String getColumnName(int col) {
         return columnNames[col];
     }
-    
-	@Override
-	public Class<?> getColumnClass(int c) {
+
+    @Override
+    public Class<?> getColumnClass(int c) {
         return String.class;
     }
 
-	public List<String[]> getValues() {
-		return values;
-	}
+    public List<String[]> getValues() {
+        return values;
+    }
 
-	public String getValue(String name) {
-		return this.getValue(name, null);
-	}
+    public String getValue(String name) {
+        return this.getValue(name, null);
+    }
 
-	public String getValue(String name, String defaultValue) {
-		for (String [] nvPair : this.values) {
-			if (nvPair[0].equals(name)) {
-				return nvPair[1];
-			}
-		}
-		return defaultValue;
-	}
+    public String getValue(String name, String defaultValue) {
+        for (String[] nvPair : this.values) {
+            if (nvPair[0].equals(name)) {
+                return nvPair[1];
+            }
+        }
+        return defaultValue;
+    }
 
-	public void setValues(List<String[]> values) {
-		this.values = values;
-	}
-	
-	public void clear() {
-		this.values.clear();
-	}
+    public void setValues(List<String[]> values) {
+        this.values = values;
+    }
 
-	public void add(String domain, String name, String value, String path) {
-		this.values.add(new String[] {domain, name, value, path});
-		this.fireTableRowsInserted(this.values.size()-1, this.values.size()-1);
-	}
-	
-	public void replace(int index, String domain, String name, String value, String path) {
-		if (index < this.values.size()) {
-			this.values.get(index)[0] = domain;
-			this.values.get(index)[1] = name;
-			this.values.get(index)[2] = value;
-			this.values.get(index)[3] = path;
-			this.fireTableRowsInserted(index, index);
-		}
-	}
+    public void clear() {
+        this.values.clear();
+    }
 
-	public void remove(int index) {
-		if (index < this.values.size()) {
-			this.values.remove(index);
-			this.fireTableRowsDeleted(index, index);
-		}
-	}
+    public void add(String domain, String name, String value, String path) {
+        this.values.add(new String[] {domain, name, value, path});
+        this.fireTableRowsInserted(this.values.size() - 1, this.values.size() - 1);
+    }
+
+    public void replace(int index, String domain, String name, String value, String path) {
+        if (index < this.values.size()) {
+            this.values.get(index)[0] = domain;
+            this.values.get(index)[1] = name;
+            this.values.get(index)[2] = value;
+            this.values.get(index)[3] = path;
+            this.fireTableRowsInserted(index, index);
+        }
+    }
+
+    public void remove(int index) {
+        if (index < this.values.size()) {
+            this.values.remove(index);
+            this.fireTableRowsDeleted(index, index);
+        }
+    }
 }

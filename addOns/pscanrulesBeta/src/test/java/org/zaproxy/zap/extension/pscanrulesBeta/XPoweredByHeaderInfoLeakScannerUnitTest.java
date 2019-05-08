@@ -19,96 +19,94 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import org.junit.Test;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
-/**
- * @author Vahid Rafiei (@vahid_r)
- */
-public class XPoweredByHeaderInfoLeakScannerUnitTest extends PassiveScannerTest<XPoweredByHeaderInfoLeakScanner> {
+/** @author Vahid Rafiei (@vahid_r) */
+public class XPoweredByHeaderInfoLeakScannerUnitTest
+        extends PassiveScannerTest<XPoweredByHeaderInfoLeakScanner> {
 
-	@Override
-	protected XPoweredByHeaderInfoLeakScanner createScanner() {
-		return new XPoweredByHeaderInfoLeakScanner();
-	}
+    @Override
+    protected XPoweredByHeaderInfoLeakScanner createScanner() {
+        return new XPoweredByHeaderInfoLeakScanner();
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfThereIsNoXPoweredBy() throws Exception {
-		// Given
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-						"Server: Apache-Coyote/1.1\r\n");
+    @Test
+    public void shouldNotRaiseAlertIfThereIsNoXPoweredBy() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
 
-		// When
-		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
-		// Then
-		assertThat(alertsRaised.size(), is(0));
-	}
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
 
-	@Test
-	public void shouldRaiseAnAlertIfFindsXPoweredBy() throws Exception {
-		// Given
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-						"Server: Apache-Coyote/1.1\r\n" +
-						"X-Powered-By: Servlet/3.0\r\n");
+    @Test
+    public void shouldRaiseAnAlertIfFindsXPoweredBy() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Powered-By: Servlet/3.0\r\n");
 
-		// When
-		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
-		// Then
-		assertThat(alertsRaised.size(), is(1));
-		assertThat(alertsRaised.get(0).getEvidence(), is("X-Powered-By: Servlet/3.0"));
-	}
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("X-Powered-By: Servlet/3.0"));
+    }
 
-	@Test
-	public void shouldRaiseOnlyOneAlertWithOneEvidenceAndOtherInfoIfFindsMultipleXPoweredBy() throws Exception {
-		// Given
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-						"Server: Apache-Coyote/1.1\r\n" +
-						"X-Powered-By: PHP/5.4\r\n" +
-						"X-Powered-By: Servlet/3.0\r\n" +
-						"X-Powered-By: ASP.NET\r\n");
+    @Test
+    public void shouldRaiseOnlyOneAlertWithOneEvidenceAndOtherInfoIfFindsMultipleXPoweredBy()
+            throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Powered-By: PHP/5.4\r\n"
+                        + "X-Powered-By: Servlet/3.0\r\n"
+                        + "X-Powered-By: ASP.NET\r\n");
 
-		// When
-		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
-		// Then
-		assertThat(alertsRaised.size(), is(1));
-		assertThat(alertsRaised.get(0).getEvidence(), is("X-Powered-By: PHP/5.4"));
-		assertThat(alertsRaised.get(0).getOtherInfo(), containsString("X-Powered-By: Servlet/3.0"));
-		assertThat(alertsRaised.get(0).getOtherInfo(), containsString("X-Powered-By: ASP.NET"));
-	}
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("X-Powered-By: PHP/5.4"));
+        assertThat(alertsRaised.get(0).getOtherInfo(), containsString("X-Powered-By: Servlet/3.0"));
+        assertThat(alertsRaised.get(0).getOtherInfo(), containsString("X-Powered-By: ASP.NET"));
+    }
 
-	@Test
-	public void shouldBeCaseSensitiveWhenShowingHeadersInEvidenceAndOtherInfo() throws Exception {
-		// Given
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-						"Server: Apache-Coyote/1.1\r\n" +
-						"X-Powered-By: PHP/5.4\r\n" +
-						"x-pOwEReD-bY: Servlet/3.0\r\n");
+    @Test
+    public void shouldBeCaseSensitiveWhenShowingHeadersInEvidenceAndOtherInfo() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Powered-By: PHP/5.4\r\n"
+                        + "x-pOwEReD-bY: Servlet/3.0\r\n");
 
-		// When
-		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
-		// Then
-		assertThat(alertsRaised.size(), is(1));
-		assertThat(alertsRaised.get(0).getEvidence(), is("X-Powered-By: PHP/5.4"));
-		assertThat(alertsRaised.get(0).getOtherInfo(), containsString("x-pOwEReD-bY: Servlet/3.0"));
-	}
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("X-Powered-By: PHP/5.4"));
+        assertThat(alertsRaised.get(0).getOtherInfo(), containsString("x-pOwEReD-bY: Servlet/3.0"));
+    }
 }

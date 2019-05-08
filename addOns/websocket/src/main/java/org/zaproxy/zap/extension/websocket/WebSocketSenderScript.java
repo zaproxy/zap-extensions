@@ -22,5 +22,6 @@ package org.zaproxy.zap.extension.websocket;
 import javax.script.ScriptException;
 
 public interface WebSocketSenderScript {
-	void onMessageFrame(WebSocketMessage msg, WebSocketSenderScriptHelper helper) throws ScriptException;
+    void onMessageFrame(WebSocketMessage msg, WebSocketSenderScriptHelper helper)
+            throws ScriptException;
 }

@@ -23,7 +23,6 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.PatternSyntaxException;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
@@ -31,68 +30,73 @@ import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 
 public class ClientBreakDialogAdd extends ClientBreakDialog {
 
-	private static final long serialVersionUID = 1L;
-	private ActionListener actionListenerCancel;
-	private ActionListener actionListenerSubmit;
+    private static final long serialVersionUID = 1L;
+    private ActionListener actionListenerCancel;
+    private ActionListener actionListenerSubmit;
 
-	public ClientBreakDialogAdd(ExtensionPlugNHack extension, 
-			ClientBreakpointsUiManagerInterface breakPointsManager) throws HeadlessException {
-		super(extension, breakPointsManager);
-	}
+    public ClientBreakDialogAdd(
+            ExtensionPlugNHack extension, ClientBreakpointsUiManagerInterface breakPointsManager)
+            throws HeadlessException {
+        super(extension, breakPointsManager);
+    }
 
-	@Override
-	protected String getBtnSubmitText() {
-		return Constant.messages.getString("brk.add.button.add");
-	}
+    @Override
+    protected String getBtnSubmitText() {
+        return Constant.messages.getString("brk.add.button.add");
+    }
 
-	@Override
-	protected String getDialogTitle() {
-		return Constant.messages.getString("brk.add.title");
-	}
+    @Override
+    protected String getDialogTitle() {
+        return Constant.messages.getString("brk.add.title");
+    }
 
-	@Override
-	protected ActionListener getActionListenerCancel() {
-		if (actionListenerCancel == null) {
-			actionListenerCancel = new ActionListener() {
-	
-				@Override
-				public void actionPerformed(ActionEvent e) {
-				    dispose();
-				}
-			};
-		}
-		return actionListenerCancel;
-	}
+    @Override
+    protected ActionListener getActionListenerCancel() {
+        if (actionListenerCancel == null) {
+            actionListenerCancel =
+                    new ActionListener() {
 
-	@Override
-	protected ActionListener getActionListenerSubmit() {
-		if (actionListenerSubmit == null) {
-			actionListenerSubmit = new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            dispose();
+                        }
+                    };
+        }
+        return actionListenerCancel;
+    }
 
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						breakPointsManager.addBreakpoint(getClientBreakpointMessage());
-						dispose();
-					} catch (PatternSyntaxException e) {
-						// show popup
-						View.getSingleton().showWarningDialog(Constant.messages.getString("filter.replacedialog.invalidpattern"));
-				        return;
-					}
-				}
-			};
-		}
-		return actionListenerSubmit;
-	}
-    
-	/**
-	 * Resets fields of dialog to default value or to values set in given
-	 * parameter.
-	 * 
-	 * @param aMessage
-	 */
+    @Override
+    protected ActionListener getActionListenerSubmit() {
+        if (actionListenerSubmit == null) {
+            actionListenerSubmit =
+                    new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent evt) {
+                            try {
+                                breakPointsManager.addBreakpoint(getClientBreakpointMessage());
+                                dispose();
+                            } catch (PatternSyntaxException e) {
+                                // show popup
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "filter.replacedialog.invalidpattern"));
+                                return;
+                            }
+                        }
+                    };
+        }
+        return actionListenerSubmit;
+    }
+
+    /**
+     * Resets fields of dialog to default value or to values set in given parameter.
+     *
+     * @param aMessage
+     */
     public void setMessage(ClientMessage msg) {
-    	resetDialogValues();
-    	setDialogValues(msg.getType(), msg.getClientId(), null);
+        resetDialogValues();
+        setDialogValues(msg.getType(), msg.getClientId(), null);
     }
 }

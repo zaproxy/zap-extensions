@@ -21,20 +21,17 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 /**
  * https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
- * 
+ *
  * @author yhawke (2104)
  */
 public class XXEPluginCallbackImplementor extends ChallengeCallbackImplementor {
 
     // This is the default component name (common for all)
     private static final String PREFIX = "xxe";
-    
-    /**
-     *
-     * @return
-     */
+
+    /** @return */
     @Override
     public String getPrefix() {
         return PREFIX;
-    }    
+    }
 }

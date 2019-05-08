@@ -20,19 +20,19 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.nio.charset.Charset;
-
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.URLDecodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractCharsetProcessorUIPanel.AbstractCharsetProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.URLDecodeProcessorUIHandler.URLDecodeProcessorUI;
 
-public class URLDecodeProcessorUIHandler implements
-        PayloadProcessorUIHandler<DefaultPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
+public class URLDecodeProcessorUIHandler
+        implements PayloadProcessorUIHandler<
+                DefaultPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.urlDecode.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.payload.processor.urlDecode.name");
 
     @Override
     public String getName() {
@@ -54,7 +54,8 @@ public class URLDecodeProcessorUIHandler implements
         return new URLDecodeProcessorUIPanel();
     }
 
-    public static class URLDecodeProcessorUI extends AbstractCharsetProcessorUI<DefaultPayload, URLDecodeProcessor> {
+    public static class URLDecodeProcessorUI
+            extends AbstractCharsetProcessorUI<DefaultPayload, URLDecodeProcessor> {
 
         public URLDecodeProcessorUI(Charset charset) {
             super(charset);
@@ -77,7 +78,8 @@ public class URLDecodeProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return Constant.messages.getString("fuzz.payload.processor.urlDecode.description", getCharset().name());
+            return Constant.messages.getString(
+                    "fuzz.payload.processor.urlDecode.description", getCharset().name());
         }
 
         @Override
@@ -89,11 +91,11 @@ public class URLDecodeProcessorUIHandler implements
         public URLDecodeProcessorUI copy() {
             return this;
         }
-
     }
 
-    public static class URLDecodeProcessorUIPanel extends
-            AbstractCharsetProcessorUIPanel<DefaultPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
+    public static class URLDecodeProcessorUIPanel
+            extends AbstractCharsetProcessorUIPanel<
+                    DefaultPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
 
         private JPanel fieldsPanel;
 

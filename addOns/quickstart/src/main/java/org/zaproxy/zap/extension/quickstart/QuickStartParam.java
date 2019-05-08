@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.quickstart;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
 
@@ -54,7 +53,8 @@ public class QuickStartParam extends AbstractParam {
 
     private static final String PARAM_AJAX_SPIDER_ENABLED = PARAM_AJAX_BASE_KEY + ".enabled";
 
-    private static final String PARAM_AJAX_SPIDER_DEFAULT_BROWSER = PARAM_AJAX_BASE_KEY + ".browser";
+    private static final String PARAM_AJAX_SPIDER_DEFAULT_BROWSER =
+            PARAM_AJAX_BASE_KEY + ".browser";
 
     private boolean isTradSpiderEnabled;
     private List<Object> recentUrls = new ArrayList<Object>(0);
@@ -98,7 +98,8 @@ public class QuickStartParam extends AbstractParam {
             LOGGER.error("Failed to load the ajax spider configuration", e);
         }
         try {
-            ajaxSpiderDefaultBrowser = getConfig().getString(PARAM_AJAX_SPIDER_DEFAULT_BROWSER, DEFAULT_BROWSER);
+            ajaxSpiderDefaultBrowser =
+                    getConfig().getString(PARAM_AJAX_SPIDER_DEFAULT_BROWSER, DEFAULT_BROWSER);
         } catch (Exception e) {
             LOGGER.error("Failed to load the Ajax \"Default Browser\" configuration", e);
         }
@@ -175,20 +176,19 @@ public class QuickStartParam extends AbstractParam {
         getConfig().setProperty(PARAM_AJAX_SPIDER_DEFAULT_BROWSER, ajaxSpiderDefaultBrowser);
         QuickStartHelper.raiseOptionsChangedEvent();
     }
-    
+
     public List<Object> getRecentUrls() {
         return this.recentUrls;
     }
-    
+
     public void addRecentUrl(String url) {
         // Always remove to force it to the top of the list
         this.recentUrls.remove(url);
         this.recentUrls.add(0, url);
         while (this.recentUrls.size() > this.maxRecentUrls) {
-            this.recentUrls.remove(this.recentUrls.size()-1);
+            this.recentUrls.remove(this.recentUrls.size() - 1);
         }
         getConfig().setProperty(PARAM_RECENT_URLS, this.recentUrls);
         QuickStartHelper.raiseOptionsChangedEvent();
     }
-
 }

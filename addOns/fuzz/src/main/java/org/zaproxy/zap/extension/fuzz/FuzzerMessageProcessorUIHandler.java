@@ -21,7 +21,10 @@ package org.zaproxy.zap.extension.fuzz;
 
 import org.zaproxy.zap.extension.httppanel.Message;
 
-public interface FuzzerMessageProcessorUIHandler<T1 extends Message, T2 extends FuzzerMessageProcessor<T1>, T3 extends FuzzerMessageProcessorUI<T1, T2>> {
+public interface FuzzerMessageProcessorUIHandler<
+        T1 extends Message,
+        T2 extends FuzzerMessageProcessor<T1>,
+        T3 extends FuzzerMessageProcessorUI<T1, T2>> {
 
     boolean isEnabled(T1 message);
 
@@ -34,5 +37,4 @@ public interface FuzzerMessageProcessorUIHandler<T1 extends Message, T2 extends 
     String getName();
 
     FuzzerMessageProcessorUIPanel<T1, T2, T3> createPanel();
-
 }

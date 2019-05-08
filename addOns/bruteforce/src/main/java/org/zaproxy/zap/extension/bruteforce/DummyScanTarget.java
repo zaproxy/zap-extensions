@@ -19,10 +19,7 @@
  */
 package org.zaproxy.zap.extension.bruteforce;
 
-/**
- * A {@code ScanTarget} that is used to be shown as non target.
- * 
- */
+/** A {@code ScanTarget} that is used to be shown as non target. */
 public class DummyScanTarget extends ScanTarget {
 
     protected DummyScanTarget(String value) {
@@ -33,5 +30,4 @@ public class DummyScanTarget extends ScanTarget {
     public int compareTo(ScanTarget other) {
         return -1;
     }
-
 }

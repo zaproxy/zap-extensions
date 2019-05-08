@@ -27,7 +27,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -39,7 +38,6 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
-
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.ScrollableSizeHint;
 import org.parosproxy.paros.Constant;
@@ -80,11 +78,17 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
     @SuppressWarnings("deprecation")
     private void initialize() {
         this.setShowByDefault(true);
-        this.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/147.png"))); // 'lightning' icon
+        this.setIcon(
+                new ImageIcon(
+                        ZAP.class.getResource("/resource/icon/16/147.png"))); // 'lightning' icon
         // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when
         // targeting Java 10+
-        this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
+        this.setDefaultAccelerator(
+                KeyStroke.getKeyStroke(
+                        KeyEvent.VK_Q,
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                | KeyEvent.SHIFT_DOWN_MASK,
+                        false));
         this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
         this.setLayout(new BorderLayout());
 
@@ -93,8 +97,10 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
         jScrollPane = new JScrollPane();
         jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
-        jScrollPane.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane.setVerticalScrollBarPolicy(
+                javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        jScrollPane.setHorizontalScrollBarPolicy(
+                javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane.setViewportView(panelContent);
 
         this.add(jScrollPane, BorderLayout.CENTER);
@@ -106,13 +112,26 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         topTitle.setBackground(Color.WHITE);
         topTitle.setFont(FontUtils.getFont(Size.much_larger));
         topTitle.setHorizontalAlignment(SwingConstants.CENTER);
-        panelContent.add(topTitle, LayoutHelper.getGBC(0, panelY, 4, 1.0D, 0.0D, GridBagConstraints.BOTH,
-                GridBagConstraints.CENTER, new Insets(0, 0, 0, 0)));
-        panelContent.add(QuickStartHelper.getWrappedLabel("quickstart.top.panel.message1"),
+        panelContent.add(
+                topTitle,
+                LayoutHelper.getGBC(
+                        0,
+                        panelY,
+                        4,
+                        1.0D,
+                        0.0D,
+                        GridBagConstraints.BOTH,
+                        GridBagConstraints.CENTER,
+                        new Insets(0, 0, 0, 0)));
+        panelContent.add(
+                QuickStartHelper.getWrappedLabel("quickstart.top.panel.message1"),
                 LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5)));
-        panelContent.add(QuickStartHelper.getWrappedLabel("quickstart.top.panel.message2"),
+        panelContent.add(
+                QuickStartHelper.getWrappedLabel("quickstart.top.panel.message2"),
                 LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5)));
-        panelContent.add(new JLabel(" "), LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5))); // Spacer
+        panelContent.add(
+                new JLabel(" "),
+                LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5))); // Spacer
 
         buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.setBackground(Color.white);
@@ -146,15 +165,17 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
             attackButton.setIcon(getAttackPanel().getIcon());
             attackButton.setVerticalTextPosition(AbstractButton.BOTTOM);
             attackButton.setHorizontalTextPosition(AbstractButton.CENTER);
-            attackButton.setToolTipText(Constant.messages.getString("quickstart.top.button.tooltip.attack"));
+            attackButton.setToolTipText(
+                    Constant.messages.getString("quickstart.top.button.tooltip.attack"));
             attackButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
-            attackButton.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    jScrollPane.setViewportView(getAttackPanel());
-                }
-            });
+            attackButton.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            jScrollPane.setViewportView(getAttackPanel());
+                        }
+                    });
         }
         return attackButton;
     }
@@ -169,19 +190,22 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
     private JButton getLearnMoreButton() {
         if (learnMoreButton == null) {
             learnMoreButton = new JButton();
-            learnMoreButton.setText(Constant.messages.getString("quickstart.top.button.label.moreinfo"));
+            learnMoreButton.setText(
+                    Constant.messages.getString("quickstart.top.button.label.moreinfo"));
             learnMoreButton.setIcon(getLearnMorePanel().getIcon());
             learnMoreButton.setVerticalTextPosition(AbstractButton.BOTTOM);
             learnMoreButton.setHorizontalTextPosition(AbstractButton.CENTER);
-            learnMoreButton.setToolTipText(Constant.messages.getString("quickstart.top.button.tooltip.moreinfo"));
+            learnMoreButton.setToolTipText(
+                    Constant.messages.getString("quickstart.top.button.tooltip.moreinfo"));
             learnMoreButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
-            learnMoreButton.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    jScrollPane.setViewportView(getLearnMorePanel());
-                }
-            });
+            learnMoreButton.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            jScrollPane.setViewportView(getLearnMorePanel());
+                        }
+                    });
         }
         return learnMoreButton;
     }
@@ -196,23 +220,26 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
     private JButton getExploreButton() {
         if (exploreButton == null) {
             exploreButton = new JButton();
-            exploreButton.setText(Constant.messages.getString("quickstart.top.button.label.explore"));
+            exploreButton.setText(
+                    Constant.messages.getString("quickstart.top.button.label.explore"));
             exploreButton.setIcon(getDefaultExplorePanel().getIcon());
             exploreButton.setVerticalTextPosition(AbstractButton.BOTTOM);
             exploreButton.setHorizontalTextPosition(AbstractButton.CENTER);
-            exploreButton.setToolTipText(Constant.messages.getString("quickstart.top.button.tooltip.explore"));
+            exploreButton.setToolTipText(
+                    Constant.messages.getString("quickstart.top.button.tooltip.explore"));
             exploreButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
-            exploreButton.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    if (explorePanel != null) {
-                        jScrollPane.setViewportView(explorePanel);
-                    } else {
-                        jScrollPane.setViewportView(getDefaultExplorePanel());
-                    }
-                }
-            });
+            exploreButton.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            if (explorePanel != null) {
+                                jScrollPane.setViewportView(explorePanel);
+                            } else {
+                                jScrollPane.setViewportView(getDefaultExplorePanel());
+                            }
+                        }
+                    });
         }
         return exploreButton;
     }

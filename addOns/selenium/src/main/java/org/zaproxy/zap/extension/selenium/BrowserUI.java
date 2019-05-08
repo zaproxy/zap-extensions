@@ -20,13 +20,12 @@
 package org.zaproxy.zap.extension.selenium;
 
 import java.text.Collator;
-
 import org.apache.commons.lang.Validate;
 
 /**
  * A representation of a {@code Browser} for UI components.
- * <p>
- * The method {@code toString()} returns the name of the browser.
+ *
+ * <p>The method {@code toString()} returns the name of the browser.
  *
  * @see Browser
  */
@@ -40,7 +39,8 @@ public class BrowserUI implements Comparable<BrowserUI> {
      *
      * @param name the name that will be shown for the browser
      * @param browser the browser
-     * @throws IllegalArgumentException if the {@code name} is {@code null} or empty and if the {@code browser} is {@code null}
+     * @throws IllegalArgumentException if the {@code name} is {@code null} or empty and if the
+     *     {@code browser} is {@code null}
      */
     public BrowserUI(String name, Browser browser) {
         Validate.notEmpty(name, "Parameter name must not be null");
@@ -70,7 +70,7 @@ public class BrowserUI implements Comparable<BrowserUI> {
 
     /**
      * Returns the name for the browser.
-     * 
+     *
      * @see #getName()
      */
     @Override
@@ -85,7 +85,7 @@ public class BrowserUI implements Comparable<BrowserUI> {
 
     /**
      * Two {@code BrowserUI} are considered equal if both have the same name.
-     * 
+     *
      * @see #getName()
      */
     @Override
@@ -112,7 +112,7 @@ public class BrowserUI implements Comparable<BrowserUI> {
 
     /**
      * Compares the names of browsers, using a {@code Collator} of the default {@code Locale}.
-     * 
+     *
      * @see #getName()
      * @see Collator
      */

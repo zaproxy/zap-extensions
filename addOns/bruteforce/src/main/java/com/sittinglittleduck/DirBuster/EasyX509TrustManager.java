@@ -62,69 +62,54 @@ package com.sittinglittleduck.DirBuster;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 /**
+ * EasyX509TrustManager unlike default {@link X509TrustManager} accepts * self-signed certificates.
+ * *
  *
- *
- * EasyX509TrustManager unlike default {@link X509TrustManager} accepts * self-signed certificates. *
- *
- *
- *
- * This trust manager SHOULD NOT be used for productive systems * due to security reasons, unless it is a concious decision and * you are perfectly aware of security implications of accepting * self-signed certificates *
- *
+ * <p>This trust manager SHOULD NOT be used for productive systems * due to security reasons, unless
+ * it is a concious decision and * you are perfectly aware of security implications of accepting *
+ * self-signed certificates *
  *
  * @author Adrian Sutton
  * @author Oleg Kalnichevski
- *
- * DISCLAIMER: HttpClient developers DO NOT actively support this component.
- * The component is provided as a reference material, which may be inappropriate
- * to be used without additional customization.
+ *     <p>DISCLAIMER: HttpClient developers DO NOT actively support this component. The component is
+ *     provided as a reference material, which may be inappropriate to be used without additional
+ *     customization.
  */
-
-public class EasyX509TrustManager implements X509TrustManager
-{
+public class EasyX509TrustManager implements X509TrustManager {
     private X509TrustManager standardTrustManager = null;
-    
-    /**
-     * Constructor for EasyX509TrustManager.
-     */
-    public EasyX509TrustManager(KeyStore keystore) throws NoSuchAlgorithmException, KeyStoreException
-    {
+
+    /** Constructor for EasyX509TrustManager. */
+    public EasyX509TrustManager(KeyStore keystore)
+            throws NoSuchAlgorithmException, KeyStoreException {
         super();
         TrustManagerFactory factory = TrustManagerFactory.getInstance("SunX509");
         factory.init(keystore);
         TrustManager[] trustmanagers = factory.getTrustManagers();
-        if (trustmanagers.length == 0)
-        {
+        if (trustmanagers.length == 0) {
             throw new NoSuchAlgorithmException("SunX509 trust manager not supported");
         }
-        this.standardTrustManager = (X509TrustManager)trustmanagers[0];
+        this.standardTrustManager = (X509TrustManager) trustmanagers[0];
     }
-    
-    /**
-     * see com.sun.net.ssl.X509TrustManager#isClientTrusted(X509Certificate[])
-     */
-    public java.security.cert.X509Certificate[] getAcceptedIssuers()
-    {
+
+    /** see com.sun.net.ssl.X509TrustManager#isClientTrusted(X509Certificate[]) */
+    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
         return null;
     }
-    public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType)
-    {
-    }
-    public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType)
-    {
-    }
-    public boolean isServerTrusted(java.security.cert.X509Certificate[] certs)
-    {
+
+    public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+
+    public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+
+    public boolean isServerTrusted(java.security.cert.X509Certificate[] certs) {
         return true;
     }
-    public boolean isClientTrusted(java.security.cert.X509Certificate[] certs)
-    {
+
+    public boolean isClientTrusted(java.security.cert.X509Certificate[] certs) {
         return true;
     }
 }
-

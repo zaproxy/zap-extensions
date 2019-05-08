@@ -24,16 +24,15 @@ import org.zaproxy.zap.extension.sse.ui.httppanel.models.StringEventStreamPanelV
 
 public class EventStreamLargetPayloadViewModel extends StringEventStreamPanelViewModel {
 
-	@Override
-	public String getData() {
-		if (event == null || event.getRawEventLength() == 0) {
-			return "";
-		}
-		
-		return Constant.messages.getString("sse.panel.view.largepayload.all.warning");
-	}
+    @Override
+    public String getData() {
+        if (event == null || event.getRawEventLength() == 0) {
+            return "";
+        }
 
-	@Override
-	public void setData(String data) {
-	}
+        return Constant.messages.getString("sse.panel.view.largepayload.all.warning");
+    }
+
+    @Override
+    public void setData(String data) {}
 }

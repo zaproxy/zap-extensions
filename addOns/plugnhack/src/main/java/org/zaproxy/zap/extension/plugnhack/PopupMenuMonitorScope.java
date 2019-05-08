@@ -25,48 +25,45 @@ import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 public class PopupMenuMonitorScope extends PopupMenuItemHttpMessageContainer {
 
-	private static final long serialVersionUID = 1L;
-	private MonitoredPagesManager mpm = null;
-	private boolean monitored = false;
+    private static final long serialVersionUID = 1L;
+    private MonitoredPagesManager mpm = null;
+    private boolean monitored = false;
 
-    /**
-     * @param label
-     */
+    /** @param label */
     public PopupMenuMonitorScope(MonitoredPagesManager mpm) {
         super(Constant.messages.getString("plugnhack.menu.monitor.inscope"));
         this.mpm = mpm;
     }
-    
+
     @Override
     public String getParentMenuName() {
-    	return Constant.messages.getString("plugnhack.menu.monitor");
+        return Constant.messages.getString("plugnhack.menu.monitor");
     }
 
     @Override
     public boolean isSubMenu() {
-    	return true;
+        return true;
     }
 
-    
-	@Override
-	public void performAction(HttpMessage msg) {
-		this.mpm.setMonitorAllInScope(! monitored);
-	}
-	
-	@Override
-	protected boolean isButtonEnabledForSelectedHttpMessage(HttpMessage msg) {
-		if (this.mpm.isMonitorAllInScope()) {
-			this.monitored = true;
-			this.setText(Constant.messages.getString("plugnhack.menu.monitor.exscope"));
-		} else {
-			this.monitored = false;
-			this.setText(Constant.messages.getString("plugnhack.menu.monitor.inscope"));
-		}
-    	return true;
+    @Override
+    public void performAction(HttpMessage msg) {
+        this.mpm.setMonitorAllInScope(!monitored);
+    }
+
+    @Override
+    protected boolean isButtonEnabledForSelectedHttpMessage(HttpMessage msg) {
+        if (this.mpm.isMonitorAllInScope()) {
+            this.monitored = true;
+            this.setText(Constant.messages.getString("plugnhack.menu.monitor.exscope"));
+        } else {
+            this.monitored = false;
+            this.setText(Constant.messages.getString("plugnhack.menu.monitor.inscope"));
+        }
+        return true;
     }
 
     @Override
     public boolean isSafe() {
-    	return true;
+        return true;
     }
 }

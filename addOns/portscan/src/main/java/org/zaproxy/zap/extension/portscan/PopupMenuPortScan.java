@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.portscan;
 
 import javax.swing.ImageIcon;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
@@ -28,64 +27,62 @@ import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
 public class PopupMenuPortScan extends PopupMenuItemSiteNodeContainer {
 
-	private static final long serialVersionUID = 1L;
-	private ExtensionPortScan extension = null;
-    
-    /**
-     * @param label
-     */
+    private static final long serialVersionUID = 1L;
+    private ExtensionPortScan extension = null;
+
+    /** @param label */
     public PopupMenuPortScan(String label) {
         super(label);
-        this.setIcon(new ImageIcon(PopupMenuPortScan.class.getResource("/resource/icon/16/187.png")));
+        this.setIcon(
+                new ImageIcon(PopupMenuPortScan.class.getResource("/resource/icon/16/187.png")));
     }
 
     @Override
     public boolean isSubMenu() {
-    	return true;
+        return true;
     }
-    
+
     @Override
     public String getParentMenuName() {
-    	return Constant.messages.getString("attack.site.popup");
+        return Constant.messages.getString("attack.site.popup");
     }
 
     @Override
     public int getParentMenuIndex() {
-    	return ATTACK_MENU_INDEX;
+        return ATTACK_MENU_INDEX;
     }
-    
+
     void setExtension(ExtensionPortScan extension) {
         this.extension = extension;
     }
-    
-	@Override
-	public void performAction(SiteNode node) {
-		// Loop up to get the top parent
-		while (node.getParent() != null && node.getParent().getParent() != null) {
-			node = node.getParent();
-		}
-		extension.portScanSite(node);
-	}
 
-	@Override
-    public boolean isButtonEnabledForSiteNode (SiteNode node) {
-	    return (!extension.isScanning(node));
+    @Override
+    public void performAction(SiteNode node) {
+        // Loop up to get the top parent
+        while (node.getParent() != null && node.getParent().getParent() != null) {
+            node = node.getParent();
+        }
+        extension.portScanSite(node);
     }
 
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-		switch (invoker) {
-		case ALERTS_PANEL:
-		case ACTIVE_SCANNER_PANEL:
-		case FORCED_BROWSE_PANEL:
-		case FUZZER_PANEL:
-			return false;
-		case HISTORY_PANEL:
-		case SITES_PANEL:
-		case SEARCH_PANEL:
-		default:
-			return true;
-		}
-	}
+    @Override
+    public boolean isButtonEnabledForSiteNode(SiteNode node) {
+        return (!extension.isScanning(node));
+    }
 
+    @Override
+    public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
+        switch (invoker) {
+            case ALERTS_PANEL:
+            case ACTIVE_SCANNER_PANEL:
+            case FORCED_BROWSE_PANEL:
+            case FUZZER_PANEL:
+                return false;
+            case HISTORY_PANEL:
+            case SITES_PANEL:
+            case SEARCH_PANEL:
+            default:
+                return true;
+        }
+    }
 }

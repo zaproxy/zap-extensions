@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.openapi.network;
 
 import java.util.List;
-
 import org.parosproxy.paros.network.HttpHeaderField;
 
 public class RequestModel {

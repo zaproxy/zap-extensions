@@ -19,84 +19,71 @@
  */
 package org.zaproxy.zap.testutils;
 
+import java.io.IOException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketTestServer;
 
-import java.io.IOException;
+/** Class with utility/helper methods for general tests for WebSockets */
+public abstract class WebSocketTestUtils extends TestUtils {
 
-/**
- * Class with utility/helper methods for general tests for WebSockets
- */
-public abstract class WebSocketTestUtils extends TestUtils{
+    public static final int DEFAULT_TIMEOUT = 5000;
 
-	public static final int DEFAULT_TIMEOUT = 5000;
-
-    /**
-     * A WebSocket Test Server. The server is {@code null} if not started.
-     */
+    /** A WebSocket Test Server. The server is {@code null} if not started. */
     private NanoWebSocketTestServer webSocketTestServer;
 
-    /**
-     * Starts a WebSocket Server on specific hostname and port.
-     */
-    public void startWebSocketServer(String hostname, int webSocketPort, int timeout) throws IOException {
-        if(webSocketTestServer == null){
-            webSocketTestServer = new NanoWebSocketTestServer(hostname,webSocketPort);
+    /** Starts a WebSocket Server on specific hostname and port. */
+    public void startWebSocketServer(String hostname, int webSocketPort, int timeout)
+            throws IOException {
+        if (webSocketTestServer == null) {
+            webSocketTestServer = new NanoWebSocketTestServer(hostname, webSocketPort);
         }
         webSocketTestServer.start(timeout);
     }
-	
-	/**
-	 * Starts a WebSocket Server on specific hostname and port.
-	 */
+
+    /** Starts a WebSocket Server on specific hostname and port. */
     public void startWebSocketServer(String hostname, int webSocketPort) throws IOException {
         startWebSocketServer(hostname, webSocketPort, DEFAULT_TIMEOUT);
     }
-	
-	/**
-	 * Start the Server at random port with standard timeout 5000
-	 */
-	public void startWebSocketServer(String hostname) throws IOException {
-		startWebSocketServer(hostname, 0, DEFAULT_TIMEOUT);
-	}
 
-    
-    public void stopWebSocketServer(){
-        if(webSocketTestServer != null){
+    /** Start the Server at random port with standard timeout 5000 */
+    public void startWebSocketServer(String hostname) throws IOException {
+        startWebSocketServer(hostname, 0, DEFAULT_TIMEOUT);
+    }
+
+    public void stopWebSocketServer() {
+        if (webSocketTestServer != null) {
             webSocketTestServer.stop();
         }
     }
-    
-    /**
-     * @return If WebServer was started return it, in any other case returns null
-     */
+
+    /** @return If WebServer was started return it, in any other case returns null */
     public NanoWebSocketTestServer getWebSocketTestServer() {
         return webSocketTestServer;
     }
-    
-    public NanoWebSocketConnection getLastConnection(){
+
+    public NanoWebSocketConnection getLastConnection() {
         return webSocketTestServer.getLastConnection();
     }
-    
-    public NanoWebSocketConnection getConnection(int channelID){
+
+    public NanoWebSocketConnection getConnection(int channelID) {
         return webSocketTestServer.getConnection(channelID);
     }
-	
-	public int getListeningPort(){
-		return webSocketTestServer.getListeningPort();
-	}
-	
-	public String getHostName(){
-		return webSocketTestServer.getHostname();
-	}
-	
-	public URI getServertUrl() throws URIException {
-    	return new URI(webSocketTestServer.isSecure() ? "https" : "http"
-				,null,webSocketTestServer.getHostname(),
-				webSocketTestServer.getListeningPort());
-    
-	}
-	
+
+    public int getListeningPort() {
+        return webSocketTestServer.getListeningPort();
+    }
+
+    public String getHostName() {
+        return webSocketTestServer.getHostname();
+    }
+
+    public URI getServertUrl() throws URIException {
+        return new URI(
+                webSocketTestServer.isSecure() ? "https" : "http",
+                null,
+                webSocketTestServer.getHostname(),
+                webSocketTestServer.getListeningPort());
+    }
 }

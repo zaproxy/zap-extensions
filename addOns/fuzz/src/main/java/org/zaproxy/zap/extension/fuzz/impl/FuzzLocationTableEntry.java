@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.fuzz.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.view.messagelocation.MessageLocationHighlight;
 import org.zaproxy.zap.view.messagelocation.MessageLocationTableEntry;
@@ -75,5 +74,4 @@ public class FuzzLocationTableEntry extends MessageLocationTableEntry {
     public List<PayloadProcessorTableEntry> getProcessors() {
         return processors;
     }
-
 }

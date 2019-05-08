@@ -20,9 +20,7 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
-
 import javax.script.ScriptException;
-
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
@@ -33,51 +31,65 @@ import org.zaproxy.zap.extension.ascan.ScriptsActiveScanner;
 
 public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 
-	private ZestScriptWrapper script = null;
-	private ScriptsActiveScanner sas = null;
-	private HttpMessage msg = null;
-	private String param = null;
-	private ExtensionZest extension = null;
+    private ZestScriptWrapper script = null;
+    private ScriptsActiveScanner sas = null;
+    private HttpMessage msg = null;
+    private String param = null;
+    private ExtensionZest extension = null;
 
     private static Logger logger = Logger.getLogger(ZestActiveRunner.class);
 
-	public ZestActiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
-		super(extension, script);
-		this.extension = extension;
-		this.script = script;
-	}
+    public ZestActiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
+        super(extension, script);
+        this.extension = extension;
+        this.script = script;
+    }
 
-	@Override
-	public void scan(ScriptsActiveScanner sas, HttpMessage msg, String param, String value) throws ScriptException {
-		logger.debug("Zest ActiveScan script: " + this.script.getName());
-		this.sas = sas;
-		this.msg = msg;
-		this.param = param;
+    @Override
+    public void scan(ScriptsActiveScanner sas, HttpMessage msg, String param, String value)
+            throws ScriptException {
+        logger.debug("Zest ActiveScan script: " + this.script.getName());
+        this.sas = sas;
+        this.msg = msg;
+        this.param = param;
 
-		try {
-			sas.setParam(msg, param, "{{target}}");
-			this.run(script.getZestScript(), 
-					ZestZapUtils.toZestRequest(msg, false, true, extension.getParam()), 
-					null);
-		} catch (Exception e) {
-			throw new ScriptException(e);
-		}
-	}
-	
-	@Override
-	public ZestResponse send(ZestRequest request) throws IOException {
-		HttpMessage msg = ZestZapUtils.toHttpMessage(request, null /*response*/);
-		
-		this.sas.sendAndReceive(msg, false /*isFollowRedirect*/);
-		
-		ZestResponse response = ZestZapUtils.toZestResponse(msg);
-		return response;	
-	}	
+        try {
+            sas.setParam(msg, param, "{{target}}");
+            this.run(
+                    script.getZestScript(),
+                    ZestZapUtils.toZestRequest(msg, false, true, extension.getParam()),
+                    null);
+        } catch (Exception e) {
+            throw new ScriptException(e);
+        }
+    }
 
-	@Override
-	public void alertFound(Alert alert) {
-		// Override this as we can put in more info from the script and message
-		sas.raiseAlert(alert.getRisk(), alert.getConfidence(), alert.getName(), script.getDescription(), 
-				msg.getRequestHeader().getURI().toString(), param, "", "", "", "", -1, -1, msg);
-	}
+    @Override
+    public ZestResponse send(ZestRequest request) throws IOException {
+        HttpMessage msg = ZestZapUtils.toHttpMessage(request, null /*response*/);
+
+        this.sas.sendAndReceive(msg, false /*isFollowRedirect*/);
+
+        ZestResponse response = ZestZapUtils.toZestResponse(msg);
+        return response;
+    }
+
+    @Override
+    public void alertFound(Alert alert) {
+        // Override this as we can put in more info from the script and message
+        sas.raiseAlert(
+                alert.getRisk(),
+                alert.getConfidence(),
+                alert.getName(),
+                script.getDescription(),
+                msg.getRequestHeader().getURI().toString(),
+                param,
+                "",
+                "",
+                "",
+                "",
+                -1,
+                -1,
+                msg);
+    }
 }

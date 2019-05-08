@@ -25,9 +25,9 @@ public interface FuzzerMessageProcessor<M extends Message> {
 
     /**
      * The name of the fuzzer message processor.
-     * <p>
-     * Should be internationalised.
-     * 
+     *
+     * <p>Should be internationalised.
+     *
      * @return the name of the fuzzer processor
      */
     String getName();

@@ -35,7 +35,8 @@ public interface FuzzerHandler<M extends Message, F extends Fuzzer<M>> {
 
     F showFuzzerDialog(MessageContainer<M> messageContainer, FuzzerOptions defaultOptions);
 
-    F showFuzzerDialog(SelectableContentMessageContainer<M> messageContainer, FuzzerOptions defaultOptions);
+    F showFuzzerDialog(
+            SelectableContentMessageContainer<M> messageContainer, FuzzerOptions defaultOptions);
 
     FuzzResultsContentPanel<M, F> getResultsContentPanel();
 
@@ -46,5 +47,4 @@ public interface FuzzerHandler<M extends Message, F extends Fuzzer<M>> {
     boolean canFuzz(MessageContainer<?> invoker);
 
     M getMessage(MessageContainer<M> invoker);
-
 }

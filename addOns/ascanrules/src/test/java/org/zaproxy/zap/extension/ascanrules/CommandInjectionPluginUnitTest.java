@@ -20,16 +20,18 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-
 import org.apache.commons.configuration.Configuration;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -40,28 +42,23 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-import fi.iki.elonen.NanoHTTPD;
-import fi.iki.elonen.NanoHTTPD.IHTTPSession;
-import fi.iki.elonen.NanoHTTPD.Response;
-
-/**
- * Unit test for {@link CommandInjectionPlugin}.
- */
-public class CommandInjectionPluginUnitTest extends ActiveScannerAppParamTest<CommandInjectionPlugin> {
+/** Unit test for {@link CommandInjectionPlugin}. */
+public class CommandInjectionPluginUnitTest
+        extends ActiveScannerAppParamTest<CommandInjectionPlugin> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
         int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
         switch (strength) {
-        case LOW:
-            return recommendMax + 6;
-        case MEDIUM:
-        default:
-            return recommendMax + 20;
-        case HIGH:
-            return recommendMax + 22;
-        case INSANE:
-            return recommendMax;
+            case LOW:
+                return recommendMax + 6;
+            case MEDIUM:
+            default:
+                return recommendMax + 20;
+            case HIGH:
+                return recommendMax + 22;
+            case INSANE:
+                return recommendMax;
         }
     }
 
@@ -150,7 +147,8 @@ public class CommandInjectionPluginUnitTest extends ActiveScannerAppParamTest<Co
     }
 
     @Test
-    public void shouldDefaultTo5SecsIfConfigTimeIsMalformedValueForTimeBasedAttacks() throws Exception {
+    public void shouldDefaultTo5SecsIfConfigTimeIsMalformedValueForTimeBasedAttacks()
+            throws Exception {
         // Given
         rule.setConfig(configWithSleepRule("not a valid value"));
         // When
@@ -163,10 +161,9 @@ public class CommandInjectionPluginUnitTest extends ActiveScannerAppParamTest<Co
     public void shouldUseSpecifiedTimeInAllTimeBasedPayloads() throws Exception {
         // Given
         String sleepTime = "987";
-        PayloadCollectorHandler payloadCollector = new PayloadCollectorHandler(
-                "/",
-                "p",
-                v -> v.contains("sleep") || v.contains("timeout"));
+        PayloadCollectorHandler payloadCollector =
+                new PayloadCollectorHandler(
+                        "/", "p", v -> v.contains("sleep") || v.contains("timeout"));
         nano.addHandler(payloadCollector);
         rule.setConfig(configWithSleepRule(sleepTime));
         rule.setAttackStrength(Plugin.AttackStrength.INSANE);
@@ -192,7 +189,8 @@ public class CommandInjectionPluginUnitTest extends ActiveScannerAppParamTest<Co
         private final Predicate<String> valuePredicate;
         private final List<String> payloads;
 
-        public PayloadCollectorHandler(String path, String param, Predicate<String> valuePredicate) {
+        public PayloadCollectorHandler(
+                String path, String param, Predicate<String> valuePredicate) {
             super(path);
 
             this.param = param;

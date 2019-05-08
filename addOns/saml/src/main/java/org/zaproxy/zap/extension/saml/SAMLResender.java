@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.saml;
 
+import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
@@ -27,15 +28,11 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 
-import java.io.IOException;
-
 public class SAMLResender {
 
     private static Logger log = Logger.getLogger(SAMLResender.class.getName());
 
-    private SAMLResender() {
-
-    }
+    private SAMLResender() {}
 
     /**
      * Resend the message to the desired endpoint and get the response
@@ -43,13 +40,19 @@ public class SAMLResender {
      * @param msg The message to be sent
      */
     public static void resendMessage(final HttpMessage msg) throws SAMLException {
-        HttpSender sender = new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true,
-                HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpSender sender =
+                new HttpSender(
+                        Model.getSingleton().getOptionsParam().getConnectionParam(),
+                        true,
+                        HttpSender.MANUAL_REQUEST_INITIATOR);
         try {
             sender.sendAndReceive(msg, true);
             if (!msg.getResponseHeader().isEmpty()) {
-                final ExtensionHistory extension = (ExtensionHistory) Control.getSingleton()
-                        .getExtensionLoader().getExtension(ExtensionHistory.NAME);
+                final ExtensionHistory extension =
+                        (ExtensionHistory)
+                                Control.getSingleton()
+                                        .getExtensionLoader()
+                                        .getExtension(ExtensionHistory.NAME);
 
                 final int finalType = HistoryReference.TYPE_ZAP_USER;
                 extension.addHistory(msg, finalType);

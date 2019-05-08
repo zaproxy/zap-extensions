@@ -20,13 +20,19 @@
 package org.zaproxy.zap.extension.replacer;
 
 import java.util.List;
-
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.utils.Enableable;
 
 class ReplacerParamRule extends Enableable {
 
-    public enum MatchType {REQ_HEADER, REQ_HEADER_STR, REQ_BODY_STR, RESP_HEADER, RESP_HEADER_STR, RESP_BODY_STR}; 
+    public enum MatchType {
+        REQ_HEADER,
+        REQ_HEADER_STR,
+        REQ_BODY_STR,
+        RESP_HEADER,
+        RESP_HEADER_STR,
+        RESP_BODY_STR
+    };
 
     private String description;
     private String matchString;
@@ -48,17 +54,25 @@ class ReplacerParamRule extends Enableable {
     }
 
     /**
-     * Constructor 
-     * @param description   whatever makes sense to the user
-     * @param matchType     the type of matching to be performed
-     * @param matchString   the string to match against
-     * @param matchRegex    true if the matchString is a regex
-     * @param replacement   the string to replace with
-     * @param initiators    a list of initiators as defined in {@link org.parosproxy.paros.network.HttpSender}
-     * @param enabled       true if the rule is enabled
+     * Constructor
+     *
+     * @param description whatever makes sense to the user
+     * @param matchType the type of matching to be performed
+     * @param matchString the string to match against
+     * @param matchRegex true if the matchString is a regex
+     * @param replacement the string to replace with
+     * @param initiators a list of initiators as defined in {@link
+     *     org.parosproxy.paros.network.HttpSender}
+     * @param enabled true if the rule is enabled
      */
-    public ReplacerParamRule(String description, MatchType matchType, String matchString, boolean matchRegex, 
-            String replacement, List<Integer> initiators, boolean enabled) {
+    public ReplacerParamRule(
+            String description,
+            MatchType matchType,
+            String matchString,
+            boolean matchRegex,
+            String replacement,
+            List<Integer> initiators,
+            boolean enabled) {
         super(enabled);
 
         this.description = description;
@@ -70,8 +84,14 @@ class ReplacerParamRule extends Enableable {
     }
 
     public ReplacerParamRule(ReplacerParamRule token) {
-        this(token.description, token.matchType, token.matchString, token.matchRegex, 
-                token.replacement, token.initiators, token.isEnabled());
+        this(
+                token.description,
+                token.matchType,
+                token.matchString,
+                token.matchRegex,
+                token.replacement,
+                token.initiators,
+                token.isEnabled());
     }
 
     public String getDescription() {
@@ -89,19 +109,19 @@ class ReplacerParamRule extends Enableable {
     public void setMatchString(String matchString) {
         this.matchString = matchString;
     }
-    
+
     public MatchType getMatchType() {
         return matchType;
     }
-    
+
     public void setMatchType(MatchType matchType) {
         this.matchType = matchType;
     }
-    
+
     public boolean isMatchRegex() {
         return matchRegex;
     }
-    
+
     public void setMatchRegex(boolean matchRegex) {
         this.matchRegex = matchRegex;
     }
@@ -117,18 +137,18 @@ class ReplacerParamRule extends Enableable {
     public List<Integer> getInitiators() {
         return initiators;
     }
-    
+
     public void setInitiators(List<Integer> initiators) {
         this.initiators = initiators;
     }
-    
+
     public boolean appliesToInitiator(int initiator) {
         if (initiator == HttpSender.CHECK_FOR_UPDATES_INITIATOR) {
             return false;
         }
         return appliesToAllInitiators() || initiators.contains(initiator);
     }
-    
+
     public boolean appliesToAllInitiators() {
         return initiators == null || initiators.isEmpty();
     }

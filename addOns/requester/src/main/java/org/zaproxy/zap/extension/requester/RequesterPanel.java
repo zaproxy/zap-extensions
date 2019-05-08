@@ -22,49 +22,52 @@ package org.zaproxy.zap.extension.requester;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-
 import javax.swing.KeyStroke;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.requester.ManualHttpRequestEditorPanel;
 
 public class RequesterPanel extends AbstractPanel {
-	
-	private static final long serialVersionUID = 1L;
-	
-	public static final String PANEL_NAME = "requesterpanel";
-	
-	private RequesterNumberedTabbedPane requesterNumberedTabbedPane = null; 
 
-	@SuppressWarnings("deprecation")
-	public RequesterPanel(ExtensionRequester extension) {
+    private static final long serialVersionUID = 1L;
+
+    public static final String PANEL_NAME = "requesterpanel";
+
+    private RequesterNumberedTabbedPane requesterNumberedTabbedPane = null;
+
+    @SuppressWarnings("deprecation")
+    public RequesterPanel(ExtensionRequester extension) {
         super();
         this.setLayout(new GridLayout(1, 1));
         this.setSize(474, 251);
         this.setName(Constant.messages.getString("requester.panel.title"));
-		this.setIcon(ExtensionRequester.REQUESTER_ICON);
-		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				// TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-				KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK, false));
-		this.setMnemonic(Constant.messages.getChar("requester.panel.mnemonic"));
-		this.setShowByDefault(true);
-		requesterNumberedTabbedPane = new RequesterNumberedTabbedPane();		
+        this.setIcon(ExtensionRequester.REQUESTER_ICON);
+        this.setDefaultAccelerator(
+                KeyStroke.getKeyStroke(
+                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
+                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
+                        KeyEvent.VK_R,
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                | KeyEvent.ALT_DOWN_MASK,
+                        false));
+        this.setMnemonic(Constant.messages.getChar("requester.panel.mnemonic"));
+        this.setShowByDefault(true);
+        requesterNumberedTabbedPane = new RequesterNumberedTabbedPane();
         this.add(requesterNumberedTabbedPane);
-        }
-    
-    public RequesterNumberedTabbedPane getRequesterNumberedTabbedPane() {
-  		return requesterNumberedTabbedPane;
-  	}
+    }
 
-  	public void newRequester(HttpMessage msg) {
-      	ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel(true, "requesterpanel");
-      	requestPane.setMessage(msg);
-      	getRequesterNumberedTabbedPane().addTab(requestPane);      	
-      }
-  	
+    public RequesterNumberedTabbedPane getRequesterNumberedTabbedPane() {
+        return requesterNumberedTabbedPane;
+    }
+
+    public void newRequester(HttpMessage msg) {
+        ManualHttpRequestEditorPanel requestPane =
+                new ManualHttpRequestEditorPanel(true, "requesterpanel");
+        requestPane.setMessage(msg);
+        getRequesterNumberedTabbedPane().addTab(requestPane);
+    }
+
     void unload() {
         getRequesterNumberedTabbedPane().unload();
     }
-  	};
+};

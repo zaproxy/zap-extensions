@@ -20,13 +20,11 @@
 package org.zaproxy.zap.extension.jxbrowser;
 
 import java.awt.Component;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import org.zaproxy.zap.utils.DisplayUtils;
 
 public class ZapTabbedPanel extends JTabbedPane {
@@ -35,17 +33,18 @@ public class ZapTabbedPanel extends JTabbedPane {
 
     public ZapTabbedPanel() {
 
-        this.addChangeListener(new ChangeListener() {
+        this.addChangeListener(
+                new ChangeListener() {
 
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                setCloseButtonStates();
-            }
-        });
-
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        setCloseButtonStates();
+                    }
+                });
     }
 
-    public void addTab(String title, Icon icon, final Component component, boolean hideable, int index) {
+    public void addTab(
+            String title, Icon icon, final Component component, boolean hideable, int index) {
         if (index == -1 || index > this.getTabCount()) {
             index = this.getTabCount();
         }
@@ -103,5 +102,4 @@ public class ZapTabbedPanel extends JTabbedPane {
             }
         }
     }
-
 }

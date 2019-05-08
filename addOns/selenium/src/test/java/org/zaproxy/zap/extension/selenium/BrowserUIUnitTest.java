@@ -20,16 +20,14 @@
 package org.zaproxy.zap.extension.selenium;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-/**
- * Unit test for {@link BrowserUI}.
- */
+/** Unit test for {@link BrowserUI}. */
 public class BrowserUIUnitTest {
 
     @Test(expected = IllegalArgumentException.class)

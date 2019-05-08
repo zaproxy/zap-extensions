@@ -22,28 +22,27 @@ package org.zaproxy.zap.extension.plugnhack.httppanel.models;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
-
 public class JsonClientPanelViewModel extends StringClientPanelViewModel {
-	
+
     @Override
     public String getData() {
-    	String data;
-        if (this.monitoredPageMessage == null)  {
+        String data;
+        if (this.monitoredPageMessage == null) {
             data = "";
         } else {
-			// TODO FULL JSON PATCH
-           	data = this.monitoredPageMessage.getJson().toString(4);
+            // TODO FULL JSON PATCH
+            data = this.monitoredPageMessage.getJson().toString(4);
         }
         return data;
     }
 
     @Override
     public void setData(String data) {
-    	if (this.monitoredPageMessage != null) {
-			if ( ! monitoredPageMessage.getData().equals(data)) {
-				// TODO FULL JSON PATCH
-    			this.monitoredPageMessage.setJson((JSONObject)JSONSerializer.toJSON(data));
-			}
-    	}
+        if (this.monitoredPageMessage != null) {
+            if (!monitoredPageMessage.getData().equals(data)) {
+                // TODO FULL JSON PATCH
+                this.monitoredPageMessage.setJson((JSONObject) JSONSerializer.toJSON(data));
+            }
+        }
     }
 }

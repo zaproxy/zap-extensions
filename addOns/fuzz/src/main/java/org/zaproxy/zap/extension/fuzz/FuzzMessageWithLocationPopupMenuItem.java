@@ -21,9 +21,7 @@ package org.zaproxy.zap.extension.fuzz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.SwingUtilities;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -49,14 +47,15 @@ public class FuzzMessageWithLocationPopupMenuItem extends ExtensionPopupMenuItem
 
         this.extension = extension;
 
-        addActionListener(new ActionListener() {
+        addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                action.perform();
-                action = null;
-            }
-        });
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        action.perform();
+                        action = null;
+                    }
+                });
     }
 
     @Override
@@ -66,7 +65,8 @@ public class FuzzMessageWithLocationPopupMenuItem extends ExtensionPopupMenuItem
         }
 
         if (invoker instanceof SelectableContentMessageContainer) {
-            return isEnableForMessageContainerHelper((SelectableContentMessageContainer<?>) invoker);
+            return isEnableForMessageContainerHelper(
+                    (SelectableContentMessageContainer<?>) invoker);
         }
         return false;
     }
@@ -79,7 +79,8 @@ public class FuzzMessageWithLocationPopupMenuItem extends ExtensionPopupMenuItem
     private <M extends Message, F extends Fuzzer<M>> boolean isEnableForMessageContainerHelper(
             SelectableContentMessageContainer<M> invoker) {
         if (SwingUtilities.getAncestorOfClass(FuzzerDialog.class, invoker.getComponent()) != null
-                || SwingUtilities.getAncestorOfClass(HttpPanel.class, invoker.getComponent()) == null) {
+                || SwingUtilities.getAncestorOfClass(HttpPanel.class, invoker.getComponent())
+                        == null) {
             return false;
         }
 
@@ -119,7 +120,8 @@ public class FuzzMessageWithLocationPopupMenuItem extends ExtensionPopupMenuItem
         private final SelectableContentMessageContainer<M> invoker;
         private final FuzzerHandler<M, F> fuzzHandler;
 
-        private ShowFuzzerDialogAction(SelectableContentMessageContainer<M> invoker, FuzzerHandler<M, F> fuzzHandler) {
+        private ShowFuzzerDialogAction(
+                SelectableContentMessageContainer<M> invoker, FuzzerHandler<M, F> fuzzHandler) {
             this.invoker = invoker;
             this.fuzzHandler = fuzzHandler;
         }

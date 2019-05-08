@@ -29,15 +29,16 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class SAMLPassiveScanner extends PluginPassiveScanner {
 
     private static final String NAME = Constant.messages.getString("saml.passivescanner.name");
-    private static final String DESCRIPTION = Constant.messages.getString("saml.passivescanner.desc");
-    private static final String OTHER_INFO = Constant.messages.getString("saml.passivescanner.otherinfo");
+    private static final String DESCRIPTION =
+            Constant.messages.getString("saml.passivescanner.desc");
+    private static final String OTHER_INFO =
+            Constant.messages.getString("saml.passivescanner.otherinfo");
     private static final String REFS = Constant.messages.getString("saml.passivescanner.refs");
 
     private PassiveScanThread parent;
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-    }
+    public void scanHttpRequestSend(HttpMessage msg, int id) {}
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -58,7 +59,8 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
 
     private void raiseAlert(HttpMessage msg, int id, SAMLInspectionResult samlInspectionResult) {
         Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, NAME);
-        alert.setDetail(DESCRIPTION,
+        alert.setDetail(
+                DESCRIPTION,
                 msg.getRequestHeader().getURI().toString(),
                 samlInspectionResult.getEvidence().getName(),
                 "",

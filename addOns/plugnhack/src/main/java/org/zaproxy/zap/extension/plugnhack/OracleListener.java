@@ -21,10 +21,10 @@ package org.zaproxy.zap.extension.plugnhack;
 
 /**
  * A listenner that will be informed of any invocations of the (client side) oracle
- * @author simon
  *
+ * @author simon
  */
 public interface OracleListener {
 
-	public void oracleInvoked(int id);
+    public void oracleInvoked(int id);
 }

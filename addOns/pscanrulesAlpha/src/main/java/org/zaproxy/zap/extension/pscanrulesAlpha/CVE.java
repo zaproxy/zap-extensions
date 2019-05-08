@@ -21,23 +21,23 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 /**
  * a class to encapsulate a CVE (in a very minimal fashion)
- * @author 70pointer@gmail.com
  *
+ * @author 70pointer@gmail.com
  */
 public class CVE {
-	private String cve;
-	private Double cvss;
-	
+    private String cve;
+    private Double cvss;
 
-	public String getCve() {
-		return cve;
-	}
-	public Double getCvss() {
-		return cvss;
-	}
-	
-	public CVE (String cve, Double cvss) {
-		this.cve = cve;
-		this.cvss = cvss;			
-	}
+    public String getCve() {
+        return cve;
+    }
+
+    public Double getCvss() {
+        return cvss;
+    }
+
+    public CVE(String cve, Double cvss) {
+        this.cve = cve;
+        this.cvss = cvss;
+    }
 }

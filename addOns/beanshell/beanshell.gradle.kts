@@ -19,7 +19,8 @@ dependencies {
 
 spotless {
     java {
-        // Don't enforce license.
+        // Don't enforce the license, just the format.
         clearSteps()
+        googleJavaFormatAosp(project)
     }
 }

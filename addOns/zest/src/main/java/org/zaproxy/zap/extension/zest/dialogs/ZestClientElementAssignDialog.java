@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-
 import org.mozilla.zest.core.v1.ZestClientElement;
 import org.mozilla.zest.core.v1.ZestClientElementAssign;
 import org.mozilla.zest.core.v1.ZestStatement;
@@ -33,43 +32,54 @@ import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
 public class ZestClientElementAssignDialog extends ZestClientElementDialog implements ZestDialog {
 
-	private static final String FIELD_VARIABLE = "zest.dialog.assign.label.variable";
-	private static final long serialVersionUID = 1L;
+    private static final String FIELD_VARIABLE = "zest.dialog.assign.label.variable";
+    private static final long serialVersionUID = 1L;
 
-	public ZestClientElementAssignDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(ext, owner, "zest.dialog.clientElementAssign.add.title", dim);
-	}
+    public ZestClientElementAssignDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(ext, owner, "zest.dialog.clientElementAssign.add.title", dim);
+    }
 
-	@Override
-	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestStatement req, ZestClientElement client, boolean add) {
-		super.init(script, parent, child, req, client, add);
-		
-		this.addTextField(FIELD_ATTRIBUTE, ((ZestClientElementAssign)this.getClient()).getAttribute());
-		this.addTextField(FIELD_VARIABLE, ((ZestClientElementAssign)this.getClient()).getVariableName());
+    @Override
+    public void init(
+            ZestScriptWrapper script,
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientElement client,
+            boolean add) {
+        super.init(script, parent, child, req, client, add);
 
-		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssign.add.title"));
-		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssign.edit.title"));
-		}
-		ZestZapUtils.setMainPopupMenu(this.getField(FIELD_ATTRIBUTE)); 
-	}
+        this.addTextField(
+                FIELD_ATTRIBUTE, ((ZestClientElementAssign) this.getClient()).getAttribute());
+        this.addTextField(
+                FIELD_VARIABLE, ((ZestClientElementAssign) this.getClient()).getVariableName());
 
-	@Override
-	public void saveFields() {
-		((ZestClientElementAssign)this.getClient()).setAttribute(this.getStringValue(FIELD_ATTRIBUTE));
-		((ZestClientElementAssign)this.getClient()).setVariableName(this.getStringValue(FIELD_VARIABLE));
-	}
+        if (add) {
+            this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssign.add.title"));
+        } else {
+            this.setTitle(
+                    Constant.messages.getString("zest.dialog.clientElementAssign.edit.title"));
+        }
+        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_ATTRIBUTE));
+    }
 
-	@Override
-	public String validateFields() {
-		if (!ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_VARIABLE))
-				&& !getScript().getZestScript().getVariableNames().contains(this.getStringValue(FIELD_VARIABLE))) {
-			return Constant.messages.getString("zest.dialog.assign.error.variable");
-		}
-		return super.validateFields();
-	}
+    @Override
+    public void saveFields() {
+        ((ZestClientElementAssign) this.getClient())
+                .setAttribute(this.getStringValue(FIELD_ATTRIBUTE));
+        ((ZestClientElementAssign) this.getClient())
+                .setVariableName(this.getStringValue(FIELD_VARIABLE));
+    }
 
-	
+    @Override
+    public String validateFields() {
+        if (!ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_VARIABLE))
+                && !getScript()
+                        .getZestScript()
+                        .getVariableNames()
+                        .contains(this.getStringValue(FIELD_VARIABLE))) {
+            return Constant.messages.getString("zest.dialog.assign.error.variable");
+        }
+        return super.validateFields();
+    }
 }

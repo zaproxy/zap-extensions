@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.zest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import org.mozilla.zest.core.v1.ZestJSON;
 import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
 
@@ -38,5 +37,4 @@ public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
     protected void parseTemplate(Path template) throws Exception {
         ZestJSON.fromString(new String(Files.readAllBytes(template), StandardCharsets.UTF_8));
     }
-
 }

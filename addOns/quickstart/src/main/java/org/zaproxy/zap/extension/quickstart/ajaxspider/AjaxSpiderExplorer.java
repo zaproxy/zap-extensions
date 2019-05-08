@@ -24,14 +24,12 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
-
 import javax.swing.Box;
 import javax.swing.ComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.quickstart.PlugableSpider;
@@ -67,7 +65,8 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         options.load(new ZapXmlConfiguration());
         ProvidedBrowserUI browserUi = (ProvidedBrowserUI) getBrowserComboBox().getSelectedItem();
         options.setBrowserId(browserUi.getBrowser().getId());
-        AjaxSpiderTarget.Builder builder = AjaxSpiderTarget.newBuilder(extension.getModel().getSession());
+        AjaxSpiderTarget.Builder builder =
+                AjaxSpiderTarget.newBuilder(extension.getModel().getSession());
         builder.setStartUri(uri);
         builder.setInScopeOnly(false);
         builder.setSubtreeOnly(false);
@@ -88,13 +87,17 @@ public class AjaxSpiderExplorer implements PlugableSpider {
     private JCheckBox getSelectCheckBox() {
         if (selectCheckBox == null) {
             selectCheckBox = new JCheckBox();
-            selectCheckBox.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    getBrowserComboBox().setEnabled(selectCheckBox.isSelected());
-                    extension.getExtQuickStart().getQuickStartParam().setAjaxSpiderEnabled(selectCheckBox.isSelected());
-                }
-            });
+            selectCheckBox.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            getBrowserComboBox().setEnabled(selectCheckBox.isSelected());
+                            extension
+                                    .getExtQuickStart()
+                                    .getQuickStartParam()
+                                    .setAjaxSpiderEnabled(selectCheckBox.isSelected());
+                        }
+                    });
         }
         return selectCheckBox;
     }
@@ -102,37 +105,46 @@ public class AjaxSpiderExplorer implements PlugableSpider {
     private JComboBox<ProvidedBrowserUI> getBrowserComboBox() {
         if (browserComboBox == null) {
             browserComboBox = new JComboBox<ProvidedBrowserUI>();
-            ProvidedBrowsersComboBoxModel model = extension.getExtSelenium().createProvidedBrowsersComboBoxModel();
+            ProvidedBrowsersComboBoxModel model =
+                    extension.getExtSelenium().createProvidedBrowsersComboBoxModel();
             model.setIncludeHeadless(false);
             model.setIncludeUnconfigured(false);
             browserComboBox.setModel(model);
-            browserComboBox.addActionListener(new ActionListener() {
+            browserComboBox.addActionListener(
+                    new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    extension.getExtQuickStart().getQuickStartParam()
-                            .setAjaxSpiderDefaultBrowser(browserComboBox.getSelectedItem().toString());
-                }
-            });
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            extension
+                                    .getExtQuickStart()
+                                    .getQuickStartParam()
+                                    .setAjaxSpiderDefaultBrowser(
+                                            browserComboBox.getSelectedItem().toString());
+                        }
+                    });
         }
         return browserComboBox;
     }
 
     @Override
     public JPanel getPanel() {
-    	if (panel == null) {
-	        panel = new JPanel(new GridBagLayout());
-	        panel.setBackground(Color.WHITE);
-	        panel.add(getSelectCheckBox(),
-	                LayoutHelper.getGBC(0, 0, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-	        panel.add(new JLabel(Constant.messages.getString("quickstart.label.withbrowser")),
-	                LayoutHelper.getGBC(1, 0, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-	        panel.add(getBrowserComboBox(),
-	                LayoutHelper.getGBC(2, 0, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-	        panel.add(new JLabel(""),
-	                LayoutHelper.getGBC(3, 0, 1, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-	        panel.add(Box.createHorizontalGlue());
-    	}
+        if (panel == null) {
+            panel = new JPanel(new GridBagLayout());
+            panel.setBackground(Color.WHITE);
+            panel.add(
+                    getSelectCheckBox(),
+                    LayoutHelper.getGBC(0, 0, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            panel.add(
+                    new JLabel(Constant.messages.getString("quickstart.label.withbrowser")),
+                    LayoutHelper.getGBC(1, 0, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            panel.add(
+                    getBrowserComboBox(),
+                    LayoutHelper.getGBC(2, 0, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            panel.add(
+                    new JLabel(""),
+                    LayoutHelper.getGBC(3, 0, 1, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            panel.add(Box.createHorizontalGlue());
+        }
         return panel;
     }
 
@@ -161,6 +173,5 @@ public class AjaxSpiderExplorer implements PlugableSpider {
                 break;
             }
         }
-
     }
 }

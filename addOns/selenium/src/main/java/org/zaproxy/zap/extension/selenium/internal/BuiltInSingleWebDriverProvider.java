@@ -27,8 +27,8 @@ import org.zaproxy.zap.extension.selenium.SingleWebDriverProvider;
 
 /**
  * A {@link SingleWebDriverProvider} for built-in supported browsers.
- * <p>
- * <strong>Note:</strong> Does not belong to the public API.
+ *
+ * <p><strong>Note:</strong> Does not belong to the public API.
  */
 public class BuiltInSingleWebDriverProvider implements SingleWebDriverProvider {
 
@@ -101,5 +101,4 @@ public class BuiltInSingleWebDriverProvider implements SingleWebDriverProvider {
             return b != null && ExtensionSelenium.isConfigured(b);
         }
     }
-
 }

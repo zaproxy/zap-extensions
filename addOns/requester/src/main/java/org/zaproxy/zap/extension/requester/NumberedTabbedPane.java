@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.requester;
 
 import java.awt.Component;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -28,52 +27,52 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.zaproxy.zap.extension.requester.ExtensionRequester;
+public abstract class NumberedTabbedPane extends JTabbedPane {
 
-public abstract class NumberedTabbedPane extends JTabbedPane {	
-	
-	private static final long serialVersionUID = 1L;
-	private Integer nextTabNumber = 1;	
-	private Component hiddenComponent = new JLabel();
-	private static final Icon PLUS_ICON = new ImageIcon(
-			ExtensionRequester.class.getResource("/resource/icon/fugue/plus.png"));
-	
-	public NumberedTabbedPane() {
-        super();        
-        this.addChangeListener(new ChangeListener() {
-			
-        	//This can be implemented better
-			private boolean adding = false;
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				NumberedTabbedPane ntp = (NumberedTabbedPane) e.getSource();    				
-				if (!adding) {					
-					if (ntp.getSelectedIndex() == ntp.getTabCount() - 1) {
-						//Clicked on plus tab or changed to it
-						adding = true;
-						ntp.addDefaultTab();        					        					
-    					adding = false;       					
-    				}    					
-				}				
-			}
-        });        
+    private static final long serialVersionUID = 1L;
+    private Integer nextTabNumber = 1;
+    private Component hiddenComponent = new JLabel();
+    private static final Icon PLUS_ICON =
+            new ImageIcon(ExtensionRequester.class.getResource("/resource/icon/fugue/plus.png"));
+
+    public NumberedTabbedPane() {
+        super();
+        this.addChangeListener(
+                new ChangeListener() {
+
+                    // This can be implemented better
+                    private boolean adding = false;
+
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        NumberedTabbedPane ntp = (NumberedTabbedPane) e.getSource();
+                        if (!adding) {
+                            if (ntp.getSelectedIndex() == ntp.getTabCount() - 1) {
+                                // Clicked on plus tab or changed to it
+                                adding = true;
+                                ntp.addDefaultTab();
+                                adding = false;
+                            }
+                        }
+                    }
+                });
         this.addTab("", PLUS_ICON, hiddenComponent);
-    }    
-	
-	private String nextTabName() {		
-		return String.valueOf(nextTabNumber++);
-		};
-		
-	public abstract void addDefaultTab();
+    }
 
-	public void addTab(Component pane) {		
-    	String tabName = nextTabName();
-    	int index = this.getTabCount() - 1;
-    	this.insertTab(tabName, null, pane, null, index);		
-		this.setTabComponentAt(index, new CloseTabPanel(tabName, this));
-		this.setSelectedIndex(index);
-    }    
-		
+    private String nextTabName() {
+        return String.valueOf(nextTabNumber++);
+    };
+
+    public abstract void addDefaultTab();
+
+    public void addTab(Component pane) {
+        String tabName = nextTabName();
+        int index = this.getTabCount() - 1;
+        this.insertTab(tabName, null, pane, null, index);
+        this.setTabComponentAt(index, new CloseTabPanel(tabName, this));
+        this.setSelectedIndex(index);
+    }
+
     void unload() {
         int editorPanels = getTabCount() - 1;
         for (int i = 0; i < editorPanels; i++) {
@@ -81,4 +80,3 @@ public abstract class NumberedTabbedPane extends JTabbedPane {
         }
     }
 };
-

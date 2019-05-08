@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.scripts.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
@@ -29,58 +28,59 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class CopyScriptDialog extends StandardFieldsDialog {
 
-	private static final String FIELD_NAME = "scripts.dialog.script.label.name"; 
-	private static final String FIELD_DESC = "scripts.dialog.script.label.desc";
-	private static final String FIELD_LOAD = "scripts.dialog.script.label.load";
+    private static final String FIELD_NAME = "scripts.dialog.script.label.name";
+    private static final String FIELD_DESC = "scripts.dialog.script.label.desc";
+    private static final String FIELD_LOAD = "scripts.dialog.script.label.load";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionScriptsUI extension = null;
-	private ScriptWrapper origScript = null;
-	
-	public CopyScriptDialog(ExtensionScriptsUI ext, Frame owner, Dimension dim, ScriptWrapper script) {
-		super(owner, "scripts.dialog.script.copy.title", dim);
-		this.extension = ext;
-		init(script);
-	}
+    private ExtensionScriptsUI extension = null;
+    private ScriptWrapper origScript = null;
 
-	public void init (ScriptWrapper script) {
-		this.origScript = script;
-		this.removeAllFields();
-		
-		this.setTitle(Constant.messages.getString("scripts.dialog.script.copy.title"));
-		this.addTextField(FIELD_NAME, Constant.messages.getString("scripts.dialog.script.copy.name", script.getName()));
-		this.addMultilineField(FIELD_DESC, script.getDescription());
-		this.addCheckBoxField(FIELD_LOAD, false);
+    public CopyScriptDialog(
+            ExtensionScriptsUI ext, Frame owner, Dimension dim, ScriptWrapper script) {
+        super(owner, "scripts.dialog.script.copy.title", dim);
+        this.extension = ext;
+        init(script);
+    }
 
-		this.addPadding();
-	}
-	
-	@Override
-	public void save() {
-		ScriptWrapper script = new ScriptWrapper();
-		script.setType(origScript.getType());
-		script.setEngine(origScript.getEngine());
-		script.setContents(origScript.getContents());
-		
-		script.setName(this.getStringValue(FIELD_NAME));
-		script.setDescription(this.getStringValue(FIELD_DESC));
-		script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
-		
-		extension.getExtScript().addScript(script);
-	}
+    public void init(ScriptWrapper script) {
+        this.origScript = script;
+        this.removeAllFields();
 
-	@Override
-	public String validateFields() {
-		if (this.isEmptyField(FIELD_NAME)) {
-			return Constant.messages.getString("scripts.dialog.script.error.name");
-		}
-		if (extension.getExtScript().getScript(this.getStringValue(FIELD_NAME)) != null) {
-			return Constant.messages.getString("scripts.dialog.script.error.duplicate");
-		}
-		
-		return null;
-	}
+        this.setTitle(Constant.messages.getString("scripts.dialog.script.copy.title"));
+        this.addTextField(
+                FIELD_NAME,
+                Constant.messages.getString("scripts.dialog.script.copy.name", script.getName()));
+        this.addMultilineField(FIELD_DESC, script.getDescription());
+        this.addCheckBoxField(FIELD_LOAD, false);
 
+        this.addPadding();
+    }
 
+    @Override
+    public void save() {
+        ScriptWrapper script = new ScriptWrapper();
+        script.setType(origScript.getType());
+        script.setEngine(origScript.getEngine());
+        script.setContents(origScript.getContents());
+
+        script.setName(this.getStringValue(FIELD_NAME));
+        script.setDescription(this.getStringValue(FIELD_DESC));
+        script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
+
+        extension.getExtScript().addScript(script);
+    }
+
+    @Override
+    public String validateFields() {
+        if (this.isEmptyField(FIELD_NAME)) {
+            return Constant.messages.getString("scripts.dialog.script.error.name");
+        }
+        if (extension.getExtScript().getScript(this.getStringValue(FIELD_NAME)) != null) {
+            return Constant.messages.getString("scripts.dialog.script.error.duplicate");
+        }
+
+        return null;
+    }
 }

@@ -19,27 +19,24 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
-import org.zaproxy.zap.utils.ZapTextArea;
-
 import com.fasteasytrade.JRandTest.IO.OutputDestination;
-
+import org.zaproxy.zap.utils.ZapTextArea;
 
 public class TokenAnalysisDetailsArea extends ZapTextArea implements OutputDestination {
 
-	private static final long serialVersionUID = 1L;
-	
-	public TokenAnalysisDetailsArea() {
-		super();
-	}
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public void printf(String s) {
-		this.append(s);
-	}
+    public TokenAnalysisDetailsArea() {
+        super();
+    }
 
-	@Override
-	public void puts(String s) {
-		this.append(s);
-	}
+    @Override
+    public void printf(String s) {
+        this.append(s);
+    }
 
+    @Override
+    public void puts(String s) {
+        this.append(s);
+    }
 }

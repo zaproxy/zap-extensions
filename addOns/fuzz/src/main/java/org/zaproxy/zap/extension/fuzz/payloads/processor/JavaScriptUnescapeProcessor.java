@@ -26,8 +26,7 @@ public class JavaScriptUnescapeProcessor implements DefaultPayloadProcessor {
 
     public static final JavaScriptUnescapeProcessor INSTANCE = new JavaScriptUnescapeProcessor();
 
-    public JavaScriptUnescapeProcessor() {
-    }
+    public JavaScriptUnescapeProcessor() {}
 
     @Override
     public DefaultPayload process(DefaultPayload payload) {
@@ -39,5 +38,4 @@ public class JavaScriptUnescapeProcessor implements DefaultPayloadProcessor {
     public JavaScriptUnescapeProcessor copy() {
         return this;
     }
-
 }

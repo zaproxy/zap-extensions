@@ -19,6 +19,14 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -28,115 +36,105 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Vector;
+public class WappalyzerPassiveScannerUnitTest
+        extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.BDDMockito.given;
+    WappalyzerApplicationTestHolder defaultHolder;
 
-public class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
+    public WappalyzerApplicationTestHolder getDefaultHolder() {
+        if (defaultHolder == null) {
+            try {
+                defaultHolder = new WappalyzerApplicationTestHolder();
+                WappalyzerJsonParser parser = new WappalyzerJsonParser();
+                WappalyzerData result = parser.parseDefaultAppsJson();
+                defaultHolder.setApplications(result.getApplications());
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return defaultHolder;
+    }
 
-	WappalyzerApplicationTestHolder defaultHolder;
+    @Override
+    protected void setUpMessages() {
+        mockMessages(new ExtensionWappalyzer());
+    }
 
-	public WappalyzerApplicationTestHolder getDefaultHolder() {
-		if(defaultHolder == null){
-			try {
-				defaultHolder = new WappalyzerApplicationTestHolder();
-				WappalyzerJsonParser parser = new WappalyzerJsonParser();
-				WappalyzerData result = parser.parseDefaultAppsJson();
-				defaultHolder.setApplications(result.getApplications());
-			}catch(Exception ex){
-				throw new RuntimeException(ex);
-			}
-		}
-		return defaultHolder;
-	}
-
-	@Override
-	protected void setUpMessages() {
-		mockMessages(new ExtensionWappalyzer());
-	}
-
-	@Override
-	protected WappalyzerPassiveScanner createScanner() {
-		getDefaultHolder().resetApplicationsToSite();
-		return new WappalyzerPassiveScanner(getDefaultHolder());
-	}
+    @Override
+    protected WappalyzerPassiveScanner createScanner() {
+        getDefaultHolder().resetApplicationsToSite();
+        return new WappalyzerPassiveScanner(getDefaultHolder());
+    }
 
     @Test
-	public void testApacheWithPhp() throws HttpMalformedHeaderException {
-		HttpMessage msg = makeHttpMessage();
-		msg.setRequestHeader("GET https://www.example.com/test.php HTTP/1.1");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-				"Server: Apache\n" +
-				"X-Powered-By: PHP/5.6.34");
+    public void testApacheWithPhp() throws HttpMalformedHeaderException {
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test.php HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n" + "Server: Apache\n" + "X-Powered-By: PHP/5.6.34");
 
-		scan(msg);
+        scan(msg);
 
-		assertFoundAppCount("www.example.com:443", 2);
-		assertFoundApp("www.example.com:443", "Apache");
-		assertFoundApp("www.example.com:443", "PHP", "5.6.34");
-	}
+        assertFoundAppCount("www.example.com:443", 2);
+        assertFoundApp("www.example.com:443", "Apache");
+        assertFoundApp("www.example.com:443", "PHP", "5.6.34");
+    }
 
-	@Test
-	public void testModernizr() throws HttpMalformedHeaderException {
-		HttpMessage msg = makeHttpMessage();
-		msg.setResponseBody(
-				"<html>" +
-					"<script type='text/javascript' src='libs/modernizr.min.js?ver=4.1.1'>" +
-					"</script>" +
-				"</html>");
-		scan(msg);
+    @Test
+    public void testModernizr() throws HttpMalformedHeaderException {
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html>"
+                        + "<script type='text/javascript' src='libs/modernizr.min.js?ver=4.1.1'>"
+                        + "</script>"
+                        + "</html>");
+        scan(msg);
 
-		assertFoundAppCount("www.example.com:443", 1);
-		assertFoundApp("www.example.com:443", "Modernizr");
-	}
+        assertFoundAppCount("www.example.com:443", 1);
+        assertFoundApp("www.example.com:443", "Modernizr");
+    }
 
-	private void scan(HttpMessage msg) {
-		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-	}
+    private void scan(HttpMessage msg) {
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+    }
 
-	private HttpMessage makeHttpMessage() throws HttpMalformedHeaderException {
-		HttpMessage httpMessage = new HttpMessage();
-		SiteNode siteNode = Mockito.mock(SiteNode.class);
-		given(siteNode.getPastHistoryReference()).willReturn(new Vector<>());
+    private HttpMessage makeHttpMessage() throws HttpMalformedHeaderException {
+        HttpMessage httpMessage = new HttpMessage();
+        SiteNode siteNode = Mockito.mock(SiteNode.class);
+        given(siteNode.getPastHistoryReference()).willReturn(new Vector<>());
 
-		HistoryReference ref = Mockito.mock(HistoryReference.class);
-		given(ref.getSiteNode()).willReturn(siteNode);
+        HistoryReference ref = Mockito.mock(HistoryReference.class);
+        given(ref.getSiteNode()).willReturn(siteNode);
 
-		httpMessage.setHistoryRef(ref);
+        httpMessage.setHistoryRef(ref);
 
-		httpMessage.setRequestHeader("GET https://www.example.com/ HTTP/1.1");
-		httpMessage.setResponseHeader("HTTP/1.1 200 OK");
-		return httpMessage;
-	}
+        httpMessage.setRequestHeader("GET https://www.example.com/ HTTP/1.1");
+        httpMessage.setResponseHeader("HTTP/1.1 200 OK");
+        return httpMessage;
+    }
 
-	private void assertFoundAppCount(String site, int appCount) {
-		List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
-		assertThat(appsForSite, notNullValue());
-		assertThat(appsForSite.size(), is(appCount));
-	}
+    private void assertFoundAppCount(String site, int appCount) {
+        List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
+        assertThat(appsForSite, notNullValue());
+        assertThat(appsForSite.size(), is(appCount));
+    }
 
-	private void assertFoundApp(String site, String appName) {
-		assertFoundApp(site, appName, null);
-	}
+    private void assertFoundApp(String site, String appName) {
+        assertFoundApp(site, appName, null);
+    }
 
-	private void assertFoundApp(String site, String appName, String version) {
-		List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
-		assertThat(appsForSite, notNullValue());
+    private void assertFoundApp(String site, String appName, String version) {
+        List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
+        assertThat(appsForSite, notNullValue());
 
-		Optional<ApplicationMatch> app = appsForSite
-				.stream()
-				.filter(a -> StringUtils.equals(a.getApplication().getName(), appName))
-				.findFirst();
+        Optional<ApplicationMatch> app =
+                appsForSite.stream()
+                        .filter(a -> StringUtils.equals(a.getApplication().getName(), appName))
+                        .findFirst();
 
-		assertThat("Application '"+appName + "' not present", app.isPresent(), is(true));
-		if(version != null){
-			assertThat(app.get().getVersion(), is(version));
-		}
-	}
+        assertThat("Application '" + appName + "' not present", app.isPresent(), is(true));
+        if (version != null) {
+            assertThat(app.get().getVersion(), is(version));
+        }
+    }
 }

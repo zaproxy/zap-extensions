@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.websocket.fuzz;
 
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
@@ -73,7 +72,8 @@ public class WebSocketFuzzerTaskProcessorUtils {
     }
 
     public boolean sendMessage(String message, boolean includeInResults) {
-        WebSocketProxy wsProxy = websocketFuzzer.getWebSocketProxies().get(originalMessage.channel.id);
+        WebSocketProxy wsProxy =
+                websocketFuzzer.getWebSocketProxies().get(originalMessage.channel.id);
         if (wsProxy == null) {
             websocketFuzzer.stopScan();
             return false;
@@ -97,7 +97,8 @@ public class WebSocketFuzzerTaskProcessorUtils {
             }
 
             if (includeInResults) {
-                websocketFuzzer.fuzzResultAvailable(new WebSocketFuzzResult(taskId, newMessage, payloads));
+                websocketFuzzer.fuzzResultAvailable(
+                        new WebSocketFuzzResult(taskId, newMessage, payloads));
             }
             return true;
         } catch (Exception e) {
@@ -105,5 +106,4 @@ public class WebSocketFuzzerTaskProcessorUtils {
         }
         return false;
     }
-
 }

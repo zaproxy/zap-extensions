@@ -27,15 +27,15 @@ public class SAMLProxyListener implements ProxyListener {
 
     private SAMLConfiguration configuration;
 
-    protected final static Logger log = Logger.getLogger(SAMLProxyListener.class.getName());
+    protected static final Logger log = Logger.getLogger(SAMLProxyListener.class.getName());
 
     public SAMLProxyListener() {
         configuration = SAMLConfiguration.getInstance();
     }
 
     /**
-     * Check whether the passive listener is activated. If deactivated the requests will be unchanged even the
-     * attributes to be changed, exists in the message
+     * Check whether the passive listener is activated. If deactivated the requests will be
+     * unchanged even the attributes to be changed, exists in the message
      */
     public boolean isActive() {
         return configuration.getAutoChangeEnabled();
@@ -47,19 +47,20 @@ public class SAMLProxyListener implements ProxyListener {
             try {
                 SAMLMessage samlMessage = new SAMLMessage(message);
 
-                //change the params
+                // change the params
                 for (Attribute attribute : configuration.getAutoChangeAttributes()) {
                     String value = attribute.getValue().toString();
-                    boolean changed = samlMessage.changeAttributeValueTo(attribute.getName(), value);
+                    boolean changed =
+                            samlMessage.changeAttributeValueTo(attribute.getName(), value);
                     if (changed) {
                         log.debug(attribute.getName() + ": value changed to " + value);
                     }
                 }
 
-                //change the original message
+                // change the original message
                 HttpMessage changedMessege = samlMessage.getChangedMessage();
                 if (changedMessege != message) {
-                    //check for reference, if they are same the message is already changed,
+                    // check for reference, if they are same the message is already changed,
                     // else the header and body are changed
                     message.setRequestBody(changedMessege.getRequestBody());
                     message.setRequestHeader(changedMessege.getRequestHeader());

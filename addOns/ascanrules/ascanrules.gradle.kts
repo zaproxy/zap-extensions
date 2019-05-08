@@ -21,16 +21,12 @@ dependencies {
 }
 
 spotless {
-    java {
-        target(fileTree(projectDir) {
-            include("**/*.java")
-            exclude("**/BufferOverflow.java",
-                    "**/FormatString.java",
-                    "**/TestServerSideInclude.java",
-                    "**/TestInjectionCRLF.java",
-                    "**/TestParameterTamper.java",
-                    "**/TestServerSideInclude.java",
-                    "**/TestDirectoryBrowsing.java")
-        })
-    }
+    javaWith3rdPartyFormatted(project, listOf(
+        "**/BufferOverflow.java",
+        "**/FormatString.java",
+        "**/TestServerSideInclude.java",
+        "**/TestInjectionCRLF.java",
+        "**/TestParameterTamper.java",
+        "**/TestServerSideInclude.java",
+        "**/TestDirectoryBrowsing.java"))
 }

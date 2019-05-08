@@ -26,14 +26,16 @@ public class BruteForceTableModel extends DefaultHistoryReferencesTableModel {
     private static final long serialVersionUID = 5732679524771190690L;
 
     public BruteForceTableModel() {
-        super(new Column[] {
-                Column.REQUEST_TIMESTAMP,
-                Column.RESPONSE_TIMESTAMP,
-                Column.METHOD,
-                Column.URL,
-                Column.STATUS_CODE,
-                Column.STATUS_REASON,
-                Column.SIZE_RESPONSE_HEADER,
-                Column.SIZE_RESPONSE_BODY });
+        super(
+                new Column[] {
+                    Column.REQUEST_TIMESTAMP,
+                    Column.RESPONSE_TIMESTAMP,
+                    Column.METHOD,
+                    Column.URL,
+                    Column.STATUS_CODE,
+                    Column.STATUS_REASON,
+                    Column.SIZE_RESPONSE_HEADER,
+                    Column.SIZE_RESPONSE_BODY
+                });
     }
 }

@@ -20,64 +20,64 @@
 package org.zaproxy.zap.extension.plugnhack;
 
 import java.awt.Component;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.plugnhack.manualsend.ManualClientMessageSendEditorDialog;
 
-
 public class PopupMenuResend extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private ExtensionPlugNHack extension;
 
-	/**
-     * 
-     */
+    /** */
     public PopupMenuResend(ExtensionPlugNHack extension) {
         super();
-		this.extension = extension;
-		this.initialize();
+        this.extension = extension;
+        this.initialize();
     }
 
-	private void initialize() {
+    private void initialize() {
         this.setText(Constant.messages.getString("plugnhack.resend.popup"));
 
-        this.addActionListener(new java.awt.event.ActionListener() { 
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
 
-        	@Override
-        	public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	ClientMessage msg = extension.getSelectedClientMessage();
-            	
-            	if (msg != null) {
-            		ClientMessage msg2 = new ClientMessage(msg.getClientId(), msg.getJson());
-            		ManualClientMessageSendEditorDialog dialog = extension.getResendDialog();
-            		dialog.setMessage(msg2);
-            		dialog.setVisible(true);
-            	}
-        	}
-        });
-	}
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        ClientMessage msg = extension.getSelectedClientMessage();
+
+                        if (msg != null) {
+                            ClientMessage msg2 =
+                                    new ClientMessage(msg.getClientId(), msg.getJson());
+                            ManualClientMessageSendEditorDialog dialog =
+                                    extension.getResendDialog();
+                            dialog.setMessage(msg2);
+                            dialog.setVisible(true);
+                        }
+                    }
+                });
+    }
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
-    	
-        if (invoker.getName() != null && invoker.getName().equals(ClientsPanel.CLIENTS_MESSAGE_TABLE_NAME)) {
-        	
-        	ClientMessage msg = extension.getSelectedClientMessage();
 
-        	if (msg != null) {
-       			// Can only resend if the page is open
-    			this.setEnabled(extension.isBeingMonitored(msg.getClientId()));
-        		return true;
-        	}
+        if (invoker.getName() != null
+                && invoker.getName().equals(ClientsPanel.CLIENTS_MESSAGE_TABLE_NAME)) {
+
+            ClientMessage msg = extension.getSelectedClientMessage();
+
+            if (msg != null) {
+                // Can only resend if the page is open
+                this.setEnabled(extension.isBeingMonitored(msg.getClientId()));
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public boolean isSafe() {
-    	return false;
+        return false;
     }
 }

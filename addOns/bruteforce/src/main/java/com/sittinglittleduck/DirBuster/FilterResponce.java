@@ -21,123 +21,114 @@
  */
 
 package com.sittinglittleduck.DirBuster;
+
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/** Util class to normliaze http responces */
+public class FilterResponce {
 
-/**
- * Util class to normliaze http responces
- */
-public class FilterResponce
-{
-    
-    /**
-     * Creates a new instance of FilterResponce
-     */
-    public FilterResponce()
-    {
-        
-    }
-    
+    /** Creates a new instance of FilterResponce */
+    public FilterResponce() {}
+
     /**
      * Clean the responce of a work unit
+     *
      * @param toclean String to clean
      * @param work Unit of work the toclean string refferes to
      * @return Cleaned responce
      */
-    public static String CleanResponce(String toclean, WorkUnit work)
-    {
+    public static String CleanResponce(String toclean, WorkUnit work) {
         return CleanResponce(toclean, work.getWork(), work.getItemToCheck());
     }
-    
+
     /**
      * Clean the responce of a work based on a URL
+     *
      * @param toclean String to clean
      * @param url URL that generated the reponce that is to be cleaned
      * @return String of cleaned responce
      */
-    public static String CleanResponce(String toclean, URL url, String itemChecked)
-    {
-        
-        if(toclean != null)
-        {
-            if(!toclean.equals(""))
-            {
-                //remove the firstline from the responce
-                //firstline = toclean.
-                
-                //remove date header
+    public static String CleanResponce(String toclean, URL url, String itemChecked) {
+
+        if (toclean != null) {
+            if (!toclean.equals("")) {
+                // remove the firstline from the responce
+                // firstline = toclean.
+
+                // remove date header
                 Pattern p = Pattern.compile("Date: [\\w\\d, :;=/]+\\W", Pattern.CASE_INSENSITIVE);
                 Matcher m = p.matcher(toclean);
-                if(m.find())
-                {
-                    //System.out.println("Found Date value = '" + m.group(0) + "'");
+                if (m.find()) {
+                    // System.out.println("Found Date value = '" + m.group(0) + "'");
                     toclean = toclean.replaceAll(m.group(0), "DATE LINE REMOVED");
                 }
-                
-                //remove P3P header
+
+                // remove P3P header
                 p = Pattern.compile("P3P: [\\w\\d, :;=/]+\\W", Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean);
-                if(m.find())
-                {
-                    //System.out.println("Found Date value = '" + m.group(0) + "'");
+                if (m.find()) {
+                    // System.out.println("Found Date value = '" + m.group(0) + "'");
                     toclean = toclean.replaceAll(m.group(0), "PSP LINE REMOVED");
                 }
-                
-                //Remove cookie header
+
+                // Remove cookie header
                 p = Pattern.compile("Set-Cookie:.*?\r\n", Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean);
-                if(m.find())
-                {
-                    //System.out.println("Found Date value = '" + m.group(0) + "'");
+                if (m.find()) {
+                    // System.out.println("Found Date value = '" + m.group(0) + "'");
                     toclean = toclean.replaceAll(m.group(0), "SET-COOKIE LINE REMOVED\r\n");
                 }
-                
-                //Remove Expires
+
+                // Remove Expires
                 p = Pattern.compile("Expires: [\\w\\d, :-;=/]+\\W", Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean);
-                if(m.find())
-                {
-                    //System.out.println("Found Date value = '" + m.group(0) + "'");
+                if (m.find()) {
+                    // System.out.println("Found Date value = '" + m.group(0) + "'");
                     toclean = toclean.replaceAll(m.group(0), "EXPIRES LINE REMOVED");
                 }
-                
-                //Remove Etag
+
+                // Remove Etag
                 p = Pattern.compile("ETag: [\\w\\d\"\', :]+\\W", Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean);
-                if(m.find())
-                {
-                    //System.out.println("Found Date value = '" + m.group(0) + "'");
+                if (m.find()) {
+                    // System.out.println("Found Date value = '" + m.group(0) + "'");
                     toclean = toclean.replaceAll(m.group(0), "");
                 }
-                
-                //Remove a possible date
-                p = Pattern.compile("\\w\\w\\w,? \\d\\d? \\w\\w\\w \\d\\d\\d\\d \\d?\\d?:?\\d?\\d?:?\\d?\\d? \\w?\\w?\\w?", Pattern.CASE_INSENSITIVE);
+
+                // Remove a possible date
+                p =
+                        Pattern.compile(
+                                "\\w\\w\\w,? \\d\\d? \\w\\w\\w \\d\\d\\d\\d \\d?\\d?:?\\d?\\d?:?\\d?\\d? \\w?\\w?\\w?",
+                                Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean); // get a matcher object
                 toclean = m.replaceAll("DATE REMOVED");
-                
-                //remove the host
+
+                // remove the host
                 p = Pattern.compile(Pattern.quote(url.getHost()), Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean); // get a matcher object
                 toclean = m.replaceAll("HOST REMOVED");
-                
-                //remove the entire URL
+
+                // remove the entire URL
                 p = Pattern.compile(Pattern.quote(url.toString()), Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean); // get a matcher object
                 toclean = m.replaceAll("ADDRESSED REMOVED");
-                
-                //remove the file location
+
+                // remove the file location
                 p = Pattern.compile(Pattern.quote(url.getFile()), Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean); // get a matcher object
                 toclean = m.replaceAll("FILE REMOVED");
-                
+
                 p = Pattern.compile(Pattern.quote(url.getPath()), Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean); // get a matcher object
                 toclean = m.replaceAll("PATH REMOVED");
-                
-                //remove any ip address
-                p = Pattern.compile("\\d\\d\\d?\\.\\d\\d\\d?\\.\\d\\d\\d?\\.\\d\\d\\d?", Pattern.CASE_INSENSITIVE);
+
+                // remove any ip address
+                p =
+                        Pattern.compile(
+                                "\\d\\d\\d?\\.\\d\\d\\d?\\.\\d\\d\\d?\\.\\d\\d\\d?",
+                                Pattern.CASE_INSENSITIVE);
                 m = p.matcher(toclean); // get a matcher object
                 toclean = m.replaceAll("IP ADDRESSED REMOVED");
                 /*
@@ -150,14 +141,11 @@ public class FilterResponce
                 }
                  */
             }
-            
         }
         return toclean;
-        
     }
-    
-    public static String removeItemCheckedFor(String toclean, String itemToCheckFor)
-    {
+
+    public static String removeItemCheckedFor(String toclean, String itemToCheckFor) {
         /*
         if (itemToCheckFor != null && toclean != null)
         {
@@ -167,16 +155,14 @@ public class FilterResponce
             toclean = m.replaceAll("ITEM TOCHECK REMOVED");
         }
          */
-        
+
         return toclean;
     }
-    
-    private static String RegexSafe(String toMakeSafe)
-    {
-        //toMakeSafe.replaceAll("\\", "\\\\");
+
+    private static String RegexSafe(String toMakeSafe) {
+        // toMakeSafe.replaceAll("\\", "\\\\");
         toMakeSafe.replaceAll("\\.", "\\\\.");
         toMakeSafe.replaceAll("\\*", "\\\\*");
         return toMakeSafe;
     }
-    
 }

@@ -19,9 +19,8 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
-import org.zaproxy.zap.extension.openapi.network.RequestMethod;
-
 import io.swagger.models.Operation;
+import org.zaproxy.zap.extension.openapi.network.RequestMethod;
 
 public class OperationModel {
 

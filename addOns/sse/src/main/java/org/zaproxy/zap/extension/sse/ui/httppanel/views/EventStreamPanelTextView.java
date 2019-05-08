@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.sse.ui.httppanel.views;
 
 import java.util.List;
 import java.util.regex.Pattern;
-
 import org.zaproxy.zap.extension.httppanel.view.text.HttpPanelTextArea;
 import org.zaproxy.zap.extension.httppanel.view.text.HttpPanelTextView;
 import org.zaproxy.zap.extension.search.SearchMatch;
@@ -29,26 +28,23 @@ import org.zaproxy.zap.extension.sse.ui.httppanel.models.StringEventStreamPanelV
 
 public class EventStreamPanelTextView extends HttpPanelTextView {
 
-	public EventStreamPanelTextView(StringEventStreamPanelViewModel model) {
-		super(model);
-	}
-	
-	@Override
-	protected HttpPanelTextArea createHttpPanelTextArea() {
-		return new EventStreamPanelTextArea();
-	}
-	
-	protected static class EventStreamPanelTextArea extends HttpPanelTextArea {
+    public EventStreamPanelTextView(StringEventStreamPanelViewModel model) {
+        super(model);
+    }
 
-		private static final long serialVersionUID = 6236551060576387786L;
-		
-		@Override
-		public void search(Pattern p, List<SearchMatch> matches) {
-		}
-		
-		@Override
-		public void highlight(SearchMatch sm) {
-		}
-		
-	}
+    @Override
+    protected HttpPanelTextArea createHttpPanelTextArea() {
+        return new EventStreamPanelTextArea();
+    }
+
+    protected static class EventStreamPanelTextArea extends HttpPanelTextArea {
+
+        private static final long serialVersionUID = 6236551060576387786L;
+
+        @Override
+        public void search(Pattern p, List<SearchMatch> matches) {}
+
+        @Override
+        public void highlight(SearchMatch sm) {}
+    }
 }

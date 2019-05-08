@@ -26,11 +26,11 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 public abstract class AbstractWebSocketBytePanelViewModel extends AbstractByteHttpPanelViewModel {
 
     protected WebSocketMessageDTO webSocketMessage;
-    
+
     @Override
     public void setMessage(Message aMessage) {
         webSocketMessage = (WebSocketMessageDTO) aMessage;
-        
+
         super.setMessage(aMessage);
     }
 }

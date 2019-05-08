@@ -19,49 +19,47 @@
  */
 package org.zaproxy.zap.extension.websocket.db;
 
-/**
- * Wraps id of message & channel together into one class.
- */
-public class WebSocketMessagePrimaryKey implements Comparable<WebSocketMessagePrimaryKey>{
-	private final Integer channelId;
-	private final Integer messageId;
-	
-	public WebSocketMessagePrimaryKey(Integer channelId, Integer messageId) {
-		this.channelId = channelId;
-		this.messageId = messageId;
-	}
-	
-	public Integer getMessageId() {
-		return messageId;
-	}
-	
-	public Integer getChannelId() {
-		return channelId;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder strBuilder = new StringBuilder();
-		
-		strBuilder.append('#').append(channelId).append('.');
-		
-		if (messageId != null) {
-			strBuilder.append(messageId);
-		} else {
-			strBuilder.append('-');
-		}
-		
-		return strBuilder.toString();
-	}
+/** Wraps id of message & channel together into one class. */
+public class WebSocketMessagePrimaryKey implements Comparable<WebSocketMessagePrimaryKey> {
+    private final Integer channelId;
+    private final Integer messageId;
 
-	@Override
-	public int compareTo(WebSocketMessagePrimaryKey other) {
-		int result = channelId.compareTo(other.getChannelId());
-		
-		if (result == 0) {
-			result = messageId.compareTo(other.getMessageId());
-		}
-		
-		return result;
-	}
+    public WebSocketMessagePrimaryKey(Integer channelId, Integer messageId) {
+        this.channelId = channelId;
+        this.messageId = messageId;
+    }
+
+    public Integer getMessageId() {
+        return messageId;
+    }
+
+    public Integer getChannelId() {
+        return channelId;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder strBuilder = new StringBuilder();
+
+        strBuilder.append('#').append(channelId).append('.');
+
+        if (messageId != null) {
+            strBuilder.append(messageId);
+        } else {
+            strBuilder.append('-');
+        }
+
+        return strBuilder.toString();
+    }
+
+    @Override
+    public int compareTo(WebSocketMessagePrimaryKey other) {
+        int result = channelId.compareTo(other.getChannelId());
+
+        if (result == 0) {
+            result = messageId.compareTo(other.getMessageId());
+        }
+
+        return result;
+    }
 }

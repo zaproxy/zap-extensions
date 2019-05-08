@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
@@ -30,70 +29,65 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 
-
-/**
- * ZAP: New Popup Menu Alert Delete
- */
+/** ZAP: New Popup Menu Alert Delete */
 public class ZestAddCommentPopupMenu extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionZest extension = null;
-	private ScriptNode parent = null;
-	private ScriptNode child = null;
-	private ZestStatement stmt = null; 
+    private ExtensionZest extension = null;
+    private ScriptNode parent = null;
+    private ScriptNode child = null;
+    private ZestStatement stmt = null;
 
-	/**
-     * 
-     */
+    /** */
     public ZestAddCommentPopupMenu(ExtensionZest extension) {
         super();
         this.extension = extension;
- 		initialize();
+        initialize();
     }
 
-    /**
-     * @param label
-     */
+    /** @param label */
     public ZestAddCommentPopupMenu(String label) {
         super(label);
     }
 
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
+    /** This method initializes this */
+    private void initialize() {
         this.setText(Constant.messages.getString("zest.comment.popup"));
 
-        this.addActionListener(new java.awt.event.ActionListener() { 
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
 
-        	@Override
-        	public void actionPerformed(java.awt.event.ActionEvent e) {
-				extension.getDialogManager().showZestCommentDialog(parent, child, stmt, new ZestComment(), true);
-        	}
-        });
-	}
-	
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        extension
+                                .getDialogManager()
+                                .showZestCommentDialog(
+                                        parent, child, stmt, new ZestComment(), true);
+                    }
+                });
+    }
+
     @Override
     public boolean isEnableForComponent(Component invoker) {
-		if (extension.isScriptTree(invoker)) {
-    		ScriptNode node = extension.getSelectedZestNode();
-    		ZestElement ze = extension.getSelectedZestElement();
-    		if (node == null || node.isTemplate()) {
-    			return false;
-    		} else if (ze != null) {
-	    		if (ze instanceof ZestContainer) {
-	    			parent = node;
-	    			child = null;
-	    			stmt = null;
-	            	return true;
-	    		} else if (ze instanceof ZestStatement) {
-	    			parent = node.getParent();
-	    			child = node;
-	    			stmt = (ZestStatement) ze;
-	            	return true;
-	    		}
-    		}
+        if (extension.isScriptTree(invoker)) {
+            ScriptNode node = extension.getSelectedZestNode();
+            ZestElement ze = extension.getSelectedZestElement();
+            if (node == null || node.isTemplate()) {
+                return false;
+            } else if (ze != null) {
+                if (ze instanceof ZestContainer) {
+                    parent = node;
+                    child = null;
+                    stmt = null;
+                    return true;
+                } else if (ze instanceof ZestStatement) {
+                    parent = node.getParent();
+                    child = node;
+                    stmt = (ZestStatement) ze;
+                    return true;
+                }
+            }
         }
         return false;
     }

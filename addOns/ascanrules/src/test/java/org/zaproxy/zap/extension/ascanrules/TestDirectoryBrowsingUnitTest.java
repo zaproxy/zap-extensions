@@ -19,14 +19,11 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-/**
- * Unit test for {@link TestDirectoryBrowsing}.
- */
+/** Unit test for {@link TestDirectoryBrowsing}. */
 public class TestDirectoryBrowsingUnitTest extends ActiveScannerAppTest<TestDirectoryBrowsing> {
 
     @Override
     protected TestDirectoryBrowsing createScanner() {
         return new TestDirectoryBrowsing();
     }
-
 }

@@ -34,13 +34,11 @@ import java.nio.file.Files;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.parosproxy.paros.Constant;
@@ -59,7 +57,8 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
     private static final String OWASP_ZAP_ROOT_CA_NAME = "owasp_zap_root_ca";
     private static final String OWASP_ZAP_ROOT_CA_FILE_EXT = ".cer";
-    private static final String OWASP_ZAP_ROOT_CA_FILENAME = OWASP_ZAP_ROOT_CA_NAME + OWASP_ZAP_ROOT_CA_FILE_EXT;
+    private static final String OWASP_ZAP_ROOT_CA_FILENAME =
+            OWASP_ZAP_ROOT_CA_NAME + OWASP_ZAP_ROOT_CA_FILE_EXT;
 
     private JPanel contentPanel;
     private JButton saveButton;
@@ -80,12 +79,17 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
 
-        panel.add(QuickStartHelper.getWrappedLabel("quickstart.launch.panel.default.message1"),
+        panel.add(
+                QuickStartHelper.getWrappedLabel("quickstart.launch.panel.default.message1"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-        panel.add(QuickStartHelper.getWrappedLabel("quickstart.launch.panel.default.message2"),
+        panel.add(
+                QuickStartHelper.getWrappedLabel("quickstart.launch.panel.default.message2"),
                 LayoutHelper.getGBC(0, 1, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
-        panel.add(new JLabel(" "), LayoutHelper.getGBC(0, 2, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5))); // Spacer
+        panel.add(
+                new JLabel(" "),
+                LayoutHelper.getGBC(
+                        0, 2, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5))); // Spacer
         return panel;
     }
 
@@ -101,20 +105,28 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
             savePanel.add(new JLabel(Constant.messages.getString("quickstart.explore.1.start")));
             savePanel.add(getSaveButton());
             savePanel.add(new JLabel(Constant.messages.getString("quickstart.explore.1.end")));
-            contentPanel.add(savePanel,
-                    LayoutHelper.getGBC(0, formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(
+                    savePanel,
+                    LayoutHelper.getGBC(
+                            0, formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
-            contentPanel.add(new JLabel(Constant.messages.getString("quickstart.explore.2")),
-                    LayoutHelper.getGBC(0, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(
+                    new JLabel(Constant.messages.getString("quickstart.explore.2")),
+                    LayoutHelper.getGBC(
+                            0, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
             JPanel proxyPanel = QuickStartHelper.getHorizontalPanel();
             proxyPanel.add(new JLabel(Constant.messages.getString("quickstart.explore.3")));
             proxyPanel.add(getHostPortField());
             proxyPanel.add(getCopyButton());
-            contentPanel.add(proxyPanel,
-                    LayoutHelper.getGBC(0, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-            contentPanel.add(new JLabel(""),
-                    LayoutHelper.getGBC(0, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(
+                    proxyPanel,
+                    LayoutHelper.getGBC(
+                            0, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+            contentPanel.add(
+                    new JLabel(""),
+                    LayoutHelper.getGBC(
+                            0, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
         }
 
         return contentPanel;
@@ -124,27 +136,34 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
         if (saveButton == null) {
             saveButton = new JButton(Constant.messages.getString("menu.file.save"));
             saveButton.setIcon(
-                    DisplayUtils.getScaledIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/096.png"))));
-            saveButton.addActionListener(new ActionListener() {
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(ZAP.class.getResource("/resource/icon/16/096.png"))));
+            saveButton.addActionListener(
+                    new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    final JFileChooser fc = new JFileChooser(System.getProperty("user.home"));
-                    fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    fc.setMultiSelectionEnabled(false);
-                    fc.setSelectedFile(new File(OWASP_ZAP_ROOT_CA_FILENAME));
-                    if (fc.showSaveDialog(DefaultExplorePanel.this) == JFileChooser.APPROVE_OPTION) {
-                        final File f = fc.getSelectedFile();
-                        try {
-                            writePubCertificateToFile(f);
-                        } catch (final Exception e) {
-                            View.getSingleton().showWarningDialog(DefaultExplorePanel.this, Constant.messages
-                                    .getString("quickstart.explore.warning.savefail", e.getMessage()));
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            final JFileChooser fc =
+                                    new JFileChooser(System.getProperty("user.home"));
+                            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                            fc.setMultiSelectionEnabled(false);
+                            fc.setSelectedFile(new File(OWASP_ZAP_ROOT_CA_FILENAME));
+                            if (fc.showSaveDialog(DefaultExplorePanel.this)
+                                    == JFileChooser.APPROVE_OPTION) {
+                                final File f = fc.getSelectedFile();
+                                try {
+                                    writePubCertificateToFile(f);
+                                } catch (final Exception e) {
+                                    View.getSingleton()
+                                            .showWarningDialog(
+                                                    DefaultExplorePanel.this,
+                                                    Constant.messages.getString(
+                                                            "quickstart.explore.warning.savefail",
+                                                            e.getMessage()));
+                                }
+                            }
                         }
-                    }
-                }
-
-            });
+                    });
         }
         return saveButton;
     }
@@ -185,18 +204,26 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
     private JButton getCopyButton() {
         if (copyButton == null) {
             copyButton = new JButton();
-            copyButton.setToolTipText(Constant.messages.getString("quickstart.explore.button.clipboard"));
-            copyButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(
-                    ExtensionQuickStart.class.getResource(ExtensionQuickStart.RESOURCES + "/clipboard-sign.png"))));
-            copyButton.addActionListener(new ActionListener() {
+            copyButton.setToolTipText(
+                    Constant.messages.getString("quickstart.explore.button.clipboard"));
+            copyButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    ExtensionQuickStart.class.getResource(
+                                            ExtensionQuickStart.RESOURCES
+                                                    + "/clipboard-sign.png"))));
+            copyButton.addActionListener(
+                    new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    OptionsParam options = Model.getSingleton().getOptionsParam();
-                    clipboard.setContents(new StringSelection(getProxyString(options.getProxyParam())), null);
-                }
-            });
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                            OptionsParam options = Model.getSingleton().getOptionsParam();
+                            clipboard.setContents(
+                                    new StringSelection(getProxyString(options.getProxyParam())),
+                                    null);
+                        }
+                    });
         }
         return copyButton;
     }
@@ -210,7 +237,8 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
     public JPanel getFooterPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
-        panel.add(QuickStartHelper.getWrappedLabel("quickstart.explore.panel.footer"),
+        panel.add(
+                QuickStartHelper.getWrappedLabel("quickstart.explore.panel.footer"),
                 LayoutHelper.getGBC(0, 0, 1, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
         return panel;
     }

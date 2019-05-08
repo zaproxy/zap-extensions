@@ -21,10 +21,9 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-
 import org.mozilla.zest.core.v1.ZestControl;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestControlReturn;
+import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -35,76 +34,80 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestControlDialog extends StandardFieldsDialog implements ZestDialog {
 
-	private static final String FIELD_VALUE = "zest.dialog.return.label.value"; 
+    private static final String FIELD_VALUE = "zest.dialog.return.label.value";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ExtensionZest extension = null;
-	private ScriptNode parent = null;
-	private ScriptNode child = null;
-	private ZestScriptWrapper script = null;
-	private ZestStatement request = null;
-	private ZestControl control = null;
-	private boolean add = false;
+    private ExtensionZest extension = null;
+    private ScriptNode parent = null;
+    private ScriptNode child = null;
+    private ZestScriptWrapper script = null;
+    private ZestStatement request = null;
+    private ZestControl control = null;
+    private boolean add = false;
 
-	public ZestControlDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.action.add.title", dim);
-		this.extension = ext;
-	}
+    public ZestControlDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(owner, "zest.dialog.action.add.title", dim);
+        this.extension = ext;
+    }
 
-	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestRequest req, ZestControl control, boolean add) {
-		this.script = script;
-		this.add = add;
-		this.parent = parent;
-		this.child = child;
-		this.request = req;
-		this.control = control;
+    public void init(
+            ZestScriptWrapper script,
+            ScriptNode parent,
+            ScriptNode child,
+            ZestRequest req,
+            ZestControl control,
+            boolean add) {
+        this.script = script;
+        this.add = add;
+        this.parent = parent;
+        this.child = child;
+        this.request = req;
+        this.control = control;
 
-		this.removeAllFields();
-		
-		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.return.add.title"));
-		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.return.edit.title"));
-		}
+        this.removeAllFields();
 
-		if (control instanceof ZestControlReturn) {
-			ZestControlReturn za = (ZestControlReturn) control;
-			this.addTextField(FIELD_VALUE, za.getValue());
-			ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
-		}
-		this.addPadding();
-	}
+        if (add) {
+            this.setTitle(Constant.messages.getString("zest.dialog.return.add.title"));
+        } else {
+            this.setTitle(Constant.messages.getString("zest.dialog.return.edit.title"));
+        }
 
-	@Override
-	public void save() {
-		if (control instanceof ZestControlReturn) {
-			ZestControlReturn za = (ZestControlReturn) control;
-			za.setValue(this.getStringValue(FIELD_VALUE));
-		}
+        if (control instanceof ZestControlReturn) {
+            ZestControlReturn za = (ZestControlReturn) control;
+            this.addTextField(FIELD_VALUE, za.getValue());
+            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
+        }
+        this.addPadding();
+    }
 
-		if (add) {
-			if (request == null) {
-				extension.addToParent(parent, control);
-			} else {
-				extension.addAfterRequest(parent, child, request, control);
-			}
-		} else {
-			extension.updated(child);
-			extension.display(child, false);
-		}
-	}
+    @Override
+    public void save() {
+        if (control instanceof ZestControlReturn) {
+            ZestControlReturn za = (ZestControlReturn) control;
+            za.setValue(this.getStringValue(FIELD_VALUE));
+        }
 
-	@Override
-	public String validateFields() {
-		// Nothing to do
-		return null;
-	}
+        if (add) {
+            if (request == null) {
+                extension.addToParent(parent, control);
+            } else {
+                extension.addAfterRequest(parent, child, request, control);
+            }
+        } else {
+            extension.updated(child);
+            extension.display(child, false);
+        }
+    }
 
-	@Override
-	public ZestScriptWrapper getScript() {
-		return this.script;
-	}
-	
+    @Override
+    public String validateFields() {
+        // Nothing to do
+        return null;
+    }
+
+    @Override
+    public ZestScriptWrapper getScript() {
+        return this.script;
+    }
 }

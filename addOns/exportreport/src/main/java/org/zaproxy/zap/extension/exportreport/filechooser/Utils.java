@@ -21,9 +21,7 @@ package org.zaproxy.zap.extension.exportreport.filechooser;
 
 import java.io.File;
 import java.util.Locale;
-
 import javax.swing.ImageIcon;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 
@@ -41,33 +39,45 @@ public class Utils {
 
     public static final String HTML = "xhtml";
     public static final String HTML_ICON = PATH + "html.png";
-    public static final String HTML_TYPE = Constant.messages.getString("exportreport.utils.xhtml.type");
-    public static final String HTML_DESCRIPTION = Constant.messages.getString("exportreport.utils.xhtml.desc");
+    public static final String HTML_TYPE =
+            Constant.messages.getString("exportreport.utils.xhtml.type");
+    public static final String HTML_DESCRIPTION =
+            Constant.messages.getString("exportreport.utils.xhtml.desc");
 
     public static final String BOOTSTRAP = "bootstrap.html";
     public static final String BOOTSTRAP_ICON = PATH + "bootstrap.png";
-    public static final String BOOTSTRAP_TYPE = Constant.messages.getString("exportreport.utils.bootstrap.type");
-    public static final String BOOTSTRAP_DESCRIPTION = Constant.messages.getString("exportreport.utils.bootstrap.desc");
+    public static final String BOOTSTRAP_TYPE =
+            Constant.messages.getString("exportreport.utils.bootstrap.type");
+    public static final String BOOTSTRAP_DESCRIPTION =
+            Constant.messages.getString("exportreport.utils.bootstrap.desc");
 
     public static final String XML = "xml";
     public static final String XML_ICON = PATH + "xml.png";
-    public static final String XML_TYPE = Constant.messages.getString("exportreport.utils.xml.type");
-    public static final String XML_DESCRIPTION = Constant.messages.getString("exportreport.utils.xml.desc");
+    public static final String XML_TYPE =
+            Constant.messages.getString("exportreport.utils.xml.type");
+    public static final String XML_DESCRIPTION =
+            Constant.messages.getString("exportreport.utils.xml.desc");
 
     public static final String JSON = "json";
     public static final String JSON_ICON = PATH + "json.png";
-    public static final String JSON_TYPE = Constant.messages.getString("exportreport.utils.json.type");
-    public static final String JSON_DESCRIPTION = Constant.messages.getString("exportreport.utils.json.desc");
+    public static final String JSON_TYPE =
+            Constant.messages.getString("exportreport.utils.json.type");
+    public static final String JSON_DESCRIPTION =
+            Constant.messages.getString("exportreport.utils.json.desc");
 
     public static final String PDF = "pdf";
     public static final String PDF_ICON = PATH + "pdf.png";
-    public static final String PDF_TYPE = Constant.messages.getString("exportreport.utils.pdf.type");
-    public static final String PDF_DESCRIPTION = Constant.messages.getString("exportreport.utils.pdf.desc");
+    public static final String PDF_TYPE =
+            Constant.messages.getString("exportreport.utils.pdf.type");
+    public static final String PDF_DESCRIPTION =
+            Constant.messages.getString("exportreport.utils.pdf.desc");
 
     public static final String DOC = "doc";
     public static final String DOC_ICON = PATH + "doc.png";
-    public static final String DOC_TYPE = Constant.messages.getString("exportreport.utils.doc.type");
-    public static final String DOC_DESCRIPTION = Constant.messages.getString("exportreport.utils.doc.desc");
+    public static final String DOC_TYPE =
+            Constant.messages.getString("exportreport.utils.doc.type");
+    public static final String DOC_DESCRIPTION =
+            Constant.messages.getString("exportreport.utils.doc.desc");
 
     public static final String ALL = "ALL";
 
@@ -93,11 +103,15 @@ public class Utils {
 
     /** Returns an ImageIcon, or null if the path was invalid. */
     protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = Utils.class.getResource(path); // Might need ExtensionExportReport.class.getResource
+        java.net.URL imgURL =
+                Utils.class.getResource(path); // Might need ExtensionExportReport.class.getResource
         if (imgURL != null) {
             return new ImageIcon(imgURL);
         } else {
-            logger.error(Constant.messages.getString("exportreport.message.error.file.image") + " " + path);
+            logger.error(
+                    Constant.messages.getString("exportreport.message.error.file.image")
+                            + " "
+                            + path);
             return null;
         }
     }

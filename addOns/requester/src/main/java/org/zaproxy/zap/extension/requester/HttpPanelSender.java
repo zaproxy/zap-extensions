@@ -25,10 +25,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -40,19 +38,15 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
-import org.zaproxy.zap.extension.requester.MessageSender;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.extension.httppanel.Message;
 
-/**
- * Knows how to send {@link HttpMessage} objects.
- */
+/** Knows how to send {@link HttpMessage} objects. */
 public class HttpPanelSender implements MessageSender {
 
-    private static final Logger logger = Logger
-            .getLogger(HttpPanelSender.class);
+    private static final Logger logger = Logger.getLogger(HttpPanelSender.class);
 
     private final HttpPanelResponse responsePanel;
     private ExtensionHistory extension;
@@ -64,17 +58,16 @@ public class HttpPanelSender implements MessageSender {
 
     private List<PersistentConnectionListener> persistentConnectionListener = new ArrayList<>();
 
-    public HttpPanelSender(HttpPanelRequest requestPanel,
-            HttpPanelResponse responsePanel) {
+    public HttpPanelSender(HttpPanelRequest requestPanel, HttpPanelResponse responsePanel) {
         this.responsePanel = responsePanel;
 
-        requestPanel.addOptions(getButtonUseTrackingSessionState(),
-                HttpPanel.OptionsLocation.AFTER_COMPONENTS);
-        requestPanel.addOptions(getButtonFollowRedirects(),
-                HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+        requestPanel.addOptions(
+                getButtonUseTrackingSessionState(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+        requestPanel.addOptions(
+                getButtonFollowRedirects(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
 
-        final boolean isSessionTrackingEnabled = Model.getSingleton()
-                .getOptionsParam().getConnectionParam().isHttpStateEnabled();
+        final boolean isSessionTrackingEnabled =
+                Model.getSingleton().getOptionsParam().getConnectionParam().isHttpStateEnabled();
         getButtonUseTrackingSessionState().setEnabled(isSessionTrackingEnabled);
     }
 
@@ -84,27 +77,32 @@ public class HttpPanelSender implements MessageSender {
         try {
             getDelegate().sendAndReceive(httpMessage, getButtonFollowRedirects().isSelected());
 
-            EventQueue.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    if (!httpMessage.getResponseHeader().isEmpty()) {
-                        // Indicate UI new response arrived
-                        responsePanel.updateContent();
+            EventQueue.invokeAndWait(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!httpMessage.getResponseHeader().isEmpty()) {
+                                // Indicate UI new response arrived
+                                responsePanel.updateContent();
 
-                        final int finalType = HistoryReference.TYPE_ZAP_USER;
-                        final Thread t = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final ExtensionHistory extHistory = getHistoryExtension();
-                                if (extHistory != null) {
-                                    extHistory.addHistory(httpMessage, finalType);
-                                }
+                                final int finalType = HistoryReference.TYPE_ZAP_USER;
+                                final Thread t =
+                                        new Thread(
+                                                new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        final ExtensionHistory extHistory =
+                                                                getHistoryExtension();
+                                                        if (extHistory != null) {
+                                                            extHistory.addHistory(
+                                                                    httpMessage, finalType);
+                                                        }
+                                                    }
+                                                });
+                                t.start();
                             }
-                        });
-                        t.start();
-                    }
-                }
-            });
+                        }
+                    });
 
             ZapGetMethod method = (ZapGetMethod) httpMessage.getUserObject();
             notifyPersistentConnectionListener(httpMessage, null, method);
@@ -116,7 +114,9 @@ public class HttpPanelSender implements MessageSender {
             throw new IOException("Error forwarding to an Unknown host: " + uhe.getMessage(), uhe);
 
         } catch (final IOException ioe) {
-            throw new IOException("IO error in sending request: " + ioe.getClass() + ": " + ioe.getMessage(), ioe);
+            throw new IOException(
+                    "IO error in sending request: " + ioe.getClass() + ": " + ioe.getMessage(),
+                    ioe);
 
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
@@ -124,16 +124,16 @@ public class HttpPanelSender implements MessageSender {
     }
 
     /**
-     * Go thru each listener and offer him to take over the connection. The
-     * first observer that returns true gets exclusive rights.
+     * Go thru each listener and offer him to take over the connection. The first observer that
+     * returns true gets exclusive rights.
      *
      * @param httpMessage Contains HTTP request & response.
      * @param inSocket Encapsulates the TCP connection to the browser.
      * @param method Provides more power to process response.
-     *
      * @return boolean to indicate if socket should be kept open.
      */
-    private boolean notifyPersistentConnectionListener(HttpMessage httpMessage, Socket inSocket, ZapGetMethod method) {
+    private boolean notifyPersistentConnectionListener(
+            HttpMessage httpMessage, Socket inSocket, ZapGetMethod method) {
         boolean keepSocketOpen = false;
         PersistentConnectionListener listener = null;
         synchronized (persistentConnectionListener) {
@@ -156,8 +156,11 @@ public class HttpPanelSender implements MessageSender {
 
     protected ExtensionHistory getHistoryExtension() {
         if (extension == null) {
-            extension = ((ExtensionHistory) Control.getSingleton()
-                    .getExtensionLoader().getExtension(ExtensionHistory.NAME));
+            extension =
+                    ((ExtensionHistory)
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionHistory.NAME));
         }
         return extension;
     }
@@ -169,27 +172,31 @@ public class HttpPanelSender implements MessageSender {
             delegate = null;
         }
 
-        final boolean isSessionTrackingEnabled = Model.getSingleton()
-                .getOptionsParam().getConnectionParam().isHttpStateEnabled();
+        final boolean isSessionTrackingEnabled =
+                Model.getSingleton().getOptionsParam().getConnectionParam().isHttpStateEnabled();
         getButtonUseTrackingSessionState().setEnabled(isSessionTrackingEnabled);
     }
 
     private HttpSender getDelegate() {
         if (delegate == null) {
-            delegate = new HttpSender(Model.getSingleton().getOptionsParam()
-                    .getConnectionParam(), getButtonUseTrackingSessionState()
-                    .isSelected(), HttpSender.MANUAL_REQUEST_INITIATOR);
+            delegate =
+                    new HttpSender(
+                            Model.getSingleton().getOptionsParam().getConnectionParam(),
+                            getButtonUseTrackingSessionState().isSelected(),
+                            HttpSender.MANUAL_REQUEST_INITIATOR);
         }
         return delegate;
     }
 
     private JToggleButton getButtonFollowRedirects() {
         if (followRedirect == null) {
-            followRedirect = new JToggleButton(new ImageIcon(
-                    HttpPanelSender.class
-                    .getResource("/resource/icon/16/118.png"))); // Arrow
-            followRedirect.setToolTipText(Constant.messages
-                    .getString("manReq.checkBox.followRedirect"));
+            followRedirect =
+                    new JToggleButton(
+                            new ImageIcon(
+                                    HttpPanelSender.class.getResource(
+                                            "/resource/icon/16/118.png"))); // Arrow
+            followRedirect.setToolTipText(
+                    Constant.messages.getString("manReq.checkBox.followRedirect"));
             followRedirect.setSelected(true);
         }
         return followRedirect;
@@ -197,11 +204,13 @@ public class HttpPanelSender implements MessageSender {
 
     private JToggleButton getButtonUseTrackingSessionState() {
         if (useTrackingSessionState == null) {
-            useTrackingSessionState = new JToggleButton(new ImageIcon(
-                    HttpPanelSender.class
-                    .getResource("/resource/icon/fugue/cookie.png"))); // Cookie
-            useTrackingSessionState.setToolTipText(Constant.messages
-                    .getString("manReq.checkBox.useSession"));
+            useTrackingSessionState =
+                    new JToggleButton(
+                            new ImageIcon(
+                                    HttpPanelSender.class.getResource(
+                                            "/resource/icon/fugue/cookie.png"))); // Cookie
+            useTrackingSessionState.setToolTipText(
+                    Constant.messages.getString("manReq.checkBox.useSession"));
         }
         return useTrackingSessionState;
     }

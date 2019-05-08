@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.reveal;
 
 import net.sf.json.JSONObject;
-
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
@@ -40,15 +39,13 @@ public class RevealAPI extends ApiImplementor {
 
     private final ExtensionReveal extension;
 
-    /**
-     * Provided only for API client generator usage.
-     */
+    /** Provided only for API client generator usage. */
     public RevealAPI() {
         this(null);
     }
 
     public RevealAPI(ExtensionReveal extension) {
-        this.addApiAction(new ApiAction(ACTION_SET_REVEAL, new String[] { PARAM_REVEAL }));
+        this.addApiAction(new ApiAction(ACTION_SET_REVEAL, new String[] {PARAM_REVEAL}));
 
         this.addApiView(new ApiView(VIEW_REVEAL));
 
@@ -82,5 +79,4 @@ public class RevealAPI extends ApiImplementor {
         }
         return result;
     }
-
 }

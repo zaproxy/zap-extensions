@@ -34,7 +34,7 @@ public class DefaultPayload implements Payload {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws IllegalArgumentException if {@code value} is null.
      */
     @Override

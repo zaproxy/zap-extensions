@@ -21,45 +21,45 @@ package org.zaproxy.zap.extension.sse.db;
 
 public class EventStreamPrimaryKey implements Comparable<EventStreamPrimaryKey> {
 
-	private final Integer streamId;
-	private final Integer eventId;
-	
-	public EventStreamPrimaryKey(Integer streamId, Integer eventId) {
-		this.streamId = streamId;
-		this.eventId = eventId;
-	}
-	
-	public Integer getEventId() {
-		return eventId;
-	}
-	
-	public Integer getStreamId() {
-		return streamId;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder strBuilder = new StringBuilder();
-		
-		strBuilder.append('#').append(streamId).append('.');
-		
-		if (eventId != null) {
-			strBuilder.append(eventId);
-		} else {
-			strBuilder.append('-');
-		}
-		
-		return strBuilder.toString();
-	}
+    private final Integer streamId;
+    private final Integer eventId;
 
-	@Override
-	public int compareTo(EventStreamPrimaryKey other) {
-		int result = streamId.compareTo(other.getStreamId());
-		
-		if (result == 0) {
-			result = eventId.compareTo(other.getEventId());
-		}
-		
-		return result;
-	}
+    public EventStreamPrimaryKey(Integer streamId, Integer eventId) {
+        this.streamId = streamId;
+        this.eventId = eventId;
+    }
+
+    public Integer getEventId() {
+        return eventId;
+    }
+
+    public Integer getStreamId() {
+        return streamId;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder strBuilder = new StringBuilder();
+
+        strBuilder.append('#').append(streamId).append('.');
+
+        if (eventId != null) {
+            strBuilder.append(eventId);
+        } else {
+            strBuilder.append('-');
+        }
+
+        return strBuilder.toString();
+    }
+
+    @Override
+    public int compareTo(EventStreamPrimaryKey other) {
+        int result = streamId.compareTo(other.getStreamId());
+
+        if (result == 0) {
+            result = eventId.compareTo(other.getEventId());
+        }
+
+        return result;
+    }
 }

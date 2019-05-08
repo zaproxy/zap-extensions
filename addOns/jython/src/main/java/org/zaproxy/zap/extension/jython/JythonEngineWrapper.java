@@ -21,50 +21,48 @@ package org.zaproxy.zap.extension.jython;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.script.ScriptEngine;
 import javax.swing.ImageIcon;
-
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.python.core.Py;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 
 public class JythonEngineWrapper extends DefaultEngineWrapper {
 
-	private final JythonOptionsParam options;
+    private final JythonOptionsParam options;
 
-	public JythonEngineWrapper(JythonOptionsParam options, ScriptEngine engine) {
-		super(engine);
+    public JythonEngineWrapper(JythonOptionsParam options, ScriptEngine engine) {
+        super(engine);
 
-		this.options = options;
-	}
+        this.options = options;
+    }
 
-	@Override
-	public ImageIcon getIcon() {
-		return ExtensionJython.PYTHON_ICON;
-	}
+    @Override
+    public ImageIcon getIcon() {
+        return ExtensionJython.PYTHON_ICON;
+    }
 
-	@Override
-	public String getSyntaxStyle() {
-		return SyntaxConstants.SYNTAX_STYLE_PYTHON;
-	}
-	
-	@Override
-	public List<String> getExtensions() {
-		List<String> list = new ArrayList<String>();
-		list.add("py");
-		return list;
-	}
+    @Override
+    public String getSyntaxStyle() {
+        return SyntaxConstants.SYNTAX_STYLE_PYTHON;
+    }
 
-	@Override
-	public boolean isRawEngine() {
-		return false;
-	}
+    @Override
+    public List<String> getExtensions() {
+        List<String> list = new ArrayList<String>();
+        list.add("py");
+        return list;
+    }
 
-	@Override
-	public ScriptEngine getEngine() {
-		ScriptEngine engine = super.getEngine();
-		Py.getSystemState().path.append(Py.newString(options.getModulePath()));
-		return engine;
-	}
+    @Override
+    public boolean isRawEngine() {
+        return false;
+    }
+
+    @Override
+    public ScriptEngine getEngine() {
+        ScriptEngine engine = super.getEngine();
+        Py.getSystemState().path.append(Py.newString(options.getModulePath()));
+        return engine;
+    }
 }

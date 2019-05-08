@@ -28,130 +28,130 @@ import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class RetrievedFromCacheScannerUnitTest extends PassiveScannerTest<RetrievedFromCacheScanner> {
+public class RetrievedFromCacheScannerUnitTest
+        extends PassiveScannerTest<RetrievedFromCacheScanner> {
 
-	private static final String X_CACHE = "X-Cache";
-	private static final String AGE = "Age";
+    private static final String X_CACHE = "X-Cache";
+    private static final String AGE = "Age";
 
-	private HttpMessage createMessage() throws URIException {
-		HttpRequestHeader requestHeader = new HttpRequestHeader();
-		requestHeader.setURI(new URI("http://example.com", false));
+    private HttpMessage createMessage() throws URIException {
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        requestHeader.setURI(new URI("http://example.com", false));
 
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader(requestHeader);
-		return msg;
-	}
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+        return msg;
+    }
 
-	@Override
-	protected RetrievedFromCacheScanner createScanner() {
-		return new RetrievedFromCacheScanner();
-	}
+    @Override
+    protected RetrievedFromCacheScanner createScanner() {
+        return new RetrievedFromCacheScanner();
+    }
 
-	@Test
-	public void scannerNameShouldMatch() {
-		// Quick test to verify scanner name which is used in the policy dialog but not
-		// alerts
+    @Test
+    public void scannerNameShouldMatch() {
+        // Quick test to verify scanner name which is used in the policy dialog but not
+        // alerts
 
-		// Given
-		RetrievedFromCacheScanner thisScanner = createScanner();
-		// Then
-		assertThat(thisScanner.getName(), equalTo("Retrieved from Cache"));
-	}
+        // Given
+        RetrievedFromCacheScanner thisScanner = createScanner();
+        // Then
+        assertThat(thisScanner.getName(), equalTo("Retrieved from Cache"));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfXCacheWasMiss() throws URIException {
-		// Given
-		String xCacheValue = "MISS";
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfXCacheWasMiss() throws URIException {
+        // Given
+        String xCacheValue = "MISS";
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfXCacheWasEmpty() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(X_CACHE, "");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfXCacheWasEmpty() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(X_CACHE, "");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfXCacheWasHit() throws URIException {
-		// Given
-		String xCacheValue = "HIT";
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getEvidence(), equalTo(xCacheValue));
-	}
+    @Test
+    public void shouldRaiseAlertIfXCacheWasHit() throws URIException {
+        // Given
+        String xCacheValue = "HIT";
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(xCacheValue));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfXCacheWasHitWithServerDetails() throws URIException {
-		// Given
-		String xCacheValue = "HIT from cache.kolich.local";
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getEvidence(), equalTo(xCacheValue));
-	}
+    @Test
+    public void shouldRaiseAlertIfXCacheWasHitWithServerDetails() throws URIException {
+        // Given
+        String xCacheValue = "HIT from cache.kolich.local";
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(xCacheValue));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfXCacheWasHitWithMultipleServerDetails() throws URIException {
-		// Given
-		String xCacheValue = "HIT from proxy.domain.tld, MISS from proxy.local";
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getEvidence(), equalTo("HIT from proxy.domain.tld"));
-	}
+    @Test
+    public void shouldRaiseAlertIfXCacheWasHitWithMultipleServerDetails() throws URIException {
+        // Given
+        String xCacheValue = "HIT from proxy.domain.tld, MISS from proxy.local";
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("HIT from proxy.domain.tld"));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfAgeWasEmpty() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(AGE, "");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfAgeWasEmpty() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(AGE, "");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfAgePresentWithValue() throws URIException {
-		// Given
-		String ageValue = "24";
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(AGE, ageValue);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getEvidence(), equalTo(AGE + ": " + ageValue));
-	}
-
+    @Test
+    public void shouldRaiseAlertIfAgePresentWithValue() throws URIException {
+        // Given
+        String ageValue = "24";
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(AGE, ageValue);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(AGE + ": " + ageValue));
+    }
 }

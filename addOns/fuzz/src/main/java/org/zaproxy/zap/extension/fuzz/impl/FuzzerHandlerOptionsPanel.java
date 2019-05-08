@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.impl;
 
 import javax.swing.JPanel;
-
 import org.zaproxy.zap.extension.fuzz.FuzzerOptions;
 
 public interface FuzzerHandlerOptionsPanel<FO extends FuzzerOptions> {

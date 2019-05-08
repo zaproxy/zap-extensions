@@ -24,5 +24,4 @@ public interface FuzzerProgressListener {
     void fuzzerProgress(int fuzzerId, String displayName, long executedTasks, long tasksToExecute);
 
     void fuzzerCompleted(int fuzzerId, String displayName, boolean successfully);
-
 }

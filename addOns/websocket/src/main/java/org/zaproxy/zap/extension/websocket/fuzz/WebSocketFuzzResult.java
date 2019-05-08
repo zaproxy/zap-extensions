@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.websocket.fuzz;
 
 import java.util.Collections;
 import java.util.List;
-
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 
 public class WebSocketFuzzResult {
@@ -35,7 +34,8 @@ public class WebSocketFuzzResult {
         this(taskId, message, Collections.emptyList());
     }
 
-    public WebSocketFuzzResult(long taskId, WebSocketFuzzMessageDTO message, List<Object> payloads) {
+    public WebSocketFuzzResult(
+            long taskId, WebSocketFuzzMessageDTO message, List<Object> payloads) {
         this.taskId = taskId;
         this.message = message;
         this.payloads = payloads;
@@ -52,5 +52,4 @@ public class WebSocketFuzzResult {
     public WebSocketFuzzMessageDTO getWebSocketMessage() {
         return message;
     }
-
 }

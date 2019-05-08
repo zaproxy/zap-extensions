@@ -19,6 +19,11 @@
  */
 package org.zaproxy.zap.extension.saml;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
+import javax.swing.*;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -27,13 +32,6 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.ExtensionPopupMenu;
 import org.zaproxy.zap.extension.saml.ui.SamlExtentionSettingsUI;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuMessageContainer;
-
-import javax.swing.*;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class SAMLExtension extends ExtensionAdaptor {
 
@@ -70,24 +68,29 @@ public class SAMLExtension extends ExtensionAdaptor {
                 final SAMLProxyListener proxyListener = new SAMLProxyListener();
                 extensionHook.addProxyListener(proxyListener);
 
-                ExtensionPopupMenu samlMenu = new ExtensionPopupMenuMessageContainer(SamlI18n.getMessage("saml.popup.mainmenu"));
-                ExtensionPopupMenuItem samlResendMenuItem = new SAMLResendMenuItem(SamlI18n.getMessage("saml.popup.view_resend"));
+                ExtensionPopupMenu samlMenu =
+                        new ExtensionPopupMenuMessageContainer(
+                                SamlI18n.getMessage("saml.popup.mainmenu"));
+                ExtensionPopupMenuItem samlResendMenuItem =
+                        new SAMLResendMenuItem(SamlI18n.getMessage("saml.popup.view_resend"));
 
                 samlMenu.add(samlResendMenuItem);
                 extensionHook.getHookMenu().addPopupMenuItem(samlMenu);
 
-                JMenuItem samlActiveEditorMenu = new JMenuItem(SamlI18n.getMessage("saml.toolmenu.settings"));
-                samlActiveEditorMenu.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        SamlExtentionSettingsUI settingUI = new SamlExtentionSettingsUI();
-                        settingUI.setVisible(true);
-                    }
-                });
+                JMenuItem samlActiveEditorMenu =
+                        new JMenuItem(SamlI18n.getMessage("saml.toolmenu.settings"));
+                samlActiveEditorMenu.addActionListener(
+                        new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                SamlExtentionSettingsUI settingUI = new SamlExtentionSettingsUI();
+                                settingUI.setVisible(true);
+                            }
+                        });
                 extensionHook.getHookMenu().addToolsMenuItem(samlActiveEditorMenu);
             }
         } catch (SAMLException e) {
-            log.error("SAML Extension can't be loaded. Configuration not found or invalid",e);
+            log.error("SAML Extension can't be loaded. Configuration not found or invalid", e);
         }
     }
 

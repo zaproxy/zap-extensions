@@ -19,6 +19,10 @@
  */
 package com.sittinglittleduck.DirBuster;
 
+import com.sittinglittleduck.DirBuster.workGenerators.BruteForceURLFuzz;
+import com.sittinglittleduck.DirBuster.workGenerators.BruteForceWorkGenerator;
+import com.sittinglittleduck.DirBuster.workGenerators.WorkerGenerator;
+import com.sittinglittleduck.DirBuster.workGenerators.WorkerGeneratorURLFuzz;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -28,7 +32,6 @@ import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.prefs.Preferences;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -37,16 +40,10 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.protocol.Protocol;
 
-import com.sittinglittleduck.DirBuster.workGenerators.BruteForceURLFuzz;
-import com.sittinglittleduck.DirBuster.workGenerators.BruteForceWorkGenerator;
-import com.sittinglittleduck.DirBuster.workGenerators.WorkerGenerator;
-import com.sittinglittleduck.DirBuster.workGenerators.WorkerGeneratorURLFuzz;
-
-public class Manager implements ProcessChecker.ProcessUpdate
-{
+public class Manager implements ProcessChecker.ProcessUpdate {
 
     int workerCount = 150;
-    //the two work queues
+    // the two work queues
     public BlockingQueue<WorkUnit> workQueue;
     public BlockingQueue<DirToCheck> dirQueue;
     public BlockingQueue<HTMLparseWorkUnit> parseQueue;
@@ -65,68 +62,68 @@ public class Manager implements ProcessChecker.ProcessUpdate
     private String host;
     private int port;
     private String startPoint;
-    private boolean doDirs,  doFiles;
+    private boolean doDirs, doFiles;
     private int totalDone = 0;
     private Vector workers = new Vector(100, 10);
     private Vector parseWorkers = new Vector(100, 10);
     private String[] charSet;
-    private int maxLen,  minLen;
+    private int maxLen, minLen;
     boolean pureBrute = false;
     boolean urlFuzz = false;
     boolean pureBrutefuzz = false;
     boolean recursive = true;
-    //flag for if we are auto switching between HEADS and GETS
+    // flag for if we are auto switching between HEADS and GETS
     private boolean auto = true;
-    //used for storing total numbers of trys per pass
+    // used for storing total numbers of trys per pass
     private double totalPass;
-    //used to record the total number of dirs that have been found
-    //set to 1 as we there must always at least 1
+    // used to record the total number of dirs that have been found
+    // set to 1 as we there must always at least 1
     private int totalDirsFound = 1;
     public Vector HTTPheaders = new Vector(10, 5);
-    //proxy detials
+    // proxy detials
     private boolean useProxy = false;
     private String proxyHost = "";
     private int proxyPort = 0;
-    //proxy credentials detials
+    // proxy credentials detials
     private boolean useProxyAuth = false;
     private String proxyUsername = "";
     private String proxyPassword = "";
     private String proxyRealm = "";
-    //setting for using a blank extention
+    // setting for using a blank extention
     private boolean blankExt = false;
-    //store of all extention that are to be tested
+    // store of all extention that are to be tested
     private Vector extToUse = new Vector(10, 5);
-    //variable for httpclient
+    // variable for httpclient
     private HttpClient httpclient;
     private HttpState initialState;
     private Vector producedBasesCases = new Vector(10, 10);
-    //used to store all the links that have parsed, will not contain a list a all items, processed
-    //as this will consume to much memory.  There for there is a chance of some duplication.
+    // used to store all the links that have parsed, will not contain a list a all items, processed
+    // as this will consume to much memory.  There for there is a chance of some duplication.
     private Vector processedLinks = new Vector(100, 100);
-    //not all base case requests are processed so this will ensure the stats stay correct
+    // not all base case requests are processed so this will ensure the stats stay correct
     private int baseCaseCounterCorrection = 0;
-    //used to store the value of items that will have been skipped
+    // used to store the value of items that will have been skipped
     private int workAmountCorrection = 0;
-    //total number of links pasrsed from the HTML that have been added to the work queue
+    // total number of links pasrsed from the HTML that have been added to the work queue
     private int parsedLinksProcessed = 0;
-    //total number of basecases produced
+    // total number of basecases produced
     private int numberOfBaseCasesProduced = 0;
-    //exts that are not to be added to the work queue if found by the HTML parser
+    // exts that are not to be added to the work queue if found by the HTML parser
     public Vector<String> extsToMiss = new Vector<>(10, 10);
-    //Vector to store all the html elements that are to be parsed.
+    // Vector to store all the html elements that are to be parsed.
     public Vector elementsToParse = new Vector(10, 10);
-    //Used to store a string of what we are currently processing
+    // Used to store a string of what we are currently processing
     private String currentlyProcessing = "";
-    //variables used to store information about the http athentifcation that is to be used
+    // variables used to store information about the http athentifcation that is to be used
     private boolean useHTTPauth = false;
     private String userName = "";
     private String password = "";
     private String realmDomain = "";
     private String authType = "";
-    //Variables to store information used for the URL fuzzing
+    // Variables to store information used for the URL fuzzing
     private String urlFuzzStart;
     private String urlFuzzEnd;
-    //var to note when the fuzz generator has finished
+    // var to note when the fuzz generator has finished
     private boolean urlFuzzGenFinished = false;
     /*
      * time at which the fuzzing started
@@ -180,12 +177,12 @@ public class Manager implements ProcessChecker.ProcessUpdate
     private String fileExtentions = null;
     private String pointToStartFrom = null;
 
-    // ZAP: Option to control whether only the dirs found under the startPoint should be parsed/fetched.
+    // ZAP: Option to control whether only the dirs found under the startPoint should be
+    // parsed/fetched.
     private boolean onlyUnderStartPoint = true;
 
     // ZAP: Changed to public to allow it to be extended
-    public Manager()
-    {
+    public Manager() {
         elementsToParse.addElement(new HTMLelementToParse("a", "href"));
         elementsToParse.addElement(new HTMLelementToParse("img", "src"));
         elementsToParse.addElement(new HTMLelementToParse("form", "action"));
@@ -206,8 +203,9 @@ public class Manager implements ProcessChecker.ProcessUpdate
         createHttpClient();
     }
 
-    //set up dictionay based attack with normal start
-    public void setupManager(String startPoint,
+    // set up dictionay based attack with normal start
+    public void setupManager(
+            String startPoint,
             String inputFile,
             String protocol,
             String host,
@@ -218,8 +216,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
             boolean doFiles,
             boolean recursive,
             boolean blankExt,
-            Vector extToUse)
-    {
+            Vector extToUse) {
         totalDone = 0;
         this.startPoint = startPoint;
         this.inputFile = inputFile;
@@ -236,40 +233,34 @@ public class Manager implements ProcessChecker.ProcessUpdate
         this.extToUse = extToUse;
         URL url;
 
-        //add the start point to the running list
-        //TODO change this so it sctually checks for it
-        try
-        {
+        // add the start point to the running list
+        // TODO change this so it sctually checks for it
+        try {
             url = new URL(firstPartOfURL + startPoint);
-        //gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning", url.toString(), "Start point of testing", null, null, this.recursive, null));
-        }
-        catch(MalformedURLException ex)
-        {
+            // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
+            // url.toString(), "Start point of testing", null, null, this.recursive, null));
+        } catch (MalformedURLException ex) {
             ex.printStackTrace();
         }
-
 
         System.out.println("Starting dir/file list based brute forcing");
 
         setpUpHttpClient();
         createTheThreads();
         workGen = new WorkerGenerator(this);
-
-
     }
 
-    public Vector<HeadlessResult> getHeadlessResult()
-    {
+    public Vector<HeadlessResult> getHeadlessResult() {
         return headlessResult;
     }
 
-    public HttpClient getHttpclient()
-    {
+    public HttpClient getHttpclient() {
         return httpclient;
     }
 
-    //setup for purebrute force with normal start
-    public void setupManager(String startPoint,
+    // setup for purebrute force with normal start
+    public void setupManager(
+            String startPoint,
             String[] charSet,
             int minLen,
             int maxLen,
@@ -281,8 +272,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
             boolean doDirs,
             boolean doFiles,
             boolean recursive,
-            boolean blankExt)
-    {
+            boolean blankExt) {
         totalDone = 0;
         this.startPoint = startPoint;
         this.firstPartOfURL = protocol + "://" + host + ":" + port;
@@ -301,14 +291,12 @@ public class Manager implements ProcessChecker.ProcessUpdate
         this.blankExt = blankExt;
         URL url;
 
-        //add the start point to the running list
-        try
-        {
+        // add the start point to the running list
+        try {
             url = new URL(firstPartOfURL + startPoint);
-        //gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning", url.toString(), "Start point of testing", null, null, this.recursive, null));
-        }
-        catch(MalformedURLException ex)
-        {
+            // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
+            // url.toString(), "Start point of testing", null, null, this.recursive, null));
+        } catch (MalformedURLException ex) {
             ex.printStackTrace();
         }
 
@@ -317,20 +305,19 @@ public class Manager implements ProcessChecker.ProcessUpdate
         setpUpHttpClient();
         createTheThreads();
         workGenBrute = new BruteForceWorkGenerator(this);
-
     }
 
     /*
      * Used to setup the manager when we are URL fuzzing
      */
-    public void setUpManager(String inputFile,
+    public void setUpManager(
+            String inputFile,
             String protocol,
             String host,
             int port,
             int ThreadNumber,
             String urlFuzzStart,
-            String urlFuzzEnd)
-    {
+            String urlFuzzEnd) {
         totalDone = 0;
         this.inputFile = inputFile;
         this.firstPartOfURL = protocol + "://" + host + ":" + port;
@@ -353,7 +340,8 @@ public class Manager implements ProcessChecker.ProcessUpdate
     /*
      * set up manager for bruteforce fuzzing
      */
-    public void setUpManager(String[] charSet,
+    public void setUpManager(
+            String[] charSet,
             int minLen,
             int maxLen,
             String protocol,
@@ -361,8 +349,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
             int port,
             int ThreadNumber,
             String urlFuzzStart,
-            String urlFuzzEnd)
-    {
+            String urlFuzzEnd) {
         /*
          * arguments for the fuzzing
          */
@@ -396,14 +383,13 @@ public class Manager implements ProcessChecker.ProcessUpdate
         workGenBruteFuzz = new BruteForceURLFuzz(this);
     }
 
-    private void createHttpClient()
-    {
-    	Protocol protocol = Protocol.getProtocol("https");
-    	if (protocol == null) {
-    		// ZAP: Dont override an existing protocol - it causes problems with ZAP
-    		Protocol easyhttps = new Protocol("https", new EasySSLProtocolSocketFactory(), 443);
-    		Protocol.registerProtocol("https", easyhttps);
-    	}
+    private void createHttpClient() {
+        Protocol protocol = Protocol.getProtocol("https");
+        if (protocol == null) {
+            // ZAP: Dont override an existing protocol - it causes problems with ZAP
+            Protocol easyhttps = new Protocol("https", new EasySSLProtocolSocketFactory(), 443);
+            Protocol.registerProtocol("https", easyhttps);
+        }
         initialState = new HttpState();
 
         MultiThreadedHttpConnectionManager connectionManager =
@@ -411,33 +397,35 @@ public class Manager implements ProcessChecker.ProcessUpdate
         connectionManager.getParams().setDefaultMaxConnectionsPerHost(1000);
         connectionManager.getParams().setMaxTotalConnections(1000);
 
-        //connectionManager.set
-
+        // connectionManager.set
 
         httpclient = new HttpClient(connectionManager);
-    //httpclient.
-
+        // httpclient.
 
     }
 
-    private void setpUpHttpClient()
-    {
-        if(httpclient != null)
-        {
-            //add the proxy setting is required
-            if(this.isUseProxy())
-            {
-                httpclient.getHostConfiguration().setProxy(this.getProxyHost(), this.getProxyPort());
-                if(this.isUseProxyAuth())
-                {
-                    httpclient.getState().setProxyCredentials(this.getProxyRealm(), this.getProxyHost(),
-                            new UsernamePasswordCredentials(this.getProxyUsername(), this.getProxyPassword()));
+    private void setpUpHttpClient() {
+        if (httpclient != null) {
+            // add the proxy setting is required
+            if (this.isUseProxy()) {
+                httpclient
+                        .getHostConfiguration()
+                        .setProxy(this.getProxyHost(), this.getProxyPort());
+                if (this.isUseProxyAuth()) {
+                    httpclient
+                            .getState()
+                            .setProxyCredentials(
+                                    this.getProxyRealm(),
+                                    this.getProxyHost(),
+                                    new UsernamePasswordCredentials(
+                                            this.getProxyUsername(), this.getProxyPassword()));
                 }
             }
 
-
-            httpclient.getHttpConnectionManager().
-                    getParams().setConnectionTimeout(Config.connectionTimeout * 1000);
+            httpclient
+                    .getHttpConnectionManager()
+                    .getParams()
+                    .setConnectionTimeout(Config.connectionTimeout * 1000);
             httpclient.setState(initialState);
             httpclient.getParams().setParameter("http.useragent", Config.userAgent);
 
@@ -446,72 +434,62 @@ public class Manager implements ProcessChecker.ProcessUpdate
              *
              */
 
-            if(useHTTPauth)
-            {
-                //Credentials creds = new Credentials();
-                //creds.
-                NTCredentials ntCreds = new NTCredentials(this.userName, this.password, "", this.realmDomain);
+            if (useHTTPauth) {
+                // Credentials creds = new Credentials();
+                // creds.
+                NTCredentials ntCreds =
+                        new NTCredentials(this.userName, this.password, "", this.realmDomain);
                 httpclient.getState().setCredentials(AuthScope.ANY, ntCreds);
             }
 
-        /*
-         * Custom code to add ntlm auth
-         */
+            /*
+             * Custom code to add ntlm auth
+             */
 
-        //NTCredentials ntCreds = new NTCredentials("username", "password", "", "");
-        //httpclient.getState().setCredentials(AuthScope.ANY, ntCreds);
+            // NTCredentials ntCreds = new NTCredentials("username", "password", "", "");
+            // httpclient.getState().setCredentials(AuthScope.ANY, ntCreds);
         }
-
     }
 
-    private void createTheThreads()
-    {
-        //workers = new Worker[workerCount];
-
+    private void createTheThreads() {
+        // workers = new Worker[workerCount];
 
         workers.removeAllElements();
         parseWorkers.removeAllElements();
 
-        for(int i = 0; i < workerCount; i++)
-        {
+        for (int i = 0; i < workerCount; i++) {
             workers.addElement(new Worker(i, this));
-        //workers[i] = new Worker(this, i);
-        //tpes.execute(workers[i]);
+            // workers[i] = new Worker(this, i);
+            // tpes.execute(workers[i]);
         }
 
-        //create the htmlparse threads
-        for(int i = 0; i < workerCount; i++)
-        {
+        // create the htmlparse threads
+        for (int i = 0; i < workerCount; i++) {
             parseWorkers.addElement(new HTMLparse(this));
         }
-        //work queue
+        // work queue
         workQueue = new ArrayBlockingQueue<WorkUnit>(workerCount * 3);
 
-        //dir to be processed
+        // dir to be processed
         dirQueue = new ArrayBlockingQueue<DirToCheck>(100000);
 
-        //queue to hold a list of items to parsed
+        // queue to hold a list of items to parsed
         parseQueue = new ArrayBlockingQueue<HTMLparseWorkUnit>(200000);
 
         timer = new Timer();
 
-        //add the fist string on to the queue
-        try
-        {
+        // add the fist string on to the queue
+        try {
             Vector tempext = extToUse;
-            //extToUse.clone().
+            // extToUse.clone().
             dirQueue.put(new DirToCheck(startPoint, tempext));
-        }
-        catch(InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public void start()
-    {
-        try
-        {
+    public void start() {
+        try {
             timestarted = System.currentTimeMillis();
 
             totalDirsFound = 0;
@@ -520,89 +498,78 @@ public class Manager implements ProcessChecker.ProcessUpdate
             parsedLinksProcessed = 0;
             processedLinks.clear();
 
-
             task = new ProcessChecker(this);
             timer.scheduleAtFixedRate(task, 1000L, 1000L);
 
             task2 = new ProcessEnd(this);
             timer.scheduleAtFixedRate(task2, 30000L, 30000L);
 
-            //start the pure brute force thread
-            if(pureBrute)
-            {
-                //start the work generator
+            // start the pure brute force thread
+            if (pureBrute) {
+                // start the work generator
                 workGenThread = new Thread(workGenBrute);
             }
-            //start the
-            else if(urlFuzz)
-            {
+            // start the
+            else if (urlFuzz) {
                 workGenThread = new Thread(workGenFuzz);
 
-            }
-            else if(pureBrutefuzz)
-            {
+            } else if (pureBrutefuzz) {
                 workGenThread = new Thread(workGenBruteFuzz);
-            }
-            else
-            {
-                //start the work generator
+            } else {
+                // start the work generator
                 workGenThread = new Thread(workGen);
             }
 
             workGenThread.setName("DirBuster-WorkerGenerator");
             workGenThread.start();
 
-            //add the worker and parseWorker threads
-            for(int i = 0; i < workers.size(); i++)
-            {
+            // add the worker and parseWorker threads
+            for (int i = 0; i < workers.size(); i++) {
                 Thread workerThread = new Thread(((Worker) workers.elementAt(i)));
                 workerThread.setName("DirBuster-Worker");
                 workerThread.start();
                 ((HTMLparse) parseWorkers.elementAt(i)).start();
             }
 
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public boolean hasWorkLeft()
-    {
-        //TODO  finish
+    public boolean hasWorkLeft() {
+        // TODO  finish
         return true;
     }
 
-    public BlockingQueue<WorkUnit> getWorkQueue()
-    {
+    public BlockingQueue<WorkUnit> getWorkQueue() {
         return workQueue;
     }
 
-    public BlockingQueue<DirToCheck> getDirQueue()
-    {
+    public BlockingQueue<DirToCheck> getDirQueue() {
         return dirQueue;
     }
 
-    public synchronized void foundDir(URL url, int statusCode, BaseCase baseCaseObj)
-    {
+    public synchronized void foundDir(URL url, int statusCode, BaseCase baseCaseObj) {
         foundDir(url, statusCode, null, null, null, baseCaseObj);
     }
 
-    public synchronized void foundDir(URL url, int statusCode, String Responce, BaseCase baseCaseObj)
-    {
+    public synchronized void foundDir(
+            URL url, int statusCode, String Responce, BaseCase baseCaseObj) {
         foundDir(url, statusCode, Responce, null, Responce, baseCaseObj);
     }
 
-    public synchronized void foundDir(URL url, int statusCode, String Responce, String BaseCase, String RawResponce, BaseCase baseCaseObj)
-    {
-        try
-        {
+    public synchronized void foundDir(
+            URL url,
+            int statusCode,
+            String Responce,
+            String BaseCase,
+            String RawResponce,
+            BaseCase baseCaseObj) {
+        try {
 
             boolean isStartPoint;
 
-            if(Config.caseInsensativeMode)
-            {
+            if (Config.caseInsensativeMode) {
                 isStartPoint = url.getPath().equalsIgnoreCase(startPoint);
 
                 /*
@@ -615,13 +582,11 @@ public class Manager implements ProcessChecker.ProcessUpdate
                 boolean foundDir = false;
                 DirToCheck[] dirArray = (DirToCheck[]) dirQueue.toArray();
 
-                for(int a = 0; a < dirArray.length; a++)
-                {
+                for (int a = 0; a < dirArray.length; a++) {
                     /*
                      * perform case in seneative check
                      */
-                    if(url.getPath().equalsIgnoreCase(dirArray[a].getName()))
-                    {
+                    if (url.getPath().equalsIgnoreCase(dirArray[a].getName())) {
                         foundDir = true;
                         break;
                     }
@@ -630,27 +595,29 @@ public class Manager implements ProcessChecker.ProcessUpdate
                 /*
                  * if the dir is not already there.
                  */
-                if(!foundDir)
-                {
+                if (!foundDir) {
 
-                    //hack to prevent getting an instance of the main extToUse and its contents!
+                    // hack to prevent getting an instance of the main extToUse and its contents!
 
                     Vector tempExtToUse = new Vector(10, 10);
-                    //tempExtToUse = extToUse.clone();
+                    // tempExtToUse = extToUse.clone();
 
-                    for(int a = 0; a < extToUse.size(); a++)
-                    {
+                    for (int a = 0; a < extToUse.size(); a++) {
                         ExtToCheck oldExtToCheck = (ExtToCheck) extToUse.elementAt(a);
-                        ExtToCheck tempExtToCheck = new ExtToCheck(oldExtToCheck.getName(), oldExtToCheck.toCheck());
+                        ExtToCheck tempExtToCheck =
+                                new ExtToCheck(oldExtToCheck.getName(), oldExtToCheck.toCheck());
                         tempExtToUse.addElement(tempExtToCheck);
                     }
 
                     boolean addToDirQueue = true;
-                    
+
                     if (onlyUnderStartPoint) {
-                        addToDirQueue = url.getPath().toLowerCase(Locale.ENGLISH).startsWith(startPoint.toLowerCase(Locale.ENGLISH));
+                        addToDirQueue =
+                                url.getPath()
+                                        .toLowerCase(Locale.ENGLISH)
+                                        .startsWith(startPoint.toLowerCase(Locale.ENGLISH));
                     }
-                    
+
                     if (addToDirQueue) {
                         dirQueue.put(new DirToCheck(url.getPath(), tempExtToUse));
                     }
@@ -661,32 +628,32 @@ public class Manager implements ProcessChecker.ProcessUpdate
             /*
              * normal case sensative search
              */
-            else
-            {
+            else {
                 isStartPoint = url.getPath().equals(startPoint);
-                //check it is not already in the queue
-                if(!dirQueue.contains(new DirToCheck(url.getPath(), extToUse)) && !isStartPoint && isRecursive())
-                {
-                    //Vector tempext = (Vector) extToUse.clone();
+                // check it is not already in the queue
+                if (!dirQueue.contains(new DirToCheck(url.getPath(), extToUse))
+                        && !isStartPoint
+                        && isRecursive()) {
+                    // Vector tempext = (Vector) extToUse.clone();
 
-                    //hack to prevent getting an instance of the main extToUse and its contents!
+                    // hack to prevent getting an instance of the main extToUse and its contents!
 
                     Vector tempExtToUse = new Vector(10, 10);
-                    //tempExtToUse = extToUse.clone();
+                    // tempExtToUse = extToUse.clone();
 
-                    for(int a = 0; a < extToUse.size(); a++)
-                    {
+                    for (int a = 0; a < extToUse.size(); a++) {
                         ExtToCheck oldExtToCheck = (ExtToCheck) extToUse.elementAt(a);
-                        ExtToCheck tempExtToCheck = new ExtToCheck(oldExtToCheck.getName(), oldExtToCheck.toCheck());
+                        ExtToCheck tempExtToCheck =
+                                new ExtToCheck(oldExtToCheck.getName(), oldExtToCheck.toCheck());
                         tempExtToUse.addElement(tempExtToCheck);
                     }
 
                     boolean addToDirQueue = true;
-                    
+
                     if (onlyUnderStartPoint) {
                         addToDirQueue = url.getPath().startsWith(startPoint);
                     }
-                    
+
                     if (addToDirQueue) {
                         dirQueue.put(new DirToCheck(url.getPath(), tempExtToUse));
                     }
@@ -694,153 +661,132 @@ public class Manager implements ProcessChecker.ProcessUpdate
                 }
             }
 
-
-
             System.out.println("Dir found: " + url.getFile() + " - " + statusCode);
-            //add to list of items that have already processed
+            // add to list of items that have already processed
             addParsedLink(url.getPath());
 
-            headlessResult.addElement(new HeadlessResult(url.getFile(), statusCode, HeadlessResult.DIR));
-        }
-        catch(InterruptedException e)
-        {
-            //e.printStackTrace();
+            headlessResult.addElement(
+                    new HeadlessResult(url.getFile(), statusCode, HeadlessResult.DIR));
+        } catch (InterruptedException e) {
+            // e.printStackTrace();
             return;
         }
     }
 
-    public synchronized void foundFile(URL url, int statusCode, BaseCase baseCaseObj)
-    {
+    public synchronized void foundFile(URL url, int statusCode, BaseCase baseCaseObj) {
         foundFile(url, statusCode, null, null, null, baseCaseObj);
     }
 
-    public synchronized void foundFile(URL url, int statusCode, String Responce, BaseCase baseCaseObj)
-    {
+    public synchronized void foundFile(
+            URL url, int statusCode, String Responce, BaseCase baseCaseObj) {
         foundFile(url, statusCode, Responce, null, Responce, baseCaseObj);
     }
 
-    public synchronized void foundFile(URL url, int statusCode, String Responce, String BaseCase, String rawResponce, BaseCase baseCaseObj)
-    {
+    public synchronized void foundFile(
+            URL url,
+            int statusCode,
+            String Responce,
+            String BaseCase,
+            String rawResponce,
+            BaseCase baseCaseObj) {
 
         System.out.println("File found: " + url.getFile() + " - " + statusCode);
         addParsedLink(url.getPath());
 
-        headlessResult.addElement(new HeadlessResult(url.getFile(), statusCode, HeadlessResult.FILE));
+        headlessResult.addElement(
+                new HeadlessResult(url.getFile(), statusCode, HeadlessResult.FILE));
     }
 
-    public synchronized void foundError(URL url, String reason)
-    {
-        headlessResult.addElement(new HeadlessResult(url.getFile() + ":" + reason, -1, HeadlessResult.ERROR));
+    public synchronized void foundError(URL url, String reason) {
+        headlessResult.addElement(
+                new HeadlessResult(url.getFile() + ":" + reason, -1, HeadlessResult.ERROR));
         System.err.println("ERROR: " + url.toString() + " - " + reason);
     }
 
-    public String getInputFile()
-    {
+    public String getInputFile() {
         return inputFile;
     }
 
-    public String getFirstPartOfURL()
-    {
+    public String getFirstPartOfURL() {
         return firstPartOfURL;
     }
 
-    public String getFileExtention()
-    {
+    public String getFileExtention() {
         return extention;
     }
 
-    public void isAlive()
-    {
-    }
+    public void isAlive() {}
 
-    public synchronized void workDone()
-    {
+    public synchronized void workDone() {
         totalDone++;
     }
 
-    public synchronized int getTotalDone()
-    {
+    public synchronized int getTotalDone() {
         return totalDone;
     }
 
-    public String getProtocol()
-    {
+    public String getProtocol() {
         return protocol;
     }
 
-    public String getHost()
-    {
+    public String getHost() {
         return host;
     }
 
-    public int getPort()
-    {
+    public int getPort() {
         return port;
     }
 
-    public boolean getDoDirs()
-    {
+    public boolean getDoDirs() {
         return doDirs;
     }
 
-    public boolean getDoFiles()
-    {
+    public boolean getDoFiles() {
         return doFiles;
     }
 
-    public void pause()
-    {
-        for(int a = 0; a < workers.size(); a++)
-        {
-            synchronized((Worker) workers.elementAt(a))
-            {
+    public void pause() {
+        for (int a = 0; a < workers.size(); a++) {
+            synchronized ((Worker) workers.elementAt(a)) {
                 ((Worker) workers.elementAt(a)).pause();
             }
         }
     }
 
-    public void unPause()
-    {
-        for(int a = 0; a < workers.size(); a++)
-        {
-            synchronized((Worker) workers.elementAt(a))
-            {
+    public void unPause() {
+        for (int a = 0; a < workers.size(); a++) {
+            synchronized ((Worker) workers.elementAt(a)) {
                 ((Worker) workers.elementAt(a)).unPause();
                 ((Worker) workers.elementAt(a)).notify();
             }
         }
     }
 
-    public int getMinLen()
-    {
+    public int getMinLen() {
         return minLen;
     }
 
-    public int getMaxLen()
-    {
+    public int getMaxLen() {
         return maxLen;
     }
 
-    public String[] getCharSet()
-    {
+    public String[] getCharSet() {
         return charSet;
     }
 
-    public boolean isRecursive()
-    {
+    public boolean isRecursive() {
         return recursive;
     }
 
-    //TODO: check how  youAreFinished() is called and when it is called
-    public void youAreFinished()
-    {
+    // TODO: check how  youAreFinished() is called and when it is called
+    public void youAreFinished() {
 
-        //clear all the queue
+        // clear all the queue
         workQueue.clear();
         dirQueue.clear();
         parseQueue.clear();
 
-        //reset counters
+        // reset counters
         totalDirsFound = 0;
         producedBasesCases.clear();
         numberOfBaseCasesProduced = 0;
@@ -848,43 +794,30 @@ public class Manager implements ProcessChecker.ProcessUpdate
         processedLinks.clear();
         workAmountCorrection = 0;
 
-        //kill all the running threads
+        // kill all the running threads
         task.cancel();
         task2.cancel();
 
-
-
-        if(pureBrute)
-        {
-            //TODO
-        }
-        else if(urlFuzz)
-        {
+        if (pureBrute) {
+            // TODO
+        } else if (urlFuzz) {
             workGenFuzz.stopMe();
-        }
-        else if(pureBrutefuzz)
-        {
-            //TODO
-        }
-        else
-        {
+        } else if (pureBrutefuzz) {
+            // TODO
+        } else {
             workGen.stopMe();
         }
 
-        //stop all the workers;
-        for(int a = 0; a < workers.size(); a++)
-        {
-            synchronized((Worker) workers.elementAt(a))
-            {
+        // stop all the workers;
+        for (int a = 0; a < workers.size(); a++) {
+            synchronized ((Worker) workers.elementAt(a)) {
                 ((Worker) workers.elementAt(a)).stopThread();
             }
         }
 
-        //stops all the parsers
-        for(int a = 0; a < this.parseWorkers.size(); a++)
-        {
-            synchronized((HTMLparse) parseWorkers.elementAt(a))
-            {
+        // stops all the parsers
+        for (int a = 0; a < this.parseWorkers.size(); a++) {
+            synchronized ((HTMLparse) parseWorkers.elementAt(a)) {
                 ((HTMLparse) parseWorkers.elementAt(a)).stopWorking();
                 ((HTMLparse) parseWorkers.elementAt(a)).notify();
             }
@@ -897,52 +830,42 @@ public class Manager implements ProcessChecker.ProcessUpdate
         urlFuzz = false;
         pureBrute = false;
         pureBrutefuzz = false;
-
     }
 
-    public double getTotalPass()
-    {
+    public double getTotalPass() {
         return totalPass;
     }
 
-    public void setTotalPass(double totalPass)
-    {
+    public void setTotalPass(double totalPass) {
         this.totalPass = totalPass;
     }
 
-    public int getTotalDirsFound()
-    {
+    public int getTotalDirsFound() {
         return totalDirsFound;
     }
 
-    public int getWorkerCount()
-    {
+    public int getWorkerCount() {
         return workerCount;
     }
 
-    public Vector getWorkers()
-    {
+    public Vector getWorkers() {
         return workers;
     }
 
-    public boolean getAuto()
-    {
+    public boolean getAuto() {
         return auto;
     }
 
-    public void setAuto(boolean b)
-    {
+    public void setAuto(boolean b) {
         auto = b;
     }
 
     /*
      * used to add extra workers to the queue
      */
-    public void addWrokers(int number)
-    {
+    public void addWrokers(int number) {
         int currentNumber = workers.size();
-        for(int i = 0; i < number; i++)
-        {
+        for (int i = 0; i < number; i++) {
             int threadid = currentNumber + i;
             workers.addElement(new Worker(threadid, this));
 
@@ -954,27 +877,22 @@ public class Manager implements ProcessChecker.ProcessUpdate
     /*
      * used to remove extra workers from the queue
      */
-    public void removeWorkers(int number)
-    {
+    public void removeWorkers(int number) {
         int currentNumber = workers.size();
 
-        if(number >= currentNumber)
-        {
+        if (number >= currentNumber) {
             return;
         }
 
-        for(int a = currentNumber - 1; a >= (currentNumber - number); a--)
-        {
+        for (int a = currentNumber - 1; a >= (currentNumber - number); a--) {
             ((Worker) workers.elementAt(a)).stopThread();
             workers.remove(a);
         }
         workerCount = currentNumber - number;
     }
 
-    //used to remove stuff from the work queue, as a result of the request from a user;
-    public synchronized void removeFromDirQueue(String dir)
-    {
-
+    // used to remove stuff from the work queue, as a result of the request from a user;
+    public synchronized void removeFromDirQueue(String dir) {
 
         /*
          *Convert item queue to an array
@@ -982,369 +900,295 @@ public class Manager implements ProcessChecker.ProcessUpdate
         Object[] tempArray = dirQueue.toArray();
         DirToCheck dirToCheck = null;
 
-        for(int b = 0; b < tempArray.length; b++)
-        {
+        for (int b = 0; b < tempArray.length; b++) {
             dirToCheck = (DirToCheck) tempArray[b];
             String processWork = dirToCheck.getName();
 
             /*
              * find the object of all the ones we wish to remove
              */
-            if(processWork.equals(dir))
-            {
+            if (processWork.equals(dir)) {
                 /*
                  * remove the item
                  */
-                if(dirQueue.remove(dirToCheck))
-                {
+                if (dirQueue.remove(dirToCheck)) {
 
                     totalDirsFound--;
-                }
-                else
-                {
+                } else {
                     System.err.println("FAILED Removed " + processWork + " from dir queue");
                 }
-
             }
         }
-
     }
 
-    //used to re add stuff to the work as the reswult from a request from the work queue
-    public synchronized void addToDirQueue(String dir)
-    {
-//System.out.println("SBSB addToDirQueue " + dir);
-        try
-        {
+    // used to re add stuff to the work as the reswult from a request from the work queue
+    public synchronized void addToDirQueue(String dir) {
+        // System.out.println("SBSB addToDirQueue " + dir);
+        try {
 
             dirQueue.put(new DirToCheck(dir, extToUse));
             totalDirsFound++;
-        }
-        catch(InterruptedException ex)
-        {
-            //ex.printStackTrace();
+        } catch (InterruptedException ex) {
+            // ex.printStackTrace();
             return;
         }
     }
 
-    public synchronized void addHTMLToParseQueue(HTMLparseWorkUnit parseWorkUnit)
-    {
-        if (onlyUnderStartPoint && !parseWorkUnit.getWorkUnit().getWork().getPath().startsWith(startPoint)) {
+    public synchronized void addHTMLToParseQueue(HTMLparseWorkUnit parseWorkUnit) {
+        if (onlyUnderStartPoint
+                && !parseWorkUnit.getWorkUnit().getWork().getPath().startsWith(startPoint)) {
             return;
         }
-        
-//System.out.println("SBSB addHTMLToParseQueue " + parseWorkUnit.toString());
-        try
-        {
+
+        // System.out.println("SBSB addHTMLToParseQueue " + parseWorkUnit.toString());
+        try {
             parseQueue.put(parseWorkUnit);
-        }
-        catch(InterruptedException ex)
-        {
+        } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
     }
 
-    public boolean isUseProxy()
-    {
+    public boolean isUseProxy() {
         return useProxy;
     }
 
-    public String getProxyHost()
-    {
+    public String getProxyHost() {
         return proxyHost;
     }
 
-    public void setProxyHost(String proxyHost)
-    {
+    public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
 
-    public void setUseProxy(boolean useProxy)
-    {
+    public void setUseProxy(boolean useProxy) {
         this.useProxy = useProxy;
     }
 
-    public int getProxyPort()
-    {
+    public int getProxyPort() {
         return proxyPort;
     }
 
-    public void setProxyPort(int proxyPort)
-    {
+    public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
     }
 
-    public boolean isUseProxyAuth()
-    {
+    public boolean isUseProxyAuth() {
         return useProxyAuth;
     }
 
-    public String getProxyUsername()
-    {
+    public String getProxyUsername() {
         return proxyUsername;
     }
 
-    public String getProxyPassword()
-    {
+    public String getProxyPassword() {
         return proxyPassword;
     }
 
-    public String getProxyRealm()
-    {
+    public String getProxyRealm() {
         return proxyRealm;
     }
 
-    public void setProxyPassword(String proxyPassword)
-    {
+    public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
     }
 
-    public void setProxyRealm(String proxyRealm)
-    {
+    public void setProxyRealm(String proxyRealm) {
         this.proxyRealm = proxyRealm;
     }
 
-    public void setProxyUsername(String proxyUsername)
-    {
+    public void setProxyUsername(String proxyUsername) {
         this.proxyUsername = proxyUsername;
     }
 
-    public void setUseProxyAuth(boolean useProxyAuth)
-    {
+    public void setUseProxyAuth(boolean useProxyAuth) {
         this.useProxyAuth = useProxyAuth;
     }
 
-    public boolean isBlankExt()
-    {
+    public boolean isBlankExt() {
         return blankExt;
     }
 
-    public void addHTTPheader(HTTPHeader header)
-    {
+    public void addHTTPheader(HTTPHeader header) {
         HTTPheaders.addElement(header);
     }
 
-    public Vector getHTTPHeaders()
-    {
+    public Vector getHTTPHeaders() {
         return HTTPheaders;
     }
 
-    public void addExt(ExtToCheck ext)
-    {
+    public void addExt(ExtToCheck ext) {
         extToUse.addElement(ext);
     }
 
-    public Vector getExtToUse()
-    {
+    public Vector getExtToUse() {
         return extToUse;
     }
 
-    public synchronized BaseCase getBaseCase(String base, boolean isDir, String fileExt)
-    {
+    public synchronized BaseCase getBaseCase(String base, boolean isDir, String fileExt) {
 
-        try
-        {
-            for(int a = 0; a < producedBasesCases.size(); a++)
-            {
+        try {
+            for (int a = 0; a < producedBasesCases.size(); a++) {
                 BaseCase tempBaseCase = (BaseCase) producedBasesCases.elementAt(a);
 
-                if(tempBaseCase.getBaseCaseURL().equals(new URL(base)) && tempBaseCase.isDir() == isDir)
-                {
-                    if(!isDir)
-                    {
-                        if(tempBaseCase.getFileExt().equals(fileExt))
-                        {
+                if (tempBaseCase.getBaseCaseURL().equals(new URL(base))
+                        && tempBaseCase.isDir() == isDir) {
+                    if (!isDir) {
+                        if (tempBaseCase.getFileExt().equals(fileExt)) {
                             return tempBaseCase;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         return tempBaseCase;
                     }
-
                 }
-
-
             }
-        }
-        catch(MalformedURLException ex)
-        {
-            //do nothing I dont care
+        } catch (MalformedURLException ex) {
+            // do nothing I dont care
         }
 
         return null;
     }
 
-    public synchronized void addBaseCase(BaseCase baseCase)
-    {
-        if(!producedBasesCases.contains(baseCase))
-        {
+    public synchronized void addBaseCase(BaseCase baseCase) {
+        if (!producedBasesCases.contains(baseCase)) {
             producedBasesCases.addElement(baseCase);
         }
     }
 
-    public synchronized boolean hasLinkBeenDone(String link)
-    {
+    public synchronized boolean hasLinkBeenDone(String link) {
 
-        if(processedLinks.contains(link))
-        {
+        if (processedLinks.contains(link)) {
             return true;
         }
 
         return false;
     }
 
-    public int getBaseCaseCounterCorrection()
-    {
+    public int getBaseCaseCounterCorrection() {
         return baseCaseCounterCorrection;
     }
 
-    public int getParsedLinksProcessed()
-    {
+    public int getParsedLinksProcessed() {
         return parsedLinksProcessed;
     }
 
-    public synchronized boolean addParsedLink(String link)
-    {
-//System.out.println("SBSB addParsedLink " + link);
+    public synchronized boolean addParsedLink(String link) {
+        // System.out.println("SBSB addParsedLink " + link);
         /*
          * case insenataive mode
          */
-        if(Config.caseInsensativeMode)
-        {
+        if (Config.caseInsensativeMode) {
 
-            for(int a = 0; a < processedLinks.size(); a++)
-            {
-                if(link.equalsIgnoreCase((String) processedLinks.elementAt(a)))
-                {
+            for (int a = 0; a < processedLinks.size(); a++) {
+                if (link.equalsIgnoreCase((String) processedLinks.elementAt(a))) {
                     return false;
                 }
             }
             processedLinks.addElement(link);
 
-            if (onlyUnderStartPoint && !link.toLowerCase(Locale.ENGLISH).startsWith(startPoint.toLowerCase(Locale.ENGLISH))) {
+            if (onlyUnderStartPoint
+                    && !link.toLowerCase(Locale.ENGLISH)
+                            .startsWith(startPoint.toLowerCase(Locale.ENGLISH))) {
                 addParsedLinksProcessed();
                 return false;
             }
-        }
-        else
+        } else
         /*
          * case sensative mode
          */
         {
-            if(!processedLinks.contains(link))
-            {
+            if (!processedLinks.contains(link)) {
                 processedLinks.addElement(link);
             }
-            
+
             if (onlyUnderStartPoint && !link.startsWith(startPoint)) {
                 addParsedLinksProcessed();
                 return false;
             }
         }
-        
+
         return true;
     }
 
-    public synchronized void addParsedLinksProcessed()
-    {
+    public synchronized void addParsedLinksProcessed() {
         parsedLinksProcessed++;
     }
 
-    public int getNumberOfBaseCasesProduced()
-    {
+    public int getNumberOfBaseCasesProduced() {
         return numberOfBaseCasesProduced;
     }
 
-    //increments the correction counter
-    public synchronized void addBaseCaseCounterCorrection()
-    {
+    // increments the correction counter
+    public synchronized void addBaseCaseCounterCorrection() {
         baseCaseCounterCorrection++;
     }
 
-    public Vector getElementsToParse()
-    {
+    public Vector getElementsToParse() {
         return elementsToParse;
     }
 
-    public synchronized void addNumberOfBaseCasesProduced()
-    {
+    public synchronized void addNumberOfBaseCasesProduced() {
         numberOfBaseCasesProduced++;
     }
 
-    public Vector getParseWorkers()
-    {
+    public Vector getParseWorkers() {
         return parseWorkers;
     }
 
-    public void skipCurrentWork()
-    {
+    public void skipCurrentWork() {
         /*
          * while this is a case snsative comparie, it should not require to be done both ways
          */
-        //stop work gen from adding more the the queue
+        // stop work gen from adding more the the queue
         workGen.skipCurrent();
 
-        //remove all items in the current work queue that are no loger required.
+        // remove all items in the current work queue that are no loger required.
         Object[] tempArray = workQueue.toArray();
         WorkUnit work = null;
         int totalRemoved = 0;
-        for(int b = 0; b < tempArray.length; b++)
-        {
+        for (int b = 0; b < tempArray.length; b++) {
             work = (WorkUnit) tempArray[b];
             String processWork = work.getWork().getPath();
-            if(processWork.startsWith(currentlyProcessing))
-            {
+            if (processWork.startsWith(currentlyProcessing)) {
                 workQueue.remove(work);
                 totalRemoved++;
             }
         }
         addToWorkCorrection(totalRemoved);
-
     }
 
-    public void setCurrentlyProcessing(String currentlyProcessing)
-    {
+    public void setCurrentlyProcessing(String currentlyProcessing) {
         this.currentlyProcessing = currentlyProcessing;
     }
 
-    public void addToWorkCorrection(int amount)
-    {
+    public void addToWorkCorrection(int amount) {
         workAmountCorrection = workAmountCorrection + amount;
     }
 
-    public String getAuthType()
-    {
+    public String getAuthType() {
         return authType;
     }
 
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
-    public String getRealmDomain()
-    {
+    public String getRealmDomain() {
         return realmDomain;
     }
 
-    public boolean isUseHTTPauth()
-    {
+    public boolean isUseHTTPauth() {
         return useHTTPauth;
     }
 
-    public String getUserName()
-    {
+    public String getUserName() {
         return userName;
     }
 
-    public int getWorkAmountCorrection()
-    {
+    public int getWorkAmountCorrection() {
         return workAmountCorrection;
     }
 
-    public void setAuthDetails(String username, String password, String realmDomain, String type)
-    {
+    public void setAuthDetails(String username, String password, String realmDomain, String type) {
         this.userName = username;
         this.password = password;
         this.realmDomain = realmDomain;
@@ -1352,63 +1196,50 @@ public class Manager implements ProcessChecker.ProcessUpdate
         this.useHTTPauth = true;
     }
 
-    public void setDoNotUseAuth()
-    {
+    public void setDoNotUseAuth() {
         this.useHTTPauth = false;
     }
 
-    public String getUrlFuzzEnd()
-    {
+    public String getUrlFuzzEnd() {
         return urlFuzzEnd;
     }
 
-    public String getUrlFuzzStart()
-    {
+    public String getUrlFuzzStart() {
         return urlFuzzStart;
     }
 
-    public boolean isURLFuzzGenFinished()
-    {
+    public boolean isURLFuzzGenFinished() {
         return urlFuzzGenFinished;
     }
 
-    public void setURLFuzzGenFinished(boolean urlFuzzGenFinished)
-    {
+    public void setURLFuzzGenFinished(boolean urlFuzzGenFinished) {
         this.urlFuzzGenFinished = urlFuzzGenFinished;
     }
 
-    public long getTimestarted()
-    {
+    public long getTimestarted() {
         return timestarted;
     }
 
-    public boolean isLimitRequests()
-    {
+    public boolean isLimitRequests() {
         return limitRequests;
     }
 
-    public void setLimitRequests(boolean limitRequests)
-    {
+    public void setLimitRequests(boolean limitRequests) {
         this.limitRequests = limitRequests;
     }
 
-    public int getLimitRequestsTo()
-    {
+    public int getLimitRequestsTo() {
         return limitRequestsTo;
     }
 
-    public void setLimitRequestsTo(int limitRequestsTo)
-    {
+    public void setLimitRequestsTo(int limitRequestsTo) {
         this.limitRequestsTo = limitRequestsTo;
     }
 
-    public boolean areWorkersAlive()
-    {
-        for(int a = 0; a < workers.size(); a++)
-        {
-            if(((Worker) workers.elementAt(a)).isWorking())
-            {
-                //there is a worker still working so break
+    public boolean areWorkersAlive() {
+        for (int a = 0; a < workers.size(); a++) {
+            if (((Worker) workers.elementAt(a)).isWorking()) {
+                // there is a worker still working so break
                 return true;
             }
         }
@@ -1418,111 +1249,91 @@ public class Manager implements ProcessChecker.ProcessUpdate
     /*
      * this loads the user prefs for set for DirBuster
      */
-    public void loadPrefs()
-    {
+    public void loadPrefs() {
         userPrefs = Preferences.userNodeForPackage(Manager.class);
         lastUpdateCheck = new Date(userPrefs.getLong("LastUpdateCheck", 0L));
         defaultNoThreads = userPrefs.getInt("DefaultNoTreads", 10);
         defaultList = userPrefs.get("DefaultList", "");
         defaultExts = userPrefs.get("DefaultExts", "php");
-
     }
 
     /*
      * returns a vector of all the regexes we have already used
      */
-    public Vector<String> getFailCaseRegexes()
-    {
+    public Vector<String> getFailCaseRegexes() {
         return failCaseRegexes;
     }
 
     /*
      * adds a new regex fail case
      */
-    public void addFailCaseRegex(String regex)
-    {
+    public void addFailCaseRegex(String regex) {
         failCaseRegexes.addElement(regex);
     }
 
-    public URL getTargetURL()
-    {
+    public URL getTargetURL() {
         return targetURL;
     }
 
-    public void setTargetURL(URL targetURL)
-    {
+    public void setTargetURL(URL targetURL) {
         this.targetURL = targetURL;
     }
 
-    public String getFileLocation()
-    {
+    public String getFileLocation() {
         return fileLocation;
     }
 
-    public void setFileLocation(String fileLocation)
-    {
+    public void setFileLocation(String fileLocation) {
         this.fileLocation = fileLocation;
     }
 
-    public String getReportLocation()
-    {
+    public String getReportLocation() {
         return reportLocation;
     }
 
-    public void setReportLocation(String reportLocation)
-    {
+    public void setReportLocation(String reportLocation) {
         this.reportLocation = reportLocation;
     }
 
-    public String getFileExtentions()
-    {
+    public String getFileExtentions() {
         return fileExtentions;
     }
 
-    public void setFileExtentions(String fileExtentions)
-    {
+    public void setFileExtentions(String fileExtentions) {
         this.fileExtentions = fileExtentions;
     }
 
-    public String getPointToStartFrom()
-    {
+    public String getPointToStartFrom() {
         return pointToStartFrom;
     }
 
-    public void setPointToStartFrom(String pointToStartFrom)
-    {
+    public void setPointToStartFrom(String pointToStartFrom) {
         this.pointToStartFrom = pointToStartFrom;
     }
 
-    public String getDefaultExts()
-    {
+    public String getDefaultExts() {
         return defaultExts;
     }
 
-    public void setDefaultExts(String defaultExts)
-    {
+    public void setDefaultExts(String defaultExts) {
         this.defaultExts = defaultExts;
         userPrefs.put("DefaultExts", defaultExts);
     }
 
-    public String getDefaultList()
-    {
+    public String getDefaultList() {
         return defaultList;
     }
 
-    public void setDefaultList(String defaultList)
-    {
+    public void setDefaultList(String defaultList) {
         this.defaultList = defaultList;
         userPrefs.put("DefaultList", defaultList);
     }
 
-    public int getDefaultNoThreads()
-    {
+    public int getDefaultNoThreads() {
         return defaultNoThreads;
     }
 
-    public void setDefaultNoThreads(int defaultNoThreads)
-    {
+    public void setDefaultNoThreads(int defaultNoThreads) {
         this.defaultNoThreads = defaultNoThreads;
         userPrefs.putInt("DefaultNoTreads", defaultNoThreads);
     }
@@ -1530,6 +1341,4 @@ public class Manager implements ProcessChecker.ProcessUpdate
     public void setOnlyUnderStartPoint(boolean onlyUnderStartPoint) {
         this.onlyUnderStartPoint = onlyUnderStartPoint;
     }
-
-
 }

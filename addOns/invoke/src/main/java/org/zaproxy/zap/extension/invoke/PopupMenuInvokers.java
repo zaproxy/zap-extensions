@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.invoke;
 
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 
@@ -63,5 +62,4 @@ public class PopupMenuInvokers extends PopupMenuHttpMessageContainer {
         }
         add(confPopup);
     }
-
 }

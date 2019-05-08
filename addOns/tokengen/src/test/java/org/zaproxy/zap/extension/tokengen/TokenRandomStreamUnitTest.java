@@ -31,26 +31,25 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class TokenRandomStreamUnitTest {
 
-	@Mock
-	CharacterFrequencyMap characterFrequencyMap;
+    @Mock CharacterFrequencyMap characterFrequencyMap;
 
-	TokenRandomStream stream;
+    TokenRandomStream stream;
 
-	@Before
-	public void setUp() throws Exception {
-		stream = new TokenRandomStream(characterFrequencyMap);
-	}
+    @Before
+    public void setUp() throws Exception {
+        stream = new TokenRandomStream(characterFrequencyMap);
+    }
 
-	@Test
-	public void shouldAlwaysReturnMinusOneWhenStreamIsClosed() throws Exception {
-		// Given
-		stream.closeInputStream();
-		// When/Then
-		assertThat(stream.readByte(), is((byte) -1));
-		assertThat(stream.readInt(), is(-1));
-		assertThat(stream.readLong(), is(-1L));
-	}
+    @Test
+    public void shouldAlwaysReturnMinusOneWhenStreamIsClosed() throws Exception {
+        // Given
+        stream.closeInputStream();
+        // When/Then
+        assertThat(stream.readByte(), is((byte) -1));
+        assertThat(stream.readInt(), is(-1));
+        assertThat(stream.readLong(), is(-1L));
+    }
 
-	// TODO Add more tests
+    // TODO Add more tests
 
 }

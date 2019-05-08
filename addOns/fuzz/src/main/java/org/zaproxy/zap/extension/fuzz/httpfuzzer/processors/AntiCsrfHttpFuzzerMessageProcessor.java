@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
@@ -33,9 +32,11 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerTaskProcessorUtils;
 
 public class AntiCsrfHttpFuzzerMessageProcessor implements HttpFuzzerMessageProcessor {
 
-    private static final String NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.message.name");
+    private static final String NAME =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.message.name");
 
-    private static final String ERROR_MESSAGE = Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.message.error");
+    private static final String ERROR_MESSAGE =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.message.error");
 
     private ExtensionAntiCSRF extensionAntiCSRF;
     private AntiCsrfToken acsrfToken;
@@ -76,9 +77,11 @@ public class AntiCsrfHttpFuzzerMessageProcessor implements HttpFuzzerMessageProc
             // Replace token value - only supported in the body right now
             String replaced = message.getRequestBody().toString();
             try {
-                replaced = replaced.replace(
-                        URLEncoder.encode(acsrfToken.getValue(), StandardCharsets.UTF_8.name()),
-                        URLEncoder.encode(tokenValue, StandardCharsets.UTF_8.name()));
+                replaced =
+                        replaced.replace(
+                                URLEncoder.encode(
+                                        acsrfToken.getValue(), StandardCharsets.UTF_8.name()),
+                                URLEncoder.encode(tokenValue, StandardCharsets.UTF_8.name()));
             } catch (UnsupportedEncodingException ignore) {
                 // UTF-8 is a standard charset
             }
@@ -95,5 +98,4 @@ public class AntiCsrfHttpFuzzerMessageProcessor implements HttpFuzzerMessageProc
     public boolean processResult(HttpFuzzerTaskProcessorUtils utils, HttpFuzzResult fuzzResult) {
         return true;
     }
-
 }

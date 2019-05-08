@@ -22,22 +22,22 @@ package org.zaproxy.zap.extension.sse.ui.httppanel.models;
 import java.nio.charset.Charset;
 
 public class ByteEventStreamPanelViewModel extends AbstractEventStreamBytePanelViewModel {
-	
-	@Override
-	public byte[] getData() {
-		if (event != null) {
-			String data = event.getRawEvent();
-			if (data != null) {
-				return data.getBytes();
-			}
-		}
-		
-		return new byte[0];
-	}
 
-	@Override
-	public void setData(byte[] data) {
-		event.setRawEvent(new String(data, Charset.forName("UTF-8")));
-		event.setRawEventLength((long) data.length);
-	}
+    @Override
+    public byte[] getData() {
+        if (event != null) {
+            String data = event.getRawEvent();
+            if (data != null) {
+                return data.getBytes();
+            }
+        }
+
+        return new byte[0];
+    }
+
+    @Override
+    public void setData(byte[] data) {
+        event.setRawEvent(new String(data, Charset.forName("UTF-8")));
+        event.setRawEventLength((long) data.length);
+    }
 }

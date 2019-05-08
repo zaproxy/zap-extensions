@@ -20,31 +20,29 @@
 package org.zaproxy.zap.extension.domxss;
 
 import java.util.Date;
-
 import org.openqa.selenium.WebDriver;
 
 public class WebDriverWrapper {
-	private WebDriver driver;
-	private Date lastAccessed;
-	
-	public WebDriverWrapper(WebDriver driver) {
-		super();
-		this.driver = driver;
-		lastAccessed = new Date();
-	}
-	
-	public WebDriver getDriver() {
-		lastAccessed = new Date();
-		return driver;
-	}
-	
-	public void setDriver(WebDriver driver) {
-		lastAccessed = new Date();
-		this.driver = driver;
-	}
+    private WebDriver driver;
+    private Date lastAccessed;
 
-	public Date getLastAccessed() {
-		return lastAccessed;
-	}
-	
+    public WebDriverWrapper(WebDriver driver) {
+        super();
+        this.driver = driver;
+        lastAccessed = new Date();
+    }
+
+    public WebDriver getDriver() {
+        lastAccessed = new Date();
+        return driver;
+    }
+
+    public void setDriver(WebDriver driver) {
+        lastAccessed = new Date();
+        this.driver = driver;
+    }
+
+    public Date getLastAccessed() {
+        return lastAccessed;
+    }
 }

@@ -27,28 +27,24 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
-
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 
-/**
- * Defines the browsers supported by the add-on.
- */
+/** Defines the browsers supported by the add-on. */
 public enum Browser {
-
     CHROME("chrome", false),
     FIREFOX("firefox", false),
     /**
      * Headless browser, guaranteed to be always available.
-     * 
+     *
      * @see #getFailSafeBrowser()
      */
     HTML_UNIT("htmlunit", true),
     /**
-     * @deprecated Does not support required capabilities
-     *             ({@link org.openqa.selenium.remote.CapabilityType#ACCEPT_INSECURE_CERTS ACCEPT_INSECURE_CERTS}).
+     * @deprecated Does not support required capabilities ({@link
+     *     org.openqa.selenium.remote.CapabilityType#ACCEPT_INSECURE_CERTS ACCEPT_INSECURE_CERTS}).
      */
     @Deprecated
     INTERNET_EXPLORER("ie", false),
@@ -63,7 +59,7 @@ public enum Browser {
     private static Path zapHomeDir;
 
     private final String id;
-    
+
     private boolean isHeadless = false;
 
     private Browser(String id, boolean isHeadless) {
@@ -73,8 +69,9 @@ public enum Browser {
 
     /**
      * Gets the ID of this browser.
-     * <p>
-     * The ID can be used for persistence and later creation, using the method {@code getBrowserWithId(String)}.
+     *
+     * <p>The ID can be used for persistence and later creation, using the method {@code
+     * getBrowserWithId(String)}.
      *
      * @return the ID of the browser
      * @see #getBrowserWithId(String)
@@ -85,12 +82,13 @@ public enum Browser {
 
     /**
      * Gets the browser that has the given {@code id}.
-     * <p>
-     * If no match is found returns the browser guaranteed to be always available, as returned by {@code getFailSafeBrowser()}.
-     * 
+     *
+     * <p>If no match is found returns the browser guaranteed to be always available, as returned by
+     * {@code getFailSafeBrowser()}.
+     *
      * @param id the ID of the browser
-     * @return the browser that matches the given {@code id}, or if not found the browser returned by
-     *         {@code getFailSafeBrowser()}
+     * @return the browser that matches the given {@code id}, or if not found the browser returned
+     *     by {@code getFailSafeBrowser()}
      * @throws IllegalArgumentException if the given {@code id} is {@code null} or empty.
      * @see #getId()
      * @see #getFailSafeBrowser()
@@ -139,9 +137,9 @@ public enum Browser {
 
     /**
      * Tells whether or not the given path is a bundled WebDriver.
-     * <p>
-     * No actual check is done to test whether or not the WebDriver really exists, just that it's under the directory of the
-     * bundled WebDrivers.
+     *
+     * <p>No actual check is done to test whether or not the WebDriver really exists, just that it's
+     * under the directory of the bundled WebDrivers.
      *
      * @param path the path to check
      * @return {@code true} if the path is a bundled WebDriver, {@code false} otherwise.
@@ -225,12 +223,12 @@ public enum Browser {
 
     private static String getWebDriverName(Browser browser) {
         switch (browser) {
-        case CHROME:
-            return "chromedriver";
-        case FIREFOX:
-            return "geckodriver";
-        default:
-            return null;
+            case CHROME:
+                return "chromedriver";
+            case FIREFOX:
+                return "geckodriver";
+            default:
+                return null;
         }
     }
 
@@ -257,7 +255,8 @@ public enum Browser {
             return;
         }
 
-        Set<PosixFilePermission> perms = Files.readAttributes(file, PosixFileAttributes.class).permissions();
+        Set<PosixFilePermission> perms =
+                Files.readAttributes(file, PosixFileAttributes.class).permissions();
         if (perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
             return;
         }
@@ -294,5 +293,4 @@ public enum Browser {
     public void setHeadless(boolean isHeadless) {
         this.isHeadless = isHeadless;
     }
-
 }

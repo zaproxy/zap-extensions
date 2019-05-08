@@ -23,50 +23,50 @@ import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 
-/**
- * Encode or decode from byte[] to Utf8 and vice versa.
- */
+/** Encode or decode from byte[] to Utf8 and vice versa. */
 public final class Utf8Util {
-	
-	private Utf8Util() {
-	}
 
-	/**
-	 * Helper method to encode payload into UTF-8 string.
-	 * 
-	 * @param utf8bytes 
-	 * @return readable representation
-	 * @throws InvalidUtf8Exception 
-	 */
-	public static String encodePayloadToUtf8(byte[] utf8bytes) throws InvalidUtf8Exception {
-		return encodePayloadToUtf8(utf8bytes, 0, utf8bytes.length);
-	}
-	
-	/**
-	 * Helper method to encode payload into UTF-8 string.
-	 * 
-	 * @param utf8bytes
-	 * @param offset
-	 * @param length
-	 * @return readable representation
-	 * @throws InvalidUtf8Exception 
-	 */
-	public static String encodePayloadToUtf8(byte[] utf8bytes, int offset, int length) throws InvalidUtf8Exception {
-		try {
-			return StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(utf8bytes, offset, length)).toString();
-		} catch (CharacterCodingException e) {
-			throw new InvalidUtf8Exception("Unable to decode given bytes as UTF-8!", e);
-		}
-	}
-	
-	/**
-	 * Helper method that takes an UTF-8 string and returns its byte
-	 * representation.
-	 * 
-	 * @param utf8string
-	 * @return byte representation
-	 */
-	public static byte[] decodePayloadFromUtf8(String utf8string) {
-		return utf8string.getBytes(StandardCharsets.UTF_8);
-	}
+    private Utf8Util() {}
+
+    /**
+     * Helper method to encode payload into UTF-8 string.
+     *
+     * @param utf8bytes
+     * @return readable representation
+     * @throws InvalidUtf8Exception
+     */
+    public static String encodePayloadToUtf8(byte[] utf8bytes) throws InvalidUtf8Exception {
+        return encodePayloadToUtf8(utf8bytes, 0, utf8bytes.length);
+    }
+
+    /**
+     * Helper method to encode payload into UTF-8 string.
+     *
+     * @param utf8bytes
+     * @param offset
+     * @param length
+     * @return readable representation
+     * @throws InvalidUtf8Exception
+     */
+    public static String encodePayloadToUtf8(byte[] utf8bytes, int offset, int length)
+            throws InvalidUtf8Exception {
+        try {
+            return StandardCharsets.UTF_8
+                    .newDecoder()
+                    .decode(ByteBuffer.wrap(utf8bytes, offset, length))
+                    .toString();
+        } catch (CharacterCodingException e) {
+            throw new InvalidUtf8Exception("Unable to decode given bytes as UTF-8!", e);
+        }
+    }
+
+    /**
+     * Helper method that takes an UTF-8 string and returns its byte representation.
+     *
+     * @param utf8string
+     * @return byte representation
+     */
+    public static byte[] decodePayloadFromUtf8(String utf8string) {
+        return utf8string.getBytes(StandardCharsets.UTF_8);
+    }
 }

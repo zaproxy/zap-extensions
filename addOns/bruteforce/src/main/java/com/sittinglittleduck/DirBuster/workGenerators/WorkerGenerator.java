@@ -21,6 +21,14 @@
  */
 package com.sittinglittleduck.DirBuster.workGenerators;
 
+import com.sittinglittleduck.DirBuster.BaseCase;
+import com.sittinglittleduck.DirBuster.Config;
+import com.sittinglittleduck.DirBuster.DirToCheck;
+import com.sittinglittleduck.DirBuster.ExtToCheck;
+import com.sittinglittleduck.DirBuster.GenBaseCase;
+import com.sittinglittleduck.DirBuster.HTTPHeader;
+import com.sittinglittleduck.DirBuster.Manager;
+import com.sittinglittleduck.DirBuster.WorkUnit;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,24 +38,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.HeadMethod;
 
-import com.sittinglittleduck.DirBuster.BaseCase;
-import com.sittinglittleduck.DirBuster.Config;
-import com.sittinglittleduck.DirBuster.DirToCheck;
-import com.sittinglittleduck.DirBuster.ExtToCheck;
-import com.sittinglittleduck.DirBuster.GenBaseCase;
-import com.sittinglittleduck.DirBuster.HTTPHeader;
-import com.sittinglittleduck.DirBuster.Manager;
-import com.sittinglittleduck.DirBuster.WorkUnit;
-
-/**
- * Produces the work to be done, when we are reading from a list
- */
-public class WorkerGenerator implements Runnable
-{
+/** Produces the work to be done, when we are reading from a list */
+public class WorkerGenerator implements Runnable {
 
     private final Manager manager;
     private BlockingQueue<WorkUnit> workQueue;
@@ -63,35 +58,29 @@ public class WorkerGenerator implements Runnable
 
     /**
      * Creates a new instance of WorkerGenerator
+     *
      * @param manager Manager object
      */
-    public WorkerGenerator(Manager manager)
-    {
+    public WorkerGenerator(Manager manager) {
         this.manager = manager;
         workQueue = manager.workQueue;
         dirQueue = manager.dirQueue;
-        if(manager.isBlankExt())
-        {
+        if (manager.isBlankExt()) {
             fileExtention = "";
-        }
-        else
-        {
+        } else {
             fileExtention = "." + manager.getFileExtention();
         }
 
-        //get the vector of all the file extention we need to use
-        //extToCheck = manager.getExtToUse();
+        // get the vector of all the file extention we need to use
+        // extToCheck = manager.getExtToUse();
         inputFile = manager.getInputFile();
         firstPart = manager.getFirstPartOfURL();
 
         httpclient = manager.getHttpclient();
     }
 
-    /**
-     * Thread run method
-     */
-    public void run()
-    {
+    /** Thread run method */
+    public void run() {
         String currentDir = "/";
         int failcode = 404;
         String line;
@@ -99,445 +88,384 @@ public class WorkerGenerator implements Runnable
         boolean recursive = true;
         int passTotal = 0;
 
-        //--------------------------------------------------
-        try
-        {
+        // --------------------------------------------------
+        try {
 
-            //find the total number of requests to be made, per pass
-            //based on the fact there is a single entry per line
-            BufferedReader d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
+            // find the total number of requests to be made, per pass
+            // based on the fact there is a single entry per line
+            BufferedReader d =
+                    new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
             passTotal = 0;
-            while((line = d.readLine()) != null)
-            {
-                if(!line.startsWith("#"))
-                {
+            while ((line = d.readLine()) != null) {
+                if (!line.startsWith("#")) {
                     passTotal++;
                 }
             }
 
             manager.setTotalPass(passTotal);
-        }
-        catch(FileNotFoundException ex)
-        {
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
-        catch(IOException ex)
-        {
-            ex.printStackTrace();
-        }
-        //-------------------------------------------------
+        // -------------------------------------------------
 
-        //checks if the server surports heads requests
-        if(manager.getAuto())
-        {
-            try
-            {
+        // checks if the server surports heads requests
+        if (manager.getAuto()) {
+            try {
                 URL headurl = new URL(firstPart);
 
                 HeadMethod httphead = new HeadMethod(headurl.toString());
 
-                //set the custom HTTP headers
+                // set the custom HTTP headers
                 Vector HTTPheaders = manager.getHTTPHeaders();
-                for(int a = 0; a < HTTPheaders.size(); a++)
-                {
+                for (int a = 0; a < HTTPheaders.size(); a++) {
                     HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
                     /*
                      * Host header has to be set in a different way!
                      */
-                    if(httpHeader.getHeader().startsWith("Host:"))
-                    {
+                    if (httpHeader.getHeader().startsWith("Host:")) {
                         httphead.getParams().setVirtualHost(httpHeader.getValue());
-                    }
-                    else
-                    {
+                    } else {
                         httphead.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
                     }
-
                 }
 
                 httphead.setFollowRedirects(Config.followRedirects);
                 int responceCode = httpclient.executeMethod(httphead);
 
-                if(Config.debug)
-                {
-                    System.out.println("DEBUG WokerGen: responce code for head check = " + responceCode);
+                if (Config.debug) {
+                    System.out.println(
+                            "DEBUG WokerGen: responce code for head check = " + responceCode);
                 }
 
-                //if the responce code is method not implemented or if the head requests return 400!
-                if(responceCode == 501 || responceCode == 400 || responceCode == 405)
-                {
-                    if(Config.debug)
-                    {
-                        System.out.println("DEBUG WokerGen: Changing to GET only HEAD test returned 501(method no implmented) or a 400");
+                // if the responce code is method not implemented or if the head requests return
+                // 400!
+                if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
+                    if (Config.debug) {
+                        System.out.println(
+                                "DEBUG WokerGen: Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                     }
-                    //switch the mode to just GET requests
+                    // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
-            }
-            catch(MalformedURLException e)
-            {
-                //TODO deal with error
-            }
-            catch(IOException e)
-            {
-                //TODO deal with error
+            } catch (MalformedURLException e) {
+                // TODO deal with error
+            } catch (IOException e) {
+                // TODO deal with error
             }
         }
 
-        //end of checks to see if server surpports head requests
+        // end of checks to see if server surpports head requests
         int counter = 0;
 
-        while((!dirQueue.isEmpty() || !workQueue.isEmpty() || !manager.areWorkersAlive()) && recursive)
-        {
-            //get the dir we are about to process
+        while ((!dirQueue.isEmpty() || !workQueue.isEmpty() || !manager.areWorkersAlive())
+                && recursive) {
+            // get the dir we are about to process
             String baseResponce = null;
             recursive = manager.isRecursive();
             BaseCase baseCaseObj = null;
 
-            //rest the skip
+            // rest the skip
             skipCurrent = false;
 
-            //deal with the dirs
-            try
-            {
-                //get item from  queue
-                //System.out.println("gen about to take");
+            // deal with the dirs
+            try {
+                // get item from  queue
+                // System.out.println("gen about to take");
                 DirToCheck tempDirToCheck = dirQueue.take();
-                //System.out.println("gen taken");
-                //get dir name
+                // System.out.println("gen taken");
+                // get dir name
                 currentDir = tempDirToCheck.getName();
-                //get any extention that need to be checked
+                // get any extention that need to be checked
                 extToCheck = tempDirToCheck.getExts();
 
                 manager.setCurrentlyProcessing(currentDir);
-            }
-            catch(InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             started = currentDir;
 
-            //generate the list of dirs
-            if(manager.getDoDirs())
-            {
-                //find the fail case for the dir
+            // generate the list of dirs
+            if (manager.getDoDirs()) {
+                // find the fail case for the dir
                 URL failurl = null;
 
-                try
-                {
+                try {
                     baseResponce = null;
 
-                    baseCaseObj = GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
-                }
-                catch(MalformedURLException e)
-                {
+                    baseCaseObj =
+                            GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
+                } catch (MalformedURLException e) {
                     e.printStackTrace();
-                }
-                catch(IOException e)
-                {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-
-                //end of dir fail case
-                if(stopMe)
-                {
+                // end of dir fail case
+                if (stopMe) {
                     return;
                 }
 
-                //generate work links
-                try
-                {
-                    //readin dir names
-                    BufferedReader d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
+                // generate work links
+                try {
+                    // readin dir names
+                    BufferedReader d =
+                            new BufferedReader(
+                                    new InputStreamReader(new FileInputStream(inputFile)));
 
-                    if(Config.debug)
-                    {
+                    if (Config.debug) {
                         System.out.println("DEBUG WokerGen: Generating dir list for " + firstPart);
                     }
 
                     URL currentURL;
 
-                    //add the first item while doing dir's
-                    if(counter == 0)
-                    {
-                        try
-                        {
+                    // add the first item while doing dir's
+                    if (counter == 0) {
+                        try {
                             String method;
-                            if(manager.getAuto() && !baseCaseObj.useContentAnalysisMode() && !baseCaseObj.isUseRegexInstead())
-                            {
+                            if (manager.getAuto()
+                                    && !baseCaseObj.useContentAnalysisMode()
+                                    && !baseCaseObj.isUseRegexInstead()) {
                                 method = "HEAD";
-                            }
-                            else
-                            {
+                            } else {
                                 method = "GET";
                             }
                             currentURL = new URL(firstPart + currentDir);
-                            //System.out.println("first part = " + firstPart);
-                            //System.out.println("current dir = " + currentDir);
+                            // System.out.println("first part = " + firstPart);
+                            // System.out.println("current dir = " + currentDir);
                             workQueue.put(new WorkUnit(currentURL, true, "GET", baseCaseObj, null));
-                            if(Config.debug)
-                            {
-                                System.out.println("DEBUG WokerGen: 1 adding dir to work list " + method + " " + currentDir.toString());
+                            if (Config.debug) {
+                                System.out.println(
+                                        "DEBUG WokerGen: 1 adding dir to work list "
+                                                + method
+                                                + " "
+                                                + currentDir.toString());
                             }
-                        }
-                        catch(MalformedURLException ex)
-                        {
+                        } catch (MalformedURLException ex) {
+                            ex.printStackTrace();
+                        } catch (InterruptedException ex) {
                             ex.printStackTrace();
                         }
-                        catch(InterruptedException ex)
-                        {
-                            ex.printStackTrace();
-                        }
-                    } //end of dealing with first item
+                    } // end of dealing with first item
                     int dirsProcessed = 0;
 
-                    //add the rest of the dirs
-                    while((line = d.readLine()) != null)
-                    {
-                        //code to skip the current work load
-                        if(skipCurrent)
-                        {
-                            //add the totalnumber per pass - the amount process this pass to the work correction total
+                    // add the rest of the dirs
+                    while ((line = d.readLine()) != null) {
+                        // code to skip the current work load
+                        if (skipCurrent) {
+                            // add the totalnumber per pass - the amount process this pass to the
+                            // work correction total
                             manager.addToWorkCorrection(passTotal - dirsProcessed);
                             break;
                         }
 
-                        //if the line is not empty or starts with a #
-                        if(!line.equalsIgnoreCase("") && !line.startsWith("#"))
-                        {
+                        // if the line is not empty or starts with a #
+                        if (!line.equalsIgnoreCase("") && !line.startsWith("#")) {
                             line = line.trim();
                             line = makeItemsafe(line);
-                            try
-                            {
+                            try {
                                 String method;
-                                if(manager.getAuto() && !baseCaseObj.useContentAnalysisMode() && !baseCaseObj.isUseRegexInstead())
-                                {
+                                if (manager.getAuto()
+                                        && !baseCaseObj.useContentAnalysisMode()
+                                        && !baseCaseObj.isUseRegexInstead()) {
                                     method = "HEAD";
-                                }
-                                else
-                                {
+                                } else {
                                     method = "GET";
                                 }
 
                                 currentURL = new URL(firstPart + currentDir + line + "/");
-                                //BaseCase baseCaseObj = new BaseCase(currentURL, failcode, true, failurl, baseResponce);
-                                //if the base case is null then we need to switch to content anylsis mode
+                                // BaseCase baseCaseObj = new BaseCase(currentURL, failcode, true,
+                                // failurl, baseResponce);
+                                // if the base case is null then we need to switch to content
+                                // anylsis mode
 
-                                //System.out.println("Gen about to add to queue");
-                                workQueue.put(new WorkUnit(currentURL, true, method, baseCaseObj, line));
-                                //System.out.println("Gen finshed adding to queue");
-                                if(Config.debug)
-                                {
-                                    System.out.println("DEBUG WokerGen: 2 adding dir to work list " + method + " " + currentURL.toString());
+                                // System.out.println("Gen about to add to queue");
+                                workQueue.put(
+                                        new WorkUnit(currentURL, true, method, baseCaseObj, line));
+                                // System.out.println("Gen finshed adding to queue");
+                                if (Config.debug) {
+                                    System.out.println(
+                                            "DEBUG WokerGen: 2 adding dir to work list "
+                                                    + method
+                                                    + " "
+                                                    + currentURL.toString());
                                 }
-                            }
-                            catch(MalformedURLException e)
-                            {
-                                //TODO deal with bad line
-                                //e.printStackTrace();
-                                //do nothing if it's malformed, I dont care about them!
-                            }
-                            catch(InterruptedException e)
-                            {
+                            } catch (MalformedURLException e) {
+                                // TODO deal with bad line
+                                // e.printStackTrace();
+                                // do nothing if it's malformed, I dont care about them!
+                            } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
 
-                            //if there is a call to stop the work gen then stop!
-                            if(stopMe)
-                            {
+                            // if there is a call to stop the work gen then stop!
+                            if (stopMe) {
                                 return;
                             }
                             dirsProcessed++;
                         }
-                    } //end of while
-                }
-                catch(FileNotFoundException e)
-                {
+                    } // end of while
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                }
-                catch(IOException e)
-                {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            //generate the list of files
-            if(manager.getDoFiles())
-            {
+            // generate the list of files
+            if (manager.getDoFiles()) {
 
                 baseResponce = null;
                 URL failurl = null;
 
-                //loop for all the different file extentions
-                for(int b = 0; b < extToCheck.size(); b++)
-                {
-                    //only test if we are surposed to
+                // loop for all the different file extentions
+                for (int b = 0; b < extToCheck.size(); b++) {
+                    // only test if we are surposed to
                     ExtToCheck extTemp = (ExtToCheck) extToCheck.elementAt(b);
 
-                    if(extTemp.toCheck())
-                    {
+                    if (extTemp.toCheck()) {
 
                         fileExtention = "";
-                        if(extTemp.getName().equals(ExtToCheck.BLANK_EXT))
-                        {
+                        if (extTemp.getName().equals(ExtToCheck.BLANK_EXT)) {
                             fileExtention = "";
-                        }
-                        else
-                        {
+                        } else {
                             fileExtention = "." + extTemp.getName();
                         }
 
-                        try
-                        {
-                            //get the base for this extention
-                            baseCaseObj = GenBaseCase.genBaseCase(manager, firstPart + currentDir, false, fileExtention);
-                        }
-                        catch(MalformedURLException e)
-                        {
+                        try {
+                            // get the base for this extention
+                            baseCaseObj =
+                                    GenBaseCase.genBaseCase(
+                                            manager, firstPart + currentDir, false, fileExtention);
+                        } catch (MalformedURLException e) {
                             e.printStackTrace();
-                        }
-                        catch(IOException e)
-                        {
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
 
-                        //if the manager has sent the stop command then exit
-                        if(stopMe)
-                        {
+                        // if the manager has sent the stop command then exit
+                        if (stopMe) {
                             return;
                         }
 
-                        try
-                        {
-                            BufferedReader d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
-                            //if(failcode != 200)
-                            //{
+                        try {
+                            BufferedReader d =
+                                    new BufferedReader(
+                                            new InputStreamReader(new FileInputStream(inputFile)));
+                            // if(failcode != 200)
+                            // {
                             int filesProcessed = 0;
 
-                            while((line = d.readLine()) != null)
-                            {
-                                //code to skip the current work load
-                                if(skipCurrent)
-                                {
+                            while ((line = d.readLine()) != null) {
+                                // code to skip the current work load
+                                if (skipCurrent) {
                                     manager.addToWorkCorrection(passTotal - filesProcessed);
                                     break;
                                 }
-                                //dont process is the line empty for starts with a #
-                                if(!line.equalsIgnoreCase("") && !line.startsWith("#"))
-                                {
+                                // dont process is the line empty for starts with a #
+                                if (!line.equalsIgnoreCase("") && !line.startsWith("#")) {
                                     line = line.trim();
                                     line = makeItemsafe(line);
-                                    try
-                                    {
+                                    try {
                                         String method;
-                                        if(manager.getAuto() && !baseCaseObj.useContentAnalysisMode() && !baseCaseObj.isUseRegexInstead())
-                                        {
+                                        if (manager.getAuto()
+                                                && !baseCaseObj.useContentAnalysisMode()
+                                                && !baseCaseObj.isUseRegexInstead()) {
                                             method = "HEAD";
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             method = "GET";
                                         }
 
-                                        URL currentURL = new URL(firstPart + currentDir + line + fileExtention);
-                                        //BaseCase baseCaseObj = new BaseCase(currentURL, true, failurl, baseResponce);
-                                        workQueue.put(new WorkUnit(currentURL, false, method, baseCaseObj, line));
-                                        if(Config.debug)
-                                        {
-                                            System.out.println("DEBUG WokerGen: adding file to work list " + method + " " + currentURL.toString());
+                                        URL currentURL =
+                                                new URL(
+                                                        firstPart
+                                                                + currentDir
+                                                                + line
+                                                                + fileExtention);
+                                        // BaseCase baseCaseObj = new BaseCase(currentURL, true,
+                                        // failurl, baseResponce);
+                                        workQueue.put(
+                                                new WorkUnit(
+                                                        currentURL,
+                                                        false,
+                                                        method,
+                                                        baseCaseObj,
+                                                        line));
+                                        if (Config.debug) {
+                                            System.out.println(
+                                                    "DEBUG WokerGen: adding file to work list "
+                                                            + method
+                                                            + " "
+                                                            + currentURL.toString());
                                         }
-                                    }
-                                    catch(MalformedURLException e)
-                                    {
-                                        //e.printStackTrace();
-                                        //again do nothing as I dont care
-                                    }
-                                    catch(InterruptedException e)
-                                    {
+                                    } catch (MalformedURLException e) {
+                                        // e.printStackTrace();
+                                        // again do nothing as I dont care
+                                    } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
 
-                                    if(stopMe)
-                                    {
+                                    if (stopMe) {
                                         return;
                                     }
                                     filesProcessed++;
                                 }
-                            } //end of while
-                        //}
-                        }
-                        catch(FileNotFoundException e)
-                        {
+                            } // end of while
+                            // }
+                        } catch (FileNotFoundException e) {
                             e.printStackTrace();
-                        }
-                        catch(IOException e)
-                        {
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-                } //end of file ext loop
-            } //end of if files
+                } // end of file ext loop
+            } // end of if files
             finished = started;
 
             counter++;
-            try
-            {
+            try {
                 Thread.sleep(200);
-            }
-            catch(InterruptedException ex)
-            {
+            } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
-        } //end of main while
-    //System.out.println("Gen FINISHED!");
-    //manager.youAreFinished();
+        } // end of main while
+        // System.out.println("Gen FINISHED!");
+        // manager.youAreFinished();
     }
 
-    private String makeItemsafe(String item)
-    {
-        //covert spaces
+    private String makeItemsafe(String item) {
+        // covert spaces
         item = item.replaceAll(" ", "%20");
-        //remove "
+        // remove "
         item = item.replaceAll("\"", "");
-        //convert \ into /
+        // convert \ into /
         item = item.replaceAll("\\\\", "");
 
-
-        if(item.length() > 2)
-        {
-            //remove / from the end
-            if(item.endsWith("/"))
-            {
+        if (item.length() > 2) {
+            // remove / from the end
+            if (item.endsWith("/")) {
                 item = item.substring(1, item.length() - 1);
             }
-            //remove / from the front
-            if(item.startsWith("/"))
-            {
+            // remove / from the front
+            if (item.startsWith("/")) {
                 item = item.substring(2, item.length());
             }
-        }
-        else
-        {
-            //change a single / for DirBuster -> this stops errors and recursive loops
-            if(item.startsWith("/"))
-            {
+        } else {
+            // change a single / for DirBuster -> this stops errors and recursive loops
+            if (item.startsWith("/")) {
                 item = "DirBuster";
             }
         }
         return item;
     }
 
-    /**
-     * Method to stop the manager while it is working
-     */
-    public void stopMe()
-    {
+    /** Method to stop the manager while it is working */
+    public void stopMe() {
         stopMe = true;
     }
 
-    public void skipCurrent()
-    {
+    public void skipCurrent() {
         skipCurrent = true;
     }
 }

@@ -25,9 +25,11 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 /**
  * A {@code PayloadGenerator} that 'generates' numbers in sequence in steps.
+ *
  * @author steven
  */
-public class NumberPayloadGenerator implements StringPayloadGenerator, ResettableAutoCloseableIterator<DefaultPayload> {
+public class NumberPayloadGenerator
+        implements StringPayloadGenerator, ResettableAutoCloseableIterator<DefaultPayload> {
 
     private static final Logger LOGGER = Logger.getLogger(NumberPayloadGenerator.class);
     private final int fromNo;
@@ -85,8 +87,7 @@ public class NumberPayloadGenerator implements StringPayloadGenerator, Resettabl
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     public int getFrom() {
         return fromNo;
@@ -101,7 +102,5 @@ public class NumberPayloadGenerator implements StringPayloadGenerator, Resettabl
     }
 
     @Override
-    public void remove() {
-
-    }
+    public void remove() {}
 }

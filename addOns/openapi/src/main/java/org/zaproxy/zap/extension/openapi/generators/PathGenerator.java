@@ -19,19 +19,17 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import java.util.ArrayList;
-
-import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
-
 import io.swagger.models.Scheme;
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.Parameter;
+import java.util.ArrayList;
+import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 
 public class PathGenerator {
 
     private DataGenerator dataGenerator;
-    
-    public PathGenerator (DataGenerator dataGenerator) {
+
+    public PathGenerator(DataGenerator dataGenerator) {
         this.dataGenerator = dataGenerator;
     }
 
@@ -61,15 +59,23 @@ public class PathGenerator {
             }
             String parameterType = parameter.getIn();
             if ("query".equals(parameterType)) {
-                String value = dataGenerator.generate(parameter.getName(), ((AbstractSerializableParameter<?>) parameter), new ArrayList<String>());
+                String value =
+                        dataGenerator.generate(
+                                parameter.getName(),
+                                ((AbstractSerializableParameter<?>) parameter),
+                                new ArrayList<String>());
                 queryString += parameter.getName() + "=" + value + "&";
             } else if ("path".equals(parameterType)) {
-                String value = dataGenerator.generate(parameter.getName(), ((AbstractSerializableParameter<?>) parameter), new ArrayList<String>());
-                String newPath = operationModel.getPath().replace("{" + parameter.getName() + "}", value);
+                String value =
+                        dataGenerator.generate(
+                                parameter.getName(),
+                                ((AbstractSerializableParameter<?>) parameter),
+                                new ArrayList<String>());
+                String newPath =
+                        operationModel.getPath().replace("{" + parameter.getName() + "}", value);
                 operationModel.setPath(newPath);
             }
         }
         return operationModel.getPath() + queryString.substring(0, queryString.length() - 1);
     }
-
 }

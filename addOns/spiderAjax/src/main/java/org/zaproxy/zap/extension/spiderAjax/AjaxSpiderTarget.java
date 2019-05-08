@@ -20,14 +20,11 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.net.URI;
-
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
-/**
- * A target of AJAX spider scans.
- */
+/** A target of AJAX spider scans. */
 public final class AjaxSpiderTarget {
 
     private final URI startUri;
@@ -81,8 +78,8 @@ public final class AjaxSpiderTarget {
 
     /**
      * Tells whether or not the spider should spider everything in scope.
-     * <p>
-     * Should be ignored if the target has a context.
+     *
+     * <p>Should be ignored if the target has a context.
      *
      * @return {@code true} if the spider should spider everything in scope, {@code false} otherwise
      */
@@ -118,9 +115,7 @@ public final class AjaxSpiderTarget {
         return new Builder(session);
     }
 
-    /**
-     * A builder of {@link AjaxSpiderTarget}.
-     */
+    /** A builder of {@link AjaxSpiderTarget}. */
     public static final class Builder {
 
         private final Session session;
@@ -158,8 +153,8 @@ public final class AjaxSpiderTarget {
 
         /**
          * Sets the context to spider.
-         * <p>
-         * Removes the user previously set, if any.
+         *
+         * <p>Removes the user previously set, if any.
          *
          * @param context the context
          * @return this builder
@@ -174,8 +169,8 @@ public final class AjaxSpiderTarget {
 
         /**
          * Sets the user to spider as.
-         * <p>
-         * Overrides any context previously set.
+         *
+         * <p>Overrides any context previously set.
          *
          * @param user the user
          * @return this builder
@@ -229,11 +224,11 @@ public final class AjaxSpiderTarget {
          *
          * @return a new {@code AjaxSpiderTarget} with configurations previously set.
          * @throws IllegalStateException if any of the following conditions is true:
-         *             <ul>
-         *             <li>No starting URI specified;</li>
-         *             <li>No options specified;</li>
-         *             <li>If a context was specified and the starting URI does not belong to the context;</li>
-         *             <li>If spidering in scope only and the starting URI is not in scope.</li>
+         *     <ul>
+         *       <li>No starting URI specified;
+         *       <li>No options specified;
+         *       <li>If a context was specified and the starting URI does not belong to the context;
+         *       <li>If spidering in scope only and the starting URI is not in scope.
          */
         public AjaxSpiderTarget build() {
             if (startUri == null) {
@@ -246,7 +241,8 @@ public final class AjaxSpiderTarget {
 
             if (context != null) {
                 if (!context.isInContext(startUri.toString())) {
-                    throw new IllegalStateException("The starting URI does not belong to the context.");
+                    throw new IllegalStateException(
+                            "The starting URI does not belong to the context.");
                 }
             } else if (inScopeOnly && !session.isInScope(startUri.toString())) {
                 throw new IllegalStateException("The starting URI is not in scope.");

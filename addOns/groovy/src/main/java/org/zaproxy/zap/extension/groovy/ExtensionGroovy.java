@@ -19,6 +19,12 @@
  */
 package org.zaproxy.zap.extension.groovy;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -27,95 +33,88 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 
-import javax.swing.ImageIcon;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class ExtensionGroovy extends ExtensionAdaptor {
 
-	public static final String NAME = "ExtensionGroovy";
-	public static final int EXTENSION_ORDER = 83;
-	public static final ImageIcon GROOVY_ICON;
-	private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    public static final String NAME = "ExtensionGroovy";
+    public static final int EXTENSION_ORDER = 83;
+    public static final ImageIcon GROOVY_ICON;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
-	static {
-		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-		dependencies.add(ExtensionScript.class);
-		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+    static {
+        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
+        dependencies.add(ExtensionScript.class);
+        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
 
-		GROOVY_ICON = View.isInitialised()
-				? new ImageIcon(ExtensionGroovy.class.getResource("/org/zaproxy/zap/extension/groovy/resources/groovy.png"))
-				: null;
-	}
+        GROOVY_ICON =
+                View.isInitialised()
+                        ? new ImageIcon(
+                                ExtensionGroovy.class.getResource(
+                                        "/org/zaproxy/zap/extension/groovy/resources/groovy.png"))
+                        : null;
+    }
 
-	private ExtensionScript extScript = null;
-	private GroovyEngineWrapper groovyEngine = null;
+    private ExtensionScript extScript = null;
+    private GroovyEngineWrapper groovyEngine = null;
 
-	public ExtensionGroovy() {
-		super(NAME);
-		this.setOrder(EXTENSION_ORDER);
-	}
+    public ExtensionGroovy() {
+        super(NAME);
+        this.setOrder(EXTENSION_ORDER);
+    }
 
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-		super.hook(extensionHook);
-		groovyEngine = new GroovyEngineWrapper();
-		getExtScript().registerScriptEngineWrapper(groovyEngine);
-	}
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+        groovyEngine = new GroovyEngineWrapper();
+        getExtScript().registerScriptEngineWrapper(groovyEngine);
+    }
 
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 
-	@Override
-	public void unload() {
-		super.unload();
-		if(groovyEngine != null){
-			getExtScript().removeScriptEngineWrapper(groovyEngine);
-		}
-	}
+    @Override
+    public void unload() {
+        super.unload();
+        if (groovyEngine != null) {
+            getExtScript().removeScriptEngineWrapper(groovyEngine);
+        }
+    }
 
-	private ExtensionScript getExtScript() {
-		if (extScript == null) {
-			extScript = Control
-				.getSingleton()
-				.getExtensionLoader()
-				.getExtension(ExtensionScript.class);
-		}
-		return extScript;
-	}
+    private ExtensionScript getExtScript() {
+        if (extScript == null) {
+            extScript =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        }
+        return extScript;
+    }
 
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
 
+    @Override
+    public String getUIName() {
+        return Constant.messages.getString("groovy.name");
+    }
 
-	@Override
-	public String getUIName() {
-		return Constant.messages.getString("groovy.name");
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("groovy.desc");
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("groovy.desc");
-	}
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_HOMEPAGE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 
-	@Override
-	public URL getURL() {
-		try {
-			return new URL(Constant.ZAP_HOMEPAGE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
-
-	@Override
-	public List<Class<? extends Extension>> getDependencies() {
-		return EXTENSION_DEPENDENCIES;
-	}
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return EXTENSION_DEPENDENCIES;
+    }
 }

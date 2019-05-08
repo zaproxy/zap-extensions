@@ -21,36 +21,34 @@ package com.sittinglittleduck.DirBuster;
 
 /**
  * Stores basic configuration detials
+ *
  * @author James
  */
-public class Config
-{
+public class Config {
 
-    /**
-     * The version number of the program
-     */
+    /** The version number of the program */
     public static final String version = "0.12";
     /*
      * 0.12
      * Command line interface added
      * Fixed a bug that caused the "User Agent" to not get set when adding custom headers
      * Updated all api's used
-     *  
+     *
      * 0.11.1
      * Fixed a bug that caused the check for update not to work correctly
-     * 
+     *
      * 0.11
      * Fixed a couple of points within the GUI, and spelling mistakes.
      * Added more content to the help section, but it's not finished yet.
      * Improved the way in which DirBuster handles inconsistent fail codes
      * Fixed a bug that caused deadlock due to all the parsing threads exiting
-     * Tweaked the content analysis code to reduce false positives, when DirBuster is using that mode 
+     * Tweaked the content analysis code to reduce false positives, when DirBuster is using that mode
      * Added code to make sure it display correctly on Vista
      * Fixed a bug that caused files found to not be shown in the report
      * Slight tweak to worker to improve performance
      * Added a windows installer
-     * 
-     * 
+     *
+     *
      * 0.10
      * Fixed a bug that caused DirBuster to hang, when deselecting items to scan.
      * Fixed part of the HTML parse worker so it exits correctly
@@ -66,7 +64,7 @@ public class Config
      * Fixed bug reported by Ralf Hoelzer, report generation fails if you tell it to write to directory and not a file
      * Added more icons
      * Added patch supplied by Ralf Hoelzer, to add a back button to the report panel
-     * 
+     *
      * 0.9.12
      * Changed the look and feel
      * reset all the fonts
@@ -74,7 +72,7 @@ public class Config
      * fixed bug under osx where the advance options buttons are not shown
      * fixed bug that stop recisive scanning from working
      * fixed bug where the parser workers did not restart
-     * 
+     *
      * 0.9.11
      * Help section started
      * Fixed bug in advanced options, which caused proxy setting to always get set
@@ -83,10 +81,10 @@ public class Config
      * Fixed a bug that caused responce to be displayed incorrectly
      * Fixed bug that selection from the tables to now work correctly
      * Fixed bug that caused blank extentions to stop working at all!
-     * 
+     *
      *0.9.10
      * + Fixed Bug that prevents it running on below java 1.6
-     * 
+     *
      *0.9.9
      *+ gui now gives better information into what it is currently processing
      *+ updated gui to allow the setting of target by submitting a URL
@@ -155,30 +153,22 @@ public class Config
      *+ minor changes to the interface
      *+ now shows diff of basecase vs responce
      */
-    /**
-     * Date the version was completed
-     */
+    /** Date the version was completed */
     public static final String versionDate = "06/05/2008";
-    /**
-     * User agent that will be used
-     */
-    public static String userAgent = "DirBuster-" + version + " (http://www.owasp.org/index.php/Category:OWASP_DirBuster_Project)";
-    /**
-     * Default debug setting
-     */
+    /** User agent that will be used */
+    public static String userAgent =
+            "DirBuster-"
+                    + version
+                    + " (http://www.owasp.org/index.php/Category:OWASP_DirBuster_Project)";
+    /** Default debug setting */
     public static boolean debug = false;
-    /**
-     * Default setting for following redirects
-     */
+    /** Default setting for following redirects */
     public static boolean followRedirects = false;
-    /**
-     * Default setting for connection timeout, in seconds
-     */
+    /** Default setting for connection timeout, in seconds */
     public static int connectionTimeout = 30;
-    /**
-     * Default setting for connection timeout, in seconds
-     */
+    /** Default setting for connection timeout, in seconds */
     public static String failCaseString = "thereIsNoWayThat-You-CanBeThere";
+
     public static boolean parseHTML = true;
     public static boolean parseHTMLa = true;
     public static boolean parseHTMLimg = true;

@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.invoke;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -34,81 +33,79 @@ public class ExtensionInvoke extends ExtensionAdaptor {
 
     private PopupMenuInvokers popupMenuInvokers;
 
-	private OptionsInvokePanel optionsInvokePanel;
-	
-	private InvokeParam invokeParam;
-	
-	/**
-     * 
-     */
+    private OptionsInvokePanel optionsInvokePanel;
+
+    private InvokeParam invokeParam;
+
+    /** */
     public ExtensionInvoke() {
         super("ExtensionInvoke");
         this.setOrder(46);
-	}
-	
-	@Override
-	public void init() {
-	    super.init();
-	    invokeParam = new InvokeParam();
-	}
-	
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-	    super.hook(extensionHook);
-	 
-	    extensionHook.addOptionsParamSet(invokeParam);
-	    
-	    if (getView() != null) {
-	        popupMenuInvokers = new PopupMenuInvokers();
-	        
-	        @SuppressWarnings("unused")
-			ExtensionHookView pv = extensionHook.getHookView();
-	        extensionHook.getHookView().addOptionPanel(getOptionsInvokePanel());
+    }
 
-	    	extensionHook.getHookMenu().addPopupMenuItem(popupMenuInvokers);
-		    
-	    }
-	}
-	
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
-	
-	@Override
-	public void optionsLoaded() {
-		if (View.isInitialised()) {
-			List<InvokableApp> apps = invokeParam.getListInvokeEnabled();
-			popupMenuInvokers.setApps(apps);
-		}
-	}
-	
-	private AbstractParamPanel getOptionsInvokePanel() {
-		if (optionsInvokePanel == null) {
-			optionsInvokePanel = new OptionsInvokePanel(this);
-		}
-		return optionsInvokePanel;
-	}
+    @Override
+    public void init() {
+        super.init();
+        invokeParam = new InvokeParam();
+    }
 
-	protected void replaceInvokeMenus(List<InvokableApp> apps) {
-		popupMenuInvokers.setApps(apps);
-	}
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("invoke.desc");
-	}
+        extensionHook.addOptionsParamSet(invokeParam);
 
-	@Override
-	public URL getURL() {
-		try {
-			return new URL(Constant.ZAP_HOMEPAGE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
+        if (getView() != null) {
+            popupMenuInvokers = new PopupMenuInvokers();
+
+            @SuppressWarnings("unused")
+            ExtensionHookView pv = extensionHook.getHookView();
+            extensionHook.getHookView().addOptionPanel(getOptionsInvokePanel());
+
+            extensionHook.getHookMenu().addPopupMenuItem(popupMenuInvokers);
+        }
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
+
+    @Override
+    public void optionsLoaded() {
+        if (View.isInitialised()) {
+            List<InvokableApp> apps = invokeParam.getListInvokeEnabled();
+            popupMenuInvokers.setApps(apps);
+        }
+    }
+
+    private AbstractParamPanel getOptionsInvokePanel() {
+        if (optionsInvokePanel == null) {
+            optionsInvokePanel = new OptionsInvokePanel(this);
+        }
+        return optionsInvokePanel;
+    }
+
+    protected void replaceInvokeMenus(List<InvokableApp> apps) {
+        popupMenuInvokers.setApps(apps);
+    }
+
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("invoke.desc");
+    }
+
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_HOMEPAGE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 }

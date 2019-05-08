@@ -22,10 +22,9 @@ package org.zaproxy.zap.extension.websocket.fuzz;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessor;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
-/**
- * A {@code FuzzerMessageProcessor} of WebSocket messages.
- */
-public interface WebSocketFuzzerMessageProcessor extends FuzzerMessageProcessor<WebSocketMessageDTO> {
+/** A {@code FuzzerMessageProcessor} of WebSocket messages. */
+public interface WebSocketFuzzerMessageProcessor
+        extends FuzzerMessageProcessor<WebSocketMessageDTO> {
 
     /**
      * Processes the fuzzed message before being forward to the server.
@@ -35,7 +34,7 @@ public interface WebSocketFuzzerMessageProcessor extends FuzzerMessageProcessor<
      * @return the message after being processed
      * @throws ProcessingException if an error occurs while processing the message
      */
-    WebSocketMessageDTO processMessage(WebSocketFuzzerTaskProcessorUtils utils, WebSocketMessageDTO message)
+    WebSocketMessageDTO processMessage(
+            WebSocketFuzzerTaskProcessorUtils utils, WebSocketMessageDTO message)
             throws ProcessingException;
-
 }

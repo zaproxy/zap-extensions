@@ -22,86 +22,84 @@ package org.zaproxy.zap.extension.cmss;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import javax.swing.JMenuItem;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
 /*
- * An example ZAP extension which adds a top level menu item. 
- * 
+ * An example ZAP extension which adds a top level menu item.
+ *
  * This class defines the extension.
  */
 public class CMSSTopMenu extends ExtensionAdaptor {
 
     private JMenuItem menuExample = null;
     private ResourceBundle messages = null;
-   
 
-        /**
-     * 
-     */
+    /** */
     public CMSSTopMenu() {
         super("ExtensionTopMenu");
         // Load extension specific language files - these are held in the extension jar
-        messages = ResourceBundle.getBundle(
-                        this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
-        }
-        
-        @SuppressWarnings("deprecation")
-        @Override
-        public void hook(ExtensionHook extensionHook) {
-            super.hook(extensionHook);
-            
-            if (getView() != null) {
-                // Register our top menu item, as long as we're not running as a daemon
-                // Use one of the other methods to add to a different menu list
-      
-                extensionHook.getHookMenu().addToolsMenuItem(getMenuExample());
-                
-            }
+        messages =
+                ResourceBundle.getBundle(
+                        this.getClass().getPackage().getName() + ".resources.Messages",
+                        Constant.getLocale());
+    }
 
-        }
-        private JMenuItem getMenuExample() {
-       
-                menuExample = new JMenuItem();
-                menuExample.setName("Fingerprinting tools");
-                menuExample.setText("Fingerprinting tools");
+    @SuppressWarnings("deprecation")
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
 
-                menuExample.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
+        if (getView() != null) {
+            // Register our top menu item, as long as we're not running as a daemon
+            // Use one of the other methods to add to a different menu list
+
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuExample());
+        }
+    }
+
+    private JMenuItem getMenuExample() {
+
+        menuExample = new JMenuItem();
+        menuExample.setName("Fingerprinting tools");
+        menuExample.setText("Fingerprinting tools");
+
+        menuExample.addActionListener(
+                new java.awt.event.ActionListener() {
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
                         // This is where you do what you want to do.
-                        // In this case we'll just show a popup message.  
-                		CMSSThread cmssThread = new CMSSThread();
-                		cmssThread.start();            	   
-                }
-            });
-        
+                        // In this case we'll just show a popup message.
+                        CMSSThread cmssThread = new CMSSThread();
+                        cmssThread.start();
+                    }
+                });
+
         return menuExample;
     }
 
-        public String getMessageString (String key) {
-                return messages.getString(key);
-        }
-        @Override
-        public String getAuthor() {
-                return Constant.ZAP_TEAM;
-        }
+    public String getMessageString(String key) {
+        return messages.getString(key);
+    }
 
-        @Override
-        public String getDescription() {
-                return messages.getString("ext.topmenu.desc");
-        }
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
 
-        @Override
-        public URL getURL() {
-                try {
-                        return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-                } catch (MalformedURLException e) {
-                        return null;
-                }
+    @Override
+    public String getDescription() {
+        return messages.getString("ext.topmenu.desc");
+    }
+
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
+        } catch (MalformedURLException e) {
+            return null;
         }
+    }
 }

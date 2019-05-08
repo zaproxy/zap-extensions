@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.exportreport.filechooser;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 
 /*
@@ -36,9 +35,17 @@ public class FileList extends AbstractList<FileType> {
         fileList = new ArrayList<FileType>();
     }
 
-    public void add(String search, String type, String extension, String description, String htmlicon, boolean enabled) {
+    public void add(
+            String search,
+            String type,
+            String extension,
+            String description,
+            String htmlicon,
+            boolean enabled) {
 
-        FileType data = new FileType(fileList.size(), search, type, extension, description, htmlicon, enabled);
+        FileType data =
+                new FileType(
+                        fileList.size(), search, type, extension, description, htmlicon, enabled);
         if (!fileList.contains(data)) {
             fileList.add(data);
         }
@@ -51,8 +58,7 @@ public class FileList extends AbstractList<FileType> {
 
     public int getIndex(String search) {
         for (FileType obj : fileList) {
-            if (obj.getSearch().equalsIgnoreCase(search))
-                return obj.getIndex();
+            if (obj.getSearch().equalsIgnoreCase(search)) return obj.getIndex();
         }
         return -1;
     }
@@ -63,16 +69,14 @@ public class FileList extends AbstractList<FileType> {
 
     public String getType(String search) {
         for (FileType obj : fileList) {
-            if ((obj.getSearch()).equalsIgnoreCase(search))
-                return obj.getType();
+            if ((obj.getSearch()).equalsIgnoreCase(search)) return obj.getType();
         }
         return "";
     }
 
     public String getExtension(int index) {
         for (FileType obj : fileList) {
-            if (obj.getIndex() == index)
-                return obj.getExtension();
+            if (obj.getIndex() == index) return obj.getExtension();
         }
         return "";
     }
@@ -103,24 +107,21 @@ public class FileList extends AbstractList<FileType> {
 
     public String getExtension(String search) {
         for (FileType obj : fileList) {
-            if ((obj.getSearch()).equalsIgnoreCase(search))
-                return obj.getExtension();
+            if ((obj.getSearch()).equalsIgnoreCase(search)) return obj.getExtension();
         }
         return "";
     }
 
     public String getDescription(String search) {
         for (FileType obj : fileList) {
-            if ((obj.getSearch()).equalsIgnoreCase(search))
-                return obj.getDescription();
+            if ((obj.getSearch()).equalsIgnoreCase(search)) return obj.getDescription();
         }
         return "";
     }
 
     public ImageIcon getIcon(String search) {
         for (FileType obj : fileList) {
-            if ((obj.getSearch()).equalsIgnoreCase(search))
-                return obj.getIcon();
+            if ((obj.getSearch()).equalsIgnoreCase(search)) return obj.getIcon();
         }
         return null;
     }
