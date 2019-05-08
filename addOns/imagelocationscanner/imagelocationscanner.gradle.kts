@@ -19,3 +19,13 @@ dependencies {
 
     testImplementation(project(":testutils"))
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            // Ignore ILS classes.
+            exclude("**/com/veggiespam/**", "**/ImageLocationScanner.java")
+        })
+    }
+}

@@ -16,3 +16,12 @@ zapAddOn {
 dependencies {
     implementation("org.eclipse.birt.runtime:org.eclipse.birt.runtime:4.2.2")
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            exclude("**/ReportLastScan.java")
+        })
+    }
+}

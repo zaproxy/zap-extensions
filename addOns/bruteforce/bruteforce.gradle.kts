@@ -21,3 +21,12 @@ dependencies {
     testImplementation(project(":testutils"))
     testImplementation("org.simpleframework:simple:5.0.2")
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            exclude("**/main/java/com/sittinglittleduck/**/*.java")
+        })
+    }
+}

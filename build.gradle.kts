@@ -16,6 +16,12 @@ allprojects {
         kotlinGradle {
             ktlint()
         }
+
+        project.plugins.withType(JavaPlugin::class) {
+            java {
+                licenseHeaderFile("$rootDir/gradle/spotless/license.java")
+            }
+        }
     }
 
     tasks.withType<JavaCompile>().configureEach {

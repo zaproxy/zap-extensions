@@ -18,3 +18,10 @@ dependencies {
         exclude(group = "junit")
     }
 }
+
+spotless {
+    java {
+        // Don't check license nor format/style, 3rd-party add-on.
+        clearSteps()
+    }
+}

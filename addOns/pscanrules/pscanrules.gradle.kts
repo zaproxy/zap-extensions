@@ -19,3 +19,13 @@ dependencies {
     testImplementation(project(":testutils"))
     testImplementation("org.apache.commons:commons-lang3:3.7")
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            exclude("**/TestInfoPrivateAddressDisclosure.java",
+                    "**/TestInfoSessionIdURL.java")
+        })
+    }
+}

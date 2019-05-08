@@ -9,3 +9,12 @@ zapAddOn {
         author.set("Chienli Ma")
     }
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            exclude("**/ReportGenerator.java", "**/ReportLastScan.java")
+        })
+    }
+}

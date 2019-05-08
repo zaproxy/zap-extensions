@@ -12,3 +12,21 @@ zapAddOn {
         author.set("Andrea Pompili (Yhawke)")
     }
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            exclude(
+                "**/DBMSHelper.java",
+                "**/SQLiBoundary.java",
+                "**/SQLInjectionPlugin.java",
+                "**/SQLiPayloadManager.java",
+                "**/SQLiTest.java",
+                "**/SQLiTestDetails.java",
+                "**/SQLiTestRequest.java",
+                "**/SQLiTestResponse.java",
+                "**/SQLiUnionEngine.java")
+        })
+    }
+}

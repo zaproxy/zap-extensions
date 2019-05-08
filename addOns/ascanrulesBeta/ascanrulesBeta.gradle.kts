@@ -17,3 +17,12 @@ dependencies {
     testImplementation(project(":testutils"))
     testImplementation("org.apache.commons:commons-lang3:3.5")
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            exclude("**/IntegerOverflow.java")
+        })
+    }
+}
