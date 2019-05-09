@@ -3,11 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2015 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,13 +21,11 @@ package org.zaproxy.zap.extension.websocket.fuzz.ui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
@@ -44,7 +44,8 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
 
     private static final Logger logger = Logger.getLogger(WebSocketFuzzResultsContentPanel.class);
 
-    private static final WebSocketFuzzMessagesViewModel EMPTY_RESULTS_MODEL = new WebSocketFuzzMessagesViewModel(-1, null);
+    private static final WebSocketFuzzMessagesViewModel EMPTY_RESULTS_MODEL =
+            new WebSocketFuzzMessagesViewModel(-1, null);
 
     private JToolBar toolbar;
     private JLabel messageCountLabel;
@@ -67,10 +68,14 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
 
-        messageCountLabel = new JLabel(Constant.messages.getString("websocket.fuzzer.results.toolbar.messagesSent"));
+        messageCountLabel =
+                new JLabel(
+                        Constant.messages.getString(
+                                "websocket.fuzzer.results.toolbar.messagesSent"));
         messageCountValueLabel = new JLabel("0");
 
-        errorCountLabel = new JLabel(Constant.messages.getString("websocket.fuzzer.results.toolbar.errors"));
+        errorCountLabel =
+                new JLabel(Constant.messages.getString("websocket.fuzzer.results.toolbar.errors"));
         errorCountValueLabel = new JLabel("0");
 
         toolbar.add(Box.createHorizontalStrut(4));
@@ -86,18 +91,21 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
         mainPanel = new JPanel(new BorderLayout());
 
         fuzzResultTable = new WebSocketFuzzMessagesView(EMPTY_RESULTS_MODEL);
-        fuzzResultTable.setDisplayPanel(View.getSingleton().getRequestPanel(), View.getSingleton().getResponsePanel());
+        fuzzResultTable.setDisplayPanel(
+                View.getSingleton().getRequestPanel(), View.getSingleton().getResponsePanel());
 
         fuzzResultTableScrollPane = new JScrollPane();
         fuzzResultTableScrollPane.setViewportView(fuzzResultTable.getViewComponent());
-        fuzzResultTableScrollPane.getVerticalScrollBar().addAdjustmentListener(new StickyScrollbarAdjustmentListener());
+        fuzzResultTableScrollPane
+                .getVerticalScrollBar()
+                .addAdjustmentListener(new StickyScrollbarAdjustmentListener());
 
         mainPanel.add(fuzzResultTableScrollPane);
 
         add(toolbar, BorderLayout.PAGE_START);
         add(mainPanel, BorderLayout.CENTER);
     }
-    
+
     @Override
     public JPanel getPanel() {
         return this;
@@ -107,13 +115,14 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
     public void clear() {
         if (!EventQueue.isDispatchThread()) {
             try {
-                EventQueue.invokeAndWait(new Runnable() {
+                EventQueue.invokeAndWait(
+                        new Runnable() {
 
-                    @Override
-                    public void run() {
-                        clear();
-                    }
-                });
+                            @Override
+                            public void run() {
+                                clear();
+                            }
+                        });
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -164,6 +173,5 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
         public void errorFound(int total) {
             errorCountValueLabel.setText(Integer.toString(total));
         }
-
     }
 }

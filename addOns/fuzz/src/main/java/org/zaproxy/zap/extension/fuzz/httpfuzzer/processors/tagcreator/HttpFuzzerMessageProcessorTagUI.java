@@ -21,8 +21,8 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator;
 
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUI;
 
-public class HttpFuzzerMessageProcessorTagUI implements
-        HttpFuzzerMessageProcessorUI<HttpFuzzerMessageProcessorTagCreator> {
+public class HttpFuzzerMessageProcessorTagUI
+        implements HttpFuzzerMessageProcessorUI<HttpFuzzerMessageProcessorTagCreator> {
 
     private static final String NAME = HttpFuzzerMessageProcessorTagCreator.NAME;
     private static final String DESCRIPTION = HttpFuzzerMessageProcessorTagCreator.DESCRIPTION;
@@ -44,7 +44,7 @@ public class HttpFuzzerMessageProcessorTagUI implements
     @Override
     public String getName() {
         String ruleName = tagRule.getName();
-        if(ruleName != null){
+        if (ruleName != null) {
             return NAME + ": " + ruleName;
         }
         return NAME;

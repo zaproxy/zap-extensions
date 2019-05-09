@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2018 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
@@ -58,12 +62,6 @@ import org.zaproxy.zap.extension.websocket.utility.WebSocketUtils;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.utils.ApiUtils;
-
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 public class WebSocketAPI extends ApiImplementor {
 
@@ -95,9 +93,7 @@ public class WebSocketAPI extends ApiImplementor {
 
     private String callbackUrl;
 
-    /**
-     * Provided only for API client generator usage.
-     */
+    /** Provided only for API client generator usage. */
     public WebSocketAPI() {
         this(null);
     }
@@ -106,22 +102,28 @@ public class WebSocketAPI extends ApiImplementor {
         this.extension = extension;
 
         this.addApiView(new ApiView(VIEW_CHANNELS));
-        this.addApiView(new ApiView(VIEW_MESSAGE, new String[] { PARAM_CHANNEL_ID, PARAM_MESSAGE_ID }));
+        this.addApiView(
+                new ApiView(VIEW_MESSAGE, new String[] {PARAM_CHANNEL_ID, PARAM_MESSAGE_ID}));
         this.addApiView(
                 new ApiView(
                         VIEW_MESSAGES,
                         null,
-                        new String[] { PARAM_CHANNEL_ID, PARAM_START, PARAM_COUNT, PARAM_PAYLOAD_PREVIEW_LENGTH }));
+                        new String[] {
+                            PARAM_CHANNEL_ID, PARAM_START, PARAM_COUNT, PARAM_PAYLOAD_PREVIEW_LENGTH
+                        }));
         this.addApiView(new ApiView(VIEW_BREAK_TEXT_MESSAGE));
 
         this.addApiAction(
-                new ApiAction(ACTION_SEND_TEXT_MESSAGE, new String[] { PARAM_CHANNEL_ID, PARAM_OUTGOING, PARAM_MESSAGE }));
+                new ApiAction(
+                        ACTION_SEND_TEXT_MESSAGE,
+                        new String[] {PARAM_CHANNEL_ID, PARAM_OUTGOING, PARAM_MESSAGE}));
 
         this.addApiAction(
-                new ApiAction(ACTION_SET_BREAK_TEXT_MESSAGE, new String[] { PARAM_MESSAGE, PARAM_OUTGOING }));
-        
-        callbackUrl = API.getInstance().getCallBackUrl(this, API_URL);
+                new ApiAction(
+                        ACTION_SET_BREAK_TEXT_MESSAGE,
+                        new String[] {PARAM_MESSAGE, PARAM_OUTGOING}));
 
+        callbackUrl = API.getInstance().getCallBackUrl(this, API_URL);
     }
 
     public String getCallbackUrl(boolean wss) {
@@ -149,164 +151,188 @@ public class WebSocketAPI extends ApiImplementor {
 
             if (connectionHeader != null && connectionHeader.toLowerCase().contains("upgrade")) {
                 if (upgradeHeader != null && upgradeHeader.equalsIgnoreCase("websocket")) {
-                    // Check Origin in case the randomly generated callback URL is accidentally leaked.
+                    // Check Origin in case the randomly generated callback URL is accidentally
+                    // leaked.
                     String origin = msg.getRequestHeader().getHeader("Origin");
                     if (!API_URL.equals(origin)) {
-                        LOG.warn("Rejecting WebSocket connection, the Origin [" + origin + "] did not match [" + API_URL + "]");
+                        LOG.warn(
+                                "Rejecting WebSocket connection, the Origin ["
+                                        + origin
+                                        + "] did not match ["
+                                        + API_URL
+                                        + "]");
                         msg.setResponseHeader("HTTP/1.1 403 Forbidden");
                         return "";
                     }
                     // Respond to handshake
-                    msg.setResponseHeader(API.getDefaultResponseHeader("101 Switching Protocols", null, 0));
+                    msg.setResponseHeader(
+                            API.getDefaultResponseHeader("101 Switching Protocols", null, 0));
                     msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
                     msg.getResponseHeader().setHeader(HttpHeader.CONNECTION, "Upgrade");
                     msg.getResponseHeader().setHeader("Upgrade", "websocket");
 
                     String secWebSocketKey = msg.getRequestHeader().getHeader("Sec-WebSocket-Key");
                     msg.getResponseHeader()
-                            .setHeader("Sec-WebSocket-Accept", WebSocketUtils.encodeWebSocketKey(secWebSocketKey));
+                            .setHeader(
+                                    "Sec-WebSocket-Accept",
+                                    WebSocketUtils.encodeWebSocketKey(secWebSocketKey));
                 }
             }
             return "";
         } catch (Exception e) {
-            throw new ApiException(ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
+            throw new ApiException(
+                    ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
         }
     }
 
     protected WebSocketObserver getWebSocketObserver() {
         if (observer == null) {
-            observer = new WebSocketObserver() {
+            observer =
+                    new WebSocketObserver() {
 
-                @Override
-                public int getObservingOrder() {
-                    // We want this to be after all of the built in observers
-                    return 1000;
-                }
+                        @Override
+                        public int getObservingOrder() {
+                            // We want this to be after all of the built in observers
+                            return 1000;
+                        }
 
-                @Override
-                public boolean onMessageFrame(int channelId, WebSocketMessage message) {
-                    WebSocketProxy proxy = extension.getWebSocketProxy(channelId);
-                    if (proxy == null || ! proxy.isAllowAPI()) {
-                        // Shouldnt happen, but just to be safe
-                        return false;
-                    }
-                    JSONObject json = null;
-                    try {
-                        if (WebSocketMessage.isControl(message.opcode) || ! message.isFinished) {
+                        @Override
+                        public boolean onMessageFrame(int channelId, WebSocketMessage message) {
+                            WebSocketProxy proxy = extension.getWebSocketProxy(channelId);
+                            if (proxy == null || !proxy.isAllowAPI()) {
+                                // Shouldnt happen, but just to be safe
+                                return false;
+                            }
+                            JSONObject json = null;
+                            try {
+                                if (WebSocketMessage.isControl(message.opcode)
+                                        || !message.isFinished) {
+                                    return false;
+                                }
+                                json = JSONObject.fromObject(message.getReadablePayload());
+                                String component = json.getString("component");
+                                String name = json.getString("name");
+                                JSONObject params = null;
+                                if (json.has("params")) {
+                                    params = json.getJSONObject("params");
+                                }
+                                JSON response = null;
+
+                                if ("event".equals(component)) {
+                                    // Special case
+                                    String type = json.getString("type");
+                                    if ("register".equals(type)) {
+                                        WebsocketEventConsumer ev = getEventConsumer(channelId);
+                                        ev.addPublisherName(name);
+                                        ZAP.getEventBus().registerConsumer(ev, name);
+                                    } else if ("unregister".equals(type)) {
+                                        WebsocketEventConsumer ev = getEventConsumer(channelId);
+                                        ev.removePublisherName(name);
+                                        ZAP.getEventBus().unregisterConsumer(ev, name);
+                                    } else {
+                                        throw new ApiException(ApiException.Type.BAD_TYPE, type);
+                                    }
+                                } else {
+                                    ApiImplementor impl =
+                                            API.getInstance().getImplementors().get(component);
+                                    if (impl == null) {
+                                        throw new ApiException(ApiException.Type.NO_IMPLEMENTOR);
+                                    }
+                                    RequestType reqType =
+                                            RequestType.valueOf(json.getString("type"));
+                                    ApiResponse apiResp;
+
+                                    switch (reqType) {
+                                        case action:
+                                            apiResp = impl.handleApiOptionAction(name, params);
+                                            if (apiResp == null) {
+                                                apiResp = impl.handleApiAction(name, params);
+                                            }
+                                            response = apiResp.toJSON();
+                                            break;
+                                        case view:
+                                            apiResp = impl.handleApiOptionView(name, params);
+                                            if (apiResp == null) {
+                                                apiResp = impl.handleApiView(name, params);
+                                            }
+                                            response = apiResp.toJSON();
+                                            break;
+                                        case other:
+                                            HttpMessage msg = new HttpMessage();
+                                            msg = impl.handleApiOther(msg, name, params);
+                                            apiResp =
+                                                    new ApiResponseElement(
+                                                            "response",
+                                                            msg.getResponseBody().toString());
+                                            response = apiResp.toJSON();
+                                            break;
+                                        case pconn:
+                                            // Not currently supported
+                                            throw new ApiException(
+                                                    ApiException.Type.BAD_TYPE, reqType.name());
+                                    }
+                                }
+                                if (response != null) {
+                                    optionalResponse(proxy, response, json);
+                                }
+                            } catch (JSONException e) {
+                                LOG.warn(e.getMessage(), e);
+                                try {
+                                    ApiException e2 =
+                                            new ApiException(
+                                                    ApiException.Type.ILLEGAL_PARAMETER,
+                                                    e.getMessage());
+                                    optionalResponse(proxy, e2, json);
+                                } catch (IOException e1) {
+                                    LOG.error(e.getMessage(), e);
+                                }
+                            } catch (ApiException e) {
+                                try {
+                                    optionalResponse(proxy, e, json);
+                                } catch (IOException e1) {
+                                    LOG.error(e.getMessage(), e);
+                                }
+                            } catch (Exception e) {
+                                LOG.error(e.getMessage(), e);
+                            }
                             return false;
                         }
-                        json = JSONObject.fromObject(message.getReadablePayload());
-                        String component = json.getString("component");
-                        String name = json.getString("name");
-                        JSONObject params = null;
-                        if (json.has("params")) {
-                            params = json.getJSONObject("params");
-                        }
-                        JSON response = null;
 
-                        if ("event".equals(component)) {
-                            // Special case
-                            String type = json.getString("type");
-                            if ("register".equals(type)) {
-                                WebsocketEventConsumer ev = getEventConsumer(channelId);
-                                ev.addPublisherName(name);
-                                ZAP.getEventBus().registerConsumer(ev, name);
-                            } else if ("unregister".equals(type)) {
-                                WebsocketEventConsumer ev = getEventConsumer(channelId);
-                                ev.removePublisherName(name);
-                                ZAP.getEventBus().unregisterConsumer(ev, name);
-                            } else {
-                                throw new ApiException(ApiException.Type.BAD_TYPE, type);
+                        @Override
+                        public void onStateChange(State state, WebSocketProxy proxy) {
+                            if (state != State.CLOSED) {
+                                return;
                             }
-                        } else {
-                            ApiImplementor impl = API.getInstance().getImplementors().get(component);
-                            if (impl == null) {
-                                throw new ApiException(ApiException.Type.NO_IMPLEMENTOR);
-                            }
-                            RequestType reqType = RequestType.valueOf(json.getString("type"));
-                            ApiResponse apiResp;
 
-                            switch (reqType) {
-                            case action:
-                                apiResp = impl.handleApiOptionAction(name, params);
-                                if (apiResp == null) {
-                                    apiResp = impl.handleApiAction(name, params);
-                                }
-                                response = apiResp.toJSON();
-                                break;
-                            case view:
-                                apiResp = impl.handleApiOptionView(name, params);
-                                if (apiResp == null) {
-                                    apiResp = impl.handleApiView(name, params);
-                                }
-                                response = apiResp.toJSON();
-                                break;
-                            case other:
-                                HttpMessage msg = new HttpMessage();
-                                msg = impl.handleApiOther(msg, name, params);
-                                apiResp = new ApiResponseElement("response", msg.getResponseBody().toString());
-                                response = apiResp.toJSON();
-                                break;
-                            case pconn:
-                                // Not currently supported
-                                throw new ApiException(ApiException.Type.BAD_TYPE, reqType.name());
-                            }
+                            removeEventConsumer(evMap.remove(proxy.getChannelId()));
                         }
-                        if (response != null) {
-                            optionalResponse(proxy, response, json);
-                        }
-                    } catch (JSONException e) {
-                        LOG.warn(e.getMessage(), e);
-                        try {
-                            ApiException e2 = new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
-                            optionalResponse(proxy, e2, json);
-                        } catch (IOException e1) {
-                            LOG.error(e.getMessage(), e);
-                        }
-                    } catch (ApiException e) {
-                        try {
-                            optionalResponse(proxy, e, json);
-                        } catch (IOException e1) {
-                            LOG.error(e.getMessage(), e);
-                        }
-                    } catch (Exception e) {
-                        LOG.error(e.getMessage(), e);
-                    }
-                    return false;
-                }
-
-                @Override
-                public void onStateChange(State state, WebSocketProxy proxy) {
-                    if (state != State.CLOSED) {
-                        return;
-                    }
-
-                    removeEventConsumer(evMap.remove(proxy.getChannelId()));
-                }
-            };
-
+                    };
         }
         return observer;
     }
-    
-    private void optionalResponse(WebSocketProxy proxy, JSON response, JSONObject request) throws IOException {
+
+    private void optionalResponse(WebSocketProxy proxy, JSON response, JSONObject request)
+            throws IOException {
         if (request != null) {
             String id = request.optString("id", "");
             if (id.length() > 0) {
                 // Only send a response if they've specified an id in the call
-                sendWebSocketMessage(proxy, responseWrapper(response, id, request.optString("caller", "")));
+                sendWebSocketMessage(
+                        proxy, responseWrapper(response, id, request.optString("caller", "")));
             }
         }
     }
 
-    private void optionalResponse(WebSocketProxy proxy, ApiException ex, JSONObject request) throws IOException {
+    private void optionalResponse(WebSocketProxy proxy, ApiException ex, JSONObject request)
+            throws IOException {
         // Not ideal, but atm the core does not expose the exception in JSON format
         optionalResponse(proxy, JSONObject.fromObject(ex.toString(Format.JSON, true)), request);
     }
 
     private String responseWrapper(JSON response, String id, String caller) {
         // OK, so its nasty wrapping JSON using strings, but the net.sf.json classes do way too much
-        // auto conversion from strings that are valid JSON to JSON objects - this has proved to be the safest option.
+        // auto conversion from strings that are valid JSON to JSON objects - this has proved to be
+        // the safest option.
         StringBuilder sb = new StringBuilder();
         sb.append("{ \"id\": \"");
         sb.append(id);
@@ -337,7 +363,8 @@ public class WebSocketAPI extends ApiImplementor {
         }
     }
 
-    private boolean sendWebSocketMessage(int channelId, boolean outgoing, String message) throws IOException {
+    private boolean sendWebSocketMessage(int channelId, boolean outgoing, String message)
+            throws IOException {
         WebSocketProxy proxy = extension.getWebSocketProxy(channelId);
         if (proxy != null) {
             return sendWebSocketMessage(proxy, outgoing, message);
@@ -349,7 +376,8 @@ public class WebSocketAPI extends ApiImplementor {
         return this.sendWebSocketMessage(proxy, false, message);
     }
 
-    private boolean sendWebSocketMessage(WebSocketProxy proxy, boolean outgoing, String message) throws IOException {
+    private boolean sendWebSocketMessage(WebSocketProxy proxy, boolean outgoing, String message)
+            throws IOException {
         WebSocketMessageDTO resp = new WebSocketMessageDTO();
         resp.channel = proxy.getDTO();
         resp.payload = message;
@@ -367,7 +395,8 @@ public class WebSocketAPI extends ApiImplementor {
         return sent;
     }
 
-    private Map<Integer, WebsocketEventConsumer> evMap = Collections.synchronizedMap(new HashMap<>());
+    private Map<Integer, WebsocketEventConsumer> evMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     private WebsocketEventConsumer getEventConsumer(int channelId) {
         return evMap.computeIfAbsent(channelId, key -> new WebsocketEventConsumer(key));
@@ -380,7 +409,8 @@ public class WebSocketAPI extends ApiImplementor {
         if (VIEW_CHANNELS.equals(name)) {
             ApiResponseList resultList = new ApiResponseList(name);
             try {
-                List<WebSocketChannelDTO> channels = extension.getChannels(new WebSocketChannelDTO());
+                List<WebSocketChannelDTO> channels =
+                        extension.getChannels(new WebSocketChannelDTO());
                 for (WebSocketChannelDTO channel : channels) {
                     Map<String, String> map = new HashMap<String, String>();
                     map.put("id", Integer.toString(channel.id));
@@ -390,7 +420,9 @@ public class WebSocketAPI extends ApiImplementor {
                     map.put("contextUrl", channel.getContextUrl());
                     map.put("fullUrl", channel.getFullUri());
                     if (channel.getHandshakeReference() != null) {
-                        map.put("handshakeHistoryId", Integer.toString(channel.getHandshakeReference().getHistoryId()));
+                        map.put(
+                                "handshakeHistoryId",
+                                Integer.toString(channel.getHandshakeReference().getHistoryId()));
                     }
                     resultList.addItem(new ApiResponseSet<String>("channel", map));
                 }
@@ -401,9 +433,10 @@ public class WebSocketAPI extends ApiImplementor {
             }
         } else if (VIEW_MESSAGE.equals(name)) {
             try {
-                WebSocketMessageDTO message = extension.getWebsocketMessage(
-                        ApiUtils.getIntParam(params, PARAM_MESSAGE_ID), 
-                        ApiUtils.getIntParam(params, PARAM_CHANNEL_ID));
+                WebSocketMessageDTO message =
+                        extension.getWebsocketMessage(
+                                ApiUtils.getIntParam(params, PARAM_MESSAGE_ID),
+                                ApiUtils.getIntParam(params, PARAM_CHANNEL_ID));
                 result = wsMessageToResult(message, true);
             } catch (DatabaseException e) {
                 LOG.error(e.getMessage(), e);
@@ -418,7 +451,8 @@ public class WebSocketAPI extends ApiImplementor {
                 WebSocketMessagesPayloadFilter webSocketMessagesPayloadFilter = null;
                 int offset = this.getParam(params, PARAM_START, 0);
                 int limit = this.getParam(params, PARAM_COUNT, 0);
-                int payloadPreviewLength = this.getParam(params, PARAM_PAYLOAD_PREVIEW_LENGTH, 1024);
+                int payloadPreviewLength =
+                        this.getParam(params, PARAM_PAYLOAD_PREVIEW_LENGTH, 1024);
                 if (offset < 0) {
                     throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_START);
                 }
@@ -428,8 +462,15 @@ public class WebSocketAPI extends ApiImplementor {
                     inScopeChannelIds.add(params.getInt(PARAM_CHANNEL_ID));
                 }
 
-                List<WebSocketMessageDTO> messages = extension
-                        .getWebsocketMessages(criteria, opcodes, inScopeChannelIds, webSocketMessagesPayloadFilter, offset, limit, payloadPreviewLength);
+                List<WebSocketMessageDTO> messages =
+                        extension.getWebsocketMessages(
+                                criteria,
+                                opcodes,
+                                inScopeChannelIds,
+                                webSocketMessagesPayloadFilter,
+                                offset,
+                                limit,
+                                payloadPreviewLength);
                 for (WebSocketMessageDTO message : messages) {
                     resultList.addItem(wsMessageToResult(message, false));
                 }
@@ -439,21 +480,25 @@ public class WebSocketAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.INTERNAL_ERROR);
             }
         } else if (VIEW_BREAK_TEXT_MESSAGE.equals(name)) {
-            ExtensionBreak extBreak = Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
+            ExtensionBreak extBreak =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
             if (extBreak == null) {
-                throw new ApiException(ApiException.Type.INTERNAL_ERROR, "ExtensionBreak not present");
+                throw new ApiException(
+                        ApiException.Type.INTERNAL_ERROR, "ExtensionBreak not present");
             }
             Message msg = extBreak.getBreakpointManagementInterface().getMessage();
 
             if (msg == null) {
-                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, 
-                        "No currently intercepted message");
+                throw new ApiException(
+                        ApiException.Type.ILLEGAL_PARAMETER, "No currently intercepted message");
             } else if (msg instanceof WebSocketMessageDTO) {
-                WebSocketMessageDTO ws = (WebSocketMessageDTO)msg;
+                WebSocketMessageDTO ws = (WebSocketMessageDTO) msg;
                 result = new ApiResponseElement(PARAM_MESSAGE, ws.getPayloadAsString());
             } else {
-                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, 
-                        "Intercepted message is not of the right type " + msg.getClass().getCanonicalName());
+                throw new ApiException(
+                        ApiException.Type.ILLEGAL_PARAMETER,
+                        "Intercepted message is not of the right type "
+                                + msg.getClass().getCanonicalName());
             }
         } else {
             throw new ApiException(ApiException.Type.BAD_VIEW);
@@ -462,52 +507,63 @@ public class WebSocketAPI extends ApiImplementor {
         return result;
     }
 
-    private ApiResponseSet<String> wsMessageToResult(WebSocketMessageDTO message, boolean fullPayload) {
+    private ApiResponseSet<String> wsMessageToResult(
+            WebSocketMessageDTO message, boolean fullPayload) {
         return new ApiResponseSet<String>("message", message.toMap(fullPayload));
     }
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         switch (name) {
-        case ACTION_SEND_TEXT_MESSAGE:
-            try {
-                int channelId = params.getInt(PARAM_CHANNEL_ID);
-                WebSocketProxy proxy = extension.getWebSocketProxy(channelId);
-                if (proxy != null) {
-                    this.sendWebSocketMessage(
-                            proxy,
-                            params.getBoolean(PARAM_OUTGOING),
-                            params.getString(PARAM_MESSAGE));
-                } else {
-                    throw new ApiException(ApiException.Type.DOES_NOT_EXIST, "channelId: " + channelId);
+            case ACTION_SEND_TEXT_MESSAGE:
+                try {
+                    int channelId = params.getInt(PARAM_CHANNEL_ID);
+                    WebSocketProxy proxy = extension.getWebSocketProxy(channelId);
+                    if (proxy != null) {
+                        this.sendWebSocketMessage(
+                                proxy,
+                                params.getBoolean(PARAM_OUTGOING),
+                                params.getString(PARAM_MESSAGE));
+                    } else {
+                        throw new ApiException(
+                                ApiException.Type.DOES_NOT_EXIST, "channelId: " + channelId);
+                    }
+                } catch (IOException e) {
+                    LOG.warn(e.getMessage(), e);
+                    throw new ApiException(ApiException.Type.INTERNAL_ERROR, e.getMessage());
                 }
-            } catch (IOException e) {
-                LOG.warn(e.getMessage(), e);
-                throw new ApiException(ApiException.Type.INTERNAL_ERROR, e.getMessage());
-            }
-            break;
-            
-        case ACTION_SET_BREAK_TEXT_MESSAGE:
-            ExtensionBreak extBreak = Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
-            if (extBreak == null) {
-                throw new ApiException(ApiException.Type.INTERNAL_ERROR, "ExtensionBreak not present");
-            }
-            Message msg = extBreak.getBreakpointManagementInterface().getMessage();
+                break;
 
-            if (msg == null) {
-                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, "No currently intercepted message");
-            } else if (msg instanceof WebSocketMessageDTO) {
-                WebSocketMessageDTO ws = (WebSocketMessageDTO)msg;
-                ws.payload = params.optString(PARAM_MESSAGE, "");
-                extBreak.getBreakpointManagementInterface().setMessage(ws, params.getBoolean(PARAM_OUTGOING));
-            } else {
-                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, 
-                        "Intercepted message is not of the right type " + msg.getClass().getCanonicalName());
-            }
-            break;
-            
-        default:
-            throw new ApiException(ApiException.Type.BAD_ACTION);
+            case ACTION_SET_BREAK_TEXT_MESSAGE:
+                ExtensionBreak extBreak =
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionBreak.class);
+                if (extBreak == null) {
+                    throw new ApiException(
+                            ApiException.Type.INTERNAL_ERROR, "ExtensionBreak not present");
+                }
+                Message msg = extBreak.getBreakpointManagementInterface().getMessage();
+
+                if (msg == null) {
+                    throw new ApiException(
+                            ApiException.Type.ILLEGAL_PARAMETER,
+                            "No currently intercepted message");
+                } else if (msg instanceof WebSocketMessageDTO) {
+                    WebSocketMessageDTO ws = (WebSocketMessageDTO) msg;
+                    ws.payload = params.optString(PARAM_MESSAGE, "");
+                    extBreak.getBreakpointManagementInterface()
+                            .setMessage(ws, params.getBoolean(PARAM_OUTGOING));
+                } else {
+                    throw new ApiException(
+                            ApiException.Type.ILLEGAL_PARAMETER,
+                            "Intercepted message is not of the right type "
+                                    + msg.getClass().getCanonicalName());
+                }
+                break;
+
+            default:
+                throw new ApiException(ApiException.Type.BAD_ACTION);
         }
 
         return ApiResponseElement.OK;
@@ -563,10 +619,10 @@ public class WebSocketAPI extends ApiImplementor {
                 jsonTarget.put("target.maxDepth", target.getMaxDepth());
                 json.put("event.target", jsonTarget);
             }
-            
+
             if (ev.getParameters() != null) {
                 // Can't use json.putAll as that performs auto json conversion, which we dont want
-                for ( Entry<String, String> entry : ev.getParameters().entrySet()) {
+                for (Entry<String, String> entry : ev.getParameters().entrySet()) {
                     try {
                         JSONSerializer.toJSON(entry.getValue());
                         // Its valid JSON so escape

@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP development team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,9 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
-
+import java.util.ResourceBundle;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -79,34 +78,35 @@ import org.zaproxy.zap.utils.I18N;
 
 /**
  * Class with utility/helper methods for general tests.
- * <p>
- * Among other helper methods it allows to {@link #setUpZap() set up ZAP} and provides a {@link #nano HTTP test server}.
+ *
+ * <p>Among other helper methods it allows to {@link #setUpZap() set up ZAP} and provides a {@link
+ * #nano HTTP test server}.
  */
 @RunWith(MockitoJUnitRunner.class)
 public abstract class TestUtils {
 
     /**
      * A temporary directory where ZAP home/installation dirs are created.
-     * <p>
-     * Can be used for other temporary files/dirs.
+     *
+     * <p>Can be used for other temporary files/dirs.
      */
-    @ClassRule
-    public static TemporaryFolder tempDir = new TemporaryFolder();
+    @ClassRule public static TemporaryFolder tempDir = new TemporaryFolder();
+
     private static String zapInstallDir;
     private static String zapHomeDir;
 
     /**
      * The resource bundle of the extension under test.
-     * <p>
-     * Lazily initialised, in {@link #mockMessages(Extension)}.
+     *
+     * <p>Lazily initialised, in {@link #mockMessages(Extension)}.
      */
     private static ResourceBundle extensionResourceBundle;
 
     /**
      * A HTTP test server.
-     * <p>
-     * The server is {@code null} if not started.
-     * 
+     *
+     * <p>The server is {@code null} if not started.
+     *
      * @see #startServer()
      */
     protected HTTPDTestServer nano;
@@ -119,15 +119,16 @@ public abstract class TestUtils {
         Path xmlDir = Files.createDirectory(installDir.toPath().resolve("xml"));
         Files.createFile(xmlDir.resolve("log4j.properties"));
         Path configXmlPath = Files.createFile(xmlDir.resolve("config.xml"));
-        Files.write(configXmlPath, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><config></config>".getBytes(StandardCharsets.UTF_8));
+        Files.write(
+                configXmlPath,
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><config></config>"
+                        .getBytes(StandardCharsets.UTF_8));
 
         zapInstallDir = installDir.getAbsolutePath();
         zapHomeDir = tempDir.newFolder("home").getAbsolutePath();
     }
 
-    /**
-     * Sets up the log to ease debugging.
-     */
+    /** Sets up the log to ease debugging. */
     protected void setUpLog() {
         // Useful if you need to get some info when debugging
         BasicConfigurator.configure();
@@ -139,8 +140,8 @@ public abstract class TestUtils {
     }
 
     /**
-     * Sets up ZAP, by initialising the home/installation dirs and core classes (for example, {@link Constant}, {@link Control},
-     * {@link Model}).
+     * Sets up ZAP, by initialising the home/installation dirs and core classes (for example, {@link
+     * Constant}, {@link Control}, {@link Model}).
      *
      * @throws Exception if an error occurred while setting up the dirs or core classes.
      * @see #setUpMessages()
@@ -151,10 +152,10 @@ public abstract class TestUtils {
 
         File langDir = new File(Constant.getZapInstall(), "lang");
         ClassLoaderUtil.addFile(langDir.getAbsolutePath());
-        
+
         ExtensionLoader extLoader = Mockito.mock(ExtensionLoader.class);
         Control control = Mockito.mock(Control.class);
-        Mockito.when (control.getExtensionLoader()).thenReturn(extLoader);
+        Mockito.when(control.getExtensionLoader()).thenReturn(extLoader);
 
         // Init all the things
         Constant.getInstance();
@@ -165,9 +166,10 @@ public abstract class TestUtils {
 
     /**
      * Starts the HTTP test server with a random port.
-     * <p>
-     * The port can be obtained with the method {@link HTTPDTestServer#getListeningPort()} from the {@link #nano test server}.
-     * 
+     *
+     * <p>The port can be obtained with the method {@link HTTPDTestServer#getListeningPort()} from
+     * the {@link #nano test server}.
+     *
      * @throws IOException if an error occurred while starting the server.
      * @see #stopServer()
      */
@@ -177,10 +179,10 @@ public abstract class TestUtils {
 
     /**
      * Starts the HTTP test server with the specified port.
-     * <p>
-     * It's recommended to use {@link #startServer()} instead, using a fixed port might lead to random failures when the port is
-     * already in use.
-     * 
+     *
+     * <p>It's recommended to use {@link #startServer()} instead, using a fixed port might lead to
+     * random failures when the port is already in use.
+     *
      * @param port the port to listen to.
      * @throws IOException if an error occurred while starting the server.
      * @see #stopServer()
@@ -211,12 +213,12 @@ public abstract class TestUtils {
     }
 
     /**
-     * Called when {@link #setUpZap() setting up ZAP} to initialise the {@link Constant#messages messages}.
+     * Called when {@link #setUpZap() setting up ZAP} to initialise the {@link Constant#messages
+     * messages}.
      *
      * @see #mockMessages(Extension)
      */
-    protected void setUpMessages() {
-    }
+    protected void setUpMessages() {}
 
     /**
      * Deletes the ZAP's home directory.
@@ -233,38 +235,42 @@ public abstract class TestUtils {
             return;
         }
 
-        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(
+                dir,
+                new SimpleFileVisitor<Path>() {
 
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                            throws IOException {
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
 
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
-                if (e != null) {
-                    throw e;
-                }
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-        });
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException e)
+                            throws IOException {
+                        if (e != null) {
+                            throw e;
+                        }
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
     }
 
     /**
      * Creates a (GET) HTTP message with the given path, for the {@link #nano test server}.
-     * <p>
-     * The response contains empty HTML tags, {@code <html></html>}.
+     *
+     * <p>The response contains empty HTML tags, {@code <html></html>}.
      *
      * @param path the path component of the request-target, for example, {@code /dir/file.txt}.
      * @return the HTTP message, never {@code null}.
-     * @throws IllegalStateException if the server was not {@link #startServer() started} prior calling this method.
+     * @throws IllegalStateException if the server was not {@link #startServer() started} prior
+     *     calling this method.
      * @throws HttpMalformedHeaderException if an error occurred while creating the HTTP message.
      */
     protected HttpMessage getHttpMessage(String path) throws HttpMalformedHeaderException {
         return this.getHttpMessage("GET", path, "<html></html>");
-        
     }
 
     /**
@@ -274,10 +280,12 @@ public abstract class TestUtils {
      * @param path the path component of the request-target, for example, {@code /dir/file.txt}.
      * @param responseBody the body of the response.
      * @return the HTTP message, never {@code null}.
-     * @throws IllegalStateException if the server was not {@link #startServer() started} prior calling this method.
+     * @throws IllegalStateException if the server was not {@link #startServer() started} prior
+     *     calling this method.
      * @throws HttpMalformedHeaderException if an error occurred while creating the HTTP message.
      */
-    protected HttpMessage getHttpMessage(String method, String path, String responseBody) throws HttpMalformedHeaderException {
+    protected HttpMessage getHttpMessage(String method, String path, String responseBody)
+            throws HttpMalformedHeaderException {
         if (nano == null) {
             throw new IllegalStateException("The HTTP test server was not started.");
         }
@@ -286,7 +294,7 @@ public abstract class TestUtils {
         StringBuilder reqHeaderSB = new StringBuilder();
         reqHeaderSB.append(method);
         reqHeaderSB.append(" http://localhost:");
-        reqHeaderSB.append(nano.getListeningPort()); 
+        reqHeaderSB.append(nano.getListeningPort());
         reqHeaderSB.append(path);
         reqHeaderSB.append(" HTTP/1.1\r\n");
         reqHeaderSB.append("Host: localhost:").append(nano.getListeningPort()).append("\r\n");
@@ -295,7 +303,7 @@ public abstract class TestUtils {
         msg.setRequestHeader(reqHeaderSB.toString());
 
         msg.setResponseBody(responseBody);
-        
+
         StringBuilder respHeaderSB = new StringBuilder();
         respHeaderSB.append("HTTP/1.1 200 OK\r\n");
         respHeaderSB.append("Server: Apache-Coyote/1.1\r\n");
@@ -316,7 +324,7 @@ public abstract class TestUtils {
      * @see #getResourcePath(String)
      */
     public String getHtml(String resourcePath) {
-        return this.getHtml(resourcePath, (Map<String, String>)null);
+        return this.getHtml(resourcePath, (Map<String, String>) null);
     }
 
     /**
@@ -329,7 +337,7 @@ public abstract class TestUtils {
      */
     public String getHtml(String resourcePath, String[][] params) {
         Map<String, String> map = new HashMap<>();
-        for (int i=0; i < params.length; i++) {
+        for (int i = 0; i < params.length; i++) {
             map.put(params[i][0], params[i][1]);
         }
         return this.getHtml(resourcePath, map);
@@ -362,8 +370,9 @@ public abstract class TestUtils {
 
     /**
      * Gets the (file system) path to the given resource.
-     * <p>
-     * The resource path is obtained with the caller class using {@link Class#getResource(String)}.
+     *
+     * <p>The resource path is obtained with the caller class using {@link
+     * Class#getResource(String)}.
      *
      * @param resourcePath the path to the resource.
      * @return the path, never {@code null}.
@@ -434,15 +443,15 @@ public abstract class TestUtils {
         techsWithParent.addAll(techList);
         return techsWithParent.toArray(new Tech[techList.size()]);
     }
-    
+
     /**
-     * Mocks the class variable {@link Constant#messages} using the resource bundle (Messages.properties) created from the given
-     * extension.
-     * <p>
-     * The extension's messages are asserted that exists before obtaining it.
-     * <p>
-     * Resource messages that do not belong to the extension (that is, do not start with {@link Extension#getI18nPrefix()}) have
-     * an empty {@code String}.
+     * Mocks the class variable {@link Constant#messages} using the resource bundle
+     * (Messages.properties) created from the given extension.
+     *
+     * <p>The extension's messages are asserted that exists before obtaining it.
+     *
+     * <p>Resource messages that do not belong to the extension (that is, do not start with {@link
+     * Extension#getI18nPrefix()}) have an empty {@code String}.
      *
      * @param extension the target extension to mock the messages
      */
@@ -453,34 +462,40 @@ public abstract class TestUtils {
         given(i18n.getLocal()).willReturn(Locale.getDefault());
 
         extensionResourceBundle = getExtensionResourceBundle(extension);
-        when(i18n.getString(anyString())).thenAnswer(new Answer<String>() {
+        when(i18n.getString(anyString()))
+                .thenAnswer(
+                        new Answer<String>() {
 
-            @Override
-            public String answer(InvocationOnMock invocation) {
-                String key = (String) invocation.getArguments()[0];
-                if (key.startsWith(extension.getI18nPrefix())) {
-                    assertKeyExists(key);
-                    return extensionResourceBundle.getString(key);
-                }
-                // Return an empty string for non extension's messages.
-                return "";
-            }
-        });
+                            @Override
+                            public String answer(InvocationOnMock invocation) {
+                                String key = (String) invocation.getArguments()[0];
+                                if (key.startsWith(extension.getI18nPrefix())) {
+                                    assertKeyExists(key);
+                                    return extensionResourceBundle.getString(key);
+                                }
+                                // Return an empty string for non extension's messages.
+                                return "";
+                            }
+                        });
 
-        when(i18n.getString(anyString(), anyVararg())).thenAnswer(new Answer<String>() {
+        when(i18n.getString(anyString(), anyVararg()))
+                .thenAnswer(
+                        new Answer<String>() {
 
-            @Override
-            public String answer(InvocationOnMock invocation) {
-                Object[] args = invocation.getArguments();
-                String key = (String) args[0];
-                if (key.startsWith(extension.getI18nPrefix())) {
-                    assertKeyExists(key);
-                    return MessageFormat.format(extensionResourceBundle.getString(key), Arrays.copyOfRange(args, 1, args.length));
-                }
-                // Return an empty string for non extension's messages.
-                return "";
-            }
-        });
+                            @Override
+                            public String answer(InvocationOnMock invocation) {
+                                Object[] args = invocation.getArguments();
+                                String key = (String) args[0];
+                                if (key.startsWith(extension.getI18nPrefix())) {
+                                    assertKeyExists(key);
+                                    return MessageFormat.format(
+                                            extensionResourceBundle.getString(key),
+                                            Arrays.copyOfRange(args, 1, args.length));
+                                }
+                                // Return an empty string for non extension's messages.
+                                return "";
+                            }
+                        });
     }
 
     private static ResourceBundle getExtensionResourceBundle(Extension ext) {
@@ -492,13 +507,15 @@ public abstract class TestUtils {
     }
 
     private static void assertKeyExists(String key) {
-        assertTrue("The extension's ResourceBundle was not intialiased.", extensionResourceBundle != null);
+        assertTrue(
+                "The extension's ResourceBundle was not intialiased.",
+                extensionResourceBundle != null);
         assertTrue("No resource message for: " + key, extensionResourceBundle.containsKey(key));
     }
 
     /**
-     * Creates a matcher that matches when the examined {@code Alert} has a name that matches with one loaded with the given
-     * key.
+     * Creates a matcher that matches when the examined {@code Alert} has a name that matches with
+     * one loaded with the given key.
      *
      * @param key the key for the name
      * @return the name matcher
@@ -525,8 +542,8 @@ public abstract class TestUtils {
     }
 
     /**
-     * Creates a matcher that matches when the examined {@code Alert} has a name that contains the string loaded with the given
-     * key.
+     * Creates a matcher that matches when the examined {@code Alert} has a name that contains the
+     * string loaded with the given key.
      *
      * @param key the key for the name
      * @return the name matcher
@@ -542,7 +559,9 @@ public abstract class TestUtils {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("alert name contains ").appendValue(Constant.messages.getString(key));
+                description
+                        .appendText("alert name contains ")
+                        .appendValue(Constant.messages.getString(key));
             }
 
             @Override
@@ -553,25 +572,30 @@ public abstract class TestUtils {
     }
 
     /**
-     * Creates a matcher that matches when the examined {@code Alert} has a other info that contains the string loaded with the given
-     * key.
+     * Creates a matcher that matches when the examined {@code Alert} has a other info that contains
+     * the string loaded with the given key.
      *
      * @param key the key for the name
      * @return the name matcher
      * @param params the parameters to format the message.
      */
-    protected static Matcher<Alert> containsOtherInfoLoadedWithKey(final String key, final Object... params) {
+    protected static Matcher<Alert> containsOtherInfoLoadedWithKey(
+            final String key, final Object... params) {
         assertKeyExists(key);
         return new BaseMatcher<Alert>() {
 
             @Override
             public boolean matches(Object actualValue) {
-                return ((Alert) actualValue).getOtherInfo().contains(Constant.messages.getString(key, params));
+                return ((Alert) actualValue)
+                        .getOtherInfo()
+                        .contains(Constant.messages.getString(key, params));
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("alert other info contains ").appendValue(Constant.messages.getString(key, params));
+                description
+                        .appendText("alert other info contains ")
+                        .appendValue(Constant.messages.getString(key, params));
             }
 
             @Override

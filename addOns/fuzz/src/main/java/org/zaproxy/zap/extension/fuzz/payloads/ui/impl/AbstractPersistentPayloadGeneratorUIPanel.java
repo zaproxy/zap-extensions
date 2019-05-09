@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,13 +30,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -49,13 +47,19 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>>
+public abstract class AbstractPersistentPayloadGeneratorUIPanel<
+                T extends Payload,
+                T2 extends PayloadGenerator<T>,
+                T3 extends PayloadGeneratorUI<T, T2>>
         implements PayloadGeneratorUIPanel<T, T2, T3> {
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractPersistentPayloadGeneratorUIPanel.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(AbstractPersistentPayloadGeneratorUIPanel.class);
 
-    private static final String SAVE_BUTTON_LABEL = Constant.messages.getString("fuzz.payloads.generators.save.button");
-    private static final String SAVE_BUTTON_TOOL_TIP = Constant.messages.getString("fuzz.payloads.generators.save.tooltip");
+    private static final String SAVE_BUTTON_LABEL =
+            Constant.messages.getString("fuzz.payloads.generators.save.button");
+    private static final String SAVE_BUTTON_TOOL_TIP =
+            Constant.messages.getString("fuzz.payloads.generators.save.tooltip");
 
     private JButton saveButton;
 
@@ -73,20 +77,22 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
         saveButton.setIcon(
                 DisplayUtils.getScaledIcon(
                         new ImageIcon(
-                                AbstractPersistentPayloadGeneratorUIPanel.class.getResource("/resource/icon/16/096.png"))));
-        saveButton.addActionListener(new ActionListener() {
+                                AbstractPersistentPayloadGeneratorUIPanel.class.getResource(
+                                        "/resource/icon/16/096.png"))));
+        saveButton.addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                T2 payloadGenerator = getPayloadGenerator();
-                if (payloadGenerator != null) {
-                    Path file = getFile();
-                    if (file != null) {
-                        saveToFile(payloadGenerator, file);
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        T2 payloadGenerator = getPayloadGenerator();
+                        if (payloadGenerator != null) {
+                            Path file = getFile();
+                            if (file != null) {
+                                saveToFile(payloadGenerator, file);
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
         return saveButton;
     }
 
@@ -99,12 +105,13 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
     }
 
     private void saveToFile(T2 payloadGenerator, Path file) {
-        try (BufferedWriter bw = Files.newBufferedWriter(
-                file,
-                StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING);
-             ResettableAutoCloseableIterator<T> it = payloadGenerator.iterator()) {
+        try (BufferedWriter bw =
+                        Files.newBufferedWriter(
+                                file,
+                                StandardCharsets.UTF_8,
+                                StandardOpenOption.CREATE,
+                                StandardOpenOption.TRUNCATE_EXISTING);
+                ResettableAutoCloseableIterator<T> it = payloadGenerator.iterator()) {
             while (it.hasNext()) {
                 bw.write(it.next().getValue());
                 if (it.hasNext()) {
@@ -115,17 +122,20 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
             View.getSingleton()
-                    .showWarningDialog(Constant.messages.getString("fuzz.payloads.generators.save.dialog.warnErrorSaving"));
+                    .showWarningDialog(
+                            Constant.messages.getString(
+                                    "fuzz.payloads.generators.save.dialog.warnErrorSaving"));
         }
     }
 
     private static void addCustomFileFuzzer(Path file) {
-        ExtensionFuzz extensionFuzz = Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
+        ExtensionFuzz extensionFuzz =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
         if (extensionFuzz != null) {
             extensionFuzz.addCustomFileFuzzer(file);
         }
     }
-    
+
     @Override
     public String getHelpTarget() {
         return "addon.fuzzer.payloads";
@@ -147,7 +157,8 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
         protected JDialog createDialog(Component parent) throws HeadlessException {
             JDialog dialog = super.createDialog(parent);
             dialog.setIconImages(DisplayUtils.getZapIconImages());
-            dialog.setTitle(Constant.messages.getString("fuzz.payloads.generators.save.dialog.title"));
+            dialog.setTitle(
+                    Constant.messages.getString("fuzz.payloads.generators.save.dialog.title"));
             return dialog;
         }
 
@@ -159,8 +170,7 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
         }
 
         @Override
-        public void changeToParentDirectory() {
-        }
+        public void changeToParentDirectory() {}
 
         @Override
         public boolean accept(File file) {
@@ -174,11 +184,14 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
         public void approveSelection() {
             File selectedFile = getSelectedFile();
 
-            if (!selectedFile.toPath().startsWith(BASE_DIR) || Files.isDirectory(selectedFile.toPath())) {
+            if (!selectedFile.toPath().startsWith(BASE_DIR)
+                    || Files.isDirectory(selectedFile.toPath())) {
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("fuzz.payloads.generators.save.dialog.warnInvalidName.message"),
-                        Constant.messages.getString("fuzz.payloads.generators.save.dialog.warnInvalidName.title"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generators.save.dialog.warnInvalidName.message"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generators.save.dialog.warnInvalidName.title"),
                         JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
@@ -190,21 +203,25 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
                             Constant.messages.getString(
                                     "fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.message",
                                     selectedFile.getAbsolutePath()),
-                            Constant.messages.getString("fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.title"),
+                            Constant.messages.getString(
+                                    "fuzz.payloads.generators.save.dialog.warnFileNoWritePermisson.title"),
                             JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
-                int result = JOptionPane.showConfirmDialog(
-                        this,
-                        Constant.messages.getString("fuzz.payloads.generators.save.dialog.overwrite.message"),
-                        Constant.messages.getString("fuzz.payloads.generators.save.dialog.overwrite.title"),
-                        JOptionPane.YES_NO_OPTION);
+                int result =
+                        JOptionPane.showConfirmDialog(
+                                this,
+                                Constant.messages.getString(
+                                        "fuzz.payloads.generators.save.dialog.overwrite.message"),
+                                Constant.messages.getString(
+                                        "fuzz.payloads.generators.save.dialog.overwrite.title"),
+                                JOptionPane.YES_NO_OPTION);
                 switch (result) {
-                case JOptionPane.NO_OPTION:
-                case JOptionPane.CLOSED_OPTION:
-                    return;
-                case JOptionPane.YES_OPTION:
+                    case JOptionPane.NO_OPTION:
+                    case JOptionPane.CLOSED_OPTION:
+                        return;
+                    case JOptionPane.YES_OPTION:
                 }
             } else if (!Files.isWritable(selectedFile.getParentFile().toPath())) {
                 JOptionPane.showMessageDialog(
@@ -212,7 +229,8 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
                         Constant.messages.getString(
                                 "fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.message",
                                 selectedFile.getParentFile().getAbsolutePath()),
-                        Constant.messages.getString("fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.title"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generators.save.dialog.warnDirNoWritePermisson.title"),
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }

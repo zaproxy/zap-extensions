@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,10 +26,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -52,14 +50,16 @@ import org.zaproxy.zap.extension.quickstart.QuickStartParam;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.utils.DisplayUtils;
 
-public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOnInstallationStatusListener {
+public class ExtensionQuickStartLaunch extends ExtensionAdaptor
+        implements AddOnInstallationStatusListener {
 
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
 
     public static final String NAME = "ExtensionQuickStartLaunch";
     private static final String DEFAULT_LAUNCH_PAGE_URL_PREFIX = "https://bit.ly/owaspzap-start-";
     private static final String DEV_LAUNCH_PAGE = "dev";
-    protected static final String PAGE_LOCALE_SEPARATOR = "<!-- - - - - - - - - %< - - - - - - - - -->\n";
+    protected static final String PAGE_LOCALE_SEPARATOR =
+            "<!-- - - - - - - - - %< - - - - - - - - -->\n";
     protected static final String PAGE_LOCALE_PREFIX = "<!-- Locale = ";
     protected static final String PAGE_LOCALE_POSTFIX = " -->";
     protected static final String PAGE_LOCALE_DEFAULT = "Default";
@@ -67,14 +67,22 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOn
 
     public static final String RESOURCES = "/org/zaproxy/zap/extension/quickstart/resources";
 
-    private static final ImageIcon CHROME_ICON = DisplayUtils
-            .getScaledIcon(new ImageIcon(ExtensionQuickStart.class.getResource(RESOURCES + "/chrome.png")));
-    private static final ImageIcon CHROMIUM_ICON = DisplayUtils
-            .getScaledIcon(new ImageIcon(ExtensionQuickStart.class.getResource(RESOURCES + "/chromium.png")));
-    private static final ImageIcon FIREFOX_ICON = DisplayUtils
-            .getScaledIcon(new ImageIcon(ExtensionQuickStart.class.getResource(RESOURCES + "/firefox.png")));
-    private static final ImageIcon SAFARI_ICON = DisplayUtils
-            .getScaledIcon(new ImageIcon(ExtensionQuickStart.class.getResource(RESOURCES + "/safari.png")));
+    private static final ImageIcon CHROME_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ExtensionQuickStart.class.getResource(RESOURCES + "/chrome.png")));
+    private static final ImageIcon CHROMIUM_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ExtensionQuickStart.class.getResource(RESOURCES + "/chromium.png")));
+    private static final ImageIcon FIREFOX_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ExtensionQuickStart.class.getResource(RESOURCES + "/firefox.png")));
+    private static final ImageIcon SAFARI_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ExtensionQuickStart.class.getResource(RESOURCES + "/safari.png")));
 
     private String defaultLaunchContent;
 
@@ -113,10 +121,12 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOn
             extensionHook.getHookView().addMainToolBarComponent(getLaunchToolbarButton());
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
 
-            this.launchPanel = new LaunchPanel(this, this.getExtQuickStart(),
-                    this.getExtQuickStart().getQuickStartPanel());
+            this.launchPanel =
+                    new LaunchPanel(
+                            this,
+                            this.getExtQuickStart(),
+                            this.getExtQuickStart().getQuickStartPanel());
             this.getExtQuickStart().setLaunchPanel(this.launchPanel);
-
         }
     }
 
@@ -146,7 +156,8 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOn
             // Always init in case the user changes to use the default home page
             // later
             defaultLaunchContent = Constant.messages.getString("quickstart.launch.html");
-            setToolbarButtonIcon(this.getExtQuickStart().getQuickStartParam().getLaunchDefaultBrowser());
+            setToolbarButtonIcon(
+                    this.getExtQuickStart().getQuickStartParam().getLaunchDefaultBrowser());
         }
 
         if (!this.getExtQuickStart().getQuickStartParam().isLaunchZapStartPage()) {
@@ -161,11 +172,16 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOn
                 HttpMessage msg;
                 String launchPageUrl = getLaunchPageURL();
                 try {
-                    HttpSender httpSender = new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true, HttpSender.CHECK_FOR_UPDATES_INITIATOR);
+                    HttpSender httpSender =
+                            new HttpSender(
+                                    Model.getSingleton().getOptionsParam().getConnectionParam(),
+                                    true,
+                                    HttpSender.CHECK_FOR_UPDATES_INITIATOR);
                     httpSender.setFollowRedirect(true);
-                    msg = new HttpMessage(new URI(launchPageUrl, true),
-                            Model.getSingleton().getOptionsParam().getConnectionParam());
+                    msg =
+                            new HttpMessage(
+                                    new URI(launchPageUrl, true),
+                                    Model.getSingleton().getOptionsParam().getConnectionParam());
                     httpSender.sendAndReceive(msg, true);
                     if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
                         /*
@@ -173,13 +189,16 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOn
                          */
                         String combinedDefaultContent = msg.getResponseBody().toString();
                         String zapLocale = Constant.getLocale().toString();
-                        String[] localeContents = combinedDefaultContent.split(PAGE_LOCALE_SEPARATOR);
+                        String[] localeContents =
+                                combinedDefaultContent.split(PAGE_LOCALE_SEPARATOR);
                         for (String locContent : localeContents) {
                             // First line should be a comment including the
                             // locale name
                             if (locContent.startsWith(PAGE_LOCALE_PREFIX)) {
-                                String locale = locContent.substring(PAGE_LOCALE_PREFIX.length(),
-                                        locContent.indexOf(PAGE_LOCALE_POSTFIX));
+                                String locale =
+                                        locContent.substring(
+                                                PAGE_LOCALE_PREFIX.length(),
+                                                locContent.indexOf(PAGE_LOCALE_POSTFIX));
                                 if (PAGE_LOCALE_DEFAULT.equals(locale)) {
                                     // The default one should be first
                                     defaultLaunchContent = locContent;
@@ -190,17 +209,19 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOn
                                 }
                             } else {
                                 LOGGER.debug("No locale comment?? " + locContent);
-
                             }
                         }
                     } else {
                         LOGGER.debug(
-                                "Response from " + launchPageUrl + " : " + msg.getResponseHeader().getStatusCode());
+                                "Response from "
+                                        + launchPageUrl
+                                        + " : "
+                                        + msg.getResponseHeader().getStatusCode());
                     }
                 } catch (Exception e) {
-                    LOGGER.debug("Failed to read from " + launchPageUrl + " : " + e.getMessage(), e);
+                    LOGGER.debug(
+                            "Failed to read from " + launchPageUrl + " : " + e.getMessage(), e);
                 }
-
             }
         }.start();
     }
@@ -230,14 +251,17 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOn
     private JButton getLaunchToolbarButton() {
         if (launchToolbarButton == null) {
             launchToolbarButton = new JButton();
-            launchToolbarButton.setToolTipText(Constant.messages.getString("quickstart.toolbar.button.tooltip.launch"));
-            launchToolbarButton.addActionListener(new ActionListener() {
+            launchToolbarButton.setToolTipText(
+                    Constant.messages.getString("quickstart.toolbar.button.tooltip.launch"));
+            launchToolbarButton.addActionListener(
+                    new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    launchBrowser(launchPanel.getSelectedBrowser(), launchPanel.getUrlValue());
-                }
-            });
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            launchBrowser(
+                                    launchPanel.getSelectedBrowser(), launchPanel.getUrlValue());
+                        }
+                    });
         }
         return launchToolbarButton;
     }
@@ -287,31 +311,45 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOn
     }
 
     protected void launchBrowser(String browserName, String url) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    WebDriver wd = getExtSelenium().getProxiedBrowserByName(browserName);
-                    if (wd != null) {
-                        QuickStartParam params = getExtQuickStart().getQuickStartParam();
-                        if (url != null && url.length() > 0 && !url.equals(DEFAULT_VALUE_URL_FIELD)) {
-                            wd.get(url);
-                        } else if (params.isLaunchZapStartPage()) {
-                            wd.get(API.getInstance().getBaseURL(API.Format.OTHER, QuickStartLaunchAPI.API_PREFIX,
-                                    API.RequestType.other, QuickStartLaunchAPI.OTHER_START_PAGE, true));
-                        } else if (!params.isLaunchBlankStartPage()) {
-                            wd.get(params.getLaunchStartPage());
-                        }
-                        // Use the same browser next time, as long
-                        // as it worked
-                        params.setLaunchDefaultBrowser(browserName);
-                        params.getConfig().save();
-                    }
-                } catch (Exception e1) {
-                    LOGGER.error(e1.getMessage(), e1);
-                }
-            }
-        }, "ZAP-BrowserLauncher").start();
+        new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    WebDriver wd =
+                                            getExtSelenium().getProxiedBrowserByName(browserName);
+                                    if (wd != null) {
+                                        QuickStartParam params =
+                                                getExtQuickStart().getQuickStartParam();
+                                        if (url != null
+                                                && url.length() > 0
+                                                && !url.equals(DEFAULT_VALUE_URL_FIELD)) {
+                                            wd.get(url);
+                                        } else if (params.isLaunchZapStartPage()) {
+                                            wd.get(
+                                                    API.getInstance()
+                                                            .getBaseURL(
+                                                                    API.Format.OTHER,
+                                                                    QuickStartLaunchAPI.API_PREFIX,
+                                                                    API.RequestType.other,
+                                                                    QuickStartLaunchAPI
+                                                                            .OTHER_START_PAGE,
+                                                                    true));
+                                        } else if (!params.isLaunchBlankStartPage()) {
+                                            wd.get(params.getLaunchStartPage());
+                                        }
+                                        // Use the same browser next time, as long
+                                        // as it worked
+                                        params.setLaunchDefaultBrowser(browserName);
+                                        params.getConfig().save();
+                                    }
+                                } catch (Exception e1) {
+                                    LOGGER.error(e1.getMessage(), e1);
+                                }
+                            }
+                        },
+                        "ZAP-BrowserLauncher")
+                .start();
     }
 
     public String getDefaultLaunchContent() {
@@ -324,8 +362,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements AddOn
     }
 
     @Override
-    public void addOnSoftUninstalled(AddOn addOn, boolean successfully) {
-    }
+    public void addOnSoftUninstalled(AddOn addOn, boolean successfully) {}
 
     @Override
     public void addOnUninstalled(AddOn addOn, boolean successfully) {

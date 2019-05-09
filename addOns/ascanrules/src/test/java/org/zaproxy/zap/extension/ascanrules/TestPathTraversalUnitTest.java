@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2017 The ZAP development team
+ * Copyright 2017 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -33,28 +36,22 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-import fi.iki.elonen.NanoHTTPD;
-import fi.iki.elonen.NanoHTTPD.IHTTPSession;
-import fi.iki.elonen.NanoHTTPD.Response;
-
-/**
- * Unit test for {@link TestPathTraversal}.
- */
+/** Unit test for {@link TestPathTraversal}. */
 public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPathTraversal> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
         int recommendMax = super.getRecommendMaxNumberMessagesPerParam(strength);
         switch (strength) {
-        case LOW:
-            return recommendMax + 4;
-        case MEDIUM:
-        default:
-            return recommendMax + 6;
-        case HIGH:
-            return recommendMax + 7;
-        case INSANE:
-            return recommendMax;
+            case LOW:
+                return recommendMax + 4;
+            case MEDIUM:
+            default:
+                return recommendMax + 6;
+            case HIGH:
+                return recommendMax + 7;
+            case INSANE:
+                return recommendMax;
         }
     }
 
@@ -119,9 +116,8 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
-
     }
-    
+
     @Test
     public void shouldNotAlertIfLocalFilePathTraversalDoesNotExist() throws Exception {
         // Given
@@ -139,13 +135,15 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
         // Given
         String filePath = "/static-file";
         String fileContent = ListWinDirsOnAttack.DIRS_LISTING;
-        nano.addHandler(new NanoServerHandler(filePath) {
+        nano.addHandler(
+                new NanoServerHandler(filePath) {
 
-            @Override
-            protected Response serve(IHTTPSession session) {
-                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, fileContent);
-            }
-        });
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse(
+                                Response.Status.OK, NanoHTTPD.MIME_HTML, fileContent);
+                    }
+                });
         rule.init(getHttpMessage("GET", filePath, fileContent), parent);
         // When
         rule.scan();
@@ -153,7 +151,7 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
         assertThat(alertsRaised, hasSize(0));
     }
 
-    private static abstract class ListDirsOnAttack extends NanoServerHandler {
+    private abstract static class ListDirsOnAttack extends NanoServerHandler {
 
         private final String param;
         private final String attack;
@@ -169,18 +167,20 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
 
         @Override
         protected Response serve(IHTTPSession session) {
-            String value = getFirstParamValue(session,param);
+            String value = getFirstParamValue(session, param);
             if (attack.equals(value)) {
                 return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, getDirs());
             }
-            return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
+            return newFixedLengthResponse(
+                    Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
         }
     }
 
     private static class ListWinDirsOnAttack extends ListDirsOnAttack {
 
-        private static final String DIRS_LISTING = "<td><a href=\"Windows/\">Windows</a></td>"
-                + "<td><a href=\"Program Files/\">Program Files</a></td>";
+        private static final String DIRS_LISTING =
+                "<td><a href=\"Windows/\">Windows</a></td>"
+                        + "<td><a href=\"Program Files/\">Program Files</a></td>";
 
         public ListWinDirsOnAttack(String path, String param, String attack) {
             super(path, param, attack);
@@ -194,8 +194,10 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
 
     private static class ListLinuxDirsOnAttack extends ListDirsOnAttack {
 
-        private static final String DIRS_LISTING = "<td><a href=\"/bin/\">bin</a></td>" + "<td><a href=\"/etc/\">etc</a></td>"
-                + "<td><a href=\"/boot/\">boot</a></td>";
+        private static final String DIRS_LISTING =
+                "<td><a href=\"/bin/\">bin</a></td>"
+                        + "<td><a href=\"/etc/\">etc</a></td>"
+                        + "<td><a href=\"/boot/\">boot</a></td>";
 
         public ListLinuxDirsOnAttack(String path, String param, String attack) {
             super(path, param, attack);
@@ -206,12 +208,14 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
             return DIRS_LISTING;
         }
     }
-    
+
     private static class ListBogusLinuxDirsOnAttack extends ListDirsOnAttack {
 
-        private static final String DIRS_LISTING = "<td><a href=\"/bin/\">bin</a></td>"
-                + "<td><a href=\"/getChoice/\">getChoice</a></td>" // Matches etc but isn't etc 
-                + "<td><a href=\"/boot/\">boot</a></td>";
+        private static final String DIRS_LISTING =
+                "<td><a href=\"/bin/\">bin</a></td>"
+                        + "<td><a href=\"/getChoice/\">getChoice</a></td>" // Matches etc but isn't
+                        // etc
+                        + "<td><a href=\"/boot/\">boot</a></td>";
 
         public ListBogusLinuxDirsOnAttack(String path, String param, String attack) {
             super(path, param, attack);
@@ -237,11 +241,13 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
 
         @Override
         protected Response serve(IHTTPSession session) {
-            String value = getFirstParamValue(session,param);
+            String value = getFirstParamValue(session, param);
             if (ArrayUtils.contains(existingFiles, value)) {
-                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "File Found");
+                return newFixedLengthResponse(
+                        Response.Status.OK, NanoHTTPD.MIME_HTML, "File Found");
             }
-            return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
+            return newFixedLengthResponse(
+                    Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
         }
     }
 }

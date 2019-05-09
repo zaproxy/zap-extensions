@@ -20,3 +20,13 @@ zapAddOn {
 dependencies {
     testImplementation(project(":testutils"))
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            // 3rd-party code.
+            exclude("**/com/fasteasytrade/**/*.java")
+        })
+    }
+}

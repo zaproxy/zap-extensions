@@ -1,27 +1,26 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2017 The ZAP Development Team
- *  
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.replacer;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang.StringUtils;
@@ -54,41 +53,50 @@ public class ReplacerParam extends AbstractParam {
 
     private boolean confirmRemoveToken = true;
 
-    /**
-     * Fills in the list of rules which will be added if there are none configured.
-     */
-
+    /** Fills in the list of rules which will be added if there are none configured. */
     private void setDefaultList() {
         final String[][] defaultListArray = {
-                { 
-                        "Remove CSP", 
-                        ReplacerParamRule.MatchType.RESP_HEADER.name(), 
-                        "Content-Security-Policy", 
-                        "",
-                        "false", 
-                        "", 
-                        "false" },
-                {
-                        "Remove HSTS",
-                        ReplacerParamRule.MatchType.RESP_HEADER.name(),
-                        "Strict-Transport-Security",
-                        "",
-                        "false",
-                        "",
-                        "false" },
-                {
-                        "Replace User-Agent with shellshock attack",
-                        ReplacerParamRule.MatchType.REQ_HEADER.name(),
-                        "User-Agent",
-                        "() {:;}; /bin/cat /etc/passwd",
-                        "false",
-                        "",
-                        "false" } };
+            {
+                "Remove CSP",
+                ReplacerParamRule.MatchType.RESP_HEADER.name(),
+                "Content-Security-Policy",
+                "",
+                "false",
+                "",
+                "false"
+            },
+            {
+                "Remove HSTS",
+                ReplacerParamRule.MatchType.RESP_HEADER.name(),
+                "Strict-Transport-Security",
+                "",
+                "false",
+                "",
+                "false"
+            },
+            {
+                "Replace User-Agent with shellshock attack",
+                ReplacerParamRule.MatchType.REQ_HEADER.name(),
+                "User-Agent",
+                "() {:;}; /bin/cat /etc/passwd",
+                "false",
+                "",
+                "false"
+            }
+        };
 
         for (String[] row : defaultListArray) {
             boolean regex = row[4].equalsIgnoreCase("true") ? true : false;
             boolean enabled = row[6].equalsIgnoreCase("true") ? true : false;
-            defaultList.add(new ReplacerParamRule(row[0], MatchType.valueOf(row[1]), row[2], regex, row[3], null, enabled));
+            defaultList.add(
+                    new ReplacerParamRule(
+                            row[0],
+                            MatchType.valueOf(row[1]),
+                            row[2],
+                            regex,
+                            row[3],
+                            null,
+                            enabled));
         }
     }
 
@@ -100,7 +108,8 @@ public class ReplacerParam extends AbstractParam {
     @Override
     protected void parse() {
         try {
-            List<HierarchicalConfiguration> fields = ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_RULES_KEY);
+            List<HierarchicalConfiguration> fields =
+                    ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_RULES_KEY);
             this.rules = new ArrayList<>(fields.size());
             List<String> tempTokensNames = new ArrayList<>(fields.size());
             for (HierarchicalConfiguration sub : fields) {
@@ -109,23 +118,33 @@ public class ReplacerParam extends AbstractParam {
                     boolean enabled = sub.getBoolean(RULE_ENABLED_KEY, true);
                     boolean regex = sub.getBoolean(RULE_REGEX_KEY, true);
                     String matchStr = sub.getString(RULE_MATCH_STRING_KEY, "");
-                    MatchType matchType = MatchType.valueOf(
-                            sub.getString(RULE_MATCH_TYPE_KEY, MatchType.RESP_BODY_STR.name()).toUpperCase());
+                    MatchType matchType =
+                            MatchType.valueOf(
+                                    sub.getString(
+                                                    RULE_MATCH_TYPE_KEY,
+                                                    MatchType.RESP_BODY_STR.name())
+                                            .toUpperCase());
                     String replace = sub.getString(RULE_REPLACEMENT_KEY, "");
                     String initStr = sub.getString(RULE_INITIATORS_KEY, "");
                     List<Integer> initList = null;
                     if (!StringUtils.isEmpty(initStr)) {
                         initList = new ArrayList<Integer>();
-                        String[] initStrArray = initStr.replace("[", "").replace("]", "").split(",");
+                        String[] initStrArray =
+                                initStr.replace("[", "").replace("]", "").split(",");
                         for (String str : initStrArray) {
                             try {
                                 initList.add(Integer.parseInt(str.trim()));
                             } catch (NumberFormatException e) {
-                                logger.error("Error while loading global repacement rule: " + e.getMessage(), e);
+                                logger.error(
+                                        "Error while loading global repacement rule: "
+                                                + e.getMessage(),
+                                        e);
                             }
                         }
                     }
-                    this.rules.add(new ReplacerParamRule(desc, matchType, matchStr, regex, replace, initList, enabled));
+                    this.rules.add(
+                            new ReplacerParamRule(
+                                    desc, matchType, matchStr, regex, replace, initList, enabled));
                     tempTokensNames.add(desc);
                 }
             }
@@ -143,7 +162,8 @@ public class ReplacerParam extends AbstractParam {
         try {
             this.confirmRemoveToken = getConfig().getBoolean(CONFIRM_REMOVE_RULE_KEY, true);
         } catch (ConversionException e) {
-            logger.error("Error while loading the confirm remove rule option: " + e.getMessage(), e);
+            logger.error(
+                    "Error while loading the confirm remove rule option: " + e.getMessage(), e);
         }
     }
 
@@ -155,7 +175,7 @@ public class ReplacerParam extends AbstractParam {
         this.rules = new ArrayList<>(rules);
         saveRules();
     }
-    
+
     private void saveRules() {
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_RULES_KEY);
@@ -166,16 +186,22 @@ public class ReplacerParam extends AbstractParam {
             ReplacerParamRule rule = rules.get(i);
 
             getConfig().setProperty(elementBaseKey + RULE_DESCRIPTION_KEY, rule.getDescription());
-            getConfig().setProperty(elementBaseKey + RULE_ENABLED_KEY, Boolean.valueOf(rule.isEnabled()));
-            getConfig().setProperty(elementBaseKey + RULE_MATCH_TYPE_KEY, rule.getMatchType().name());
+            getConfig()
+                    .setProperty(
+                            elementBaseKey + RULE_ENABLED_KEY, Boolean.valueOf(rule.isEnabled()));
+            getConfig()
+                    .setProperty(elementBaseKey + RULE_MATCH_TYPE_KEY, rule.getMatchType().name());
             getConfig().setProperty(elementBaseKey + RULE_MATCH_STRING_KEY, rule.getMatchString());
-            getConfig().setProperty(elementBaseKey + RULE_REGEX_KEY, Boolean.valueOf(rule.isMatchRegex()));
+            getConfig()
+                    .setProperty(
+                            elementBaseKey + RULE_REGEX_KEY, Boolean.valueOf(rule.isMatchRegex()));
             getConfig().setProperty(elementBaseKey + RULE_REPLACEMENT_KEY, rule.getReplacement());
             List<Integer> initiators = rule.getInitiators();
             if (initiators == null || initiators.isEmpty()) {
                 getConfig().setProperty(elementBaseKey + RULE_INITIATORS_KEY, "");
             } else {
-                getConfig().setProperty(elementBaseKey + RULE_INITIATORS_KEY, initiators.toString());
+                getConfig()
+                        .setProperty(elementBaseKey + RULE_INITIATORS_KEY, initiators.toString());
             }
 
             if (rule.isEnabled()) {
@@ -187,39 +213,39 @@ public class ReplacerParam extends AbstractParam {
     }
 
     public ReplacerParamRule getRule(String desc) {
-    	for (ReplacerParamRule rule : rules) {
-    		if (rule.getDescription().equals(desc)) {
-    			return rule;
-    		}
-    	}
+        for (ReplacerParamRule rule : rules) {
+            if (rule.getDescription().equals(desc)) {
+                return rule;
+            }
+        }
         return null;
     }
-    
+
     public boolean setEnabled(String desc, boolean enabled) {
-    	ReplacerParamRule rule = this.getRule(desc);
+        ReplacerParamRule rule = this.getRule(desc);
         if (rule != null) {
-        	rule.setEnabled(enabled);
+            rule.setEnabled(enabled);
             this.saveRules();
-        	return true;
+            return true;
         }
-    	return false;
+        return false;
     }
-    
+
     public void addRule(ReplacerParamRule rule) {
-    	this.rules.add(rule);
-    	this.saveRules();
+        this.rules.add(rule);
+        this.saveRules();
     }
 
     public boolean removeRule(String desc) {
-    	ReplacerParamRule rule = this.getRule(desc);
+        ReplacerParamRule rule = this.getRule(desc);
         if (rule != null) {
-        	this.rules.remove(rule);
+            this.rules.remove(rule);
             this.saveRules();
-        	return true;
+            return true;
         }
-    	return false;
+        return false;
     }
-    
+
     @ZapApiIgnore
     public boolean isConfirmRemoveToken() {
         return this.confirmRemoveToken;
@@ -230,5 +256,4 @@ public class ReplacerParam extends AbstractParam {
         this.confirmRemoveToken = confirmRemove;
         getConfig().setProperty(CONFIRM_REMOVE_RULE_KEY, Boolean.valueOf(confirmRemoveToken));
     }
-
 }

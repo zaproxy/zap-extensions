@@ -13,3 +13,13 @@ zapAddOn {
         url.set("https://github.com/zaproxy/zaproxy/wiki/ScriptConsole")
     }
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            // 3rd-party code.
+            exclude("**/JScrollPopupMenu.java")
+        })
+    }
+}

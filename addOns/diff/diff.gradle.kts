@@ -12,3 +12,13 @@ zapAddOn {
         author.set("ZAP Dev Team")
     }
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            // Ignore 3rd-party code.
+            exclude("**/diff_match_patch.java", "**/ZapDiffRowGenerator.java")
+        })
+    }
+}

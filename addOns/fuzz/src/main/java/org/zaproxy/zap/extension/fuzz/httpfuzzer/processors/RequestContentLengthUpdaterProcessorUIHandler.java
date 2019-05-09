@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.AbstractHttpFuzzerMessageProcessorUIPanel;
@@ -28,8 +27,9 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.RequestContentLengthUpdaterProcessorUIHandler.RequestContentLengthUpdatedProcessorUI;
 
-public class RequestContentLengthUpdaterProcessorUIHandler implements
-        HttpFuzzerMessageProcessorUIHandler<RequestContentLengthUpdaterProcessor, RequestContentLengthUpdatedProcessorUI> {
+public class RequestContentLengthUpdaterProcessorUIHandler
+        implements HttpFuzzerMessageProcessorUIHandler<
+                RequestContentLengthUpdaterProcessor, RequestContentLengthUpdatedProcessorUI> {
 
     @Override
     public String getName() {
@@ -71,13 +71,13 @@ public class RequestContentLengthUpdaterProcessorUIHandler implements
         return new RequestContentLengthUpdatedProcessorUIPanel();
     }
 
-    public static class RequestContentLengthUpdatedProcessorUI implements
-            HttpFuzzerMessageProcessorUI<RequestContentLengthUpdaterProcessor> {
+    public static class RequestContentLengthUpdatedProcessorUI
+            implements HttpFuzzerMessageProcessorUI<RequestContentLengthUpdaterProcessor> {
 
-        public static final RequestContentLengthUpdatedProcessorUI INSTANCE = new RequestContentLengthUpdatedProcessorUI();
+        public static final RequestContentLengthUpdatedProcessorUI INSTANCE =
+                new RequestContentLengthUpdatedProcessorUI();
 
-        public RequestContentLengthUpdatedProcessorUI() {
-        }
+        public RequestContentLengthUpdatedProcessorUI() {}
 
         @Override
         public String getName() {
@@ -91,7 +91,8 @@ public class RequestContentLengthUpdaterProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return Constant.messages.getString("fuzz.httpfuzzer.processor.requestContentLengthUpdater.description");
+            return Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.requestContentLengthUpdater.description");
         }
 
         @Override
@@ -103,12 +104,11 @@ public class RequestContentLengthUpdaterProcessorUIHandler implements
         public RequestContentLengthUpdatedProcessorUI copy() {
             return this;
         }
-
     }
 
     public static class RequestContentLengthUpdatedProcessorUIPanel
-            extends
-            AbstractHttpFuzzerMessageProcessorUIPanel<RequestContentLengthUpdaterProcessor, RequestContentLengthUpdatedProcessorUI> {
+            extends AbstractHttpFuzzerMessageProcessorUIPanel<
+                    RequestContentLengthUpdaterProcessor, RequestContentLengthUpdatedProcessorUI> {
 
         private JPanel fieldsPanel;
 
@@ -122,13 +122,12 @@ public class RequestContentLengthUpdaterProcessorUIHandler implements
         }
 
         @Override
-        public void setFuzzerMessageProcessorUI(RequestContentLengthUpdatedProcessorUI payloadProcessorUI) {
-        }
+        public void setFuzzerMessageProcessorUI(
+                RequestContentLengthUpdatedProcessorUI payloadProcessorUI) {}
 
         @Override
         public RequestContentLengthUpdatedProcessorUI getFuzzerMessageProcessorUI() {
             return RequestContentLengthUpdatedProcessorUI.INSTANCE;
         }
-
     }
 }

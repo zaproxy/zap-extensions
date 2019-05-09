@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,118 +30,122 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class UserControlledJavascriptEventScannerUnitTest extends PassiveScannerTest<UserControlledJavascriptEventScanner> {
+public class UserControlledJavascriptEventScannerUnitTest
+        extends PassiveScannerTest<UserControlledJavascriptEventScanner> {
 
-	@Override
-	protected UserControlledJavascriptEventScanner createScanner() {
-		return new UserControlledJavascriptEventScanner();
-	}
+    @Override
+    protected UserControlledJavascriptEventScanner createScanner() {
+        return new UserControlledJavascriptEventScanner();
+    }
 
-	public HttpMessage createMessage() {
-		HttpMessage msg = new HttpMessage();
-		HttpRequestHeader requestHeader = new HttpRequestHeader();
-		try {
-			requestHeader.setURI(new URI("http://example.com/i.php", false));
-		} catch (URIException | NullPointerException e) {
-		}
-		requestHeader.setMethod(HttpRequestHeader.GET);
+    public HttpMessage createMessage() {
+        HttpMessage msg = new HttpMessage();
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        try {
+            requestHeader.setURI(new URI("http://example.com/i.php", false));
+        } catch (URIException | NullPointerException e) {
+        }
+        requestHeader.setMethod(HttpRequestHeader.GET);
 
-		msg = new HttpMessage();
-		msg.setRequestHeader(requestHeader);
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
-		msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
-		return msg;
-	}
+        msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        return msg;
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseIsNotStatusOk() {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseIsNotHtml() {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
-	
-	@Test
-	public void shouldNotRaiseAlertIfResponsehasNoContentType() {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, ""); // Removed when value set empty
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseIsNotHtml() {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
-		// Given
-		HttpMessage msg = createMessage();
-		// WHen
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponsehasNoContentType() {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(HttpHeader.CONTENT_TYPE, ""); // Removed when value set empty
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
+        // Given
+        HttpMessage msg = createMessage();
+        // WHen
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfRequestParamValuesNotUsedInJsEvent() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
-		msg.setResponseBody("<html><img src=\"x.jpg\" onerror=alert(\"Error\")></img></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfRequestParamsHaveNoValues() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseHasUnknownJsEvent() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
-		msg.setResponseBody("<html><img src=\"x.jpg\" onblah=fred></img></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfRequestParamValuesNotUsedInJsEvent() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader()
+                .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
+        msg.setResponseBody("<html><img src=\"x.jpg\" onerror=alert(\"Error\")></img></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfRequestParamValuesUsedInJsEvent() throws Exception {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
-		msg.setResponseBody("<html><img src=\"x.jpg\" onerror=fred></img></html>");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseHasUnknownJsEvent() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader()
+                .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
+        msg.setResponseBody("<html><img src=\"x.jpg\" onblah=fred></img></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
+    @Test
+    public void shouldRaiseAlertIfRequestParamValuesUsedInJsEvent() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader()
+                .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
+        msg.setResponseBody("<html><img src=\"x.jpg\" onerror=fred></img></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+    }
 }

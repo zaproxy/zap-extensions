@@ -27,14 +27,12 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ReportWriter
-{
+public class ReportWriter {
 
     private final String fileToWriteTo;
     private final Manager manager;
 
-    public ReportWriter(Manager manager, String fileToWriteTo)
-    {
+    public ReportWriter(Manager manager, String fileToWriteTo) {
         this.fileToWriteTo = fileToWriteTo;
         this.manager = manager;
     }
@@ -42,174 +40,142 @@ public class ReportWriter
     /*
      * writes the report when we are in headless mode.
      */
-    public void writeReportHeadless()
-    {
+    public void writeReportHeadless() {
         Vector<HeadlessResult> data = manager.getHeadlessResult();
-        
+
         Vector<HeadlessResult> dirs = new Vector<HeadlessResult>(100, 10);
         Vector<HeadlessResult> files = new Vector<HeadlessResult>(100, 10);
         Vector<HeadlessResult> errors = new Vector<HeadlessResult>(100, 10);
 
         Vector dirCodes = new Vector(100, 10);
         Vector fileCodes = new Vector(100, 10);
-        
-        for(int a = 0; a < data.size(); a ++)
-        {
-            if(data.elementAt(a).getType() == HeadlessResult.FILE)
-            {
+
+        for (int a = 0; a < data.size(); a++) {
+            if (data.elementAt(a).getType() == HeadlessResult.FILE) {
                 files.addElement(data.elementAt(a));
-            }
-            else if(data.elementAt(a).getType() == HeadlessResult.DIR)
-            {
+            } else if (data.elementAt(a).getType() == HeadlessResult.DIR) {
                 dirs.addElement(data.elementAt(a));
-            }
-            else if(data.elementAt(a).getType() == HeadlessResult.ERROR)
-            {
+            } else if (data.elementAt(a).getType() == HeadlessResult.ERROR) {
                 errors.addElement(data.elementAt(a));
             }
         }
-        
-        //get responce codes for dirs
-        for(int b = 0; b < dirs.size(); b ++)
-        {
-            if(!dirCodes.contains(String.valueOf(dirs.elementAt(b).getResponceCode())))
-            {
+
+        // get responce codes for dirs
+        for (int b = 0; b < dirs.size(); b++) {
+            if (!dirCodes.contains(String.valueOf(dirs.elementAt(b).getResponceCode()))) {
                 dirCodes.addElement(String.valueOf(dirs.elementAt(b).getResponceCode()));
             }
         }
 
-        //get responce codes for files
-        for(int b = 0; b < files.size(); b ++)
-        {
-            if(!fileCodes.contains(String.valueOf(files.elementAt(b).getResponceCode())))
-            {
+        // get responce codes for files
+        for (int b = 0; b < files.size(); b++) {
+            if (!fileCodes.contains(String.valueOf(files.elementAt(b).getResponceCode()))) {
                 fileCodes.addElement(String.valueOf(files.elementAt(b).getResponceCode()));
             }
         }
-        
+
         BufferedWriter out;
-        try
-        {
+        try {
             out = new BufferedWriter(new FileWriter(fileToWriteTo));
             /*
              * write the report header
              */
             writeReportHeader(out);
-            
+
             /*
              * Write the found dirs
              */
-            if(dirs.size() > 0)
-            {
+            if (dirs.size() > 0) {
                 out.write("Directories found during testing:");
                 out.newLine();
                 out.newLine();
-                for(int a = 0; a < dirCodes.size(); a ++)
-                {
+                for (int a = 0; a < dirCodes.size(); a++) {
                     String foundCode = (String) dirCodes.elementAt(a);
                     int foundCodeInt = Integer.parseInt(foundCode);
                     out.write("Dirs found with a " + foundCode + " response:");
                     out.newLine();
                     out.newLine();
-                    for(int b = 0; b < dirs.size(); b ++)
-                    {
-                        
-                        if(dirs.elementAt(b).getResponceCode() == foundCodeInt)
-                        {
+                    for (int b = 0; b < dirs.size(); b++) {
+
+                        if (dirs.elementAt(b).getResponceCode() == foundCodeInt) {
                             out.write(dirs.elementAt(b).getFound());
                             out.newLine();
                         }
                     }
                     out.newLine();
-
                 }
                 out.newLine();
                 out.write("--------------------------------");
                 out.newLine();
             }
-            
+
             /*
              * Write the files
              */
-            
-            if(files.size() > 0)
-            {
+
+            if (files.size() > 0) {
                 out.write("Files found during testing:");
                 out.newLine();
                 out.newLine();
-                for(int a = 0; a < fileCodes.size(); a ++)
-                {
+                for (int a = 0; a < fileCodes.size(); a++) {
                     String foundCode = (String) fileCodes.elementAt(a);
                     int foundCodeInt = Integer.parseInt(foundCode);
                     out.write("Files found with a " + foundCode + " responce:");
                     out.newLine();
                     out.newLine();
-                    for(int b = 0; b < files.size(); b ++)
-                    {
-                        
-                        if(files.elementAt(b).getResponceCode() == foundCodeInt)
-                        {
+                    for (int b = 0; b < files.size(); b++) {
+
+                        if (files.elementAt(b).getResponceCode() == foundCodeInt) {
                             out.write(files.elementAt(b).getFound());
                             out.newLine();
                         }
                     }
                     out.newLine();
-
                 }
                 out.newLine();
             }
             out.write("--------------------------------");
             out.newLine();
-            
+
             /*
              * write any error that were discovered
              */
-            if(errors.size() > 0)
-            {
+            if (errors.size() > 0) {
                 out.write("Errors encountered during testing:");
                 out.newLine();
                 out.newLine();
 
-                for(int a = 0; a < errors.size(); a ++)
-                {
+                for (int a = 0; a < errors.size(); a++) {
                     out.write(errors.elementAt(a).getFound());
                     out.newLine();
-
                 }
                 out.newLine();
             }
 
             out.flush();
             out.close();
-            
-        }
-        catch(IOException ex)
-        {
+
+        } catch (IOException ex) {
             Logger.getLogger(ReportWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
-  
-        
-        
     }
-    
-    private void writeReportHeader(BufferedWriter out) throws IOException
-    {
 
-            out.write("DirBuster " + Config.version + " - Report");
-            out.newLine();
-            out.write("http://www.owasp.org/index.php/Category:OWASP_DirBuster_Project");
-            out.newLine();
-            Date date = new Date(System.currentTimeMillis());
-            out.write("Report produced on " + date);
-            out.newLine();
-            out.write("--------------------------------");
-            out.newLine();
-            out.newLine();
+    private void writeReportHeader(BufferedWriter out) throws IOException {
 
+        out.write("DirBuster " + Config.version + " - Report");
+        out.newLine();
+        out.write("http://www.owasp.org/index.php/Category:OWASP_DirBuster_Project");
+        out.newLine();
+        Date date = new Date(System.currentTimeMillis());
+        out.write("Report produced on " + date);
+        out.newLine();
+        out.write("--------------------------------");
+        out.newLine();
+        out.newLine();
 
-            out.write(manager.getProtocol() + "://" + manager.getHost() + ":" + manager.getPort());
-            out.newLine();
-            out.write("--------------------------------");
-            out.newLine();
+        out.write(manager.getProtocol() + "://" + manager.getHost() + ":" + manager.getPort());
+        out.newLine();
+        out.write("--------------------------------");
+        out.newLine();
     }
 }

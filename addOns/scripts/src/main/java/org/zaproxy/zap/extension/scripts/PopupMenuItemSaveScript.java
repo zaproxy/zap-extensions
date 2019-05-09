@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP development team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,10 +20,8 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
-
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -54,18 +52,23 @@ public class PopupMenuItemSaveScript extends ExtensionPopupMenuItem {
             throw new IllegalArgumentException("The parameter scriptsPanel must not be null.");
         }
 
-        setIcon(DisplayUtils.getScaledIcon(new ImageIcon(PopupMenuItemSaveScript.class.getResource("/resource/icon/16/096.png"))));
+        setIcon(
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                PopupMenuItemSaveScript.class.getResource(
+                                        "/resource/icon/16/096.png"))));
 
         this.scriptsPanel = scriptsPanel;
 
-        this.addActionListener(new java.awt.event.ActionListener() {
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
 
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                PopupMenuItemSaveScript.this.scriptsPanel.saveScript(selectedScript);
-                selectedScript = null;
-            }
-        });
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        PopupMenuItemSaveScript.this.scriptsPanel.saveScript(selectedScript);
+                        selectedScript = null;
+                    }
+                });
     }
 
     @Override

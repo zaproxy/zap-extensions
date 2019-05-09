@@ -19,34 +19,49 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator;
 
-import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.httpfuzzer.AbstractHttpFuzzerMessageProcessorUIPanel;
-import org.zaproxy.zap.utils.ZapTextField;
-import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import java.awt.GridLayout;
 import java.awt.Panel;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.fuzz.httpfuzzer.AbstractHttpFuzzerMessageProcessorUIPanel;
+import org.zaproxy.zap.utils.ZapTextField;
 
 public class HttpFuzzerMessageProcessorTagUIPanel
-        extends AbstractHttpFuzzerMessageProcessorUIPanel<HttpFuzzerMessageProcessorTagCreator, HttpFuzzerMessageProcessorTagUI> {
+        extends AbstractHttpFuzzerMessageProcessorUIPanel<
+                HttpFuzzerMessageProcessorTagCreator, HttpFuzzerMessageProcessorTagUI> {
 
-    private static final String MATCH_BY_REGEX_LABEL_REGEX = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.matchbyregex.regex");
-    private static final String MATCH_BY_REGEX_LABEL_TAG = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.matchbyregex.tag");
-    private static final String MATCH_BY_REGEX_NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.matchbyregex.name");
-    private static final String EXTRACT_BY_REGEX_LABEL_REGEX = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.extractbyregex.regex");
-    private static final String EXTRACT_BY_REGEX_NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.extractbyregex.name");
-    private static final String VALIDATION_MESSAGEBOX_TITLE = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.validation.messageboxtitle");
-    private static final String VALIDATION_TEXTFIELDS_ARE_REQUIRED = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.validation.textfieldsarerequired");
-    private static final String VALIDATION_REGEX_SYNTAX_ERROR = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.validation.regexsyntaxerror");
-    private static final String VALIDATION_REGEX_AT_LEAST_ONE_GROUP = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.validation.regexatleastonegroup");
+    private static final String MATCH_BY_REGEX_LABEL_REGEX =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.matchbyregex.regex");
+    private static final String MATCH_BY_REGEX_LABEL_TAG =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.matchbyregex.tag");
+    private static final String MATCH_BY_REGEX_NAME =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.matchbyregex.name");
+    private static final String EXTRACT_BY_REGEX_LABEL_REGEX =
+            Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.tagcreator.extractbyregex.regex");
+    private static final String EXTRACT_BY_REGEX_NAME =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.extractbyregex.name");
+    private static final String VALIDATION_MESSAGEBOX_TITLE =
+            Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.tagcreator.validation.messageboxtitle");
+    private static final String VALIDATION_TEXTFIELDS_ARE_REQUIRED =
+            Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.tagcreator.validation.textfieldsarerequired");
+    private static final String VALIDATION_REGEX_SYNTAX_ERROR =
+            Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.tagcreator.validation.regexsyntaxerror");
+    private static final String VALIDATION_REGEX_AT_LEAST_ONE_GROUP =
+            Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.tagcreator.validation.regexatleastonegroup");
     private static final boolean INVALID = false;
     private static final boolean VALID = true;
     private final JPanel fieldsPanel;
@@ -76,7 +91,7 @@ public class HttpFuzzerMessageProcessorTagUIPanel
         addLabelWithTextField(extractByRegexFieldRegex, EXTRACT_BY_REGEX_LABEL_REGEX);
     }
 
-    private void createMatchByRegexControl(){
+    private void createMatchByRegexControl() {
         matchByRegexRadio = new JRadioButton();
         addRadioButton(matchByRegexRadio, MATCH_BY_REGEX_NAME, true);
 
@@ -95,8 +110,8 @@ public class HttpFuzzerMessageProcessorTagUIPanel
         radioGroup.add(radio);
     }
 
-    private void addLabelWithTextField(JTextField textField, String labelName){
-        JLabel label = new JLabel(labelName,  JLabel.TRAILING);
+    private void addLabelWithTextField(JTextField textField, String labelName) {
+        JLabel label = new JLabel(labelName, JLabel.TRAILING);
         fieldsPanel.add(label);
         label.setLabelFor(textField);
         fieldsPanel.add(textField);
@@ -110,20 +125,19 @@ public class HttpFuzzerMessageProcessorTagUIPanel
     @Override
     public void setFuzzerMessageProcessorUI(HttpFuzzerMessageProcessorTagUI processorUI) {
         TagRule rule = processorUI.getTagRule();
-        if(rule.getClass() == MatchByRegexTagRule.class){
-            MatchByRegexTagRule tagRule = (MatchByRegexTagRule)rule;
+        if (rule.getClass() == MatchByRegexTagRule.class) {
+            MatchByRegexTagRule tagRule = (MatchByRegexTagRule) rule;
             matchByRegexRadio.setSelected(true);
             setTextAndDiscardAllEdits(matchByRegexFieldRegex, tagRule.getRegex());
             setTextAndDiscardAllEdits(matchByRegexFieldTag, tagRule.getTag());
-        }
-        else if(rule.getClass() == ExtractByRegexTagRule.class){
-            ExtractByRegexTagRule tagRule = (ExtractByRegexTagRule)rule;
+        } else if (rule.getClass() == ExtractByRegexTagRule.class) {
+            ExtractByRegexTagRule tagRule = (ExtractByRegexTagRule) rule;
             extractByRegexRadio.setSelected(true);
             setTextAndDiscardAllEdits(extractByRegexFieldRegex, tagRule.getRegex());
         }
     }
 
-    private void setTextAndDiscardAllEdits(ZapTextField zapTextField, String text){
+    private void setTextAndDiscardAllEdits(ZapTextField zapTextField, String text) {
         zapTextField.setText(text);
         zapTextField.discardAllEdits();
     }
@@ -131,12 +145,12 @@ public class HttpFuzzerMessageProcessorTagUIPanel
     @Override
     public HttpFuzzerMessageProcessorTagUI getFuzzerMessageProcessorUI() {
         TagRule tagRule = null;
-        if(matchByRegexRadio.isSelected()){
-            tagRule = new MatchByRegexTagRule(
-                    matchByRegexFieldRegex.getText(),
-                    matchByRegexFieldTag.getText());
+        if (matchByRegexRadio.isSelected()) {
+            tagRule =
+                    new MatchByRegexTagRule(
+                            matchByRegexFieldRegex.getText(), matchByRegexFieldTag.getText());
 
-        } else if(extractByRegexRadio.isSelected()){
+        } else if (extractByRegexRadio.isSelected()) {
             tagRule = new ExtractByRegexTagRule(extractByRegexFieldRegex.getText());
         }
         return new HttpFuzzerMessageProcessorTagUI(tagRule);
@@ -152,54 +166,56 @@ public class HttpFuzzerMessageProcessorTagUIPanel
 
     @Override
     public boolean validate() {
-        if(matchByRegexRadio.isSelected()){
+        if (matchByRegexRadio.isSelected()) {
             return validateMatchByRegex();
-        } else if(extractByRegexRadio.isSelected()){
+        } else if (extractByRegexRadio.isSelected()) {
             return validateExtractByRegex();
         }
         return INVALID;
     }
 
     private boolean validateMatchByRegex() {
-        return isTextFieldNotEmpty(matchByRegexFieldTag) &&
-                isTextFieldNotEmpty(matchByRegexFieldRegex) &&
-                hasTextFieldValidRegex(matchByRegexFieldRegex);
+        return isTextFieldNotEmpty(matchByRegexFieldTag)
+                && isTextFieldNotEmpty(matchByRegexFieldRegex)
+                && hasTextFieldValidRegex(matchByRegexFieldRegex);
     }
 
-    private boolean hasTextFieldValidRegex(ZapTextField zapTextField){
+    private boolean hasTextFieldValidRegex(ZapTextField zapTextField) {
         String regex = zapTextField.getText();
         try {
             Pattern.compile(regex);
         } catch (PatternSyntaxException exception) {
-            String errorMessage = MessageFormat.format(VALIDATION_REGEX_SYNTAX_ERROR, exception.getDescription());
+            String errorMessage =
+                    MessageFormat.format(VALIDATION_REGEX_SYNTAX_ERROR, exception.getDescription());
             return showError(errorMessage);
         }
         return VALID;
     }
 
-    private boolean isTextFieldNotEmpty(ZapTextField zapTextField){
-        if(zapTextField.getText().length() == 0){
+    private boolean isTextFieldNotEmpty(ZapTextField zapTextField) {
+        if (zapTextField.getText().length() == 0) {
             return showError(VALIDATION_TEXTFIELDS_ARE_REQUIRED);
         }
         return VALID;
     }
 
-    private boolean showError(String text){
-        JOptionPane.showMessageDialog(null, text, VALIDATION_MESSAGEBOX_TITLE, JOptionPane.INFORMATION_MESSAGE);
+    private boolean showError(String text) {
+        JOptionPane.showMessageDialog(
+                null, text, VALIDATION_MESSAGEBOX_TITLE, JOptionPane.INFORMATION_MESSAGE);
         return INVALID;
     }
 
     private boolean validateExtractByRegex() {
-        return isTextFieldNotEmpty(extractByRegexFieldRegex) &&
-                hasTextFieldValidRegex(extractByRegexFieldRegex) &&
-                hasTextFieldRegexAtLeastOneGroup(extractByRegexFieldRegex);
+        return isTextFieldNotEmpty(extractByRegexFieldRegex)
+                && hasTextFieldValidRegex(extractByRegexFieldRegex)
+                && hasTextFieldRegexAtLeastOneGroup(extractByRegexFieldRegex);
     }
 
-    private boolean hasTextFieldRegexAtLeastOneGroup(ZapTextField zapTextField){
+    private boolean hasTextFieldRegexAtLeastOneGroup(ZapTextField zapTextField) {
         String regex = zapTextField.getText();
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher("");
-        if(matcher.groupCount() == 0){
+        if (matcher.groupCount() == 0) {
             return showError(VALIDATION_REGEX_AT_LEAST_ONE_GROUP);
         }
         return VALID;

@@ -21,67 +21,58 @@
  */
 
 package com.sittinglittleduck.DirBuster;
+
 import java.net.URL;
 
-public class WorkUnit
-{
+public class WorkUnit {
     private URL urlToGet;
     private boolean isDir;
     private String method;
-    //private String basecase = null;
-    //private boolean comparebase = false;
-    
-    //information about the basecase used for this test.
+    // private String basecase = null;
+    // private boolean comparebase = false;
+
+    // information about the basecase used for this test.
     private BaseCase baseCaseObj;
-    
-    //the item used to produce the check
+
+    // the item used to produce the check
     private String itemToCheck;
     /** Creates a new instance of WorkUnit */
-    public WorkUnit(URL url, boolean isDir, String method, BaseCase baseCaseObj, String itemToCheck)
-    {
+    public WorkUnit(
+            URL url, boolean isDir, String method, BaseCase baseCaseObj, String itemToCheck) {
         urlToGet = url;
         this.isDir = isDir;
         this.method = method;
         this.baseCaseObj = baseCaseObj;
         this.itemToCheck = itemToCheck;
     }
-    
-    
-    public URL getWork()
-    {
+
+    public URL getWork() {
         return urlToGet;
     }
-    
-    public boolean isDir()
-    {
+
+    public boolean isDir() {
         return isDir;
     }
-    
-    public String getMethod()
-    {
+
+    public String getMethod() {
         return method;
     }
-    
-    //public String getBasecase()
-    //{
-    //    return basecase;
-    //}
-    
-    //public boolean compareBasecase()
-    //{
-    //    return comparebase;
-    //}
 
-    public BaseCase getBaseCaseObj()
-    {
+    // public String getBasecase()
+    // {
+    //    return basecase;
+    // }
+
+    // public boolean compareBasecase()
+    // {
+    //    return comparebase;
+    // }
+
+    public BaseCase getBaseCaseObj() {
         return baseCaseObj;
     }
 
-    public String getItemToCheck()
-    {
+    public String getItemToCheck() {
         return itemToCheck;
     }
-    
-    
-
 }

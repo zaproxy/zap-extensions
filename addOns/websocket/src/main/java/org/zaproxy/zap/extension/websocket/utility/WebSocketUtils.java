@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2018 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,11 +21,10 @@ package org.zaproxy.zap.extension.websocket.utility;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.Random;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Vector;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.encoder.Encoder;
 import org.parosproxy.paros.network.HttpMessage;
@@ -33,14 +32,12 @@ import org.zaproxy.zap.extension.websocket.WebSocketProtocol;
 
 public final class WebSocketUtils {
     private static final Logger LOGGER = Logger.getLogger(WebSocketUtils.class);
-    
+
     public static final String WEB_SOCKET_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
     private static Encoder encoder = new Encoder();
 
-    /**
-     * Given a Sec-WebSocket-Key, Generate response key Sec-WebSocket-Accept
-     */
+    /** Given a Sec-WebSocket-Key, Generate response key Sec-WebSocket-Accept */
     public static String encodeWebSocketKey(String key) {
         String toEncode = key + WEB_SOCKET_GUID;
 
@@ -51,9 +48,10 @@ public final class WebSocketUtils {
             return null;
         }
     }
-    
+
     /**
      * Generate a Sec-WebSocket-key which is used in handshake request
+     *
      * @return new Sec-WebSocket-key
      */
     public static String generateSecWebSocketKey() {
@@ -62,28 +60,27 @@ public final class WebSocketUtils {
         rand.nextBytes(random);
         return Base64.getEncoder().encodeToString(random);
     }
-    
+
     /**
-     * Parses the negotiated WebSockets extensions. It splits them up into name
-     * and params of the extension. In future we want to look up if given
-     * extension is available as ZAP extension and then use their knowledge to
-     * process frames.
-     * <p>
-     * If multiple extensions are to be used, they can all be listed in a single
-     * {@link WebSocketProtocol#HEADER_EXTENSION} field or split between multiple
-     * instances of the {@link WebSocketProtocol#HEADER_EXTENSION} header field.
+     * Parses the negotiated WebSockets extensions. It splits them up into name and params of the
+     * extension. In future we want to look up if given extension is available as ZAP extension and
+     * then use their knowledge to process frames.
+     *
+     * <p>If multiple extensions are to be used, they can all be listed in a single {@link
+     * WebSocketProtocol#HEADER_EXTENSION} field or split between multiple instances of the {@link
+     * WebSocketProtocol#HEADER_EXTENSION} header field.
      *
      * @param msg
      * @return Map with extension name and parameter string.
      */
     public static Map<String, String> parseWebSocketExtensions(HttpMessage msg) {
-        Vector<String> extensionHeaders = msg.getResponseHeader().getHeaders(
-                WebSocketProtocol.HEADER_EXTENSION);
-        
+        Vector<String> extensionHeaders =
+                msg.getResponseHeader().getHeaders(WebSocketProtocol.HEADER_EXTENSION);
+
         if (extensionHeaders == null) {
             return null;
         }
-        
+
         /*
          * From http://tools.ietf.org/html/rfc6455#section-4.3:
          *   extension-list = 1#extension
@@ -109,13 +106,13 @@ public final class WebSocketUtils {
             for (String extension : extensionHeader.split(",")) {
                 String key = extension.trim();
                 String params = "";
-                
+
                 int paramsIndex = key.indexOf(";");
                 if (paramsIndex != -1) {
                     key = extension.substring(0, paramsIndex).trim();
                     params = extension.substring(paramsIndex + 1).trim();
                 }
-                
+
                 wsExtensions.put(key, params);
             }
         }
@@ -126,47 +123,47 @@ public final class WebSocketUtils {
          *
          * Note that the order of extensions is significant!
          */
-        
+
         return wsExtensions;
     }
-    
+
     /**
      * Parses negotiated protocols out of the response header.
-     * <p>
-     * The {@link WebSocketProtocol#HEADER_PROTOCOL} header is only allowed to
-     * appear once in the HTTP response (but several times in the HTTP request).
      *
-     * A server that speaks multiple sub-protocols has to make sure it selects
-     * one based on the client's handshake and specifies it in its handshake.
+     * <p>The {@link WebSocketProtocol#HEADER_PROTOCOL} header is only allowed to appear once in the
+     * HTTP response (but several times in the HTTP request).
+     *
+     * <p>A server that speaks multiple sub-protocols has to make sure it selects one based on the
+     * client's handshake and specifies it in its handshake.
      *
      * @param msg
      * @return Name of negotiated sub-protocol or null.
      */
     public static String parseWebSocketSubProtocol(HttpMessage msg) {
-        String subProtocol = msg.getResponseHeader().getHeader(
-                WebSocketProtocol.HEADER_PROTOCOL);
+        String subProtocol = msg.getResponseHeader().getHeader(WebSocketProtocol.HEADER_PROTOCOL);
         return subProtocol;
     }
-    
+
     /**
-     * The {@link WebSocketProtocol#HEADER_VERSION} header might not always
-     * contain a number. Therefore I return a string. Use the version to choose
-     * the appropriate processing class.
+     * The {@link WebSocketProtocol#HEADER_VERSION} header might not always contain a number.
+     * Therefore I return a string. Use the version to choose the appropriate processing class.
      *
      * @param msg
      * @return Version of the WebSockets channel, defining the protocol.
      */
     public static String parseWebSocketVersion(HttpMessage msg) {
-        String version = msg.getResponseHeader().getHeader(
-                WebSocketProtocol.HEADER_VERSION);
-        
+        String version = msg.getResponseHeader().getHeader(WebSocketProtocol.HEADER_VERSION);
+
         if (version == null) {
             // check for requested WebSockets version
             version = msg.getRequestHeader().getHeader(WebSocketProtocol.HEADER_VERSION);
-            
+
             if (version == null) {
                 // default to version 13 if non is given, for whatever reason
-                LOGGER.debug("No " + WebSocketProtocol.HEADER_VERSION + " header was provided - try version 13");
+                LOGGER.debug(
+                        "No "
+                                + WebSocketProtocol.HEADER_VERSION
+                                + " header was provided - try version 13");
                 version = "13";
             }
         }

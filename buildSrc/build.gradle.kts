@@ -1,5 +1,5 @@
 plugins {
-    `java-gradle-plugin`
+    `kotlin-dsl`
     id("com.diffplug.gradle.spotless") version "3.20.0"
 }
 
@@ -39,6 +39,7 @@ dependencies {
     compileOnly("com.google.code.findbugs:findbugs-annotations:3.0.1")
     compileOnly("com.infradna.tool:bridge-method-annotation:1.18")
     implementation("com.github.zafarkhaja:java-semver:0.9.0")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:3.20.0")
 }
 
 java {

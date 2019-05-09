@@ -22,29 +22,21 @@
 
 package com.sittinglittleduck.DirBuster;
 
-
-public class HTMLparseWorkUnit
-{
+public class HTMLparseWorkUnit {
     private String htmlToParse;
     private WorkUnit workUnit;
-    
+
     /** Creates a new instance of HTMLparseWorkUnit */
-    public HTMLparseWorkUnit(String htmlToParse, WorkUnit workUnit)
-    {
+    public HTMLparseWorkUnit(String htmlToParse, WorkUnit workUnit) {
         this.workUnit = workUnit;
         this.htmlToParse = htmlToParse;
     }
 
-    public String getHtmlToParse()
-    {
+    public String getHtmlToParse() {
         return htmlToParse;
     }
 
-    public WorkUnit getWorkUnit()
-    {
+    public WorkUnit getWorkUnit() {
         return workUnit;
     }
-    
-
-    
 }

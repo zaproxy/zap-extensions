@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2014 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,14 +26,16 @@ public class BruteForceTableModel extends DefaultHistoryReferencesTableModel {
     private static final long serialVersionUID = 5732679524771190690L;
 
     public BruteForceTableModel() {
-        super(new Column[] {
-                Column.REQUEST_TIMESTAMP,
-                Column.RESPONSE_TIMESTAMP,
-                Column.METHOD,
-                Column.URL,
-                Column.STATUS_CODE,
-                Column.STATUS_REASON,
-                Column.SIZE_RESPONSE_HEADER,
-                Column.SIZE_RESPONSE_BODY });
+        super(
+                new Column[] {
+                    Column.REQUEST_TIMESTAMP,
+                    Column.RESPONSE_TIMESTAMP,
+                    Column.METHOD,
+                    Column.URL,
+                    Column.STATUS_CODE,
+                    Column.STATUS_REASON,
+                    Column.SIZE_RESPONSE_HEADER,
+                    Column.SIZE_RESPONSE_BODY
+                });
     }
 }

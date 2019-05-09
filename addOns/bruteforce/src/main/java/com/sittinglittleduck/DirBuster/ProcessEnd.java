@@ -22,100 +22,78 @@ package com.sittinglittleduck.DirBuster;
 import java.util.TimerTask;
 import java.util.Vector;
 
-public class ProcessEnd extends TimerTask
-{
+public class ProcessEnd extends TimerTask {
 
     private final Manager manager;
 
     /** Creates a new instance of ProcessChecker */
-    public interface ProcessUpdate
-    {
+    public interface ProcessUpdate {
 
         void isAlive();
     }
 
-    public ProcessEnd(Manager manager)
-    {
+    public ProcessEnd(Manager manager) {
         this.manager = manager;
-
     }
 
-    public void run()
-    {
-        if (manager.dirQueue.isEmpty() && manager.workQueue.isEmpty() && manager.parseQueue.isEmpty())
-        {
-            //test to see if all the workers are done
+    public void run() {
+        if (manager.dirQueue.isEmpty()
+                && manager.workQueue.isEmpty()
+                && manager.parseQueue.isEmpty()) {
+            // test to see if all the workers are done
             boolean allWorkersFinished = true;
             Vector workers = manager.getWorkers();
             Vector parsers = manager.getParseWorkers();
 
-            for (int a = 0; a < workers.size(); a++)
-            {
-                if (((Worker) workers.elementAt(a)).isWorking())
-                {
-                    //there is a worker still working so break
+            for (int a = 0; a < workers.size(); a++) {
+                if (((Worker) workers.elementAt(a)).isWorking()) {
+                    // there is a worker still working so break
                     allWorkersFinished = false;
                     break;
                 }
             }
 
-            for (int a = 0; a < parsers.size(); a++)
-            {
-                if (((HTMLparse) parsers.elementAt(a)).isWorking())
-                {
+            for (int a = 0; a < parsers.size(); a++) {
+                if (((HTMLparse) parsers.elementAt(a)).isWorking()) {
                     allWorkersFinished = false;
                     break;
                 }
             }
 
-
-            if (allWorkersFinished)
-            {
-                //all the workers are finished and there is nothing 
+            if (allWorkersFinished) {
+                // all the workers are finished and there is nothing
                 manager.youAreFinished();
             }
 
-        }
-        else
-        {
-            //if we are fuzzing
-            if (manager.urlFuzz || manager.pureBrutefuzz)
-            {
-                if (manager.isURLFuzzGenFinished())
-                {
+        } else {
+            // if we are fuzzing
+            if (manager.urlFuzz || manager.pureBrutefuzz) {
+                if (manager.isURLFuzzGenFinished()) {
                     boolean allWorkersFinished = true;
                     Vector workers = manager.getWorkers();
                     Vector parsers = manager.getParseWorkers();
 
-                    for (int a = 0; a < workers.size(); a++)
-                    {
-                        if (((Worker) workers.elementAt(a)).isWorking())
-                        {
-                            //there is a worker still working so break
+                    for (int a = 0; a < workers.size(); a++) {
+                        if (((Worker) workers.elementAt(a)).isWorking()) {
+                            // there is a worker still working so break
                             allWorkersFinished = false;
                             break;
                         }
                     }
 
-                    for (int a = 0; a < parsers.size(); a++)
-                    {
-                        if (((HTMLparse) parsers.elementAt(a)).isWorking())
-                        {
+                    for (int a = 0; a < parsers.size(); a++) {
+                        if (((HTMLparse) parsers.elementAt(a)).isWorking()) {
                             allWorkersFinished = false;
                             break;
                         }
                     }
 
-
-                    if (allWorkersFinished)
-                    {
-                        //all the workers are finished and there is nothing 
+                    if (allWorkersFinished) {
+                        // all the workers are finished and there is nothing
                         manager.youAreFinished();
                     }
                 }
             }
         }
-
     }
 }
-

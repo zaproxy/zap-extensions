@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,8 +22,8 @@ package org.zaproxy.zap.extension.fuzz.payloads.processor;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
 /**
- * A {@code DefaultPayloadProcessor} that allows to expand the payload up to a given length appending a given value to begin or
- * end of the payload.
+ * A {@code DefaultPayloadProcessor} that allows to expand the payload up to a given length
+ * appending a given value to begin or end of the payload.
  */
 public class ExpandStringProcessor implements DefaultPayloadProcessor {
 
@@ -71,12 +71,12 @@ public class ExpandStringProcessor implements DefaultPayloadProcessor {
         }
 
         switch (position) {
-        case END:
-            expandedValue.insert(0, valuePayload);
-            break;
-        case BEGIN:
-        default:
-            expandedValue.append(valuePayload);
+            case END:
+                expandedValue.insert(0, valuePayload);
+                break;
+            case BEGIN:
+            default:
+                expandedValue.append(valuePayload);
         }
 
         payload.setValue(expandedValue.toString());
@@ -87,5 +87,4 @@ public class ExpandStringProcessor implements DefaultPayloadProcessor {
     public ExpandStringProcessor copy() {
         return this;
     }
-
 }

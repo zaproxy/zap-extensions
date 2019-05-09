@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,9 +19,7 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads;
 
-/**
- * A payload used for fuzzing.
- */
+/** A payload used for fuzzing. */
 public interface Payload {
 
     /**
@@ -33,9 +31,9 @@ public interface Payload {
 
     /**
      * Sets value of the payload.
-     * <p>
-     * Implementations might ignore the value, if not appropriate (for example, if it's a numeric payload but it's being set a
-     * String).
+     *
+     * <p>Implementations might ignore the value, if not appropriate (for example, if it's a numeric
+     * payload but it's being set a String).
      *
      * @param value the new value
      */
@@ -43,8 +41,8 @@ public interface Payload {
 
     /**
      * Returns a copy of this payload.
-     * <p>
-     * Implementations might opt to return {@code this}, if immutable and thread-safe.
+     *
+     * <p>Implementations might opt to return {@code this}, if immutable and thread-safe.
      *
      * @return a new {@code Payload} whose contents are equal to this payload.
      */

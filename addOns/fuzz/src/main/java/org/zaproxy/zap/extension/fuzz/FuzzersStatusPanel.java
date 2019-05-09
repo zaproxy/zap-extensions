@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
-
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -32,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.ScanPanel2;
@@ -52,7 +50,10 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
 
     private FuzzerListenerImpl fuzzerListener;
 
-    public FuzzersStatusPanel(FuzzOptions fuzzerOptions, FuzzersController mainFuzzerScanController, Action fuzzerUIStarter) {
+    public FuzzersStatusPanel(
+            FuzzOptions fuzzerOptions,
+            FuzzersController mainFuzzerScanController,
+            Action fuzzerUIStarter) {
         super("fuzz", FuzzerUIUtils.FUZZER_ICON, mainFuzzerScanController);
 
         getNewScanButton().setAction(fuzzerUIStarter);
@@ -60,7 +61,9 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
 
         this.fuzzerOptions = fuzzerOptions;
 
-        setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
+        setDefaultAccelerator(
+                KeyStroke.getKeyStroke(
+                        KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
         setMnemonic(Constant.messages.getString("fuzz.panel.mnemonic").charAt(0));
     }
 
@@ -126,13 +129,18 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
     @Override
     public void clearFinishedScans() {
         if (fuzzerOptions.isPromptToClearFinishedFuzzers()) {
-            JCheckBox dontPromptCheckBox = new JCheckBox(Constant.messages.getString("fuzz.toolbar.confirm.clear.dontPrompt"));
-            Object[] messages = { Constant.messages.getString("fuzz.toolbar.confirm.clear"), "\n", dontPromptCheckBox };
-            int option = JOptionPane.showConfirmDialog(
-                    View.getSingleton().getMainFrame(),
-                    messages,
-                    Constant.PROGRAM_NAME,
-                    JOptionPane.YES_NO_OPTION);
+            JCheckBox dontPromptCheckBox =
+                    new JCheckBox(
+                            Constant.messages.getString("fuzz.toolbar.confirm.clear.dontPrompt"));
+            Object[] messages = {
+                Constant.messages.getString("fuzz.toolbar.confirm.clear"), "\n", dontPromptCheckBox
+            };
+            int option =
+                    JOptionPane.showConfirmDialog(
+                            View.getSingleton().getMainFrame(),
+                            messages,
+                            Constant.PROGRAM_NAME,
+                            JOptionPane.YES_NO_OPTION);
             if (dontPromptCheckBox.isSelected()) {
                 fuzzerOptions.setPromptToClearFinishedFuzzers(false);
             }
@@ -160,25 +168,32 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
     private class FuzzerListenerImpl implements FuzzerProgressListener {
 
         @Override
-        public void fuzzerProgress(final int id, final String displayName, final long executedTasks, final long tasksToExecute) {
-            EventQueue.invokeLater(new Runnable() {
+        public void fuzzerProgress(
+                final int id,
+                final String displayName,
+                final long executedTasks,
+                final long tasksToExecute) {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                @Override
-                public void run() {
-                    scanProgress(id, displayName, (int) executedTasks, (int) tasksToExecute);
-                }
-            });
+                        @Override
+                        public void run() {
+                            scanProgress(
+                                    id, displayName, (int) executedTasks, (int) tasksToExecute);
+                        }
+                    });
         }
 
         @Override
         public void fuzzerCompleted(final int id, final String displayName, boolean successfully) {
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                @Override
-                public void run() {
-                    scanFinshed(id, displayName);
-                }
-            });
+                        @Override
+                        public void run() {
+                            scanFinshed(id, displayName);
+                        }
+                    });
         }
     }
 }

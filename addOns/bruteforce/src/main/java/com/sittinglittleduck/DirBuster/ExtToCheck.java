@@ -2,7 +2,7 @@
  * ExtToCheck.java
  *
  * Created on June 22, 2007, 11:30 AM
- * 
+ *
  * Copyright 2007 James Fisher
  *
  * This library is free software; you can redistribute it and/or
@@ -19,41 +19,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
- 
 
 package com.sittinglittleduck.DirBuster;
 
-/**
- *
- * @author james
- */
-public class ExtToCheck
-{
+/** @author james */
+public class ExtToCheck {
     public static final String BLANK_EXT = "BLANK";
     private String name;
     private boolean toCheck;
-    
-    /**
-     * Creates a new instance of ExtToCheck
-     */
-    public ExtToCheck(String name, boolean toCheck)
-    {
+
+    /** Creates a new instance of ExtToCheck */
+    public ExtToCheck(String name, boolean toCheck) {
         this.toCheck = toCheck;
         this.name = name;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public boolean toCheck()
-    {
+    public boolean toCheck() {
         return toCheck;
     }
 
-    public void setToCheck(boolean toCheck)
-    {
+    public void setToCheck(boolean toCheck) {
         this.toCheck = toCheck;
-    }  
+    }
 }

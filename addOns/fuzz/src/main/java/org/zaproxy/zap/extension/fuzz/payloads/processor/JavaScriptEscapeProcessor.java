@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,8 +26,7 @@ public class JavaScriptEscapeProcessor implements DefaultPayloadProcessor {
 
     public static final JavaScriptEscapeProcessor INSTANCE = new JavaScriptEscapeProcessor();
 
-    public JavaScriptEscapeProcessor() {
-    }
+    public JavaScriptEscapeProcessor() {}
 
     @Override
     public DefaultPayload process(DefaultPayload payload) {
@@ -39,5 +38,4 @@ public class JavaScriptEscapeProcessor implements DefaultPayloadProcessor {
     public JavaScriptEscapeProcessor copy() {
         return this;
     }
-
 }

@@ -1,19 +1,38 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2013 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.saml.ui;
 
-import org.apache.log4j.Logger;
-import org.zaproxy.zap.extension.saml.*;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Set;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import org.apache.log4j.Logger;
+import org.zaproxy.zap.extension.saml.*;
 
-public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeChangeListener, AttributeListener {
+public class SamlExtentionSettingsUI extends JFrame
+        implements PassiveAttributeChangeListener, AttributeListener {
 
     private static final long serialVersionUID = 1L;
     private JScrollPane settingsScrollPane;
@@ -26,9 +45,7 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
 
     protected Logger log = Logger.getLogger(SamlExtentionSettingsUI.class.getName());
 
-    /**
-     * Create the frame.
-     */
+    /** Create the frame. */
     public SamlExtentionSettingsUI() {
         configuration = SAMLConfiguration.getInstance();
         setTitle(SamlI18n.getMessage("saml.toolmenu.settings"));
@@ -50,90 +67,105 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
         contentPane.add(footerPanel, BorderLayout.SOUTH);
         footerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        JButton btnAddAutoChange = new JButton(SamlI18n.getMessage("saml.settings.button.addautochangeattrib"));
-        btnAddAutoChange.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AddAutoChangeAttributeUI dialog = new AddAutoChangeAttributeUI(SamlExtentionSettingsUI.this);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.setVisible(true);
-            }
-        });
+        JButton btnAddAutoChange =
+                new JButton(SamlI18n.getMessage("saml.settings.button.addautochangeattrib"));
+        btnAddAutoChange.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        AddAutoChangeAttributeUI dialog =
+                                new AddAutoChangeAttributeUI(SamlExtentionSettingsUI.this);
+                        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                        dialog.setVisible(true);
+                    }
+                });
         footerPanel.add(btnAddAutoChange);
 
         JButton btnAdd = new JButton(SamlI18n.getMessage("saml.settings.button.addattrib"));
-        btnAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AddAttributeUI addAttributeUI = new AddAttributeUI(SamlExtentionSettingsUI.this);
-                addAttributeUI.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                addAttributeUI.setVisible(true);
-            }
-        });
+        btnAdd.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        AddAttributeUI addAttributeUI =
+                                new AddAttributeUI(SamlExtentionSettingsUI.this);
+                        addAttributeUI.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                        addAttributeUI.setVisible(true);
+                    }
+                });
         footerPanel.add(btnAdd);
 
         JButton btnSaveChanges = new JButton(SamlI18n.getMessage("saml.settings.button.save"));
-        btnSaveChanges.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean success = saveChanges();
-                if (success) {
-                    JOptionPane.showMessageDialog(SamlExtentionSettingsUI.this, SamlI18n.getMessage("saml.settings" +
-                            ".messages.saved"), SamlI18n.getMessage("saml.settings.messages.success"),
-                            JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(SamlExtentionSettingsUI.this, SamlI18n.getMessage("saml.settings" +
-                            ".messages.notsaved"), SamlI18n.getMessage("saml.settings.messages.failed"),
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+        btnSaveChanges.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        boolean success = saveChanges();
+                        if (success) {
+                            JOptionPane.showMessageDialog(
+                                    SamlExtentionSettingsUI.this,
+                                    SamlI18n.getMessage("saml.settings" + ".messages.saved"),
+                                    SamlI18n.getMessage("saml.settings.messages.success"),
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    SamlExtentionSettingsUI.this,
+                                    SamlI18n.getMessage("saml.settings" + ".messages.notsaved"),
+                                    SamlI18n.getMessage("saml.settings.messages.failed"),
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                });
         footerPanel.add(btnSaveChanges);
 
         JButton btnResetChanges = new JButton(SamlI18n.getMessage("saml.settings.button.reset"));
-        btnResetChanges.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(SamlExtentionSettingsUI.this,
-                        SamlI18n.getMessage("saml.editor.msg.confirmreset"), SamlI18n.getMessage("saml.settings.messages.confirm"),
-                        JOptionPane.YES_NO_OPTION);
-                if (response == JOptionPane.YES_OPTION) {
-                    resetChanges();
-                }
-            }
-        });
+        btnResetChanges.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int response =
+                                JOptionPane.showConfirmDialog(
+                                        SamlExtentionSettingsUI.this,
+                                        SamlI18n.getMessage("saml.editor.msg.confirmreset"),
+                                        SamlI18n.getMessage("saml.settings.messages.confirm"),
+                                        JOptionPane.YES_NO_OPTION);
+                        if (response == JOptionPane.YES_OPTION) {
+                            resetChanges();
+                        }
+                    }
+                });
         footerPanel.add(btnResetChanges);
 
         JButton btnExit = new JButton(SamlI18n.getMessage("saml.settings.button.exit"));
-        btnExit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(SamlExtentionSettingsUI.this,
-                        "Do You want to save changes before exit?", SamlI18n.getMessage("saml.settings.messages" +
-                        ".confirm"),
-                        JOptionPane.YES_NO_CANCEL_OPTION);
-                boolean exit = false;
-                if (response == JOptionPane.YES_OPTION) {
-                    saveChanges();
-                    exit = true;
-                } else if(response==JOptionPane.NO_OPTION){
-                    resetChanges();
-                    exit = true;
-                }
+        btnExit.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int response =
+                                JOptionPane.showConfirmDialog(
+                                        SamlExtentionSettingsUI.this,
+                                        "Do You want to save changes before exit?",
+                                        SamlI18n.getMessage("saml.settings.messages" + ".confirm"),
+                                        JOptionPane.YES_NO_CANCEL_OPTION);
+                        boolean exit = false;
+                        if (response == JOptionPane.YES_OPTION) {
+                            saveChanges();
+                            exit = true;
+                        } else if (response == JOptionPane.NO_OPTION) {
+                            resetChanges();
+                            exit = true;
+                        }
 
-                if (exit) {
-                    setVisible(false);
-                    dispose();
-                }
-            }
-        });
+                        if (exit) {
+                            setVisible(false);
+                            dispose();
+                        }
+                    }
+                });
         footerPanel.add(btnExit);
         initAttributes();
     }
 
-    /**
-     * Initialize UI with the attributes
-     */
+    /** Initialize UI with the attributes */
     private void initAttributes() {
         JPanel settingsPanel = new JPanel();
         settingsScrollPane.setViewportView(settingsPanel);
@@ -147,8 +179,14 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
         panelConstraints.gridx = 0;
         panelConstraints.gridy = 0;
         JPanel globalSettingsPanel = new JPanel();
-        globalSettingsPanel.setBorder(new TitledBorder(null, SamlI18n.getMessage("saml.settings.border.global"),
-                TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        globalSettingsPanel.setBorder(
+                new TitledBorder(
+                        null,
+                        SamlI18n.getMessage("saml.settings.border.global"),
+                        TitledBorder.LEADING,
+                        TitledBorder.TOP,
+                        null,
+                        null));
         settingsPanel.add(globalSettingsPanel, panelConstraints);
 
         GridBagLayout settingPanelLayout = new GridBagLayout();
@@ -162,29 +200,40 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
         gridBagConstraints.gridx = 0;
 
         SAMLConfiguration configuration = SAMLConfiguration.getInstance();
-        chckbxEnablePassiveChanger = new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.passivechanger"));
+        chckbxEnablePassiveChanger =
+                new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.passivechanger"));
         chckbxEnablePassiveChanger.setSelected(configuration.getAutoChangeEnabled());
         globalSettingsPanel.add(chckbxEnablePassiveChanger, gridBagConstraints);
 
         gridBagConstraints.gridy++;
-        chckbxDeflateOnSend = new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.deflateonsend"));
+        chckbxDeflateOnSend =
+                new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.deflateonsend"));
         chckbxDeflateOnSend.setSelected(configuration.isDeflateOnSendEnabled());
         globalSettingsPanel.add(chckbxDeflateOnSend, gridBagConstraints);
 
         gridBagConstraints.gridy++;
-        chckbxRemoveMessageSignatures = new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.removesign"));
+        chckbxRemoveMessageSignatures =
+                new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.removesign"));
         chckbxRemoveMessageSignatures.setSelected(configuration.getXSWEnabled());
         globalSettingsPanel.add(chckbxRemoveMessageSignatures, gridBagConstraints);
 
         gridBagConstraints.gridy++;
-        chckbxValidateAttributeValue = new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.typevalidate"));
+        chckbxValidateAttributeValue =
+                new JCheckBox(SamlI18n.getMessage("saml.settings.chkbox.typevalidate"));
         chckbxValidateAttributeValue.setSelected(configuration.isValidationEnabled());
         globalSettingsPanel.add(chckbxValidateAttributeValue, gridBagConstraints);
 
         panelConstraints.gridy++;
         panelConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
         JPanel attributePanel = new JPanel();
-        attributePanel.setBorder(new TitledBorder(null, SamlI18n.getMessage("saml.settings.border.autochange"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        attributePanel.setBorder(
+                new TitledBorder(
+                        null,
+                        SamlI18n.getMessage("saml.settings.border.autochange"),
+                        TitledBorder.LEADING,
+                        TitledBorder.TOP,
+                        null,
+                        null));
         settingsPanel.add(attributePanel, panelConstraints);
         attributePanel.setLayout(new GridBagLayout());
 
@@ -202,30 +251,37 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
             txtValue.setColumns(20);
             attributePanel.add(txtValue, gridBagConstraints);
 
-            txtValue.addFocusListener(new FocusListener() {
-                @Override
-                public void focusGained(FocusEvent e) {
-                }
+            txtValue.addFocusListener(
+                    new FocusListener() {
+                        @Override
+                        public void focusGained(FocusEvent e) {}
 
-                @Override
-                public void focusLost(FocusEvent e) {
-                    attribute.setValue(txtValue.getText());
-                    onDesiredAttributeValueChange(attribute);
-                }
-            });
+                        @Override
+                        public void focusLost(FocusEvent e) {
+                            attribute.setValue(txtValue.getText());
+                            onDesiredAttributeValueChange(attribute);
+                        }
+                    });
 
             gridBagConstraints.gridx++;
-            JButton btnRemoveAttribute = new JButton(SamlI18n.getMessage("saml.settings.button.removeattrib"));
-            btnRemoveAttribute.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int response = JOptionPane.showConfirmDialog(SamlExtentionSettingsUI.this,
-                            SamlI18n.getMessage("saml.settings.messages.confirmremove"), SamlI18n.getMessage("saml.settings.messages.confirm"), JOptionPane.YES_NO_OPTION);
-                    if (response == JOptionPane.YES_OPTION) {
-                        onDeleteDesiredAttribute(attribute);
-                    }
-                }
-            });
+            JButton btnRemoveAttribute =
+                    new JButton(SamlI18n.getMessage("saml.settings.button.removeattrib"));
+            btnRemoveAttribute.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            int response =
+                                    JOptionPane.showConfirmDialog(
+                                            SamlExtentionSettingsUI.this,
+                                            SamlI18n.getMessage(
+                                                    "saml.settings.messages.confirmremove"),
+                                            SamlI18n.getMessage("saml.settings.messages.confirm"),
+                                            JOptionPane.YES_NO_OPTION);
+                            if (response == JOptionPane.YES_OPTION) {
+                                onDeleteDesiredAttribute(attribute);
+                            }
+                        }
+                    });
             attributePanel.add(btnRemoveAttribute, gridBagConstraints);
             gridBagConstraints.gridy++;
         }
@@ -234,8 +290,14 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
         panelConstraints.weighty = 1.0;
         panelConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
         JPanel allAttributePanel = new JPanel();
-        allAttributePanel.setBorder(new TitledBorder(null, SamlI18n.getMessage("saml.settings.border.attributes"), TitledBorder.LEADING,
-                TitledBorder.TOP, null, null));
+        allAttributePanel.setBorder(
+                new TitledBorder(
+                        null,
+                        SamlI18n.getMessage("saml.settings.border.attributes"),
+                        TitledBorder.LEADING,
+                        TitledBorder.TOP,
+                        null,
+                        null));
         settingsPanel.add(allAttributePanel, panelConstraints);
         allAttributePanel.setLayout(new GridBagLayout());
 
@@ -251,23 +313,30 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
             allAttributePanel.add(lblAttributeType, gridBagConstraints);
 
             gridBagConstraints.gridx++;
-            JButton btnRemoveAttribute = new JButton(SamlI18n.getMessage("saml.settings.button.removeattrib"));
-            btnRemoveAttribute.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int response = JOptionPane.showConfirmDialog(SamlExtentionSettingsUI.this,
-                            SamlI18n.getMessage("saml.settings.messages.confirmremove"), SamlI18n.getMessage("saml.settings.messages.confirm"), JOptionPane.YES_NO_OPTION);
-                    if (response == JOptionPane.YES_OPTION) {
-                        onAttributeDelete(attribute);
-                    }
-                }
-            });
+            JButton btnRemoveAttribute =
+                    new JButton(SamlI18n.getMessage("saml.settings.button.removeattrib"));
+            btnRemoveAttribute.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            int response =
+                                    JOptionPane.showConfirmDialog(
+                                            SamlExtentionSettingsUI.this,
+                                            SamlI18n.getMessage(
+                                                    "saml.settings.messages.confirmremove"),
+                                            SamlI18n.getMessage("saml.settings.messages.confirm"),
+                                            JOptionPane.YES_NO_OPTION);
+                            if (response == JOptionPane.YES_OPTION) {
+                                onAttributeDelete(attribute);
+                            }
+                        }
+                    });
             allAttributePanel.add(btnRemoveAttribute, gridBagConstraints);
             gridBagConstraints.gridy++;
         }
     }
 
-    private boolean saveChanges(){
+    private boolean saveChanges() {
         configuration.setAutochangeEnabled(chckbxEnablePassiveChanger.isSelected());
         configuration.setDeflateOnSendEnabled(chckbxDeflateOnSend.isSelected());
         configuration.setXSWEnabled(chckbxRemoveMessageSignatures.isSelected());
@@ -275,12 +344,14 @@ public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeC
         return configuration.saveConfiguration();
     }
 
-    private void resetChanges(){
+    private void resetChanges() {
         try {
             SAMLConfiguration.getInstance().initialize();
             initAttributes();
         } catch (SAMLException e1) {
-            JOptionPane.showMessageDialog(SamlExtentionSettingsUI.this, SamlI18n.getMessage("saml.editor.msg.resetfailed"),
+            JOptionPane.showMessageDialog(
+                    SamlExtentionSettingsUI.this,
+                    SamlI18n.getMessage("saml.editor.msg.resetfailed"),
                     SamlI18n.getMessage("saml.settings.messages.failed"),
                     JOptionPane.ERROR_MESSAGE);
             log.error("Resetting settings failed");

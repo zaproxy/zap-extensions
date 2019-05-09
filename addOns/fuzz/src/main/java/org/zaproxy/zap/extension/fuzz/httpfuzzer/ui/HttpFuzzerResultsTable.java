@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,13 +24,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JLabel;
 import javax.swing.SortOrder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
-
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.decorator.AbstractHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
@@ -62,22 +60,30 @@ public class HttpFuzzerResultsTable extends HistoryReferencesTable {
 
         setAutoCreateColumnsFromModel(false);
 
-        getColumnExt(Constant.messages.getString("view.href.table.header.timestamp.request")).setVisible(false);
-        getColumnExt(Constant.messages.getString("view.href.table.header.method")).setVisible(false);
+        getColumnExt(Constant.messages.getString("view.href.table.header.timestamp.request"))
+                .setVisible(false);
+        getColumnExt(Constant.messages.getString("view.href.table.header.method"))
+                .setVisible(false);
         getColumnExt(Constant.messages.getString("view.href.table.header.url")).setVisible(false);
-        getColumnExt(Constant.messages.getString("view.href.table.header.size.requestheader")).setVisible(false);
-        getColumnExt(Constant.messages.getString("view.href.table.header.size.requestbody")).setVisible(false);
+        getColumnExt(Constant.messages.getString("view.href.table.header.size.requestheader"))
+                .setVisible(false);
+        getColumnExt(Constant.messages.getString("view.href.table.header.size.requestbody"))
+                .setVisible(false);
 
-        TableColumnExt stateColumn = getColumnExt(Constant.messages.getString("fuzz.httpfuzzer.results.tab.messages.table.header.state"));
+        TableColumnExt stateColumn =
+                getColumnExt(
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.results.tab.messages.table.header.state"));
         fuzzResultStateHighlighter = new FuzzResultStateHighlighter(stateColumn.getModelIndex());
         stateColumn.addHighlighter(fuzzResultStateHighlighter);
 
         // Sort on task ID
         setSortOrder(0, SortOrder.ASCENDING);
     }
-    
+
     public String getCustomStateValue(Map<String, Object> customState) {
-        for (HttpFuzzerResultStateHighlighter highlighter : fuzzResultStateHighlighter.highlighters) {
+        for (HttpFuzzerResultStateHighlighter highlighter :
+                fuzzResultStateHighlighter.highlighters) {
             if (highlighter.isHighlighted(customState)) {
                 return highlighter.getLabel();
             }
@@ -118,20 +124,24 @@ public class HttpFuzzerResultsTable extends HistoryReferencesTable {
                     HttpMessage httpMessage = hRef.getHttpMessage();
                     displayMessage(httpMessage);
 
-                    for (Object payload : ((HttpFuzzerResultsTableModel) getModel()).getPayloads(hRef.getHistoryId())) {
+                    for (Object payload :
+                            ((HttpFuzzerResultsTableModel) getModel())
+                                    .getPayloads(hRef.getHistoryId())) {
                         String strPayload = payload.toString();
                         if (strPayload.isEmpty()) {
                             continue;
                         }
 
-                        int startIndex = httpMessage.getResponseBody().toString().indexOf(strPayload);
+                        int startIndex =
+                                httpMessage.getResponseBody().toString().indexOf(strPayload);
                         if (startIndex >= 0) {
                             // Found the exact pattern - highlight it
-                            SearchMatch sm = new SearchMatch(
-                                    httpMessage,
-                                    SearchMatch.Location.RESPONSE_BODY,
-                                    startIndex,
-                                    startIndex + strPayload.length());
+                            SearchMatch sm =
+                                    new SearchMatch(
+                                            httpMessage,
+                                            SearchMatch.Location.RESPONSE_BODY,
+                                            startIndex,
+                                            startIndex + strPayload.length());
                             View.getSingleton().getResponsePanel().setTabFocus();
                             View.getSingleton().getResponsePanel().requestFocusInWindow();
                             View.getSingleton().getResponsePanel().highlightBody(sm);
@@ -159,7 +169,8 @@ public class HttpFuzzerResultsTable extends HistoryReferencesTable {
         @Override
         protected Component doHighlight(Component component, ComponentAdapter adapter) {
             @SuppressWarnings("unchecked")
-            Map<String, Object> data = new HashMap<>((Map<String, Object>) adapter.getValue(columnIndex));
+            Map<String, Object> data =
+                    new HashMap<>((Map<String, Object>) adapter.getValue(columnIndex));
 
             StringBuilder labelBuilder = new StringBuilder();
             boolean iconSet = false;
@@ -218,13 +229,15 @@ public class HttpFuzzerResultsTable extends HistoryReferencesTable {
 
         /**
          * {@inheritDoc}
-         * <p>
-         * Overridden to return true if the component is of type IconAware or of type JLabel, false otherwise.
-         * <p>
-         * Note: special casing JLabel is for backward compatibility - application highlighting code which doesn't use the
-         * Swingx renderers would stop working otherwise.
+         *
+         * <p>Overridden to return true if the component is of type IconAware or of type JLabel,
+         * false otherwise.
+         *
+         * <p>Note: special casing JLabel is for backward compatibility - application highlighting
+         * code which doesn't use the Swingx renderers would stop working otherwise.
          */
-        // Method/JavaDoc copied from org.jdesktop.swingx.decorator.IconHighlighter#canHighlight(Component, ComponentAdapter)
+        // Method/JavaDoc copied from
+        // org.jdesktop.swingx.decorator.IconHighlighter#canHighlight(Component, ComponentAdapter)
         @Override
         protected boolean canHighlight(final Component component, final ComponentAdapter adapter) {
             return component instanceof IconAware || component instanceof JLabel;

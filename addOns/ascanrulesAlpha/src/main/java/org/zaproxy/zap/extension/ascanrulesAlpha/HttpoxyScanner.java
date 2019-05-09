@@ -2,14 +2,14 @@
  * Zed Attack Proxy (ZAP) and its related class files.
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2016 The ZAP Development Team
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
@@ -34,157 +33,155 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class HttpoxyScanner extends AbstractAppPlugin {
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "ascanalpha.httpoxy.";
-	private static final int PLUGIN_ID = 10107;
+    /** Prefix for internationalised messages used by this rule */
+    private static final String MESSAGE_PREFIX = "ascanalpha.httpoxy.";
 
-	private static final Logger log = Logger.getLogger(HttpoxyScanner.class);
+    private static final int PLUGIN_ID = 10107;
 
-	@Override
-	public int getCategory() {
-		return Category.SERVER;
-	}
+    private static final Logger log = Logger.getLogger(HttpoxyScanner.class);
 
-	@Override
-	public String[] getDependency() {
-		return null;
-	}
+    @Override
+    public int getCategory() {
+        return Category.SERVER;
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
+    @Override
+    public String[] getDependency() {
+        return null;
+    }
 
-	@Override
-	public int getId() {
-		return PLUGIN_ID;
-	}
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
 
-	@Override
-	public int getRisk() {
-		return Alert.RISK_HIGH;
-	}
+    @Override
+    public int getId() {
+        return PLUGIN_ID;
+    }
 
-	@Override
-	public int getCweId() {
-		return 20; // WASC-20 Improper Input Handling
-	}
+    @Override
+    public int getRisk() {
+        return Alert.RISK_HIGH;
+    }
 
-	@Override
-	public int getWascId() {
-		return 20;	// Improper Input Validation
-	}
+    @Override
+    public int getCweId() {
+        return 20; // WASC-20 Improper Input Handling
+    }
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
+    @Override
+    public int getWascId() {
+        return 20; // Improper Input Validation
+    }
 
-	@Override
-	public String getReference() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
 
-	@Override
-	public String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
+    @Override
+    public String getReference() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
 
-	@Override
-	public void init() {
-	}
+    @Override
+    public String getSolution() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
 
-	@Override
-	public void scan() {
-		// Set up a listener using all interfaces on another port
-		ProxyServer proxy;
-		proxy = new ProxyServer();
-		HttpoxyListener listener = new HttpoxyListener();
-		proxy.addOverrideMessageProxyListener(listener);
-		int proxyPort = proxy.startServer(null, 0, true);
+    @Override
+    public void init() {}
 
-		try {
-			Enumeration<NetworkInterface> allInterfaces = NetworkInterface.getNetworkInterfaces();
-			
-			// Try all of the available interfaces as we dont know which one(s) 
-			// will be available to the target server
-			while (allInterfaces.hasMoreElements()) {
-				NetworkInterface ni = allInterfaces.nextElement();
-				Enumeration<InetAddress> inetAddrs = ni.getInetAddresses();
-				while (inetAddrs.hasMoreElements()) {
-					InetAddress inetAddr = inetAddrs.nextElement();
-					String hostPort = inetAddr.getHostAddress() + ":" + proxyPort;
+    @Override
+    public void scan() {
+        // Set up a listener using all interfaces on another port
+        ProxyServer proxy;
+        proxy = new ProxyServer();
+        HttpoxyListener listener = new HttpoxyListener();
+        proxy.addOverrideMessageProxyListener(listener);
+        int proxyPort = proxy.startServer(null, 0, true);
 
-					HttpMessage newRequest = getNewMsg();
-					newRequest.getRequestHeader().setHeader("Proxy", hostPort);
-					try {
-						sendAndReceive(newRequest, false);
-					} catch (Exception e) {
-						// Ignore
-					}
-				
-					if (listener.isMsgReceived()) {
-						// the server is vulnerable
-						bingo(getRisk(), //Risk
-								Alert.CONFIDENCE_HIGH, //Confidence/Reliability
-								getName(), //Name
-								getDescription(), //Description
-								getBaseMsg().getRequestHeader().getURI().toString(), //Original URI
-								null, //Param
-								"Proxy: " + hostPort, //Attack
-								Constant.messages.getString(
-										MESSAGE_PREFIX + "otherinfo", listener.getMsgUrl()), //OtherInfo 
-								getSolution(), //Solution
-								"", //Evidence
-								getCweId(), //CWE ID
-								getWascId(), //WASC ID
-								newRequest); //HTTPMessage
+        try {
+            Enumeration<NetworkInterface> allInterfaces = NetworkInterface.getNetworkInterfaces();
 
-						// no point in continuing
-						return;
-					}
-				}
-			}
-		} catch (Exception e) {
-			log.debug(e.getMessage(), e);
-		} finally {
-			proxy.stopServer();
-		}
-	}
+            // Try all of the available interfaces as we dont know which one(s)
+            // will be available to the target server
+            while (allInterfaces.hasMoreElements()) {
+                NetworkInterface ni = allInterfaces.nextElement();
+                Enumeration<InetAddress> inetAddrs = ni.getInetAddresses();
+                while (inetAddrs.hasMoreElements()) {
+                    InetAddress inetAddr = inetAddrs.nextElement();
+                    String hostPort = inetAddr.getHostAddress() + ":" + proxyPort;
 
-	private class HttpoxyListener implements OverrideMessageProxyListener {
-		
-		private boolean msgReceived;
-		private String msgUrl;
+                    HttpMessage newRequest = getNewMsg();
+                    newRequest.getRequestHeader().setHeader("Proxy", hostPort);
+                    try {
+                        sendAndReceive(newRequest, false);
+                    } catch (Exception e) {
+                        // Ignore
+                    }
 
-		@Override
-		public int getArrangeableListenerOrder() {
-			return 0;
-		}
+                    if (listener.isMsgReceived()) {
+                        // the server is vulnerable
+                        bingo(
+                                getRisk(), // Risk
+                                Alert.CONFIDENCE_HIGH, // Confidence/Reliability
+                                getName(), // Name
+                                getDescription(), // Description
+                                getBaseMsg().getRequestHeader().getURI().toString(), // Original URI
+                                null, // Param
+                                "Proxy: " + hostPort, // Attack
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "otherinfo",
+                                        listener.getMsgUrl()), // OtherInfo
+                                getSolution(), // Solution
+                                "", // Evidence
+                                getCweId(), // CWE ID
+                                getWascId(), // WASC ID
+                                newRequest); // HTTPMessage
 
-		@Override
-		public boolean onHttpRequestSend(HttpMessage msg) {
-			this.msgReceived = true;
-			this.msgUrl = msg.getRequestHeader().getURI().toString();
-			log.debug("Received request " + msgUrl);
-			return true;
-		}
+                        // no point in continuing
+                        return;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.debug(e.getMessage(), e);
+        } finally {
+            proxy.stopServer();
+        }
+    }
 
-		@Override
-		public boolean onHttpResponseReceived(HttpMessage msg) {
-			return true;
-		}
+    private class HttpoxyListener implements OverrideMessageProxyListener {
 
-		public boolean isMsgReceived() {
-			return msgReceived;
-		}
+        private boolean msgReceived;
+        private String msgUrl;
 
-		public String getMsgUrl() {
-			return msgUrl;
-		}
-		
-	}
+        @Override
+        public int getArrangeableListenerOrder() {
+            return 0;
+        }
 
+        @Override
+        public boolean onHttpRequestSend(HttpMessage msg) {
+            this.msgReceived = true;
+            this.msgUrl = msg.getRequestHeader().getURI().toString();
+            log.debug("Received request " + msgUrl);
+            return true;
+        }
+
+        @Override
+        public boolean onHttpResponseReceived(HttpMessage msg) {
+            return true;
+        }
+
+        public boolean isMsgReceived() {
+            return msgReceived;
+        }
+
+        public String getMsgUrl() {
+            return msgUrl;
+        }
+    }
 }

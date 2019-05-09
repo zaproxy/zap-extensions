@@ -1,22 +1,24 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2013 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.saml;
 
-import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.network.HtmlParameter;
-import org.parosproxy.paros.network.HttpMessage;
-import org.w3c.dom.*;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.zaproxy.zap.utils.XmlUtils;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -26,6 +28,22 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.*;
+import org.apache.commons.httpclient.URIException;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.network.HtmlParameter;
+import org.parosproxy.paros.network.HttpMessage;
+import org.w3c.dom.*;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.zaproxy.zap.utils.XmlUtils;
 
 public class SAMLMessage {
 
@@ -67,23 +85,27 @@ public class SAMLMessage {
      * @throws SAMLException
      */
     private void processHTTPMessage() throws SAMLException {
-        //check whether a saml message
+        // check whether a saml message
         if (!SAMLUtils.hasSAMLMessage(httpMessage)) {
             throw new SAMLException("Not a SAML Message");
         }
 
-        //get the saml message from the parameters
+        // get the saml message from the parameters
         for (HtmlParameter urlParameter : httpMessage.getUrlParams()) {
-            if (urlParameter.getName().equals("SAMLRequest") || urlParameter.getName().equals("SAMLResponse")) {
-                samlMessageString = SAMLUtils.extractSAMLMessage(urlParameter.getValue(), Binding.HTTPRedirect);
+            if (urlParameter.getName().equals("SAMLRequest")
+                    || urlParameter.getName().equals("SAMLResponse")) {
+                samlMessageString =
+                        SAMLUtils.extractSAMLMessage(urlParameter.getValue(), Binding.HTTPRedirect);
 
             } else if (urlParameter.getName().equals("RelayState")) {
                 relayState = urlParameter.getValue();
             }
         }
         for (HtmlParameter formParameter : httpMessage.getFormParams()) {
-            if (formParameter.getName().equals("SAMLRequest") || formParameter.getName().equals("SAMLResponse")) {
-                samlMessageString = SAMLUtils.extractSAMLMessage(formParameter.getValue(), Binding.HTTPPost);
+            if (formParameter.getName().equals("SAMLRequest")
+                    || formParameter.getName().equals("SAMLResponse")) {
+                samlMessageString =
+                        SAMLUtils.extractSAMLMessage(formParameter.getValue(), Binding.HTTPPost);
             } else if (formParameter.getName().equals("RelayState")) {
                 relayState = formParameter.getValue();
             }
@@ -97,7 +119,8 @@ public class SAMLMessage {
      */
     private void buildXMLDocument() throws SAMLException {
         try {
-            DocumentBuilderFactory docBuilderFactory = XmlUtils.newXxeDisabledDocumentBuilderFactory();
+            DocumentBuilderFactory docBuilderFactory =
+                    XmlUtils.newXxeDisabledDocumentBuilderFactory();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             xmlDocument = docBuilder.parse(new InputSource(new StringReader(samlMessageString)));
             xmlDocument.getDocumentElement().normalize();
@@ -106,9 +129,7 @@ public class SAMLMessage {
         }
     }
 
-    /**
-     * Get the saml attributes from the saml message which are also in the configured list
-     */
+    /** Get the saml attributes from the saml message which are also in the configured list */
     private void buildAttributeMap() {
         // xpath initialization
         XPathFactory xFactory = XPathFactory.newInstance();
@@ -118,7 +139,8 @@ public class SAMLMessage {
             try {
                 XPathExpression expression = xpath.compile(attribute.getxPath());
                 Node node = (Node) expression.evaluate(xmlDocument, XPathConstants.NODE);
-                if (node != null) {     //the attributes that aren't available will be giving null values
+                if (node != null) { // the attributes that aren't available will be giving null
+                    // values
                     String value;
                     if (node instanceof Element) {
                         value = node.getTextContent();
@@ -142,7 +164,7 @@ public class SAMLMessage {
     /**
      * Check whether the values are applicable to the selected attribute
      *
-     * @param type  Param type that is expected
+     * @param type Param type that is expected
      * @param value Param value to be tested against
      * @return Object that matches the relevant type is valid, null if invalid
      */
@@ -165,16 +187,18 @@ public class SAMLMessage {
         }
     }
 
-    /**
-     * Update XML document with any attributes that were changed
-     */
+    /** Update XML document with any attributes that were changed */
     private void updateXMLDocument() {
         XPathFactory xFactory = XPathFactory.newInstance();
         XPath xpath = xFactory.newXPath();
         for (Attribute attribute : attributeMap.values()) {
             try {
-                Node node = (Node) xpath.compile(attribute.getxPath()).evaluate(xmlDocument, XPathConstants.NODE);
-                if (node != null) {     //the attributes that aren't available will be giving null values
+                Node node =
+                        (Node)
+                                xpath.compile(attribute.getxPath())
+                                        .evaluate(xmlDocument, XPathConstants.NODE);
+                if (node != null) { // the attributes that aren't available will be giving null
+                    // values
                     if (node instanceof Element) {
                         node.setTextContent(attribute.getValue().toString());
                     } else if (node instanceof Attr) {
@@ -189,8 +213,10 @@ public class SAMLMessage {
         }
         if (SAMLConfiguration.getInstance().getXSWEnabled()) {
             try {
-                NodeList nodeList = (NodeList) xpath.compile("/Response//Signature")
-                        .evaluate(xmlDocument, XPathConstants.NODESET);
+                NodeList nodeList =
+                        (NodeList)
+                                xpath.compile("/Response//Signature")
+                                        .evaluate(xmlDocument, XPathConstants.NODESET);
                 for (int i = 0; i < nodeList.getLength(); i++) {
                     Node item = nodeList.item(i);
                     if (item instanceof Element) {
@@ -203,9 +229,7 @@ public class SAMLMessage {
         }
     }
 
-    /**
-     * Update the saml message text to the changed xml document
-     */
+    /** Update the saml message text to the changed xml document */
     private void updateMessage() {
         try {
             TransformerFactory tf = TransformerFactory.newInstance();
@@ -218,16 +242,14 @@ public class SAMLMessage {
         }
     }
 
-    /**
-     * Rebuild the httpmessage with the changed saml message
-     */
+    /** Rebuild the httpmessage with the changed saml message */
     private void rebuildHttpMessage() {
         try {
             SAMLConfiguration configuration = SAMLConfiguration.getInstance();
             byte[] messageToEncode;
-            if(configuration.isDeflateOnSendEnabled()){
+            if (configuration.isDeflateOnSendEnabled()) {
                 messageToEncode = SAMLUtils.deflateMessage(samlMessageString);
-            }else{
+            } else {
                 messageToEncode = samlMessageString.getBytes("UTF-8");
             }
 
@@ -236,39 +258,55 @@ public class SAMLMessage {
             int paramIndex = 0;
 
             for (HtmlParameter urlParameter : httpMessage.getUrlParams()) {
-                if (urlParameter.getName().equals("SAMLRequest") || urlParameter.getName().equals("SAMLResponse")) {
+                if (urlParameter.getName().equals("SAMLRequest")
+                        || urlParameter.getName().equals("SAMLResponse")) {
                     String samlParam = urlParameter.getName();
-                    newParamBuilder.append(samlParam).append("=").append(URLEncoder.encode(encodedSAMLMessage, "UTF-8"));
+                    newParamBuilder
+                            .append(samlParam)
+                            .append("=")
+                            .append(URLEncoder.encode(encodedSAMLMessage, "UTF-8"));
                 } else if (urlParameter.getName().equals("RelayState")) {
-                    newParamBuilder.append("RelayState=").append(URLEncoder.encode(relayState, "UTF-8"));
+                    newParamBuilder
+                            .append("RelayState=")
+                            .append(URLEncoder.encode(relayState, "UTF-8"));
                 } else {
-                    newParamBuilder.append(urlParameter.getName()).append("=").append(URLEncoder
-                            .encode(urlParameter.getValue(), "UTF-8"));
+                    newParamBuilder
+                            .append(urlParameter.getName())
+                            .append("=")
+                            .append(URLEncoder.encode(urlParameter.getValue(), "UTF-8"));
                 }
                 if (paramIndex < httpMessage.getUrlParams().size() - 1) {
-                    newParamBuilder.append("&");  //add '&' between params for separation
+                    newParamBuilder.append("&"); // add '&' between params for separation
                 }
                 paramIndex++;
-            }  //todo if paramindex>0
+            } // todo if paramindex>0
 
-            if(httpMessage.getUrlParams().size()>0){
+            if (httpMessage.getUrlParams().size() > 0) {
                 httpMessage.getRequestHeader().getURI().setEscapedQuery(newParamBuilder.toString());
             }
 
             newParamBuilder = new StringBuilder();
             paramIndex = 0;
             for (HtmlParameter formParameter : httpMessage.getFormParams()) {
-                if (formParameter.getName().equals("SAMLRequest") || formParameter.getName().equals("SAMLResponse")) {
+                if (formParameter.getName().equals("SAMLRequest")
+                        || formParameter.getName().equals("SAMLResponse")) {
                     String samlParam = formParameter.getName();
-                    newParamBuilder.append(samlParam).append("=").append(URLEncoder.encode(encodedSAMLMessage, "UTF-8"));
+                    newParamBuilder
+                            .append(samlParam)
+                            .append("=")
+                            .append(URLEncoder.encode(encodedSAMLMessage, "UTF-8"));
                 } else if (formParameter.getName().equals("RelayState")) {
-                    newParamBuilder.append("RelayState=").append(URLEncoder.encode(relayState, "UTF-8"));
+                    newParamBuilder
+                            .append("RelayState=")
+                            .append(URLEncoder.encode(relayState, "UTF-8"));
                 } else {
-                    newParamBuilder.append(formParameter.getName()).append("=").append(URLEncoder
-                            .encode(formParameter.getValue(), "UTF-8"));
+                    newParamBuilder
+                            .append(formParameter.getName())
+                            .append("=")
+                            .append(URLEncoder.encode(formParameter.getValue(), "UTF-8"));
                 }
                 if (paramIndex < httpMessage.getFormParams().size() - 1) {
-                    newParamBuilder.append("&");  //add '&' between params for separation
+                    newParamBuilder.append("&"); // add '&' between params for separation
                 }
                 paramIndex++;
             }
@@ -281,14 +319,14 @@ public class SAMLMessage {
         } catch (SAMLException e) {
             log.warn("saml message extraction failed", e);
         }
-        messageChanged = false;  //the message is permanently modified, can't revert from here on
+        messageChanged = false; // the message is permanently modified, can't revert from here on
     }
 
     /**
      * Change the attribute value to the given new value
      *
      * @param attributeName name of the attribute to be changed
-     * @param value         new value to be changed to
+     * @param value new value to be changed to
      * @return whether the change is successful
      */
     public boolean changeAttributeValueTo(String attributeName, String value) {
@@ -327,9 +365,7 @@ public class SAMLMessage {
         return httpMessage;
     }
 
-    /**
-     * Reset any changes to the http message
-     */
+    /** Reset any changes to the http message */
     public void resetChanges() {
         if (messageChanged) {
             try {
@@ -345,6 +381,7 @@ public class SAMLMessage {
 
     /**
      * Get the relay state
+     *
      * @return
      */
     public String getRelayState() {
@@ -353,6 +390,7 @@ public class SAMLMessage {
 
     /**
      * Set the relay state
+     *
      * @param relayState
      */
     public void setRelayState(String relayState) {
@@ -364,6 +402,7 @@ public class SAMLMessage {
 
     /**
      * Get the saml message as a formatted XML
+     *
      * @return
      */
     public String getSamlMessageString() {
@@ -388,10 +427,12 @@ public class SAMLMessage {
 
     /**
      * Set the saml message XML string to the given value
+     *
      * @param samlMessageString
      */
     public void setSamlMessageString(String samlMessageString) {
-        String trimmedMessage = samlMessageString.trim().replaceAll("\n", "").replaceAll("\\s+", " ");
+        String trimmedMessage =
+                samlMessageString.trim().replaceAll("\n", "").replaceAll("\\s+", " ");
         if (!this.samlMessageString.equals(trimmedMessage)) {
             String oldValue = this.samlMessageString;
             this.samlMessageString = trimmedMessage;
@@ -407,8 +448,9 @@ public class SAMLMessage {
     }
 
     /**
-     * Get the attribute name:value map. This will only contain the configured attributes and their values if they
-     * are found in the message
+     * Get the attribute name:value map. This will only contain the configured attributes and their
+     * values if they are found in the message
+     *
      * @return
      */
     public Map<String, Attribute> getAttributeMap() {
@@ -417,6 +459,7 @@ public class SAMLMessage {
 
     /**
      * set the attribute name:value map to be updated in the saml message
+     *
      * @param attributeMap
      */
     public void setAttributeMap(Map<String, Attribute> attributeMap) {

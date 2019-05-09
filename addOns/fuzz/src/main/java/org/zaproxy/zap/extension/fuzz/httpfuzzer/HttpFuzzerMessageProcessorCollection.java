@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,29 +24,33 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUIPanel;
 import org.zaproxy.zap.extension.fuzz.impl.FuzzerMessageProcessors;
 
-public class HttpFuzzerMessageProcessorCollection implements FuzzerMessageProcessors<HttpMessage, HttpFuzzerMessageProcessor> {
+public class HttpFuzzerMessageProcessorCollection
+        implements FuzzerMessageProcessors<HttpMessage, HttpFuzzerMessageProcessor> {
 
     private final String defaultPanelName;
     private List<HttpFuzzerMessageProcessorUIHandler<?, ?>> handlers;
-    private Map<String, HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>> handlersMap;
+    private Map<String, HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>>
+            handlersMap;
     private Map<String, HttpFuzzerMessageProcessorUIPanel<HttpFuzzerMessageProcessor, ?>> panelsMap;
-    private List<FuzzerMessageProcessorUI<HttpMessage, HttpFuzzerMessageProcessor>> defaultProcessors;
+    private List<FuzzerMessageProcessorUI<HttpMessage, HttpFuzzerMessageProcessor>>
+            defaultProcessors;
 
     public HttpFuzzerMessageProcessorCollection(
             HttpMessage message,
-            Collection<HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>> uiHandlers) {
+            Collection<HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>>
+                    uiHandlers) {
         handlers = new ArrayList<>();
         handlersMap = new HashMap<>();
         panelsMap = new HashMap<>();
         defaultProcessors = new ArrayList<>();
 
-        for (HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?> uiHandler : uiHandlers) {
+        for (HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?> uiHandler :
+                uiHandlers) {
             if (uiHandler.isEnabled(message)) {
                 handlers.add(uiHandler);
                 handlersMap.put(uiHandler.getName(), uiHandler);
@@ -71,17 +75,22 @@ public class HttpFuzzerMessageProcessorCollection implements FuzzerMessageProces
     }
 
     @Override
-    public FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, ?> getPanel(String name) {
+    public FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, ?> getPanel(
+            String name) {
         return panelsMap.get(name);
     }
 
     @Override
-    public <T3 extends FuzzerMessageProcessorUI<HttpMessage, HttpFuzzerMessageProcessor>> FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, T3> getPanel(
-            T3 fuzzerMessageProcessorUI) {
+    public <T3 extends FuzzerMessageProcessorUI<HttpMessage, HttpFuzzerMessageProcessor>>
+            FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, T3> getPanel(
+                    T3 fuzzerMessageProcessorUI) {
         for (HttpFuzzerMessageProcessorUIHandler<?, ?> handler : handlers) {
-            if (handler.getFuzzerMessageProcessorUIType().equals(fuzzerMessageProcessorUI.getClass())) {
+            if (handler.getFuzzerMessageProcessorUIType()
+                    .equals(fuzzerMessageProcessorUI.getClass())) {
                 @SuppressWarnings("unchecked")
-                FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, T3> panel = (FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, T3>) panelsMap.get(handler.getName());
+                FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, T3> panel =
+                        (FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, T3>)
+                                panelsMap.get(handler.getName());
                 return panel;
             }
         }
@@ -89,12 +98,14 @@ public class HttpFuzzerMessageProcessorCollection implements FuzzerMessageProces
     }
 
     @Override
-    public FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, ?> getDefaultPanel() {
+    public FuzzerMessageProcessorUIPanel<HttpMessage, HttpFuzzerMessageProcessor, ?>
+            getDefaultPanel() {
         return panelsMap.get(defaultPanelName);
     }
 
     @Override
-    public List<? extends FuzzerMessageProcessorUI<HttpMessage, HttpFuzzerMessageProcessor>> getDefaultProcessors() {
+    public List<? extends FuzzerMessageProcessorUI<HttpMessage, HttpFuzzerMessageProcessor>>
+            getDefaultProcessors() {
         return defaultProcessors;
     }
 
@@ -109,7 +120,8 @@ public class HttpFuzzerMessageProcessorCollection implements FuzzerMessageProces
     }
 
     @Override
-    public Collection<HttpFuzzerMessageProcessorUIPanel<HttpFuzzerMessageProcessor, ?>> getPanels() {
+    public Collection<HttpFuzzerMessageProcessorUIPanel<HttpFuzzerMessageProcessor, ?>>
+            getPanels() {
         return panelsMap.values();
     }
 }

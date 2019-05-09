@@ -29,10 +29,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.encoder.Base64;
@@ -41,10 +39,10 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class ViewstateScanner extends PluginPassiveScanner {
-	
-	private static final String MESSAGE_PREFIX = "pscanrules.viewstatescanner.";
-	private static final int PLUGIN_ID = 10032;
-	
+
+    private static final String MESSAGE_PREFIX = "pscanrules.viewstatescanner.";
+    private static final int PLUGIN_ID = 10032;
+
     private PassiveScanThread parent = null;
     private static Pattern hiddenFieldPattern = Pattern.compile("__.*");
 
@@ -57,141 +55,145 @@ public class ViewstateScanner extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         Map<String, StartTag> hiddenFields = getHiddenFields(source);
-         if (hiddenFields.isEmpty())
-             return;
+        if (hiddenFields.isEmpty()) return;
 
         Viewstate v = extractViewstate(hiddenFields);
 
         // If the viewstate is invalid, we stop here
-        // TODO: in the future, we might want to differentiate an encrypted viewstate and still consider it as valid.
-        if (! v.isValid())
-        	return;
-         
-        if (! v.hasMACtest1() || ! v.hasMACtest2())
-        	if (! v.hasMACtest1() && ! v.hasMACtest2())
-        		alertNoMACforSure(msg, id);
-        	else
-        		alertNoMACUnsure(msg, id);
+        // TODO: in the future, we might want to differentiate an encrypted viewstate and still
+        // consider it as valid.
+        if (!v.isValid()) return;
 
-        if (! v.isLatestAspNetVersion())
-            alertOldAspVersion(msg, id);
-        
+        if (!v.hasMACtest1() || !v.hasMACtest2())
+            if (!v.hasMACtest1() && !v.hasMACtest2()) alertNoMACforSure(msg, id);
+            else alertNoMACUnsure(msg, id);
+
+        if (!v.isLatestAspNetVersion()) alertOldAspVersion(msg, id);
+
         List<ViewstateAnalyzerResult> listOfMatches = ViewstateAnalyzer.getSearchResults(v, this);
-    	for(ViewstateAnalyzerResult var : listOfMatches) {
-    		if (var.hasResults())
-    			alertViewstateAnalyzerResult(msg, id, var);
+        for (ViewstateAnalyzerResult var : listOfMatches) {
+            if (var.hasResults()) alertViewstateAnalyzerResult(msg, id, var);
         }
-        
-        if (v.isSplit())
-        	alertSplitViewstate(msg, id);
+
+        if (v.isSplit()) alertSplitViewstate(msg, id);
     }
-    
-    private void alertViewstateAnalyzerResult(HttpMessage msg, int id, ViewstateAnalyzerResult var) {
-        Alert alert = new Alert(
-                getPluginId(),
-                Alert.RISK_MEDIUM,
-                Alert.CONFIDENCE_MEDIUM,
-                var.pattern.getAlertHeader()
-            );
+
+    private void alertViewstateAnalyzerResult(
+            HttpMessage msg, int id, ViewstateAnalyzerResult var) {
+        Alert alert =
+                new Alert(
+                        getPluginId(),
+                        Alert.RISK_MEDIUM,
+                        Alert.CONFIDENCE_MEDIUM,
+                        var.pattern.getAlertHeader());
 
         alert.setDetail(
-        		var.pattern.getAlertDescription(),
+                var.pattern.getAlertDescription(),
                 msg.getRequestHeader().getURI().toString(),
                 "",
                 "",
-                var.getResultExtract().toString(), 
-                getSolution(),//Solution
+                var.getResultExtract().toString(),
+                getSolution(), // Solution
                 "",
-				"",	// No Evidence
-				16,	// CWE Id 16 - Configuration
-				14,	// WASC Id - Server Misconfiguration
+                "", // No Evidence
+                16, // CWE Id 16 - Configuration
+                14, // WASC Id - Server Misconfiguration
                 msg);
-        
+
         parent.raiseAlert(id, alert);
     }
 
     private void alertOldAspVersion(HttpMessage msg, int id) {
-        Alert alert = new Alert(
-                getPluginId(),
-                Alert.RISK_LOW,
-                Alert.CONFIDENCE_MEDIUM,
-                Constant.messages.getString(MESSAGE_PREFIX + "oldver.name")
-            );
+        Alert alert =
+                new Alert(
+                        getPluginId(),
+                        Alert.RISK_LOW,
+                        Alert.CONFIDENCE_MEDIUM,
+                        Constant.messages.getString(MESSAGE_PREFIX + "oldver.name"));
 
         alert.setDetail(
-        		Constant.messages.getString(MESSAGE_PREFIX + "oldver.desc"),
+                Constant.messages.getString(MESSAGE_PREFIX + "oldver.desc"),
                 msg.getRequestHeader().getURI().toString(),
-                "", "", "",
+                "",
+                "",
+                "",
                 Constant.messages.getString(MESSAGE_PREFIX + "oldver.soln"),
                 "",
-				"",	// No Evidence
-				16,	// CWE Id 16 - Configuration
-				14,	// WASC Id - Server Misconfiguration
+                "", // No Evidence
+                16, // CWE Id 16 - Configuration
+                14, // WASC Id - Server Misconfiguration
                 msg);
-        
+
         parent.raiseAlert(id, alert);
     }
-    
-    //TODO: see if this alert triggers too often, as the detection rule is far from being robust for the moment
+
+    // TODO: see if this alert triggers too often, as the detection rule is far from being robust
+    // for the moment
     private void alertNoMACUnsure(HttpMessage msg, int id) {
-        Alert alert = new Alert(
-                                getPluginId(),
-                                Alert.RISK_HIGH,
-                                Alert.CONFIDENCE_LOW,
-                                Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.name")
-                            );
+        Alert alert =
+                new Alert(
+                        getPluginId(),
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_LOW,
+                        Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.name"));
         alert.setDetail(
-        		Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.desc"),
+                Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.desc"),
                 msg.getRequestHeader().getURI().toString(),
-                "", "", "",
+                "",
+                "",
+                "",
                 Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.soln"),
                 Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.refs"),
-				"",	// No Evidence
-				642,	// CWE Id 642 - External Control of Critical State Data
-				14,	// WASC Id 14 - Server Misconfiguration
+                "", // No Evidence
+                642, // CWE Id 642 - External Control of Critical State Data
+                14, // WASC Id 14 - Server Misconfiguration
                 msg);
 
         parent.raiseAlert(id, alert);
     }
 
     private void alertNoMACforSure(HttpMessage msg, int id) {
-        Alert alert = new Alert(
-                                getPluginId(),
-                                Alert.RISK_HIGH,
-                                Alert.CONFIDENCE_MEDIUM,
-                                Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.name")
-                            );
+        Alert alert =
+                new Alert(
+                        getPluginId(),
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_MEDIUM,
+                        Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.name"));
         alert.setDetail(
-        		Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.desc"),
-            msg.getRequestHeader().getURI().toString(),
-            "", "", "",
-            Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.soln"),
-            Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.refs"),
-			"",	// No Evidence
-			642,	// CWE Id 642 - External Control of Critical State Data
-			14,	// WASC Id 14 - Server Misconfiguration
-            msg);
+                Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.desc"),
+                msg.getRequestHeader().getURI().toString(),
+                "",
+                "",
+                "",
+                Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.soln"),
+                Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.refs"),
+                "", // No Evidence
+                642, // CWE Id 642 - External Control of Critical State Data
+                14, // WASC Id 14 - Server Misconfiguration
+                msg);
 
         parent.raiseAlert(id, alert);
     }
-    
+
     private void alertSplitViewstate(HttpMessage msg, int id) {
-        Alert alert = new Alert(
-                                getPluginId(),
-                                Alert.RISK_INFO,
-                                Alert.RISK_INFO,
-                                Constant.messages.getString(MESSAGE_PREFIX + "split.name")
-                            );
+        Alert alert =
+                new Alert(
+                        getPluginId(),
+                        Alert.RISK_INFO,
+                        Alert.RISK_INFO,
+                        Constant.messages.getString(MESSAGE_PREFIX + "split.name"));
         alert.setDetail(
-        	Constant.messages.getString(MESSAGE_PREFIX + "split.desc"),
-            msg.getRequestHeader().getURI().toString(),
-            "", "", "",
-            Constant.messages.getString(MESSAGE_PREFIX + "split.soln"),
-            "",
-			"",	// No Evidence
-			16,	// CWE Id 16 - Configuration
-			14,	// WASC Id - Server Misconfiguration
-            msg);
+                Constant.messages.getString(MESSAGE_PREFIX + "split.desc"),
+                msg.getRequestHeader().getURI().toString(),
+                "",
+                "",
+                "",
+                Constant.messages.getString(MESSAGE_PREFIX + "split.soln"),
+                "",
+                "", // No Evidence
+                16, // CWE Id 16 - Configuration
+                14, // WASC Id - Server Misconfiguration
+                msg);
 
         parent.raiseAlert(id, alert);
     }
@@ -204,172 +206,171 @@ public class ViewstateScanner extends PluginPassiveScanner {
     @Override
     public void setParent(PassiveScanThread parent) {
         this.parent = parent;
-
     }
 
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
-    
-	private String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
 
+    private String getSolution() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
 
     private Map<String, StartTag> getHiddenFields(Source source) {
         List<StartTag> result = source.getAllStartTags("input");
 
         // Searching for name only tags only makes sense for Asp.Net 1.1 websites
-        // TODO: Enhance this ugly code 
+        // TODO: Enhance this ugly code
         List<StartTag> hiddenNames = source.getAllStartTags("name", hiddenFieldPattern);
-        for (StartTag st : hiddenNames)
-            if (! result.contains(st))
-                result.add(st);
+        for (StartTag st : hiddenNames) if (!result.contains(st)) result.add(st);
 
         // Creating a key:StartTag map based on the previous results
         Map<String, StartTag> stMap = new TreeMap<>();
         for (StartTag st : result) {
-        	// TODO: fix exception occurring here (st == null?)
-            String name = (st.getAttributeValue("id") == null) ? st.getAttributeValue("name") : st.getAttributeValue("id");
-             
+            // TODO: fix exception occurring here (st == null?)
+            String name =
+                    (st.getAttributeValue("id") == null)
+                            ? st.getAttributeValue("name")
+                            : st.getAttributeValue("id");
+
             // <input type="hidden" /> will generate a null pointer exception otherwise
-            if (name != null)
-            	stMap.put(name, st);
+            if (name != null) stMap.put(name, st);
         }
         return stMap;
     }
 
     // TODO: see how to manage exceptions in this class...
     private Viewstate extractViewstate(Map<String, StartTag> lstHiddenFields) {
-    	// If the viewstate isn't split, we simply return the Viewstate object based on the field
-        if (! lstHiddenFields.containsKey("__VIEWSTATEFIELDCOUNT"))
+        // If the viewstate isn't split, we simply return the Viewstate object based on the field
+        if (!lstHiddenFields.containsKey("__VIEWSTATEFIELDCOUNT"))
             return new Viewstate(lstHiddenFields.get("__VIEWSTATE"));
 
-        // Otherwise we concatenate manually the viewstate 
+        // Otherwise we concatenate manually the viewstate
         StringBuilder tmpValue = new StringBuilder();
 
-        tmpValue.append( lstHiddenFields.get("__VIEWSTATE").getAttributeValue("value") );
+        tmpValue.append(lstHiddenFields.get("__VIEWSTATE").getAttributeValue("value"));
 
-        int max = Integer.parseInt(
-                    lstHiddenFields.get("__VIEWSTATEFIELDCOUNT").getAttributeValue("value")
-                    );
-        for (int i = 1; i < max ; i++) {
-            tmpValue.append( lstHiddenFields.get("__VIEWSTATE" + i).getAttributeValue("value") );
+        int max =
+                Integer.parseInt(
+                        lstHiddenFields.get("__VIEWSTATEFIELDCOUNT").getAttributeValue("value"));
+        for (int i = 1; i < max; i++) {
+            tmpValue.append(lstHiddenFields.get("__VIEWSTATE" + i).getAttributeValue("value"));
         }
 
         return new Viewstate(tmpValue.toString(), true);
     }
-    
+
     private class ViewstateAnalyzerResult {
-    	
-    	private ViewstateAnalyzerPattern pattern;
-    	private Set<String> resultExtract = new HashSet<>();
-    	
-    	public ViewstateAnalyzerResult(ViewstateAnalyzerPattern vap) {
-    		this.pattern = vap;
-    	}
-    	
-    	public void addResults(String s) {
-    		this.resultExtract.add(s);
-    	}
-    	
-    	public Set<String> getResultExtract() {
-    		return this.resultExtract;
-    	}
-    	
-    	public boolean hasResults() {
-    		return ! this.resultExtract.isEmpty();
-    	}
+
+        private ViewstateAnalyzerPattern pattern;
+        private Set<String> resultExtract = new HashSet<>();
+
+        public ViewstateAnalyzerResult(ViewstateAnalyzerPattern vap) {
+            this.pattern = vap;
+        }
+
+        public void addResults(String s) {
+            this.resultExtract.add(s);
+        }
+
+        public Set<String> getResultExtract() {
+            return this.resultExtract;
+        }
+
+        public boolean hasResults() {
+            return !this.resultExtract.isEmpty();
+        }
     }
-    
+
     // TODO: enhance this class with searches for e.g. passwords, ODBC strings, etc
     private static enum ViewstateAnalyzerPattern {
-    	
-    	EMAIL(
-    			Pattern.compile("[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}", Pattern.CASE_INSENSITIVE),
-    			Constant.messages.getString(MESSAGE_PREFIX + "content.email.name"),
-    			Constant.messages.getString(MESSAGE_PREFIX + "content.email.desc"),
-    			Constant.messages.getString(MESSAGE_PREFIX + "content.email.pattern.source")),
-    	
-    	// TODO: once the viewstate parser is implemented, filter out all the version numbers of the serialized objects which also trigger this filter
-    	// Example: Microsoft.SharePoint.WebControls.SPControlMode, Microsoft.SharePoint, Version=12.0.0.0, Culture=neutral, 
-    	// TODO: maybe replace this regex by a tigher rule, avoiding detecting 999.999.999.999
-    	IPADDRESS(
-    			Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"),
-    			Constant.messages.getString(MESSAGE_PREFIX + "content.ip.name"),
-    			Constant.messages.getString(MESSAGE_PREFIX + "content.ip.desc"),
-    			Constant.messages.getString(MESSAGE_PREFIX + "content.ip.pattern.source"));
+        EMAIL(
+                Pattern.compile(
+                        "[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}", Pattern.CASE_INSENSITIVE),
+                Constant.messages.getString(MESSAGE_PREFIX + "content.email.name"),
+                Constant.messages.getString(MESSAGE_PREFIX + "content.email.desc"),
+                Constant.messages.getString(MESSAGE_PREFIX + "content.email.pattern.source")),
 
-    	ViewstateAnalyzerPattern(Pattern p, String alertHeader, String alertDescription, String sourceRegex) {
-    		this.pattern = p;
-    		this.alertHeader = alertHeader;
-    		this.alertDescription = alertDescription;
-    		this.sourceRegex = sourceRegex;
-    	}
-    	
-    	private Pattern pattern;
-    	private String alertHeader;
-    	private String alertDescription;
-    	private String sourceRegex;
-    	
-    	public Pattern getPattern() {
-    		return this.pattern;
-    	}
-    	   	
-    	public String getAlertDescription() {
-    		return this.alertDescription;
-    	}
-    	
-    	public String getAlertHeader() {
-    		return this.alertHeader;
-    	}
+        // TODO: once the viewstate parser is implemented, filter out all the version numbers of the
+        // serialized objects which also trigger this filter
+        // Example: Microsoft.SharePoint.WebControls.SPControlMode, Microsoft.SharePoint,
+        // Version=12.0.0.0, Culture=neutral,
+        // TODO: maybe replace this regex by a tigher rule, avoiding detecting 999.999.999.999
+        IPADDRESS(
+                Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"),
+                Constant.messages.getString(MESSAGE_PREFIX + "content.ip.name"),
+                Constant.messages.getString(MESSAGE_PREFIX + "content.ip.desc"),
+                Constant.messages.getString(MESSAGE_PREFIX + "content.ip.pattern.source"));
+
+        ViewstateAnalyzerPattern(
+                Pattern p, String alertHeader, String alertDescription, String sourceRegex) {
+            this.pattern = p;
+            this.alertHeader = alertHeader;
+            this.alertDescription = alertDescription;
+            this.sourceRegex = sourceRegex;
+        }
+
+        private Pattern pattern;
+        private String alertHeader;
+        private String alertDescription;
+        private String sourceRegex;
+
+        public Pattern getPattern() {
+            return this.pattern;
+        }
+
+        public String getAlertDescription() {
+            return this.alertDescription;
+        }
+
+        public String getAlertHeader() {
+            return this.alertHeader;
+        }
     }
-    
+
     private static class ViewstateAnalyzer {
 
-    	public static List<ViewstateAnalyzerResult> getSearchResults(Viewstate v, ViewstateScanner s)
-    	{
-    		List<ViewstateAnalyzerResult> result = new ArrayList<>();
-    		
-    		for (ViewstateAnalyzerPattern vap : ViewstateAnalyzerPattern.values())
-    		{
-    			Matcher m = vap.getPattern().matcher(v.decodedValue);
-    			ViewstateAnalyzerResult var = s.new ViewstateAnalyzerResult(vap);
-    			   			
-    			while(m.find()) {
-        			// TODO: if we find the text in the viewstate, we also need to check it isn't already in clear text in the page
-    				var.addResults(m.group());
-    				}
-    			
-    			result.add(var);
-    		}
-    		
-    		return result;
-    	}
-    }
-    
-    public enum ViewstateVersion {
-    	
-    	ASPNET1	(1f, 1.1f, false),
-    	ASPNET2	(2f, 4f, true),
-    	UNKNOWN (-1f, -1f, false);
-    	
-    	private final float minVersion;
-    	private final float maxVersion;
-    	private final boolean isLatest;
-    	
-    	ViewstateVersion(float minVersion, float maxVersion, boolean isLatest) {
-    		this.minVersion = minVersion;
-    		this.maxVersion = maxVersion;
-    		this.isLatest = isLatest;
-    	}
-    	
-    	public boolean isLatest() {
-    		return this.isLatest;
-    	}
+        public static List<ViewstateAnalyzerResult> getSearchResults(
+                Viewstate v, ViewstateScanner s) {
+            List<ViewstateAnalyzerResult> result = new ArrayList<>();
+
+            for (ViewstateAnalyzerPattern vap : ViewstateAnalyzerPattern.values()) {
+                Matcher m = vap.getPattern().matcher(v.decodedValue);
+                ViewstateAnalyzerResult var = s.new ViewstateAnalyzerResult(vap);
+
+                while (m.find()) {
+                    // TODO: if we find the text in the viewstate, we also need to check it isn't
+                    // already in clear text in the page
+                    var.addResults(m.group());
+                }
+
+                result.add(var);
+            }
+
+            return result;
+        }
     }
 
+    public enum ViewstateVersion {
+        ASPNET1(1f, 1.1f, false),
+        ASPNET2(2f, 4f, true),
+        UNKNOWN(-1f, -1f, false);
+
+        private final float minVersion;
+        private final float maxVersion;
+        private final boolean isLatest;
+
+        ViewstateVersion(float minVersion, float maxVersion, boolean isLatest) {
+            this.minVersion = minVersion;
+            this.maxVersion = maxVersion;
+            this.isLatest = isLatest;
+        }
+
+        public boolean isLatest() {
+            return this.isLatest;
+        }
+    }
 
     // inner class Viewstate
     private class Viewstate {
@@ -381,118 +382,116 @@ public class ViewstateScanner extends PluginPassiveScanner {
         private ViewstateVersion version;
 
         public Viewstate(StartTag s) {
-    		this(s, false);
+            this(s, false);
         }
 
-        
         public Viewstate(StartTag s, boolean wasSplit) {
-        	if (s != null)
-        	{
-        		this.isSplit = wasSplit;
-        		this.base64Value = s.getAttributeValue("value");
-        		try {
-					this.decodedValue = new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
-	        		this.isValid = true;
-	        		this.setVersion();
-	        	} catch (IllegalArgumentException | IOException e) {
-					//Incorrect Base64 value.
-				}
-        	}
+            if (s != null) {
+                this.isSplit = wasSplit;
+                this.base64Value = s.getAttributeValue("value");
+                try {
+                    this.decodedValue =
+                            new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
+                    this.isValid = true;
+                    this.setVersion();
+                } catch (IllegalArgumentException | IOException e) {
+                    // Incorrect Base64 value.
+                }
+            }
         }
-        
+
         // TODO: tidy up these two constructors
         // TODO: check if splitting was possible with ASP.NET 1.1
         public Viewstate(String s, boolean wasSplit) {
-        	if (s != null)
-        	{
-        		this.isSplit = wasSplit;
-        		this.base64Value = s;
-        		try {
-					this.decodedValue = new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
-					this.isValid = true;
-	        		this.setVersion();
-        		} catch (IllegalArgumentException | IOException e) {
-					//Incorrect Base64 value.
-				}
-        	}
+            if (s != null) {
+                this.isSplit = wasSplit;
+                this.base64Value = s;
+                try {
+                    this.decodedValue =
+                            new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
+                    this.isValid = true;
+                    this.setVersion();
+                } catch (IllegalArgumentException | IOException e) {
+                    // Incorrect Base64 value.
+                }
+            }
         }
-
 
         public boolean isValid() {
-        	return this.isValid && ( this.getVersion() != ViewstateVersion.UNKNOWN);
+            return this.isValid && (this.getVersion() != ViewstateVersion.UNKNOWN);
         }
-        
+
         public boolean isSplit() {
-        	return this.isSplit;
+            return this.isSplit;
         }
-        
+
         // TODO: enhance this code, as it WILL fail at least in the following cases:
-        //			- MAC is set to another value than the default (e.g. bigger or smaller than 20 characters)
-        //			- some ASP.NET 3.5 stuff, especially linked with SharePoint, don't seem to use 'd' as null character
+        //			- MAC is set to another value than the default (e.g. bigger or smaller than 20
+        // characters)
+        //			- some ASP.NET 3.5 stuff, especially linked with SharePoint, don't seem to use 'd' as
+        // null character
         //			- some Viewstates don't have their last 2 objects set to null
-        
+
         // TODO: replace this bool by a more fuzzy indicator
         public boolean hasMACtest1() {
-        	int l = this.decodedValue.length();
-        	// By default, the MAC is 20 characters long
-        	String lastCharsBeforeMac = this.decodedValue.substring(l-22, l-20); 
-        	
+            int l = this.decodedValue.length();
+            // By default, the MAC is 20 characters long
+            String lastCharsBeforeMac = this.decodedValue.substring(l - 22, l - 20);
+
             if (this.version.equals(ViewstateVersion.ASPNET2))
-            	return lastCharsBeforeMac.equals("dd");
-            
+                return lastCharsBeforeMac.equals("dd");
+
             if (this.version.equals(ViewstateVersion.ASPNET1))
-            	return lastCharsBeforeMac.equals(">>");
-            
+                return lastCharsBeforeMac.equals(">>");
+
             return true;
         }
-        
+
         public boolean hasMACtest2() {
-        	int l = this.decodedValue.length();
-        	// By default, the MAC is 20 characters long
-        	String lastCharsBeforeMac = this.decodedValue.substring(l-2); 
-        	
+            int l = this.decodedValue.length();
+            // By default, the MAC is 20 characters long
+            String lastCharsBeforeMac = this.decodedValue.substring(l - 2);
+
             if (this.version.equals(ViewstateVersion.ASPNET2))
-            	return ! lastCharsBeforeMac.equals("dd");
-            
+                return !lastCharsBeforeMac.equals("dd");
+
             if (this.version.equals(ViewstateVersion.ASPNET1))
-            	return ! lastCharsBeforeMac.equals(">>");
-            
+                return !lastCharsBeforeMac.equals(">>");
+
             return true;
         }
-        
+
         public String getDecodedValue() {
-        	return this.decodedValue;
+            return this.decodedValue;
         }
 
         public boolean isLatestAspNetVersion() {
             return this.getVersion().isLatest();
         }
-        
+
         public ViewstateVersion getVersion() {
-        	return this.version;
+            return this.version;
         }
-        
+
         private void setVersion() {
-        	this.version =  ViewstateVersion.UNKNOWN;
-        	
-        	if (this.base64Value.startsWith("/w"))
-        		this.version = ViewstateVersion.ASPNET2;
-        	
-        	if (this.base64Value.startsWith("dD"))
-        		this.version = ViewstateVersion.ASPNET1;      		
+            this.version = ViewstateVersion.UNKNOWN;
+
+            if (this.base64Value.startsWith("/w")) this.version = ViewstateVersion.ASPNET2;
+
+            if (this.base64Value.startsWith("dD")) this.version = ViewstateVersion.ASPNET1;
         }
-        
+
         /* TODO once we have good Viewstate 1 & 2 parsers */
         public Object[] getObjectTree() throws Exception {
-        	throw new Exception("Not implemented (yet)");
+            throw new Exception("Not implemented (yet)");
         }
-        
+
         public Object[] getStateBagTree() throws Exception {
-        	throw new Exception("Not implemented (yet)");
+            throw new Exception("Not implemented (yet)");
         }
-        
+
         public Object[] getSerializedComponentsTree() throws Exception {
-        	throw new Exception("Not implemented (yet)");
+            throw new Exception("Not implemented (yet)");
         }
     }
 }

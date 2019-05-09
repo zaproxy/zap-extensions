@@ -1,19 +1,21 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Copyright 2014 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.simpleexample;
 
@@ -23,10 +25,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
-
 import javax.swing.ImageIcon;
 import javax.swing.JTextPane;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -38,9 +38,10 @@ import org.zaproxy.zap.view.ZapMenuItem;
 
 /**
  * An example ZAP extension which adds a top level menu item, a pop up menu item and a status panel.
- * <p>
- * {@link ExtensionAdaptor} classes are the main entry point for adding/loading functionalities provided by the add-ons.
- * 
+ *
+ * <p>{@link ExtensionAdaptor} classes are the main entry point for adding/loading functionalities
+ * provided by the add-ons.
+ *
  * @see #hook(ExtensionHook)
  */
 public class ExtensionSimpleExample extends ExtensionAdaptor {
@@ -54,13 +55,13 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 
     /**
      * Relative path (from add-on package) to load add-on resources.
-     * 
+     *
      * @see Class#getResource(String)
      */
     private static final String RESOURCES = "resources";
 
-    private static final ImageIcon ICON = new ImageIcon(
-            ExtensionSimpleExample.class.getResource(RESOURCES + "/cake.png"));
+    private static final ImageIcon ICON =
+            new ImageIcon(ExtensionSimpleExample.class.getResource(RESOURCES + "/cake.png"));
 
     private static final String EXAMPLE_FILE = "example/ExampleFile.txt";
 
@@ -94,7 +95,8 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 
     @Override
     public boolean canUnload() {
-        // The extension can be dynamically unloaded, all resources used/added can be freed/removed from core.
+        // The extension can be dynamically unloaded, all resources used/added can be freed/removed
+        // from core.
         return true;
     }
 
@@ -130,32 +132,38 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
         if (menuExample == null) {
             menuExample = new ZapMenuItem(PREFIX + ".topmenu.tools.title");
 
-            menuExample.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent ae) {
-                    // This is where you do what you want to do.
-                    // In this case we'll just show a popup message.
-                    View.getSingleton().showMessageDialog(
-                            Constant.messages.getString(PREFIX + ".topmenu.tools.msg"));
-                    // And display a file included with the add-on in the Output tab
-                    displayFile(EXAMPLE_FILE);
-                }
-            });
+            menuExample.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent ae) {
+                            // This is where you do what you want to do.
+                            // In this case we'll just show a popup message.
+                            View.getSingleton()
+                                    .showMessageDialog(
+                                            Constant.messages.getString(
+                                                    PREFIX + ".topmenu.tools.msg"));
+                            // And display a file included with the add-on in the Output tab
+                            displayFile(EXAMPLE_FILE);
+                        }
+                    });
         }
         return menuExample;
     }
 
-    private void displayFile (String file) {
-        if (! View.isInitialised()) {
+    private void displayFile(String file) {
+        if (!View.isInitialised()) {
             // Running in daemon mode, shouldnt have been called
             return;
         }
         try {
             File f = new File(Constant.getZapHome(), file);
-            if (! f.exists()) {
+            if (!f.exists()) {
                 // This is something the user should know, so show a warning dialog
-                View.getSingleton().showWarningDialog(
-                        Constant.messages.getString(ExtensionSimpleExample.PREFIX + ".error.nofile", f.getAbsolutePath()));
+                View.getSingleton()
+                        .showWarningDialog(
+                                Constant.messages.getString(
+                                        ExtensionSimpleExample.PREFIX + ".error.nofile",
+                                        f.getAbsolutePath()));
                 return;
             }
             // Quick way to read a small text file
@@ -172,8 +180,9 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 
     private RightClickMsgMenu getPopupMsgMenuExample() {
         if (popupMsgMenuExample == null) {
-            popupMsgMenuExample = new RightClickMsgMenu(this,
-                    Constant.messages.getString(PREFIX + ".popup.title"));
+            popupMsgMenuExample =
+                    new RightClickMsgMenu(
+                            this, Constant.messages.getString(PREFIX + ".popup.title"));
         }
         return popupMsgMenuExample;
     }

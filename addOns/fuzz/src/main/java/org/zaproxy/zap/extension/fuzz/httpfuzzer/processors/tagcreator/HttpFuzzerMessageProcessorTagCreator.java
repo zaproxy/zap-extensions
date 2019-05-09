@@ -19,27 +19,30 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzResult;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessor;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerTaskProcessorUtils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 public class HttpFuzzerMessageProcessorTagCreator implements HttpFuzzerMessageProcessor {
 
-    public static final String NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.name");
-    public static final String DESCRIPTION = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.desc");
-    static final String TAG_CREATOR_LIST_STATE_KEY = "fuzz.httpfuzzer.messageprocessor.tagcreator.tags.list";
-    public static final String TAG_CREATOR_TEXT_STATE_KEY = "fuzz.httpfuzzer.messageprocessor.tagcreator.tags.text";
+    public static final String NAME =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.name");
+    public static final String DESCRIPTION =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.desc");
+    static final String TAG_CREATOR_LIST_STATE_KEY =
+            "fuzz.httpfuzzer.messageprocessor.tagcreator.tags.list";
+    public static final String TAG_CREATOR_TEXT_STATE_KEY =
+            "fuzz.httpfuzzer.messageprocessor.tagcreator.tags.text";
     private static final String TAG_SEPARATOR = "; ";
 
     private TagRule tagRule;
 
-    public HttpFuzzerMessageProcessorTagCreator(TagRule tagRule){
+    public HttpFuzzerMessageProcessorTagCreator(TagRule tagRule) {
         this.tagRule = tagRule;
     }
 
@@ -65,18 +68,19 @@ public class HttpFuzzerMessageProcessorTagCreator implements HttpFuzzerMessagePr
         HttpMessage httpMessage = fuzzResult.getHttpMessage();
         List<String> existingTags = getExistingTags(fuzzResult);
         String responseMessage = getResponseMessage(httpMessage);
-        HttpResponseTagCreator tagCreator = new HttpResponseTagCreator(tagRule, responseMessage, existingTags);
+        HttpResponseTagCreator tagCreator =
+                new HttpResponseTagCreator(tagRule, responseMessage, existingTags);
         return tagCreator.create();
     }
 
-    private List<String> getExistingTags(HttpFuzzResult fuzzResult){
-        Map<String, Object> state =  fuzzResult.getCustomStates();
+    private List<String> getExistingTags(HttpFuzzResult fuzzResult) {
+        Map<String, Object> state = fuzzResult.getCustomStates();
         return getExistingTagsFromCustomState(state);
     }
 
-    private List<String> getExistingTagsFromCustomState(Map<String, Object> state){
-        if(state.containsKey(TAG_CREATOR_LIST_STATE_KEY)){
-            return (List<String>)state.get(TAG_CREATOR_LIST_STATE_KEY);
+    private List<String> getExistingTagsFromCustomState(Map<String, Object> state) {
+        if (state.containsKey(TAG_CREATOR_LIST_STATE_KEY)) {
+            return (List<String>) state.get(TAG_CREATOR_LIST_STATE_KEY);
         }
         return Collections.emptyList();
     }
@@ -87,7 +91,7 @@ public class HttpFuzzerMessageProcessorTagCreator implements HttpFuzzerMessagePr
         return responseHeader + "\r\n" + responseBody;
     }
 
-    private void setTagListToCustomState(HttpFuzzResult fuzzResult, List<String> tags){
+    private void setTagListToCustomState(HttpFuzzResult fuzzResult, List<String> tags) {
         fuzzResult.addCustomState(TAG_CREATOR_LIST_STATE_KEY, tags);
     }
 
@@ -96,7 +100,7 @@ public class HttpFuzzerMessageProcessorTagCreator implements HttpFuzzerMessagePr
         fuzzResult.addCustomState(TAG_CREATOR_TEXT_STATE_KEY, tagsAsText);
     }
 
-    private String joinTagsWithSeparator(List<String> tags){
+    private String joinTagsWithSeparator(List<String> tags) {
         StringBuilder stringBuilder = new StringBuilder();
         for (String tag : tags) {
             if (stringBuilder.length() > 0) {

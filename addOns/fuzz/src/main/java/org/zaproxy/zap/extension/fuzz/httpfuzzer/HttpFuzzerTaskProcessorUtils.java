@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -119,15 +118,17 @@ public class HttpFuzzerTaskProcessorUtils {
                     fuzzResult.getHttpMessage());
             if (historyReference == null) {
                 try {
-                    historyReference = new HistoryReference(
-                            Model.getSingleton().getSession(),
-                            HistoryReference.TYPE_FUZZER,
-                            fuzzResult.getHttpMessage());
+                    historyReference =
+                            new HistoryReference(
+                                    Model.getSingleton().getSession(),
+                                    HistoryReference.TYPE_FUZZER,
+                                    fuzzResult.getHttpMessage());
                 } catch (HttpMalformedHeaderException | DatabaseException e) {
                     httpFuzzer.increaseErrorCount(
                             taskId,
                             processorName,
-                            Constant.messages.getString("fuzz.httpfuzzer.processor.scriptProcessor.error.persistMessageForAlert"));
+                            Constant.messages.getString(
+                                    "fuzz.httpfuzzer.processor.scriptProcessor.error.persistMessageForAlert"));
                     LOGGER.warn("Failed to persist the message and raise the alert:", e);
                     return;
                 }
@@ -145,9 +146,7 @@ public class HttpFuzzerTaskProcessorUtils {
         return payloads;
     }
 
-    /**
-     * @deprecated (2.0.0) Use {@link #getPayloads()} instead.
-     */
+    /** @deprecated (2.0.0) Use {@link #getPayloads()} instead. */
     @Deprecated
     @SuppressWarnings("javadoc")
     public List<Object> getPaylaods() {
@@ -177,7 +176,8 @@ public class HttpFuzzerTaskProcessorUtils {
         addMessageToResults(type, httpMessage, null, null);
     }
 
-    public void addMessageToResults(String type, HttpMessage httpMessage, String customStateKey, Object customState) {
+    public void addMessageToResults(
+            String type, HttpMessage httpMessage, String customStateKey, Object customState) {
         HttpFuzzResult result = new HttpFuzzResult(taskId, type, httpMessage);
         if (customStateKey != null) {
             result.addCustomState(customStateKey, customState);
@@ -192,5 +192,4 @@ public class HttpFuzzerTaskProcessorUtils {
     public void setParameters(Map<String, String> paramsMap) {
         this.parameters = paramsMap;
     }
-
 }

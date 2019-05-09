@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,71 +30,72 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class InPageBannerInfoLeakScannerUnitTest extends PassiveScannerTest<InPageBannerInfoLeakScanner> {
+public class InPageBannerInfoLeakScannerUnitTest
+        extends PassiveScannerTest<InPageBannerInfoLeakScanner> {
 
-	private HttpMessage createMessage(String banner) throws URIException {
-		HttpRequestHeader requestHeader = new HttpRequestHeader();
-		requestHeader.setURI(new URI("http://example.com", false));
+    private HttpMessage createMessage(String banner) throws URIException {
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        requestHeader.setURI(new URI("http://example.com", false));
 
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader(requestHeader);
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_FOUND);
-		msg.setResponseBody("<html><body>" + banner + "</body></html>");
-		return msg;
-	}
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_FOUND);
+        msg.setResponseBody("<html><body>" + banner + "</body></html>");
+        return msg;
+    }
 
-	@Override
-	protected InPageBannerInfoLeakScanner createScanner() {
-		return new InPageBannerInfoLeakScanner();
-	}
+    @Override
+    protected InPageBannerInfoLeakScanner createScanner() {
+        return new InPageBannerInfoLeakScanner();
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseIsRedirect() throws URIException {
-		// Given
-		HttpMessage msg = createMessage("");
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseIsRedirect() throws URIException {
+        // Given
+        HttpMessage msg = createMessage("");
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfResponseHasRelevanContent() throws URIException {
-		// Given
-		String squidBanner = "Squid/2.5.STABLE4";
-		HttpMessage msg = createMessage(squidBanner);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getEvidence(), equalTo("Squid/2.5"));
-	}
+    @Test
+    public void shouldRaiseAlertIfResponseHasRelevanContent() throws URIException {
+        // Given
+        String squidBanner = "Squid/2.5.STABLE4";
+        HttpMessage msg = createMessage(squidBanner);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Squid/2.5"));
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseHasRelevantContentWithStatusOk() throws URIException {
-		// Given - Default threshold (MEDIUM)
-		String apacheBanner = "Apache/2.4.17";
-		HttpMessage msg = createMessage(apacheBanner);
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseHasRelevantContentWithStatusOk() throws URIException {
+        // Given - Default threshold (MEDIUM)
+        String apacheBanner = "Apache/2.4.17";
+        HttpMessage msg = createMessage(apacheBanner);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfThresholdLowResponseHasRelevantContentWithStatusOk() throws URIException {
-		// Given
-		String jettyBanner = "Jetty://9.4z-SNAPSHOT";
-		HttpMessage msg = createMessage(jettyBanner);
-		msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
-		rule.setAlertThreshold(AlertThreshold.LOW);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getEvidence(), equalTo("Jetty://9.4"));
-	}
-
+    @Test
+    public void shouldRaiseAlertIfThresholdLowResponseHasRelevantContentWithStatusOk()
+            throws URIException {
+        // Given
+        String jettyBanner = "Jetty://9.4z-SNAPSHOT";
+        HttpMessage msg = createMessage(jettyBanner);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Jetty://9.4"));
+    }
 }

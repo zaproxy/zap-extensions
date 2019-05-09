@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,25 +21,20 @@ package org.zaproxy.zap.extension.selenium;
 
 import org.zaproxy.zap.extension.api.ApiImplementor;
 
-/**
- * The Selenium API.
- */
+/** The Selenium API. */
 public class SeleniumAPI extends ApiImplementor {
 
     private static final String API_PREFIX = "selenium";
 
-    /**
-     * Provided only for API client generator usage.
-     */
+    /** Provided only for API client generator usage. */
     public SeleniumAPI() {
         // Nothing to do.
     }
 
     /**
      * Constructs a {@code SeleniumAPI} with the given {@code options} exposed through the API.
-     * 
-     * @param options the options that will be exposed through the API
      *
+     * @param options the options that will be exposed through the API
      */
     public SeleniumAPI(SeleniumOptions options) {
         addApiOptions(options);
@@ -49,5 +44,4 @@ public class SeleniumAPI extends ApiImplementor {
     public String getPrefix() {
         return API_PREFIX;
     }
-
 }

@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,22 +24,22 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-public class SourceCodeDisclosureScannerUnitTest extends PassiveScannerTest<SourceCodeDisclosureScanner> {
+public class SourceCodeDisclosureScannerUnitTest
+        extends PassiveScannerTest<SourceCodeDisclosureScanner> {
 
-	@Override
-	protected SourceCodeDisclosureScanner createScanner() {
-		return new SourceCodeDisclosureScanner();
-	}
+    @Override
+    protected SourceCodeDisclosureScanner createScanner() {
+        return new SourceCodeDisclosureScanner();
+    }
 
-	@Test
-	public void scannerNameShouldMatch() {
-		// Quick test to verify scanner name which is used in the policy dialog but not 
-		// alone in alerts
+    @Test
+    public void scannerNameShouldMatch() {
+        // Quick test to verify scanner name which is used in the policy dialog but not
+        // alone in alerts
 
-		// Given
-		SourceCodeDisclosureScanner thisScanner = createScanner();
-		// Then
-		assertThat(thisScanner.getName(), equalTo("Source Code Disclosure"));
-	}
-	
+        // Given
+        SourceCodeDisclosureScanner thisScanner = createScanner();
+        // Then
+        assertThat(thisScanner.getName(), equalTo("Source Code Disclosure"));
+    }
 }

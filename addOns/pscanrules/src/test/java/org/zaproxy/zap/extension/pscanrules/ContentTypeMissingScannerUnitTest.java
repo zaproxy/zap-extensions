@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,72 +28,82 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 
-public class ContentTypeMissingScannerUnitTest extends PassiveScannerTest<ContentTypeMissingScanner> {
+public class ContentTypeMissingScannerUnitTest
+        extends PassiveScannerTest<ContentTypeMissingScanner> {
 
-	@Override
-	protected ContentTypeMissingScanner createScanner() {
-		return new ContentTypeMissingScanner();
-	}
+    @Override
+    protected ContentTypeMissingScanner createScanner() {
+        return new ContentTypeMissingScanner();
+    }
 
-	private HttpMessage createMessage() throws HttpMalformedHeaderException {
-		HttpMessage msg = new HttpMessage();
+    private HttpMessage createMessage() throws HttpMalformedHeaderException {
+        HttpMessage msg = new HttpMessage();
 
-		msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
 
-		msg.setResponseBody("<html></html>");
-		msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n"
-				+ "Cache-Control: no-cache, no-store, must-revalidate\r\n" + "Content-Length: "
-				+ msg.getResponseBody().length() + "\r\n");
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Cache-Control: no-cache, no-store, must-revalidate\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
 
-		return msg;
-	}
+        return msg;
+    }
 
-	@Test
-	public void shoudNotAlertIfResponseBodyIsEmpty() throws HttpMalformedHeaderException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
-		msg.setResponseBody("");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shoudNotAlertIfResponseBodyIsEmpty() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
+        msg.setResponseBody("");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shoudNotAlertIfContentTypePresentInResponse() throws HttpMalformedHeaderException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html;charset=ISO-8859-1");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
-	
-	@Test
-	public void shoudAlertIfContentTypePresentButEmptyInResponse() throws HttpMalformedHeaderException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
-		// When
-		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo(Constant.messages.getString("pscanrules.contenttypemissingscanner.name.empty")));
-	}
-	
-	@Test
-	public void shoudAlertIfContentTypeNotPresentInResponse() throws HttpMalformedHeaderException {
-		// Given
-		HttpMessage msg = createMessage();
-		// When
-		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getName(),
-				equalTo(Constant.messages.getString("pscanrules.contenttypemissingscanner.name")));
-	}
+    @Test
+    public void shoudNotAlertIfContentTypePresentInResponse() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html;charset=ISO-8859-1");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
+    @Test
+    public void shoudAlertIfContentTypePresentButEmptyInResponse()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo(
+                        Constant.messages.getString(
+                                "pscanrules.contenttypemissingscanner.name.empty")));
+    }
+
+    @Test
+    public void shoudAlertIfContentTypeNotPresentInResponse() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo(Constant.messages.getString("pscanrules.contenttypemissingscanner.name")));
+    }
 }

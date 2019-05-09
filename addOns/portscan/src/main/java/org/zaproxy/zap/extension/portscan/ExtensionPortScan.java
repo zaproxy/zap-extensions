@@ -1,21 +1,21 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Copyright 2010 psiinon@gmail.com
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Copyright 2010 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.portscan;
 
@@ -25,9 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-
 import javax.swing.tree.TreeNode;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
@@ -47,21 +45,20 @@ import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 public class ExtensionPortScan extends ExtensionAdaptor
         implements SessionChangedListener, ProxyListener, SiteMapListener, XmlReporterExtension {
-	
+
     private static final Logger logger = Logger.getLogger(ExtensionPortScan.class);
 
-    //Could be after the last one that saves the HttpMessage, as this ProxyListener doesn't change the HttpMessage.
-	public static final int PROXY_LISTENER_ORDER = ProxyListenerLog.PROXY_LISTENER_ORDER + 1;
-	
+    // Could be after the last one that saves the HttpMessage, as this ProxyListener doesn't change
+    // the HttpMessage.
+    public static final int PROXY_LISTENER_ORDER = ProxyListenerLog.PROXY_LISTENER_ORDER + 1;
+
     private PortScanPanel portScanPanel = null;
     private PopupMenuPortScan popupMenuPortScan = null;
     private OptionsPortScanPanel optionsPortScanPanel = null;
     private PopupMenuPortCopy popupMenuPortCopy = null;
     private PortScanParam params = null;
 
-    /**
-     *
-     */
+    /** */
     public ExtensionPortScan() {
         super("ExtensionPortScan");
         this.setI18nPrefix("ports");
@@ -88,19 +85,18 @@ public class ExtensionPortScan extends ExtensionAdaptor
         extensionHook.addOptionsParamSet(getPortScanParam());
     }
 
-	@Override
-	public boolean canUnload() {
-    	return true;
-    }
-	
     @Override
-	public void unload() {
-	    if (getView() != null) {
-	        getPortScanPanel().unload();
-	    }
-	    super.unload();
+    public boolean canUnload() {
+        return true;
     }
 
+    @Override
+    public void unload() {
+        if (getView() != null) {
+            getPortScanPanel().unload();
+        }
+        super.unload();
+    }
 
     private PortScanParam getPortScanParam() {
         if (params == null) {
@@ -126,13 +122,14 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
         } else {
             try {
-                EventQueue.invokeAndWait(new Runnable() {
+                EventQueue.invokeAndWait(
+                        new Runnable() {
 
-                    @Override
-                    public void run() {
-                        sessionChangedEventHandler(session);
-                    }
-                });
+                            @Override
+                            public void run() {
+                                sessionChangedEventHandler(session);
+                            }
+                        });
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -142,10 +139,10 @@ public class ExtensionPortScan extends ExtensionAdaptor
     private void sessionChangedEventHandler(Session session) {
         // Clear all scans
         this.getPortScanPanel().reset();
-		if (session == null) {
-			// Closedown
-			return;
-		}
+        if (session == null) {
+            // Closedown
+            return;
+        }
         // Add new hosts
         SiteNode root = (SiteNode) session.getSiteTree().getRoot();
         @SuppressWarnings("unchecked")
@@ -157,9 +154,9 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public int getArrangeableListenerOrder() {
-    	return PROXY_LISTENER_ORDER;
+        return PROXY_LISTENER_ORDER;
     }
-    
+
     @Override
     public boolean onHttpRequestSend(HttpMessage msg) {
         if (getView() != null) {
@@ -181,14 +178,14 @@ public class ExtensionPortScan extends ExtensionAdaptor
         this.getPortScanPanel().nodeSelected(node, false);
     }
 
-	@Override
-	public void onReturnNodeRendererComponent(
-			SiteMapTreeCellRenderer component, boolean leaf, SiteNode value) {
-	}
+    @Override
+    public void onReturnNodeRendererComponent(
+            SiteMapTreeCellRenderer component, boolean leaf, SiteNode value) {}
 
     private PopupMenuPortScan getPopupMenuPortScan() {
         if (popupMenuPortScan == null) {
-            popupMenuPortScan = new PopupMenuPortScan(Constant.messages.getString("ports.site.popup"));
+            popupMenuPortScan =
+                    new PopupMenuPortScan(Constant.messages.getString("ports.site.popup"));
             popupMenuPortScan.setExtension(this);
         }
         return popupMenuPortScan;
@@ -229,10 +226,13 @@ public class ExtensionPortScan extends ExtensionAdaptor
     public String getXml(SiteNode site) {
         StringBuilder xml = new StringBuilder();
         List<Integer> ports = getPorts(site);
-        if(ports!=null) {
+        if (ports != null) {
             xml.append("<portscan>");
             for (Integer port : ports) {
-                xml.append("<port number=\"" + port.toString() + "\" state=\"open\" proto=\"tcp\"/>\n");
+                xml.append(
+                        "<port number=\""
+                                + port.toString()
+                                + "\" state=\"open\" proto=\"tcp\"/>\n");
             }
             xml.append("</portscan>");
         }
@@ -250,50 +250,49 @@ public class ExtensionPortScan extends ExtensionAdaptor
             PortScanResultsTableModel portScanResults = scan.getResultsTableModel();
             int size = portScanResults.getRowCount();
             List<Integer> ports = new ArrayList<>(size);
-            for(int i=0; i<size; i++) {
+            for (int i = 0; i < size; i++) {
                 ports.add(portScanResults.getResult(i).getPort());
             }
             return ports;
         }
         return (null);
     }
-    
+
     public List<Integer> getPorts(SiteNode site) {
         return getPorts(site.getNodeName());
     }
-    
-	@Override
-	public void sessionAboutToChange(Session session) {
-	}
-	
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("ports.desc");
-	}
+    @Override
+    public void sessionAboutToChange(Session session) {}
 
-	@Override
-	public URL getURL() {
-		try {
-			return new URL(Constant.ZAP_HOMEPAGE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
-	
-	@Override
-	public void sessionScopeChanged(Session session) {
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("ports.desc");
+    }
+
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_HOMEPAGE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public void sessionScopeChanged(Session session) {
         if (getView() != null) {
             this.getPortScanPanel().sessionScopeChanged(session);
         }
-	}
-	
-	@Override
-	public void sessionModeChanged(Mode mode) {
-		this.getPortScanPanel().sessionModeChanged(mode);
-	}
+    }
+
+    @Override
+    public void sessionModeChanged(Mode mode) {
+        this.getPortScanPanel().sessionModeChanged(mode);
+    }
 }

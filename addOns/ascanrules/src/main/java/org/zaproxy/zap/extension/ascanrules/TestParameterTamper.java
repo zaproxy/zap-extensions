@@ -1,25 +1,25 @@
 /*
  *
  * Paros and its related class files.
- * 
+ *
  * Paros is an HTTP/HTTPS proxy for assessing web application security.
  * Copyright (C) 2003-2004 Chinotec Technologies Company
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the Clarified Artistic License
  * as published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * Clarified Artistic License for more details.
- * 
+ *
  * You should have received a copy of the Clarified Artistic License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 // ZAP: 2012/01/02 Separate param and attack
-// ZAP: 2012/03/15 Changed the method checkResult to use the class StringBuilder 
+// ZAP: 2012/03/15 Changed the method checkResult to use the class StringBuilder
 // instead of StringBuffer.
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
@@ -27,12 +27,12 @@
 // ZAP: 2013/03/03 Issue 546: Remove all template Javadoc comments
 // ZAP: 2016/02/02 Add isStop() checks
 // ZAP: 2017/05/19 Correct data set in the raised alerts
+// ZAP: 2019/05/08 Normalise format/indentation.
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
-
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -46,24 +46,33 @@ import org.parosproxy.paros.network.HttpStatusCode;
 
 public class TestParameterTamper extends AbstractAppParamPlugin {
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "ascanrules.testparametertamper.";
-	
-    //private static final String[] PARAM_LIST = {"", "@", "+", "%A", "%1Z", "%", "%00", "|"};
+    /** Prefix for internationalised messages used by this rule */
+    private static final String MESSAGE_PREFIX = "ascanrules.testparametertamper.";
+
+    // private static final String[] PARAM_LIST = {"", "@", "+", "%A", "%1Z", "%", "%00", "|"};
     // problem sending "%A", "%1Z" to server - assume server can handle properly on this.
     // %0A not included as this is in CRLFInjection already.
-    private static String[] PARAM_LIST = {"", "", "@", "+", AbstractPlugin.getURLDecode("%00"), "|"};
-    
-    private static Pattern patternErrorJava1 = Pattern.compile("javax\\.servlet\\.\\S+", PATTERN_PARAM);
-    private static Pattern patternErrorJava2 = Pattern.compile("invoke.+exception|exception.+invoke", PATTERN_PARAM);
-    private static Pattern patternErrorVBScript = Pattern.compile("Microsoft(\\s+|&nbsp)*VBScript(\\s+|&nbsp)+error", PATTERN_PARAM);
-    private static Pattern patternErrorODBC1 = Pattern.compile("Microsoft OLE DB Provider for ODBC Drivers.*error", PATTERN_PARAM);
-    private static Pattern patternErrorODBC2 = Pattern.compile("ODBC.*Drivers.*error", PATTERN_PARAM);
-    private static Pattern patternErrorJet = Pattern.compile("Microsoft JET Database Engine.*error", PATTERN_PARAM);
+    private static String[] PARAM_LIST = {
+        "", "", "@", "+", AbstractPlugin.getURLDecode("%00"), "|"
+    };
+
+    private static Pattern patternErrorJava1 =
+            Pattern.compile("javax\\.servlet\\.\\S+", PATTERN_PARAM);
+    private static Pattern patternErrorJava2 =
+            Pattern.compile("invoke.+exception|exception.+invoke", PATTERN_PARAM);
+    private static Pattern patternErrorVBScript =
+            Pattern.compile("Microsoft(\\s+|&nbsp)*VBScript(\\s+|&nbsp)+error", PATTERN_PARAM);
+    private static Pattern patternErrorODBC1 =
+            Pattern.compile("Microsoft OLE DB Provider for ODBC Drivers.*error", PATTERN_PARAM);
+    private static Pattern patternErrorODBC2 =
+            Pattern.compile("ODBC.*Drivers.*error", PATTERN_PARAM);
+    private static Pattern patternErrorJet =
+            Pattern.compile("Microsoft JET Database Engine.*error", PATTERN_PARAM);
     private static Pattern patternErrorPHP = Pattern.compile(" on line <b>", PATTERN_PARAM);
-    private static Pattern patternErrorTomcat = Pattern.compile("(Apache Tomcat).*(^Caused by:|HTTP Status 500 - Internal Server Error)", PATTERN_PARAM);
+    private static Pattern patternErrorTomcat =
+            Pattern.compile(
+                    "(Apache Tomcat).*(^Caused by:|HTTP Status 500 - Internal Server Error)",
+                    PATTERN_PARAM);
     // ZAP: Added logger
     private static Logger log = Logger.getLogger(TestParameterTamper.class);
 
@@ -95,18 +104,15 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
     @Override
     public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-
     }
 
     @Override
     public String getReference() {
         return "";
-
     }
 
     @Override
-    public void init() {
-    }
+    public void init() {}
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
@@ -118,12 +124,23 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
         try {
             sendAndReceive(normalMsg);
-        } catch (InvalidRedirectLocationException|SocketException|IllegalStateException|IllegalArgumentException|URIException|UnknownHostException ex) {
-			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-					" when accessing: " + normalMsg.getRequestHeader().getURI().toString() + 
-					"\n The target may have replied with a poorly formed redirect due to our input.");
-			return; //Something went wrong, no point continuing
-		} catch (Exception e) {
+        } catch (InvalidRedirectLocationException
+                | SocketException
+                | IllegalStateException
+                | IllegalArgumentException
+                | URIException
+                | UnknownHostException ex) {
+            if (log.isDebugEnabled())
+                log.debug(
+                        "Caught "
+                                + ex.getClass().getName()
+                                + " "
+                                + ex.getMessage()
+                                + " when accessing: "
+                                + normalMsg.getRequestHeader().getURI().toString()
+                                + "\n The target may have replied with a poorly formed redirect due to our input.");
+            return; // Something went wrong, no point continuing
+        } catch (Exception e) {
             // ZAP: Log exceptions
             log.warn(e.getMessage(), e);
             return;
@@ -142,17 +159,27 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
             } else {
                 setParameter(msg, param, PARAM_LIST[i]);
                 attack = PARAM_LIST[i];
-
             }
             try {
-            	try {
-            		sendAndReceive(msg);
-            	} catch (InvalidRedirectLocationException|SocketException|IllegalStateException|IllegalArgumentException|URIException|UnknownHostException ex) {
-        			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-        					" when accessing: " + msg.getRequestHeader().getURI().toString() + 
-        					"\n The target may have replied with a poorly formed redirect due to our input.");
-        			continue; //Something went wrong, move on to the next item in the PARAM_LIST
-        		}
+                try {
+                    sendAndReceive(msg);
+                } catch (InvalidRedirectLocationException
+                        | SocketException
+                        | IllegalStateException
+                        | IllegalArgumentException
+                        | URIException
+                        | UnknownHostException ex) {
+                    if (log.isDebugEnabled())
+                        log.debug(
+                                "Caught "
+                                        + ex.getClass().getName()
+                                        + " "
+                                        + ex.getMessage()
+                                        + " when accessing: "
+                                        + msg.getRequestHeader().getURI().toString()
+                                        + "\n The target may have replied with a poorly formed redirect due to our input.");
+                    continue; // Something went wrong, move on to the next item in the PARAM_LIST
+                }
                 if (checkResult(msg, param, attack, normalMsg.getResponseBody().toString())) {
                     return;
                 }
@@ -160,13 +187,11 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
                 // ZAP: Log exceptions
                 log.warn(e.getMessage(), e);
             }
-
         }
-
-
     }
 
-    private boolean checkResult(HttpMessage msg, String param, String attack, String normalHTTPResponse) {
+    private boolean checkResult(
+            HttpMessage msg, String param, String attack, String normalHTTPResponse) {
 
         if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK
                 && !HttpStatusCode.isServerError(msg.getResponseHeader().getStatusCode())) {
@@ -182,7 +207,8 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
         boolean issueFound = false;
         int confidence = Alert.CONFIDENCE_MEDIUM;
-        if (matchBodyPattern(msg, patternErrorJava1, sb) && matchBodyPattern(msg, patternErrorJava2, null)) {
+        if (matchBodyPattern(msg, patternErrorJava1, sb)
+                && matchBodyPattern(msg, patternErrorJava2, null)) {
             issueFound = true;
         } else if (matchBodyPattern(msg, patternErrorVBScript, sb)
                 || matchBodyPattern(msg, patternErrorODBC1, sb)
@@ -199,7 +225,6 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
         }
 
         return issueFound;
-
     }
 
     @Override

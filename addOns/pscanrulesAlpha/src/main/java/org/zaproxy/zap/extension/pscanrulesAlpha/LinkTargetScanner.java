@@ -1,27 +1,29 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
- * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Copyright 2018 The ZAP development team
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2018 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -36,13 +38,10 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.HTMLElementName;
-import net.htmlparser.jericho.Source;
-
 public class LinkTargetScanner extends PluginPassiveScanner {
 
-    // TODO Replace "rules.domains.trusted" with RuleConfigParam.RULE_DOMAINS_TRUSTED once available.
+    // TODO Replace "rules.domains.trusted" with RuleConfigParam.RULE_DOMAINS_TRUSTED once
+    // available.
     public static final String TRUSTED_DOMAINS_PROPERTY = "rules.domains.trusted";
     private static final String MESSAGE_PREFIX = "pscanalpha.linktarget.";
 
@@ -53,11 +52,11 @@ public class LinkTargetScanner extends PluginPassiveScanner {
     private static final String NOREFERRER = "noreferrer";
 
     private String trustedConfig = "";
-    private List <String> trustedDomainRegexes = new ArrayList<String>();
+    private List<String> trustedDomainRegexes = new ArrayList<String>();
 
     private PassiveScanThread parent = null;
     private Model model = null;
-    
+
     private static final Logger LOG = Logger.getLogger(PluginPassiveScanner.class);
 
     @Override
@@ -66,21 +65,20 @@ public class LinkTargetScanner extends PluginPassiveScanner {
     }
 
     @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
-    }
+    public void scanHttpRequestSend(HttpMessage msg, int id) {}
 
     @Override
     public int getPluginId() {
         return 10108;
     }
-    
+
     private Model getModel() {
         if (this.model == null) {
             this.model = Model.getSingleton();
         }
         return this.model;
     }
-    
+
     /*
      * Just for use in the unit tests
      */
@@ -88,8 +86,12 @@ public class LinkTargetScanner extends PluginPassiveScanner {
         this.model = model;
     }
 
-    private boolean isLinkFromOtherDomain (String host, String link, List<Context> contextList){
-        if (link == null || !link.startsWith("//") && (link.startsWith("/") || link.startsWith("./") || link.startsWith("../"))) {
+    private boolean isLinkFromOtherDomain(String host, String link, List<Context> contextList) {
+        if (link == null
+                || !link.startsWith("//")
+                        && (link.startsWith("/")
+                                || link.startsWith("./")
+                                || link.startsWith("../"))) {
             return false;
         }
         boolean otherDomain = false;
@@ -97,15 +99,15 @@ public class LinkTargetScanner extends PluginPassiveScanner {
             URI linkURI = new URI(link, true);
             String linkURIStr = linkURI.toString();
             String linkHost = linkURI.getHost();
-            if(linkHost != null && !linkHost.toLowerCase().equals(host.toLowerCase())){
+            if (linkHost != null && !linkHost.toLowerCase().equals(host.toLowerCase())) {
                 otherDomain = true;
             }
-            if(otherDomain && ! Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+            if (otherDomain && !Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
                 // Get a list of contexts that contain the original URL
                 for (Context context : contextList) {
-                    if(context.isInContext(linkURIStr)) {
+                    if (context.isInContext(linkURIStr)) {
                         // The linkURI is in a context that the original URI is in
-                        return false; //No need to loop further
+                        return false; // No need to loop further
                     }
                 }
             }
@@ -129,7 +131,7 @@ public class LinkTargetScanner extends PluginPassiveScanner {
 
     private void checkIgnoreList() {
         String trustedConf = getConfig().getString(TRUSTED_DOMAINS_PROPERTY, "");
-        if (! trustedConf.equals(this.trustedConfig)) {
+        if (!trustedConf.equals(this.trustedConfig)) {
             // Its changed
             trustedDomainRegexes.clear();
             this.trustedConfig = trustedConf;
@@ -141,14 +143,13 @@ public class LinkTargetScanner extends PluginPassiveScanner {
             }
         }
     }
-    
-    
+
     private boolean checkElement(Element link, HttpMessage msg, int id) {
         // get target, check if its _blank
         String target = link.getAttributeValue(TARGET_ATTRIBUTE);
         if (target != null) {
-            if (AlertThreshold.HIGH.equals(this.getAlertThreshold()) && 
-                    ! _BLANK.equalsIgnoreCase(target)) {
+            if (AlertThreshold.HIGH.equals(this.getAlertThreshold())
+                    && !_BLANK.equalsIgnoreCase(target)) {
                 // Only report _blank link targets at a high threshold
                 return false;
             }
@@ -162,7 +163,8 @@ public class LinkTargetScanner extends PluginPassiveScanner {
                 }
             }
             // Its bad
-            Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
+            Alert alert =
+                    new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
             alert.setDetail(
                     getDescription(),
                     msg.getRequestHeader().getURI().toString(),
@@ -192,7 +194,10 @@ public class LinkTargetScanner extends PluginPassiveScanner {
         checkIgnoreList();
 
         String host = msg.getRequestHeader().getHostName();
-        List<Context> contextList = getModel().getSession().getContextsForUrl(msg.getRequestHeader().getURI().toString());
+        List<Context> contextList =
+                getModel()
+                        .getSession()
+                        .getContextsForUrl(msg.getRequestHeader().getURI().toString());
 
         for (Element link : source.getAllElements(HTMLElementName.A)) {
             if (this.isLinkFromOtherDomain(host, link.getAttributeValue("href"), contextList)) {

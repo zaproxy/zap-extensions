@@ -57,7 +57,7 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then
         assertEquals(alertsRaised.size(), 1);
-        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX+"name"));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "name"));
     }
 
     @Test
@@ -90,5 +90,4 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
-
 }

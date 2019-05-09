@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,16 +25,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 /**
  * A {@code PayloadGenerator} that 'generates' payloads from a file.
- * <p>
- * It reads the contents of a file and returns a payload for each line read. Ignoring empty and commented lines.
  *
+ * <p>It reads the contents of a file and returns a payload for each line read. Ignoring empty and
+ * commented lines.
  */
 public class FileStringPayloadGenerator implements StringPayloadGenerator {
 
@@ -42,16 +41,12 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
 
     public static final String DEFAULT_COMMENT_TOKEN = "#";
 
-    /**
-     * The source of payloads.
-     */
+    /** The source of payloads. */
     private final Path file;
 
     private final Charset charset;
 
-    /**
-     * The number of payloads contained in the file.
-     */
+    /** The number of payloads contained in the file. */
     private final long numberOfPayloads;
 
     private final boolean ignoreTrimmedEmptyLines;
@@ -68,7 +63,8 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
      * Constructs a {@code FilePayload} which reads the payloads from the given {@code file}.
      *
      * @param file the path to the file containing the payloads
-     * @param limit the maximum number of payloads that should be read from the file, zero or negative number indicates no limit
+     * @param limit the maximum number of payloads that should be read from the file, zero or
+     *     negative number indicates no limit
      */
     public FileStringPayloadGenerator(Path file, int limit) {
         this(file, limit, DEFAULT_COMMENT_TOKEN);
@@ -117,21 +113,22 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
         } else {
             int calculatedNumberOfPayloads = -1;
             try {
-                calculatedNumberOfPayloads = calculateNumberOfPayloads(
-                        file,
-                        charset,
-                        limit,
-                        commentToken,
-                        ignoreTrimmedEmptyLines,
-                        ignoreFirstLine);
+                calculatedNumberOfPayloads =
+                        calculateNumberOfPayloads(
+                                file,
+                                charset,
+                                limit,
+                                commentToken,
+                                ignoreTrimmedEmptyLines,
+                                ignoreFirstLine);
             } catch (IOException e) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to calculate the number of payloads from the file " + file, e);
+                    LOGGER.debug(
+                            "Failed to calculate the number of payloads from the file " + file, e);
                 }
             }
             this.numberOfPayloads = calculatedNumberOfPayloads;
         }
-
     }
 
     public static int calculateNumberOfPayloads(
@@ -140,7 +137,8 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
             long limit,
             String commentToken,
             boolean ignoreTrimmedEmptyLines,
-            boolean ignoreFirstLine) throws IOException {
+            boolean ignoreFirstLine)
+            throws IOException {
         boolean checkCommentedLines = !commentToken.isEmpty();
         int count = 0;
         try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
@@ -177,7 +175,13 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
 
     @Override
     public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
-        return new FileIterator(file, charset, numberOfPayloads, commentToken, ignoreTrimmedEmptyLines, ignoreFirstLine);
+        return new FileIterator(
+                file,
+                charset,
+                numberOfPayloads,
+                commentToken,
+                ignoreTrimmedEmptyLines,
+                ignoreFirstLine);
     }
 
     @Override
@@ -274,8 +278,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public void remove() {
-        }
+        public void remove() {}
 
         @Override
         public void reset() {
@@ -298,6 +301,5 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
                 }
             }
         }
-
     }
 }

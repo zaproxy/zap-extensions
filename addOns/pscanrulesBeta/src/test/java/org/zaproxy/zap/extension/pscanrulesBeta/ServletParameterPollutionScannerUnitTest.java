@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP development team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +17,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.zaproxy.zap.extension.pscanrulesBeta;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-public class ServletParameterPollutionScannerUnitTest extends PassiveScannerTest<ServletParameterPollutionScanner> {
+public class ServletParameterPollutionScannerUnitTest
+        extends PassiveScannerTest<ServletParameterPollutionScanner> {
 
     public static final String URI = "http://www.example.com/test/";
 
@@ -45,14 +45,17 @@ public class ServletParameterPollutionScannerUnitTest extends PassiveScannerTest
     }
 
     @Test
-    public void givenFormWithActionAttributeWhenScanHttpResponseReceiveThenNoAlertsRaised() throws Exception {
+    public void givenFormWithActionAttributeWhenScanHttpResponseReceiveThenNoAlertsRaised()
+            throws Exception {
         HttpMessage msg = createHttpMessageFromHtml("<form action='ActionMan'>");
         scanHttpResponseReceive(msg);
         assertNumberOfAlertsRaised(0);
     }
 
     @Test
-    public void givenFormWithNoActionAttributeWhenScanHttpResponseReceiveThenAlertRaisedAndAlertPopulated() throws Exception {
+    public void
+            givenFormWithNoActionAttributeWhenScanHttpResponseReceiveThenAlertRaisedAndAlertPopulated()
+                    throws Exception {
         HttpMessage msg = createHttpMessageFromHtml("<form />");
         scanHttpResponseReceive(msg);
         Alert alert = getFirstAlertRaised();
@@ -63,35 +66,41 @@ public class ServletParameterPollutionScannerUnitTest extends PassiveScannerTest
     }
 
     @Test
-    public void givenFormWithValuelessActionAttributeWhenScanHttpResponseReceiveThenAlertRaised() throws Exception {
+    public void givenFormWithValuelessActionAttributeWhenScanHttpResponseReceiveThenAlertRaised()
+            throws Exception {
         HttpMessage msg = createHttpMessageFromHtml("<form action />");
         scanHttpResponseReceive(msg);
         assertNumberOfAlertsRaised(1);
     }
 
     @Test
-    public void givenFormWithEmptyActionAttributeWhenScanHttpResponseReceiveThenAlertRaised() throws Exception {
+    public void givenFormWithEmptyActionAttributeWhenScanHttpResponseReceiveThenAlertRaised()
+            throws Exception {
         HttpMessage msg = createHttpMessageFromHtml("<form action='' />");
         scanHttpResponseReceive(msg);
         assertNumberOfAlertsRaised(1);
     }
 
     @Test
-    public void givenFormWithEmptyAndPopulatedActionAttributesWhenScanHttpResponseReceiveThenAlertRaised() throws Exception {
+    public void
+            givenFormWithEmptyAndPopulatedActionAttributesWhenScanHttpResponseReceiveThenAlertRaised()
+                    throws Exception {
         HttpMessage msg = createHttpMessageFromHtml("<form action action='ActionMan' />");
         scanHttpResponseReceive(msg);
         assertNumberOfAlertsRaised(1);
     }
 
     @Test
-    public void givenTwoFormsWithNoActionAttributeWhenScanHttpResponseReceiveThenOnlyOneAlertRaised() throws Exception {
+    public void
+            givenTwoFormsWithNoActionAttributeWhenScanHttpResponseReceiveThenOnlyOneAlertRaised()
+                    throws Exception {
         HttpMessage msg = createHttpMessageFromHtml("<form /><form />");
         scanHttpResponseReceive(msg);
         assertNumberOfAlertsRaised(1);
     }
 
     private Alert getFirstAlertRaised() {
-        assertTrue( "Expected Alert but none raised.", alertsRaised.size() > 0 );
+        assertTrue("Expected Alert but none raised.", alertsRaised.size() > 0);
         return alertsRaised.get(0);
     }
 

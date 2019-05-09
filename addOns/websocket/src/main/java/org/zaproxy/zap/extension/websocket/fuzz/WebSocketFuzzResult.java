@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.websocket.fuzz;
 
 import java.util.Collections;
 import java.util.List;
-
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 
 public class WebSocketFuzzResult {
@@ -35,7 +34,8 @@ public class WebSocketFuzzResult {
         this(taskId, message, Collections.emptyList());
     }
 
-    public WebSocketFuzzResult(long taskId, WebSocketFuzzMessageDTO message, List<Object> payloads) {
+    public WebSocketFuzzResult(
+            long taskId, WebSocketFuzzMessageDTO message, List<Object> payloads) {
         this.taskId = taskId;
         this.message = message;
         this.payloads = payloads;
@@ -52,5 +52,4 @@ public class WebSocketFuzzResult {
     public WebSocketFuzzMessageDTO getWebSocketMessage() {
         return message;
     }
-
 }

@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.fuzz.messagelocations;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.MessageLocation;
 
@@ -29,7 +28,12 @@ public class MessageLocationReplacers {
 
     private static MessageLocationReplacers instance;
 
-    private Map<Class<? extends Message>, Map<Class<? extends MessageLocation>, MessageLocationReplacerFactory<? extends Message>>> messageLocationReplacers;
+    private Map<
+                    Class<? extends Message>,
+                    Map<
+                            Class<? extends MessageLocation>,
+                            MessageLocationReplacerFactory<? extends Message>>>
+            messageLocationReplacers;
 
     public static MessageLocationReplacers getInstance() {
         if (instance == null) {
@@ -48,8 +52,10 @@ public class MessageLocationReplacers {
         messageLocationReplacers = new HashMap<>();
     }
 
-    public <T extends Message> void addReplacer(Class<T> messageClass, MessageLocationReplacerFactory<T> replacerFactory) {
-        Map<Class<? extends MessageLocation>, MessageLocationReplacerFactory<? extends Message>> replacers = messageLocationReplacers.get(messageClass);
+    public <T extends Message> void addReplacer(
+            Class<T> messageClass, MessageLocationReplacerFactory<T> replacerFactory) {
+        Map<Class<? extends MessageLocation>, MessageLocationReplacerFactory<? extends Message>>
+                replacers = messageLocationReplacers.get(messageClass);
         if (replacers == null) {
             replacers = new HashMap<>();
             messageLocationReplacers.put(messageClass, replacers);
@@ -57,8 +63,10 @@ public class MessageLocationReplacers {
         replacers.put(replacerFactory.getTargetMessageLocation(), replacerFactory);
     }
 
-    public <T extends Message> void removeReplacer(Class<T> messageClass, MessageLocationReplacerFactory<T> replacerFactory) {
-        Map<Class<? extends MessageLocation>, MessageLocationReplacerFactory<? extends Message>> replacers = messageLocationReplacers.get(messageClass);
+    public <T extends Message> void removeReplacer(
+            Class<T> messageClass, MessageLocationReplacerFactory<T> replacerFactory) {
+        Map<Class<? extends MessageLocation>, MessageLocationReplacerFactory<? extends Message>>
+                replacers = messageLocationReplacers.get(messageClass);
         if (replacers == null) {
             return;
         }
@@ -69,17 +77,17 @@ public class MessageLocationReplacers {
     }
 
     public <T extends Message, T1 extends MessageLocation> MessageLocationReplacer<T> getMLR(
-            Class<T> messageClass,
-            Class<T1> messageLocationClass) {
+            Class<T> messageClass, Class<T1> messageLocationClass) {
 
-        Map<Class<? extends MessageLocation>, MessageLocationReplacerFactory<? extends Message>> replacers = messageLocationReplacers.get(messageClass);
+        Map<Class<? extends MessageLocation>, MessageLocationReplacerFactory<? extends Message>>
+                replacers = messageLocationReplacers.get(messageClass);
         if (replacers != null) {
             @SuppressWarnings("unchecked")
-            MessageLocationReplacerFactory<T> replacerFactory = (MessageLocationReplacerFactory<T>) replacers.get(messageLocationClass);
+            MessageLocationReplacerFactory<T> replacerFactory =
+                    (MessageLocationReplacerFactory<T>) replacers.get(messageLocationClass);
             return replacerFactory.createReplacer();
         }
 
         return null;
     }
-
 }

@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2019 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,25 +24,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventPublisher;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 
-/**
- * A {@link EventPublisher} of websocket events.
- */
+/** A {@link EventPublisher} of websocket events. */
 public final class WebSocketEventPublisher implements EventPublisher, WebSocketSenderListener {
 
-    /**
-     * The event sent when a {@code WebSocketMessage} is seen.
-     */
+    /** The event sent when a {@code WebSocketMessage} is seen. */
     public static final String EVENT_MESSAGE = "ws.message";
-    /**
-     * The event sent when a {@code WebSocketProxy} state change occurs.
-     */
+    /** The event sent when a {@code WebSocketProxy} state change occurs. */
     public static final String EVENT_STATE_CHANGE = "ws.stateChange";
 
     private static final String FIELD_STATE = "state";
@@ -61,17 +54,17 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
     private ExtensionWebSocket extension;
     private ExecutorService executor;
 
-    public WebSocketEventPublisher (ExtensionWebSocket extension) {
+    public WebSocketEventPublisher(ExtensionWebSocket extension) {
         this.extension = extension;
-        executor = Executors.newSingleThreadExecutor( r -> {
-                return new Thread(r, "ZAP-WebSocketEventPublisher");
-            });
-        
-        ZAP.getEventBus().registerPublisher(
-                this,
-                new String [] {EVENT_MESSAGE, EVENT_STATE_CHANGE});
+        executor =
+                Executors.newSingleThreadExecutor(
+                        r -> {
+                            return new Thread(r, "ZAP-WebSocketEventPublisher");
+                        });
+
+        ZAP.getEventBus().registerPublisher(this, new String[] {EVENT_MESSAGE, EVENT_STATE_CHANGE});
     }
-    
+
     @Override
     public String getPublisherName() {
         return WebSocketEventPublisher.class.getCanonicalName();
@@ -91,40 +84,40 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
             return;
         }
         if (message.isFinished) {
-            this.executor.execute(() -> {
-                Map<String, String> map = new HashMap<String, String>();
-                map.put(FIELD_CHANNEL_ID, Integer.toString(channelId));
-                map.put(FIELD_CHANNEL_HOST, message.getDTO().channel.host);
-                map.put(FIELD_TIME_IN_MS, Long.toString(message.getTimestamp().getTime()));
-                map.put(FIELD_OP_CODE, Integer.toString(message.getOpcode()));
-                map.put(FIELD_OP_CODE_STRING, message.getOpcodeString());
-                map.put(FIELD_DIRECTION, message.getDirection().name());
-                map.put(FIELD_MSG_ID, Integer.toString(message.getMessageId()));
-                map.put(FIELD_LENGTH, Integer.toString(message.getPayloadLength()));
-                if (message.isText()) {
-                    String txt = message.getReadablePayload();
-                    if (txt.length() > 1024) {
-                        txt = txt.substring(0, 1024);
-                    }
-                    map.put(FIELD_MSG_SUMMARY, txt);
-                } else {
-                    // Generate a hex version so that its slightly more readable
-                    StringBuilder sb = new StringBuilder();
-                    for (byte b : message.getPayload()) {
-                        sb.append(String.format("%02X ", b));
-                        if (sb.length() > 1024) {
-                            break;
+            this.executor.execute(
+                    () -> {
+                        Map<String, String> map = new HashMap<String, String>();
+                        map.put(FIELD_CHANNEL_ID, Integer.toString(channelId));
+                        map.put(FIELD_CHANNEL_HOST, message.getDTO().channel.host);
+                        map.put(FIELD_TIME_IN_MS, Long.toString(message.getTimestamp().getTime()));
+                        map.put(FIELD_OP_CODE, Integer.toString(message.getOpcode()));
+                        map.put(FIELD_OP_CODE_STRING, message.getOpcodeString());
+                        map.put(FIELD_DIRECTION, message.getDirection().name());
+                        map.put(FIELD_MSG_ID, Integer.toString(message.getMessageId()));
+                        map.put(FIELD_LENGTH, Integer.toString(message.getPayloadLength()));
+                        if (message.isText()) {
+                            String txt = message.getReadablePayload();
+                            if (txt.length() > 1024) {
+                                txt = txt.substring(0, 1024);
+                            }
+                            map.put(FIELD_MSG_SUMMARY, txt);
+                        } else {
+                            // Generate a hex version so that its slightly more readable
+                            StringBuilder sb = new StringBuilder();
+                            for (byte b : message.getPayload()) {
+                                sb.append(String.format("%02X ", b));
+                                if (sb.length() > 1024) {
+                                    break;
+                                }
+                            }
+                            map.put(FIELD_MSG_SUMMARY, sb.toString());
                         }
-                    }
-                    map.put(FIELD_MSG_SUMMARY, sb.toString());
-                }
-                ZAP.getEventBus().publishSyncEvent(
-                        this,
-                        new Event(this, EVENT_MESSAGE, null, map));
-            });
+                        ZAP.getEventBus()
+                                .publishSyncEvent(this, new Event(this, EVENT_MESSAGE, null, map));
+                    });
         }
     }
-    
+
     private String socketToStr(Socket socket) {
         if (socket == null) {
             return "";
@@ -134,18 +127,18 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
 
     @Override
     public void onStateChange(State state, WebSocketProxy proxy) {
-        this.executor.execute(() -> {
-            Map<String, String> map = new HashMap<String, String>();
-            map.put(FIELD_STATE, state.name());
-            map.put(FIELD_CHANNEL_ID, Integer.toString(proxy.getChannelId()));
-            map.put(FIELD_LOCAL_SOCKET, socketToStr(proxy.localSocket));
-            map.put(FIELD_REMOTE_SOCKET, socketToStr(proxy.remoteSocket));
-            ZAP.getEventBus().publishSyncEvent(
-                    this,
-                    new Event(this, EVENT_STATE_CHANGE, null, map));
-        });
+        this.executor.execute(
+                () -> {
+                    Map<String, String> map = new HashMap<String, String>();
+                    map.put(FIELD_STATE, state.name());
+                    map.put(FIELD_CHANNEL_ID, Integer.toString(proxy.getChannelId()));
+                    map.put(FIELD_LOCAL_SOCKET, socketToStr(proxy.localSocket));
+                    map.put(FIELD_REMOTE_SOCKET, socketToStr(proxy.remoteSocket));
+                    ZAP.getEventBus()
+                            .publishSyncEvent(this, new Event(this, EVENT_STATE_CHANGE, null, map));
+                });
     }
-    
+
     public void shutdown() {
         ZAP.getEventBus().unregisterPublisher(this);
         this.executor.shutdown();

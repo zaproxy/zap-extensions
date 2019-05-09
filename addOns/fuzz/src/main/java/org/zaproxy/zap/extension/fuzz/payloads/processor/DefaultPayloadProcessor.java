@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,9 +23,8 @@ import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
 /**
  * Tagging interface for {@code PayloadProcessor}s of {@code DefaultPayload}s.
- * 
+ *
  * @see PayloadProcessor
  * @see DefaultPayload
  */
-public interface DefaultPayloadProcessor extends PayloadProcessor<DefaultPayload> {
-}
+public interface DefaultPayloadProcessor extends PayloadProcessor<DefaultPayload> {}

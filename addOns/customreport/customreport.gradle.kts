@@ -9,3 +9,9 @@ zapAddOn {
         author.set("Chienli Ma")
     }
 }
+
+spotless {
+    javaWith3rdPartyFormatted(project, listOf(
+        "**/ReportGenerator.java",
+        "**/ReportLastScan.java"))
+}

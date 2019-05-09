@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 
@@ -50,14 +49,19 @@ public final class PayloadProcessorUIHandlersRegistry {
         processorUIHandlers = new HashMap<>();
     }
 
-    public <T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>> void registerProcessorUIHandler(
-            Class<T2> processorClass,
-            PayloadProcessorUIHandler<T, T2, T3> processorHandler) {
+    public <T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>>
+            void registerProcessorUIHandler(
+                    Class<T2> processorClass,
+                    PayloadProcessorUIHandler<T, T2, T3> processorHandler) {
         processorUIHandlers.put(processorClass, processorHandler);
     }
 
-    public <T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>, T4 extends PayloadProcessorUIHandler<T, T2, T3>> T4 getProcessorUIHandler(
-            Class<T2> processorClass) {
+    public <
+                    T extends Payload,
+                    T2 extends PayloadProcessor<T>,
+                    T3 extends PayloadProcessorUI<T, T2>,
+                    T4 extends PayloadProcessorUIHandler<T, T2, T3>>
+            T4 getProcessorUIHandler(Class<T2> processorClass) {
         Object object = processorUIHandlers.get(processorClass);
         if (object == null) {
             return null;
@@ -71,8 +75,12 @@ public final class PayloadProcessorUIHandlersRegistry {
         return processorUIHandlers.values();
     }
 
-    public <T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>, T4 extends PayloadProcessorUIHandler<T, T2, T3>> void setDefaultPayloadProcessor(
-            T4 uiHandler) {
+    public <
+                    T extends Payload,
+                    T2 extends PayloadProcessor<T>,
+                    T3 extends PayloadProcessorUI<T, T2>,
+                    T4 extends PayloadProcessorUIHandler<T, T2, T3>>
+            void setDefaultPayloadProcessor(T4 uiHandler) {
         if (processorUIHandlers.containsValue(uiHandler)) {
             nameDefaultPayloadProcessor = uiHandler.getName();
         }
@@ -81,5 +89,4 @@ public final class PayloadProcessorUIHandlersRegistry {
     public String getNameDefaultPayloadProcessor() {
         return nameDefaultPayloadProcessor;
     }
-
 }

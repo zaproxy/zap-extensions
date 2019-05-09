@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,6 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.GroupLayout;
@@ -32,7 +31,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -45,21 +43,27 @@ import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
-public class UserHttpFuzzerMessageProcessorUIHandler implements
-        HttpFuzzerMessageProcessorUIHandler<UserHttpFuzzerMessageProcessor, UserHttpFuzzerMessageProcessorUI> {
+public class UserHttpFuzzerMessageProcessorUIHandler
+        implements HttpFuzzerMessageProcessorUIHandler<
+                UserHttpFuzzerMessageProcessor, UserHttpFuzzerMessageProcessorUI> {
 
     private final ExtensionUserManagement extensionUserManagement;
 
-    public UserHttpFuzzerMessageProcessorUIHandler(ExtensionUserManagement extensionUserManagement) {
+    public UserHttpFuzzerMessageProcessorUIHandler(
+            ExtensionUserManagement extensionUserManagement) {
         this.extensionUserManagement = extensionUserManagement;
     }
 
     @Override
     public boolean isEnabled(HttpMessage message) {
         Session session = Model.getSingleton().getSession();
-        List<Context> contexts = session.getContextsForUrl(message.getRequestHeader().getURI().toString());
+        List<Context> contexts =
+                session.getContextsForUrl(message.getRequestHeader().getURI().toString());
         for (Context context : contexts) {
-            List<User> users = extensionUserManagement.getContextUserAuthManager(context.getIndex()).getUsers();
+            List<User> users =
+                    extensionUserManagement
+                            .getContextUserAuthManager(context.getIndex())
+                            .getUsers();
             if (!users.isEmpty()) {
                 return true;
             }
@@ -102,8 +106,8 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
         return new UserHttpFuzzerMessageProcessorUIPanel(extensionUserManagement);
     }
 
-    public static class UserHttpFuzzerMessageProcessorUI implements
-            HttpFuzzerMessageProcessorUI<UserHttpFuzzerMessageProcessor> {
+    public static class UserHttpFuzzerMessageProcessorUI
+            implements HttpFuzzerMessageProcessorUI<UserHttpFuzzerMessageProcessor> {
 
         private final User user;
 
@@ -127,7 +131,8 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return Constant.messages.getString("fuzz.httpfuzzer.processor.userMessageProcessor.description",
+            return Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.userMessageProcessor.description",
                     user.getName(),
                     Integer.toString(user.getContextId()));
         }
@@ -143,12 +148,17 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
         }
     }
 
-    public static class UserHttpFuzzerMessageProcessorUIPanel extends
-            AbstractHttpFuzzerMessageProcessorUIPanel<UserHttpFuzzerMessageProcessor, UserHttpFuzzerMessageProcessorUI> {
+    public static class UserHttpFuzzerMessageProcessorUIPanel
+            extends AbstractHttpFuzzerMessageProcessorUIPanel<
+                    UserHttpFuzzerMessageProcessor, UserHttpFuzzerMessageProcessorUI> {
 
-        private static final String CONTEXT_FIELD_LABEL = Constant.messages.getString("fuzz.httpfuzzer.processor.userMessageProcessor.panel.context.label");
+        private static final String CONTEXT_FIELD_LABEL =
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.processor.userMessageProcessor.panel.context.label");
 
-        private static final String USER_FIELD_LABEL = Constant.messages.getString("fuzz.httpfuzzer.processor.userMessageProcessor.panel.user.label");
+        private static final String USER_FIELD_LABEL =
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.processor.userMessageProcessor.panel.user.label");
 
         private final ExtensionUserManagement extensionUserManagement;
 
@@ -157,22 +167,24 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
 
         private final JPanel fieldsPanel;
 
-        public UserHttpFuzzerMessageProcessorUIPanel(ExtensionUserManagement extensionUserManagement) {
+        public UserHttpFuzzerMessageProcessorUIPanel(
+                ExtensionUserManagement extensionUserManagement) {
             this.extensionUserManagement = extensionUserManagement;
 
             contextsComboBox = new JComboBox<>();
             contextsComboBox.addItem(ContextUI.NO_CONTEXT);
             usersComboBox = new JComboBox<>(ContextUI.NO_CONTEXT);
 
-            contextsComboBox.addItemListener(new ItemListener() {
+            contextsComboBox.addItemListener(
+                    new ItemListener() {
 
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    if (ItemEvent.SELECTED == e.getStateChange()) {
-                        usersComboBox.setModel((ContextUI) e.getItem());
-                    }
-                }
-            });
+                        @Override
+                        public void itemStateChanged(ItemEvent e) {
+                            if (ItemEvent.SELECTED == e.getStateChange()) {
+                                usersComboBox.setModel((ContextUI) e.getItem());
+                            }
+                        }
+                    });
 
             fieldsPanel = new JPanel();
 
@@ -186,33 +198,39 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
             JLabel usersLabel = new JLabel(USER_FIELD_LABEL);
             usersLabel.setLabelFor(usersComboBox);
 
-            layout.setHorizontalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                    .addComponent(contextsLabel)
-                                    .addComponent(usersLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(contextsComboBox)
-                                    .addComponent(usersComboBox)));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                            .addComponent(contextsLabel)
+                                            .addComponent(usersLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                            .addComponent(contextsComboBox)
+                                            .addComponent(usersComboBox)));
 
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(contextsLabel)
-                                    .addComponent(contextsComboBox))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(usersLabel)
-                                    .addComponent(usersComboBox)));
+            layout.setVerticalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(contextsLabel)
+                                            .addComponent(contextsComboBox))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(usersLabel)
+                                            .addComponent(usersComboBox)));
         }
 
         @Override
         public void init(HttpMessage message) {
             Session session = Model.getSingleton().getSession();
-            List<Context> contexts = session.getContextsForUrl(message.getRequestHeader().getURI().toString());
+            List<Context> contexts =
+                    session.getContextsForUrl(message.getRequestHeader().getURI().toString());
             for (Context context : contexts) {
-                List<User> users = extensionUserManagement.getContextUserAuthManager(context.getIndex()).getUsers();
+                List<User> users =
+                        extensionUserManagement
+                                .getContextUserAuthManager(context.getIndex())
+                                .getUsers();
                 if (!users.isEmpty()) {
                     contextsComboBox.addItem(new ContextUI(context, users));
                 }
@@ -230,7 +248,8 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
         }
 
         @Override
-        public void setFuzzerMessageProcessorUI(UserHttpFuzzerMessageProcessorUI messageProcessorUI) {
+        public void setFuzzerMessageProcessorUI(
+                UserHttpFuzzerMessageProcessorUI messageProcessorUI) {
             User user = messageProcessorUI.getUser();
             if (setSelectedContext(user.getContextId())) {
                 setSelectedUser(user);
@@ -245,8 +264,10 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
 
             JOptionPane.showMessageDialog(
                     null,
-                    Constant.messages.getString("fuzz.httpfuzzer.processor.userMessageProcessor.panel.validation.dialog.message"),
-                    Constant.messages.getString("fuzz.httpfuzzer.processor.userMessageProcessor.panel.validation.dialog.title"),
+                    Constant.messages.getString(
+                            "fuzz.httpfuzzer.processor.userMessageProcessor.panel.validation.dialog.message"),
+                    Constant.messages.getString(
+                            "fuzz.httpfuzzer.processor.userMessageProcessor.panel.validation.dialog.title"),
                     JOptionPane.INFORMATION_MESSAGE);
             contextsComboBox.requestFocusInWindow();
             return false;
@@ -282,7 +303,8 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
         }
     }
 
-    private static class ContextUI extends AbstractListModel<UserUI> implements ComboBoxModel<UserUI> {
+    private static class ContextUI extends AbstractListModel<UserUI>
+            implements ComboBoxModel<UserUI> {
 
         private static final long serialVersionUID = -6749757786536820094L;
 

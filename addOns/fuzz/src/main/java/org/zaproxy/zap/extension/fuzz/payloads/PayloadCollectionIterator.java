@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,10 +21,10 @@ package org.zaproxy.zap.extension.fuzz.payloads;
 
 import java.util.Collection;
 import java.util.Iterator;
-
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class PayloadCollectionIterator<E extends Payload> implements ResettableAutoCloseableIterator<E> {
+public class PayloadCollectionIterator<E extends Payload>
+        implements ResettableAutoCloseableIterator<E> {
 
     private final Collection<E> payloads;
     private Iterator<E> payloadIterator;
@@ -50,8 +50,7 @@ public class PayloadCollectionIterator<E extends Payload> implements ResettableA
     }
 
     @Override
-    public void remove() {
-    }
+    public void remove() {}
 
     @Override
     public void reset() {
@@ -59,6 +58,5 @@ public class PayloadCollectionIterator<E extends Payload> implements ResettableA
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 }

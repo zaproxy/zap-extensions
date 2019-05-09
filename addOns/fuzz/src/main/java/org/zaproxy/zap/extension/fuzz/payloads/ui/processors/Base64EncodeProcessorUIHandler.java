@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,22 +20,22 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.nio.charset.Charset;
-
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.Base64EncodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractCharsetProcessorUIPanel.AbstractCharsetProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.Base64EncodeProcessorUIHandler.Base64EncodeProcessorUI;
 
-public class Base64EncodeProcessorUIHandler implements
-        PayloadProcessorUIHandler<DefaultPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
+public class Base64EncodeProcessorUIHandler
+        implements PayloadProcessorUIHandler<
+                DefaultPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.base64Encode.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.payload.processor.base64Encode.name");
 
     @Override
     public String getName() {
@@ -57,8 +57,8 @@ public class Base64EncodeProcessorUIHandler implements
         return new Base64EncodeProcessorUIPanel();
     }
 
-    public static class Base64EncodeProcessorUI extends
-            AbstractCharsetProcessorUI<DefaultPayload, Base64EncodeProcessor> {
+    public static class Base64EncodeProcessorUI
+            extends AbstractCharsetProcessorUI<DefaultPayload, Base64EncodeProcessor> {
 
         private final boolean breakLines;
 
@@ -89,12 +89,16 @@ public class Base64EncodeProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            String breakLinesMessage = isBreakLines()
-                    ? Constant.messages.getString("fuzz.payload.processor.base64Encode.description.breakLines")
-                    : "";
+            String breakLinesMessage =
+                    isBreakLines()
+                            ? Constant.messages.getString(
+                                    "fuzz.payload.processor.base64Encode.description.breakLines")
+                            : "";
 
-            return Constant.messages
-                    .getString("fuzz.payload.processor.base64Encode.description.base", getCharset().name(), breakLinesMessage);
+            return Constant.messages.getString(
+                    "fuzz.payload.processor.base64Encode.description.base",
+                    getCharset().name(),
+                    breakLinesMessage);
         }
 
         @Override
@@ -106,15 +110,18 @@ public class Base64EncodeProcessorUIHandler implements
         public Base64EncodeProcessorUI copy() {
             return this;
         }
-
     }
 
-    public static class Base64EncodeProcessorUIPanel extends
-            AbstractCharsetProcessorUIPanel<DefaultPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
+    public static class Base64EncodeProcessorUIPanel
+            extends AbstractCharsetProcessorUIPanel<
+                    DefaultPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
 
-        private static final String BREAK_LINES_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.base64Encode.breakLines.label");
+        private static final String BREAK_LINES_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payload.processor.base64Encode.breakLines.label");
 
-        private static final String BREAK_LINES_FIELD_TOOLTIP = Constant.messages.getString("fuzz.payload.processor.base64Encode.breakLines.tooltip");
+        private static final String BREAK_LINES_FIELD_TOOLTIP =
+                Constant.messages.getString(
+                        "fuzz.payload.processor.base64Encode.breakLines.tooltip");
 
         private JPanel fieldsPanel;
 
@@ -131,25 +138,27 @@ public class Base64EncodeProcessorUIHandler implements
             breakLinesLabel.setLabelFor(getBreakLinesCheckBox());
             breakLinesLabel.setToolTipText(BREAK_LINES_FIELD_TOOLTIP);
 
-            layout.setHorizontalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                    .addComponent(getCharsetLabel())
-                                    .addComponent(breakLinesLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(getCharsetComboBox())
-                                    .addComponent(getBreakLinesCheckBox())));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                            .addComponent(getCharsetLabel())
+                                            .addComponent(breakLinesLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                            .addComponent(getCharsetComboBox())
+                                            .addComponent(getBreakLinesCheckBox())));
 
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(getCharsetLabel())
-                                    .addComponent(getCharsetComboBox()))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(breakLinesLabel)
-                                    .addComponent(getBreakLinesCheckBox())));
+            layout.setVerticalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(getCharsetLabel())
+                                            .addComponent(getCharsetComboBox()))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(breakLinesLabel)
+                                            .addComponent(getBreakLinesCheckBox())));
         }
 
         @Override

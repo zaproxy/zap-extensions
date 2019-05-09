@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.TrimStringProcessor;
@@ -30,10 +29,12 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.TrimStringProcessor
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
-public class TrimStringProcessorUIHandler implements
-        PayloadProcessorUIHandler<DefaultPayload, TrimStringProcessor, TrimStringProcessorUI> {
+public class TrimStringProcessorUIHandler
+        implements PayloadProcessorUIHandler<
+                DefaultPayload, TrimStringProcessor, TrimStringProcessorUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.trim.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.payload.processor.trim.name");
 
     @Override
     public String getName() {
@@ -55,7 +56,8 @@ public class TrimStringProcessorUIHandler implements
         return new TrimStringProcessorUIPanel();
     }
 
-    public static class TrimStringProcessorUI implements PayloadProcessorUI<DefaultPayload, TrimStringProcessor> {
+    public static class TrimStringProcessorUI
+            implements PayloadProcessorUI<DefaultPayload, TrimStringProcessor> {
 
         private final int length;
 
@@ -84,7 +86,8 @@ public class TrimStringProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return Constant.messages.getString("fuzz.payload.processor.trim.description", Integer.valueOf(getLength()));
+            return Constant.messages.getString(
+                    "fuzz.payload.processor.trim.description", Integer.valueOf(getLength()));
         }
 
         @Override
@@ -96,13 +99,14 @@ public class TrimStringProcessorUIHandler implements
         public TrimStringProcessorUI copy() {
             return this;
         }
-
     }
 
-    public static class TrimStringProcessorUIPanel extends
-            AbstractProcessorUIPanel<DefaultPayload, TrimStringProcessor, TrimStringProcessorUI> {
+    public static class TrimStringProcessorUIPanel
+            extends AbstractProcessorUIPanel<
+                    DefaultPayload, TrimStringProcessor, TrimStringProcessorUI> {
 
-        private static final String LENGTH_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.expand.length.label");
+        private static final String LENGTH_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payload.processor.expand.length.label");
 
         private JPanel fieldsPanel;
 
@@ -118,13 +122,15 @@ public class TrimStringProcessorUIHandler implements
             JLabel lengthLabel = new JLabel(LENGTH_FIELD_LABEL);
             lengthLabel.setLabelFor(getLengthNumberSpinner());
 
-            layout.setHorizontalGroup(layout.createSequentialGroup()
-                    .addComponent(lengthLabel)
-                    .addComponent(getLengthNumberSpinner()));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addComponent(lengthLabel)
+                            .addComponent(getLengthNumberSpinner()));
 
-            layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(lengthLabel)
-                    .addComponent(getLengthNumberSpinner()));
+            layout.setVerticalGroup(
+                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(lengthLabel)
+                            .addComponent(getLengthNumberSpinner()));
         }
 
         @Override
@@ -164,5 +170,4 @@ public class TrimStringProcessorUIHandler implements
             return new TrimStringProcessor(getLengthNumberSpinner().getValue().intValue());
         }
     }
-
 }

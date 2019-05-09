@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,20 +23,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
-
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesView;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
 
 /**
- * The fuzzing tab with its WebSocket messsages view differs slightly from the messages view in the WebSockets tab, as there are
- * 2 more columns here.
- * <p>
- * Moreover it is not backed by the database but a {@link List}. You have to add messages yourself via
- * {@link WebSocketFuzzMessagesView#addFuzzResult(FuzzResult)}.
+ * The fuzzing tab with its WebSocket messsages view differs slightly from the messages view in the
+ * WebSockets tab, as there are 2 more columns here.
+ *
+ * <p>Moreover it is not backed by the database but a {@link List}. You have to add messages
+ * yourself via {@link WebSocketFuzzMessagesView#addFuzzResult(FuzzResult)}.
  */
 public class WebSocketFuzzMessagesView extends WebSocketMessagesView {
 
@@ -91,5 +89,4 @@ public class WebSocketFuzzMessagesView extends WebSocketMessagesView {
     public void clear() {
         ((WebSocketFuzzMessagesViewModel) model).clear();
     }
-
 }

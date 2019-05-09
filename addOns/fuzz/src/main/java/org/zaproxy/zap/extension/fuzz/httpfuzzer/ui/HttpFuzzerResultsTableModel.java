@@ -1,19 +1,21 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Copyright 2015 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.ui;
 
@@ -25,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -43,35 +44,39 @@ import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableMode
 import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
 import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 
-public class HttpFuzzerResultsTableModel extends
-        AbstractCustomColumnHistoryReferencesTableModel<HttpFuzzerResultsTableModel.FuzzResultTableEntry> {
+public class HttpFuzzerResultsTableModel
+        extends AbstractCustomColumnHistoryReferencesTableModel<
+                HttpFuzzerResultsTableModel.FuzzResultTableEntry> {
 
     private static final long serialVersionUID = -7711293371478878302L;
 
     private static final Logger logger = Logger.getLogger(HttpFuzzerResultsTableModel.class);
 
-    private static final Column[] COLUMNS = new Column[] {
-            Column.CUSTOM,
-            Column.CUSTOM,
-            Column.REQUEST_TIMESTAMP,
-            Column.METHOD,
-            Column.URL,
-            Column.STATUS_CODE,
-            Column.STATUS_REASON,
-            Column.RTT,
-            Column.SIZE_REQUEST_HEADER,
-            Column.SIZE_REQUEST_BODY,
-            Column.SIZE_RESPONSE_HEADER,
-            Column.SIZE_RESPONSE_BODY,
-            Column.HIGHEST_ALERT,
-            Column.CUSTOM,
-            Column.CUSTOM };
+    private static final Column[] COLUMNS =
+            new Column[] {
+                Column.CUSTOM,
+                Column.CUSTOM,
+                Column.REQUEST_TIMESTAMP,
+                Column.METHOD,
+                Column.URL,
+                Column.STATUS_CODE,
+                Column.STATUS_REASON,
+                Column.RTT,
+                Column.SIZE_REQUEST_HEADER,
+                Column.SIZE_REQUEST_BODY,
+                Column.SIZE_RESPONSE_HEADER,
+                Column.SIZE_RESPONSE_BODY,
+                Column.HIGHEST_ALERT,
+                Column.CUSTOM,
+                Column.CUSTOM
+            };
 
     private static final String[] CUSTOM_COLUMN_NAMES = {
-            Constant.messages.getString("fuzz.httpfuzzer.results.tab.messages.table.header.taskId"),
-            Constant.messages.getString("fuzz.httpfuzzer.results.tab.messages.table.header.type"),
-            Constant.messages.getString("fuzz.httpfuzzer.results.tab.messages.table.header.state"),
-            Constant.messages.getString("fuzz.httpfuzzer.results.tab.messages.table.header.payloads") };
+        Constant.messages.getString("fuzz.httpfuzzer.results.tab.messages.table.header.taskId"),
+        Constant.messages.getString("fuzz.httpfuzzer.results.tab.messages.table.header.type"),
+        Constant.messages.getString("fuzz.httpfuzzer.results.tab.messages.table.header.state"),
+        Constant.messages.getString("fuzz.httpfuzzer.results.tab.messages.table.header.payloads")
+    };
 
     private List<FuzzResultTableEntry> results;
     private Map<Integer, Integer> idsToRows;
@@ -85,44 +90,47 @@ public class HttpFuzzerResultsTableModel extends
 
     public void addResult(final HttpFuzzResult result) {
         try {
-            final HistoryReference href = result.getHttpMessage().getHistoryRef() != null ? result.getHttpMessage()
-                    .getHistoryRef() : new HistoryReference(
-                    Model.getSingleton().getSession(),
-                    // TODO Replace 20 with HistoryReference.TYPE_FUZZER_TEMPORARY once available.
-                    20,
-                    result.getHttpMessage());
+            final HistoryReference href =
+                    result.getHttpMessage().getHistoryRef() != null
+                            ? result.getHttpMessage().getHistoryRef()
+                            : new HistoryReference(
+                                    Model.getSingleton().getSession(),
+                                    // TODO Replace 20 with HistoryReference.TYPE_FUZZER_TEMPORARY
+                                    // once available.
+                                    20,
+                                    result.getHttpMessage());
 
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                @Override
-                public void run() {
-                    final int row = results.size();
-                    idsToRows.put(Integer.valueOf(href.getHistoryId()), Integer.valueOf(row));
-                    results.add(new FuzzResultTableEntry(
-                            href,
-                            result.getTaskId(),
-                            result.getType(),
-                            result.getCustomStates(),
-                            result.getPayloads()));
-                    fireTableRowsInserted(row, row);
-                }
-            });
+                        @Override
+                        public void run() {
+                            final int row = results.size();
+                            idsToRows.put(
+                                    Integer.valueOf(href.getHistoryId()), Integer.valueOf(row));
+                            results.add(
+                                    new FuzzResultTableEntry(
+                                            href,
+                                            result.getTaskId(),
+                                            result.getType(),
+                                            result.getCustomStates(),
+                                            result.getPayloads()));
+                            fireTableRowsInserted(row, row);
+                        }
+                    });
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             logger.error("Failed to persist (and show) the message:", e);
         }
     }
 
     @Override
-    public void addEntry(FuzzResultTableEntry entry) {
-    }
+    public void addEntry(FuzzResultTableEntry entry) {}
 
     @Override
-    public void refreshEntryRow(int historyReferenceId) {
-    }
+    public void refreshEntryRow(int historyReferenceId) {}
 
     @Override
-    public void removeEntry(int historyReferenceId) {
-    }
+    public void removeEntry(int historyReferenceId) {}
 
     @Override
     public FuzzResultTableEntry getEntry(int rowIndex) {
@@ -172,14 +180,14 @@ public class HttpFuzzerResultsTableModel extends
     @Override
     protected Object getCustomValueAt(FuzzResultTableEntry entry, int columnIndex) {
         switch (getCustomColumnIndex(columnIndex)) {
-        case 0:
-            return Long.valueOf(entry.getTaskId());
-        case 1:
-            return entry.getType();
-        case 2:
-            return entry.getCustomStates();
-        case 3:
-            return StringUtils.join(entry.getPayloads(), ", ");
+            case 0:
+                return Long.valueOf(entry.getTaskId());
+            case 1:
+                return entry.getType();
+            case 2:
+                return entry.getCustomStates();
+            case 3:
+                return StringUtils.join(entry.getPayloads(), ", ");
         }
         return null;
     }
@@ -192,14 +200,14 @@ public class HttpFuzzerResultsTableModel extends
     @Override
     protected Class<?> getCustomColumnClass(int columnIndex) {
         switch (getCustomColumnIndex(columnIndex)) {
-        case 0:
-            return Long.class;
-        case 1:
-            return String.class;
-        case 2:
-            return Map.class;
-        case 3:
-            return String.class;
+            case 0:
+                return Long.class;
+            case 1:
+                return String.class;
+            case 2:
+                return Map.class;
+            case 3:
+                return String.class;
         }
         return null;
     }
@@ -207,14 +215,14 @@ public class HttpFuzzerResultsTableModel extends
     @Override
     protected Object getCustomPrototypeValue(int columnIndex) {
         switch (getCustomColumnIndex(columnIndex)) {
-        case 0:
-            return Long.valueOf(10000);
-        case 1:
-            return "Fuzzed";
-        case 2:
-            return "State description";
-        case 3:
-            return Collections.emptyList();
+            case 0:
+                return Long.valueOf(10000);
+            case 1:
+                return "Fuzzed";
+            case 2:
+                return "State description";
+            case 3:
+                return Collections.emptyList();
         }
         return null;
     }
@@ -227,10 +235,10 @@ public class HttpFuzzerResultsTableModel extends
 
         return results.get(row.intValue()).getPayloads();
     }
-    
+
     public List<String> getHeaders() {
         List<String> headers = new ArrayList<>(getColumnCount());
-        for (int i = 0; i < getColumnCount(); i++ ) {
+        for (int i = 0; i < getColumnCount(); i++) {
             headers.add(getColumnName(i));
         }
         return headers;
@@ -315,38 +323,41 @@ public class HttpFuzzerResultsTableModel extends
                     // Check for no matches in either Response Header or Body
                     if (!pattern.matcher(msg.getResponseHeader().toString()).find()
                             && !pattern.matcher(msg.getResponseBody().toString()).find()) {
-                        searchResults.add(createSearchResult(
-                                pattern.toString(),
-                                "",
-                                msg,
-                                SearchMatch.Location.RESPONSE_HEAD,
-                                0,
-                                0));
+                        searchResults.add(
+                                createSearchResult(
+                                        pattern.toString(),
+                                        "",
+                                        msg,
+                                        SearchMatch.Location.RESPONSE_HEAD,
+                                        0,
+                                        0));
                         matches++;
                     }
                 } else {
                     // Response header
                     matcher = pattern.matcher(msg.getResponseHeader().toString());
                     while (matcher.find() && !(max > 0 && matches >= max)) {
-                        searchResults.add(createSearchResult(
-                                pattern.toString(),
-                                matcher.group(),
-                                msg,
-                                SearchMatch.Location.RESPONSE_HEAD,
-                                matcher.start(),
-                                matcher.end()));
+                        searchResults.add(
+                                createSearchResult(
+                                        pattern.toString(),
+                                        matcher.group(),
+                                        msg,
+                                        SearchMatch.Location.RESPONSE_HEAD,
+                                        matcher.start(),
+                                        matcher.end()));
                         matches++;
                     }
                     // Response body
                     matcher = pattern.matcher(msg.getResponseBody().toString());
                     while (matcher.find() && !(max > 0 && matches >= max)) {
-                        searchResults.add(createSearchResult(
-                                pattern.toString(),
-                                matcher.group(),
-                                msg,
-                                SearchMatch.Location.RESPONSE_BODY,
-                                matcher.start(),
-                                matcher.end()));
+                        searchResults.add(
+                                createSearchResult(
+                                        pattern.toString(),
+                                        matcher.group(),
+                                        msg,
+                                        SearchMatch.Location.RESPONSE_BODY,
+                                        matcher.start(),
+                                        matcher.end()));
                         matches++;
                     }
                 }

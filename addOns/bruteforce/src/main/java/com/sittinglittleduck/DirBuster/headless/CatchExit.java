@@ -1,6 +1,6 @@
 /*
- * CatchExit.java 
- * 
+ * CatchExit.java
+ *
  * Copyright 2008 James Fisher
  *
  * This library is free software; you can redistribute it and/or
@@ -23,21 +23,17 @@ package com.sittinglittleduck.DirBuster.headless;
 import com.sittinglittleduck.DirBuster.Manager;
 import com.sittinglittleduck.DirBuster.ReportWriter;
 
-/**
- *
- * @author james
- */
-public class CatchExit implements Runnable
-{
+/** @author james */
+public class CatchExit implements Runnable {
     private final Manager manager;
-    
+
     public CatchExit(Manager manager) {
         this.manager = manager;
     }
 
-    public void run()
-    {
-        //String reportLocation = System.getProperty("user.dir") + File.separatorChar + "DirBuster-Report-" + manager.getHost() + "-" + manager.getPort() +".txt";
+    public void run() {
+        // String reportLocation = System.getProperty("user.dir") + File.separatorChar +
+        // "DirBuster-Report-" + manager.getHost() + "-" + manager.getPort() +".txt";
         String reportLocation = manager.getReportLocation();
         ReportWriter report = new ReportWriter(manager, reportLocation);
         System.out.println("");
@@ -46,8 +42,5 @@ public class CatchExit implements Runnable
         report.writeReportHeadless();
         System.out.println("Report saved to " + reportLocation);
         System.out.println("Enjoy the rest of your day");
-        
-        
     }
-
 }

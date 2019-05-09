@@ -22,5 +22,5 @@ package org.zaproxy.zap.extension.wappalyzer;
 import java.util.regex.PatternSyntaxException;
 
 public interface PatternErrorHandler {
-	void handleError(String pattern, PatternSyntaxException e);
+    void handleError(String pattern, PatternSyntaxException e);
 }

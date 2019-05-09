@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,11 +24,12 @@ import org.zaproxy.zap.model.MessageLocation;
 
 /**
  * A {@code MessageLocationReplacement} with a {@code Payload}.
- * 
+ *
  * @param <T> the type of payloads used during replacement
  * @see MessageLocationReplacement
  */
-public class PayloadMessageLocationReplacement<T extends Payload> implements MessageLocationReplacement<T> {
+public class PayloadMessageLocationReplacement<T extends Payload>
+        implements MessageLocationReplacement<T> {
 
     private final MessageLocation messageLocation;
     private final T payload;

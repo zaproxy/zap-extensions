@@ -19,3 +19,9 @@ dependencies {
     testImplementation(project(":testutils"))
     testImplementation("org.apache.commons:commons-lang3:3.7")
 }
+
+spotless {
+    javaWith3rdPartyFormatted(project, listOf(
+        "**/TestInfoPrivateAddressDisclosure.java",
+        "**/TestInfoSessionIdURL.java"))
+}

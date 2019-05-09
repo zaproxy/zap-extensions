@@ -1,29 +1,49 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2013 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.saml;
 
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Set;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 
 public class SAMLConfiguration implements AttributeListener {
 
     private static final String SAML_CONF_FILE = "zap_saml_conf.xml";
-    private static final String SAML_CONF_FILE_PATH = Paths.get(Constant.getZapHome(), SAML_CONF_FILE).toString();
+    private static final String SAML_CONF_FILE_PATH =
+            Paths.get(Constant.getZapHome(), SAML_CONF_FILE).toString();
     private static SAMLConfiguration configuration = new SAMLConfiguration();
 
     private SAMLConfigData configData;
 
-    protected final static Logger log = Logger.getLogger(SAMLConfiguration.class);
+    protected static final Logger log = Logger.getLogger(SAMLConfiguration.class);
 
     /**
      * Get the singleton configurations object
+     *
      * @return
      */
     public static SAMLConfiguration getInstance() {
@@ -40,29 +60,31 @@ public class SAMLConfiguration implements AttributeListener {
     }
 
     /**
-     * Initialize the configuration using the config file at given path, if file is not available this will try to
-     * load the default settings that are bundled with the extension and will be saved to user directory
+     * Initialize the configuration using the config file at given path, if file is not available
+     * this will try to load the default settings that are bundled with the extension and will be
+     * saved to user directory
      *
      * @param confPath Configuration file path
-     * @throws SAMLException If both configuration file and default configuration files are not available
+     * @throws SAMLException If both configuration file and default configuration files are not
+     *     available
      */
     public void initialize(String confPath) throws SAMLException {
         File confFile = new File(confPath);
 
         if (!confFile.exists()) {
-            URL confURL = getClass().getResource("resources/"+SAML_CONF_FILE);
-            if (confURL ==null) {
+            URL confURL = getClass().getResource("resources/" + SAML_CONF_FILE);
+            if (confURL == null) {
                 log.error("Configuration file not found ");
                 throw new SAMLException("Configuration file not found");
-
             }
-            //try to copy configuration to user directory
+            // try to copy configuration to user directory
             try {
                 confFile.createNewFile();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(confURL.openStream()));
+                BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(confURL.openStream()));
                 BufferedWriter writer = new BufferedWriter(new FileWriter(confFile));
                 String line;
-                while ((line=reader.readLine())!=null){
+                while ((line = reader.readLine()) != null) {
                     writer.write(line);
                     writer.newLine();
                 }
@@ -71,11 +93,14 @@ public class SAMLConfiguration implements AttributeListener {
                 reader.close();
 
             } catch (IOException e) {
-                throw new SAMLException("SAML Configuration file "+confFile.getAbsolutePath()+" can't be modified");
+                throw new SAMLException(
+                        "SAML Configuration file "
+                                + confFile.getAbsolutePath()
+                                + " can't be modified");
             }
         }
 
-        //load the configuration
+        // load the configuration
         configData = (SAMLConfigData) loadXMLObject(SAMLConfigData.class, confFile);
     }
 
@@ -89,8 +114,8 @@ public class SAMLConfiguration implements AttributeListener {
     }
 
     /**
-     * Get the set of attributes that need to be changed to the given values before the message is sent to the end
-     * point
+     * Get the set of attributes that need to be changed to the given values before the message is
+     * sent to the end point
      *
      * @return set of attributes that will be changed within the message if present
      */
@@ -107,7 +132,7 @@ public class SAMLConfiguration implements AttributeListener {
         return configData.isAutoChangerEnabled();
     }
 
-     /**
+    /**
      * Get whether deflateOnSend is enabled
      *
      * @return <code>true</code> if enabled, <code>false</code> if disabled.
@@ -126,8 +151,9 @@ public class SAMLConfiguration implements AttributeListener {
     }
 
     /**
-     * Enable or disable automatic attribute value change at the passive scanner. If enabled the values of the
-     * attributes will be changes as predefined, before the message is sent to the endpoint
+     * Enable or disable automatic attribute value change at the passive scanner. If enabled the
+     * values of the attributes will be changes as predefined, before the message is sent to the
+     * endpoint
      *
      * @param value <code>true</code> to enable auto change, <code>false</code> to disable it.
      */
@@ -146,9 +172,11 @@ public class SAMLConfiguration implements AttributeListener {
     }
 
     /**
-     * Set true to remove signature of the messages (if present) to simulate signature exclusion attacks
+     * Set true to remove signature of the messages (if present) to simulate signature exclusion
+     * attacks
      *
-     * @param value <code>true</code> to remove signatures if present, <code>false</code> to keep unchanged.
+     * @param value <code>true</code> to remove signatures if present, <code>false</code> to keep
+     *     unchanged.
      */
     public void setXSWEnabled(boolean value) {
         configData.setXswEnabled(value);
@@ -165,9 +193,10 @@ public class SAMLConfiguration implements AttributeListener {
     }
 
     /**
-     * Get whether the validation is enabled for the attribute types. Enabling this will ensure invalid data types are
-     * not set to the attributes. Disabling validation gives the user the ability to set whatever values he/she like,
-     * inject new attributes which may be needed for some tests
+     * Get whether the validation is enabled for the attribute types. Enabling this will ensure
+     * invalid data types are not set to the attributes. Disabling validation gives the user the
+     * ability to set whatever values he/she like, inject new attributes which may be needed for
+     * some tests
      *
      * @param value <code>true</code> to enable validation, <code>false</code> to disable it.
      */
@@ -201,7 +230,7 @@ public class SAMLConfiguration implements AttributeListener {
      * Unmarshall the XML file and extract the object using JAXB
      *
      * @param clazz class of the object
-     * @param file  xml file
+     * @param file xml file
      * @return unmarshalled object
      * @throws SAMLException
      */

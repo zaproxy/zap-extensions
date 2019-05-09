@@ -21,3 +21,7 @@ dependencies {
     testImplementation(project(":testutils"))
     testImplementation("org.simpleframework:simple:5.0.2")
 }
+
+spotless {
+    javaWith3rdPartyFormatted(project, listOf("**/main/java/com/sittinglittleduck/**/*.java"))
+}

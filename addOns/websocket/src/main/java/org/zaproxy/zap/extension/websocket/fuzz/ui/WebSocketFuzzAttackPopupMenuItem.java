@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.websocket.fuzz.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.FuzzerUIUtils;
@@ -41,24 +40,26 @@ public class WebSocketFuzzAttackPopupMenuItem extends ExtensionPopupMenuItemMess
 
     private WebSocketMessageContainer websocketMessageContainer;
 
-    public WebSocketFuzzAttackPopupMenuItem(ExtensionFuzz extensionFuzz, WebSocketFuzzerHandler fuzzerHandler) {
+    public WebSocketFuzzAttackPopupMenuItem(
+            ExtensionFuzz extensionFuzz, WebSocketFuzzerHandler fuzzerHandler) {
         super(Constant.messages.getString("websocket.fuzzer.popup.menu.item.attack"));
         setIcon(FuzzerUIUtils.FUZZER_ICON);
 
         this.extensionFuzz = extensionFuzz;
         this.fuzzerHandler = fuzzerHandler;
 
-        addActionListener(new ActionListener() {
+        addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    performAction();
-                } finally {
-                    resetState();
-                }
-            }
-        });
+                    @Override
+                    public void actionPerformed(ActionEvent evt) {
+                        try {
+                            performAction();
+                        } finally {
+                            resetState();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -96,8 +97,9 @@ public class WebSocketFuzzAttackPopupMenuItem extends ExtensionPopupMenuItemMess
     }
 
     private void performAction() {
-        WebSocketFuzzer fuzzer = fuzzerHandler
-                .showFuzzerDialog(websocketMessageContainer, extensionFuzz.getDefaultFuzzerOptions());
+        WebSocketFuzzer fuzzer =
+                fuzzerHandler.showFuzzerDialog(
+                        websocketMessageContainer, extensionFuzz.getDefaultFuzzerOptions());
         if (fuzzer != null) {
             extensionFuzz.runFuzzer(fuzzerHandler, fuzzer);
         }

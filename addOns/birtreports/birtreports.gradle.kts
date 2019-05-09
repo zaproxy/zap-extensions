@@ -16,3 +16,7 @@ zapAddOn {
 dependencies {
     implementation("org.eclipse.birt.runtime:org.eclipse.birt.runtime:4.2.2")
 }
+
+spotless {
+    javaWith3rdPartyFormatted(project, listOf("**/ReportLastScan.java"))
+}

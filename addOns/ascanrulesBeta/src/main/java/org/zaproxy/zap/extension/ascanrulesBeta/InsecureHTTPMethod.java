@@ -3,11 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2014 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,30 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.zaproxy.zap.extension.ascanrulesBeta;
-
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.ProxyClient;
-import org.apache.commons.httpclient.ProxyClient.ConnectResponse;
-import org.apache.commons.httpclient.StatusLine;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
-import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.network.HttpStatusCode;
-import org.parosproxy.paros.network.HtmlParameter;
-import org.parosproxy.paros.network.HttpHeader;
-import org.parosproxy.paros.network.HttpMessage;
-
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -55,38 +34,55 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.ProxyClient;
+import org.apache.commons.httpclient.ProxyClient.ConnectResponse;
+import org.apache.commons.httpclient.StatusLine;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HtmlParameter;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.model.Vulnerabilities;
+import org.zaproxy.zap.model.Vulnerability;
 
 /**
- * a scanner that looks for known insecure HTTP methods enabled for the URL
- * Note that HTTP methods can be enabled for individual URLs, rather than necessarily just at host level
- * It is also possible for methods to be actually be supported, without being documented by the OPTIONS method, so at High Attack Strength, check that as well (regardless of Threshold).
+ * a scanner that looks for known insecure HTTP methods enabled for the URL Note that HTTP methods
+ * can be enabled for individual URLs, rather than necessarily just at host level It is also
+ * possible for methods to be actually be supported, without being documented by the OPTIONS method,
+ * so at High Attack Strength, check that as well (regardless of Threshold).
  *
  * @author 70pointer
  */
 public class InsecureHTTPMethod extends AbstractAppPlugin {
 
     /* These are the 'default' HTTP methods which are considered as insecure */
-    private static final List<String> INSECURE_DEFAULT_METHODS = Arrays.asList(
-            /* Request for a change in a resource identified by the URI */
-            HttpRequestHeader.PATCH,
-            /* For putting or updating a resource on the server */
-            HttpRequestHeader.PUT
-    );
+    private static final List<String> INSECURE_DEFAULT_METHODS =
+            Arrays.asList(
+                    /* Request for a change in a resource identified by the URI */
+                    HttpRequestHeader.PATCH,
+                    /* For putting or updating a resource on the server */
+                    HttpRequestHeader.PUT);
 
     /* These are the WEBDAV methods bundled */
-    private static final List<String> WEBDAV_METHODS = Arrays.asList("COPY", "LOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK");
-    /**
-     * details of the vulnerability which we are attempting to find 45 =
-     * "Fingerprinting"
-     */
+    private static final List<String> WEBDAV_METHODS =
+            Arrays.asList("COPY", "LOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK");
+    /** details of the vulnerability which we are attempting to find 45 = "Fingerprinting" */
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_45");
-    /**
-     * the logger object
-     */
+    /** the logger object */
     private static final Logger log = Logger.getLogger(InsecureHTTPMethod.class);
     /**
-     * The set of methods that we know are unsafe. It's a combination of the
-     * 'default' HTTP methods and the WEBDAV methods.
+     * The set of methods that we know are unsafe. It's a combination of the 'default' HTTP methods
+     * and the WEBDAV methods.
      */
     private static List<String> INSECURE_METHODS;
 
@@ -96,17 +92,13 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         INSECURE_METHODS.addAll(WEBDAV_METHODS);
     }
 
-    /**
-     * returns the plugin id
-     */
+    /** returns the plugin id */
     @Override
     public int getId() {
         return 90028;
     }
 
-    /**
-     * returns the name of the plugin
-     */
+    /** returns the name of the plugin */
     @Override
     public String getName() {
         return Constant.messages.getString("ascanbeta.insecurehttpmethod.name");
@@ -154,8 +146,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
     }
 
     @Override
-    public void init() {
-    }
+    public void init() {}
 
     @Override
     public void scan() {
@@ -163,7 +154,8 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         try {
             String thirdpartyHost = "www.google.com";
             int thirdpartyPort = 80;
-            Pattern thirdPartyContentPattern = Pattern.compile("<title.*Google.*/title>", Pattern.CASE_INSENSITIVE);
+            Pattern thirdPartyContentPattern =
+                    Pattern.compile("<title.*Google.*/title>", Pattern.CASE_INSENSITIVE);
 
             // send an OPTIONS message, and see what the server reports. Do
             // not try any methods not listed in those results.
@@ -192,27 +184,41 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 
             AttackStrength attackStrength = getAttackStrength();
 
-            if (allowedmethods.isEmpty() && attackStrength == AttackStrength.MEDIUM || attackStrength == AttackStrength.LOW) {
+            if (allowedmethods.isEmpty() && attackStrength == AttackStrength.MEDIUM
+                    || attackStrength == AttackStrength.LOW) {
                 // nothing to see here. Move along now.
                 return;
             }
             // if the "Public" response is present (for IIS), use that to
             // determine the enabled methods.
             if (!publicmethods.isEmpty()) {
-            	allowedmethods += ", " + publicmethods;
+                allowedmethods += ", " + publicmethods;
             }
 
             // Convert the list to a set so that we have a unique list
-            Set<String> enabledMethodsSet = new HashSet<>(Arrays.asList(allowedmethods.toUpperCase(Locale.ROOT).split(",")));
+            Set<String> enabledMethodsSet =
+                    new HashSet<>(
+                            Arrays.asList(allowedmethods.toUpperCase(Locale.ROOT).split(",")));
             if (enabledMethodsSet.contains(HttpRequestHeader.DELETE)) {
-                enabledMethodsSet.remove(HttpRequestHeader.DELETE); // We don't actually want to make a DELETE request
-                bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString("ascanbeta.insecurehttpmethod.detailed.name", HttpRequestHeader.DELETE), 
-                        Constant.messages.getString("ascanbeta.insecurehttpmethod.desc", HttpRequestHeader.DELETE), null,
+                enabledMethodsSet.remove(
+                        HttpRequestHeader
+                                .DELETE); // We don't actually want to make a DELETE request
+                bingo(
+                        Alert.RISK_MEDIUM,
+                        Alert.CONFIDENCE_MEDIUM,
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.detailed.name",
+                                HttpRequestHeader.DELETE),
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.desc", HttpRequestHeader.DELETE),
+                        null,
                         null, // parameter being attacked: none.
                         "", // attack
-                        Constant.messages.getString("ascanbeta.insecurehttpmethod.extrainfo", allowedmethods), 
-                        Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"), HttpRequestHeader.DELETE, optionsmsg);
+                        Constant.messages.getString(
+                                "ascanbeta.insecurehttpmethod.extrainfo", allowedmethods),
+                        Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"),
+                        HttpRequestHeader.DELETE,
+                        optionsmsg);
             }
 
             if (attackStrength == AttackStrength.HIGH || attackStrength == AttackStrength.INSANE) {
@@ -228,10 +234,13 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                 // try the TRACE method
                 testTraceOrTrack(HttpRequestHeader.TRACE);
 
-
                 // use a CONNECT method to try establish a socket connection to
                 // a third party, via the server being tested
-                testConnect(this.getBaseMsg(), thirdpartyHost, thirdpartyPort, thirdPartyContentPattern);
+                testConnect(
+                        this.getBaseMsg(),
+                        thirdpartyHost,
+                        thirdpartyPort,
+                        thirdPartyContentPattern);
 
                 /* Test all other methods */
                 for (String insecureMethod : INSECURE_METHODS) {
@@ -241,13 +250,17 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                 // rely on the OPTIONS METHOD, but potentially verify the
                 // results, depending on the Threshold.
                 for (String enabledmethod : enabledMethodsSet) {
-                    enabledmethod = enabledmethod.trim(); // strip off any leading spaces (it happens!)
+                    enabledmethod =
+                            enabledmethod.trim(); // strip off any leading spaces (it happens!)
                     if (enabledmethod.isEmpty()) {
                         continue;
                     }
 
                     if (log.isDebugEnabled()) {
-                        log.debug("The following enabled method is being checked: '" + enabledmethod + "'");
+                        log.debug(
+                                "The following enabled method is being checked: '"
+                                        + enabledmethod
+                                        + "'");
                     }
                     String insecureMethod = enabledmethod;
 
@@ -267,9 +280,14 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                             // use a CONNECT method to establish a
                             // socket connection to a third party, via
                             // the server being tested
-                            testConnect(this.getBaseMsg(), thirdpartyHost, thirdpartyPort, thirdPartyContentPattern);
+                            testConnect(
+                                    this.getBaseMsg(),
+                                    thirdpartyHost,
+                                    thirdpartyPort,
+                                    thirdPartyContentPattern);
 
-                        } else if (enabledmethod.equals(HttpRequestHeader.TRACE) || enabledmethod.equals(HttpRequestHeader.TRACK)) {
+                        } else if (enabledmethod.equals(HttpRequestHeader.TRACE)
+                                || enabledmethod.equals(HttpRequestHeader.TRACK)) {
                             log.debug("Verifying a TRACE/TRACK");
                             testTraceOrTrack(enabledmethod);
                         } else if (INSECURE_METHODS.contains(enabledmethod)) {
@@ -287,25 +305,37 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                         raiseAlert = true;
                         evidence = enabledmethod;
                         alertMessage = optionsmsg;
-                        description = Constant.messages.getString("ascanbeta.insecurehttpmethod.desc", enabledmethod);
-                        extraInfo = Constant.messages.getString("ascanbeta.insecurehttpmethod.extrainfo", allowedmethods);
+                        description =
+                                Constant.messages.getString(
+                                        "ascanbeta.insecurehttpmethod.desc", enabledmethod);
+                        extraInfo =
+                                Constant.messages.getString(
+                                        "ascanbeta.insecurehttpmethod.extrainfo", allowedmethods);
                     }
 
                     if (raiseAlert) {
                         log.debug("Raising alert for Insecure HTTP Method");
 
-                        bingo(riskLevel, Alert.CONFIDENCE_MEDIUM,
-                                Constant.messages.getString("ascanbeta.insecurehttpmethod.detailed.name", insecureMethod), description, null, // originalMessage.getRequestHeader().getURI().getURI(),
+                        bingo(
+                                riskLevel,
+                                Alert.CONFIDENCE_MEDIUM,
+                                Constant.messages.getString(
+                                        "ascanbeta.insecurehttpmethod.detailed.name",
+                                        insecureMethod),
+                                description,
+                                null, // originalMessage.getRequestHeader().getURI().getURI(),
                                 null, // parameter being attacked: none.
                                 "", // attack
-                                extraInfo, Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"), evidence, alertMessage);
+                                extraInfo,
+                                Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"),
+                                evidence,
+                                alertMessage);
                     }
                 }
             }
         } catch (Exception e) {
             log.error("Error scanning a Host for Insecure HTTP Methods: " + e.getMessage(), e);
         }
-
     }
 
     @Override
@@ -324,7 +354,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
     }
 
     private static String getNonNullHeader(HttpMessage msg, String headerName) {
-        String headerValue= msg.getResponseHeader().getHeader(headerName);
+        String headerValue = msg.getResponseHeader().getHeader(headerName);
         if (StringUtils.isBlank(headerValue)) {
             return "";
         }
@@ -338,28 +368,46 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         // TRACE is supported in 1.0. TRACK is presumably the same, since it is
         // a alias for TRACE. Typical Microsoft.
         msg.getRequestHeader().setVersion(HttpRequestHeader.HTTP10);
-        String randomcookiename = RandomStringUtils.random(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-        String randomcookievalue = RandomStringUtils.random(40, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+        String randomcookiename =
+                RandomStringUtils.random(
+                        15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+        String randomcookievalue =
+                RandomStringUtils.random(
+                        40, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
         TreeSet<HtmlParameter> cookies = msg.getCookieParams();
-        cookies.add(new HtmlParameter(HtmlParameter.Type.cookie, randomcookiename, randomcookievalue));
+        cookies.add(
+                new HtmlParameter(HtmlParameter.Type.cookie, randomcookiename, randomcookievalue));
         msg.setCookieParams(cookies);
         // do not follow redirects. That might ruin our day.
         sendAndReceive(msg, false);
 
         // if the response *body* from the TRACE request contains the cookie,we're in business :)
         if (msg.getResponseBody().toString().contains(randomcookievalue)) {
-            bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString("ascanbeta.insecurehttpmethod.detailed.name", method),
-                    Constant.messages.getString("ascanbeta.insecurehttpmethod.trace.exploitable.desc", method), msg.getRequestHeader().getURI().getURI(),
+            bingo(
+                    Alert.RISK_MEDIUM,
+                    Alert.CONFIDENCE_MEDIUM,
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.detailed.name", method),
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.trace.exploitable.desc", method),
+                    msg.getRequestHeader().getURI().getURI(),
                     null, // parameter being attacked: none.
                     "", // attack
-                    Constant.messages.getString("ascanbeta.insecurehttpmethod.trace.exploitable.extrainfo", randomcookievalue),
-                    Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"), randomcookievalue, msg);
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.trace.exploitable.extrainfo",
+                            randomcookievalue),
+                    Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"),
+                    randomcookievalue,
+                    msg);
         }
-
-
     }
 
-    private void testConnect(HttpMessage baseMsg, String thirdpartyHost, int thirdpartyPort, Pattern thirdPartyContentPattern) throws Exception {
+    private void testConnect(
+            HttpMessage baseMsg,
+            String thirdpartyHost,
+            int thirdpartyPort,
+            Pattern thirdPartyContentPattern)
+            throws Exception {
 
         String connecthost = baseMsg.getRequestHeader().getURI().getHost();
         int connectport = baseMsg.getRequestHeader().getURI().getPort();
@@ -379,8 +427,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 
             StatusLine statusLine = connectResponse.getConnectMethod().getStatusLine();
 
-            if (log.isDebugEnabled())
-                log.debug("The status line returned: " + statusLine);
+            if (log.isDebugEnabled()) log.debug("The status line returned: " + statusLine);
 
             int statusCode = statusLine.getStatusCode();
 
@@ -421,12 +468,23 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                 Matcher m = thirdPartyContentPattern.matcher(response);
                 if (m.matches()) {
                     log.debug("Response matches expected third party pattern!");
-                    bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString("ascanbeta.insecurehttpmethod.detailed.name", HttpRequestHeader.CONNECT),
-                            Constant.messages.getString("ascanbeta.insecurehttpmethod.connect.exploitable.desc", HttpRequestHeader.CONNECT), null,
+                    bingo(
+                            Alert.RISK_MEDIUM,
+                            Alert.CONFIDENCE_MEDIUM,
+                            Constant.messages.getString(
+                                    "ascanbeta.insecurehttpmethod.detailed.name",
+                                    HttpRequestHeader.CONNECT),
+                            Constant.messages.getString(
+                                    "ascanbeta.insecurehttpmethod.connect.exploitable.desc",
+                                    HttpRequestHeader.CONNECT),
+                            null,
                             null, // parameter being attacked: none.
                             "", // attack
-                            Constant.messages.getString("ascanbeta.insecurehttpmethod.connect.exploitable.extrainfo", thirdpartyHost),
-                            Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"), response, // evidence,
+                            Constant.messages.getString(
+                                    "ascanbeta.insecurehttpmethod.connect.exploitable.extrainfo",
+                                    thirdpartyHost),
+                            Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"),
+                            response, // evidence,
                             this.getBaseMsg());
                     return;
                 } else {
@@ -439,11 +497,12 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                             "Could not establish a socket connection to a third party using the CONNECT HTTP method: NULL socket returned, or non-200 response");
                     log.debug("The status line returned: " + statusLine);
                 }
-
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug("Could not establish a socket connection to a third party using the CONNECT HTTP method", e);
+                log.debug(
+                        "Could not establish a socket connection to a third party using the CONNECT HTTP method",
+                        e);
             }
         } finally {
             IOUtils.closeQuietly(is);
@@ -454,15 +513,20 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 
     private void testHttpMethod(String httpMethod) throws Exception {
 
-
         final HttpMessage msg = getNewMsg();
         msg.getRequestHeader().setMethod(httpMethod);
         msg.getRequestHeader().setVersion(HttpRequestHeader.HTTP11);
 
-        if (httpMethod.equals(HttpRequestHeader.PUT) || httpMethod.equals(HttpRequestHeader.PATCH)) {
-            String randomKey = RandomStringUtils.random(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-            String randomValue = RandomStringUtils.random(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-            String randomResource = RandomStringUtils.random(10, "abcdefghijklmnopqrstuvwxyz0123456789");
+        if (httpMethod.equals(HttpRequestHeader.PUT)
+                || httpMethod.equals(HttpRequestHeader.PATCH)) {
+            String randomKey =
+                    RandomStringUtils.random(
+                            15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+            String randomValue =
+                    RandomStringUtils.random(
+                            15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+            String randomResource =
+                    RandomStringUtils.random(10, "abcdefghijklmnopqrstuvwxyz0123456789");
             String requestBody = '"' + randomKey + "\":\"" + randomValue + '"';
             String newURI = msg.getRequestHeader().getURI().getURI();
             if (newURI.endsWith("/")) {
@@ -501,9 +565,13 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         }
 
         if (responseCode == HttpStatusCode.OK || responseCode == HttpStatusCode.CREATED) {
-            evidence = Constant.messages.getString("ascanbeta.insecurehttpmethod.insecure", responseCode);
+            evidence =
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.insecure", responseCode);
         } else if (enabledStatusCodes.contains(responseCode)) {
-            evidence = Constant.messages.getString("ascanbeta.insecurehttpmethod.potentiallyinsecure", responseCode);
+            evidence =
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.potentiallyinsecure", responseCode);
         } else {
             return;
         }
@@ -512,27 +580,42 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         String exploitableDesc;
         String exploitableExtraInfo;
         if (WEBDAV_METHODS.contains(httpMethod)) {
-            exploitableDesc = Constant.messages.getString("ascanbeta.insecurehttpmethod.webdav.exploitable.desc", httpMethod);
-            exploitableExtraInfo = Constant.messages.getString("ascanbeta.insecurehttpmethod.webdav.exploitable.extrainfo");
+            exploitableDesc =
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.webdav.exploitable.desc", httpMethod);
+            exploitableExtraInfo =
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.webdav.exploitable.extrainfo");
             riskLevel = Alert.RISK_INFO;
         } else {
-            exploitableDesc = Constant.messages.getString("ascanbeta.insecurehttpmethod." + httpMethod.toLowerCase() + ".exploitable.desc", httpMethod);
-            exploitableExtraInfo = Constant.messages.getString("ascanbeta.insecurehttpmethod." + httpMethod.toLowerCase() + ".exploitable.extrainfo");
+            exploitableDesc =
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod."
+                                    + httpMethod.toLowerCase()
+                                    + ".exploitable.desc",
+                            httpMethod);
+            exploitableExtraInfo =
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod."
+                                    + httpMethod.toLowerCase()
+                                    + ".exploitable.extrainfo");
 
             riskLevel = Alert.RISK_MEDIUM;
         }
         try {
 
-            bingo(riskLevel,
+            bingo(
+                    riskLevel,
                     Alert.CONFIDENCE_MEDIUM,
-                    Constant.messages.getString("ascanbeta.insecurehttpmethod.detailed.name", httpMethod),
+                    Constant.messages.getString(
+                            "ascanbeta.insecurehttpmethod.detailed.name", httpMethod),
                     exploitableDesc,
                     msg.getRequestHeader().getURI().getURI(),
-                    null,/* parameter being attacked: none */
-                    "",/* attack */
-                    exploitableExtraInfo,/* extra info */
-                    "",/* solution */
-                    evidence,/* evidence, highlighted in the message */
+                    null, /* parameter being attacked: none */
+                    "", /* attack */
+                    exploitableExtraInfo, /* extra info */
+                    "", /* solution */
+                    evidence, /* evidence, highlighted in the message */
                     msg);
         } catch (Exception e) {
         }

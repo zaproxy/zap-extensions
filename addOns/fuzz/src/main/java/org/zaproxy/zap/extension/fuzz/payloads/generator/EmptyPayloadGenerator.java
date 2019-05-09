@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +32,8 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
             throw new IllegalArgumentException("Parameter value must not be null.");
         }
         if (numberOfPayloads <= 0) {
-            throw new IllegalArgumentException("Parameter numberOfPayloads must be greater than zero.");
+            throw new IllegalArgumentException(
+                    "Parameter numberOfPayloads must be greater than zero.");
         }
 
         this.value = value;
@@ -54,7 +55,8 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
         return this;
     }
 
-    private static class ValueRepeaterIterator<E extends Payload> implements ResettableAutoCloseableIterator<E> {
+    private static class ValueRepeaterIterator<E extends Payload>
+            implements ResettableAutoCloseableIterator<E> {
 
         private final E value;
         private final int repeat;
@@ -77,8 +79,7 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
         }
 
         @Override
-        public void remove() {
-        }
+        public void remove() {}
 
         @Override
         public void reset() {
@@ -86,7 +87,6 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
         }
 
         @Override
-        public void close() {
-        }
+        public void close() {}
     }
 }

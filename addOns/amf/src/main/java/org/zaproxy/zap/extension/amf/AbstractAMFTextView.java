@@ -19,16 +19,20 @@
  */
 package org.zaproxy.zap.extension.amf;
 
+import flex.messaging.io.SerializationContext;
+import flex.messaging.io.amf.ActionContext;
+import flex.messaging.io.amf.ActionMessage;
+import flex.messaging.io.amf.AmfMessageDeserializer;
+import flex.messaging.io.amf.MessageBody;
+import flex.messaging.io.amf.MessageHeader;
 import java.awt.BorderLayout;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import org.apache.commons.configuration.FileConfiguration;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.encoder.Encoder;
@@ -41,22 +45,13 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelEvent;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelListener;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.AbstractHttpByteHttpPanelViewModel;
 
-import flex.messaging.io.SerializationContext;
-import flex.messaging.io.amf.ActionContext;
-import flex.messaging.io.amf.ActionMessage;
-import flex.messaging.io.amf.AmfMessageDeserializer;
-import flex.messaging.io.amf.MessageBody;
-import flex.messaging.io.amf.MessageHeader;
-
-/**
- * 
- * @author Colm O'Flaherty
- */
+/** @author Colm O'Flaherty */
 public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelViewModelListener {
 
     protected static final String CONTENT_TYPE_AMF = "application/x-amf";
 
-    public static final String CAPTION_NAME = Constant.messages.getString("amf.httppanel.text.view.name");
+    public static final String CAPTION_NAME =
+            Constant.messages.getString("amf.httppanel.text.view.name");
 
     private JPanel mainPanel;
     private JLabel amfLabel;
@@ -76,8 +71,7 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
     }
 
     @Override
-    public void save() {
-    }
+    public void save() {}
 
     @Override
     public void setSelected(boolean selected) {
@@ -122,20 +116,16 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
     }
 
     @Override
-    public void setEditable(boolean editable) {
-    }
+    public void setEditable(boolean editable) {}
 
     @Override
-    public void setParentConfigurationKey(String configurationKey) {
-    }
+    public void setParentConfigurationKey(String configurationKey) {}
 
     @Override
-    public void loadConfiguration(FileConfiguration fileConfiguration) {
-    }
+    public void loadConfiguration(FileConfiguration fileConfiguration) {}
 
     @Override
-    public void saveConfiguration(FileConfiguration fileConfiguration) {
-    }
+    public void saveConfiguration(FileConfiguration fileConfiguration) {}
 
     @Override
     public HttpPanelViewModel getModel() {
@@ -161,7 +151,8 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
         amfHumanReadable.append("<html>");
 
         ActionMessage message = new ActionMessage();
-        amfDeserialiser.initialize(serialisationContext, new ByteArrayInputStream(model.getData()), null);
+        amfDeserialiser.initialize(
+                serialisationContext, new ByteArrayInputStream(model.getData()), null);
         try {
             amfDeserialiser.readMessage(message, actioncontext);
             int headerCount = message.getHeaderCount();
@@ -171,7 +162,8 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
                 MessageHeader messageHeader = message.getHeader(i);
                 try {
                     Object headerObject = messageHeader.getData();
-                    amfHumanReadable.append("Header [")
+                    amfHumanReadable
+                            .append("Header [")
                             .append(i)
                             .append("]: ")
                             .append(encoder.getHTMLString(headerObject.toString()))
@@ -191,17 +183,20 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
                 String responseURI = messageBody.getResponseURI();
                 String method = messageBody.getReplyMethod();
 
-                amfHumanReadable.append("Body [")
+                amfHumanReadable
+                        .append("Body [")
                         .append(i)
                         .append("] target URI: [")
                         .append(encoder.getHTMLString(targetURI))
                         .append("]<br />");
-                amfHumanReadable.append("Body [")
+                amfHumanReadable
+                        .append("Body [")
                         .append(i)
                         .append("] response URI: [")
                         .append(encoder.getHTMLString(responseURI))
                         .append("]<br />");
-                amfHumanReadable.append("Body [")
+                amfHumanReadable
+                        .append("Body [")
                         .append(i)
                         .append("] method: [")
                         .append(encoder.getHTMLString(method))
@@ -209,10 +204,12 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
 
                 try {
                     Object bodyObject = messageBody.getData();
-                    String data = (bodyObject instanceof Object[])
-                            ? Arrays.toString((Object[]) bodyObject)
-                            : bodyObject.toString();
-                    amfHumanReadable.append("Body [")
+                    String data =
+                            (bodyObject instanceof Object[])
+                                    ? Arrays.toString((Object[]) bodyObject)
+                                    : bodyObject.toString();
+                    amfHumanReadable
+                            .append("Body [")
                             .append(i)
                             .append("]: ")
                             .append(encoder.getHTMLString(data))
@@ -230,7 +227,8 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
                     "<html>A class was not found when attempting to read the Action Message from the stream. This should *not* happen</html>");
             return;
         } catch (IOException ioe) {
-            amfLabel.setText("<html>The AMF could not be de-serialised due to an I/O Exception</html>");
+            amfLabel.setText(
+                    "<html>The AMF could not be de-serialised due to an I/O Exception</html>");
             return;
         }
     }
@@ -240,6 +238,7 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
             return false;
         }
 
-        return CONTENT_TYPE_AMF.equalsIgnoreCase(((HttpMessage) message).getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
+        return CONTENT_TYPE_AMF.equalsIgnoreCase(
+                ((HttpMessage) message).getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
     }
 }

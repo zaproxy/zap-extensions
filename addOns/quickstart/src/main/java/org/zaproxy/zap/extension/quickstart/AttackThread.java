@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2012 The ZAP development team
+ * Copyright 2012 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,9 +21,7 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.net.URL;
 import java.net.UnknownHostException;
-
 import javax.swing.SwingUtilities;
-
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -46,7 +44,14 @@ import org.zaproxy.zap.model.Target;
 public class AttackThread extends Thread {
 
     public enum Progress {
-        notstarted, started, spider, ajaxspider, ascan, failed, complete, stopped
+        notstarted,
+        started,
+        spider,
+        ajaxspider,
+        ascan,
+        failed,
+        complete,
+        stopped
     }
 
     private ExtensionQuickStart extension;
@@ -95,8 +100,11 @@ public class AttackThread extends Thread {
             target.setRecurse(true);
             if (this.useStdSpider) {
 
-                ExtensionSpider extSpider = (ExtensionSpider) Control.getSingleton().getExtensionLoader()
-                        .getExtension(ExtensionSpider.NAME);
+                ExtensionSpider extSpider =
+                        (ExtensionSpider)
+                                Control.getSingleton()
+                                        .getExtensionLoader()
+                                        .getExtension(ExtensionSpider.NAME);
                 int spiderId;
                 if (extSpider == null) {
                     logger.error("No spider");
@@ -160,15 +168,20 @@ public class AttackThread extends Thread {
                 }
             }
 
-            if (startNode.isLeaf() && !startNode.getParent().isRoot() && !startNode.getParent().getParent().isRoot()) {
+            if (startNode.isLeaf()
+                    && !startNode.getParent().isRoot()
+                    && !startNode.getParent().getParent().isRoot()) {
                 // Start node is a leaf and isnt root or a top level app (eg
                 // www.example.com/app1)
                 // Go up a level
                 startNode = startNode.getParent();
             }
 
-            ExtensionActiveScan extAscan = (ExtensionActiveScan) Control.getSingleton().getExtensionLoader()
-                    .getExtension(ExtensionActiveScan.NAME);
+            ExtensionActiveScan extAscan =
+                    (ExtensionActiveScan)
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionActiveScan.NAME);
             int scanId;
             if (extAscan == null) {
                 logger.error("No active scanner");
@@ -196,10 +209,12 @@ public class AttackThread extends Thread {
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            extension.notifyProgress(Progress.failed,
-                    Constant.messages.getString("quickstart.progress.failed.reason", e.getMessage()));
+            extension.notifyProgress(
+                    Progress.failed,
+                    Constant.messages.getString(
+                            "quickstart.progress.failed.reason", e.getMessage()));
         } finally {
-            if (! completed) {
+            if (!completed) {
                 // Already handled
             } else if (stopAttack) {
                 logger.debug("Attack stopped manually");
@@ -215,13 +230,18 @@ public class AttackThread extends Thread {
         SiteNode startNode = null;
         // Request the URL
         try {
-            final HttpMessage msg = new HttpMessage(new URI(url.toString(), true),
-                    extension.getModel().getOptionsParam().getConnectionParam());
+            final HttpMessage msg =
+                    new HttpMessage(
+                            new URI(url.toString(), true),
+                            extension.getModel().getOptionsParam().getConnectionParam());
             getHttpSender().sendAndReceive(msg, true);
 
             if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
-                extension.notifyProgress(Progress.failed, Constant.messages.getString("quickstart.progress.failed.code",
-                        msg.getResponseHeader().getStatusCode()));
+                extension.notifyProgress(
+                        Progress.failed,
+                        Constant.messages.getString(
+                                "quickstart.progress.failed.code",
+                                msg.getResponseHeader().getStatusCode()));
 
                 return null;
             }
@@ -231,20 +251,31 @@ public class AttackThread extends Thread {
                 return null;
             }
 
-            ExtensionHistory extHistory = ((ExtensionHistory) Control.getSingleton().getExtensionLoader()
-                    .getExtension(ExtensionHistory.NAME));
+            ExtensionHistory extHistory =
+                    ((ExtensionHistory)
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionHistory.NAME));
             extHistory.addHistory(msg, HistoryReference.TYPE_PROXIED);
 
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    // Needs to be done on the EDT
-                    Model.getSingleton().getSession().getSiteTree().addPath(msg.getHistoryRef());
-                }
-            });
+            SwingUtilities.invokeAndWait(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            // Needs to be done on the EDT
+                            Model.getSingleton()
+                                    .getSession()
+                                    .getSiteTree()
+                                    .addPath(msg.getHistoryRef());
+                        }
+                    });
 
             for (int i = 0; i < 10; i++) {
-                startNode = Model.getSingleton().getSession().getSiteTree().findNode(new URI(url.toString(), false));
+                startNode =
+                        Model.getSingleton()
+                                .getSession()
+                                .getSiteTree()
+                                .findNode(new URI(url.toString(), false));
                 if (startNode != null) {
                     break;
                 }
@@ -255,22 +286,31 @@ public class AttackThread extends Thread {
                 }
             }
         } catch (UnknownHostException e1) {
-            ConnectionParam connectionParam = Model.getSingleton().getOptionsParam().getConnectionParam();
+            ConnectionParam connectionParam =
+                    Model.getSingleton().getOptionsParam().getConnectionParam();
             if (connectionParam.isUseProxyChain()
                     && connectionParam.getProxyChainName().equalsIgnoreCase(e1.getMessage())) {
-                extension.notifyProgress(Progress.failed,
-                        Constant.messages.getString("quickstart.progress.failed.badhost.proxychain", e1.getMessage()));
+                extension.notifyProgress(
+                        Progress.failed,
+                        Constant.messages.getString(
+                                "quickstart.progress.failed.badhost.proxychain", e1.getMessage()));
             } else {
-                extension.notifyProgress(Progress.failed,
-                        Constant.messages.getString("quickstart.progress.failed.badhost", e1.getMessage()));
+                extension.notifyProgress(
+                        Progress.failed,
+                        Constant.messages.getString(
+                                "quickstart.progress.failed.badhost", e1.getMessage()));
             }
         } catch (URIException e) {
-            extension.notifyProgress(Progress.failed,
-                    Constant.messages.getString("quickstart.progress.failed.reason", e.getMessage()));
+            extension.notifyProgress(
+                    Progress.failed,
+                    Constant.messages.getString(
+                            "quickstart.progress.failed.reason", e.getMessage()));
         } catch (Exception e1) {
             logger.error(e1.getMessage(), e1);
-            extension.notifyProgress(Progress.failed,
-                    Constant.messages.getString("quickstart.progress.failed.reason", e1.getMessage()));
+            extension.notifyProgress(
+                    Progress.failed,
+                    Constant.messages.getString(
+                            "quickstart.progress.failed.reason", e1.getMessage()));
             return null;
         }
         return startNode;
@@ -278,8 +318,11 @@ public class AttackThread extends Thread {
 
     private HttpSender getHttpSender() {
         if (httpSender == null) {
-            httpSender = new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true,
-                    HttpSender.MANUAL_REQUEST_INITIATOR);
+            httpSender =
+                    new HttpSender(
+                            Model.getSingleton().getOptionsParam().getConnectionParam(),
+                            true,
+                            HttpSender.MANUAL_REQUEST_INITIATOR);
         }
         return httpSender;
     }
@@ -287,5 +330,4 @@ public class AttackThread extends Thread {
     public void stopAttack() {
         this.stopAttack = true;
     }
-
 }

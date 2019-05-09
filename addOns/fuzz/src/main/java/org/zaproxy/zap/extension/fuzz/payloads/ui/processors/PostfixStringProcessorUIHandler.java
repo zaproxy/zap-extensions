@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,17 +23,18 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PostfixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PostfixStringProcessorUIHandler.PostfixStringProcessorUI;
 import org.zaproxy.zap.utils.ZapTextField;
 
-public class PostfixStringProcessorUIHandler implements
-        PayloadProcessorUIHandler<DefaultPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
+public class PostfixStringProcessorUIHandler
+        implements PayloadProcessorUIHandler<
+                DefaultPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.postfixString.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.payload.processor.postfixString.name");
 
     @Override
     public String getName() {
@@ -55,7 +56,8 @@ public class PostfixStringProcessorUIHandler implements
         return new PostfixStringProcessorUIPanel();
     }
 
-    public static class PostfixStringProcessorUI implements PayloadProcessorUI<DefaultPayload, PostfixStringProcessor> {
+    public static class PostfixStringProcessorUI
+            implements PayloadProcessorUI<DefaultPayload, PostfixStringProcessor> {
 
         private final String value;
 
@@ -96,13 +98,14 @@ public class PostfixStringProcessorUIHandler implements
         public PostfixStringProcessorUI copy() {
             return this;
         }
-
     }
 
-    public static class PostfixStringProcessorUIPanel extends
-            AbstractProcessorUIPanel<DefaultPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
+    public static class PostfixStringProcessorUIPanel
+            extends AbstractProcessorUIPanel<
+                    DefaultPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
 
-        private static final String VALUE_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.postfixString.value.label");
+        private static final String VALUE_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payload.processor.postfixString.value.label");
 
         private JPanel fieldsPanel;
 
@@ -118,11 +121,15 @@ public class PostfixStringProcessorUIHandler implements
             JLabel valueLabel = new JLabel(VALUE_FIELD_LABEL);
             valueLabel.setLabelFor(getValueTextField());
 
-            layout.setHorizontalGroup(layout.createSequentialGroup().addComponent(valueLabel).addComponent(getValueTextField()));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addComponent(valueLabel)
+                            .addComponent(getValueTextField()));
 
-            layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(valueLabel)
-                    .addComponent(getValueTextField()));
+            layout.setVerticalGroup(
+                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(valueLabel)
+                            .addComponent(getValueTextField()));
         }
 
         @Override
@@ -159,8 +166,10 @@ public class PostfixStringProcessorUIHandler implements
             if (getValueTextField().getText().isEmpty()) {
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("fuzz.payload.processor.postfixString.warnNoValue.message"),
-                        Constant.messages.getString("fuzz.payload.processor.postfixString.warnNoValue.title"),
+                        Constant.messages.getString(
+                                "fuzz.payload.processor.postfixString.warnNoValue.message"),
+                        Constant.messages.getString(
+                                "fuzz.payload.processor.postfixString.warnNoValue.title"),
                         JOptionPane.INFORMATION_MESSAGE);
                 getValueTextField().requestFocusInWindow();
                 return false;
@@ -176,5 +185,4 @@ public class PostfixStringProcessorUIHandler implements
             return new PostfixStringProcessor(getValueTextField().getText());
         }
     }
-
 }

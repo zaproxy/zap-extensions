@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
@@ -55,7 +54,8 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
 
     private WebSocketFuzzResultsContentPanel websocketFuzzResultsContentPanel;
 
-    private final List<WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?>> messageProcessors;
+    private final List<WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?>>
+            messageProcessors;
 
     public WebSocketFuzzerHandler() {
         this.messageProcessors = new ArrayList<>();
@@ -78,8 +78,7 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
 
     @Override
     public WebSocketFuzzer showFuzzerDialog(
-            MessageContainer<WebSocketMessageDTO> messageContainer,
-            FuzzerOptions defaultOptions) {
+            MessageContainer<WebSocketMessageDTO> messageContainer, FuzzerOptions defaultOptions) {
         if (!canFuzz(messageContainer)) {
             return null;
         }
@@ -106,7 +105,8 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
     }
 
     @Override
-    public WebSocketFuzzer showFuzzerDialog(WebSocketMessageDTO message, FuzzerOptions defaultOptions) {
+    public WebSocketFuzzer showFuzzerDialog(
+            WebSocketMessageDTO message, FuzzerOptions defaultOptions) {
         return showFuzzerDialogImpl(message, null, defaultOptions);
     }
 
@@ -114,13 +114,16 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
             WebSocketMessageDTO message,
             SelectableContentMessageContainer<WebSocketMessageDTO> container,
             FuzzerOptions defaultOptions) {
-        FuzzerDialog<WebSocketMessageDTO, FuzzerOptions, WebSocketFuzzerMessageProcessor> fuzzDialogue = new FuzzerDialog<>(
-                View.getSingleton().getMainFrame(),
-                defaultOptions,
-                message,
-                message.isOutgoing,
-                new WebSocketFuzzerHandlerOptionsPanel(),
-                new WebSocketFuzzerMessageProcessorCollection(message, messageProcessors));
+        FuzzerDialog<WebSocketMessageDTO, FuzzerOptions, WebSocketFuzzerMessageProcessor>
+                fuzzDialogue =
+                        new FuzzerDialog<>(
+                                View.getSingleton().getMainFrame(),
+                                defaultOptions,
+                                message,
+                                message.isOutgoing,
+                                new WebSocketFuzzerHandlerOptionsPanel(),
+                                new WebSocketFuzzerMessageProcessorCollection(
+                                        message, messageProcessors));
 
         if (container != null) {
             if (fuzzDialogue.setSelectedContainer(container.getName())) {
@@ -148,27 +151,29 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
             return null;
         }
 
-        MessageLocationReplacer<WebSocketMessageDTO> replacer = MessageLocationReplacers.getInstance()
-                .getMLR(WebSocketMessageDTO.class, WebSocketMessageLocation.class);
+        MessageLocationReplacer<WebSocketMessageDTO> replacer =
+                MessageLocationReplacers.getInstance()
+                        .getMLR(WebSocketMessageDTO.class, WebSocketMessageLocation.class);
 
         replacer.init(message);
 
         MultipleMessageLocationsReplacer<WebSocketMessageDTO> multipleMessageLocationsReplacer;
-        if (MessageLocationsReplacementStrategy.DEPTH_FIRST == options.getPayloadsReplacementStrategy()) {
+        if (MessageLocationsReplacementStrategy.DEPTH_FIRST
+                == options.getPayloadsReplacementStrategy()) {
             multipleMessageLocationsReplacer = new MultipleMessageLocationsDepthFirstReplacer<>();
         } else {
             multipleMessageLocationsReplacer = new MultipleMessageLocationsBreadthFirstReplacer<>();
         }
-        SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators = new TreeSet<>();
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators =
+                new TreeSet<>();
 
         for (PayloadGeneratorMessageLocation<?> fuzzLocation : fuzzLocations) {
             messageLocationReplacementGenerators.add(fuzzLocation);
         }
         multipleMessageLocationsReplacer.init(replacer, messageLocationReplacementGenerators);
 
-        ExtensionWebSocket extensionWebSocket = Control.getSingleton()
-                .getExtensionLoader()
-                .getExtension(ExtensionWebSocket.class);
+        ExtensionWebSocket extensionWebSocket =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionWebSocket.class);
 
         return new WebSocketFuzzer(
                 extensionWebSocket.getStorage().getTable(),
@@ -176,7 +181,8 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
                 options,
                 getConnectedProxies(),
                 message,
-                (List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>) (ArrayList) fuzzLocations,
+                (List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>)
+                        (ArrayList) fuzzLocations,
                 multipleMessageLocationsReplacer,
                 processors);
     }
@@ -188,7 +194,8 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
             strBuilder.setLength(27);
             strBuilder.append("...");
         }
-        return Constant.messages.getString("websocket.fuzzer.fuzzerNamePrefix", strBuilder.toString());
+        return Constant.messages.getString(
+                "websocket.fuzzer.fuzzerNamePrefix", strBuilder.toString());
     }
 
     @Override
@@ -242,19 +249,28 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
     }
 
     @SuppressWarnings("unchecked")
-    protected <T1 extends WebSocketFuzzerMessageProcessor, T2 extends WebSocketFuzzerMessageProcessorUI<T1>> void addFuzzerMessageProcessorUIHandler(
-            WebSocketFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
-        messageProcessors
-                .add((WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?>) processorUIHandler);
+    protected <
+                    T1 extends WebSocketFuzzerMessageProcessor,
+                    T2 extends WebSocketFuzzerMessageProcessorUI<T1>>
+            void addFuzzerMessageProcessorUIHandler(
+                    WebSocketFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
+        messageProcessors.add(
+                (WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?>)
+                        processorUIHandler);
     }
 
-    protected <T1 extends WebSocketFuzzerMessageProcessor, T2 extends WebSocketFuzzerMessageProcessorUI<T1>> void removeFuzzerMessageProcessorUIHandler(
-            WebSocketFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
+    protected <
+                    T1 extends WebSocketFuzzerMessageProcessor,
+                    T2 extends WebSocketFuzzerMessageProcessorUI<T1>>
+            void removeFuzzerMessageProcessorUIHandler(
+                    WebSocketFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
         messageProcessors.remove(processorUIHandler);
     }
 
     private static Map<Integer, WebSocketProxy> getConnectedProxies() {
-        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionWebSocketFuzzer.class).getConnectedProxies();
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionWebSocketFuzzer.class)
+                .getConnectedProxies();
     }
-
 }

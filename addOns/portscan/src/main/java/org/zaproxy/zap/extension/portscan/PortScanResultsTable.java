@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2014 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,12 +25,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.SortOrder;
 import javax.swing.table.TableModel;
-
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.view.View;
 
@@ -52,16 +50,17 @@ public class PortScanResultsTable extends JXTable {
         setAutoCreateColumnsFromModel(false);
 
         setDoubleBuffered(true);
-        
+
         setAutoCreateRowSorter(true);
-        
+
         setComponentPopupMenu(new CustomPopupMenu());
     }
 
     @Override
     public void setModel(TableModel tableModel) {
         if (!(tableModel instanceof PortScanResultsTableModel)) {
-            throw new IllegalArgumentException("Parameter tableModel must be a PortScanResultsTableModel.");
+            throw new IllegalArgumentException(
+                    "Parameter tableModel must be a PortScanResultsTableModel.");
         }
 
         super.setModel(tableModel);

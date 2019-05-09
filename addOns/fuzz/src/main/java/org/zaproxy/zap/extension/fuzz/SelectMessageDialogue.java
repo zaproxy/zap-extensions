@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,12 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
@@ -43,11 +41,14 @@ public class SelectMessageDialogue extends AbstractFormDialog {
 
     private static final long serialVersionUID = -117024736933191325L;
 
-    private static final String DIALOG_TITLE = Constant.messages.getString("fuzz.select.message.dialog.title");
+    private static final String DIALOG_TITLE =
+            Constant.messages.getString("fuzz.select.message.dialog.title");
 
-    private static final String CONFIRM_BUTTON_LABEL = Constant.messages.getString("fuzz.select.message.dialog.confirm.button");
+    private static final String CONFIRM_BUTTON_LABEL =
+            Constant.messages.getString("fuzz.select.message.dialog.confirm.button");
 
-    private static final String TYPE_FIELD_LABEL = Constant.messages.getString("fuzz.select.message.dialog.message.type.label");
+    private static final String TYPE_FIELD_LABEL =
+            Constant.messages.getString("fuzz.select.message.dialog.message.type.label");
 
     private JComboBox<String> messageTypesComboBox;
 
@@ -59,7 +60,8 @@ public class SelectMessageDialogue extends AbstractFormDialog {
     private FuzzerHandlerEntry<?, ?> currentPanel;
     private Selection<?, ?> selection;
 
-    public SelectMessageDialogue(Frame owner, String nameDefaultFuzzer, List<FuzzerHandler<?, ?>> fuzzerHandlers) {
+    public SelectMessageDialogue(
+            Frame owner, String nameDefaultFuzzer, List<FuzzerHandler<?, ?>> fuzzerHandlers) {
         super(owner, DIALOG_TITLE, false);
 
         this.messageSelectionPanels = new FuzzerHandlers(fuzzerHandlers);
@@ -86,28 +88,43 @@ public class SelectMessageDialogue extends AbstractFormDialog {
         contentsPanel = new JPanel(contentsPanelCardLayout);
 
         for (String messageType : messageSelectionPanels.getFuzzerHandlersNames()) {
-            contentsPanel.add(messageSelectionPanels.getEntry(messageType).getMessageSelectorPanel().getPanel(), messageType);
+            contentsPanel.add(
+                    messageSelectionPanels
+                            .getEntry(messageType)
+                            .getMessageSelectorPanel()
+                            .getPanel(),
+                    messageType);
         }
 
         JLabel messageTypeLabel = new JLabel(TYPE_FIELD_LABEL);
 
-        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-                .addGroup(
-                        groupLayout.createSequentialGroup()
-                                .addGroup(
-                                        groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                messageTypeLabel))
-                                .addGroup(
-                                        groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                getMessageTypesComboBox())))
-                .addComponent(contentsPanel));
+        groupLayout.setHorizontalGroup(
+                groupLayout
+                        .createParallelGroup()
+                        .addGroup(
+                                groupLayout
+                                        .createSequentialGroup()
+                                        .addGroup(
+                                                groupLayout
+                                                        .createParallelGroup(
+                                                                GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(messageTypeLabel))
+                                        .addGroup(
+                                                groupLayout
+                                                        .createParallelGroup(
+                                                                GroupLayout.Alignment.LEADING)
+                                                        .addComponent(getMessageTypesComboBox())))
+                        .addComponent(contentsPanel));
 
-        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(
-                        groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(messageTypeLabel)
-                                .addComponent(getMessageTypesComboBox()))
-                .addComponent(contentsPanel));
+        groupLayout.setVerticalGroup(
+                groupLayout
+                        .createSequentialGroup()
+                        .addGroup(
+                                groupLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(messageTypeLabel)
+                                        .addComponent(getMessageTypesComboBox()))
+                        .addComponent(contentsPanel));
 
         return fieldsPanel;
     }
@@ -145,20 +162,22 @@ public class SelectMessageDialogue extends AbstractFormDialog {
                 messageTypesComboBox.addItem(name);
             }
 
-            messageTypesComboBox.addItemListener(new ItemListener() {
+            messageTypesComboBox.addItemListener(
+                    new ItemListener() {
 
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    if (ItemEvent.SELECTED == e.getStateChange()) {
-                        String panelName = (String) e.getItem();
+                        @Override
+                        public void itemStateChanged(ItemEvent e) {
+                            if (ItemEvent.SELECTED == e.getStateChange()) {
+                                String panelName = (String) e.getItem();
 
-                        currentPanel = messageSelectionPanels.getEntry(panelName);
-                        contentsPanelCardLayout.show(contentsPanel, panelName);
+                                currentPanel = messageSelectionPanels.getEntry(panelName);
+                                contentsPanelCardLayout.show(contentsPanel, panelName);
 
-                        setHelpTarget(currentPanel.getMessageSelectorPanel().getHelpTarget());
-                    }
-                }
-            });
+                                setHelpTarget(
+                                        currentPanel.getMessageSelectorPanel().getHelpTarget());
+                            }
+                        }
+                    });
         }
         return messageTypesComboBox;
     }

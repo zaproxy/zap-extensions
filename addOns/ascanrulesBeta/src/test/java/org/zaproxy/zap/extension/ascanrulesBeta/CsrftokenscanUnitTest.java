@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,17 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
+
+import java.util.List;
+import java.util.TreeSet;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -29,18 +40,6 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
-
-import java.util.List;
-import java.util.TreeSet;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.empty;
-import static org.junit.Assert.assertThat;
 
 public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
 
@@ -85,7 +84,13 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
     @Test
     public void shouldNotProcessWithoutForm() throws Exception {
         // Given
-        HttpMessage msg = getHttpMessage("GET", "/", "<html><input type=\"hidden\" name=\"customAntiCSRF\" value=" + Math.random() + "></input></html>");
+        HttpMessage msg =
+                getHttpMessage(
+                        "GET",
+                        "/",
+                        "<html><input type=\"hidden\" name=\"customAntiCSRF\" value="
+                                + Math.random()
+                                + "></input></html>");
         rule.init(msg, parent);
         // When
         rule.scan();
@@ -169,24 +174,26 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
     }
 
     @Test
-    public void shouldNotProcessAtHighThresholdAndOutOfScope() throws HttpMalformedHeaderException, URIException {
+    public void shouldNotProcessAtHighThresholdAndOutOfScope()
+            throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(false);
-        
+
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.HIGH);
         rule.init(msg, parent);
         // When
         this.rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(equalTo(0)));// No messages sent
+        assertThat(httpMessagesSent, hasSize(equalTo(0))); // No messages sent
     }
 
     @Test
-    public void shouldProcessAtHighThresholdAndInScope() throws HttpMalformedHeaderException, URIException {
+    public void shouldProcessAtHighThresholdAndInScope()
+            throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(true);
-        
+
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.HIGH);
         rule.init(msg, parent);
@@ -197,7 +204,8 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
     }
 
     @Test
-    public void shouldProcessAtMediumThresholdAndOutOfScope() throws HttpMalformedHeaderException, URIException {
+    public void shouldProcessAtMediumThresholdAndOutOfScope()
+            throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(false);
         rule.setConfig(new ZapXmlConfiguration());
@@ -211,7 +219,8 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
     }
 
     @Test
-    public void shouldProcessAtMediumThresholdAndInScope() throws HttpMalformedHeaderException, URIException {
+    public void shouldProcessAtMediumThresholdAndInScope()
+            throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(true);
         rule.setConfig(new ZapXmlConfiguration());
@@ -225,7 +234,8 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
     }
 
     @Test
-    public void shouldProcessAtLowThresholdAndOutOfScope() throws HttpMalformedHeaderException, URIException {
+    public void shouldProcessAtLowThresholdAndOutOfScope()
+            throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(false);
         rule.setConfig(new ZapXmlConfiguration());
@@ -239,7 +249,8 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
     }
 
     @Test
-    public void shouldProcessAtLowThresholdAndInScope() throws HttpMalformedHeaderException, URIException {
+    public void shouldProcessAtLowThresholdAndInScope()
+            throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(true);
         rule.setConfig(new ZapXmlConfiguration());
@@ -252,37 +263,41 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
         assertThat(httpMessagesSent, hasSize(greaterThan(0)));
     }
 
-    private HttpMessage createMessage(boolean isInScope) throws URIException, HttpMalformedHeaderException {
-        HttpMessage msg = new HttpMessage() {
-
-            @Override
-            public HttpMessage cloneRequest() {
-                HttpMessage newMsg = new HttpMessage() {
+    private HttpMessage createMessage(boolean isInScope)
+            throws URIException, HttpMalformedHeaderException {
+        HttpMessage msg =
+                new HttpMessage() {
 
                     @Override
-                    public boolean isInScope() {
-                        return isInScope;
+                    public HttpMessage cloneRequest() {
+                        HttpMessage newMsg =
+                                new HttpMessage() {
+
+                                    @Override
+                                    public boolean isInScope() {
+                                        return isInScope;
+                                    }
+                                };
+
+                        if (!this.getRequestHeader().isEmpty()) {
+                            try {
+                                newMsg.getRequestHeader()
+                                        .setMessage(this.getRequestHeader().toString());
+                            } catch (HttpMalformedHeaderException e) {
+                                throw new RuntimeException(e);
+                            }
+                            newMsg.setRequestBody(this.getRequestBody().getBytes());
+                        }
+                        return newMsg;
                     }
                 };
-
-                if (!this.getRequestHeader().isEmpty()) {
-                    try {
-                        newMsg.getRequestHeader().setMessage(this.getRequestHeader().toString());
-                    } catch (HttpMalformedHeaderException e) {
-                        throw new RuntimeException(e);
-                    }
-                    newMsg.setRequestBody(this.getRequestBody().getBytes());
-                }
-                return newMsg;
-            }
-        };
 
         HttpMessage compatMsg = getAntiCSRFCompatibleMessage();
         msg.setRequestHeader(compatMsg.getRequestHeader());
         msg.setRequestBody(compatMsg.getRequestBody());
         msg.setResponseHeader(compatMsg.getResponseHeader());
         msg.setResponseBody(compatMsg.getResponseBody());
-        
+
         return msg;
     }
 
@@ -293,10 +308,16 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
     }
 
     private HttpMessage getAntiCSRFCompatibleMessage() throws HttpMalformedHeaderException {
-        return getHttpMessage("GET", "/", "<html><form><input type=\"hidden\" name=\"customAntiCSRF\" value=" + Math.random() + "></input></form></html>");
+        return getHttpMessage(
+                "GET",
+                "/",
+                "<html><form><input type=\"hidden\" name=\"customAntiCSRF\" value="
+                        + Math.random()
+                        + "></input></form></html>");
     }
 
     private HtmlParameter getCookieAs(String cookieName) {
-        return new HtmlParameter(HtmlParameter.Type.cookie, cookieName, "FF4F838FDA9E1974DEEB4020AB6127FD");
+        return new HtmlParameter(
+                HtmlParameter.Type.cookie, cookieName, "FF4F838FDA9E1974DEEB4020AB6127FD");
     }
 }

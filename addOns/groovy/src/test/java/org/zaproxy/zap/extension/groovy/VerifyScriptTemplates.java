@@ -19,14 +19,12 @@
  */
 package org.zaproxy.zap.extension.groovy;
 
+import groovy.lang.GroovyClassLoader;
 import java.io.IOException;
 import java.nio.file.Path;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
-
-import groovy.lang.GroovyClassLoader;
 
 /** Verifies that the Groovy templates are parsed without errors. */
 public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
@@ -58,7 +56,8 @@ public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
     private static boolean isExcluded(Path template) {
         String parentDir = template.getParent().getFileName().toString();
-        // XXX Validate when the add-ons Fuzzer and Script Console are included in the test classpath.
+        // XXX Validate when the add-ons Fuzzer and Script Console are included in the test
+        // classpath.
         return parentDir.equals("httpfuzzerprocessor") || parentDir.equals("extender");
     }
 }

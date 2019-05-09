@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2017 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,14 +22,11 @@ package org.zaproxy.zap.extension.jxbrowsermacos.selenium;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.file.Paths;
-
 import org.openqa.selenium.WebDriverException;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.selenium.SingleWebDriverProvider;
 
-/**
- * A {@link SingleWebDriverProvider} for JxBrowser on MacOS.
- */
+/** A {@link SingleWebDriverProvider} for JxBrowser on MacOS. */
 public class MacOsJxBrowserProvider extends JxBrowserProvider {
 
     public MacOsJxBrowserProvider() {
@@ -42,7 +39,8 @@ public class MacOsJxBrowserProvider extends JxBrowserProvider {
     protected int getFreePort() {
         // Reuse the same port, as the JxBrowser/Chrome process tends to live longer on macOS.
         if (chromePort == null) {
-            try (ServerSocket socket = new ServerSocket(0, 400, InetAddress.getByName("localhost"))) {
+            try (ServerSocket socket =
+                    new ServerSocket(0, 400, InetAddress.getByName("localhost"))) {
                 chromePort = socket.getLocalPort();
             } catch (Exception e) {
                 throw new WebDriverException(e);

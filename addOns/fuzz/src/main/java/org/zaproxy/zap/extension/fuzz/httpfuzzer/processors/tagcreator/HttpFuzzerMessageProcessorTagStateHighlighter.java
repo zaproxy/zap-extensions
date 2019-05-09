@@ -20,17 +20,20 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator;
 
 import java.util.Map;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzerResultStateHighlighter;
 import org.zaproxy.zap.view.table.decorator.NoteTableCellItemIconHighlighter;
 
-public class HttpFuzzerMessageProcessorTagStateHighlighter implements HttpFuzzerResultStateHighlighter {
+public class HttpFuzzerMessageProcessorTagStateHighlighter
+        implements HttpFuzzerResultStateHighlighter {
 
-    private static final Icon REFLECTED_ICON = new ImageIcon(NoteTableCellItemIconHighlighter.class.getResource("/resource/icon/16/073.png"));
-    private static final String TAG_CREATOR_TEXT_STATE_KEY = HttpFuzzerMessageProcessorTagCreator.TAG_CREATOR_TEXT_STATE_KEY;
+    private static final Icon REFLECTED_ICON =
+            new ImageIcon(
+                    NoteTableCellItemIconHighlighter.class.getResource(
+                            "/resource/icon/16/073.png"));
+    private static final String TAG_CREATOR_TEXT_STATE_KEY =
+            HttpFuzzerMessageProcessorTagCreator.TAG_CREATOR_TEXT_STATE_KEY;
     private String tagsAsText;
 
     @Override
@@ -39,9 +42,9 @@ public class HttpFuzzerMessageProcessorTagStateHighlighter implements HttpFuzzer
         return tagsAsText.length() > 0;
     }
 
-    private String getTagsAsTextFromCustomState(Map<String, Object> state){
-        if(state.containsKey(TAG_CREATOR_TEXT_STATE_KEY)){
-            return (String)state.get(TAG_CREATOR_TEXT_STATE_KEY);
+    private String getTagsAsTextFromCustomState(Map<String, Object> state) {
+        if (state.containsKey(TAG_CREATOR_TEXT_STATE_KEY)) {
+            return (String) state.get(TAG_CREATOR_TEXT_STATE_KEY);
         }
         return "";
     }

@@ -17,10 +17,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
 import com.google.gson.*;
+import java.text.MessageFormat;
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
@@ -33,15 +37,13 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextArea;
 
-import javax.swing.GroupLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.text.MessageFormat;
-
-public class JsonPayloadGeneratorAdapterUIHandler implements
-        PayloadGeneratorUIHandler<DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorAdapterUIHandler.JsonPayloadGeneratorUI> {
-    private static final Logger LOGGER = Logger.getLogger(JsonPayloadGeneratorAdapterUIHandler.class);
+public class JsonPayloadGeneratorAdapterUIHandler
+        implements PayloadGeneratorUIHandler<
+                DefaultPayload,
+                JsonPayloadGenerator,
+                JsonPayloadGeneratorAdapterUIHandler.JsonPayloadGeneratorUI> {
+    private static final Logger LOGGER =
+            Logger.getLogger(JsonPayloadGeneratorAdapterUIHandler.class);
     private static final String PAYLOAD_GENERATOR_NAME = getString("name");
     private static final String PAYLOAD_GENERATOR_DESC = getString("description");
 
@@ -56,16 +58,22 @@ public class JsonPayloadGeneratorAdapterUIHandler implements
     }
 
     @Override
-    public Class<? extends PayloadGeneratorUIPanel<DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorUI>> getPayloadGeneratorUIPanelClass() {
+    public Class<
+                    ? extends
+                            PayloadGeneratorUIPanel<
+                                    DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorUI>>
+            getPayloadGeneratorUIPanelClass() {
         return JsonPayloadGeneratorUIPanel.class;
     }
 
     @Override
-    public PayloadGeneratorUIPanel<DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorUI> createPanel() {
+    public PayloadGeneratorUIPanel<DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorUI>
+            createPanel() {
         return new JsonPayloadGeneratorUIPanel();
     }
 
-    public static class JsonPayloadGeneratorUI implements PayloadGeneratorUI<DefaultPayload, JsonPayloadGenerator> {
+    public static class JsonPayloadGeneratorUI
+            implements PayloadGeneratorUI<DefaultPayload, JsonPayloadGenerator> {
         private final JsonPayloadGenerator jsonPayloadGenerator;
 
         public JsonPayloadGeneratorUI(JsonPayloadGenerator generator) {
@@ -85,9 +93,7 @@ public class JsonPayloadGeneratorAdapterUIHandler implements
         @Override
         public String getDescription() {
 
-            return MessageFormat.format(
-                    PAYLOAD_GENERATOR_DESC,
-                    jsonPayloadGenerator.getJson());
+            return MessageFormat.format(PAYLOAD_GENERATOR_DESC, jsonPayloadGenerator.getJson());
         }
 
         @Override
@@ -106,7 +112,9 @@ public class JsonPayloadGeneratorAdapterUIHandler implements
         }
     }
 
-    public static class JsonPayloadGeneratorUIPanel extends AbstractPersistentPayloadGeneratorUIPanel<DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorUI> {
+    public static class JsonPayloadGeneratorUIPanel
+            extends AbstractPersistentPayloadGeneratorUIPanel<
+                    DefaultPayload, JsonPayloadGenerator, JsonPayloadGeneratorUI> {
         private static final String JSON_FIELD_LABEL = getString("original.field.label");
         private static final String NUMBER_PAYLOADS_LABEL = getString("number.payloads.label");
 
@@ -131,25 +139,27 @@ public class JsonPayloadGeneratorAdapterUIHandler implements
             jsonFieldLabel.setLabelFor(getJsonTextArea());
             JScrollPane jsonFieldScrollPane = new JScrollPane(getJsonTextArea());
 
-            layout.setHorizontalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                    .addComponent(numberOfPayloadsLabel)
-                                    .addComponent(jsonFieldLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(numberOfPayloadsSpinner)
-                                    .addComponent(jsonFieldScrollPane)));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                            .addComponent(numberOfPayloadsLabel)
+                                            .addComponent(jsonFieldLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                            .addComponent(numberOfPayloadsSpinner)
+                                            .addComponent(jsonFieldScrollPane)));
 
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(numberOfPayloadsLabel)
-                                    .addComponent(numberOfPayloadsSpinner))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jsonFieldLabel)
-                                    .addComponent(jsonFieldScrollPane)));
+            layout.setVerticalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(numberOfPayloadsLabel)
+                                            .addComponent(numberOfPayloadsSpinner))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jsonFieldLabel)
+                                            .addComponent(jsonFieldScrollPane)));
         }
 
         @Override
@@ -157,7 +167,8 @@ public class JsonPayloadGeneratorAdapterUIHandler implements
             if (!validate()) {
                 return null;
             }
-            return new JsonPayloadGenerator(jsonTextArea.getText(), numberOfPayloadsSpinner.getValue());
+            return new JsonPayloadGenerator(
+                    jsonTextArea.getText(), numberOfPayloadsSpinner.getValue());
         }
 
         @Override
@@ -173,7 +184,8 @@ public class JsonPayloadGeneratorAdapterUIHandler implements
         @Override
         public void setPayloadGeneratorUI(JsonPayloadGeneratorUI payloadGeneratorUI) {
             oldGenerator = payloadGeneratorUI;
-            numberOfPayloadsSpinner.setValue(payloadGeneratorUI.getPayloadGenerator().getNumberOfPayloads());
+            numberOfPayloadsSpinner.setValue(
+                    payloadGeneratorUI.getPayloadGenerator().getNumberOfPayloads());
             jsonTextArea.setText(payloadGeneratorUI.getPayloadGenerator().getJson());
             jsonTextArea.discardAllEdits();
         }
@@ -198,9 +210,12 @@ public class JsonPayloadGeneratorAdapterUIHandler implements
 
         @Override
         public boolean validate() {
-            if (oldGenerator != null &&
-                    getJsonTextArea().getText().equals(oldGenerator.getPayloadGenerator().getJson()) &&
-                    numberOfPayloadsSpinner.getValue() == oldGenerator.getPayloadGenerator().getNumberOfPayloads()) {
+            if (oldGenerator != null
+                    && getJsonTextArea()
+                            .getText()
+                            .equals(oldGenerator.getPayloadGenerator().getJson())
+                    && numberOfPayloadsSpinner.getValue()
+                            == oldGenerator.getPayloadGenerator().getNumberOfPayloads()) {
                 return true;
             }
 

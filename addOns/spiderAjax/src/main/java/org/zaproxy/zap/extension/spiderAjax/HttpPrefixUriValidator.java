@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2016 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,16 +21,16 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.util.Arrays;
 import java.util.Locale;
-
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 
 /**
  * A {@code URI} validator based on a HTTP or HTTPS {@code URI}.
- * <p>
- * The {@code URI}s are required to start with the {@code URI} (the prefix) to be considered valid.
- * 
+ *
+ * <p>The {@code URI}s are required to start with the {@code URI} (the prefix) to be considered
+ * valid.
+ *
  * @see #isValid(URI)
  */
 class HttpPrefixUriValidator {
@@ -44,7 +44,10 @@ class HttpPrefixUriValidator {
 
     /** The port number that indicates that a port is the default of a scheme. */
     private static final int DEFAULT_PORT = -1;
-    /** The port number that indicates that a port is of an unknown scheme (that is, non HTTP and HTTPS). */
+    /**
+     * The port number that indicates that a port is of an unknown scheme (that is, non HTTP and
+     * HTTPS).
+     */
     private static final int UNKNOWN_PORT = -2;
     /** The default port number of HTTP scheme. */
     private static final int DEFAULT_HTTP_PORT = 80;
@@ -65,19 +68,20 @@ class HttpPrefixUriValidator {
 
     /**
      * Constructs a {@code HttpPrefixFetchFilter} using the given {@code URI} as prefix.
-     * <p>
-     * The user info, query component and fragment of the given {@code URI} are discarded. The scheme and domain comparisons are
-     * done in a case insensitive way while the path component comparison is case sensitive.
+     *
+     * <p>The user info, query component and fragment of the given {@code URI} are discarded. The
+     * scheme and domain comparisons are done in a case insensitive way while the path component
+     * comparison is case sensitive.
      *
      * @param prefix the {@code URI} that will be used as prefix
      * @throws IllegalArgumentException if any of the following conditions is {@code true}:
-     *             <ul>
-     *             <li>The given {@code prefix} is {@code null};</li>
-     *             <li>The given {@code prefix} has {@code null} scheme;</li>
-     *             <li>The scheme of the given {@code prefix} is not HTTP or HTTPS;</li>
-     *             <li>The given {@code prefix} has {@code null} host;</li>
-     *             <li>The given {@code prefix} has malformed host.</li>
-     *             </ul>
+     *     <ul>
+     *       <li>The given {@code prefix} is {@code null};
+     *       <li>The given {@code prefix} has {@code null} scheme;
+     *       <li>The scheme of the given {@code prefix} is not HTTP or HTTPS;
+     *       <li>The given {@code prefix} has {@code null} host;
+     *       <li>The given {@code prefix} has malformed host.
+     *     </ul>
      */
     public HttpPrefixUriValidator(URI prefix) {
         if (prefix == null) {
@@ -109,9 +113,9 @@ class HttpPrefixUriValidator {
 
     /**
      * Returns the normalised form of the given {@code scheme}.
-     * <p>
-     * The normalisation process consists in converting the scheme to lowercase, if {@code null} it is returned an empty
-     * {@code String}.
+     *
+     * <p>The normalisation process consists in converting the scheme to lowercase, if {@code null}
+     * it is returned an empty {@code String}.
      *
      * @param scheme the scheme that will be normalised
      * @return a {@code String} with the host scheme, never {@code null}
@@ -156,9 +160,9 @@ class HttpPrefixUriValidator {
 
     /**
      * Returns the normalised form of the host of the given {@code uri}.
-     * <p>
-     * The normalisation process consists in converting the host to lowercase, if {@code null} it is returned an empty
-     * {@code String}.
+     *
+     * <p>The normalisation process consists in converting the host to lowercase, if {@code null} it
+     * is returned an empty {@code String}.
      *
      * @param uri the URI whose host will be extracted and normalised
      * @return a {@code String} with the host normalised, never {@code null}
@@ -173,9 +177,10 @@ class HttpPrefixUriValidator {
 
     /**
      * Returns the normalised form of the given {@code port}, based on the given {@code scheme}.
-     * <p>
-     * If the port is non-default (as given by {@link #DEFAULT_PORT}), it's immediately returned. Otherwise, for schemes HTTP
-     * and HTTPS it's returned 80 and 443, respectively, for any other scheme it's returned {@link #UNKNOWN_PORT}.
+     *
+     * <p>If the port is non-default (as given by {@link #DEFAULT_PORT}), it's immediately returned.
+     * Otherwise, for schemes HTTP and HTTPS it's returned 80 and 443, respectively, for any other
+     * scheme it's returned {@link #UNKNOWN_PORT}.
      *
      * @param scheme the (normalised) scheme of the URI where the port was defined
      * @param port the port to normalise
@@ -232,12 +237,13 @@ class HttpPrefixUriValidator {
 
     /**
      * Tells whether or not the given {@code port} is the default for the given {@code scheme}.
-     * <p>
-     * The method returns always {@code false} for non HTTP or HTTPS schemes.
+     *
+     * <p>The method returns always {@code false} for non HTTP or HTTPS schemes.
      *
      * @param scheme the scheme of a URI, might be {@code null}
      * @param port the port of a URI
-     * @return {@code true} if the {@code port} is the default for the given {@code scheme}, {@code false} otherwise
+     * @return {@code true} if the {@code port} is the default for the given {@code scheme}, {@code
+     *     false} otherwise
      */
     private static boolean isDefaultHttpOrHttpsPort(String scheme, int port) {
         if (port == DEFAULT_HTTP_PORT && isHttp(scheme)) {
@@ -251,9 +257,10 @@ class HttpPrefixUriValidator {
 
     /**
      * Tells whether or not the given URI is valid, by starting or not with the defined prefix.
-     * 
+     *
      * @param uri the uri to be validated
-     * @return {@code true} if valid, that is, the {@code uri} starts with the {@code prefix}, {@code false} otherwise
+     * @return {@code true} if valid, that is, the {@code uri} starts with the {@code prefix},
+     *     {@code false} otherwise
      */
     public boolean isValid(URI uri) {
         if (uri == null) {
@@ -282,8 +289,8 @@ class HttpPrefixUriValidator {
 
     /**
      * Tells whether or not the given {@code uri} has the same host as required by this prefix.
-     * <p>
-     * For malformed hosts it returns always {@code false}.
+     *
+     * <p>For malformed hosts it returns always {@code false}.
      *
      * @param uri the {@code URI} whose host will be checked
      * @return {@code true} if the host is same, {@code false} otherwise
@@ -299,12 +306,14 @@ class HttpPrefixUriValidator {
 
     /**
      * Tells whether or not the given {@code array} starts with the given {@code prefix}.
-     * <p>
-     * The {@code prefix} might be {@code null} in which case it's considered that the {@code array} starts with the prefix.
+     *
+     * <p>The {@code prefix} might be {@code null} in which case it's considered that the {@code
+     * array} starts with the prefix.
      *
      * @param array the array that will be tested if starts with the prefix, might be {@code null}
      * @param prefix the array used as prefix, might be {@code null}
-     * @return {@code true} if the {@code array} starts with the {@code prefix}, {@code false} otherwise
+     * @return {@code true} if the {@code array} starts with the {@code prefix}, {@code false}
+     *     otherwise
      */
     private static boolean startsWith(char[] array, char[] prefix) {
         if (prefix == null) {

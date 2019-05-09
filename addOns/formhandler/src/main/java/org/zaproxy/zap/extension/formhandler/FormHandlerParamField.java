@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,7 +34,7 @@ class FormHandlerParamField extends Enableable {
         this(name, "", true);
     }
 
-    public FormHandlerParamField(String name, String value){
+    public FormHandlerParamField(String name, String value) {
         this(name, value, true);
     }
 
@@ -76,24 +76,16 @@ class FormHandlerParamField extends Enableable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (!super.equals(obj)) return false;
+        if (getClass() != obj.getClass()) return false;
         FormHandlerParamField other = (FormHandlerParamField) obj;
         if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
+            if (other.name != null) return false;
+        } else if (!name.equals(other.name)) return false;
         if (value == null) {
-            if (other.value != null)
-                return false;
-        } else if (!value.equals(other.value))
-            return false;
+            if (other.value != null) return false;
+        } else if (!value.equals(other.value)) return false;
         return true;
     }
-
 }

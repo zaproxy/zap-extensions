@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.fuzz;
 
 import org.zaproxy.zap.extension.httppanel.Message;
 
-public interface FuzzerMessageProcessorUI<T1 extends Message, T2 extends FuzzerMessageProcessor<T1>> {
+public interface FuzzerMessageProcessorUI<
+        T1 extends Message, T2 extends FuzzerMessageProcessor<T1>> {
 
     boolean isMutable();
 
@@ -32,5 +33,4 @@ public interface FuzzerMessageProcessorUI<T1 extends Message, T2 extends FuzzerM
     T2 getFuzzerMessageProcessor();
 
     FuzzerMessageProcessorUI<T1, T2> copy();
-
 }

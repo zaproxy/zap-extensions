@@ -19,26 +19,27 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator;
 
-import org.parosproxy.paros.Constant;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.parosproxy.paros.Constant;
 
 public class ExtractByRegexTagRule extends RegexTagRule {
 
-    public ExtractByRegexTagRule(String regex){
+    public ExtractByRegexTagRule(String regex) {
         super(regex);
     }
 
     @Override
     public String getName() {
-        String ruleName = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.extractbyregex.name");
+        String ruleName =
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.processor.tagcreator.extractbyregex.name");
         return ruleName + " " + getRegex();
     }
 
     @Override
-    public String createTag(String responseMessage){
-        if(hasRegex()){
+    public String createTag(String responseMessage) {
+        if (hasRegex()) {
             return extractByRegex(responseMessage);
         }
         return null;
@@ -47,7 +48,7 @@ public class ExtractByRegexTagRule extends RegexTagRule {
     private String extractByRegex(String responseMessage) {
         Pattern pattern = getRegexPattern();
         Matcher matcher = pattern.matcher(responseMessage);
-        if(matcher.find()){
+        if (matcher.find()) {
             return matcher.group(1);
         }
         return null;

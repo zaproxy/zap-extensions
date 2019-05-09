@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,16 +22,15 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 import java.awt.event.ItemEvent;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.AbstractHttpFuzzerMessageProcessorUIPanel;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUIHandler;
@@ -40,12 +39,14 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.view.DynamicFieldsPanel;
-import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
 
-public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
-        HttpFuzzerMessageProcessorUIHandler<FuzzerHttpMessageScriptProcessorAdapter, FuzzerHttpMessageScriptProcessorAdapterUI> {
+public class FuzzerHttpMessageScriptProcessorAdapterUIHandler
+        implements HttpFuzzerMessageProcessorUIHandler<
+                FuzzerHttpMessageScriptProcessorAdapter,
+                FuzzerHttpMessageScriptProcessorAdapterUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.scriptProcessor.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.scriptProcessor.name");
 
     private final ExtensionScript extensionScript;
 
@@ -94,16 +95,14 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
                 extensionScript.getScripts(HttpFuzzerProcessorScript.TYPE_NAME));
     }
 
-    public static class FuzzerHttpMessageScriptProcessorAdapterUI implements
-            HttpFuzzerMessageProcessorUI<FuzzerHttpMessageScriptProcessorAdapter> {
+    public static class FuzzerHttpMessageScriptProcessorAdapterUI
+            implements HttpFuzzerMessageProcessorUI<FuzzerHttpMessageScriptProcessorAdapter> {
 
         private final ScriptWrapper scriptWrapper;
         private final Map<String, String> paramsValues;
 
-
         public FuzzerHttpMessageScriptProcessorAdapterUI(
-                ScriptWrapper scriptWrapper,
-                Map<String, String> paramsValues) {
+                ScriptWrapper scriptWrapper, Map<String, String> paramsValues) {
             this.scriptWrapper = scriptWrapper;
             this.paramsValues = paramsValues;
         }
@@ -139,10 +138,13 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
     }
 
     public static class FuzzerHttpMessageScriptProcessorAdapterUIPanel
-            extends
-            AbstractHttpFuzzerMessageProcessorUIPanel<FuzzerHttpMessageScriptProcessorAdapter, FuzzerHttpMessageScriptProcessorAdapterUI> {
+            extends AbstractHttpFuzzerMessageProcessorUIPanel<
+                    FuzzerHttpMessageScriptProcessorAdapter,
+                    FuzzerHttpMessageScriptProcessorAdapterUI> {
 
-        private static final String SCRIPT_FIELD_LABEL = Constant.messages.getString("fuzz.httpfuzzer.processor.scriptProcessor.panel.script.label");
+        private static final String SCRIPT_FIELD_LABEL =
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.processor.scriptProcessor.panel.script.label");
 
         private final JPanel fieldsPanel;
         private final JComboBox<ScriptUIEntry> scriptComboBox;
@@ -151,11 +153,12 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
         public FuzzerHttpMessageScriptProcessorAdapterUIPanel(List<ScriptWrapper> scriptWrappers) {
             scriptComboBox = new JComboBox<>(new SortedComboBoxModel<ScriptUIEntry>());
             addScriptsToScriptComboBox(scriptWrappers);
-            scriptComboBox.addItemListener(e -> {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    updateScriptParametersPanel((FuzzerProcessorScriptUIEntry) e.getItem());
-                }
-            });
+            scriptComboBox.addItemListener(
+                    e -> {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            updateScriptParametersPanel((FuzzerProcessorScriptUIEntry) e.getItem());
+                        }
+                    });
             scriptParametersPanel = new DynamicFieldsPanel(HttpFuzzerProcessorScript.EMPTY_PARAMS);
             fieldsPanel = new JPanel();
             setupFieldsPanel();
@@ -182,7 +185,10 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
 
             layout.setHorizontalGroup(
                     layout.createParallelGroup()
-                            .addGroup(layout.createSequentialGroup().addComponent(scriptLabel).addComponent(scriptComboBox))
+                            .addGroup(
+                                    layout.createSequentialGroup()
+                                            .addComponent(scriptLabel)
+                                            .addComponent(scriptComboBox))
                             .addComponent(parametersScrollPane));
 
             layout.setVerticalGroup(
@@ -201,9 +207,11 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
             if (scriptUIEntry != null) {
                 try {
                     if (!scriptUIEntry.isDataLoaded()) {
-                        HttpFuzzerProcessorScript script = HttpFuzzerProcessorScriptProxy
-                                .create(scriptUIEntry.getScriptWrapper());
-                        scriptUIEntry.setParameters(script.getRequiredParamsNames(), script.getOptionalParamsNames());
+                        HttpFuzzerProcessorScript script =
+                                HttpFuzzerProcessorScriptProxy.create(
+                                        scriptUIEntry.getScriptWrapper());
+                        scriptUIEntry.setParameters(
+                                script.getRequiredParamsNames(), script.getOptionalParamsNames());
                     }
                     requiredParameters = scriptUIEntry.getRequiredParameters();
                     optionalParameters = scriptUIEntry.getOptionalParameters();
@@ -214,7 +222,8 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
                             Constant.messages.getString(
                                     "fuzz.httpfuzzer.processor.scriptProcessor.warnNoInterface.message",
                                     scriptUIEntry.getScriptWrapper().getName()),
-                            Constant.messages.getString("fuzz.httpfuzzer.processor.scriptProcessor.warnNoInterface.title"));
+                            Constant.messages.getString(
+                                    "fuzz.httpfuzzer.processor.scriptProcessor.warnNoInterface.title"));
                 }
             }
 
@@ -230,15 +239,19 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
         }
 
         @Override
-        public void setFuzzerMessageProcessorUI(FuzzerHttpMessageScriptProcessorAdapterUI payloadProcessorUI) {
-            scriptComboBox.setSelectedItem(new FuzzerProcessorScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
+        public void setFuzzerMessageProcessorUI(
+                FuzzerHttpMessageScriptProcessorAdapterUI payloadProcessorUI) {
+            scriptComboBox.setSelectedItem(
+                    new FuzzerProcessorScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
             scriptParametersPanel.bindFieldValues(payloadProcessorUI.paramsValues);
         }
 
         @Override
         public FuzzerHttpMessageScriptProcessorAdapterUI getFuzzerMessageProcessorUI() {
-            FuzzerProcessorScriptUIEntry entry = (FuzzerProcessorScriptUIEntry) scriptComboBox.getSelectedItem();
-            return new FuzzerHttpMessageScriptProcessorAdapterUI(entry.getScriptWrapper(), scriptParametersPanel.getFieldValues());
+            FuzzerProcessorScriptUIEntry entry =
+                    (FuzzerProcessorScriptUIEntry) scriptComboBox.getSelectedItem();
+            return new FuzzerHttpMessageScriptProcessorAdapterUI(
+                    entry.getScriptWrapper(), scriptParametersPanel.getFieldValues());
         }
 
         @Override
@@ -251,25 +264,26 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
         public boolean validate() {
             if (scriptComboBox.getSelectedIndex() == -1) {
                 showValidationMessageDialog(
-                        Constant.messages
-                        .getString("fuzz.httpfuzzer.processor.scriptProcessor.panel.warnNoScript.message"),
-                        Constant.messages
-                        .getString("fuzz.httpfuzzer.processor.scriptProcessor.panel.warnNoScript.title"));
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.processor.scriptProcessor.panel.warnNoScript.message"),
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.processor.scriptProcessor.panel.warnNoScript.title"));
                 return false;
             }
 
             try {
                 scriptParametersPanel.validateFields();
             } catch (IllegalStateException ex) {
-                showValidationMessageDialog(ex.getMessage(),
-                        Constant.messages
-                        .getString("fuzz.httpfuzzer.processor.scriptProcessor.panel.warn.title"));
+                showValidationMessageDialog(
+                        ex.getMessage(),
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.processor.scriptProcessor.panel.warn.title"));
                 return false;
             }
             return true;
         }
 
-        private void showValidationMessageDialog(Object message,String title){
+        private void showValidationMessageDialog(Object message, String title) {
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
             scriptComboBox.requestFocusInWindow();
         }

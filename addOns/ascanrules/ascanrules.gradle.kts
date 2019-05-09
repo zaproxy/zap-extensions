@@ -19,3 +19,14 @@ dependencies {
     testImplementation(project(":testutils"))
     testImplementation("org.apache.commons:commons-lang3:3.9")
 }
+
+spotless {
+    javaWith3rdPartyFormatted(project, listOf(
+        "**/BufferOverflow.java",
+        "**/FormatString.java",
+        "**/TestServerSideInclude.java",
+        "**/TestInjectionCRLF.java",
+        "**/TestParameterTamper.java",
+        "**/TestServerSideInclude.java",
+        "**/TestDirectoryBrowsing.java"))
+}

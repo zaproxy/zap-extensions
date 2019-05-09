@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2017 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,31 +51,35 @@ public interface SingleWebDriverProvider {
     WebDriver getWebDriver(int requesterId);
 
     /**
-     * Gets a {@code WebDriver} to the provided browser for the given requester, proxying through the given address and port.
+     * Gets a {@code WebDriver} to the provided browser for the given requester, proxying through
+     * the given address and port.
      *
      * @param requesterId the ID of the (ZAP) component that's requesting the {@code WebDriver}.
      * @param proxyAddress the address of the proxy.
      * @param proxyPort the port of the proxy.
-     * @return the {@code WebDriver} to the provided browser, proxying through the given address and port.
-     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if {@code proxyPort} is not a valid
-     *             port number (between 1 and 65535).
+     * @return the {@code WebDriver} to the provided browser, proxying through the given address and
+     *     port.
+     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if
+     *     {@code proxyPort} is not a valid port number (between 1 and 65535).
      */
     WebDriver getWebDriver(int requesterId, String proxyAddress, int proxyPort);
 
     /**
-     * Gets a warning message that indicates the possible cause of the failure that prevented the WebDriver/browser from
-     * starting.
-     * <p>
-     * The message will be shown in UI components.
+     * Gets a warning message that indicates the possible cause of the failure that prevented the
+     * WebDriver/browser from starting.
+     *
+     * <p>The message will be shown in UI components.
      *
      * @param e the error/exception that was thrown while obtaining/starting the WebDriver/browser.
-     * @return the warning message that indicates the possible cause of the failure, might be {@code null} if there's no custom
-     *         warning message (Selenium extension will provide a generic warning message in those cases).
+     * @return the warning message that indicates the possible cause of the failure, might be {@code
+     *     null} if there's no custom warning message (Selenium extension will provide a generic
+     *     warning message in those cases).
      */
     String getWarnMessageFailedToStart(Throwable e);
-    
+
     /**
      * Returns true if the provided browser is configured to run on the current platform
+     *
      * @return
      */
     boolean isConfigured();

@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.websocket.fuzz.messagelocations;
 
 import java.util.SortedSet;
-
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacement;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacer;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
@@ -29,7 +28,8 @@ import org.zaproxy.zap.extension.websocket.messagelocations.TextWebSocketMessage
 import org.zaproxy.zap.model.InvalidMessageException;
 import org.zaproxy.zap.model.MessageLocation;
 
-public class TextWebSocketMessageLocationReplacer implements MessageLocationReplacer<WebSocketMessageDTO> {
+public class TextWebSocketMessageLocationReplacer
+        implements MessageLocationReplacer<WebSocketMessageDTO> {
 
     private WebSocketMessageDTO message;
 
@@ -49,7 +49,8 @@ public class TextWebSocketMessageLocationReplacer implements MessageLocationRepl
     }
 
     @Override
-    public WebSocketFuzzMessageDTO replace(SortedSet<? extends MessageLocationReplacement<?>> replacements)
+    public WebSocketFuzzMessageDTO replace(
+            SortedSet<? extends MessageLocationReplacement<?>> replacements)
             throws InvalidMessageException {
         if (message == null) {
             throw new IllegalStateException("Replacer not initialised.");
@@ -68,7 +69,10 @@ public class TextWebSocketMessageLocationReplacer implements MessageLocationRepl
             }
 
             TextWebSocketMessageLocation textLocation = (TextWebSocketMessageLocation) location;
-            replacer.replace(textLocation.getStart(), textLocation.getEnd(), replacement.getReplacement().toString());
+            replacer.replace(
+                    textLocation.getStart(),
+                    textLocation.getEnd(),
+                    replacement.getReplacement().toString());
         }
 
         WebSocketFuzzMessageDTO replacedMessage = copyMessage(message);

@@ -21,30 +21,22 @@
 
 package com.sittinglittleduck.DirBuster;
 
-/**
- *
- * @author james
- */
-public class HTMLelementToParse
-{
+/** @author james */
+public class HTMLelementToParse {
     private String tag;
     private String attr;
-    
+
     /** Creates a new instance of HTMLelementToParse */
-    public HTMLelementToParse(String tag, String attr)
-    {
+    public HTMLelementToParse(String tag, String attr) {
         this.tag = tag;
         this.attr = attr;
     }
 
-    public String getAttr()
-    {
+    public String getAttr() {
         return attr;
     }
 
-    public String getTag()
-    {
+    public String getTag() {
         return tag;
     }
-        
 }

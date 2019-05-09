@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,13 +20,11 @@
 package org.zaproxy.zap.extension.websocket.fuzz.processors;
 
 import java.util.List;
-
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -37,10 +35,13 @@ import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerMessageProcessorU
 import org.zaproxy.zap.extension.websocket.fuzz.processors.FuzzerWebSocketMessageScriptProcessorAdapterUIHandler.FuzzerWebSocketMessageScriptProcessorAdapterUI;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 
-public class FuzzerWebSocketMessageScriptProcessorAdapterUIHandler implements
-        WebSocketFuzzerMessageProcessorUIHandler<FuzzerWebSocketMessageScriptProcessorAdapter, FuzzerWebSocketMessageScriptProcessorAdapterUI> {
+public class FuzzerWebSocketMessageScriptProcessorAdapterUIHandler
+        implements WebSocketFuzzerMessageProcessorUIHandler<
+                FuzzerWebSocketMessageScriptProcessorAdapter,
+                FuzzerWebSocketMessageScriptProcessorAdapterUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("websocket.fuzzer.processor.scriptProcessor.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("websocket.fuzzer.processor.scriptProcessor.name");
 
     private final ExtensionScript extensionScript;
 
@@ -90,7 +91,8 @@ public class FuzzerWebSocketMessageScriptProcessorAdapterUIHandler implements
     }
 
     public static class FuzzerWebSocketMessageScriptProcessorAdapterUI
-            implements WebSocketFuzzerMessageProcessorUI<FuzzerWebSocketMessageScriptProcessorAdapter> {
+            implements WebSocketFuzzerMessageProcessorUI<
+                    FuzzerWebSocketMessageScriptProcessorAdapter> {
 
         private final ScriptWrapper scriptWrapper;
 
@@ -128,16 +130,20 @@ public class FuzzerWebSocketMessageScriptProcessorAdapterUIHandler implements
         }
     }
 
-    public static class FuzzerWebSocketMessageScriptProcessorAdapterUIPanel extends
-            AbstractWebSocketFuzzerMessageProcessorUIPanel<FuzzerWebSocketMessageScriptProcessorAdapter, FuzzerWebSocketMessageScriptProcessorAdapterUI> {
+    public static class FuzzerWebSocketMessageScriptProcessorAdapterUIPanel
+            extends AbstractWebSocketFuzzerMessageProcessorUIPanel<
+                    FuzzerWebSocketMessageScriptProcessorAdapter,
+                    FuzzerWebSocketMessageScriptProcessorAdapterUI> {
 
-        private static final String SCRIPT_FIELD_LABEL = Constant.messages
-                .getString("websocket.fuzzer.processor.scriptProcessor.panel.script.label");
+        private static final String SCRIPT_FIELD_LABEL =
+                Constant.messages.getString(
+                        "websocket.fuzzer.processor.scriptProcessor.panel.script.label");
 
         private final JPanel fieldsPanel;
         private final JComboBox<ScriptUIEntry> scriptComboBox;
 
-        public FuzzerWebSocketMessageScriptProcessorAdapterUIPanel(List<ScriptWrapper> scriptWrappers) {
+        public FuzzerWebSocketMessageScriptProcessorAdapterUIPanel(
+                List<ScriptWrapper> scriptWrappers) {
             scriptComboBox = new JComboBox<>(new SortedComboBoxModel<ScriptUIEntry>());
             for (ScriptWrapper scriptWrapper : scriptWrappers) {
                 if (scriptWrapper.isEnabled()) {
@@ -154,7 +160,10 @@ public class FuzzerWebSocketMessageScriptProcessorAdapterUIHandler implements
             JLabel scriptLabel = new JLabel(SCRIPT_FIELD_LABEL);
             scriptLabel.setLabelFor(scriptComboBox);
 
-            layout.setHorizontalGroup(layout.createSequentialGroup().addComponent(scriptLabel).addComponent(scriptComboBox));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addComponent(scriptLabel)
+                            .addComponent(scriptComboBox));
 
             layout.setVerticalGroup(
                     layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -168,8 +177,10 @@ public class FuzzerWebSocketMessageScriptProcessorAdapterUIHandler implements
         }
 
         @Override
-        public void setFuzzerMessageProcessorUI(FuzzerWebSocketMessageScriptProcessorAdapterUI payloadProcessorUI) {
-            scriptComboBox.setSelectedItem(new ScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
+        public void setFuzzerMessageProcessorUI(
+                FuzzerWebSocketMessageScriptProcessorAdapterUI payloadProcessorUI) {
+            scriptComboBox.setSelectedItem(
+                    new ScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
         }
 
         @Override
@@ -188,8 +199,10 @@ public class FuzzerWebSocketMessageScriptProcessorAdapterUIHandler implements
             if (scriptComboBox.getSelectedIndex() == -1) {
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("websocket.fuzzer.processor.scriptProcessor.panel.warnNoScript.message"),
-                        Constant.messages.getString("websocket.fuzzer.processor.scriptProcessor.panel.warnNoScript.title"),
+                        Constant.messages.getString(
+                                "websocket.fuzzer.processor.scriptProcessor.panel.warnNoScript.message"),
+                        Constant.messages.getString(
+                                "websocket.fuzzer.processor.scriptProcessor.panel.warnNoScript.title"),
                         JOptionPane.INFORMATION_MESSAGE);
                 scriptComboBox.requestFocusInWindow();
                 return false;
@@ -262,7 +275,6 @@ public class FuzzerWebSocketMessageScriptProcessorAdapterUIHandler implements
                 }
                 return scriptName.compareTo(other.scriptName);
             }
-
         }
     }
 }

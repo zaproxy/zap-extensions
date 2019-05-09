@@ -1,19 +1,19 @@
 /*
  * Derivative Work based upon SQLMap source code implementation
- * 
+ *
  * Copyright (c) 2006-2012 sqlmap developers (http://sqlmap.org/)
  * Bernardo Damele Assumpcao Guimaraes, Miroslav Stampar.
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -25,13 +25,12 @@ import java.util.List;
 import org.jdom.Element;
 
 /**
- * Service class used to store a test element
- * parsed from the XML payload configuration file
- * 
+ * Service class used to store a test element parsed from the XML payload configuration file
+ *
  * @author yhawke (2013)
  */
 public class SQLiTest {
-        
+
     /*
      * Tag: <test>
     SQL injection test definition.
@@ -119,23 +118,21 @@ public class SQLiTest {
     private SQLiTestResponse response;
     private SQLiTestDetails details;
 
-    /**
-     * 
-     */
+    /** */
     public SQLiTest() {
         clauses = new ArrayList<>();
         where = new ArrayList<>();
         level = 0;
         stype = 0;
         risk = 0;
-        title = "";       
+        title = "";
         vector = "";
         request = null;
         response = null;
         details = null;
     }
 
-    /* 
+    /*
      * SQLMap Test list XML syntax
      * --------------------------------------------------------
      */
@@ -150,49 +147,50 @@ public class SQLiTest {
     private static final String TAG_RESPONSE = "response";
     private static final String TAG_DETAILS = "details";
 
-    /**
-     * 
-     * @param el 
-     */
+    /** @param el */
     protected SQLiTest(Element el) {
         this();
-        
+
         Element value = el.getChild(TAG_TEST_TITLE);
         if (value != null) {
             this.title = value.getText();
         }
-        
+
         value = el.getChild(TAG_TEST_STYPE);
         if (value != null) {
             try {
                 this.stype = Integer.parseInt(value.getText());
-                
-            } catch (NumberFormatException nfe) {}
+
+            } catch (NumberFormatException nfe) {
+            }
         }
-        
+
         value = el.getChild(TAG_TEST_LEVEL);
         if (value != null) {
             try {
                 this.level = Integer.parseInt(value.getText());
-                
-            } catch (NumberFormatException nfe) {}
+
+            } catch (NumberFormatException nfe) {
+            }
         }
-        
+
         value = el.getChild(TAG_TEST_RISK);
         if (value != null) {
             try {
                 this.risk = Integer.parseInt(value.getText());
-                
-            } catch (NumberFormatException nfe) {}
+
+            } catch (NumberFormatException nfe) {
+            }
         }
 
         value = el.getChild(TAG_TEST_CLAUSE);
         if (value != null) {
-            for (String tmp :  value.getText().split(",")) {
-                try {                    
+            for (String tmp : value.getText().split(",")) {
+                try {
                     clauses.add(Integer.parseInt(tmp));
-                    
-                } catch (NumberFormatException nfe) {}
+
+                } catch (NumberFormatException nfe) {
+                }
             }
         }
 
@@ -202,52 +200,49 @@ public class SQLiTest {
                 try {
                     where.add(Integer.parseInt(tmp));
 
-                } catch (NumberFormatException nfe) {}
+                } catch (NumberFormatException nfe) {
+                }
             }
         }
-                        
+
         value = el.getChild(TAG_TEST_VECTOR);
         if (value != null) {
             this.vector = value.getText();
         }
-        
+
         value = el.getChild(TAG_REQUEST);
         if (value != null) {
             this.request = new SQLiTestRequest(value);
         }
-        
+
         value = el.getChild(TAG_RESPONSE);
         if (value != null) {
             this.response = new SQLiTestResponse(value);
         }
-        
+
         value = el.getChild(TAG_DETAILS);
         if (value != null) {
             this.details = new SQLiTestDetails(value);
         }
     }
-        
-    /**
-     * 
-     * @return 
-     */
+
+    /** @return */
     public int getLevel() {
         return level;
     }
 
     /**
-     * 
      * @param clauseList
-     * @return 
+     * @return
      */
-    public boolean matchClauseList(int[] clauseList) {        
+    public boolean matchClauseList(int[] clauseList) {
         if (clauseList.length < clauses.size()) {
             return false;
         }
 
         boolean result = true;
         int idx = 0;
-        
+
         while (result && (idx < clauses.size())) {
             result = false;
             for (int j = 0; j < clauseList.length; j++) {
@@ -256,119 +251,85 @@ public class SQLiTest {
                     break;
                 }
             }
-            
+
             idx++;
         }
-    
+
         return result;
     }
-    
-    /**
-     * 
-     * @return 
-     */
+
+    /** @return */
     public boolean matchClause(SQLiBoundary boundary) {
         for (int testClause : clauses) {
             if ((testClause == 0) || boundary.matchClause(testClause)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public boolean matchWhere(SQLiBoundary boundary) {
         for (int testWhere : where) {
             if (boundary.matchWhere(testWhere)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public List<Integer> getWhere() {
         return where;
     }
-    
-    /**
-     * 
-     * @return 
-     */
+
+    /** @return */
     public List<Integer> getClauseList() {
         return clauses;
     }
-    
+
     /**
-     * 
      * @param testWhere
-     * @return 
+     * @return
      */
     public boolean matchWhere(int testWhere) {
         return where.isEmpty() || where.contains(testWhere);
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public String getTitle() {
         return title;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public int getStype() {
         return stype;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public int getRisk() {
         return risk;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public String getVector() {
         return vector;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public SQLiTestRequest getRequest() {
         return request;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public SQLiTestResponse getResponse() {
         return response;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public SQLiTestDetails getDetails() {
         return details;
-    }    
+    }
 }

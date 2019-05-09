@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,13 +24,11 @@ import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.DefaultStringPayloadGenerator;
@@ -42,10 +40,12 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.StringUIUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 
-public class DefaultStringPayloadGeneratorUIHandler implements
-        PayloadGeneratorUIHandler<DefaultPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
+public class DefaultStringPayloadGeneratorUIHandler
+        implements PayloadGeneratorUIHandler<
+                DefaultPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
 
-    private static final String PAYLOAD_GENERATOR_NAME = Constant.messages.getString("fuzz.payloads.generator.strings.name");
+    private static final String PAYLOAD_GENERATOR_NAME =
+            Constant.messages.getString("fuzz.payloads.generator.strings.name");
 
     private static final String SPLIT_PAYLOADS_PATTERN = "\r?\n";
 
@@ -69,8 +69,8 @@ public class DefaultStringPayloadGeneratorUIHandler implements
         return new DefaultStringPayloadGeneratorUIPanel();
     }
 
-    public static class DefaultStringPayloadGeneratorUI implements
-            PayloadGeneratorUI<DefaultPayload, DefaultStringPayloadGenerator> {
+    public static class DefaultStringPayloadGeneratorUI
+            implements PayloadGeneratorUI<DefaultPayload, DefaultStringPayloadGenerator> {
 
         private final boolean multiline;
         private final String value;
@@ -150,15 +150,20 @@ public class DefaultStringPayloadGeneratorUIHandler implements
         public DefaultStringPayloadGeneratorUI copy() {
             return this;
         }
-
     }
 
-    public static class DefaultStringPayloadGeneratorUIPanel extends
-            AbstractPersistentPayloadGeneratorUIPanel<DefaultPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
+    public static class DefaultStringPayloadGeneratorUIPanel
+            extends AbstractPersistentPayloadGeneratorUIPanel<
+                    DefaultPayload,
+                    DefaultStringPayloadGenerator,
+                    DefaultStringPayloadGeneratorUI> {
 
-        private static final String CONTENTS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.strings.contents.label");
-        private static final String MULTILINE_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.strings.multiline.label");
-        private static final String MULTILINE_FIELD_TOOLTIP = Constant.messages.getString("fuzz.payloads.generator.strings.multiline.tooltip");
+        private static final String CONTENTS_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payloads.generator.strings.contents.label");
+        private static final String MULTILINE_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payloads.generator.strings.multiline.label");
+        private static final String MULTILINE_FIELD_TOOLTIP =
+                Constant.messages.getString("fuzz.payloads.generator.strings.multiline.tooltip");
 
         private JPanel fieldsPanel;
 
@@ -180,27 +185,29 @@ public class DefaultStringPayloadGeneratorUIHandler implements
 
             JScrollPane contentsScrollPane = new JScrollPane(getContentsTextArea());
 
-            layout.setHorizontalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                    .addComponent(contentsLabel)
-                                    .addComponent(multilineLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(contentsScrollPane)
-                                    .addComponent(getMultilineCheckBox())
-                                    .addComponent(getSaveButton())));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                            .addComponent(contentsLabel)
+                                            .addComponent(multilineLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                            .addComponent(contentsScrollPane)
+                                            .addComponent(getMultilineCheckBox())
+                                            .addComponent(getSaveButton())));
 
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(contentsLabel)
-                                    .addComponent(contentsScrollPane))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(multilineLabel)
-                                    .addComponent(getMultilineCheckBox()))
-                    .addComponent(getSaveButton()));
+            layout.setVerticalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(contentsLabel)
+                                            .addComponent(contentsScrollPane))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(multilineLabel)
+                                            .addComponent(getMultilineCheckBox()))
+                            .addComponent(getSaveButton()));
 
             getSaveButton().setEnabled(true);
         }
@@ -219,20 +226,21 @@ public class DefaultStringPayloadGeneratorUIHandler implements
             if (multilineCheckBox == null) {
                 multilineCheckBox = new JCheckBox();
                 multilineCheckBox.setToolTipText(MULTILINE_FIELD_TOOLTIP);
-                multilineCheckBox.addItemListener(new ItemListener() {
+                multilineCheckBox.addItemListener(
+                        new ItemListener() {
 
-                    @Override
-                    public void itemStateChanged(ItemEvent e) {
-                        getSaveButton().setEnabled(e.getStateChange() != ItemEvent.SELECTED);
-                    }
-                });
+                            @Override
+                            public void itemStateChanged(ItemEvent e) {
+                                getSaveButton()
+                                        .setEnabled(e.getStateChange() != ItemEvent.SELECTED);
+                            }
+                        });
             }
             return multilineCheckBox;
         }
 
         @Override
-        public void init(MessageLocation messageLocation) {
-        }
+        public void init(MessageLocation messageLocation) {}
 
         @Override
         public JPanel getComponent() {
@@ -247,12 +255,14 @@ public class DefaultStringPayloadGeneratorUIHandler implements
 
         @Override
         public DefaultStringPayloadGeneratorUI getPayloadGeneratorUI() {
-            return new DefaultStringPayloadGeneratorUI(getContentsTextArea().getText(), getMultilineCheckBox().isSelected());
+            return new DefaultStringPayloadGeneratorUI(
+                    getContentsTextArea().getText(), getMultilineCheckBox().isSelected());
         }
 
         @Override
         protected DefaultStringPayloadGenerator getPayloadGenerator() {
-            return new DefaultStringPayloadGenerator(Arrays.asList(getContentsTextArea().getText().split("\r?\n", -1)));
+            return new DefaultStringPayloadGenerator(
+                    Arrays.asList(getContentsTextArea().getText().split("\r?\n", -1)));
         }
 
         @Override

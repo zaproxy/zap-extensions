@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.selenium;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
@@ -34,91 +33,76 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 /**
  * Manages the Selenium configurations saved in the configuration file.
- * <p>
- * It allows to change, programmatically, the following options:
+ *
+ * <p>It allows to change, programmatically, the following options:
+ *
  * <ul>
- * <li>The path to ChromeDriver;</li>
- * <li>The path to Firefox binary;</li>
- * <li>The path to Firefox driver (geckodriver);</li>
- * <li>The path to PhantomJS binary.</li>
+ *   <li>The path to ChromeDriver;
+ *   <li>The path to Firefox binary;
+ *   <li>The path to Firefox driver (geckodriver);
+ *   <li>The path to PhantomJS binary.
  * </ul>
- * 
  */
 public class SeleniumOptions extends VersionedAbstractParam {
 
     private static final Logger LOGGER = Logger.getLogger(SeleniumOptions.class);
 
-    public static final String CHROME_DRIVER_SYSTEM_PROPERTY = ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
-    public static final String FIREFOX_BINARY_SYSTEM_PROPERTY = "zap.selenium.webdriver.firefox.bin";
+    public static final String CHROME_DRIVER_SYSTEM_PROPERTY =
+            ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
+    public static final String FIREFOX_BINARY_SYSTEM_PROPERTY =
+            "zap.selenium.webdriver.firefox.bin";
     public static final String FIREFOX_DRIVER_SYSTEM_PROPERTY = "webdriver.gecko.driver";
-    /**
-     * @deprecated IE is no longer supported.
-     */
+    /** @deprecated IE is no longer supported. */
     @Deprecated
-    public static final String IE_DRIVER_SYSTEM_PROPERTY = InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;
-    public static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
+    public static final String IE_DRIVER_SYSTEM_PROPERTY =
+            InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;
+
+    public static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY =
+            PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
 
     /**
-     * The current version of the configurations. Used to keep track of configuration changes between releases, in case
-     * changes/updates are needed.
-     * <p>
-     * It only needs to be incremented for configuration changes (not releases of the add-on).
-     * 
+     * The current version of the configurations. Used to keep track of configuration changes
+     * between releases, in case changes/updates are needed.
+     *
+     * <p>It only needs to be incremented for configuration changes (not releases of the add-on).
+     *
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
     private static final int CURRENT_CONFIG_VERSION = 2;
 
-    /**
-     * The base key for all selenium configurations.
-     */
+    /** The base key for all selenium configurations. */
     private static final String SELENIUM_BASE_KEY = "selenium";
 
     /**
      * The configuration key to read/write the version of the configurations.
-     * 
+     *
      * @see #CURRENT_CONFIG_VERSION
      */
     private static final String CONFIG_VERSION_KEY = SELENIUM_BASE_KEY + VERSION_ATTRIBUTE;
 
-    /**
-     * The configuration key to read/write the path to ChromeDriver.
-     */
+    /** The configuration key to read/write the path to ChromeDriver. */
     private static final String CHROME_DRIVER_KEY = SELENIUM_BASE_KEY + ".chromeDriver";
 
-    /**
-     * The configuration key to read/write the path Firefox binary.
-     */
+    /** The configuration key to read/write the path Firefox binary. */
     private static final String FIREFOX_BINARY_KEY = SELENIUM_BASE_KEY + ".firefoxBinary";
 
-    /**
-     * The configuration key to read/write the path Firefox driver (geckodriver).
-     */
+    /** The configuration key to read/write the path Firefox driver (geckodriver). */
     private static final String FIREFOX_DRIVER_KEY = SELENIUM_BASE_KEY + ".firefoxDriver";
 
-    /**
-     * The configuration key to read/write the path PhantomJS binary.
-     */
+    /** The configuration key to read/write the path PhantomJS binary. */
     private static final String PHANTOM_JS_BINARY_KEY = SELENIUM_BASE_KEY + ".phantomJsBinary";
 
-    /**
-     * The path to ChromeDriver.
-     */
+    /** The path to ChromeDriver. */
     private String chromeDriverPath = "";
 
-    /**
-     * The path to Firefox binary.
-     */
+    /** The path to Firefox binary. */
     private String firefoxBinaryPath = "";
 
-    /**
-     * The path to Firefox driver (geckodriver).
-     */
+    /** The path to Firefox driver (geckodriver). */
     private String firefoxDriverPath = "";
 
-    /**
-     * The path to PhantomJS binary.
-     */
+    /** The path to PhantomJS binary. */
     private String phantomJsBinaryPath = "";
 
     @Override
@@ -135,18 +119,26 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        chromeDriverPath = getWebDriverPath(Browser.CHROME, CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
-        firefoxBinaryPath = readSystemPropertyWithOptionFallback(FIREFOX_BINARY_SYSTEM_PROPERTY, FIREFOX_BINARY_KEY);
-        firefoxDriverPath = getWebDriverPath(Browser.FIREFOX, FIREFOX_DRIVER_SYSTEM_PROPERTY, FIREFOX_DRIVER_KEY);
+        chromeDriverPath =
+                getWebDriverPath(Browser.CHROME, CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
+        firefoxBinaryPath =
+                readSystemPropertyWithOptionFallback(
+                        FIREFOX_BINARY_SYSTEM_PROPERTY, FIREFOX_BINARY_KEY);
+        firefoxDriverPath =
+                getWebDriverPath(
+                        Browser.FIREFOX, FIREFOX_DRIVER_SYSTEM_PROPERTY, FIREFOX_DRIVER_KEY);
 
-        phantomJsBinaryPath = readSystemPropertyWithOptionFallback(PHANTOM_JS_BINARY_SYSTEM_PROPERTY, PHANTOM_JS_BINARY_KEY);
+        phantomJsBinaryPath =
+                readSystemPropertyWithOptionFallback(
+                        PHANTOM_JS_BINARY_SYSTEM_PROPERTY, PHANTOM_JS_BINARY_KEY);
     }
 
     /**
      * Gets the path to the WebDriver of the given browser.
-     * <p>
-     * Reads the given {@code systemProperty}, falling back to the option with the given {@code optionKey} if not set. If both
-     * properties are empty it returns the path to the bundled WebDriver, if available.
+     *
+     * <p>Reads the given {@code systemProperty}, falling back to the option with the given {@code
+     * optionKey} if not set. If both properties are empty it returns the path to the bundled
+     * WebDriver, if available.
      *
      * @param browser the target browser
      * @param systemProperty the name of the system property
@@ -173,15 +165,17 @@ public class SeleniumOptions extends VersionedAbstractParam {
     }
 
     /**
-     * Reads the given {@code systemProperty}, falling back to the option with the given {@code optionKey} if not set.
-     * <p>
-     * The system property if set, is saved in the file with the given {@code optionKey}. If not set, it's restored with the
-     * option if available.
-     * 
+     * Reads the given {@code systemProperty}, falling back to the option with the given {@code
+     * optionKey} if not set.
+     *
+     * <p>The system property if set, is saved in the file with the given {@code optionKey}. If not
+     * set, it's restored with the option if available.
+     *
      * @param systemProperty the name of the system property
      * @param optionKey the key of the option used as fallback
-     * @return the value of the system property, or if not set, the option read from the configuration file. If neither the
-     *         system property nor the option are set it returns an empty {@code String}.
+     * @return the value of the system property, or if not set, the option read from the
+     *     configuration file. If neither the system property nor the option are set it returns an
+     *     empty {@code String}.
      */
     private String readSystemPropertyWithOptionFallback(String systemProperty, String optionKey) {
         String value = System.getProperty(systemProperty);
@@ -204,9 +198,9 @@ public class SeleniumOptions extends VersionedAbstractParam {
     @Override
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
-        case 1:
-            getConfig().clearProperty("selenium.ieDriver");
-            break;
+            case 1:
+                getConfig().clearProperty("selenium.ieDriver");
+                break;
         }
     }
 
@@ -231,13 +225,14 @@ public class SeleniumOptions extends VersionedAbstractParam {
         if (!this.chromeDriverPath.equals(chromeDriverPath)) {
             this.chromeDriverPath = chromeDriverPath;
 
-            saveAndSetSystemProperty(CHROME_DRIVER_KEY, CHROME_DRIVER_SYSTEM_PROPERTY, chromeDriverPath);
+            saveAndSetSystemProperty(
+                    CHROME_DRIVER_KEY, CHROME_DRIVER_SYSTEM_PROPERTY, chromeDriverPath);
         }
     }
 
     /**
-     * Saves the given {@code value} to the configuration file, with the given {@code optionKey}, and sets it to the given
-     * {@code systemProperty}.
+     * Saves the given {@code value} to the configuration file, with the given {@code optionKey},
+     * and sets it to the given {@code systemProperty}.
      *
      * @param optionKey the key of the option
      * @param systemProperty the system property
@@ -269,7 +264,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
         if (!this.firefoxBinaryPath.equals(firefoxBinaryPath)) {
             this.firefoxBinaryPath = firefoxBinaryPath;
 
-            saveAndSetSystemProperty(FIREFOX_BINARY_KEY, FIREFOX_BINARY_SYSTEM_PROPERTY, firefoxBinaryPath);
+            saveAndSetSystemProperty(
+                    FIREFOX_BINARY_KEY, FIREFOX_BINARY_SYSTEM_PROPERTY, firefoxBinaryPath);
         }
     }
 
@@ -294,7 +290,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
         if (!this.firefoxDriverPath.equals(firefoxDriverPath)) {
             this.firefoxDriverPath = firefoxDriverPath;
 
-            saveAndSetSystemProperty(FIREFOX_DRIVER_KEY, FIREFOX_DRIVER_SYSTEM_PROPERTY, firefoxDriverPath);
+            saveAndSetSystemProperty(
+                    FIREFOX_DRIVER_KEY, FIREFOX_DRIVER_SYSTEM_PROPERTY, firefoxDriverPath);
         }
     }
 
@@ -342,8 +339,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
         if (!this.phantomJsBinaryPath.equals(phantomJsBinaryPath)) {
             this.phantomJsBinaryPath = phantomJsBinaryPath;
 
-            saveAndSetSystemProperty(PHANTOM_JS_BINARY_KEY, PHANTOM_JS_BINARY_SYSTEM_PROPERTY, phantomJsBinaryPath);
+            saveAndSetSystemProperty(
+                    PHANTOM_JS_BINARY_KEY, PHANTOM_JS_BINARY_SYSTEM_PROPERTY, phantomJsBinaryPath);
         }
     }
-
 }

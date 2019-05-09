@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,16 +20,15 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.util.List;
-
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessorAdapter;
@@ -37,15 +36,18 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.ScriptStringPayload
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
-import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
 
 public class ScriptStringPayloadProcessorAdapterUIHandler
-        implements
-        PayloadProcessorUIHandler<DefaultPayload, ScriptStringPayloadProcessorAdapter, ScriptStringPayloadProcessorAdapterUI> {
+        implements PayloadProcessorUIHandler<
+                DefaultPayload,
+                ScriptStringPayloadProcessorAdapter,
+                ScriptStringPayloadProcessorAdapterUI> {
 
-    private static final Logger LOGGER = Logger.getLogger(ScriptStringPayloadProcessorAdapterUIHandler.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(ScriptStringPayloadProcessorAdapterUIHandler.class);
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.script.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.payload.processor.script.name");
 
     private final ExtensionScript extensionScript;
 
@@ -74,8 +76,8 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
                 extensionScript.getScripts(ScriptStringPayloadProcessor.TYPE_NAME));
     }
 
-    public static class ScriptStringPayloadProcessorAdapterUI implements
-            PayloadProcessorUI<DefaultPayload, ScriptStringPayloadProcessorAdapter> {
+    public static class ScriptStringPayloadProcessorAdapterUI
+            implements PayloadProcessorUI<DefaultPayload, ScriptStringPayloadProcessorAdapter> {
 
         private final ScriptWrapper scriptWrapper;
 
@@ -116,14 +118,16 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
         public ScriptStringPayloadProcessorAdapterUI copy() {
             return this;
         }
-
     }
 
     public static class ScriptStringPayloadProcessorAdapterUIPanel
-            extends
-            AbstractProcessorUIPanel<DefaultPayload, ScriptStringPayloadProcessorAdapter, ScriptStringPayloadProcessorAdapterUI> {
+            extends AbstractProcessorUIPanel<
+                    DefaultPayload,
+                    ScriptStringPayloadProcessorAdapter,
+                    ScriptStringPayloadProcessorAdapterUI> {
 
-        private static final String SCRIPT_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.script.script.label");
+        private static final String SCRIPT_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payload.processor.script.script.label");
 
         private final JPanel fieldsPanel;
         private final JComboBox<ScriptUIEntry> scriptComboBox;
@@ -145,11 +149,15 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
             JLabel scriptLabel = new JLabel(SCRIPT_FIELD_LABEL);
             scriptLabel.setLabelFor(scriptComboBox);
 
-            layout.setHorizontalGroup(layout.createSequentialGroup().addComponent(scriptLabel).addComponent(scriptComboBox));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addComponent(scriptLabel)
+                            .addComponent(scriptComboBox));
 
-            layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(scriptLabel)
-                    .addComponent(scriptComboBox));
+            layout.setVerticalGroup(
+                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(scriptLabel)
+                            .addComponent(scriptComboBox));
         }
 
         @Override
@@ -158,8 +166,10 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
         }
 
         @Override
-        public void setPayloadProcessorUI(ScriptStringPayloadProcessorAdapterUI payloadProcessorUI) {
-            scriptComboBox.setSelectedItem(new ScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
+        public void setPayloadProcessorUI(
+                ScriptStringPayloadProcessorAdapterUI payloadProcessorUI) {
+            scriptComboBox.setSelectedItem(
+                    new ScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
         }
 
         @Override
@@ -173,8 +183,10 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
             if (scriptComboBox.getSelectedIndex() == -1) {
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("fuzz.payload.processor.script.warnNoScript.message"),
-                        Constant.messages.getString("fuzz.payload.processor.script.warnNoScript.title"),
+                        Constant.messages.getString(
+                                "fuzz.payload.processor.script.warnNoScript.message"),
+                        Constant.messages.getString(
+                                "fuzz.payload.processor.script.warnNoScript.title"),
                         JOptionPane.INFORMATION_MESSAGE);
                 scriptComboBox.requestFocusInWindow();
                 return false;
@@ -187,22 +199,28 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
                 if (scriptPayloadGenerator == null) {
                     JOptionPane.showMessageDialog(
                             null,
-                            Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.message"),
-                            Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.title"),
+                            Constant.messages.getString(
+                                    "fuzz.payload.processor.script.warnNoInterface.message"),
+                            Constant.messages.getString(
+                                    "fuzz.payload.processor.script.warnNoInterface.title"),
                             JOptionPane.INFORMATION_MESSAGE);
                     handleScriptExceptionImpl(
                             scriptWrapper,
-                            Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.message"));
+                            Constant.messages.getString(
+                                    "fuzz.payload.processor.script.warnNoInterface.message"));
                     return false;
                 }
             } catch (Exception e) {
                 handleScriptExceptionImpl(scriptWrapper, e);
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.message"),
-                        Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.title"),
+                        Constant.messages.getString(
+                                "fuzz.payload.processor.script.warnNoInterface.message"),
+                        Constant.messages.getString(
+                                "fuzz.payload.processor.script.warnNoInterface.title"),
                         JOptionPane.INFORMATION_MESSAGE);
-                LOGGER.warn("Failed to validate '" + scriptWrapper.getName() + "': " + e.getMessage());
+                LOGGER.warn(
+                        "Failed to validate '" + scriptWrapper.getName() + "': " + e.getMessage());
                 return false;
             }
             return true;
@@ -218,8 +236,10 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
         }
     }
 
-    private static ScriptStringPayloadProcessor initialiseImpl(ScriptWrapper scriptWrapper) throws Exception {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+    private static ScriptStringPayloadProcessor initialiseImpl(ScriptWrapper scriptWrapper)
+            throws Exception {
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             return extensionScript.getInterface(scriptWrapper, ScriptStringPayloadProcessor.class);
         }
@@ -227,7 +247,8 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
     }
 
     private static void handleScriptExceptionImpl(ScriptWrapper scriptWrapper, Exception cause) {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             extensionScript.setError(scriptWrapper, cause);
             extensionScript.setEnabled(scriptWrapper, false);
@@ -235,7 +256,8 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
     }
 
     private static void handleScriptExceptionImpl(ScriptWrapper scriptWrapper, String error) {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             extensionScript.setError(scriptWrapper, error);
             extensionScript.setEnabled(scriptWrapper, false);

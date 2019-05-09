@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,18 +21,16 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JCheckBox;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.RegexPayloadGenerator;
@@ -45,10 +43,12 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
-public class RegexPayloadGeneratorUIHandler implements
-        PayloadGeneratorUIHandler<DefaultPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
+public class RegexPayloadGeneratorUIHandler
+        implements PayloadGeneratorUIHandler<
+                DefaultPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
 
-    private static final String PAYLOAD_GENERATOR_NAME = Constant.messages.getString("fuzz.payloads.generator.regex.name");
+    private static final String PAYLOAD_GENERATOR_NAME =
+            Constant.messages.getString("fuzz.payloads.generator.regex.name");
 
     @Override
     public String getName() {
@@ -70,7 +70,8 @@ public class RegexPayloadGeneratorUIHandler implements
         return new RegexPayloadGeneratorUIPanel();
     }
 
-    public static class RegexPayloadGeneratorUI implements PayloadGeneratorUI<DefaultPayload, RegexPayloadGenerator> {
+    public static class RegexPayloadGeneratorUI
+            implements PayloadGeneratorUI<DefaultPayload, RegexPayloadGenerator> {
 
         private final String regex;
         private final int maxPayloads;
@@ -81,11 +82,12 @@ public class RegexPayloadGeneratorUIHandler implements
             this.regex = regex;
             this.maxPayloads = maxPayloads;
             this.randomOrder = randomOrder;
-            this.payloadGenerator = new RegexPayloadGenerator(
-                    regex,
-                    maxPayloads,
-                    getMaximumForPayloadCalculation(maxPayloads),
-                    randomOrder);
+            this.payloadGenerator =
+                    new RegexPayloadGenerator(
+                            regex,
+                            maxPayloads,
+                            getMaximumForPayloadCalculation(maxPayloads),
+                            randomOrder);
         }
 
         public String getRegex() {
@@ -113,13 +115,18 @@ public class RegexPayloadGeneratorUIHandler implements
         @Override
         public String getDescription() {
             StringBuilder descriptionBuilder = new StringBuilder(150);
-            String maxPayloadsDescription = (maxPayloads != 0)
-                    ? Constant.messages
-                            .getString("fuzz.payloads.generator.regex.description.maxPayloads", Integer.valueOf(maxPayloads))
-                    : "";
+            String maxPayloadsDescription =
+                    (maxPayloads != 0)
+                            ? Constant.messages.getString(
+                                    "fuzz.payloads.generator.regex.description.maxPayloads",
+                                    Integer.valueOf(maxPayloads))
+                            : "";
 
-            String message = Constant.messages
-                    .getString("fuzz.payloads.generator.regex.description.base", regex, maxPayloadsDescription);
+            String message =
+                    Constant.messages.getString(
+                            "fuzz.payloads.generator.regex.description.base",
+                            regex,
+                            maxPayloadsDescription);
 
             descriptionBuilder.append(message);
 
@@ -140,11 +147,11 @@ public class RegexPayloadGeneratorUIHandler implements
         public RegexPayloadGeneratorUI copy() {
             return this;
         }
-
     }
 
-    public static class RegexPayloadGeneratorUIPanel extends
-            AbstractPersistentPayloadGeneratorUIPanel<DefaultPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
+    public static class RegexPayloadGeneratorUIPanel
+            extends AbstractPersistentPayloadGeneratorUIPanel<
+                    DefaultPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
 
         private static final int DEFAULT_MAX_PAYLOADS = 1000;
 
@@ -152,13 +159,20 @@ public class RegexPayloadGeneratorUIHandler implements
 
         private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 250;
 
-        private static final String CONTENTS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.regex.label");
-        private static final String RANDOM_ORDER_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.regex.randomorder");
-        private static final String MAX_PAYLOADS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.maxPayloads.label");
-        private static final String MAX_PAYLOADS_FIELD_TOOL_TIP = Constant.messages.getString("fuzz.payloads.generator.regex.maxPayloads.tooltip");
+        private static final String CONTENTS_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payloads.generator.regex.regex.label");
+        private static final String RANDOM_ORDER_LABEL =
+                Constant.messages.getString("fuzz.payloads.generator.regex.regex.randomorder");
+        private static final String MAX_PAYLOADS_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payloads.generator.regex.maxPayloads.label");
+        private static final String MAX_PAYLOADS_FIELD_TOOL_TIP =
+                Constant.messages.getString("fuzz.payloads.generator.regex.maxPayloads.tooltip");
 
-        private static final String PAYLOADS_PREVIEW_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.payloadsPreview.label");
-        private static final String PAYLOADS_PREVIEW_GENERATE_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.payloadsPreviewGenerate.label");
+        private static final String PAYLOADS_PREVIEW_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payloads.generator.regex.payloadsPreview.label");
+        private static final String PAYLOADS_PREVIEW_GENERATE_FIELD_LABEL =
+                Constant.messages.getString(
+                        "fuzz.payloads.generator.regex.payloadsPreviewGenerate.label");
 
         private JPanel fieldsPanel;
 
@@ -188,70 +202,77 @@ public class RegexPayloadGeneratorUIHandler implements
 
             JScrollPane payloadsPreviewScrollPane = new JScrollPane(getPayloadsPreviewTextArea());
 
-            layout.setHorizontalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                    .addComponent(regexLabel)
-                                    .addComponent(multilineLabel)
-                                    .addComponent(payloadsPreviewLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(getRegexTextField())
-                                    .addComponent(getMaxPayloadsNumberSpinner())
-                                    .addComponent(getRandomOrderCheckbox())
-                                    .addGroup(
-                                            layout.createSequentialGroup()
-                                                    .addComponent(getPayloadsPreviewGenerateButton())
-                                                    .addComponent(getSaveButton()))
-                                    .addComponent(payloadsPreviewScrollPane)));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                            .addComponent(regexLabel)
+                                            .addComponent(multilineLabel)
+                                            .addComponent(payloadsPreviewLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                            .addComponent(getRegexTextField())
+                                            .addComponent(getMaxPayloadsNumberSpinner())
+                                            .addComponent(getRandomOrderCheckbox())
+                                            .addGroup(
+                                                    layout.createSequentialGroup()
+                                                            .addComponent(
+                                                                    getPayloadsPreviewGenerateButton())
+                                                            .addComponent(getSaveButton()))
+                                            .addComponent(payloadsPreviewScrollPane)));
 
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(regexLabel)
-                                    .addComponent(getRegexTextField()))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(multilineLabel)
-                                    .addComponent(getMaxPayloadsNumberSpinner()))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(getRandomOrderCheckbox()))
-                    .addGroup(
-                            layout.createParallelGroup()
-                                    .addComponent(getPayloadsPreviewGenerateButton())
-                                    .addComponent(getSaveButton()))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(payloadsPreviewLabel)
-                                    .addComponent(payloadsPreviewScrollPane)));
+            layout.setVerticalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(regexLabel)
+                                            .addComponent(getRegexTextField()))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(multilineLabel)
+                                            .addComponent(getMaxPayloadsNumberSpinner()))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(getRandomOrderCheckbox()))
+                            .addGroup(
+                                    layout.createParallelGroup()
+                                            .addComponent(getPayloadsPreviewGenerateButton())
+                                            .addComponent(getSaveButton()))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(payloadsPreviewLabel)
+                                            .addComponent(payloadsPreviewScrollPane)));
         }
 
         private ZapTextField getRegexTextField() {
             if (regexTextField == null) {
                 regexTextField = new ZapTextField();
                 regexTextField.setColumns(25);
-                regexTextField.getDocument().addDocumentListener(new DocumentListener() {
+                regexTextField
+                        .getDocument()
+                        .addDocumentListener(
+                                new DocumentListener() {
 
-                    @Override
-                    public void removeUpdate(DocumentEvent e) {
-                        update();
-                    }
+                                    @Override
+                                    public void removeUpdate(DocumentEvent e) {
+                                        update();
+                                    }
 
-                    @Override
-                    public void insertUpdate(DocumentEvent e) {
-                        update();
-                    }
+                                    @Override
+                                    public void insertUpdate(DocumentEvent e) {
+                                        update();
+                                    }
 
-                    @Override
-                    public void changedUpdate(DocumentEvent e) {
-                        update();
-                    }
+                                    @Override
+                                    public void changedUpdate(DocumentEvent e) {
+                                        update();
+                                    }
 
-                    private void update() {
-                        setPreviewAndSaveButtonsEnabled(!regexTextField.getText().isEmpty());
-                    }
-                });
+                                    private void update() {
+                                        setPreviewAndSaveButtonsEnabled(
+                                                !regexTextField.getText().isEmpty());
+                                    }
+                                });
             }
             return regexTextField;
         }
@@ -263,7 +284,8 @@ public class RegexPayloadGeneratorUIHandler implements
 
         private ZapNumberSpinner getMaxPayloadsNumberSpinner() {
             if (maxPayloadsNumberSpinner == null) {
-                maxPayloadsNumberSpinner = new ZapNumberSpinner(0, DEFAULT_MAX_PAYLOADS, Integer.MAX_VALUE);
+                maxPayloadsNumberSpinner =
+                        new ZapNumberSpinner(0, DEFAULT_MAX_PAYLOADS, Integer.MAX_VALUE);
                 maxPayloadsNumberSpinner.setToolTipText(MAX_PAYLOADS_FIELD_TOOL_TIP);
             }
             return maxPayloadsNumberSpinner;
@@ -281,13 +303,14 @@ public class RegexPayloadGeneratorUIHandler implements
                 payloadsPreviewGenerateButton = new JButton(PAYLOADS_PREVIEW_GENERATE_FIELD_LABEL);
                 payloadsPreviewGenerateButton.setEnabled(false);
 
-                payloadsPreviewGenerateButton.addActionListener(new ActionListener() {
+                payloadsPreviewGenerateButton.addActionListener(
+                        new ActionListener() {
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        updatePayloadsPreviewTextArea();
-                    }
-                });
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                updatePayloadsPreviewTextArea();
+                            }
+                        });
             }
             return payloadsPreviewGenerateButton;
         }
@@ -308,7 +331,8 @@ public class RegexPayloadGeneratorUIHandler implements
             }
             StringBuilder contents = new StringBuilder();
             try {
-                try (ResettableAutoCloseableIterator<DefaultPayload> payloads = payloadGenerator.iterator()) {
+                try (ResettableAutoCloseableIterator<DefaultPayload> payloads =
+                        payloadGenerator.iterator()) {
                     for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext(); i++) {
                         if (contents.length() > 0) {
                             contents.append('\n');
@@ -319,7 +343,9 @@ public class RegexPayloadGeneratorUIHandler implements
                 getPayloadsPreviewTextArea().setEnabled(true);
             } catch (Exception ignore) {
                 contents.setLength(0);
-                contents.append(Constant.messages.getString("fuzz.payloads.generator.regex.payloadsPreview.error"));
+                contents.append(
+                        Constant.messages.getString(
+                                "fuzz.payloads.generator.regex.payloadsPreview.error"));
                 getPayloadsPreviewTextArea().setEnabled(false);
             }
             getPayloadsPreviewTextArea().setText(contents.toString());
@@ -327,8 +353,7 @@ public class RegexPayloadGeneratorUIHandler implements
         }
 
         @Override
-        public void init(MessageLocation messageLocation) {
-        }
+        public void init(MessageLocation messageLocation) {}
 
         @Override
         public JPanel getComponent() {
@@ -362,7 +387,8 @@ public class RegexPayloadGeneratorUIHandler implements
             }
             return new RegexPayloadGenerator(
                     getRegexTextField().getText(),
-                    getMaximumForPayloadPersistence(getMaxPayloadsNumberSpinner().getValue().intValue()),
+                    getMaximumForPayloadPersistence(
+                            getMaxPayloadsNumberSpinner().getValue().intValue()),
                     getRandomOrderCheckbox().isSelected());
         }
 
@@ -380,7 +406,8 @@ public class RegexPayloadGeneratorUIHandler implements
         public boolean validate() {
             if (oldGenerator != null) {
                 if (oldGenerator.getRegex().equals(getRegexTextField().getText())
-                        && oldGenerator.getMaxPayloads() == getMaxPayloadsNumberSpinner().getValue().intValue()
+                        && oldGenerator.getMaxPayloads()
+                                == getMaxPayloadsNumberSpinner().getValue().intValue()
                         && oldGenerator.isRandomOrder() == getRandomOrderCheckbox().isSelected()) {
                     return true;
                 }
@@ -390,8 +417,10 @@ public class RegexPayloadGeneratorUIHandler implements
             if (regex.isEmpty()) {
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnNoRegex.message"),
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnNoRegex.title"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generator.regex.warnNoRegex.message"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generator.regex.warnNoRegex.title"),
                         JOptionPane.INFORMATION_MESSAGE);
                 getRegexTextField().requestFocusInWindow();
                 return false;
@@ -399,8 +428,10 @@ public class RegexPayloadGeneratorUIHandler implements
             if (!RegexPayloadGenerator.hasValidSyntax(regex)) {
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnInvalidRegex.message"),
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnInvalidRegex.title"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generator.regex.warnInvalidRegex.message"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generator.regex.warnInvalidRegex.title"),
                         JOptionPane.INFORMATION_MESSAGE);
                 getRegexTextField().requestFocusInWindow();
                 return false;
@@ -408,8 +439,10 @@ public class RegexPayloadGeneratorUIHandler implements
             if (!RegexPayloadGenerator.isValid(regex)) {
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnInvalidRegexTimeCost.message"),
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnInvalidRegexTimeCost.title"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generator.regex.warnInvalidRegexTimeCost.message"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generator.regex.warnInvalidRegexTimeCost.title"),
                         JOptionPane.INFORMATION_MESSAGE);
                 getRegexTextField().requestFocusInWindow();
                 return false;
@@ -418,27 +451,35 @@ public class RegexPayloadGeneratorUIHandler implements
                 if (getMaxPayloadsNumberSpinner().getValue().intValue() == 0) {
                     JOptionPane.showMessageDialog(
                             null,
-                            Constant.messages.getString("fuzz.payloads.generator.regex.warnNoRandomPayloads.message"),
-                            Constant.messages.getString("fuzz.payloads.generator.regex.warnNoRandomPayloads.title"),
+                            Constant.messages.getString(
+                                    "fuzz.payloads.generator.regex.warnNoRandomPayloads.message"),
+                            Constant.messages.getString(
+                                    "fuzz.payloads.generator.regex.warnNoRandomPayloads.title"),
                             JOptionPane.INFORMATION_MESSAGE);
                     getMaxPayloadsNumberSpinner().requestFocusInWindow();
                     return false;
                 }
-            } else if (getMaxPayloadsNumberSpinner().getValue().intValue() == 0 && RegexPayloadGenerator.isInfinite(regex, 0)) {
+            } else if (getMaxPayloadsNumberSpinner().getValue().intValue() == 0
+                    && RegexPayloadGenerator.isInfinite(regex, 0)) {
                 if (JOptionPane.showConfirmDialog(
-                        null,
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnInfiniteRegex.message"),
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnInfiniteRegex.title"),
-                        JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+                                null,
+                                Constant.messages.getString(
+                                        "fuzz.payloads.generator.regex.warnInfiniteRegex.message"),
+                                Constant.messages.getString(
+                                        "fuzz.payloads.generator.regex.warnInfiniteRegex.title"),
+                                JOptionPane.YES_NO_OPTION)
+                        != JOptionPane.YES_OPTION) {
                     getMaxPayloadsNumberSpinner().requestFocusInWindow();
                     return false;
                 }
-            } else if (calculateNumberOfPayloads(
-                    regex) >= RegexPayloadGenerator.DEFAULT_LIMIT_CALCULATION_PAYLOADS) {
+            } else if (calculateNumberOfPayloads(regex)
+                    >= RegexPayloadGenerator.DEFAULT_LIMIT_CALCULATION_PAYLOADS) {
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnMaxNumberOfPayloads.message"),
-                        Constant.messages.getString("fuzz.payloads.generator.regex.warnMaxNumberOfPayloads.title"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generator.regex.warnMaxNumberOfPayloads.message"),
+                        Constant.messages.getString(
+                                "fuzz.payloads.generator.regex.warnMaxNumberOfPayloads.title"),
                         JOptionPane.INFORMATION_MESSAGE);
             }
             oldGenerator = null;
@@ -448,7 +489,8 @@ public class RegexPayloadGeneratorUIHandler implements
         private int calculateNumberOfPayloads(String regex) {
             return RegexPayloadGenerator.calculateNumberOfPayloads(
                     regex,
-                    getMaximumForPayloadCalculation(getMaxPayloadsNumberSpinner().getValue().intValue()),
+                    getMaximumForPayloadCalculation(
+                            getMaxPayloadsNumberSpinner().getValue().intValue()),
                     getRandomOrderCheckbox().isSelected());
         }
 

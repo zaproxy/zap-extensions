@@ -1,12 +1,12 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.ui;
 
 import java.util.Collections;
-
 import javax.swing.GroupLayout;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,7 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
@@ -57,8 +55,14 @@ public class HttpMessageSelectorPanel implements MessageSelectorPanel<HttpMessag
         panel.setLayout(layout);
         layout.setAutoCreateGaps(true);
 
-        SiteNode root = new SiteNode(null, -1, Constant.messages.getString("fuzz.httpfuzzer.select.message.dialogue.rootNode"));
-        SiteNode mainTreeRoot = (SiteNode) Model.getSingleton().getSession().getSiteTree().getRoot();
+        SiteNode root =
+                new SiteNode(
+                        null,
+                        -1,
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.select.message.dialogue.rootNode"));
+        SiteNode mainTreeRoot =
+                (SiteNode) Model.getSingleton().getSession().getSiteTree().getRoot();
         copyTree(mainTreeRoot, root);
         messagesTreeModel = new DefaultTreeModel(root);
 
@@ -67,7 +71,8 @@ public class HttpMessageSelectorPanel implements MessageSelectorPanel<HttpMessag
         messagesTree.setShowsRootHandles(true);
         messagesTree.setName("HttpMessageSelectorTree");
         messagesTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        messagesTree.setCellRenderer(new SiteMapTreeCellRenderer(Collections.<SiteMapListener> emptyList()));
+        messagesTree.setCellRenderer(
+                new SiteMapTreeCellRenderer(Collections.<SiteMapListener>emptyList()));
         messagesTree.expandRow(0);
 
         JScrollPane scrollPane = new JScrollPane();
@@ -97,14 +102,17 @@ public class HttpMessageSelectorPanel implements MessageSelectorPanel<HttpMessag
         SiteNode node = (SiteNode) messagesTree.getLastSelectedPathComponent();
         if (node != null && node.getParent() != null) {
             try {
-                selectedHttpMessage = ((SiteNode) node.getUserObject()).getHistoryReference().getHttpMessage();
+                selectedHttpMessage =
+                        ((SiteNode) node.getUserObject()).getHistoryReference().getHttpMessage();
                 return true;
             } catch (HttpMalformedHeaderException | DatabaseException e) {
                 LOGGER.error("Failed to read the message: ", e);
                 JOptionPane.showMessageDialog(
                         null,
-                        Constant.messages.getString("fuzz.httpfuzzer.select.message.dialogue.error.dialog.message"),
-                        Constant.messages.getString("fuzz.httpfuzzer.select.message.dialogue.error.dialog.title"),
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.select.message.dialogue.error.dialog.message"),
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.select.message.dialogue.error.dialog.title"),
                         JOptionPane.INFORMATION_MESSAGE);
                 messagesTree.requestFocusInWindow();
                 return false;
@@ -113,8 +121,10 @@ public class HttpMessageSelectorPanel implements MessageSelectorPanel<HttpMessag
 
         JOptionPane.showMessageDialog(
                 null,
-                Constant.messages.getString("fuzz.httpfuzzer.select.message.dialogue.validation.dialog.message"),
-                Constant.messages.getString("fuzz.httpfuzzer.select.message.dialogue.validation.dialog.title"),
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.select.message.dialogue.validation.dialog.message"),
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.select.message.dialogue.validation.dialog.title"),
                 JOptionPane.INFORMATION_MESSAGE);
         messagesTree.requestFocusInWindow();
         return false;
@@ -135,5 +145,4 @@ public class HttpMessageSelectorPanel implements MessageSelectorPanel<HttpMessag
         // THC add help...
         return null;
     }
-
 }

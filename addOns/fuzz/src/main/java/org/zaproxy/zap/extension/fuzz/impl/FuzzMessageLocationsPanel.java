@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,9 +25,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.JButton;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
@@ -42,8 +40,9 @@ import org.zaproxy.zap.view.messagelocation.AbstractMessageLocationsPanel;
 import org.zaproxy.zap.view.messagelocation.MessageLocationHighlight;
 import org.zaproxy.zap.view.messagelocation.MessageLocationsTableModel;
 
-public class FuzzMessageLocationsPanel extends
-        AbstractMessageLocationsPanel<FuzzLocationTableEntry, MessageLocationsTableModel<FuzzLocationTableEntry>> {
+public class FuzzMessageLocationsPanel
+        extends AbstractMessageLocationsPanel<
+                FuzzLocationTableEntry, MessageLocationsTableModel<FuzzLocationTableEntry>> {
 
     protected static final long serialVersionUID = -7609757285865562636L;
 
@@ -64,59 +63,77 @@ public class FuzzMessageLocationsPanel extends
 
         addButtonSpacer();
 
-        payloadsButton = new JButton(Constant.messages.getString("fuzz.fuzzer.dialog.messagelocations.button.payloads.label"));
-        payloadsButton.setToolTipText(Constant.messages.getString("fuzz.fuzzer.dialog.messagelocations.button.processors.tooltip"));
-        payloadsButton.addActionListener(new ActionListener() {
+        payloadsButton =
+                new JButton(
+                        Constant.messages.getString(
+                                "fuzz.fuzzer.dialog.messagelocations.button.payloads.label"));
+        payloadsButton.setToolTipText(
+                Constant.messages.getString(
+                        "fuzz.fuzzer.dialog.messagelocations.button.processors.tooltip"));
+        payloadsButton.addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int row = getSelectedRow();
-                FuzzLocationTableEntry entry = getMultipleOptionsModel().getElement(row);
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int row = getSelectedRow();
+                        FuzzLocationTableEntry entry = getMultipleOptionsModel().getElement(row);
 
-                PayloadsDialog a = new PayloadsDialog(
-                        getParentOwner(),
-                        entry.getLocation(),
-                        entry.getPayloads(),
-                        FuzzMessageLocationsPanel.this.payloadGeneratorsUIHandlers);
-                a.setVisible(true);
+                        PayloadsDialog a =
+                                new PayloadsDialog(
+                                        getParentOwner(),
+                                        entry.getLocation(),
+                                        entry.getPayloads(),
+                                        FuzzMessageLocationsPanel.this.payloadGeneratorsUIHandlers);
+                        a.setVisible(true);
 
-                List<PayloadTableEntry> payloads = a.getPayloads();
-                if (payloads != null) {
-                    entry.setPayloads(payloads);
-                    getMultipleOptionsModel().fireTableRowsUpdated(row, row);
-                }
-            }
-        });
+                        List<PayloadTableEntry> payloads = a.getPayloads();
+                        if (payloads != null) {
+                            entry.setPayloads(payloads);
+                            getMultipleOptionsModel().fireTableRowsUpdated(row, row);
+                        }
+                    }
+                });
         payloadsButton.setEnabled(false);
         addButton(payloadsButton);
 
         addButtonSpacer();
 
-        processorsButton = new JButton(
-                Constant.messages.getString("fuzz.fuzzer.dialog.messagelocations.button.processors.label"));
-        processorsButton.setToolTipText(Constant.messages.getString("fuzz.fuzzer.dialog.messagelocations.button.processors.tooltip"));
-        processorsButton.addActionListener(new ActionListener() {
+        processorsButton =
+                new JButton(
+                        Constant.messages.getString(
+                                "fuzz.fuzzer.dialog.messagelocations.button.processors.label"));
+        processorsButton.setToolTipText(
+                Constant.messages.getString(
+                        "fuzz.fuzzer.dialog.messagelocations.button.processors.tooltip"));
+        processorsButton.addActionListener(
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (processorsDialog == null) {
-                    processorsDialog = new ProcessorsMessageLocationDialog(getParentOwner(), new PayloadProcessorsContainer(
-                            PayloadProcessorUIHandlersRegistry.getInstance().getProcessorUIHandlers(),
-                            PayloadProcessorUIHandlersRegistry.getInstance().getNameDefaultPayloadProcessor()));
-                    processorsDialog.pack();
-                }
-                int row = getSelectedRow();
-                FuzzLocationTableEntry locationEntry = getMultipleOptionsModel().getElement(row);
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (processorsDialog == null) {
+                            processorsDialog =
+                                    new ProcessorsMessageLocationDialog(
+                                            getParentOwner(),
+                                            new PayloadProcessorsContainer(
+                                                    PayloadProcessorUIHandlersRegistry.getInstance()
+                                                            .getProcessorUIHandlers(),
+                                                    PayloadProcessorUIHandlersRegistry.getInstance()
+                                                            .getNameDefaultPayloadProcessor()));
+                            processorsDialog.pack();
+                        }
+                        int row = getSelectedRow();
+                        FuzzLocationTableEntry locationEntry =
+                                getMultipleOptionsModel().getElement(row);
 
-                processorsDialog.setMessageLocation(locationEntry.getLocation());
-                processorsDialog.setPayloadProcessors(locationEntry.getProcessors());
-                processorsDialog.setPayloads(getPayloads(locationEntry));
-                processorsDialog.setVisible(true);
+                        processorsDialog.setMessageLocation(locationEntry.getLocation());
+                        processorsDialog.setPayloadProcessors(locationEntry.getProcessors());
+                        processorsDialog.setPayloads(getPayloads(locationEntry));
+                        processorsDialog.setVisible(true);
 
-                locationEntry.setProcessors(processorsDialog.getProcessors());
-                getMultipleOptionsModel().fireTableRowsUpdated(row, row);
-            }
-        });
+                        locationEntry.setProcessors(processorsDialog.getProcessors());
+                        getMultipleOptionsModel().fireTableRowsUpdated(row, row);
+                    }
+                });
         processorsButton.setEnabled(false);
         addButton(processorsButton);
     }
@@ -137,11 +154,12 @@ public class FuzzMessageLocationsPanel extends
             MessageLocationHighlight highlightReference) {
         List<PayloadTableEntry> payloads;
         if (buttonAddedLocation) {
-            PayloadsDialog a = new PayloadsDialog(
-                    getParentOwner(),
-                    messageLocation,
-                    Collections.<PayloadTableEntry> emptyList(),
-                    payloadGeneratorsUIHandlers);
+            PayloadsDialog a =
+                    new PayloadsDialog(
+                            getParentOwner(),
+                            messageLocation,
+                            Collections.<PayloadTableEntry>emptyList(),
+                            payloadGeneratorsUIHandlers);
             a.setVisible(true);
             a.dispose();
 
@@ -189,14 +207,17 @@ public class FuzzMessageLocationsPanel extends
             if (!payloadTableEntries.isEmpty()) {
                 payloadGenerators = new ArrayList<>(payloadTableEntries.size());
                 for (PayloadTableEntry payloadTableEntry : payloadTableEntries) {
-                    PayloadGenerator<? extends Payload> payloadGenerator = payloadTableEntry.getPayloadGeneratorUI()
-                            .getPayloadGenerator();
-                    List<PayloadProcessorTableEntry> processors = payloadTableEntry.getPayloadProcessors();
+                    PayloadGenerator<? extends Payload> payloadGenerator =
+                            payloadTableEntry.getPayloadGeneratorUI().getPayloadGenerator();
+                    List<PayloadProcessorTableEntry> processors =
+                            payloadTableEntry.getPayloadProcessors();
                     numberOfPayloads += payloadGenerator.getNumberOfPayloads();
                     if (processors.isEmpty()) {
                         payloadGenerators.add(payloadGenerator);
                     } else {
-                        payloadGenerators.add(wrapProcessedPayloadGenerator((PayloadGenerator)payloadGenerator, processors));
+                        payloadGenerators.add(
+                                wrapProcessedPayloadGenerator(
+                                        (PayloadGenerator) payloadGenerator, processors));
                     }
                 }
             } else {
@@ -208,38 +229,51 @@ public class FuzzMessageLocationsPanel extends
             if (processors.isEmpty()) {
                 payloadsIterator = new CompositePayloadGenerator(payloadGenerators).iterator();
             } else {
-                payloadsIterator = wrapProcessedPayloadGenerator(new CompositePayloadGenerator(payloadGenerators), processors).iterator();
+                payloadsIterator =
+                        wrapProcessedPayloadGenerator(
+                                        new CompositePayloadGenerator(payloadGenerators),
+                                        processors)
+                                .iterator();
             }
 
-            fuzzLocations.add(new PayloadGeneratorMessageLocation(entry.getLocation(), numberOfPayloads, payloadsIterator));
+            fuzzLocations.add(
+                    new PayloadGeneratorMessageLocation(
+                            entry.getLocation(), numberOfPayloads, payloadsIterator));
         }
 
         return fuzzLocations;
     }
 
-    private static <T2 extends Payload, T3 extends PayloadProcessor<T2>> ProcessedPayloadGenerator<T2> wrapProcessedPayloadGenerator(
-            PayloadGenerator<T2> payloadGenerator,
-            List<PayloadProcessorTableEntry> processorTableEntries) {
+    private static <T2 extends Payload, T3 extends PayloadProcessor<T2>>
+            ProcessedPayloadGenerator<T2> wrapProcessedPayloadGenerator(
+                    PayloadGenerator<T2> payloadGenerator,
+                    List<PayloadProcessorTableEntry> processorTableEntries) {
         List<PayloadProcessor<T2>> processors = new ArrayList<>(processorTableEntries.size());
         for (PayloadProcessorTableEntry processorTableEntry : processorTableEntries) {
-            processors.add((PayloadProcessor<T2>) processorTableEntry.getPayloadProcessorUI().getPayloadProcessor());
+            processors.add(
+                    (PayloadProcessor<T2>)
+                            processorTableEntry.getPayloadProcessorUI().getPayloadProcessor());
         }
         return new ProcessedPayloadGenerator<>(payloadGenerator, processors);
     }
 
-    private static ResettableAutoCloseableIterator<Payload> getPayloads(FuzzLocationTableEntry locationEntry) {
+    private static ResettableAutoCloseableIterator<Payload> getPayloads(
+            FuzzLocationTableEntry locationEntry) {
         List<PayloadGenerator<? extends Payload>> payloadGenerators;
         List<PayloadTableEntry> payloadTableEntries = locationEntry.getPayloads();
         if (!payloadTableEntries.isEmpty()) {
             payloadGenerators = new ArrayList<>(payloadTableEntries.size());
             for (PayloadTableEntry payloadTableEntry : payloadTableEntries) {
-                PayloadGenerator<? extends Payload> payloadGenerator = payloadTableEntry.getPayloadGeneratorUI()
-                        .getPayloadGenerator();
-                List<PayloadProcessorTableEntry> processors = payloadTableEntry.getPayloadProcessors();
+                PayloadGenerator<? extends Payload> payloadGenerator =
+                        payloadTableEntry.getPayloadGeneratorUI().getPayloadGenerator();
+                List<PayloadProcessorTableEntry> processors =
+                        payloadTableEntry.getPayloadProcessors();
                 if (processors.isEmpty()) {
                     payloadGenerators.add(payloadGenerator);
                 } else {
-                    payloadGenerators.add(new PayloadsProcessedIterator(payloadGenerator.iterator(), convert(processors)));
+                    payloadGenerators.add(
+                            new PayloadsProcessedIterator(
+                                    payloadGenerator.iterator(), convert(processors)));
                 }
             }
         } else {
@@ -251,11 +285,11 @@ public class FuzzMessageLocationsPanel extends
 
     private static List<PayloadProcessor<? extends Payload>> convert(
             List<PayloadProcessorTableEntry> processorTableEntries) {
-        List<PayloadProcessor<? extends Payload>> processors = new ArrayList<>(processorTableEntries.size());
+        List<PayloadProcessor<? extends Payload>> processors =
+                new ArrayList<>(processorTableEntries.size());
         for (PayloadProcessorTableEntry processorTableEntry : processorTableEntries) {
             processors.add(processorTableEntry.getPayloadProcessorUI().getPayloadProcessor());
         }
         return processors;
     }
-
 }

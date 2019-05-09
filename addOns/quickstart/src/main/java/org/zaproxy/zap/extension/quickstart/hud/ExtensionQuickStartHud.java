@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,17 +33,16 @@ import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.quickstart.PlugableHud;
 
 /**
- * Provides the option to use the HUD when exploring via the quick start tab.
- * This is a separate extension so that the main extension still loads if the HUD is
- * not installed.
+ * Provides the option to use the HUD when exploring via the quick start tab. This is a separate
+ * extension so that the main extension still loads if the HUD is not installed.
  */
-
 public class ExtensionQuickStartHud extends ExtensionAdaptor implements PlugableHud {
 
     public static final String NAME = "ExtensionQuickStartHud";
     private static final Logger LOGGER = Logger.getLogger(ExtensionQuickStartHud.class);
 
-    private static final String EXTENSION_HUD_CLASSNAME = "org.zaproxy.zap.extension.hud.ExtensionHUD";
+    private static final String EXTENSION_HUD_CLASSNAME =
+            "org.zaproxy.zap.extension.hud.ExtensionHUD";
 
     private Method isEnabledMethod;
 
@@ -85,12 +83,12 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
 
     public void setHudEnabledForDesktop(boolean enabled) {
         try {
-            Method methodSetEnabled = getExtHudClass().getMethod("setHudEnabledForDesktop", Boolean.class);
+            Method methodSetEnabled =
+                    getExtHudClass().getMethod("setHudEnabledForDesktop", Boolean.class);
             methodSetEnabled.invoke(ExtensionQuickStartHud.getExtHud(), enabled);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-
     }
 
     @Override
@@ -114,7 +112,6 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
     public String getDescription() {
         return Constant.messages.getString("quickstart.launch.desc");
     }
-
 
     @Override
     public String getUIName() {
@@ -145,18 +142,22 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
     }
 
     public static Extension getExtHud() {
-        return Control.getSingleton().getExtensionLoader().getExtensionByClassName(EXTENSION_HUD_CLASSNAME);
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtensionByClassName(EXTENSION_HUD_CLASSNAME);
     }
 
     @SuppressWarnings("unchecked")
     public List<String> getSupportedBrowserIds() {
         try {
-            Method method = ExtensionQuickStartHud.getExtHud().getClass().getMethod("getSupportedBrowserIds");
+            Method method =
+                    ExtensionQuickStartHud.getExtHud()
+                            .getClass()
+                            .getMethod("getSupportedBrowserIds");
             return (List<String>) method.invoke(ExtensionQuickStartHud.getExtHud());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
-
 }

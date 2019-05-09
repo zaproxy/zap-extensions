@@ -22,9 +22,9 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUIHandler;
 
-
-public class HttpFuzzerMessageProcessorTagUIHandler implements
-    HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessorTagCreator, HttpFuzzerMessageProcessorTagUI> {
+public class HttpFuzzerMessageProcessorTagUIHandler
+        implements HttpFuzzerMessageProcessorUIHandler<
+                HttpFuzzerMessageProcessorTagCreator, HttpFuzzerMessageProcessorTagUI> {
 
     private static final String NAME = HttpFuzzerMessageProcessorTagCreator.NAME;
 

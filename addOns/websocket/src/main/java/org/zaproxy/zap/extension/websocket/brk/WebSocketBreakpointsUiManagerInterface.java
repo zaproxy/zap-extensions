@@ -1,19 +1,21 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Copyright 2012 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.websocket.brk;
 
@@ -31,25 +33,25 @@ public class WebSocketBreakpointsUiManagerInterface implements BreakpointsUiMana
 
     private ExtensionBreak extensionBreak;
     private WebSocketPanel wsPanel;
-    
+
     public WebSocketBreakpointsUiManagerInterface(ExtensionBreak extensionBreak) {
         this.extensionBreak = extensionBreak;
     }
-    
+
     public void setWebSocketPanel(WebSocketPanel wsPanel) {
-    	this.wsPanel = wsPanel;
+        this.wsPanel = wsPanel;
     }
-    
+
     @Override
     public Class<WebSocketMessageDTO> getMessageClass() {
         return WebSocketMessageDTO.class;
     }
-    
+
     @Override
     public Class<WebSocketBreakpointMessage> getBreakpointClass() {
         return WebSocketBreakpointMessage.class;
     }
-    
+
     @Override
     public String getType() {
         return "WebSocket";
@@ -66,10 +68,11 @@ public class WebSocketBreakpointsUiManagerInterface implements BreakpointsUiMana
 
     @Override
     public void handleEditBreakpoint(BreakpointMessageInterface breakpoint) {
-        showEditDialog((WebSocketBreakpointMessage)breakpoint);
+        showEditDialog((WebSocketBreakpointMessage) breakpoint);
     }
 
-    void editBreakpoint(BreakpointMessageInterface oldBreakpoint, BreakpointMessageInterface newBreakpoint) {
+    void editBreakpoint(
+            BreakpointMessageInterface oldBreakpoint, BreakpointMessageInterface newBreakpoint) {
         extensionBreak.editBreakpoint(oldBreakpoint, newBreakpoint);
     }
 
@@ -79,14 +82,13 @@ public class WebSocketBreakpointsUiManagerInterface implements BreakpointsUiMana
     }
 
     @Override
-    public void reset() {
-    }
-    
+    public void reset() {}
+
     private void populateAddDialogAndSetVisible(Message aMessage) {
-        addDialog.setMessage((WebSocketMessageDTO)aMessage);
+        addDialog.setMessage((WebSocketMessageDTO) aMessage);
         addDialog.setVisible(true);
     }
-    
+
     private void showAddDialog(Message aMessage) {
         if (addDialog == null) {
             addDialog = new WebSocketBreakDialogAdd(this, wsPanel.getChannelsModel());
@@ -100,7 +102,7 @@ public class WebSocketBreakpointsUiManagerInterface implements BreakpointsUiMana
         editDialog.setBreakpoint(breakpoint);
         editDialog.setVisible(true);
     }
-    
+
     private void showEditDialog(WebSocketBreakpointMessage breakpoint) {
         if (editDialog == null) {
             editDialog = new WebSocketBreakDialogEdit(this, wsPanel.getChannelsModel());

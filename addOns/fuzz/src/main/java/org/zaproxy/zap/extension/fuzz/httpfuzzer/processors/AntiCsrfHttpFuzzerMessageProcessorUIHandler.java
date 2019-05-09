@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,13 +20,11 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
 import java.util.List;
-
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
@@ -36,10 +34,12 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.AntiCsrfHttpFuzzerMessageProcessorUIHandler.AntiCsrfHttpFuzzerMessageProcessorUI;
 
-public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
-        HttpFuzzerMessageProcessorUIHandler<AntiCsrfHttpFuzzerMessageProcessor, AntiCsrfHttpFuzzerMessageProcessorUI> {
+public class AntiCsrfHttpFuzzerMessageProcessorUIHandler
+        implements HttpFuzzerMessageProcessorUIHandler<
+                AntiCsrfHttpFuzzerMessageProcessor, AntiCsrfHttpFuzzerMessageProcessorUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.name");
 
     private final ExtensionAntiCSRF extensionAntiCSRF;
     private HttpMessage message;
@@ -69,10 +69,9 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
             return null;
         }
 
-        AntiCsrfHttpFuzzerMessageProcessorUI processor = new AntiCsrfHttpFuzzerMessageProcessorUI(
-                extensionAntiCSRF,
-                extensionAntiCSRF.getTokens(message).get(0),
-                false);
+        AntiCsrfHttpFuzzerMessageProcessorUI processor =
+                new AntiCsrfHttpFuzzerMessageProcessorUI(
+                        extensionAntiCSRF, extensionAntiCSRF.getTokens(message).get(0), false);
         message = null;
         return processor;
     }
@@ -102,8 +101,8 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
         return new AntiCsrfHttpFuzzerMessageProcessorUIPanel(extensionAntiCSRF);
     }
 
-    public static class AntiCsrfHttpFuzzerMessageProcessorUI implements
-            HttpFuzzerMessageProcessorUI<AntiCsrfHttpFuzzerMessageProcessor> {
+    public static class AntiCsrfHttpFuzzerMessageProcessorUI
+            implements HttpFuzzerMessageProcessorUI<AntiCsrfHttpFuzzerMessageProcessor> {
 
         private final ExtensionAntiCSRF extensionAntiCSRF;
         private final AntiCsrfToken antiCsrfToken;
@@ -138,12 +137,14 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.description", antiCsrfToken.getName());
+            return Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.acsrffuzz.description", antiCsrfToken.getName());
         }
 
         @Override
         public AntiCsrfHttpFuzzerMessageProcessor getFuzzerMessageProcessor() {
-            return new AntiCsrfHttpFuzzerMessageProcessor(extensionAntiCSRF, antiCsrfToken, showTokenRequests);
+            return new AntiCsrfHttpFuzzerMessageProcessor(
+                    extensionAntiCSRF, antiCsrfToken, showTokenRequests);
         }
 
         @Override
@@ -152,14 +153,23 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
         }
     }
 
-    public static class AntiCsrfHttpFuzzerMessageProcessorUIPanel extends
-            AbstractHttpFuzzerMessageProcessorUIPanel<AntiCsrfHttpFuzzerMessageProcessor, AntiCsrfHttpFuzzerMessageProcessorUI> {
+    public static class AntiCsrfHttpFuzzerMessageProcessorUIPanel
+            extends AbstractHttpFuzzerMessageProcessorUIPanel<
+                    AntiCsrfHttpFuzzerMessageProcessor, AntiCsrfHttpFuzzerMessageProcessorUI> {
 
-        private static final String NAME_FIELD_LABEL = Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.panel.label.name");
-        private static final String SOURCE_FIELD_LABEL = Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.panel.label.source");
-        private static final String TARGET_FIELD_LABEL = Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.panel.label.target");
-        private static final String PREVIOUS_VALUE_FIELD_LABEL = Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.panel.label.prev");
-        private static final String SHOW_TOKENS_FIELD_LABEL = Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.panel.label.showtokens");
+        private static final String NAME_FIELD_LABEL =
+                Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.panel.label.name");
+        private static final String SOURCE_FIELD_LABEL =
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.processor.acsrffuzz.panel.label.source");
+        private static final String TARGET_FIELD_LABEL =
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.processor.acsrffuzz.panel.label.target");
+        private static final String PREVIOUS_VALUE_FIELD_LABEL =
+                Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.panel.label.prev");
+        private static final String SHOW_TOKENS_FIELD_LABEL =
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.processor.acsrffuzz.panel.label.showtokens");
 
         private final ExtensionAntiCSRF extensionAntiCSRF;
 
@@ -203,43 +213,45 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
             JLabel showTokensLabel = new JLabel(SHOW_TOKENS_FIELD_LABEL);
             showTokensLabel.setLabelFor(showTokensCheckBox);
 
-            layout.setHorizontalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                    .addComponent(nameLabel)
-                                    .addComponent(sourceLabel)
-                                    .addComponent(targetLabel)
-                                    .addComponent(previousLabel)
-                                    .addComponent(showTokensLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(nameValueLabel)
-                                    .addComponent(sourceUrlLabel)
-                                    .addComponent(targetUrlLabel)
-                                    .addComponent(previousValueLabel)
-                                    .addComponent(showTokensCheckBox)));
+            layout.setHorizontalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                            .addComponent(nameLabel)
+                                            .addComponent(sourceLabel)
+                                            .addComponent(targetLabel)
+                                            .addComponent(previousLabel)
+                                            .addComponent(showTokensLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                            .addComponent(nameValueLabel)
+                                            .addComponent(sourceUrlLabel)
+                                            .addComponent(targetUrlLabel)
+                                            .addComponent(previousValueLabel)
+                                            .addComponent(showTokensCheckBox)));
 
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(nameLabel)
-                                    .addComponent(nameValueLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(sourceLabel)
-                                    .addComponent(sourceUrlLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(targetLabel)
-                                    .addComponent(targetUrlLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(previousLabel)
-                                    .addComponent(previousValueLabel))
-                    .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(showTokensLabel)
-                                    .addComponent(showTokensCheckBox)));
+            layout.setVerticalGroup(
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(nameLabel)
+                                            .addComponent(nameValueLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(sourceLabel)
+                                            .addComponent(sourceUrlLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(targetLabel)
+                                            .addComponent(targetUrlLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(previousLabel)
+                                            .addComponent(previousValueLabel))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(showTokensLabel)
+                                            .addComponent(showTokensCheckBox)));
         }
 
         @Override
@@ -274,7 +286,8 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
         }
 
         @Override
-        public void setFuzzerMessageProcessorUI(AntiCsrfHttpFuzzerMessageProcessorUI messageProcessorUI) {
+        public void setFuzzerMessageProcessorUI(
+                AntiCsrfHttpFuzzerMessageProcessorUI messageProcessorUI) {
             antiCsrfToken = messageProcessorUI.getAntiCsrfToken();
             updateTokenFields();
 
@@ -283,7 +296,8 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
 
         @Override
         public AntiCsrfHttpFuzzerMessageProcessorUI getFuzzerMessageProcessorUI() {
-            return new AntiCsrfHttpFuzzerMessageProcessorUI(extensionAntiCSRF, antiCsrfToken, showTokensCheckBox.isSelected());
+            return new AntiCsrfHttpFuzzerMessageProcessorUI(
+                    extensionAntiCSRF, antiCsrfToken, showTokensCheckBox.isSelected());
         }
     }
 }

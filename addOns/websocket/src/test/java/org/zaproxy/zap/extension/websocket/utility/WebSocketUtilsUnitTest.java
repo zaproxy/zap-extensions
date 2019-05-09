@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2018 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,15 +27,15 @@ import org.junit.Test;
 
 public class WebSocketUtilsUnitTest {
 
-	@Test
-	public void shouldEncodeTest1() throws Exception {
-		// given
-	    String key = "JIUetocUsIRxbzKP6sOH5Q==";
-		// when
-		String enc = WebSocketUtils.encodeWebSocketKey(key);
-		// then
-		assertThat(enc, is(equalTo("N4KbpT4uCJELr4IfJWm1xgkLQDA=")));
-	}
+    @Test
+    public void shouldEncodeTest1() throws Exception {
+        // given
+        String key = "JIUetocUsIRxbzKP6sOH5Q==";
+        // when
+        String enc = WebSocketUtils.encodeWebSocketKey(key);
+        // then
+        assertThat(enc, is(equalTo("N4KbpT4uCJELr4IfJWm1xgkLQDA=")));
+    }
 
     @Test
     public void shouldEncodeTest2() throws Exception {

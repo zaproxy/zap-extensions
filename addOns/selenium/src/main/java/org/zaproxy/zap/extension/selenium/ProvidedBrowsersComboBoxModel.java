@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2017 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,10 +20,8 @@
 package org.zaproxy.zap.extension.selenium;
 
 import java.util.List;
-
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
-
 import org.apache.commons.lang.Validate;
 
 /**
@@ -36,26 +34,23 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
 
     private static final long serialVersionUID = -2353742370704132293L;
 
-    /**
-     * The {@code ProvidedBrowserUI}s contained in this model.
-     */
+    /** The {@code ProvidedBrowserUI}s contained in this model. */
     private final List<ProvidedBrowserUI> browsers;
 
-    /**
-     * The currently selected browser, {@code null} if no browser is selected.
-     */
+    /** The currently selected browser, {@code null} if no browser is selected. */
     private ProvidedBrowserUI selectedBrowser;
-    
+
     private boolean includeHeadless = true;
     private boolean includeUnconfigured = true;
 
     /**
      * Constructs a {@code BrowsersComboBoxModel} with the given {@code browsers}.
-     * <p>
-     * The selected item will be set to the first browser of the given list of {@code browsers}.
-     * 
+     *
+     * <p>The selected item will be set to the first browser of the given list of {@code browsers}.
+     *
      * @param browsers the browsers that will have this combo box model
-     * @throws IllegalArgumentException if the given {@code List} of {@code browsers} is {@code null} or empty.
+     * @throws IllegalArgumentException if the given {@code List} of {@code browsers} is {@code
+     *     null} or empty.
      */
     public ProvidedBrowsersComboBoxModel(List<ProvidedBrowserUI> browsers) {
         Validate.notEmpty(browsers);
@@ -66,6 +61,7 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
 
     /**
      * Returns whether headless browsers should be included in the model
+     *
      * @return true if headless browsers should be included in the model
      */
     public boolean isIncludeHeadless() {
@@ -74,6 +70,7 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
 
     /**
      * Sets whether headless browsers should be included in the model
+     *
      * @param includeHeadless true if headless browsers should be included in the model
      */
     public void setIncludeHeadless(boolean includeHeadless) {
@@ -83,6 +80,7 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
 
     /**
      * Returns whether unconfigured browsers should be included in the model
+     *
      * @return true if unconfigured browsers should be included in the model
      */
     public boolean isIncludeUnconfigured() {
@@ -91,16 +89,17 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
 
     /**
      * Sets whether unconfigured browsers should be included in the model
+     *
      * @param includeHeadless true if unconfigured browsers should be included in the model
      */
     public void setIncludeUnconfigured(boolean includeUnconfigured) {
         this.includeUnconfigured = includeUnconfigured;
         configsChanged();
     }
-    
+
     private void configsChanged() {
         fireContentsChanged(this, -1, -1);
-        if (! this.incBrowser(this.getSelectedItem())) {
+        if (!this.incBrowser(this.getSelectedItem())) {
             // The selected item is no longer valid
             this.setSelectedItem(this.getElementAt(0));
         }
@@ -113,9 +112,10 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
 
     /**
      * Convenience method that sets the selected browser using the browser ID.
-     * <p>
-     * No changes are done to the selected item if the browser with the given ID is not contained in this model.
-     * 
+     *
+     * <p>No changes are done to the selected item if the browser with the given ID is not contained
+     * in this model.
+     *
      * @param providerBrowserId the id of the browser, {@code null} to clear the selection
      * @see #setSelectedBrowser(ProvidedBrowser)
      */
@@ -135,9 +135,10 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
 
     /**
      * Convenience method that sets the selected item using the given {@code browser}.
-     * <p>
-     * No changes are done to the selected item if the given browser is not contained in this model.
-     * 
+     *
+     * <p>No changes are done to the selected item if the given browser is not contained in this
+     * model.
+     *
      * @param browser the browser, {@code null} to clear the selection
      * @see #setSelectedItem(Object)
      */
@@ -156,11 +157,14 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
     }
 
     /**
-     * Sets the given {@code item} as the selected item. Might be {@code null} to clear the selection.
-     * <p>
-     * No changes are done to the selected item if the given {@code item} is not contained in this model.
-     * 
-     * @throws IllegalArgumentException if {@code item} is not a {@code ProvidedBrowserUI} when non-{@code null}.
+     * Sets the given {@code item} as the selected item. Might be {@code null} to clear the
+     * selection.
+     *
+     * <p>No changes are done to the selected item if the given {@code item} is not contained in
+     * this model.
+     *
+     * @throws IllegalArgumentException if {@code item} is not a {@code ProvidedBrowserUI} when
+     *     non-{@code null}.
      */
     @Override
     public void setSelectedItem(Object item) {
@@ -177,7 +181,8 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
     }
 
     private void setSelectedBrowserImpl(ProvidedBrowserUI browser) {
-        if ((selectedBrowser != null && !selectedBrowser.equals(browser)) || selectedBrowser == null && browser != null) {
+        if ((selectedBrowser != null && !selectedBrowser.equals(browser))
+                || selectedBrowser == null && browser != null) {
             if (this.incBrowser(browser)) {
                 selectedBrowser = browser;
                 fireContentsChanged(this, -1, -1);
@@ -190,8 +195,8 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
             // Special case - null is used to indicate no selected item
             return true;
         }
-        return (this.includeUnconfigured || browser.getBrowser().isConfigured()) &&
-                (this.isIncludeHeadless() || ! browser.getBrowser().isHeadless());
+        return (this.includeUnconfigured || browser.getBrowser().isConfigured())
+                && (this.isIncludeHeadless() || !browser.getBrowser().isHeadless());
     }
 
     @Override
@@ -199,7 +204,7 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
         int size = 0;
         for (ProvidedBrowserUI browser : browsers) {
             if (incBrowser(browser)) {
-                size ++;
+                size++;
             }
         }
         return size;
@@ -210,7 +215,7 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
         int idx = -1;
         for (ProvidedBrowserUI browser : browsers) {
             if (incBrowser(browser)) {
-                idx ++;
+                idx++;
                 if (idx == index) {
                     return browser;
                 }
@@ -218,5 +223,4 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
         }
         return null;
     }
-
 }

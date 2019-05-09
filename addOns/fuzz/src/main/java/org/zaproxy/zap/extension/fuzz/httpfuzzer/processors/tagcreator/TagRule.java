@@ -21,5 +21,6 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator;
 
 public interface TagRule {
     String getName();
+
     String createTag(String responseMessage);
 }

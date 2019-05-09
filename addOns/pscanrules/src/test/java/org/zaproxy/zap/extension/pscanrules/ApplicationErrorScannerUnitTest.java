@@ -19,16 +19,16 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import org.junit.Test;
-import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
-
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.parosproxy.paros.network.HttpStatusCode.*;
+
+import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 
 @SuppressWarnings("Duplicates")
 public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<ApplicationErrorScanner> {
@@ -41,7 +41,8 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseCodeIsInternalServerErrorLow() throws HttpMalformedHeaderException {
+    public void shouldRaiseAlertIfResponseCodeIsInternalServerErrorLow()
+            throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
@@ -58,8 +59,10 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         assertThat(result.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
         assertThat(result.getUri(), equalTo(URI));
     }
+
     @Test
-    public void shouldRaiseAlertIfResponseCodeIsInternalServerErrorMed() throws HttpMalformedHeaderException {
+    public void shouldRaiseAlertIfResponseCodeIsInternalServerErrorMed()
+            throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
@@ -76,8 +79,10 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         assertThat(result.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
         assertThat(result.getUri(), equalTo(URI));
     }
+
     @Test
-    public void shouldNotRaiseAlertIfResponseCodeIsInternalServerErrorHigh() throws HttpMalformedHeaderException {
+    public void shouldNotRaiseAlertIfResponseCodeIsInternalServerErrorHigh()
+            throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
@@ -88,7 +93,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
-  
+
     @Test
     public void shouldNotRaiseAlertIfResponseCodeIsNotFound() throws HttpMalformedHeaderException {
         // Given
@@ -102,7 +107,8 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseCodeOkAndEmptyBody() throws HttpMalformedHeaderException {
+    public void shouldNotRaiseAlertIfResponseCodeOkAndEmptyBody()
+            throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
@@ -114,16 +120,14 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
     }
 
     @Test
-    public void shouldNotRaiseAlertIfResponseCodeOkAndNoEvidenceDetected() throws HttpMalformedHeaderException {
+    public void shouldNotRaiseAlertIfResponseCodeOkAndNoEvidenceDetected()
+            throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
         msg.setResponseHeader(createResponseHeader(OK));
-        msg.setResponseBody("<html>" +
-                "<div>" +
-                "here a body with no evidence" +
-                "</div>" +
-                "</html>");
+        msg.setResponseBody(
+                "<html>" + "<div>" + "here a body with no evidence" + "</div>" + "</html>");
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then
@@ -131,17 +135,14 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
     }
 
     @Test
-    public void shouldRaiseAlertForResponseCodeOkAndStringEvidenceDetected() throws HttpMalformedHeaderException {
+    public void shouldRaiseAlertForResponseCodeOkAndStringEvidenceDetected()
+            throws HttpMalformedHeaderException {
         // Given
         String expectedEvidence = "Microsoft OLE DB Provider for ODBC Drivers";
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
         msg.setResponseHeader(createResponseHeader(OK));
-        msg.setResponseBody("<html>" +
-                "<div>" +
-                expectedEvidence +
-                "</div>" +
-                "</html>");
+        msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then
@@ -152,17 +153,14 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
     }
 
     @Test
-    public void shouldRaiseAlertForResponseCodeOkAndEvidenceDetectedWithMatcher() throws HttpMalformedHeaderException {
+    public void shouldRaiseAlertForResponseCodeOkAndEvidenceDetectedWithMatcher()
+            throws HttpMalformedHeaderException {
         // Given
         String expectedEvidence = "Line 1024: Incorrect syntax near 'login'";
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(REQUEST_HEADER);
         msg.setResponseHeader(createResponseHeader(OK));
-        msg.setResponseBody("<html>" +
-                "<div>" +
-                expectedEvidence +
-                "</div>" +
-                "</html>");
+        msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then

@@ -3,11 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2014 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,28 +32,26 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-/**
- *
- * @author yhawke (2014)
- */
+/** @author yhawke (2014) */
 public class PaddingOraclePlugin extends AbstractAppParamPlugin {
 
     // List of all possible errors
     private static final String[] ERROR_PATTERNS = {
-        "BadPaddingException", 
-        "padding", 
-        "runtime", 
-        "runtime error", 
-        "server error", 
-        "cryptographicexception", 
+        "BadPaddingException",
+        "padding",
+        "runtime",
+        "runtime error",
+        "server error",
+        "cryptographicexception",
         "crypto"
     };
 
     // Logger object
-    private static final Logger log = Logger.getLogger(PaddingOraclePlugin.class);    
-    
+    private static final Logger log = Logger.getLogger(PaddingOraclePlugin.class);
+
     /**
      * Get the unique identifier of this plugin
+     *
      * @return this plugin identifier
      */
     @Override
@@ -61,6 +61,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
 
     /**
      * Get the name of this plugin
+     *
      * @return the plugin name
      */
     @Override
@@ -70,15 +71,17 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
 
     /**
      * Give back specific pugin dependancies (none for this)
+     *
      * @return the list of plugins that need to be executed before
      */
     @Override
     public String[] getDependency() {
-        return new String[]{};
+        return new String[] {};
     }
 
     /**
      * Get the description of the vulnerbaility when found
+     *
      * @return the vulnerability description
      */
     @Override
@@ -87,10 +90,11 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Give back the categorization of the vulnerability 
-     * checked by this plugin (it's an injection category for CODEi)
-     * @return a category from the Category enum list 
-     */    
+     * Give back the categorization of the vulnerability checked by this plugin (it's an injection
+     * category for CODEi)
+     *
+     * @return a category from the Category enum list
+     */
     @Override
     public int getCategory() {
         return Category.MISC;
@@ -98,24 +102,27 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
 
     /**
      * Give back a general solution for the found vulnerability
+     *
      * @return the solution that can be put in place
      */
     @Override
-    public String getSolution() {        
+    public String getSolution() {
         return Constant.messages.getString("ascanbeta.paddingoracle.soln");
     }
 
     /**
      * Reports all links and documentation which refers to this vulnerability
+     *
      * @return a string based list of references
-     */    
+     */
     @Override
     public String getReference() {
         return Constant.messages.getString("ascanbeta.paddingoracle.refs");
     }
-    
+
     /**
      * http://cwe.mitre.org/data/definitions/209.html
+     *
      * @return the official CWE id
      */
     @Override
@@ -123,19 +130,18 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
         return 209;
     }
 
-    /**
-     * @return the official WASC id
-     */
+    /** @return the official WASC id */
     @Override
     public int getWascId() {
         // There's not a real classification for this
-        // so we consider the general "Improper Input Handling" class 
+        // so we consider the general "Improper Input Handling" class
         // http://projects.webappsec.org/w/page/13246933/Improper%20Input%20Handling
         return 20;
     }
-        
+
     /**
      * Give back the risk associated to this vulnerability (high)
+     *
      * @return the risk according to the Alert enum
      */
     @Override
@@ -143,10 +149,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
         return Alert.RISK_HIGH;
     }
 
-    /**
-     * Initialize the plugin according to
-     * the overall environment configuration
-     */
+    /** Initialize the plugin according to the overall environment configuration */
     @Override
     public void init() {
         // do nothing
@@ -154,14 +157,14 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
 
     /**
      * Scan for Paddding Oracle Vulnerabilites
-     * 
+     *
      * @param msg a request only copy of the original message (the response isn't copied)
      * @param paramName the parameter name that need to be exploited
      * @param value the original parameter value
      */
     @Override
     public void scan(HttpMessage msg, String paramName, String value) {
-        // Get rid of strings that are all numeric 
+        // Get rid of strings that are all numeric
         // (they probably aren't encoded and they pollute results)
         if (!value.matches("^[0-9]+$")) {
             for (OracleEncoder encoder : OracleEncoder.values()) {
@@ -173,7 +176,6 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     *
      * @param paramName
      * @param value
      * @param encoder
@@ -185,7 +187,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
         // Get the decoded value
         byte[] oracle = encoder.decode(value);
         if ((oracle != null) && isEncrypted(oracle)) {
-            
+
             try {
                 // First test is for double control
                 HttpMessage msg = getNewMsg();
@@ -207,40 +209,51 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
 
                     // First check if an Internal Server Error ws launched
                     // in this case we found (very) likely Padding Oracle vulnerability
-                    if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR) {
-                            // We Found IT!                    
-                            // First do logging
-                            if (log.isDebugEnabled()) {
-                                log.debug("[Padding Oracle Found] on parameter [" + paramName + "] with payload [" + encodedValue + "]");
-                            }
+                    if (msg.getResponseHeader().getStatusCode()
+                            == HttpStatusCode.INTERNAL_SERVER_ERROR) {
+                        // We Found IT!
+                        // First do logging
+                        if (log.isDebugEnabled()) {
+                            log.debug(
+                                    "[Padding Oracle Found] on parameter ["
+                                            + paramName
+                                            + "] with payload ["
+                                            + encodedValue
+                                            + "]");
+                        }
 
-                            // Now create the alert message
-                            this.bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    msg.getRequestHeader().getURI().toString(),
-                                    paramName,
-                                    msg.getRequestHeader().getURI().toString(),
-                                    null,
-                                    msg.getResponseHeader().getReasonPhrase(),
-                                    msg);
+                        // Now create the alert message
+                        this.bingo(
+                                Alert.RISK_HIGH,
+                                Alert.CONFIDENCE_MEDIUM,
+                                msg.getRequestHeader().getURI().toString(),
+                                paramName,
+                                msg.getRequestHeader().getURI().toString(),
+                                null,
+                                msg.getResponseHeader().getReasonPhrase(),
+                                msg);
                     }
 
                     // Otherwise check the response with the last bit changed
                     String lastBitResponse = msg.getResponseBody().toString();
 
-                    // Check if changing the last bit produced a result that 
+                    // Check if changing the last bit produced a result that
                     // changing the first bit didn't. These results are based
-                    // on a list of error strings. 
+                    // on a list of error strings.
                     for (String pattern : ERROR_PATTERNS) {
-                        
+
                         if (lastBitResponse.contains(pattern)
                                 && !controlResponse.contains(pattern)) {
 
-                            // We Found IT!                    
+                            // We Found IT!
                             // First do logging
                             if (log.isDebugEnabled()) {
-                                log.debug("[Padding Oracle Found] on parameter [" + paramName + "] with payload [" + encodedValue + "]");
+                                log.debug(
+                                        "[Padding Oracle Found] on parameter ["
+                                                + paramName
+                                                + "] with payload ["
+                                                + encodedValue
+                                                + "]");
                             }
 
                             // Now create the alert message
@@ -254,24 +267,29 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                                     pattern,
                                     msg);
 
-                            // All done. No need to look for vulnerabilities on subsequent 
+                            // All done. No need to look for vulnerabilities on subsequent
                             // parameters on the same request (to reduce performance impact)
                             return true;
                         }
-                        
+
                         // Check if the scan has been stopped
                         // if yes dispose resources and exit
                         if (isStop()) {
                             return true;
-                        }                        
+                        }
                     }
                 }
 
             } catch (IOException ex) {
-                //Do not try to internationalise this.. we need an error message in any event..
-                //if it's in English, it's still better than not having it at all.
-                log.warn("Padding Oracle vulnerability check failed for parameter ["
-                        + paramName + "] and payload [" + encoder.encode(oracle) + "] due to an I/O error", ex);
+                // Do not try to internationalise this.. we need an error message in any event..
+                // if it's in English, it's still better than not having it at all.
+                log.warn(
+                        "Padding Oracle vulnerability check failed for parameter ["
+                                + paramName
+                                + "] and payload ["
+                                + encoder.encode(oracle)
+                                + "] due to an I/O error",
+                        ex);
             }
         }
 
@@ -279,20 +297,18 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Decide if the data given in 'data' is encrypted
-     * It turns out that this is difficult to do on short strings, so we are going to 
-     * solve this by cheating. Basically, check if the string contains any non-ascii
-     * characters (&lt;0x20 or &gt;0x7F). The odds of a 4-character encrypted string having
-     * at least one character that falls outside of ASCII is almost 100%. We also 
-     * ignore any string longer than 16 bytes, since those are generally too short
-     * to be encrypted. 
-     * 
+     * Decide if the data given in 'data' is encrypted It turns out that this is difficult to do on
+     * short strings, so we are going to solve this by cheating. Basically, check if the string
+     * contains any non-ascii characters (&lt;0x20 or &gt;0x7F). The odds of a 4-character encrypted
+     * string having at least one character that falls outside of ASCII is almost 100%. We also
+     * ignore any string longer than 16 bytes, since those are generally too short to be encrypted.
+     *
      * @param value the value that need to be checked
      * @return true if it seems to be encrypted
      */
     private boolean isEncrypted(byte[] value) {
 
-        // Make sure we have a reasonable sized string 
+        // Make sure we have a reasonable sized string
         // (encrypted strings tend to be long, and short strings tend to break our numbers)
         if (value.length < 16) {
             return false;
@@ -307,15 +323,14 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
 
         return (notAscii > (value.length / 4));
     }
-    
-    
+
     /**
-     * Enumeration Utility which is able to manage all specifi encoding/decoding
-     * tasks that could be met during plugin's testing
+     * Enumeration Utility which is able to manage all specifi encoding/decoding tasks that could be
+     * met during plugin's testing
      */
     public enum OracleEncoder {
         HEX {
-            // Hex strings are a-fA-F0-9. Although it's technically possible for a 
+            // Hex strings are a-fA-F0-9. Although it's technically possible for a
             // base64 string to look like this, it's exceptionally unlikely.
             private final Pattern HEX_PATTERN = Pattern.compile("^([a-fA-F0-9]{2})+$");
 
@@ -329,19 +344,20 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                 if (HEX_PATTERN.matcher(value).matches()) {
                     try {
                         return Hex.decodeHex(value.toCharArray());
-                        
-                    } catch (DecoderException ex) {}
+
+                    } catch (DecoderException ex) {
+                    }
                 }
-                
+
                 return null;
             }
         },
-        
+
         BASE64URL {
-            // base64url always has an integer 0, 1, or 2 at the end, and contains letters, 
-            // numbers, -, and _. The final byte is the number of padding bytes, so the 
-            // string length with a number of extra bytes equal to the final digit has to be 
-            // a multiple of 4. 
+            // base64url always has an integer 0, 1, or 2 at the end, and contains letters,
+            // numbers, -, and _. The final byte is the number of padding bytes, so the
+            // string length with a number of extra bytes equal to the final digit has to be
+            // a multiple of 4.
             private final Pattern BASE64URL_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]+[012]$");
 
             @Override
@@ -355,20 +371,20 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
             public byte[] decode(String value) {
                 if (BASE64URL_PATTERN.matcher(value).matches()) {
                     // The last letter represents the length
-                    int last = value.length() - 1; 
-                    if(((last + (int)value.charAt(last)) % 4) == 0) {
+                    int last = value.length() - 1;
+                    if (((last + (int) value.charAt(last)) % 4) == 0) {
                         Base64 decoder = new Base64(true);
                         return decoder.decode(value.substring(0, last));
                     }
                 }
-                
+
                 return null;
             }
         },
-        
+
         BASE64 {
-            // base64 strings are similar, except they can contain + and /, and end 
-            // with 0 - 2 '=' signs. They are also a multiple of 4 bytes. 
+            // base64 strings are similar, except they can contain + and /, and end
+            // with 0 - 2 '=' signs. They are also a multiple of 4 bytes.
             private final Pattern BASE64_PATTERN = Pattern.compile("^[a-zA-Z0-9/+]+={0,2}$");
 
             @Override
@@ -383,12 +399,13 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                         return Base64.decodeBase64(value);
                     }
                 }
-                
+
                 return null;
             }
         };
-        
+
         public abstract String encode(byte[] value);
+
         public abstract byte[] decode(String value);
     }
 }

@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2014 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,9 +25,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.event.TableModelEvent;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
@@ -42,30 +40,34 @@ import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
 import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 
 public class AjaxSpiderResultsTableModel
-        extends AbstractCustomColumnHistoryReferencesTableModel<AjaxSpiderResultsTableModel.AjaxSpiderTableEntry> {
+        extends AbstractCustomColumnHistoryReferencesTableModel<
+                AjaxSpiderResultsTableModel.AjaxSpiderTableEntry> {
 
     private static final long serialVersionUID = 4949104995571034494L;
 
-    private static final Column[] COLUMNS = new Column[] {
-            Column.CUSTOM,
-            Column.HREF_ID,
-            Column.REQUEST_TIMESTAMP,
-            Column.RESPONSE_TIMESTAMP,
-            Column.METHOD,
-            Column.URL,
-            Column.STATUS_CODE,
-            Column.STATUS_REASON,
-            Column.RTT,
-            Column.SIZE_REQUEST_HEADER,
-            Column.SIZE_REQUEST_BODY,
-            Column.SIZE_RESPONSE_HEADER,
-            Column.SIZE_RESPONSE_BODY,
-            Column.HIGHEST_ALERT,
-            Column.NOTE,
-            Column.TAGS };
+    private static final Column[] COLUMNS =
+            new Column[] {
+                Column.CUSTOM,
+                Column.HREF_ID,
+                Column.REQUEST_TIMESTAMP,
+                Column.RESPONSE_TIMESTAMP,
+                Column.METHOD,
+                Column.URL,
+                Column.STATUS_CODE,
+                Column.STATUS_REASON,
+                Column.RTT,
+                Column.SIZE_REQUEST_HEADER,
+                Column.SIZE_REQUEST_BODY,
+                Column.SIZE_RESPONSE_HEADER,
+                Column.SIZE_RESPONSE_BODY,
+                Column.HIGHEST_ALERT,
+                Column.NOTE,
+                Column.TAGS
+            };
 
     private static final String[] CUSTOM_COLUMN_NAMES = {
-            Constant.messages.getString("spiderajax.panel.table.header.processed") };
+        Constant.messages.getString("spiderajax.panel.table.header.processed")
+    };
 
     private static final EnumMap<ResourceState, ProcessedCellItem> statesMap;
 
@@ -91,42 +93,54 @@ public class AjaxSpiderResultsTableModel
         idsToRows = new HashMap<>();
 
         alertEventConsumer = new AlertEventConsumer();
-        extensionHistory = Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
-        ZAP.getEventBus().registerConsumer(alertEventConsumer, AlertEventPublisher.getPublisher().getPublisherName());
+        extensionHistory =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
+        ZAP.getEventBus()
+                .registerConsumer(
+                        alertEventConsumer, AlertEventPublisher.getPublisher().getPublisherName());
     }
 
-    private static void addState(Map<ResourceState, ProcessedCellItem> map, ResourceState state, String i18nName) {
-        map.put(state, new ProcessedCellItem(state, Constant.messages.getString("spiderajax.panel.table.cell." + i18nName)));
+    private static void addState(
+            Map<ResourceState, ProcessedCellItem> map, ResourceState state, String i18nName) {
+        map.put(
+                state,
+                new ProcessedCellItem(
+                        state,
+                        Constant.messages.getString("spiderajax.panel.table.cell." + i18nName)));
     }
 
     public void addHistoryReference(HistoryReference historyReference, ResourceState state) {
         HistoryReference latestHistoryReference = historyReference;
         if (extensionHistory != null) {
-            latestHistoryReference = extensionHistory.getHistoryReference(historyReference.getHistoryId());
+            latestHistoryReference =
+                    extensionHistory.getHistoryReference(historyReference.getHistoryId());
         }
         final AjaxSpiderTableEntry entry = new AjaxSpiderTableEntry(latestHistoryReference, state);
-        EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(
+                new Runnable() {
 
-            @Override
-            public void run() {
-                final int row = resources.size();
-                idsToRows.put(Integer.valueOf(entry.getHistoryId()), Integer.valueOf(row));
-                resources.add(entry);
-                fireTableRowsInserted(row, row);
-            }
-        });
+                    @Override
+                    public void run() {
+                        final int row = resources.size();
+                        idsToRows.put(Integer.valueOf(entry.getHistoryId()), Integer.valueOf(row));
+                        resources.add(entry);
+                        fireTableRowsInserted(row, row);
+                    }
+                });
     }
 
     void unload() {
         if (alertEventConsumer != null) {
-            ZAP.getEventBus().unregisterConsumer(alertEventConsumer, AlertEventPublisher.getPublisher().getPublisherName());
+            ZAP.getEventBus()
+                    .unregisterConsumer(
+                            alertEventConsumer,
+                            AlertEventPublisher.getPublisher().getPublisherName());
             alertEventConsumer = null;
         }
     }
 
     @Override
-    public void addEntry(AjaxSpiderTableEntry entry) {
-    }
+    public void addEntry(AjaxSpiderTableEntry entry) {}
 
     @Override
     public void refreshEntryRow(int historyReferenceId) {
@@ -141,8 +155,7 @@ public class AjaxSpiderResultsTableModel
     }
 
     @Override
-    public void removeEntry(int historyReferenceId) {
-    }
+    public void removeEntry(int historyReferenceId) {}
 
     @Override
     public AjaxSpiderTableEntry getEntry(int rowIndex) {
@@ -245,15 +258,18 @@ public class AjaxSpiderResultsTableModel
         @Override
         public void eventReceived(Event event) {
             switch (event.getEventType()) {
-            case AlertEventPublisher.ALERT_ADDED_EVENT:
-            case AlertEventPublisher.ALERT_CHANGED_EVENT:
-            case AlertEventPublisher.ALERT_REMOVED_EVENT:
-                refreshEntry(Integer.valueOf(event.getParameters().get(AlertEventPublisher.HISTORY_REFERENCE_ID)));
-                break;
-            case AlertEventPublisher.ALL_ALERTS_REMOVED_EVENT:
-                refreshEntries();
-                break;
-            default:
+                case AlertEventPublisher.ALERT_ADDED_EVENT:
+                case AlertEventPublisher.ALERT_CHANGED_EVENT:
+                case AlertEventPublisher.ALERT_REMOVED_EVENT:
+                    refreshEntry(
+                            Integer.valueOf(
+                                    event.getParameters()
+                                            .get(AlertEventPublisher.HISTORY_REFERENCE_ID)));
+                    break;
+                case AlertEventPublisher.ALL_ALERTS_REMOVED_EVENT:
+                    refreshEntries();
+                    break;
+                default:
             }
         }
 
@@ -263,13 +279,14 @@ public class AjaxSpiderResultsTableModel
                 return;
             }
 
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                @Override
-                public void run() {
-                    refreshEntry(id);
-                }
-            });
+                        @Override
+                        public void run() {
+                            refreshEntry(id);
+                        }
+                    });
         }
 
         private void refreshEntries() {
@@ -278,13 +295,14 @@ public class AjaxSpiderResultsTableModel
                 return;
             }
 
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                @Override
-                public void run() {
-                    refreshEntries();
-                }
-            });
+                        @Override
+                        public void run() {
+                            refreshEntries();
+                        }
+                    });
         }
 
         public void refreshEntryRows() {
@@ -360,5 +378,4 @@ public class AjaxSpiderResultsTableModel
             return state.compareTo(other.state);
         }
     }
-
 }

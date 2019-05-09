@@ -3,28 +3,27 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2016 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * This file is based on the Paros code file ReportLastScan.java
  */
 package org.zaproxy.zap.extension.exportreport;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.exportreport.utility.DualListBox;
 import org.zaproxy.zap.extension.exportreport.utility.SharedFunctions;
@@ -44,7 +43,10 @@ public class PanelAlertDetails extends JPanel {
     ArrayList<String> listExcluded = null;
     String[] arrExcluded;
 
-    public PanelAlertDetails(ExtensionExportReport extension, ArrayList<String> list, ArrayList<String> listExcluded) {
+    public PanelAlertDetails(
+            ExtensionExportReport extension,
+            ArrayList<String> list,
+            ArrayList<String> listExcluded) {
         this.extension = extension;
         this.list = list;
         this.arr = new String[this.list.toArray().length];
@@ -70,7 +72,7 @@ public class PanelAlertDetails extends JPanel {
         this.add(top, BorderLayout.PAGE_START);
         SharedFunctions.createLabel(top, strLabel, SharedFunctions.getTitleFont());
 
-        int[] pad = { 0, 0, 295, 360 };
+        int[] pad = {0, 0, 295, 360};
         content.setLayout(new SpringLayout());
         sl = new SpringLayout();
         container.setLayout(sl);
@@ -81,7 +83,9 @@ public class PanelAlertDetails extends JPanel {
         dual = new DualListBox();
         arr = SharedFunctions.appendToArray(list, 0, extension.extensionGetMaxList());
         dual.addSourceElements(arr);
-        arrExcluded = SharedFunctions.appendToArray(listExcluded, list.size(), extension.extensionGetMaxList());
+        arrExcluded =
+                SharedFunctions.appendToArray(
+                        listExcluded, list.size(), extension.extensionGetMaxList());
         dual.addDestinationElements(arrExcluded);
         content.add(dual);
         SpringUtilities.makeCompactGrid(content, 1, 1, 6, 6, 6, 6);

@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP development team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,8 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
     private static final String NAME_HEADER_NOT_SET = BASE_RESOURCE_KEY + "missing.name";
     private static final String NAME_MULTIPLE_HEADERS = BASE_RESOURCE_KEY + "multiple.header.name";
     private static final String NAME_DEFINED_IN_META = BASE_RESOURCE_KEY + "compliance.meta.name";
-    private static final String NAME_MALFORMED = BASE_RESOURCE_KEY + "compliance.malformed.setting.name";
+    private static final String NAME_MALFORMED =
+            BASE_RESOURCE_KEY + "compliance.malformed.setting.name";
 
     @Override
     protected XFrameOptionScanner createScanner() {
@@ -44,89 +45,99 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void xframeOptionsDeny() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "X-Frame-Options: DENY\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Frame-Options: DENY\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
-    
+
     @Test
     public void xframeOptionsDenyLc() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "X-Frame-Options: deny\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Frame-Options: deny\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
-    
+
     @Test
     public void xframeOptionsDenyMc() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "X-Frame-Options: dEnY\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Frame-Options: dEnY\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
-    
+
     @Test
     public void xframeOptionsSameOrigin() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "X-Frame-Options: SAMEORIGIN\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Frame-Options: SAMEORIGIN\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
-    
+
     @Test
     public void xframeOptionsAllowFrom() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "X-Frame-Options: ALLOW-FROM https://www.anotherdomain.com/\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Frame-Options: ALLOW-FROM https://www.anotherdomain.com/\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
@@ -134,16 +145,18 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void noXframeOptions() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
@@ -155,18 +168,20 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void noXframeOptionsErrorLow() throws HttpMalformedHeaderException {
-        
+
         rule.setAlertThreshold(AlertThreshold.LOW);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 401 Unauthorized\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 401 Unauthorized\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
@@ -178,18 +193,20 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void noXframeOptionsErrorMed() throws HttpMalformedHeaderException {
-        
+
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 401 Unauthorized\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 401 Unauthorized\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
@@ -197,18 +214,20 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void noXframeOptionsErrorHigh() throws HttpMalformedHeaderException {
-        
+
         rule.setAlertThreshold(AlertThreshold.HIGH);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 401 Unauthorized\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 401 Unauthorized\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
@@ -216,18 +235,20 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void noXframeOptionsPlainTextLow() throws HttpMalformedHeaderException {
-        
+
         rule.setAlertThreshold(AlertThreshold.LOW);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("Blah");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Type: text/plain;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/plain;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
@@ -239,18 +260,20 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void noXframeOptionsPlainTextMed() throws HttpMalformedHeaderException {
-        
+
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("blah");
         msg.setResponseHeader(
-                "HTTP/1.1 401 Unauthorized\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Type: text/plain;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 401 Unauthorized\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/plain;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
@@ -258,18 +281,20 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void noXframeOptionsPlainTextHigh() throws HttpMalformedHeaderException {
-        
+
         rule.setAlertThreshold(AlertThreshold.HIGH);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("blah");
         msg.setResponseHeader(
-                "HTTP/1.1 401 Unauthorized\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Type: text/plain;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 401 Unauthorized\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/plain;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
@@ -277,18 +302,20 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void multipleXframeOptions() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "X-Frame-Options: DENY\r\n" +
-                "X-Frame-Options: SAMEORIGIN\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Frame-Options: DENY\r\n"
+                        + "X-Frame-Options: SAMEORIGIN\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
@@ -297,22 +324,22 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
     }
-    
+
     @Test
     public void xframeOptionsViaMetaTag() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody(
-                "<html>" +
-                "<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">"+
-                "</html>");
+                "<html>" + "<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">" + "</html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(2));
@@ -323,49 +350,53 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
         assertThat(alertsRaised.get(1), hasNameLoadedWithKey(NAME_DEFINED_IN_META));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(1).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
-        assertThat(alertsRaised.get(1).getEvidence(), equalTo(
-                "<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">"));
+        assertThat(
+                alertsRaised.get(1).getEvidence(),
+                equalTo("<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">"));
     }
-    
+
     @Test
     public void xframeOptionsViaMetaTagAndHeader() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody(
-                "<html>" +
-                "<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">"+
-                "</html>");
+                "<html>" + "<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">" + "</html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "X-Frame-Options: DENY\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Frame-Options: DENY\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_DEFINED_IN_META));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo(
-                "<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">"));
     }
 
     @Test
     public void malformedXframeOptions() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "X-Frame-Options: STUFF\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "X-Frame-Options: STUFF\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
@@ -377,17 +408,19 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void cspNoFaNoXframeOptions() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Security-Policy: default-src 'self';\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: default-src 'self';\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
@@ -399,17 +432,19 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void cspWithFaNoXframeOptions() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
@@ -417,18 +452,20 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void cspWithFaWithXframeOptions() throws HttpMalformedHeaderException {
-        
+
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n" +
-                "X-Frame-Options: DENY\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n"
+                        + "X-Frame-Options: DENY\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
@@ -436,20 +473,22 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void cspWithFaWithBadXframeOptionsLow() throws HttpMalformedHeaderException {
-        
+
         rule.setAlertThreshold(AlertThreshold.LOW);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n" +
-                "X-Frame-Options: BAD\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n"
+                        + "X-Frame-Options: BAD\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
@@ -461,20 +500,22 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void cspWithFaWithBadXframeOptionsMedium() throws HttpMalformedHeaderException {
-        
+
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n" +
-                "X-Frame-Options: BAD\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n"
+                        + "X-Frame-Options: BAD\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
@@ -482,20 +523,22 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
 
     @Test
     public void cspWithFaWithBadXframeOptionsHigh() throws HttpMalformedHeaderException {
-        
+
         rule.setAlertThreshold(AlertThreshold.HIGH);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        
+
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n" +
-                "X-Frame-Options: BAD\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: default-src 'self'; frame-ancestors 'none'\r\n"
+                        + "X-Frame-Options: BAD\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));

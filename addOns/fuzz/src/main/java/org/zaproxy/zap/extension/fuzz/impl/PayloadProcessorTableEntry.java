@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +44,8 @@ public class PayloadProcessorTableEntry implements Orderable {
         this.order = order;
     }
 
-    public PayloadProcessorUI<? extends Payload, ? extends PayloadProcessor<? extends Payload>> getPayloadProcessorUI() {
+    public PayloadProcessorUI<? extends Payload, ? extends PayloadProcessor<? extends Payload>>
+            getPayloadProcessorUI() {
         return payloadProcessorUI;
     }
 
@@ -67,5 +68,4 @@ public class PayloadProcessorTableEntry implements Orderable {
     public boolean isMutable() {
         return payloadProcessorUI.isMutable();
     }
-
 }

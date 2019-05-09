@@ -29,9 +29,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-/**
- * Unit test for {@link HashDisclosureScanner}.
- */
+/** Unit test for {@link HashDisclosureScanner}. */
 public class HashDisclosureScannerUnitTest extends PassiveScannerTest<HashDisclosureScanner> {
 
     @Override
@@ -110,10 +108,8 @@ public class HashDisclosureScannerUnitTest extends PassiveScannerTest<HashDisclo
     private HttpMessage createMsg(String hashVal) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
         msg.setResponseBody("{\"hash\": \"" + hashVal + "\"}");
         return msg;
     }
-
 }

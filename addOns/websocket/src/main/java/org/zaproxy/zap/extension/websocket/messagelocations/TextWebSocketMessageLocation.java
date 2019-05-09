@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,9 +23,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.model.MessageLocation;
 
-/**
- * A textual {@code MessageLocation} of {@code WebSocket} messages.
- */
+/** A textual {@code MessageLocation} of {@code WebSocket} messages. */
 public class TextWebSocketMessageLocation implements WebSocketMessageLocation {
 
     private final int start;
@@ -34,7 +32,8 @@ public class TextWebSocketMessageLocation implements WebSocketMessageLocation {
 
     public TextWebSocketMessageLocation(int position) {
         if (position < 0) {
-            throw new IllegalArgumentException("Parameter position must be greater or equal to zero.");
+            throw new IllegalArgumentException(
+                    "Parameter position must be greater or equal to zero.");
         }
         this.start = position;
         this.end = position;
@@ -97,7 +96,8 @@ public class TextWebSocketMessageLocation implements WebSocketMessageLocation {
             return true;
         }
 
-        TextWebSocketMessageLocation otherTextLocation = (TextWebSocketMessageLocation) otherLocation;
+        TextWebSocketMessageLocation otherTextLocation =
+                (TextWebSocketMessageLocation) otherLocation;
         if (start == otherTextLocation.getStart()) {
             if (start == end) {
                 return end == otherTextLocation.getEnd();
@@ -116,7 +116,8 @@ public class TextWebSocketMessageLocation implements WebSocketMessageLocation {
             return 1;
         }
 
-        TextWebSocketMessageLocation otherTextLocation = (TextWebSocketMessageLocation) otherLocation;
+        TextWebSocketMessageLocation otherTextLocation =
+                (TextWebSocketMessageLocation) otherLocation;
         if (start > otherTextLocation.getStart()) {
             return 1;
         } else if (start < otherTextLocation.getStart()) {
@@ -174,5 +175,4 @@ public class TextWebSocketMessageLocation implements WebSocketMessageLocation {
         }
         return true;
     }
-
 }

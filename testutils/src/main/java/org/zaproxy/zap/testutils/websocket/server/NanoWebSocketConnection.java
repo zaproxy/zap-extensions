@@ -17,13 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.zaproxy.zap.testutils.websocket.server;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoWSD;
 import fi.iki.elonen.NanoWSD.WebSocketFrame;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +29,9 @@ import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Represent a WebSocket Test connection.
- */
+/** Represent a WebSocket Test connection. */
 public class NanoWebSocketConnection extends NanoWSD.WebSocket {
-    
+
     private static final String CLOSE_PAYLOAD = "Connection Closed";
     private static final String CLOSE_FROM_PING = "No ping response";
     private byte[] pingPayload;
@@ -44,42 +40,43 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
     private Stack<WebSocketFrame> incomingMessages;
     private Stack<WebSocketFrame> outgoingMessages;
     private WebSocketFrameListener incomingListener;
-    
-    public NanoWebSocketConnection(NanoHTTPD.IHTTPSession handshakeRequest){
+
+    public NanoWebSocketConnection(NanoHTTPD.IHTTPSession handshakeRequest) {
         super(handshakeRequest);
         incomingMessages = new Stack<>();
         outgoingMessages = new Stack<>();
-        
     }
-    
+
     /**
      * Set up a ping Schedule.
+     *
      * @param pingInterval how often in milliseconds send ping message.
      * @param pingPayload the ping message.
      */
-    public void setPingScheduling(int pingInterval, byte[] pingPayload){
+    public void setPingScheduling(int pingInterval, byte[] pingPayload) {
         scheduling = new Scheduling();
         this.pingPayload = pingPayload;
         scheduling.pingScheduling(pingInterval);
     }
-    
-    synchronized protected boolean isPongReceived() {
+
+    protected synchronized boolean isPongReceived() {
         return pongReceived;
     }
-    
-    synchronized protected void setPongReceived(boolean pongReceived) {
+
+    protected synchronized void setPongReceived(boolean pongReceived) {
         this.pongReceived = pongReceived;
     }
-    
+
     /**
-     * Sends a ping message to the client. Ping payload defined by {@link NanoWebSocketConnection#setPingMessage(byte[])}
+     * Sends a ping message to the client. Ping payload defined by {@link
+     * NanoWebSocketConnection#setPingMessage(byte[])}
      */
-    protected boolean ping(){
+    protected boolean ping() {
         try {
-            if(isPongReceived()){
+            if (isPongReceived()) {
                 super.ping(pingPayload);
                 setPongReceived(false);
-            }else {
+            } else {
                 onClose(WebSocketFrame.CloseCode.AbnormalClosure, CLOSE_FROM_PING, false);
             }
         } catch (IOException e) {
@@ -89,14 +86,13 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
         }
         return true;
     }
-    
+
     @Override
-    protected void onOpen() {
-    }
-    
+    protected void onOpen() {}
+
     @Override
-    protected void onClose(WebSocketFrame.CloseCode closeCode, String s, boolean b) { }
-    
+    protected void onClose(WebSocketFrame.CloseCode closeCode, String s, boolean b) {}
+
     @Override
     protected void onMessage(WebSocketFrame webSocketFrame) {
         receivedFrame(webSocketFrame);
@@ -108,59 +104,60 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
         }
         incomingMessages.push(webSocketFrame);
     }
-    
+
     @Override
     protected void onPong(WebSocketFrame webSocketFrame) {
         receivedFrame(webSocketFrame);
         setPongReceived(true);
     }
-    
+
     @Override
-    protected void onException(IOException e) { }
-    
-    public void setPingMessage(byte[] payload){
+    protected void onException(IOException e) {}
+
+    public void setPingMessage(byte[] payload) {
         this.pingPayload = payload;
     }
-    
-    public WebSocketFrame popIncomingMessage(){
+
+    public WebSocketFrame popIncomingMessage() {
         return incomingMessages.pop();
     }
-    
+
     /**
      * Creates a schedule in order to send messages.
+     *
      * @param messages Stack of the messages is going to be sent
      * @param messageInterval the interval of the messages
      */
-    public void setOutgoingMessageSchedule(Stack<WebSocketFrame> messages, int messageInterval){
-        if(scheduling == null){
+    public void setOutgoingMessageSchedule(Stack<WebSocketFrame> messages, int messageInterval) {
+        if (scheduling == null) {
             scheduling = new Scheduling();
         }
         outgoingMessages = messages;
         scheduling.messageScheduling(messageInterval);
     }
-    
-    public List<WebSocketFrame> getListOfIncomingMessages(){
-    	return new ArrayList<WebSocketFrame>(incomingMessages);
-	}
-    
+
+    public List<WebSocketFrame> getListOfIncomingMessages() {
+        return new ArrayList<WebSocketFrame>(incomingMessages);
+    }
+
     class Scheduling {
         protected Timer pingTimer;
         protected Timer messageTimer;
-    
+
         public Scheduling() {
             super();
         }
-    
+
         void pingScheduling(int pingInterval) {
             pingTimer = new Timer("pingTimer");
             pingTimer.scheduleAtFixedRate(new SendPing(), pingInterval, pingInterval);
         }
-    
+
         void messageScheduling(int messageInterval) {
             messageTimer = new Timer("messageTimer");
             messageTimer.scheduleAtFixedRate(new SendMessage(), messageInterval, messageInterval);
         }
-    
+
         class SendPing extends TimerTask {
             public void run() {
                 if (!ping()) {
@@ -168,7 +165,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
                 }
             }
         }
-        
+
         class SendMessage extends TimerTask {
             public void run() {
                 synchronized (outgoingMessages) {
@@ -186,11 +183,11 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
             }
         }
     }
-    
+
     public void addIncomingWebSocketFrameListener(WebSocketFrameListener listener) {
         this.incomingListener = listener;
     }
-    
+
     public interface WebSocketFrameListener {
 
         void frameReceived(WebSocketFrame frame);

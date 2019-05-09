@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,12 +20,12 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui;
 
 import javax.swing.JPanel;
-
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.model.MessageLocation;
 
-public interface PayloadGeneratorUIPanel<T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> {
+public interface PayloadGeneratorUIPanel<
+        T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> {
 
     void init(MessageLocation messageLocation);
 
@@ -40,12 +40,14 @@ public interface PayloadGeneratorUIPanel<T extends Payload, T2 extends PayloadGe
     boolean validate();
 
     /**
-     * Gets the 'target' to the help page of this payload generator panel. The 'target' must be defined in the {@code map}'s
-     * help file. If there's no help available this method should return {@code null}.
-     * <p>
-     * A help button is shown when the help is available.
-     * 
-     * @return the 'target' to the help page of this payload generator panel, or {@code null} if no help page is available
+     * Gets the 'target' to the help page of this payload generator panel. The 'target' must be
+     * defined in the {@code map}'s help file. If there's no help available this method should
+     * return {@code null}.
+     *
+     * <p>A help button is shown when the help is available.
+     *
+     * @return the 'target' to the help page of this payload generator panel, or {@code null} if no
+     *     help page is available
      */
     String getHelpTarget();
 }

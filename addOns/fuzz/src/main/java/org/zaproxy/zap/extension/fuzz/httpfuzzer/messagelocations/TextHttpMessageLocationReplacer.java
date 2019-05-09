@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.messagelocations;
 
 import java.util.SortedSet;
-
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacement;
@@ -49,7 +48,8 @@ public class TextHttpMessageLocationReplacer implements MessageLocationReplacer<
     }
 
     @Override
-    public HttpMessage replace(SortedSet<? extends MessageLocationReplacement<?>> replacements) throws InvalidMessageException {
+    public HttpMessage replace(SortedSet<? extends MessageLocationReplacement<?>> replacements)
+            throws InvalidMessageException {
         if (message == null) {
             throw new IllegalStateException("Replacer not initialised.");
         }
@@ -68,37 +68,42 @@ public class TextHttpMessageLocationReplacer implements MessageLocationReplacer<
 
             TextHttpMessageLocation textLocation = (TextHttpMessageLocation) location;
             switch (textLocation.getLocation()) {
-            case REQUEST_HEADER:
-                if (requestHeaderReplacement == null) {
-                    requestHeaderReplacement = new Replacer(message.getRequestHeader().toString());
-                }
-                currentReplacement = requestHeaderReplacement;
-                break;
-            case REQUEST_BODY:
-                if (requestBodyReplacement == null) {
-                    requestBodyReplacement = new Replacer(message.getRequestBody().toString());
-                }
-                currentReplacement = requestBodyReplacement;
-                break;
-            case RESPONSE_HEADER:
-                if (responseHeaderReplacement == null) {
-                    responseHeaderReplacement = new Replacer(message.getResponseHeader().toString());
-                }
-                currentReplacement = responseHeaderReplacement;
-                break;
-            case RESPONSE_BODY:
-                if (responseBodyReplacement == null) {
-                    responseBodyReplacement = new Replacer(message.getResponseBody().toString());
-                }
-                currentReplacement = responseBodyReplacement;
-                break;
-            default:
-                currentReplacement = null;
+                case REQUEST_HEADER:
+                    if (requestHeaderReplacement == null) {
+                        requestHeaderReplacement =
+                                new Replacer(message.getRequestHeader().toString());
+                    }
+                    currentReplacement = requestHeaderReplacement;
+                    break;
+                case REQUEST_BODY:
+                    if (requestBodyReplacement == null) {
+                        requestBodyReplacement = new Replacer(message.getRequestBody().toString());
+                    }
+                    currentReplacement = requestBodyReplacement;
+                    break;
+                case RESPONSE_HEADER:
+                    if (responseHeaderReplacement == null) {
+                        responseHeaderReplacement =
+                                new Replacer(message.getResponseHeader().toString());
+                    }
+                    currentReplacement = responseHeaderReplacement;
+                    break;
+                case RESPONSE_BODY:
+                    if (responseBodyReplacement == null) {
+                        responseBodyReplacement =
+                                new Replacer(message.getResponseBody().toString());
+                    }
+                    currentReplacement = responseBodyReplacement;
+                    break;
+                default:
+                    currentReplacement = null;
             }
 
             if (currentReplacement != null) {
-                currentReplacement.replace(textLocation.getStart(), textLocation.getEnd(), replacement.getReplacement()
-                        .toString());
+                currentReplacement.replace(
+                        textLocation.getStart(),
+                        textLocation.getEnd(),
+                        replacement.getReplacement().toString());
             }
         }
 

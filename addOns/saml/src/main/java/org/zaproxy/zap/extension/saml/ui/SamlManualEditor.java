@@ -1,16 +1,34 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2013 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.saml.ui;
 
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.saml.*;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Map;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.saml.*;
 
 public class SamlManualEditor extends JFrame {
 
@@ -28,10 +46,7 @@ public class SamlManualEditor extends JFrame {
 
     private boolean msgUpdating;
 
-
-    /**
-     * Create the frame.
-     */
+    /** Create the frame. */
     public SamlManualEditor(final SAMLMessage samlMessage) {
         setTitle(SamlI18n.getMessage("saml.editor.title"));
         this.samlMessage = samlMessage;
@@ -75,34 +90,40 @@ public class SamlManualEditor extends JFrame {
         btnReset = new JButton(SamlI18n.getMessage("saml.editor.btn.reset"));
         bottomPanel.add(btnReset);
 
-        btnResend.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                //wait till the message is updated
-                while (msgUpdating){
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException ignored) {
+        btnResend.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent event) {
+                        // wait till the message is updated
+                        while (msgUpdating) {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException ignored) {
+                            }
+                        }
+                        try {
+                            SAMLResender.resendMessage(
+                                    SamlManualEditor.this.samlMessage.getChangedMessage());
+                            updateResponse(SamlManualEditor.this.samlMessage.getChangedMessage());
+                            btnResend.setEnabled(false);
+                            btnReset.setEnabled(false);
+                        } catch (SAMLException e) {
+                            JOptionPane.showMessageDialog(
+                                    reqPanel,
+                                    e.getMessage(),
+                                    SamlI18n.getMessage("saml.editor.msg.cantresend"),
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
                     }
-                }
-                try {
-                    SAMLResender.resendMessage(SamlManualEditor.this.samlMessage.getChangedMessage());
-                    updateResponse(SamlManualEditor.this.samlMessage.getChangedMessage());
-                    btnResend.setEnabled(false);
-                    btnReset.setEnabled(false);
-                } catch (SAMLException e) {
-                    JOptionPane.showMessageDialog(reqPanel, e.getMessage(), SamlI18n.getMessage("saml.editor.msg.cantresend"),
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-        btnReset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SamlManualEditor.this.samlMessage.resetChanges();
-                updateFields();
-            }
-        });
+                });
+        btnReset.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        SamlManualEditor.this.samlMessage.resetChanges();
+                        updateFields();
+                    }
+                });
 
         JPanel respPanel = new JPanel();
         tabbedPane.addTab(SamlI18n.getMessage("saml.editor.tab.response"), null, respPanel, null);
@@ -117,34 +138,31 @@ public class SamlManualEditor extends JFrame {
         JScrollPane resBodyScrollPane = new JScrollPane();
         respPanel.add(resBodyScrollPane);
 
-
         respBodyTextPane = new JTextPane();
         resBodyScrollPane.setViewportView(respBodyTextPane);
         updateFields();
     }
 
-    /**
-     * Update the UI fields with the new values. To be called on value changes
-     */
+    /** Update the UI fields with the new values. To be called on value changes */
     private void updateFields() {
         msgPane = new JTextPane();
         msgScrollPane.setViewportView(msgPane);
         msgPane.setText(samlMessage.getSamlMessageString());
-        msgPane.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                msgUpdating = true;
-            }
+        msgPane.addFocusListener(
+                new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        msgUpdating = true;
+                    }
 
-            @Override
-            public void focusLost(FocusEvent e) {
-                samlMessage.setSamlMessageString(msgPane.getText());
-                //todo: check for validity
-                updateFields();
-                msgUpdating = false;
-            }
-        });
-
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        samlMessage.setSamlMessageString(msgPane.getText());
+                        // todo: check for validity
+                        updateFields();
+                        msgUpdating = false;
+                    }
+                });
 
         Map<String, Attribute> samlAttributes;
         samlAttributes = samlMessage.getAttributeMap();
@@ -152,10 +170,12 @@ public class SamlManualEditor extends JFrame {
         JPanel attributesPane = new JPanel();
         attribScrollPane.setViewportView(attributesPane);
 
-        //1 row per attribute and 1 for relay state. if the total < 10 set it to 10 to have a better layout
-        attributesPane.setLayout(new java.awt.GridLayout(Math.max(10, samlAttributes.size() + 1), 1, 5, 5));
+        // 1 row per attribute and 1 for relay state. if the total < 10 set it to 10 to have a
+        // better layout
+        attributesPane.setLayout(
+                new java.awt.GridLayout(Math.max(10, samlAttributes.size() + 1), 1, 5, 5));
 
-        //text field to change relay state
+        // text field to change relay state
         JSplitPane relayStatePane = new JSplitPane();
         JLabel lblRelayState = new JLabel();
         final JTextField txtRelayStateValue = new JTextField();
@@ -169,22 +189,23 @@ public class SamlManualEditor extends JFrame {
         txtRelayStateValue.setText(samlMessage.getRelayState());
         relayStatePane.setRightComponent(txtRelayStateValue);
 
-        //update the saml message on attribute value changes
-        txtRelayStateValue.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                msgUpdating = true;
-            }
+        // update the saml message on attribute value changes
+        txtRelayStateValue.addFocusListener(
+                new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        msgUpdating = true;
+                    }
 
-            @Override
-            public void focusLost(FocusEvent e) {
-                samlMessage.setRelayState(txtRelayStateValue.getText());
-                msgUpdating = false;
-            }
-        });
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        samlMessage.setRelayState(txtRelayStateValue.getText());
+                        msgUpdating = false;
+                    }
+                });
         attributesPane.add(relayStatePane);
 
-        //Text fields to change other attributes
+        // Text fields to change other attributes
 
         for (final Attribute attribute : samlAttributes.values()) {
             JSplitPane sPane = new JSplitPane();
@@ -200,26 +221,29 @@ public class SamlManualEditor extends JFrame {
             txtValue.setText(attribute.getValue().toString());
             sPane.setRightComponent(txtValue);
 
-            //update the saml message on attribute value changes
-            txtValue.addFocusListener(new FocusListener() {
-                @Override
-                public void focusGained(FocusEvent e) {
-                    msgUpdating = true;
-                }
+            // update the saml message on attribute value changes
+            txtValue.addFocusListener(
+                    new FocusListener() {
+                        @Override
+                        public void focusGained(FocusEvent e) {
+                            msgUpdating = true;
+                        }
 
-                @Override
-                public void focusLost(FocusEvent e) {
-                    samlMessage.changeAttributeValueTo(attribute.getName(), txtValue.getText());
-                    msgPane.setText(samlMessage.getSamlMessageString());
-                    msgUpdating = false;
-                }
-            });
+                        @Override
+                        public void focusLost(FocusEvent e) {
+                            samlMessage.changeAttributeValueTo(
+                                    attribute.getName(), txtValue.getText());
+                            msgPane.setText(samlMessage.getSamlMessageString());
+                            msgUpdating = false;
+                        }
+                    });
             attributesPane.add(sPane);
         }
     }
 
     /**
      * Update the response
+     *
      * @param msg
      */
     private void updateResponse(HttpMessage msg) {

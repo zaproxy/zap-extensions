@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,36 +19,37 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
+import com.mifmif.common.regex.Generex;
+import com.mifmif.common.regex.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-import com.mifmif.common.regex.Generex;
-import com.mifmif.common.regex.util.Iterator;
-
 /**
- * A {@code StringPayloadGenerator} that generates {@code DefaultPayload}s based on a regular expression.
- * 
+ * A {@code StringPayloadGenerator} that generates {@code DefaultPayload}s based on a regular
+ * expression.
+ *
  * @see DefaultPayload
  */
 public class RegexPayloadGenerator implements StringPayloadGenerator {
 
     /**
-     * Default limit for calculation of number of generated payloads of an infinite regular expression.
-     * 
+     * Default limit for calculation of number of generated payloads of an infinite regular
+     * expression.
+     *
      * @see #calculateNumberOfPayloads(String, int)
      */
     public static final int DEFAULT_LIMIT_CALCULATION_PAYLOADS = 10000000;
 
     /**
      * The seconds that a regular expression, at most, can take to be validated.
-     * <p>
-     * Some regular expressions might be infinite or take too much time to be parsed, to prevent hanging the running process the
-     * validation is interrupted after the given time and the regular expression is considered invalid.
+     *
+     * <p>Some regular expressions might be infinite or take too much time to be parsed, to prevent
+     * hanging the running process the validation is interrupted after the given time and the
+     * regular expression is considered invalid.
      */
     private static final int VALID_REGEX_MAX_SECONDS = 5;
 
@@ -75,11 +76,13 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         this(regex, maxPayloads, limitCalculationPayloads, false);
     }
 
-    public RegexPayloadGenerator(String regex, int maxPayloads, int limitCalculationPayloads, boolean randomOrder) {
+    public RegexPayloadGenerator(
+            String regex, int maxPayloads, int limitCalculationPayloads, boolean randomOrder) {
         validateValid(regex);
         this.generator = new Generex(regex);
         this.maxPayloads = maxPayloads;
-        this.numberOfPayloads = calculateNumberOfPayloadsImpl(generator, limitCalculationPayloads, randomOrder);
+        this.numberOfPayloads =
+                calculateNumberOfPayloadsImpl(generator, limitCalculationPayloads, randomOrder);
         this.randomOrder = randomOrder;
     }
 
@@ -114,9 +117,9 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
 
     /**
      * Tells whether or not the given {@code regex} is valid for the payload generator.
-     * <p>
-     * A regular expression might have a valid syntax but still be invalid for the payload generator if it takes too much time
-     * to be processed.
+     *
+     * <p>A regular expression might have a valid syntax but still be invalid for the payload
+     * generator if it takes too much time to be processed.
      *
      * @param regex the regular expression that will be validated
      * @return {@code true} if the {@code regex} is valid, {@code false} otherwise
@@ -127,22 +130,26 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         if (!hasValidSyntax(regex)) {
             return false;
         }
-        return TimeOutRunner.run(new Runnable() {
+        return TimeOutRunner.run(
+                new Runnable() {
 
-            @Override
-            public void run() {
-                @SuppressWarnings("unused")
-                Generex generator = new Generex(regex);
-            }
-        }, VALID_REGEX_MAX_SECONDS, TimeUnit.SECONDS);
+                    @Override
+                    public void run() {
+                        @SuppressWarnings("unused")
+                        Generex generator = new Generex(regex);
+                    }
+                },
+                VALID_REGEX_MAX_SECONDS,
+                TimeUnit.SECONDS);
     }
 
     /**
-     * Tells whether or not the given {@code regex} is infinite, that is, generates an infinite number of payloads, taking into
-     * account the given {@code limit}.
+     * Tells whether or not the given {@code regex} is infinite, that is, generates an infinite
+     * number of payloads, taking into account the given {@code limit}.
      *
      * @param regex the regular expression that will be validated
-     * @param limit if positive, the maximum number of payloads that are allowed, otherwise, negative or zero, for no limit
+     * @param limit if positive, the maximum number of payloads that are allowed, otherwise,
+     *     negative or zero, for no limit
      * @return {@code true} if the {@code regex} is infinite, {@code false} otherwise
      * @throws IllegalArgumentException if the given {@code regex} is {@code null} or not valid
      * @see #isValid(String)
@@ -157,7 +164,8 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
             throw new IllegalArgumentException("The provided regular expression must not be null.");
         }
         if (!isValid(regex)) {
-            throw new IllegalArgumentException("The provided regular expression must be valid: " + regex);
+            throw new IllegalArgumentException(
+                    "The provided regular expression must be valid: " + regex);
         }
     }
 
@@ -171,13 +179,16 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
     }
 
     /**
-     * Calculates the number of payloads that the given regular expression would produce, limiting up to the given {@code limit}
-     * , if positive.
-     * <p>
-     * If the regular expression is infinite and no limit is provided it returns {@code DEFAULT_LIMIT_CALCULATION_PAYLOADS}.
+     * Calculates the number of payloads that the given regular expression would produce, limiting
+     * up to the given {@code limit} , if positive.
      *
-     * @param regex the regular expression that will be used to calculate the number of payloads generated
-     * @param limit if positive, the maximum number of payloads that are allowed, otherwise, negative or zero, for no limit
+     * <p>If the regular expression is infinite and no limit is provided it returns {@code
+     * DEFAULT_LIMIT_CALCULATION_PAYLOADS}.
+     *
+     * @param regex the regular expression that will be used to calculate the number of payloads
+     *     generated
+     * @param limit if positive, the maximum number of payloads that are allowed, otherwise,
+     *     negative or zero, for no limit
      * @return the number of payloads that would be produced by the given regular expression
      * @throws IllegalArgumentException if the given {@code regex} is {@code null} or not valid
      * @see #DEFAULT_LIMIT_CALCULATION_PAYLOADS
@@ -190,15 +201,19 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
     }
 
     /**
-     * Calculates the number of payloads that the given regular expression would produce, limiting up to the given {@code limit}
-     * (if positive) and whether it's random.
-     * <p>
-     * If the payloads should be generated in random order the limit would be the number of payloads, otherwise, if the regular
-     * expression is infinite and no limit is provided it returns {@code DEFAULT_LIMIT_CALCULATION_PAYLOADS}.
+     * Calculates the number of payloads that the given regular expression would produce, limiting
+     * up to the given {@code limit} (if positive) and whether it's random.
      *
-     * @param regex the regular expression that will be used to calculate the number of payloads generated
-     * @param limit if positive, the maximum number of payloads that are allowed, otherwise, negative or zero, for no limit
-     * @param randomOrder {@code true} if the payloads are generated randomly, {@code false} otherwise.
+     * <p>If the payloads should be generated in random order the limit would be the number of
+     * payloads, otherwise, if the regular expression is infinite and no limit is provided it
+     * returns {@code DEFAULT_LIMIT_CALCULATION_PAYLOADS}.
+     *
+     * @param regex the regular expression that will be used to calculate the number of payloads
+     *     generated
+     * @param limit if positive, the maximum number of payloads that are allowed, otherwise,
+     *     negative or zero, for no limit
+     * @param randomOrder {@code true} if the payloads are generated randomly, {@code false}
+     *     otherwise.
      * @return the number of payloads that would be produced by the given regular expression
      * @throws IllegalArgumentException if the given {@code regex} is {@code null} or not valid
      * @see #DEFAULT_LIMIT_CALCULATION_PAYLOADS
@@ -211,7 +226,8 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         return calculateNumberOfPayloadsImpl(new Generex(regex), limit, randomOrder);
     }
 
-    private static int calculateNumberOfPayloadsImpl(Generex generator, int limit, boolean randomOrder) {
+    private static int calculateNumberOfPayloadsImpl(
+            Generex generator, int limit, boolean randomOrder) {
         if (randomOrder) {
             return Math.max(0, limit);
         }
@@ -245,7 +261,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
 
         @Override
         public boolean hasNext() {
-            if(randomOrder){
+            if (randomOrder) {
                 return count < maxPayloads;
             }
 
@@ -258,7 +274,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         @Override
         public DefaultPayload next() {
             count++;
-            if(randomOrder){
+            if (randomOrder) {
                 return new DefaultPayload(generex.random());
             }
 
@@ -266,8 +282,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public void remove() {
-        }
+        public void remove() {}
 
         @Override
         public void reset() {
@@ -276,13 +291,12 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public void close() {
-        }
-
+        public void close() {}
     }
 
     /**
-     * Class that runs a {@code Runnable}, stopping it if it doesn't finish after a given amount of time.
+     * Class that runs a {@code Runnable}, stopping it if it doesn't finish after a given amount of
+     * time.
      */
     private static class TimeOutRunner {
 
@@ -292,19 +306,21 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
             ExecutorService executor = null;
             try {
                 executor = Executors.newSingleThreadExecutor();
-                Future<?> future = executor.submit(new Runnable() {
+                Future<?> future =
+                        executor.submit(
+                                new Runnable() {
 
-                    @Override
-                    public void run() {
-                        synchronized (thread) {
-                            thread.start();
-                            try {
-                                thread.wait();
-                            } catch (InterruptedException e) {
-                            }
-                        }
-                    }
-                });
+                                    @Override
+                                    public void run() {
+                                        synchronized (thread) {
+                                            thread.start();
+                                            try {
+                                                thread.wait();
+                                            } catch (InterruptedException e) {
+                                            }
+                                        }
+                                    }
+                                });
 
                 future.get(time, timeUnit);
                 return true;

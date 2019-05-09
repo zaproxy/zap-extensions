@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,13 +26,11 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-/**
- * A {@code PayloadGenerator} that generates payloads using a script.
- *
- */
+/** A {@code PayloadGenerator} that generates payloads using a script. */
 public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerator {
 
-    private static final Logger LOGGER = Logger.getLogger(ScriptStringPayloadGeneratorAdapter.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(ScriptStringPayloadGeneratorAdapter.class);
 
     private final ScriptWrapper scriptWrapper;
     private boolean initialised;
@@ -44,20 +42,25 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
             throw new IllegalArgumentException("Parameter scriptWrapper must not be null.");
         }
         if (!ScriptStringPayloadGenerator.TYPE_NAME.equals(scriptWrapper.getTypeName())) {
-            throw new IllegalArgumentException("Parameter scriptWrapper must wrap a script of type \""
-                    + ScriptStringPayloadGenerator.TYPE_NAME + "\".");
+            throw new IllegalArgumentException(
+                    "Parameter scriptWrapper must wrap a script of type \""
+                            + ScriptStringPayloadGenerator.TYPE_NAME
+                            + "\".");
         }
         this.scriptWrapper = scriptWrapper;
         this.numberOfPayloads = -1;
     }
 
-    public ScriptStringPayloadGeneratorAdapter(ScriptWrapper scriptWrapper, ScriptStringPayloadGenerator script) {
+    public ScriptStringPayloadGeneratorAdapter(
+            ScriptWrapper scriptWrapper, ScriptStringPayloadGenerator script) {
         if (scriptWrapper == null) {
             throw new IllegalArgumentException("Parameter scriptWrapper must not be null.");
         }
         if (!ScriptStringPayloadGenerator.TYPE_NAME.equals(scriptWrapper.getTypeName())) {
-            throw new IllegalArgumentException("Parameter scriptWrapper must wrap a script of type \""
-                    + ScriptStringPayloadGenerator.TYPE_NAME + "\".");
+            throw new IllegalArgumentException(
+                    "Parameter scriptWrapper must wrap a script of type \""
+                            + ScriptStringPayloadGenerator.TYPE_NAME
+                            + "\".");
         }
         if (script == null) {
             throw new IllegalArgumentException("Parameter script must not be null.");
@@ -88,7 +91,11 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
                 numberOfPayloads = scriptPayloadGenerator.getNumberOfPayloads();
                 return numberOfPayloads;
             } catch (Exception e) {
-                LOGGER.warn("Failed to obtain number of payloads from script '" + scriptWrapper.getName() + "':", e);
+                LOGGER.warn(
+                        "Failed to obtain number of payloads from script '"
+                                + scriptWrapper.getName()
+                                + "':",
+                        e);
             }
         }
         return UNKNOWN_NUMBER_OF_PAYLOADS;
@@ -97,8 +104,10 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
     @Override
     public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
         if (scriptPayloadGenerator != null) {
-            ScriptPayloadGeneratorIterator iterator = new ScriptPayloadGeneratorIterator(scriptWrapper, scriptPayloadGenerator);
-            // Use the existing script instance just once, otherwise it could be used by multiple iterators at the same time
+            ScriptPayloadGeneratorIterator iterator =
+                    new ScriptPayloadGeneratorIterator(scriptWrapper, scriptPayloadGenerator);
+            // Use the existing script instance just once, otherwise it could be used by multiple
+            // iterators at the same time
             scriptPayloadGenerator = null;
             return iterator;
         }
@@ -110,7 +119,8 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         return new ScriptStringPayloadGeneratorAdapter(scriptWrapper);
     }
 
-    private static class ScriptPayloadGeneratorIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
+    private static class ScriptPayloadGeneratorIterator
+            implements ResettableAutoCloseableIterator<DefaultPayload> {
 
         private final ScriptWrapper scriptWrapper;
         private boolean initialised;
@@ -121,8 +131,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         }
 
         public ScriptPayloadGeneratorIterator(
-                ScriptWrapper scriptWrapper,
-                ScriptStringPayloadGenerator scriptPayloadGenerator) {
+                ScriptWrapper scriptWrapper, ScriptStringPayloadGenerator scriptPayloadGenerator) {
             this.scriptWrapper = scriptWrapper;
             this.scriptPayloadGenerator = scriptPayloadGenerator;
             this.initialised = true;
@@ -136,13 +145,16 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
             }
 
             if (scriptPayloadGenerator == null) {
-                throw new PayloadGenerationException("Script '" + scriptWrapper.getName()
-                        + "' does not implement the expected interface (ScriptStringPayloadGenerator).");
+                throw new PayloadGenerationException(
+                        "Script '"
+                                + scriptWrapper.getName()
+                                + "' does not implement the expected interface (ScriptStringPayloadGenerator).");
             }
             try {
                 return scriptPayloadGenerator.hasNext();
             } catch (Exception e) {
-                // N.B. Catch exception (instead of ScriptException) since Nashorn throws RuntimeException.
+                // N.B. Catch exception (instead of ScriptException) since Nashorn throws
+                // RuntimeException.
                 // The same applies to all other script try-catch blocks.
                 // For example, when a variable or function is not defined it throws:
                 // jdk.nashorn.internal.runtime.ECMAException
@@ -166,8 +178,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         }
 
         @Override
-        public void remove() {
-        }
+        public void remove() {}
 
         @Override
         public void reset() {
@@ -187,7 +198,8 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
             }
         }
 
-        private static ScriptStringPayloadGenerator initialise(ScriptWrapper scriptWrapper) throws PayloadGenerationException {
+        private static ScriptStringPayloadGenerator initialise(ScriptWrapper scriptWrapper)
+                throws PayloadGenerationException {
             try {
                 return initialiseImpl(scriptWrapper);
             } catch (Exception e) {
@@ -196,14 +208,17 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
             return null;
         }
 
-        private static void handleScriptException(ScriptWrapper scriptWrapper, Exception cause) throws PayloadGenerationException {
+        private static void handleScriptException(ScriptWrapper scriptWrapper, Exception cause)
+                throws PayloadGenerationException {
             handleScriptExceptionImpl(scriptWrapper, cause);
             throw new PayloadGenerationException("Failed to generate the payload:", cause);
         }
     }
 
-    private static ScriptStringPayloadGenerator initialiseImpl(ScriptWrapper scriptWrapper) throws Exception {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+    private static ScriptStringPayloadGenerator initialiseImpl(ScriptWrapper scriptWrapper)
+            throws Exception {
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             return extensionScript.getInterface(scriptWrapper, ScriptStringPayloadGenerator.class);
         }
@@ -211,7 +226,8 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
     }
 
     private static void handleScriptExceptionImpl(ScriptWrapper scriptWrapper, Exception cause) {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             extensionScript.setError(scriptWrapper, cause);
             extensionScript.setEnabled(scriptWrapper, false);

@@ -19,16 +19,15 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator;
 
-import org.parosproxy.paros.Constant;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.parosproxy.paros.Constant;
 
 public class MatchByRegexTagRule extends RegexTagRule {
 
     private String tag;
 
-    public MatchByRegexTagRule(String regex, String tag){
+    public MatchByRegexTagRule(String regex, String tag) {
         super(regex);
         this.tag = tag;
     }
@@ -39,13 +38,15 @@ public class MatchByRegexTagRule extends RegexTagRule {
 
     @Override
     public String getName() {
-        String ruleName = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.matchbyregex.name");
+        String ruleName =
+                Constant.messages.getString(
+                        "fuzz.httpfuzzer.processor.tagcreator.matchbyregex.name");
         return tag + "; " + ruleName + " " + getRegex();
     }
 
     @Override
-    public String createTag(String responseMessage){
-        if(isHttpResponseMatching(responseMessage)){
+    public String createTag(String responseMessage) {
+        if (isHttpResponseMatching(responseMessage)) {
             return getTag();
         }
         return null;

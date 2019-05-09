@@ -19,14 +19,11 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-/**
- * Unit test for {@link TestExternalRedirect}.
- */
+/** Unit test for {@link TestExternalRedirect}. */
 public class TestExternalRedirectUnitTest extends ActiveScannerAppParamTest<TestExternalRedirect> {
 
     @Override
     protected TestExternalRedirect createScanner() {
         return new TestExternalRedirect();
     }
-
 }

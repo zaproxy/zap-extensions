@@ -20,39 +20,30 @@
 
 package com.sittinglittleduck.DirBuster;
 
-/**
- *
- * @author james
- */
-public class HTTPHeader
-{
+/** @author james */
+public class HTTPHeader {
     private String header;
     private String value;
-    
+
     /** Creates a new instance of HTTPHeader */
-    public HTTPHeader(String header, String value)
-    {
+    public HTTPHeader(String header, String value) {
         this.header = header;
         this.value = value;
     }
 
-    public String getHeader()
-    {
+    public String getHeader() {
         return header;
     }
 
-    public String getValue()
-    {
+    public String getValue() {
         return value;
     }
 
-    public void setHeader(String header)
-    {
+    public void setHeader(String header) {
         this.header = header;
     }
 
-    public void setValue(String value)
-    {
+    public void setValue(String value) {
         this.value = value;
-    } 
+    }
 }

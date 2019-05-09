@@ -17,29 +17,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.zaproxy.zap.extension.websocket.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketObserver;
 import org.zaproxy.zap.extension.websocket.WebSocketSenderListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 /**
- * This class wrap up the HttpMessage and the appropriate options were necessary for
- * handshake request
+ * This class wrap up the HttpMessage and the appropriate options were necessary for handshake
+ * request
  */
 public class HandshakeConfig {
-    
+
     private HttpMessage httpMessage;
     private boolean followRedirects;
     private boolean useSessionState;
     private List<WebSocketObserver> websocketObservers;
     private List<WebSocketSenderListener> webSocketSenderListeners;
-    
+
     /**
      * Creates a basic configuration for a handshake message
      *
@@ -47,55 +44,54 @@ public class HandshakeConfig {
      * @param followRedirects {@code true} to follow redirection
      * @param useSessionState {@code true} in order to send a state http request
      */
-    public HandshakeConfig(HttpMessage httpMessage, boolean followRedirects, boolean useSessionState){
+    public HandshakeConfig(
+            HttpMessage httpMessage, boolean followRedirects, boolean useSessionState) {
         this.httpMessage = httpMessage;
         this.followRedirects = followRedirects;
         this.useSessionState = useSessionState;
     }
 
-	/**
-	 * Creates a basic configuration for a handshake message
-	 *
-	 * @param httpMessage the http handshake message
-	 */
-	public HandshakeConfig(HttpMessage httpMessage){
-		this.httpMessage = httpMessage;
-	}
+    /**
+     * Creates a basic configuration for a handshake message
+     *
+     * @param httpMessage the http handshake message
+     */
+    public HandshakeConfig(HttpMessage httpMessage) {
+        this.httpMessage = httpMessage;
+    }
 
     public HttpMessage getHttpMessage() {
         return httpMessage;
     }
-    
+
     public void setHttpMessage(HttpMessage httpMessage) {
         this.httpMessage = httpMessage;
     }
-    
+
     public boolean isFollowRedirects() {
         return followRedirects;
     }
-    
+
     public void setFollowRedirects(boolean followRedirects) {
         this.followRedirects = followRedirects;
     }
-    
+
     public boolean isUseSessionState() {
         return useSessionState;
     }
-    
+
     public void setUseSessionState(boolean useSessionState) {
         this.useSessionState = useSessionState;
     }
-    
-    /**
-     * Add an observer that is attached to the new channel connection in future.
-     */
+
+    /** Add an observer that is attached to the new channel connection in future. */
     public void addChannelObserver(WebSocketObserver observer) {
-        if(websocketObservers == null){
+        if (websocketObservers == null) {
             websocketObservers = new ArrayList<>();
         }
         websocketObservers.add(observer);
     }
-    
+
     /**
      * Removes the given {@code observer}, that will be attached to channel.
      *
@@ -106,40 +102,38 @@ public class HandshakeConfig {
         if (observer == null) {
             throw new IllegalArgumentException("The parameter observer must not be null.");
         }
-        if(websocketObservers != null){
+        if (websocketObservers != null) {
             websocketObservers.remove(observer);
         }
     }
-    
-    /**
-     * Add an sender listener that is attached to the new channel connection in future.
-     */
-    public void addChannelSenderListener(WebSocketSenderListener senderListener){
-        if(webSocketSenderListeners == null){
+
+    /** Add an sender listener that is attached to the new channel connection in future. */
+    public void addChannelSenderListener(WebSocketSenderListener senderListener) {
+        if (webSocketSenderListeners == null) {
             webSocketSenderListeners = new ArrayList<>();
         }
         webSocketSenderListeners.add(senderListener);
     }
-    
+
     /**
      * Removes the given {@code senderListener}, that will be attached to channel.
      *
      * @param senderListener the sender listener to be removed
      * @throws IllegalArgumentException if the given {@code senderListener} is {@code null}.
      */
-    public void removeChannelSenderListener(WebSocketSenderListener senderListener){
+    public void removeChannelSenderListener(WebSocketSenderListener senderListener) {
         if (senderListener == null) {
             throw new IllegalArgumentException("The parameter senderListener must not be null.");
         }
-        if(webSocketSenderListeners != null){
+        if (webSocketSenderListeners != null) {
             webSocketSenderListeners.remove(senderListener);
         }
     }
-    
+
     public List<WebSocketObserver> getWebsocketObservers() {
         return websocketObservers;
     }
-    
+
     public List<WebSocketSenderListener> getWebSocketSenderListeners() {
         return webSocketSenderListeners;
     }

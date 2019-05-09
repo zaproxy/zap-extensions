@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2017 The ZAP Development Team
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
@@ -41,7 +40,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     private static final String FIRST_TAB = "replacer.tab.rule";
     private static final String INITIATORS_TAB = "replacer.tab.init";
 
-    private static final String[] ADV_TAB_LABELS = { FIRST_TAB, INITIATORS_TAB };
+    private static final String[] ADV_TAB_LABELS = {FIRST_TAB, INITIATORS_TAB};
 
     protected static final String DESC_FIELD = "replacer.label.desc";
     protected static final String MATCH_STR_FIELD = "replacer.label.matchstr";
@@ -67,8 +66,11 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     private ReplacerParamRule rule;
     private OptionsReplacerTableModel replacerModel;
 
-    public ReplaceRuleAddDialog(Window owner, String title, 
-            ReplacerParam replacerParam, OptionsReplacerTableModel replacerModel) {
+    public ReplaceRuleAddDialog(
+            Window owner,
+            String title,
+            ReplacerParam replacerParam,
+            OptionsReplacerTableModel replacerModel) {
         super(owner, title, DisplayUtils.getScaledDimension(500, 350), ADV_TAB_LABELS, true);
         this.replacerParam = replacerParam;
         this.replacerModel = replacerModel;
@@ -120,31 +122,39 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         // Set before adding the listener so we don't get in a loop
         this.setRule(rule, selectedMatchType);
 
-        this.addFieldListener(MATCH_TYPE_FIELD, new ActionListener() {
+        this.addFieldListener(
+                MATCH_TYPE_FIELD,
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                save();
-                initFields();
-            }
-        });
-        this.addFieldListener(INIT_TYPE_ALL_FIELD, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        save();
+                        initFields();
+                    }
+                });
+        this.addFieldListener(
+                INIT_TYPE_ALL_FIELD,
+                new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setUpInitiatorFields();
-            }
-        });
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        setUpInitiatorFields();
+                    }
+                });
     }
 
     private void setUpInitiatorFields() {
         boolean bool = !getBoolValue(INIT_TYPE_ALL_FIELD);
         if (bool) {
-            this.setFieldValue(INIT_TYPE_SUMMARY_FIELD, Constant.messages.getString("replacer.label.initsummary.tab"));
+            this.setFieldValue(
+                    INIT_TYPE_SUMMARY_FIELD,
+                    Constant.messages.getString("replacer.label.initsummary.tab"));
         } else {
-            this.setFieldValue(INIT_TYPE_SUMMARY_FIELD, Constant.messages.getString("replacer.label.initsummary.all"));
+            this.setFieldValue(
+                    INIT_TYPE_SUMMARY_FIELD,
+                    Constant.messages.getString("replacer.label.initsummary.all"));
         }
-       
+
         getField(INIT_TYPE_PROXY_FIELD).setEnabled(bool);
         getField(INIT_TYPE_SPIDER_FIELD).setEnabled(bool);
         getField(INIT_TYPE_SCANNER_FIELD).setEnabled(bool);
@@ -169,7 +179,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     public OptionsReplacerTableModel getReplacerModel() {
         return this.replacerModel;
     }
-    
+
     public ReplacerParam getReplacerParam() {
         return replacerParam;
     }
@@ -177,7 +187,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     public void setReplacerParam(ReplacerParam replacerParam) {
         this.replacerParam = replacerParam;
     }
-    
+
     private void setRule(ReplacerParamRule rule, MatchType selectedMatchType) {
         this.rule = rule;
         if (rule != null) {
@@ -196,18 +206,36 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
                 this.setFieldValue(INIT_TYPE_ALL_FIELD, true);
             } else {
                 this.setFieldValue(INIT_TYPE_ALL_FIELD, false);
-                this.setFieldValue(INIT_TYPE_PROXY_FIELD, rule.getInitiators().contains(HttpSender.PROXY_INITIATOR));
-                this.setFieldValue(INIT_TYPE_SPIDER_FIELD, rule.getInitiators().contains(HttpSender.SPIDER_INITIATOR));
-                this.setFieldValue(INIT_TYPE_SCANNER_FIELD, rule.getInitiators().contains(HttpSender.ACTIVE_SCANNER_INITIATOR));
-                this.setFieldValue(INIT_TYPE_BRUTE_FIELD, rule.getInitiators().contains(HttpSender.FORCED_BROWSE_INITIATOR));
-                this.setFieldValue(INIT_TYPE_FUZZER_FIELD, rule.getInitiators().contains(HttpSender.FUZZER_INITIATOR));
-                this.setFieldValue(INIT_TYPE_SPIDER_AJAX_FIELD, rule.getInitiators().contains(HttpSender.AJAX_SPIDER_INITIATOR));
-                this.setFieldValue(INIT_TYPE_AUTH_FIELD, rule.getInitiators().contains(HttpSender.AUTHENTICATION_INITIATOR));
+                this.setFieldValue(
+                        INIT_TYPE_PROXY_FIELD,
+                        rule.getInitiators().contains(HttpSender.PROXY_INITIATOR));
+                this.setFieldValue(
+                        INIT_TYPE_SPIDER_FIELD,
+                        rule.getInitiators().contains(HttpSender.SPIDER_INITIATOR));
+                this.setFieldValue(
+                        INIT_TYPE_SCANNER_FIELD,
+                        rule.getInitiators().contains(HttpSender.ACTIVE_SCANNER_INITIATOR));
+                this.setFieldValue(
+                        INIT_TYPE_BRUTE_FIELD,
+                        rule.getInitiators().contains(HttpSender.FORCED_BROWSE_INITIATOR));
+                this.setFieldValue(
+                        INIT_TYPE_FUZZER_FIELD,
+                        rule.getInitiators().contains(HttpSender.FUZZER_INITIATOR));
+                this.setFieldValue(
+                        INIT_TYPE_SPIDER_AJAX_FIELD,
+                        rule.getInitiators().contains(HttpSender.AJAX_SPIDER_INITIATOR));
+                this.setFieldValue(
+                        INIT_TYPE_AUTH_FIELD,
+                        rule.getInitiators().contains(HttpSender.AUTHENTICATION_INITIATOR));
                 this.setFieldValue(
                         INIT_TYPE_AC_FIELD,
                         rule.getInitiators().contains(HttpSender.ACCESS_CONTROL_SCANNER_INITIATOR));
-                this.setFieldValue(INIT_TYPE_USER_FIELD, rule.getInitiators().contains(HttpSender.MANUAL_REQUEST_INITIATOR));
-                this.setFieldValue(INIT_TYPE_TOKEN_GEN_FIELD, rule.getInitiators().contains(HttpSender.TOKEN_GENERATOR_INITIATOR));
+                this.setFieldValue(
+                        INIT_TYPE_USER_FIELD,
+                        rule.getInitiators().contains(HttpSender.MANUAL_REQUEST_INITIATOR));
+                this.setFieldValue(
+                        INIT_TYPE_TOKEN_GEN_FIELD,
+                        rule.getInitiators().contains(HttpSender.TOKEN_GENERATOR_INITIATOR));
             }
         }
         setUpInitiatorFields();
@@ -234,7 +262,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
                 initiators.add(HttpSender.ACTIVE_SCANNER_INITIATOR);
             }
             if (getBoolValue(INIT_TYPE_BRUTE_FIELD)) {
-                initiators.add(HttpSender.FORCED_BROWSE_INITIATOR); 
+                initiators.add(HttpSender.FORCED_BROWSE_INITIATOR);
             }
             if (getBoolValue(INIT_TYPE_FUZZER_FIELD)) {
                 initiators.add(HttpSender.FUZZER_INITIATOR);
@@ -256,14 +284,15 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
             }
         }
 
-        rule = new ReplacerParamRule(
-                this.getStringValue(DESC_FIELD),
-                this.getSelectedMatchType(),
-                this.getStringValue(MATCH_STR_FIELD),
-                this.getBoolValue(REGEX_FIELD),
-                this.getStringValue(REPLACEMENT_FIELD),
-                initiators,
-                this.getBoolValue(ENABLE_FIELD));
+        rule =
+                new ReplacerParamRule(
+                        this.getStringValue(DESC_FIELD),
+                        this.getSelectedMatchType(),
+                        this.getStringValue(MATCH_STR_FIELD),
+                        this.getBoolValue(REGEX_FIELD),
+                        this.getStringValue(REPLACEMENT_FIELD),
+                        initiators,
+                        this.getBoolValue(ENABLE_FIELD));
     }
 
     protected String checkIfUnique() {
@@ -293,7 +322,8 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     }
 
     private String matchTypeToStr(ReplacerParamRule.MatchType matchType) {
-        return (Constant.messages.getString("replacer.matchtype." + matchType.name().toLowerCase()));
+        return (Constant.messages.getString(
+                "replacer.matchtype." + matchType.name().toLowerCase()));
     }
 
     private List<String> getMatchTypes() {
@@ -432,7 +462,8 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
             return ReplacerParamRule.MatchType.REQ_BODY_STR;
         } else if (matchTypeToStr(ReplacerParamRule.MatchType.RESP_HEADER).equals(selectedStr)) {
             return ReplacerParamRule.MatchType.RESP_HEADER;
-        } else if (matchTypeToStr(ReplacerParamRule.MatchType.RESP_HEADER_STR).equals(selectedStr)) {
+        } else if (matchTypeToStr(ReplacerParamRule.MatchType.RESP_HEADER_STR)
+                .equals(selectedStr)) {
             return ReplacerParamRule.MatchType.RESP_HEADER_STR;
         } else if (matchTypeToStr(ReplacerParamRule.MatchType.RESP_BODY_STR).equals(selectedStr)) {
             return ReplacerParamRule.MatchType.RESP_BODY_STR;
@@ -448,5 +479,4 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.setFieldValue(REPLACEMENT_FIELD, "");
         this.setFieldValue(ENABLE_FIELD, false);
     }
-
 }

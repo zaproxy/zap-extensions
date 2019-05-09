@@ -28,7 +28,7 @@ import org.parosproxy.paros.network.HttpMessage;
 
 /**
  * Unit test for {@link PiiScanner}.
- * 
+ *
  * @see PiiScannerCreditCardUnitTest
  */
 public class PiiScannerUnitTest extends PassiveScannerTest<PiiScanner> {
@@ -39,7 +39,8 @@ public class PiiScannerUnitTest extends PassiveScannerTest<PiiScanner> {
     }
 
     @Test
-    public void shouldNotFailWithStackOverflowErrorWhenScanningResponseWithManyNumbers() throws Exception {
+    public void shouldNotFailWithStackOverflowErrorWhenScanningResponseWithManyNumbers()
+            throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -63,8 +64,7 @@ public class PiiScannerUnitTest extends PassiveScannerTest<PiiScanner> {
     private HttpMessage createMsg(String cardNumber) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
         msg.setResponseBody("{\"cc\": \"" + cardNumber + "\"}");
         return msg;
     }

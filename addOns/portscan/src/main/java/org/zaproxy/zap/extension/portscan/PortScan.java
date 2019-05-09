@@ -1,21 +1,21 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Copyright 2010 psiinon@gmail.com
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Copyright 2010 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.portscan;
 
@@ -30,9 +30,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.DefaultListModel;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.ConnectionParam;
@@ -121,7 +119,9 @@ public class PortScan extends ScanThread implements ScanListenner {
         }
 
         ConnectionParam connParams = Model.getSingleton().getOptionsParam().getConnectionParam();
-        SocketAddress sa = new InetSocketAddress(connParams.getProxyChainName(), connParams.getProxyChainPort());
+        SocketAddress sa =
+                new InetSocketAddress(
+                        connParams.getProxyChainName(), connParams.getProxyChainPort());
         final java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.SOCKS, sa);
 
         for (port = startPort; port < maxPort; port += threads) {
@@ -153,24 +153,30 @@ public class PortScan extends ScanThread implements ScanListenner {
                 }
 
                 Socket s = null;
-                if (useProxy && Model.getSingleton().getOptionsParam().getConnectionParam().isUseProxy(site)) {
+                if (useProxy
+                        && Model.getSingleton()
+                                .getOptionsParam()
+                                .getConnectionParam()
+                                .isUseProxy(site)) {
 
-                    FutureTask<Integer> ft = new FutureTask<>(new Callable<Integer>() {
+                    FutureTask<Integer> ft =
+                            new FutureTask<>(
+                                    new Callable<Integer>() {
 
-                        @Override
-                        public Integer call() {
-                            Socket s = new Socket(proxy);
-                            SocketAddress endpoint = new InetSocketAddress(site, port);
-                            try {
-                                s.connect(endpoint, timeout);
-                                s.close();
-                            } catch (IOException e) {
-                                return null;
-                            }
-                            return port;
-
-                        }
-                    });
+                                        @Override
+                                        public Integer call() {
+                                            Socket s = new Socket(proxy);
+                                            SocketAddress endpoint =
+                                                    new InetSocketAddress(site, port);
+                                            try {
+                                                s.connect(endpoint, timeout);
+                                                s.close();
+                                            } catch (IOException e) {
+                                                return null;
+                                            }
+                                            return port;
+                                        }
+                                    });
                     new Thread(ft).start();
                     try {
                         ft.get(2, TimeUnit.SECONDS);
@@ -201,13 +207,14 @@ public class PortScan extends ScanThread implements ScanListenner {
         if (EventQueue.isDispatchThread()) {
             resultsTableModel.addPort(port);
         } else {
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                @Override
-                public void run() {
-                    addResult(port);
-                }
-            });
+                        @Override
+                        public void run() {
+                            addResult(port);
+                        }
+                    });
         }
     }
 
@@ -276,8 +283,9 @@ public class PortScan extends ScanThread implements ScanListenner {
     }
 
     /**
-     * @deprecated (7) No longer supported, throws UnsupportedOperationException. Use {@code getResultsTableModel()} instead.
-     *             Port Scan results are shown in a table thus it uses a {@code TableModel} ({@code PortScanResultsTableModel}).
+     * @deprecated (7) No longer supported, throws UnsupportedOperationException. Use {@code
+     *     getResultsTableModel()} instead. Port Scan results are shown in a table thus it uses a
+     *     {@code TableModel} ({@code PortScanResultsTableModel}).
      * @throws UnsupportedOperationException to indicate that is no longer supported.
      * @see PortScanResultsTableModel
      * @see #getResultsTableModel()
@@ -334,13 +342,14 @@ public class PortScan extends ScanThread implements ScanListenner {
         if (EventQueue.isDispatchThread()) {
             resultsTableModel.clear();
         } else {
-            EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(
+                    new Runnable() {
 
-                @Override
-                public void run() {
-                    reset();
-                }
-            });
+                        @Override
+                        public void run() {
+                            reset();
+                        }
+                    });
         }
     }
 
@@ -370,9 +379,8 @@ public class PortScan extends ScanThread implements ScanListenner {
         // Don't support
     }
 
-	@Override
-	public void setTechSet(TechSet techSet) {
+    @Override
+    public void setTechSet(TechSet techSet) {
         // Don't support
-	}
-
+    }
 }

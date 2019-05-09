@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP development team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.net.Socket;
-
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.proxy.ProxyThread;
 import org.parosproxy.paros.network.HttpSender;
@@ -28,7 +27,10 @@ import org.parosproxy.paros.network.HttpSender;
 class AjaxProxyThread extends ProxyThread {
 
     AjaxProxyThread(ProxyServer server, Socket socket) {
-        super(server, socket, new HttpSender(server.getConnectionParam(), true, HttpSender.AJAX_SPIDER_INITIATOR));
+        super(
+                server,
+                socket,
+                new HttpSender(
+                        server.getConnectionParam(), true, HttpSender.AJAX_SPIDER_INITIATOR));
     }
-
 }

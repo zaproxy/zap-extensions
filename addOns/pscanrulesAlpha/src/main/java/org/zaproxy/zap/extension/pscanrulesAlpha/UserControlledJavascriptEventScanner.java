@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2012 The ZAP development team
+ * Copyright 2013 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,12 +23,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -39,153 +37,195 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/)
- * rule {@code CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledJavascriptEvent}
- * 
+ * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
+ * CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledJavascriptEvent}
  */
 public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
 
-    private static final String[] JAVASCRIPT_EVENTS = new String[] {
-    		"onabort", "onbeforeunload", "onblur", "onchange", "onclick", 
-    		"oncontextmenu", "ondblclick", "ondrag", "ondragend", "ondragenter", 
-    		"ondragleave", "ondragover", "ondragstart", "ondrop", "onerror",
-            "onfocus", "onhashchange", "onkeydown", "onkeypress", "onkeyup", 
-            "onload", "onmessage", "onmousedown", "onmousemove", "onmouseout", 
-            "onmouseover", "onmouseup", "onmousewheel", "onoffline", "ononline", 
-            "onpopstate", "onreset", "onresize", "onscroll", "onselect", 
-            "onstorage", "onsubmit", "onunload"
-    };	
-	
-	private PassiveScanThread parent = null;	
-	
-	/**
-	 * Prefix for internationalized messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledjavascriptevent.";
+    private static final String[] JAVASCRIPT_EVENTS =
+            new String[] {
+                "onabort",
+                "onbeforeunload",
+                "onblur",
+                "onchange",
+                "onclick",
+                "oncontextmenu",
+                "ondblclick",
+                "ondrag",
+                "ondragend",
+                "ondragenter",
+                "ondragleave",
+                "ondragover",
+                "ondragstart",
+                "ondrop",
+                "onerror",
+                "onfocus",
+                "onhashchange",
+                "onkeydown",
+                "onkeypress",
+                "onkeyup",
+                "onload",
+                "onmessage",
+                "onmousedown",
+                "onmousemove",
+                "onmouseout",
+                "onmouseover",
+                "onmouseup",
+                "onmousewheel",
+                "onoffline",
+                "ononline",
+                "onpopstate",
+                "onreset",
+                "onresize",
+                "onscroll",
+                "onselect",
+                "onstorage",
+                "onsubmit",
+                "onunload"
+            };
 
-	@Override
-	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
-	}
+    private PassiveScanThread parent = null;
 
-	@Override
-	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		// do nothing
-	}
+    /** Prefix for internationalized messages used by this rule */
+    private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledjavascriptevent.";
 
-	@Override
-	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {		
-		if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
-			return;
-		}
-		
-    	if (!isResponseHTML(msg)) {
-    		return;
-    	}		
-		
-    	Set<HtmlParameter> params = new TreeSet<HtmlParameter>(msg.getFormParams());
-    	params.addAll(msg.getUrlParams());    	
-    	if (params.size() == 0) {
-    		return;
-    	} 		
+    @Override
+    public String getName() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
 
-		List<Element> htmlElements = source.getAllElements();
-		for (Element htmlElement: htmlElements) {
-			Attributes attributes = htmlElement.getAttributes();
-			if (attributes == null) {
-				continue;
-			}
-			
-			for (Attribute attribute: attributes) {
-				if (Arrays.binarySearch(JAVASCRIPT_EVENTS, attribute.getName().toLowerCase()) >= 0) {
-					for (HtmlParameter param: params) {
-						if (param.getValue() != null && param.getValue().length() > 0) {
-							checkJavascriptEvent(msg, id, htmlElement, attribute, param);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-    private void checkJavascriptEvent(HttpMessage msg, int id,
-			Element htmlElement, Attribute attribute, HtmlParameter param) {
+    @Override
+    public void scanHttpRequestSend(HttpMessage msg, int id) {
+        // do nothing
+    }
+
+    @Override
+    public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
+            return;
+        }
+
+        if (!isResponseHTML(msg)) {
+            return;
+        }
+
+        Set<HtmlParameter> params = new TreeSet<HtmlParameter>(msg.getFormParams());
+        params.addAll(msg.getUrlParams());
+        if (params.size() == 0) {
+            return;
+        }
+
+        List<Element> htmlElements = source.getAllElements();
+        for (Element htmlElement : htmlElements) {
+            Attributes attributes = htmlElement.getAttributes();
+            if (attributes == null) {
+                continue;
+            }
+
+            for (Attribute attribute : attributes) {
+                if (Arrays.binarySearch(JAVASCRIPT_EVENTS, attribute.getName().toLowerCase())
+                        >= 0) {
+                    for (HtmlParameter param : params) {
+                        if (param.getValue() != null && param.getValue().length() > 0) {
+                            checkJavascriptEvent(msg, id, htmlElement, attribute, param);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkJavascriptEvent(
+            HttpMessage msg,
+            int id,
+            Element htmlElement,
+            Attribute attribute,
+            HtmlParameter param) {
         // Try some rudimentary parsing of the Javascript event
         // so we can find the user-input.
         String[] split = attribute.getValue().split("[;=,:]");
-        for (String s: split) {
+        for (String s : split) {
             if (s.equalsIgnoreCase(param.getValue())) {
-            	raiseAlert(msg, id, htmlElement, attribute, param);
+                raiseAlert(msg, id, htmlElement, attribute, param);
             }
         }
-	}
-   
-	// TODO: Fix up to support other variations of text/html.  
-	// FIX: This will match Atom and RSS feeds now, which set text/html but 
-	// use &lt;?xml&gt; in content
-  	
+    }
+
+    // TODO: Fix up to support other variations of text/html.
+    // FIX: This will match Atom and RSS feeds now, which set text/html but
+    // use &lt;?xml&gt; in content
+
     // TODO: these methods have been extracted from CharsetMismatchScanner
     // I think we should create helper methods for them
-	private boolean isResponseHTML(HttpMessage message) {
-		String contentType = message.getResponseHeader().getHeader(
-				HttpHeader.CONTENT_TYPE);
-		if (contentType == null) {
-			return false;
-		}
-		
-		return contentType.indexOf("text/html") != -1 || 
-				contentType.indexOf("application/xhtml+xml") != -1 ||
-				contentType.indexOf("application/xhtml") != -1;
-	}  
-	
-	private void raiseAlert(HttpMessage msg, int id, Element htmlElement, 
-			Attribute htmlAttribute, HtmlParameter param) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM,
-				getName());				    
+    private boolean isResponseHTML(HttpMessage message) {
+        String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
+        if (contentType == null) {
+            return false;
+        }
 
-		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), param.getName(), "", 
-				getExtraInfoMessage(msg, htmlAttribute, param),
-				getSolutionMessage(), getReferenceMessage(),  
-				"",	// No evidence
-				20,	// CWE-20: Improper Input Validation
-				20,	// WASC-20: Improper Input Handling
-				msg);  
+        return contentType.indexOf("text/html") != -1
+                || contentType.indexOf("application/xhtml+xml") != -1
+                || contentType.indexOf("application/xhtml") != -1;
+    }
 
-		parent.raiseAlert(id, alert);
-	}
+    private void raiseAlert(
+            HttpMessage msg,
+            int id,
+            Element htmlElement,
+            Attribute htmlAttribute,
+            HtmlParameter param) {
+        Alert alert =
+                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
 
-	@Override
-	public int getPluginId() {
-		return 10043;
-	}
+        alert.setDetail(
+                getDescriptionMessage(),
+                msg.getRequestHeader().getURI().toString(),
+                param.getName(),
+                "",
+                getExtraInfoMessage(msg, htmlAttribute, param),
+                getSolutionMessage(),
+                getReferenceMessage(),
+                "", // No evidence
+                20, // CWE-20: Improper Input Validation
+                20, // WASC-20: Improper Input Handling
+                msg);
 
-	@Override
-	public void setParent(PassiveScanThread parent) {
-		this.parent = parent;
-	}
+        parent.raiseAlert(id, alert);
+    }
 
-	/*
-	 * Rule-associated messages
-	 */
+    @Override
+    public int getPluginId() {
+        return 10043;
+    }
 
-	private String getDescriptionMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
+    @Override
+    public void setParent(PassiveScanThread parent) {
+        this.parent = parent;
+    }
 
-	private String getSolutionMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
+    /*
+     * Rule-associated messages
+     */
 
-	private String getReferenceMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
+    private String getDescriptionMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
 
-	private String getExtraInfoMessage(HttpMessage msg, Attribute htmlAttribute,
-			HtmlParameter param) {        
-        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", 
-        		msg.getRequestHeader().getURI().toString(), 
-        		htmlAttribute.getName(), htmlAttribute.getValue(),
-        		param.getValue());        
-	}
+    private String getSolutionMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    private String getReferenceMessage() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    private String getExtraInfoMessage(
+            HttpMessage msg, Attribute htmlAttribute, HtmlParameter param) {
+        return Constant.messages.getString(
+                MESSAGE_PREFIX + "extrainfo",
+                msg.getRequestHeader().getURI().toString(),
+                htmlAttribute.getName(),
+                htmlAttribute.getValue(),
+                param.getValue());
+    }
 }

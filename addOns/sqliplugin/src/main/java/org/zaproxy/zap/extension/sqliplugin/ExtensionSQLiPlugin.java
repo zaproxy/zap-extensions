@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2016 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 
 /**
- * A helper extension to force the load, done by core, of the resource messages bundled in the add-on.
+ * A helper extension to force the load, done by core, of the resource messages bundled in the
+ * add-on.
  */
 public class ExtensionSQLiPlugin extends ExtensionAdaptor {
 
@@ -52,5 +53,4 @@ public class ExtensionSQLiPlugin extends ExtensionAdaptor {
     public boolean canUnload() {
         return true;
     }
-
 }

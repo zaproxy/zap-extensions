@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,13 +26,10 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- * Unit test for {@link BrowsersComboBoxModel}.
- */
+/** Unit test for {@link BrowsersComboBoxModel}. */
 public class BrowsersComboBoxModelUnitTest {
 
     private static BrowserUI FIREFOX;
@@ -242,5 +239,4 @@ public class BrowsersComboBoxModelUnitTest {
         // Then
         assertThat(browsersComboBoxModel.getSelectedItem(), is(equalTo(null)));
     }
-
 }

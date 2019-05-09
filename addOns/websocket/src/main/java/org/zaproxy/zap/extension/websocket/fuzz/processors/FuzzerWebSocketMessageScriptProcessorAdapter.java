@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,12 +28,14 @@ import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerMessageProcessor;
 import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerTaskProcessorUtils;
 
 /**
- * A {@code WebSocketFuzzerMessageProcessor} that delegates the processing to a {@code WebSocketFuzzerProcessorScript}.
+ * A {@code WebSocketFuzzerMessageProcessor} that delegates the processing to a {@code
+ * WebSocketFuzzerProcessorScript}.
  *
  * @see WebSocketFuzzerMessageProcessor
  * @see WebSocketFuzzerProcessorScript
  */
-public class FuzzerWebSocketMessageScriptProcessorAdapter implements WebSocketFuzzerMessageProcessor {
+public class FuzzerWebSocketMessageScriptProcessorAdapter
+        implements WebSocketFuzzerMessageProcessor {
 
     private final ScriptWrapper scriptWrapper;
     private boolean initialised;
@@ -45,7 +47,9 @@ public class FuzzerWebSocketMessageScriptProcessorAdapter implements WebSocketFu
         }
         if (!WebSocketFuzzerProcessorScript.TYPE_NAME.equals(scriptWrapper.getTypeName())) {
             throw new IllegalArgumentException(
-                    "Parameter scriptWrapper must wrap a script of type \"" + WebSocketFuzzerProcessorScript.TYPE_NAME + "\".");
+                    "Parameter scriptWrapper must wrap a script of type \""
+                            + WebSocketFuzzerProcessorScript.TYPE_NAME
+                            + "\".");
         }
         this.scriptWrapper = scriptWrapper;
     }
@@ -56,7 +60,8 @@ public class FuzzerWebSocketMessageScriptProcessorAdapter implements WebSocketFu
     }
 
     @Override
-    public WebSocketMessageDTO processMessage(WebSocketFuzzerTaskProcessorUtils utils, WebSocketMessageDTO message)
+    public WebSocketMessageDTO processMessage(
+            WebSocketFuzzerTaskProcessorUtils utils, WebSocketMessageDTO message)
             throws ProcessingException {
         if (!initialised) {
             initialise();
@@ -65,14 +70,16 @@ public class FuzzerWebSocketMessageScriptProcessorAdapter implements WebSocketFu
 
         if (scriptProcessor == null) {
             throw new ProcessingException(
-                    "Script '" + scriptWrapper.getName()
+                    "Script '"
+                            + scriptWrapper.getName()
                             + "' does not implement the expected interface (WebSocketFuzzerProcessorScript).");
         }
 
         try {
             scriptProcessor.processMessage(utils, message);
         } catch (Exception e) {
-            // N.B. Catch exception (instead of ScriptException) since Nashorn throws RuntimeException.
+            // N.B. Catch exception (instead of ScriptException) since Nashorn throws
+            // RuntimeException.
             // The same applies to all other script try-catch blocks.
             // For example, when a variable or function is not defined it throws:
             // jdk.nashorn.internal.runtime.ECMAException
@@ -82,10 +89,13 @@ public class FuzzerWebSocketMessageScriptProcessorAdapter implements WebSocketFu
     }
 
     private void initialise() throws ProcessingException {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             try {
-                scriptProcessor = extensionScript.getInterface(scriptWrapper, WebSocketFuzzerProcessorScript.class);
+                scriptProcessor =
+                        extensionScript.getInterface(
+                                scriptWrapper, WebSocketFuzzerProcessorScript.class);
             } catch (Exception e) {
                 handleScriptException(e);
             }
@@ -93,7 +103,8 @@ public class FuzzerWebSocketMessageScriptProcessorAdapter implements WebSocketFu
     }
 
     private void handleScriptException(Exception cause) throws ProcessingException {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             extensionScript.setError(scriptWrapper, cause);
             extensionScript.setEnabled(scriptWrapper, false);
@@ -101,5 +112,4 @@ public class FuzzerWebSocketMessageScriptProcessorAdapter implements WebSocketFu
 
         throw new ProcessingException("Failed to process the payload:", cause);
     }
-
 }

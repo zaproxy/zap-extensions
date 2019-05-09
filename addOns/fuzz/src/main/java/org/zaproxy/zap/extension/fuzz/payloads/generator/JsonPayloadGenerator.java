@@ -22,10 +22,9 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.natpryce.snodge.JsonMutator;
+import java.util.Iterator;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
-
-import java.util.Iterator;
 
 public class JsonPayloadGenerator implements StringPayloadGenerator {
     private final String json;
@@ -64,12 +63,12 @@ public class JsonPayloadGenerator implements StringPayloadGenerator {
         return new JsonPayloadGenerator(json, numberOfPayloads);
     }
 
-
     public String getJson() {
         return this.json;
     }
 
-    private static class JsonPayloadIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
+    private static class JsonPayloadIterator
+            implements ResettableAutoCloseableIterator<DefaultPayload> {
         private final int numberOfPayloads;
         private final JsonElement originalJson;
         private Iterator<JsonElement> mutant;
@@ -82,9 +81,7 @@ public class JsonPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public void close() {
-
-        }
+        public void close() {}
 
         @Override
         public void reset() {

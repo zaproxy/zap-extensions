@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,9 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.ImageIcon;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -51,8 +49,8 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
 
 public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
 
-    private static final ImageIcon WEBSOCKET_FUZZER_PROCESSOR_SCRIPT_ICON = new ImageIcon(
-            ZAP.class.getResource("/resource/icon/16/script-fuzz.png"));
+    private static final ImageIcon WEBSOCKET_FUZZER_PROCESSOR_SCRIPT_ICON =
+            new ImageIcon(ZAP.class.getResource("/resource/icon/16/script-fuzz.png"));
 
     private static final List<Class<? extends Extension>> DEPENDENCIES;
 
@@ -102,14 +100,16 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
     public void initView(ViewDelegate view) {
         super.initView(view);
 
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
-            scriptType = new ScriptType(
-                    WebSocketFuzzerProcessorScript.TYPE_NAME,
-                    "websocket.fuzzer.script.type.fuzzerprocessor",
-                    WEBSOCKET_FUZZER_PROCESSOR_SCRIPT_ICON,
-                    true,
-                    true);
+            scriptType =
+                    new ScriptType(
+                            WebSocketFuzzerProcessorScript.TYPE_NAME,
+                            "websocket.fuzzer.script.type.fuzzerprocessor",
+                            WEBSOCKET_FUZZER_PROCESSOR_SCRIPT_ICON,
+                            true,
+                            true);
             extensionScript.registerScriptType(scriptType);
 
             websocketFuzzerHandler.addFuzzerMessageProcessorUIHandler(
@@ -121,17 +121,20 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        ExtensionFuzz extensionFuzz = Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
+        ExtensionFuzz extensionFuzz =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
         extensionFuzz.addFuzzerHandler(websocketFuzzerHandler);
 
         if (getView() != null) {
             // Disable for now, there are no places where it would be used
-            //extensionHook.getHookMenu()
-            //       .addPopupMenuItem(new WebSocketFuzzAttackPopupMenuItem(extensionFuzz, websocketFuzzerHandler));
+            // extensionHook.getHookMenu()
+            //       .addPopupMenuItem(new WebSocketFuzzAttackPopupMenuItem(extensionFuzz,
+            // websocketFuzzerHandler));
 
-            ExtensionWebSocket extensionWebSocket = Control.getSingleton()
-                    .getExtensionLoader()
-                    .getExtension(ExtensionWebSocket.class);
+            ExtensionWebSocket extensionWebSocket =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionWebSocket.class);
             extensionWebSocket.addAllChannelObserver(getAllChannelObserver());
         }
     }
@@ -140,16 +143,17 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
     public void unload() {
         super.unload();
 
-        ExtensionFuzz extensionFuzz = Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
+        ExtensionFuzz extensionFuzz =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
         extensionFuzz.removeFuzzerHandler(websocketFuzzerHandler);
 
-        ExtensionWebSocket extensionWebSocket = Control.getSingleton()
-                .getExtensionLoader()
-                .getExtension(ExtensionWebSocket.class);
+        ExtensionWebSocket extensionWebSocket =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionWebSocket.class);
         extensionWebSocket.removeAllChannelObserver(getAllChannelObserver());
 
         if (getView() != null) {
-            ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+            ExtensionScript extensionScript =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
             if (extensionScript != null) {
                 extensionScript.removeScripType(scriptType);
             }
@@ -162,13 +166,19 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
         return true;
     }
 
-    public <T1 extends WebSocketFuzzerMessageProcessor, T2 extends WebSocketFuzzerMessageProcessorUI<T1>> void addFuzzerMessageProcessorUIHandler(
-            WebSocketFuzzerMessageProcessorUIHandler<T1, T2> handler) {
+    public <
+                    T1 extends WebSocketFuzzerMessageProcessor,
+                    T2 extends WebSocketFuzzerMessageProcessorUI<T1>>
+            void addFuzzerMessageProcessorUIHandler(
+                    WebSocketFuzzerMessageProcessorUIHandler<T1, T2> handler) {
         websocketFuzzerHandler.addFuzzerMessageProcessorUIHandler(handler);
     }
 
-    public <T1 extends WebSocketFuzzerMessageProcessor, T2 extends WebSocketFuzzerMessageProcessorUI<T1>> void removeFuzzerMessageProcessorUIHandler(
-            WebSocketFuzzerMessageProcessorUIHandler<T1, T2> handler) {
+    public <
+                    T1 extends WebSocketFuzzerMessageProcessor,
+                    T2 extends WebSocketFuzzerMessageProcessorUI<T1>>
+            void removeFuzzerMessageProcessorUIHandler(
+                    WebSocketFuzzerMessageProcessorUIHandler<T1, T2> handler) {
         websocketFuzzerHandler.removeFuzzerMessageProcessorUIHandler(handler);
     }
 

@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,9 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerTaskProcessorUtils;
 
 public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessageProcessor {
 
-    public static final String NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.requestContentLengthUpdater.name");
+    public static final String NAME =
+            Constant.messages.getString(
+                    "fuzz.httpfuzzer.processor.requestContentLengthUpdater.name");
 
     private static RequestContentLengthUpdaterProcessor instance;
 
@@ -66,7 +68,8 @@ public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessagePr
             return message;
         }
 
-        if (message.getRequestHeader().getHeader(HttpHeader.CONTENT_LENGTH) != null || message.getRequestBody().length() != 0) {
+        if (message.getRequestHeader().getHeader(HttpHeader.CONTENT_LENGTH) != null
+                || message.getRequestBody().length() != 0) {
             message.getRequestHeader().setContentLength(message.getRequestBody().length());
         }
 
@@ -77,5 +80,4 @@ public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessagePr
     public boolean processResult(HttpFuzzerTaskProcessorUtils utils, HttpFuzzResult fuzzResult) {
         return true;
     }
-
 }

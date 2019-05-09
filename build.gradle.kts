@@ -1,5 +1,5 @@
 plugins {
-    id("com.diffplug.gradle.spotless") version "3.20.0"
+    id("com.diffplug.gradle.spotless")
 }
 
 apply(from = "$rootDir/gradle/travis-ci.gradle.kts")
@@ -15,6 +15,13 @@ allprojects {
     spotless {
         kotlinGradle {
             ktlint()
+        }
+
+        project.plugins.withType(JavaPlugin::class) {
+            java {
+                licenseHeaderFile("$rootDir/gradle/spotless/license.java")
+                googleJavaFormatAosp(project)
+            }
         }
     }
 

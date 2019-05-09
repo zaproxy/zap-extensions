@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2014 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.reveal;
 
 import net.sf.json.JSONObject;
-
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
@@ -40,15 +39,13 @@ public class RevealAPI extends ApiImplementor {
 
     private final ExtensionReveal extension;
 
-    /**
-     * Provided only for API client generator usage.
-     */
+    /** Provided only for API client generator usage. */
     public RevealAPI() {
         this(null);
     }
 
     public RevealAPI(ExtensionReveal extension) {
-        this.addApiAction(new ApiAction(ACTION_SET_REVEAL, new String[] { PARAM_REVEAL }));
+        this.addApiAction(new ApiAction(ACTION_SET_REVEAL, new String[] {PARAM_REVEAL}));
 
         this.addApiView(new ApiView(VIEW_REVEAL));
 
@@ -82,5 +79,4 @@ public class RevealAPI extends ApiImplementor {
         }
         return result;
     }
-
 }

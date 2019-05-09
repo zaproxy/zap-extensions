@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP development team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -32,13 +34,9 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-import fi.iki.elonen.NanoHTTPD.IHTTPSession;
-import fi.iki.elonen.NanoHTTPD.Response;
-
-/**
- * Unit test for {@link RemoteCodeExecutionCVE20121823}.
- */
-public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<RemoteCodeExecutionCVE20121823> {
+/** Unit test for {@link RemoteCodeExecutionCVE20121823}. */
+public class RemoteCodeExecutionCVE20121823UnitTest
+        extends ActiveScannerTest<RemoteCodeExecutionCVE20121823> {
 
     @Override
     protected RemoteCodeExecutionCVE20121823 createScanner() {
@@ -80,14 +78,15 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
     public void shouldScanUrlsWithEncodedCharsInPath() throws Exception {
         // Given
         String test = "/shouldScanUrlsWithEncodedCharsInPath/";
-        nano.addHandler(new NanoServerHandler(test) {
+        nano.addHandler(
+                new NanoServerHandler(test) {
 
-            @Override
-            protected Response serve(IHTTPSession session) {
-                consumeBody(session);
-                return newFixedLengthResponse("Nothing echoed...");
-            }
-        });
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        consumeBody(session);
+                        return newFixedLengthResponse("Nothing echoed...");
+                    }
+                });
         HttpMessage message = getHttpMessage(test + "%7B+%25%24");
         rule.init(message, parent);
         // When
@@ -113,14 +112,15 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
     public void shouldNotAlertIfTheAttackIsNotEchoedInTheResponse() throws Exception {
         // Given
         String test = "/shouldNotAlertIfTheAttackIsNotEchoedInTheResponse/";
-        nano.addHandler(new NanoServerHandler(test) {
+        nano.addHandler(
+                new NanoServerHandler(test) {
 
-            @Override
-            protected Response serve(IHTTPSession session) {
-                consumeBody(session);
-                return newFixedLengthResponse("Nothing echoed...");
-            }
-        });
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        consumeBody(session);
+                        return newFixedLengthResponse("Nothing echoed...");
+                    }
+                });
         HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
@@ -133,19 +133,20 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
     public void shouldNotAlertEvenIfAttackResponseBodyHasBiggerSize() throws Exception {
         // Given
         String test = "/shouldNotAlertEvenIfResponseBodyHasBiggerSize/";
-        nano.addHandler(new NanoServerHandler(test) {
+        nano.addHandler(
+                new NanoServerHandler(test) {
 
-            @Override
-            protected Response serve(IHTTPSession session) {
-                consumeBody(session);
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        consumeBody(session);
 
-                StringBuilder strBuilder = new StringBuilder("Nothing echoed...\n");
-                for (int i = 0; i < 50; i++) {
-                    strBuilder.append(" response content...\n");
-                }
-                return newFixedLengthResponse(strBuilder.toString());
-            }
-        });
+                        StringBuilder strBuilder = new StringBuilder("Nothing echoed...\n");
+                        for (int i = 0; i < 50; i++) {
+                            strBuilder.append(" response content...\n");
+                        }
+                        return newFixedLengthResponse(strBuilder.toString());
+                    }
+                });
         HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
@@ -157,7 +158,8 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
     @Test
     public void shouldAlertIfWindowsAttackWasSuccessful() throws Exception {
         // Given
-        final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
+        final String body =
+                RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
         String test = "/shouldAlertIfWindowsAttackWasSuccessful/";
         nano.addHandler(new WinResponse(test, body));
         HttpMessage message = getHttpMessage(test);
@@ -168,9 +170,13 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(body)));
         assertThat(alertsRaised.get(0).getParam(), is(equalTo("")));
-        assertThat(alertsRaised.get(0).getAttack(), is(
-                equalTo("<?php exec('cmd.exe /C echo " + RemoteCodeExecutionCVE20121823.RANDOM_STRING
-                        + "',$colm);echo join(\"\n\",$colm);die();?>")));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(
+                        equalTo(
+                                "<?php exec('cmd.exe /C echo "
+                                        + RemoteCodeExecutionCVE20121823.RANDOM_STRING
+                                        + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo(body)));
@@ -179,7 +185,8 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
     @Test
     public void shouldNotDoWinAttackIfWinTechIsNotIncluded() throws Exception {
         // Given
-        final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
+        final String body =
+                RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
         String test = "/shouldNotDoWinAttackIfWinTechIsNotIncluded/";
         nano.addHandler(new WinResponse(test, body));
         HttpMessage message = getHttpMessage(test);
@@ -195,7 +202,8 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
     @Test
     public void shouldAlertIfNixAttackWasSuccessful() throws Exception {
         // Given
-        final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
+        final String body =
+                RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
         String test = "/shouldAlertIfNixAttackWasSuccessful/";
         nano.addHandler(new NixResponse(test, body));
         HttpMessage message = getHttpMessage(test);
@@ -206,9 +214,13 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(body)));
         assertThat(alertsRaised.get(0).getParam(), is(equalTo("")));
-        assertThat(alertsRaised.get(0).getAttack(), is(
-                equalTo("<?php exec('echo " + RemoteCodeExecutionCVE20121823.RANDOM_STRING
-                        + "',$colm);echo join(\"\n\",$colm);die();?>")));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                is(
+                        equalTo(
+                                "<?php exec('echo "
+                                        + RemoteCodeExecutionCVE20121823.RANDOM_STRING
+                                        + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo(body)));
@@ -219,7 +231,10 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
         // Given
         String test = "/shouldNotDoNixAttackIfNixTechsAreNotIncluded/";
         nano.addHandler(
-                new NixResponse(test, RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>"));
+                new NixResponse(
+                        test,
+                        RemoteCodeExecutionCVE20121823.RANDOM_STRING
+                                + "<html><body>X Y Z</body></html>"));
         HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         rule.setTechSet(techSetWithout(Tech.Linux, Tech.MacOS));
@@ -230,7 +245,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
         assertThat(httpMessagesSent, hasSize(1)); // Win attack
     }
 
-    private static abstract class RceResponse extends NanoServerHandler {
+    private abstract static class RceResponse extends NanoServerHandler {
 
         private final String body;
 
@@ -273,5 +288,4 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
             return requestBody.startsWith("<?php exec('echo");
         }
     }
-
 }

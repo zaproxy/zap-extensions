@@ -17,8 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.zaproxy.zap.extension.websocket.client;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,54 +34,66 @@ import org.zaproxy.zap.testutils.WebSocketTestUtils;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketTestServer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 public class ServerConnectionEstablisherUnitTest extends WebSocketTestUtils {
-	private final static String HOST_NAME = "localhost";
-	
-	@Before
-	public void openWebSocketServer() throws Exception {
-		super.startWebSocketServer(HOST_NAME);
-		super.setUpZap();
-	}
-	
-	@After
-	@Override
-	public void stopWebSocketServer(){
-		super.stopWebSocketServer();
-	}
-	
-	@Override
-	protected void setUpMessages() {
-		mockMessages(new ExtensionWebSocket());
-	}
-	
-	@Test
-	public void shouldReceiveUpgradeStatusCode() throws Exception {
-		ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
-		NanoWebSocketTestServer webSocketServer = super.getWebSocketTestServer();
-		HttpMessage handshakeRequest = new HttpMessage(HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
-		establisher.send(new HandshakeConfig(handshakeRequest,false,false));
-		assertEquals(101,handshakeRequest.getResponseHeader().getStatusCode());
-		assertEquals(webSocketServer.getLastConnection()
-						.getHandshakeResponse().getHeader(HttpHandshakeBuilder.SEC_WEB_SOCKET_ACCEPT)
-				, WebSocketUtils.encodeWebSocketKey(handshakeRequest.getRequestHeader().getHeader(HttpHandshakeBuilder.SEC_WEB_SOCKET_KEY)));
-		
-	}
-	
-	@Test
-	public void shouldReturnWSProxy() throws Exception {
-		ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
-		HttpMessage handshakeRequest = new HttpMessage(HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
-		WebSocketProxy webSocketProxy = establisher.send(new HandshakeConfig(handshakeRequest,false,false));
-		NanoWebSocketConnection webSocketConnection = super.getWebSocketTestServer().getLastConnection();
-		assertEquals(101,handshakeRequest.getResponseHeader().getStatusCode());
-		assertNotNull(webSocketProxy);
-		assertTrue(webSocketProxy.isConnected());
-		assertEquals(webSocketConnection.getHandshakeResponse().getHeader(HttpHandshakeBuilder.SEC_WEB_SOCKET_ACCEPT)
-				,WebSocketUtils.encodeWebSocketKey(handshakeRequest.getRequestHeader().getHeader(HttpHandshakeBuilder.SEC_WEB_SOCKET_KEY)));
-	}
-	
+    private static final String HOST_NAME = "localhost";
+
+    @Before
+    public void openWebSocketServer() throws Exception {
+        super.startWebSocketServer(HOST_NAME);
+        super.setUpZap();
+    }
+
+    @After
+    @Override
+    public void stopWebSocketServer() {
+        super.stopWebSocketServer();
+    }
+
+    @Override
+    protected void setUpMessages() {
+        mockMessages(new ExtensionWebSocket());
+    }
+
+    @Test
+    public void shouldReceiveUpgradeStatusCode() throws Exception {
+        ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
+        NanoWebSocketTestServer webSocketServer = super.getWebSocketTestServer();
+        HttpMessage handshakeRequest =
+                new HttpMessage(
+                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
+        establisher.send(new HandshakeConfig(handshakeRequest, false, false));
+        assertEquals(101, handshakeRequest.getResponseHeader().getStatusCode());
+        assertEquals(
+                webSocketServer
+                        .getLastConnection()
+                        .getHandshakeResponse()
+                        .getHeader(HttpHandshakeBuilder.SEC_WEB_SOCKET_ACCEPT),
+                WebSocketUtils.encodeWebSocketKey(
+                        handshakeRequest
+                                .getRequestHeader()
+                                .getHeader(HttpHandshakeBuilder.SEC_WEB_SOCKET_KEY)));
+    }
+
+    @Test
+    public void shouldReturnWSProxy() throws Exception {
+        ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
+        HttpMessage handshakeRequest =
+                new HttpMessage(
+                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
+        WebSocketProxy webSocketProxy =
+                establisher.send(new HandshakeConfig(handshakeRequest, false, false));
+        NanoWebSocketConnection webSocketConnection =
+                super.getWebSocketTestServer().getLastConnection();
+        assertEquals(101, handshakeRequest.getResponseHeader().getStatusCode());
+        assertNotNull(webSocketProxy);
+        assertTrue(webSocketProxy.isConnected());
+        assertEquals(
+                webSocketConnection
+                        .getHandshakeResponse()
+                        .getHeader(HttpHandshakeBuilder.SEC_WEB_SOCKET_ACCEPT),
+                WebSocketUtils.encodeWebSocketKey(
+                        handshakeRequest
+                                .getRequestHeader()
+                                .getHeader(HttpHandshakeBuilder.SEC_WEB_SOCKET_KEY)));
+    }
 }

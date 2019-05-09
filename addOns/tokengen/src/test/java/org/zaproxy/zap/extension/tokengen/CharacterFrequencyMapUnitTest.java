@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP development team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,9 +28,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-/**
- * Unit test for {@link CharacterFrequencyMap}.
- */
+/** Unit test for {@link CharacterFrequencyMap}. */
 public class CharacterFrequencyMapUnitTest {
 
     @Test
@@ -41,7 +39,8 @@ public class CharacterFrequencyMapUnitTest {
         TokenAnalysisTestResult result = cfm.checkCharacterUniformity();
         // Then
         assertThat(result.getType(), is(equalTo(TokenAnalysisTestResult.Type.CHR_UNIFORMITY)));
-        assertThat(result.getName(), is(equalTo(TokenAnalysisTestResult.Type.CHR_UNIFORMITY.name())));
+        assertThat(
+                result.getName(), is(equalTo(TokenAnalysisTestResult.Type.CHR_UNIFORMITY.name())));
         assertThat(result.getResult(), is(equalTo(TokenAnalysisTestResult.Result.FAIL)));
         assertThat(result.getFailures(), is(contains("Tokens have zero characters.")));
         assertThat(result.getDetails(), is(empty()));
@@ -59,7 +58,8 @@ public class CharacterFrequencyMapUnitTest {
         TokenAnalysisTestResult result = cfm.checkCharacterUniformity();
         // Then
         assertThat(result.getType(), is(equalTo(TokenAnalysisTestResult.Type.CHR_UNIFORMITY)));
-        assertThat(result.getName(), is(equalTo(TokenAnalysisTestResult.Type.CHR_UNIFORMITY.name())));
+        assertThat(
+                result.getName(), is(equalTo(TokenAnalysisTestResult.Type.CHR_UNIFORMITY.name())));
         assertThat(result.getResult(), is(equalTo(TokenAnalysisTestResult.Result.FAIL)));
         assertThat(
                 result.getFailures(),
@@ -67,7 +67,13 @@ public class CharacterFrequencyMapUnitTest {
                         "Column 0 Character A appears 1000 times: more than expected (669)",
                         "Column 1 Character B appears 1000 times: more than expected (669)",
                         "Column 2 Character C appears 1000 times: more than expected (669)"));
-        assertThat(result.getDetails(), is(contains("Col 0 A:1000 B:0 C:0", "Col 1 A:0 B:1000 C:0", "Col 2 A:0 B:0 C:1000")));
+        assertThat(
+                result.getDetails(),
+                is(
+                        contains(
+                                "Col 0 A:1000 B:0 C:0",
+                                "Col 1 A:0 B:1000 C:0",
+                                "Col 2 A:0 B:0 C:1000")));
         assertThat(result.getSummary(), is(nullValue()));
     }
 
@@ -82,10 +88,13 @@ public class CharacterFrequencyMapUnitTest {
         TokenAnalysisTestResult result = cfm.checkCharacterUniformity();
         // Then
         assertThat(result.getType(), is(equalTo(TokenAnalysisTestResult.Type.CHR_UNIFORMITY)));
-        assertThat(result.getName(), is(equalTo(TokenAnalysisTestResult.Type.CHR_UNIFORMITY.name())));
+        assertThat(
+                result.getName(), is(equalTo(TokenAnalysisTestResult.Type.CHR_UNIFORMITY.name())));
         assertThat(result.getResult(), is(equalTo(TokenAnalysisTestResult.Result.PASS)));
         assertThat(result.getFailures(), is(empty()));
-        assertThat(result.getDetails(), contains("Col 0 A:1 B:1 C:1", "Col 1 A:1 B:1 C:1", "Col 2 A:1 B:1 C:1"));
+        assertThat(
+                result.getDetails(),
+                contains("Col 0 A:1 B:1 C:1", "Col 1 A:1 B:1 C:1", "Col 2 A:1 B:1 C:1"));
         assertThat(result.getSummary(), is(nullValue()));
     }
 }

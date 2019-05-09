@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Copyright 2015 The ZAP Development Team
- * 
+ *
+ * Copyright 2019 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
 import java.util.List;
-
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessingException;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
@@ -32,7 +31,8 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
     private final PayloadGenerator<T> payloadGenerator;
     private final List<PayloadProcessor<T>> processors;
 
-    public ProcessedPayloadGenerator(PayloadGenerator<T> payloadGenerator, List<PayloadProcessor<T>> processors) {
+    public ProcessedPayloadGenerator(
+            PayloadGenerator<T> payloadGenerator, List<PayloadProcessor<T>> processors) {
         this.payloadGenerator = payloadGenerator;
         this.processors = processors;
     }
@@ -52,8 +52,8 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
         return new ProcessedPayloadGenerator<>(payloadGenerator, processors);
     }
 
-    private static class ProcessedPayaloadGeneratorIterator<E extends Payload> implements
-            ResettableAutoCloseableIterator<E> {
+    private static class ProcessedPayaloadGeneratorIterator<E extends Payload>
+            implements ResettableAutoCloseableIterator<E> {
 
         private final PayloadGenerator<E> payloadGenerator;
         private final List<PayloadProcessor<E>> processors;
@@ -61,8 +61,7 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
         private ResettableAutoCloseableIterator<E> payloadIterator;
 
         public ProcessedPayaloadGeneratorIterator(
-                PayloadGenerator<E> payloadGenerator,
-                List<PayloadProcessor<E>> processors) {
+                PayloadGenerator<E> payloadGenerator, List<PayloadProcessor<E>> processors) {
             this.payloadGenerator = payloadGenerator;
             this.processors = processors;
 
@@ -88,15 +87,15 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
                 try {
                     value = processor.process(value);
                 } catch (PayloadProcessingException e) {
-                    throw new PayloadGenerationException("An error occurred while processing the payload: " + e.toString(), e);
+                    throw new PayloadGenerationException(
+                            "An error occurred while processing the payload: " + e.toString(), e);
                 }
             }
             return value;
         }
 
         @Override
-        public void remove() {
-        }
+        public void remove() {}
 
         @Override
         public void reset() {
@@ -107,6 +106,5 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
         public void close() {
             payloadIterator.close();
         }
-
     }
 }

@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP development team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,11 +26,8 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.htmlparser.jericho.Source;
-
 import org.junit.Before;
-
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
@@ -39,9 +36,9 @@ import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Class with utility/helper methods for passive scanner tests ({@link org.zaproxy.zap.extension.pscan.PluginPassiveScanner
- * PluginPassiveScanner}).
- * 
+ * Class with utility/helper methods for passive scanner tests ({@link
+ * org.zaproxy.zap.extension.pscan.PluginPassiveScanner PluginPassiveScanner}).
+ *
  * @param <T> the type of the passive scanner.
  */
 public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends TestUtils {
@@ -59,13 +56,14 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
         setUpZap();
 
         alertsRaised = new ArrayList<>();
-        parent = new PassiveScanThread(null, null, new ExtensionAlert(), null) {
-            @Override
-            public void raiseAlert(int id, Alert alert) {
-                defaultAssertions(alert);
-                alertsRaised.add(alert);
-            }
-        };
+        parent =
+                new PassiveScanThread(null, null, new ExtensionAlert(), null) {
+                    @Override
+                    public void raiseAlert(int id, Alert alert) {
+                        defaultAssertions(alert);
+                        alertsRaised.add(alert);
+                    }
+                };
         rule = createScanner();
         rule.setParent(parent);
     }
@@ -79,9 +77,8 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
     }
 
     protected abstract T createScanner();
-    
+
     protected Source createSource(HttpMessage msg) {
         return new Source(msg.getResponseBody().toString());
     }
-
 }

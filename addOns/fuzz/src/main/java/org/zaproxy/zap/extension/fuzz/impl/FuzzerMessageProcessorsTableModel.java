@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,29 +21,35 @@ package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessor;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTableModel;
 
-public class FuzzerMessageProcessorsTableModel<T1 extends Message, T2 extends FuzzerMessageProcessor<T1>, T3 extends FuzzerMessageProcessorUI<T1, T2>>
-        extends AbstractMultipleOrderedOptionsBaseTableModel<FuzzerMessageProcessorTableEntry<T1, T2>> {
+public class FuzzerMessageProcessorsTableModel<
+                T1 extends Message,
+                T2 extends FuzzerMessageProcessor<T1>,
+                T3 extends FuzzerMessageProcessorUI<T1, T2>>
+        extends AbstractMultipleOrderedOptionsBaseTableModel<
+                FuzzerMessageProcessorTableEntry<T1, T2>> {
 
     private static final long serialVersionUID = 1445590168342841316L;
 
     private static final String[] COLUMNS = {
-            Constant.messages.getString("fuzz.fuzzer.messageprocessors.table.header.order"),
-            Constant.messages.getString("fuzz.fuzzer.messageprocessors.table.header.name"),
-            Constant.messages.getString("fuzz.fuzzer.messageprocessors.table.header.description") };
+        Constant.messages.getString("fuzz.fuzzer.messageprocessors.table.header.order"),
+        Constant.messages.getString("fuzz.fuzzer.messageprocessors.table.header.name"),
+        Constant.messages.getString("fuzz.fuzzer.messageprocessors.table.header.description")
+    };
 
     private List<FuzzerMessageProcessorTableEntry<T1, T2>> messageProcessors;
 
     public FuzzerMessageProcessorsTableModel(List<T3> messageProcessors) {
         this.messageProcessors = new ArrayList<>(messageProcessors.size());
         for (FuzzerMessageProcessorUI<T1, T2> processor : messageProcessors) {
-            this.messageProcessors.add(new FuzzerMessageProcessorTableEntry<>(this.messageProcessors.size() + 1, processor));
+            this.messageProcessors.add(
+                    new FuzzerMessageProcessorTableEntry<>(
+                            this.messageProcessors.size() + 1, processor));
         }
     }
 
@@ -87,5 +93,4 @@ public class FuzzerMessageProcessorsTableModel<T1 extends Message, T2 extends Fu
     public List<FuzzerMessageProcessorTableEntry<T1, T2>> getElements() {
         return messageProcessors;
     }
-
 }

@@ -26,12 +26,12 @@ import org.junit.Test;
 
 public class WappalyzerAppsJsonParseUnitTest {
 
-	@Test
-	public void test() throws IOException {
-		// When - there's a parse exception, fail
-		WappalyzerJsonParser parser = new WappalyzerJsonParser(
-				(pattern, e) -> fail("Regular expression with errors: " + e));
-		parser.parseDefaultAppsJson();
-	}
-
+    @Test
+    public void test() throws IOException {
+        // When - there's a parse exception, fail
+        WappalyzerJsonParser parser =
+                new WappalyzerJsonParser(
+                        (pattern, e) -> fail("Regular expression with errors: " + e));
+        parser.parseDefaultAppsJson();
+    }
 }

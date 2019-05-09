@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,14 +20,12 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.ui;
 
 import java.awt.Container;
-
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
-
 import org.jdesktop.swingx.JXTable;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
 
@@ -59,8 +57,9 @@ public class HttpFuzzerErrorsTable extends JXTable {
         createDefaultColumnsFromModel();
 
         getColumnExt(0).setPrototypeValue(Long.valueOf(1000));
-        getColumnExt(1).setPrototypeValue(
-                "The error message contains a lot of text which occupies a lot more space than the task ID.");
+        getColumnExt(1)
+                .setPrototypeValue(
+                        "The error message contains a lot of text which occupies a lot more space than the task ID.");
 
         initializeColumnWidths();
 
@@ -69,12 +68,13 @@ public class HttpFuzzerErrorsTable extends JXTable {
     }
 
     /**
-     * Sets if the vertical scroll bar of the wrapper {@code JScrollPane} should be automatically scrolled on new values.
-     * <p>
-     * Default value is to {@code true}.
-     * 
-     * @param autoScroll {@code true} if vertical scroll bar should be automatically scrolled on new values, {@code false}
-     *            otherwise.
+     * Sets if the vertical scroll bar of the wrapper {@code JScrollPane} should be automatically
+     * scrolled on new values.
+     *
+     * <p>Default value is to {@code true}.
+     *
+     * @param autoScroll {@code true} if vertical scroll bar should be automatically scrolled on new
+     *     values, {@code false} otherwise.
      */
     public void setAutoScrollOnNewValues(boolean autoScroll) {
         if (this.autoScroll == autoScroll) {
@@ -92,9 +92,11 @@ public class HttpFuzzerErrorsTable extends JXTable {
     }
 
     /**
-     * Tells whether or not the vertical scroll bar of the wrapper {@code JScrollPane} is automatically scrolled on new values.
-     * 
-     * @return {@code true} if the vertical scroll bar is automatically scrolled on new values, {@code false} otherwise.
+     * Tells whether or not the vertical scroll bar of the wrapper {@code JScrollPane} is
+     * automatically scrolled on new values.
+     *
+     * @return {@code true} if the vertical scroll bar is automatically scrolled on new values,
+     *     {@code false} otherwise.
      * @see #setAutoScrollOnNewValues(boolean)
      */
     public boolean isAutoScrollOnNewValues() {
@@ -105,23 +107,26 @@ public class HttpFuzzerErrorsTable extends JXTable {
         JScrollPane scrollPane = getEnclosingScrollPane();
         if (scrollPane != null && autoScrollScrollbarAdjustmentListener == null) {
             autoScrollScrollbarAdjustmentListener = new StickyScrollbarAdjustmentListener();
-            scrollPane.getVerticalScrollBar().addAdjustmentListener(autoScrollScrollbarAdjustmentListener);
+            scrollPane
+                    .getVerticalScrollBar()
+                    .addAdjustmentListener(autoScrollScrollbarAdjustmentListener);
         }
     }
 
     private void removeAutoScrollScrollbarAdjustmentListener() {
         JScrollPane scrollPane = getEnclosingScrollPane();
         if (scrollPane != null && autoScrollScrollbarAdjustmentListener != null) {
-            scrollPane.getVerticalScrollBar().removeAdjustmentListener(autoScrollScrollbarAdjustmentListener);
+            scrollPane
+                    .getVerticalScrollBar()
+                    .removeAdjustmentListener(autoScrollScrollbarAdjustmentListener);
             autoScrollScrollbarAdjustmentListener = null;
         }
     }
 
     /**
      * {@inheritDoc}
-     * <p>
-     * Overridden to set auto-scroll on new values, if enabled.
-     * </p>
+     *
+     * <p>Overridden to set auto-scroll on new values, if enabled.
      */
     @Override
     protected void configureEnclosingScrollPane() {
@@ -134,9 +139,8 @@ public class HttpFuzzerErrorsTable extends JXTable {
 
     /**
      * {@inheritDoc}
-     * <p>
-     * Overridden to unset auto-scroll on new values, if enabled.
-     * </p>
+     *
+     * <p>Overridden to unset auto-scroll on new values, if enabled.
      */
     @Override
     protected void unconfigureEnclosingScrollPane() {
@@ -149,14 +153,15 @@ public class HttpFuzzerErrorsTable extends JXTable {
 
     /**
      * {@inheritDoc}
-     * <p>
-     * Overridden to take into account for possible parent {@code JLayer}s.
-     * </p>
-     * 
+     *
+     * <p>Overridden to take into account for possible parent {@code JLayer}s.
+     *
      * @see javax.swing.JLayer
      */
-    // Note: Same implementation as in JXTable#getEnclosingScrollPane() but changed to get the parent and viewport view using
-    // the methods SwingUtilities#getUnwrappedParent(Component) and SwingUtilities#getUnwrappedView(JViewport) respectively.
+    // Note: Same implementation as in JXTable#getEnclosingScrollPane() but changed to get the
+    // parent and viewport view using
+    // the methods SwingUtilities#getUnwrappedParent(Component) and
+    // SwingUtilities#getUnwrappedView(JViewport) respectively.
     @Override
     protected JScrollPane getEnclosingScrollPane() {
         Container p = SwingUtilities.getUnwrappedParent(this);
@@ -187,5 +192,4 @@ public class HttpFuzzerErrorsTable extends JXTable {
             setSortOrder(sortedcolumnIndex, sortOrder);
         }
     }
-
 }

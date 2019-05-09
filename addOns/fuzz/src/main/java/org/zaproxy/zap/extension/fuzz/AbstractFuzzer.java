@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +32,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacement;
@@ -48,7 +47,7 @@ import org.zaproxy.zap.utils.PausableThreadPoolExecutor;
 
 /**
  * An abstract {@code Fuzzer} that allows to fuzz a message.
- * 
+ *
  * @param <M> the type of message fuzzed by this fuzzer
  */
 public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
@@ -68,7 +67,9 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
     private final FuzzerOptions fuzzerOptions;
 
     private final M message;
-    private final List<? extends MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>> fuzzLocations;
+    private final List<
+                    ? extends MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>
+            fuzzLocations;
 
     private final MultipleMessageLocationsReplacer<M> multipleMessageLocationsReplacer;
 
@@ -95,11 +96,13 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
             String fuzzerScanName,
             FuzzerOptions fuzzerOptions,
             M message,
-            List<? extends MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>> fuzzLocations,
+            List<? extends MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>
+                    fuzzLocations,
             MultipleMessageLocationsReplacer<M> multipleMessageLocationsReplacer) {
         super();
         if (!multipleMessageLocationsReplacer.isInitialised()) {
-            throw new IllegalArgumentException("MultipleMessageLocationsReplacer is not initialised.");
+            throw new IllegalArgumentException(
+                    "MultipleMessageLocationsReplacer is not initialised.");
         }
 
         this.fuzzerScanId = -1;
@@ -138,8 +141,8 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
     /**
      * Starts the fuzzer.
-     * <p>
-     * The call to this method has no effect if the scan was already started.
+     *
+     * <p>The call to this method has no effect if the scan was already started.
      */
     @Override
     public void run() {
@@ -148,8 +151,8 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
     /**
      * Starts the fuzzer.
-     * <p>
-     * The call to this method has no effect if the scan was already started.
+     *
+     * <p>The call to this method has no effect if the scan was already started.
      */
     public void startScan() {
         acquireScanStateLock();
@@ -181,11 +184,15 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
     protected PausableExecutorService createFuzzerTaskExecutor() {
         int poolSize = fuzzerOptions.getThreadCount();
-        FuzzerThreadFactory threadFactory = new FuzzerThreadFactory("ZAP-FuzzerThreadPool-" + fuzzerScanId + "-thread-");
+        FuzzerThreadFactory threadFactory =
+                new FuzzerThreadFactory("ZAP-FuzzerThreadPool-" + fuzzerScanId + "-thread-");
 
         if (fuzzerOptions.getSendMessageDelay() > 0) {
-            PausableScheduledThreadPoolExecutor executor = new PausableScheduledThreadPoolExecutor(poolSize, threadFactory);
-            executor.setDefaultDelay(fuzzerOptions.getSendMessageDelay(), fuzzerOptions.getSendMessageDelayTimeUnit());
+            PausableScheduledThreadPoolExecutor executor =
+                    new PausableScheduledThreadPoolExecutor(poolSize, threadFactory);
+            executor.setDefaultDelay(
+                    fuzzerOptions.getSendMessageDelay(),
+                    fuzzerOptions.getSendMessageDelayTimeUnit());
             executor.setIncrementalDefaultDelay(true);
             return executor;
         }
@@ -200,7 +207,8 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
     }
 
     protected FuzzerTaskSubmitter createFuzzerTaskSubmitter() {
-        return new FuzzerTaskSubmitter("ZAP-FuzzerTaskSubmitter-" + fuzzerScanId, fuzzerOptions.getThreadCount() * 3);
+        return new FuzzerTaskSubmitter(
+                "ZAP-FuzzerTaskSubmitter-" + fuzzerScanId, fuzzerOptions.getThreadCount() * 3);
     }
 
     protected boolean submitFuzzerTask(AbstractFuzzerTask<M> task) {
@@ -214,18 +222,23 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
             return true;
         } catch (RejectedExecutionException e) {
             postTaskExecution(task.getId(), false);
-            logger.warn("Submitted task was rejected, fuzzer state: [stopped=" + isStopped() + ", terminated="
-                    + fuzzerTaskExecutor.isTerminated() + "].");
+            logger.warn(
+                    "Submitted task was rejected, fuzzer state: [stopped="
+                            + isStopped()
+                            + ", terminated="
+                            + fuzzerTaskExecutor.isTerminated()
+                            + "].");
         }
         return false;
     }
 
-    protected abstract AbstractFuzzerTask<M> createFuzzerTask(long id, M message, List<Object> payloads);
+    protected abstract AbstractFuzzerTask<M> createFuzzerTask(
+            long id, M message, List<Object> payloads);
 
     /**
      * Pauses the fuzzer.
-     * <p>
-     * The call to this method has no effect if the fuzzer is not running.
+     *
+     * <p>The call to this method has no effect if the fuzzer is not running.
      */
     @Override
     public void pauseScan() {
@@ -242,8 +255,8 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
     /**
      * Resumes the fuzzer.
-     * <p>
-     * The call to this method has no effect if the fuzzer is not paused.
+     *
+     * <p>The call to this method has no effect if the fuzzer is not paused.
      */
     @Override
     public void resumeScan() {
@@ -268,14 +281,17 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
     /**
      * Stops the fuzzer.
-     * <p>
-     * The call to this method has no effect if the fuzzer was not yet started or has already finished.
+     *
+     * <p>The call to this method has no effect if the fuzzer was not yet started or has already
+     * finished.
      */
     @Override
     public void stopScan() {
         acquireScanStateLock();
         try {
-            if (!State.NOT_STARTED.equals(state) && !State.FINISHED.equals(state) && !State.STOPPED.equals(state)) {
+            if (!State.NOT_STARTED.equals(state)
+                    && !State.FINISHED.equals(state)
+                    && !State.STOPPED.equals(state)) {
                 logger.info("Stopping fuzzer...");
                 State previousState = state;
                 state = State.STOPPED;
@@ -283,7 +299,8 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
                 fuzzerTaskExecutor.shutdown();
                 resumeScanImpl(previousState);
 
-                // Temporarily release the lock to allow task threads and listeners to query the state of the fuzzer.
+                // Temporarily release the lock to allow task threads and listeners to query the
+                // state of the fuzzer.
                 releaseScanStateLock();
                 try {
                     shutdownExecutorNow();
@@ -300,7 +317,8 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         fuzzerTaskExecutor.shutdownNow();
         try {
             if (!fuzzerTaskExecutor.awaitTermination(2, TimeUnit.SECONDS)) {
-                logger.warn("Failed to await for all fuzzer tasks to stop in the given time (2s)...");
+                logger.warn(
+                        "Failed to await for all fuzzer tasks to stop in the given time (2s)...");
             }
         } catch (InterruptedException ignore) {
             logger.warn("Interrupted while awaiting for all fuzzer tasks to stop...");
@@ -398,8 +416,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         throw new UnsupportedOperationException("Fuzzer display name must no be changed.");
     }
 
-    protected void preTaskExecution(long taskId) {
-    }
+    protected void preTaskExecution(long taskId) {}
 
     protected void postTaskExecution(long taskId, boolean normalTermination) {
         long done = tasksDoneCount.incrementAndGet();
@@ -414,7 +431,8 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
     }
 
     protected void increaseErrorCount(long taskId, String source, String reason) {
-        increaseErrorCount(taskId, source, reason, Collections.<MessageLocationReplacement<?>> emptyList());
+        increaseErrorCount(
+                taskId, source, reason, Collections.<MessageLocationReplacement<?>>emptyList());
     }
 
     protected void increaseErrorCount(
@@ -443,8 +461,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
             String reason,
             int totalErrors,
             boolean maxErrorsReached,
-            Collection<MessageLocationReplacement<?>> replacements) {
-    }
+            Collection<MessageLocationReplacement<?>> replacements) {}
 
     public int getErrorCount() {
         return errorCount.get();
@@ -464,7 +481,8 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         return listeners;
     }
 
-    protected synchronized void notifyListenersFuzzerProgress(long executedTasks, long tasksToExecute) {
+    protected synchronized void notifyListenersFuzzerProgress(
+            long executedTasks, long tasksToExecute) {
         for (FuzzerProgressListener l : listeners) {
             l.fuzzerProgress(fuzzerScanId, fuzzerScanName, executedTasks, tasksToExecute);
         }
@@ -472,9 +490,9 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
     /**
      * Called when the crafting of a fuzzed message throws an {@code InvalidMessageException}.
-     * <p>
-     * Defaults to call {@code postTaskExecution(boolean)} with parameter as {@code false}.
-     * 
+     *
+     * <p>Defaults to call {@code postTaskExecution(boolean)} with parameter as {@code false}.
+     *
      * @param taskId the ID of the task
      * @param e the exception thrown while crafting the fuzzed message
      * @param replacements the locations and corresponding payloads used in the crafting
@@ -511,8 +529,9 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
     }
 
     /**
-     * A {@code Thread} responsible to submit fuzzer tasks retrieved from a {@code MultipleMessageLocationsReplacer}.
-     * 
+     * A {@code Thread} responsible to submit fuzzer tasks retrieved from a {@code
+     * MultipleMessageLocationsReplacer}.
+     *
      * @see AbstractFuzzerTask
      * @see MultipleMessageLocationsReplacer
      */
@@ -549,7 +568,8 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
         private void submitTasks() {
             while (multipleMessageLocationsReplacer.hasNext() && !isStopped()) {
-                while ((totalTasksSubmitted - tasksDoneCount.get()) > maxNumberOfLiveTasks && !isStopped()) {
+                while ((totalTasksSubmitted - tasksDoneCount.get()) > maxNumberOfLiveTasks
+                        && !isStopped()) {
                     try {
                         sleep(25);
                     } catch (InterruptedException ignore) {
@@ -576,11 +596,18 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
                         long taskId = tasksIdCounter++;
                         try {
                             M message = multipleMessageLocationsReplacer.next();
-                            submitFuzzerTask(createFuzzerTask(taskId, message, getCurrentPayloads()));
+                            submitFuzzerTask(
+                                    createFuzzerTask(taskId, message, getCurrentPayloads()));
                         } catch (InvalidMessageException e) {
-                            failedToCraftFuzzedMessage(taskId, e, multipleMessageLocationsReplacer.currentReplacements());
+                            failedToCraftFuzzedMessage(
+                                    taskId,
+                                    e,
+                                    multipleMessageLocationsReplacer.currentReplacements());
                         } catch (ReplacementException e) {
-                            failedReplacementInFuzzeMessage(taskId, e, multipleMessageLocationsReplacer.currentReplacements());
+                            failedReplacementInFuzzeMessage(
+                                    taskId,
+                                    e,
+                                    multipleMessageLocationsReplacer.currentReplacements());
                         }
                         taskSubmitted = true;
                         totalTasksSubmitted++;
@@ -590,8 +617,10 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         }
 
         protected List<Object> getCurrentPayloads() {
-            List<Object> payloads = new ArrayList<>(multipleMessageLocationsReplacer.currentReplacements().size());
-            for (MessageLocationReplacement<?> replacement : multipleMessageLocationsReplacer.currentReplacements()) {
+            List<Object> payloads =
+                    new ArrayList<>(multipleMessageLocationsReplacer.currentReplacements().size());
+            for (MessageLocationReplacement<?> replacement :
+                    multipleMessageLocationsReplacer.currentReplacements()) {
                 payloads.add(replacement.getReplacement());
             }
             return payloads;
@@ -632,21 +661,24 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
             // lead to deadlock (attempting to lock on scannerStateLock) between, for
             // example, EDT and pool's thread, if the scan is stopped just before the
             // termination.
-            new Thread(new Runnable() {
+            new Thread(
+                            new Runnable() {
 
-                @Override
-                public void run() {
-                    acquireScanStateLock();
-                    try {
-                        if (!State.FINISHED.equals(state) && !State.STOPPED.equals(state)) {
-                            AbstractFuzzer.this.terminated(true);
-                        }
-                    } finally {
-                        releaseScanStateLock();
-                    }
-                }
-            }, "ZAP-FuzzerTerminationNotifier-" + fuzzerScanId).start();
+                                @Override
+                                public void run() {
+                                    acquireScanStateLock();
+                                    try {
+                                        if (!State.FINISHED.equals(state)
+                                                && !State.STOPPED.equals(state)) {
+                                            AbstractFuzzer.this.terminated(true);
+                                        }
+                                    } finally {
+                                        releaseScanStateLock();
+                                    }
+                                }
+                            },
+                            "ZAP-FuzzerTerminationNotifier-" + fuzzerScanId)
+                    .start();
         }
     }
-
 }

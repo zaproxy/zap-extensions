@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,11 +29,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.openqa.selenium.MutableCapabilities;
@@ -60,7 +58,8 @@ import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvider;
 
 /**
- * An {@code Extension} that provides {@code WebDriver} implementations for several {@code Browser}s.
+ * An {@code Extension} that provides {@code WebDriver} implementations for several {@code
+ * Browser}s.
  *
  * @see WebDriver
  * @see Browser
@@ -82,36 +81,32 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     /**
      * A list containing all supported browsers by this extension.
-     * <p>
-     * Lazy initialised with {@code initialiseBrowserUIList()}.
-     * 
+     *
+     * <p>Lazy initialised with {@code initialiseBrowserUIList()}.
+     *
      * @see #initialiseBrowserUIList()
      */
     private List<BrowserUI> browserUIList;
 
-    /**
-     * A list containing all (installed) WebDriverProviders.
-     */
+    /** A list containing all (installed) WebDriverProviders. */
     private Map<String, SingleWebDriverProvider> webDriverProviders;
-    
-    /**
-     * A map of {@code ProvidedBrowser}'s ID to the {@code ProvidedBrowser} instance.
-     */
+
+    /** A map of {@code ProvidedBrowser}'s ID to the {@code ProvidedBrowser} instance. */
     private Map<String, ProvidedBrowser> providedBrowsers;
 
     /**
      * A list containing all (installed) UI wrappers of {@code ProvidedBrowser}s.
-     * 
+     *
      * @see #buildProvidedBrowserUIList
      */
     private List<ProvidedBrowserUI> providedBrowserUIList;
 
     /**
-     * A list containing all of the proxied WebDrivers opened, so that they can
-     * be closed when ZAP is closed.
+     * A list containing all of the proxied WebDrivers opened, so that they can be closed when ZAP
+     * is closed.
      */
     private Map<String, List<WebDriver>> proxiedWebDrivers = new HashMap<>();
-    
+
     private List<WeakReference<ProvidedBrowsersComboBoxModel>> providedBrowserComboBoxModels =
             new ArrayList<WeakReference<ProvidedBrowsersComboBoxModel>>();
 
@@ -133,7 +128,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public String getAuthor() {
         return Constant.ZAP_TEAM;
     }
-    
+
     @Override
     public int getOrder() {
         return 300;
@@ -150,8 +145,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         seleniumApi = new SeleniumAPI(getOptions());
         addonFilesChangedListener = new AddonFilesChangedListenerImpl();
-        webDriverProviders = Collections.synchronizedMap(new HashMap<String, SingleWebDriverProvider>());
-        providedBrowsers = Collections.synchronizedMap(new HashMap<String, ProvidedBrowser>()); 
+        webDriverProviders =
+                Collections.synchronizedMap(new HashMap<String, SingleWebDriverProvider>());
+        providedBrowsers = Collections.synchronizedMap(new HashMap<String, ProvidedBrowser>());
 
         addBuiltInProvider(Browser.CHROME);
         addBuiltInProvider(Browser.FIREFOX);
@@ -164,7 +160,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     private void addBuiltInProvider(Browser browser) {
-        webDriverProviders.put(browser.getId(), new BuiltInSingleWebDriverProvider(getName(browser), browser));
+        webDriverProviders.put(
+                browser.getId(), new BuiltInSingleWebDriverProvider(getName(browser), browser));
     }
 
     private void buildProvidedBrowserUIList() {
@@ -220,15 +217,16 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * Adds the given WebDriver provider.
      *
      * @param webDriverProvider the WebDriver provider to add
-     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its ID is {@code null} or empty.
-     *             Also, if the ID already exists.
+     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its
+     *     ID is {@code null} or empty. Also, if the ID already exists.
      * @since 1.1.0
      */
     public void addWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
         validateWebDriverProvider(webDriverProvider);
 
         if (webDriverProviders.containsKey(webDriverProvider.getId())) {
-            throw new IllegalArgumentException("A provider with the ID [" + webDriverProvider.getId() + "] already exists.");
+            throw new IllegalArgumentException(
+                    "A provider with the ID [" + webDriverProvider.getId() + "] already exists.");
         }
 
         webDriverProviders.put(webDriverProvider.getId(), webDriverProvider);
@@ -239,37 +237,41 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         ProvidedBrowserUI pbui = new ProvidedBrowserUI(providedBrowser);
         providedBrowserUIList.add(pbui);
         Collections.sort(providedBrowserUIList);
-        
+
         final int idx = providedBrowserUIList.indexOf(pbui);
-        
+
         if (getView() != null) {
-            SwingUtilities.invokeLater(new Runnable(){
-                @Override
-                public void run() {
-                    ListDataEvent ev = new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, idx, idx);
-                    Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter = 
-                            providedBrowserComboBoxModels.iterator();
-                    while (iter.hasNext()) {
-                        WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
-                        ProvidedBrowsersComboBoxModel pb = wr.get();
-                        if (pb == null) {
-                            iter.remove();
-                        } else {
-                            for (ListDataListener listener : pb.getListDataListeners()) {
-                                listener.contentsChanged(ev);
+            SwingUtilities.invokeLater(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            ListDataEvent ev =
+                                    new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, idx, idx);
+                            Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter =
+                                    providedBrowserComboBoxModels.iterator();
+                            while (iter.hasNext()) {
+                                WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
+                                ProvidedBrowsersComboBoxModel pb = wr.get();
+                                if (pb == null) {
+                                    iter.remove();
+                                } else {
+                                    for (ListDataListener listener : pb.getListDataListeners()) {
+                                        listener.contentsChanged(ev);
+                                    }
+                                }
                             }
-                            
                         }
-                    }
-                }});
+                    });
         }
     }
 
     /**
-     * Validates that the given WebDriver provider is not {@code null} nor has a {@code null} or empty ID.
+     * Validates that the given WebDriver provider is not {@code null} nor has a {@code null} or
+     * empty ID.
      *
      * @param webDriverProvider the WebDriver provider to validate.
-     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its ID is {@code null} or empty.
+     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its
+     *     ID is {@code null} or empty.
      */
     private static void validateWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
         if (webDriverProvider == null) {
@@ -277,7 +279,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
 
         if (StringUtils.isEmpty(webDriverProvider.getId())) {
-            throw new IllegalArgumentException("The ID of the webDriverProvider must not be null nor empty.");
+            throw new IllegalArgumentException(
+                    "The ID of the webDriverProvider must not be null nor empty.");
         }
     }
 
@@ -285,7 +288,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * Removes the given WebDriver provider.
      *
      * @param webDriverProvider the WebDriver provider to remove
-     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its ID is {@code null} or empty.
+     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its
+     *     ID is {@code null} or empty.
      * @since 1.1.0
      */
     public void removeWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
@@ -297,25 +301,31 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         buildProvidedBrowserUIList();
 
         if (getView() != null) {
-            SwingUtilities.invokeLater(new Runnable(){
-                @Override
-                public void run() {
-                    ListDataEvent ev = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, providedBrowserUIList.size());
-                    Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter = 
-                            providedBrowserComboBoxModels.iterator();
-                    while (iter.hasNext()) {
-                        WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
-                        ProvidedBrowsersComboBoxModel pb = wr.get();
-                        if (pb == null) {
-                            iter.remove();
-                        } else {
-                            for (ListDataListener listener : pb.getListDataListeners()) {
-                                listener.contentsChanged(ev);
+            SwingUtilities.invokeLater(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            ListDataEvent ev =
+                                    new ListDataEvent(
+                                            this,
+                                            ListDataEvent.CONTENTS_CHANGED,
+                                            0,
+                                            providedBrowserUIList.size());
+                            Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter =
+                                    providedBrowserComboBoxModels.iterator();
+                            while (iter.hasNext()) {
+                                WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
+                                ProvidedBrowsersComboBoxModel pb = wr.get();
+                                if (pb == null) {
+                                    iter.remove();
+                                } else {
+                                    for (ListDataListener listener : pb.getListDataListeners()) {
+                                        listener.contentsChanged(ev);
+                                    }
+                                }
                             }
-                            
                         }
-                    }
-                }});
+                    });
         }
     }
 
@@ -327,13 +337,15 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @since 1.1.0
      */
     public ProvidedBrowsersComboBoxModel createProvidedBrowsersComboBoxModel() {
-        ProvidedBrowsersComboBoxModel model = new ProvidedBrowsersComboBoxModel(providedBrowserUIList);
+        ProvidedBrowsersComboBoxModel model =
+                new ProvidedBrowsersComboBoxModel(providedBrowserUIList);
         providedBrowserComboBoxModels.add(new WeakReference<ProvidedBrowsersComboBoxModel>(model));
         return model;
     }
 
     /**
-     * Gets the (unmodifiable) list of {@code ProvidedBrowserUI} objects for all {@code ProvidedBrowser}s installed.
+     * Gets the (unmodifiable) list of {@code ProvidedBrowserUI} objects for all {@code
+     * ProvidedBrowser}s installed.
      *
      * @return an unmodifiable list with all browsers installed
      * @since 1.1.0
@@ -350,8 +362,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public List<ProvidedBrowserUI> getUsableProvidedBrowserUIList(boolean incHeadless) {
         List<ProvidedBrowserUI> list = new ArrayList<ProvidedBrowserUI>();
         for (ProvidedBrowserUI provided : providedBrowserUIList) {
-            if (provided.getBrowser().isConfigured() && 
-                    (incHeadless || !provided.getBrowser().isHeadless())) {
+            if (provided.getBrowser().isConfigured()
+                    && (incHeadless || !provided.getBrowser().isHeadless())) {
                 list.add(provided);
             }
         }
@@ -365,8 +377,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public List<String> getUsableProvidedBrowserUINameList(boolean incHeadless) {
         List<String> list = new ArrayList<String>();
         for (ProvidedBrowserUI provided : providedBrowserUIList) {
-            if (provided.getBrowser().isConfigured() && 
-                    (incHeadless || !provided.getBrowser().isHeadless())) {
+            if (provided.getBrowser().isConfigured()
+                    && (incHeadless || !provided.getBrowser().isHeadless())) {
                 list.add(provided.getName());
             }
         }
@@ -403,9 +415,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     /**
-     * Returns a new {@code BrowsersComboBoxModel} with the browsers returned by {@code getBrowserUIList()}.
+     * Returns a new {@code BrowsersComboBoxModel} with the browsers returned by {@code
+     * getBrowserUIList()}.
      *
-     * @return a new {@code BrowsersComboBoxModel} with the browsers returned by {@code getBrowserUIList()}
+     * @return a new {@code BrowsersComboBoxModel} with the browsers returned by {@code
+     *     getBrowserUIList()}
      * @see #getBrowserUIList()
      */
     public BrowsersComboBoxModel createBrowsersComboBoxModel() {
@@ -413,7 +427,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     /**
-     * Gets the (unmodifiable) list of {@code BrowseUI} objects for all {@code Browser}s supported by this extension.
+     * Gets the (unmodifiable) list of {@code BrowseUI} objects for all {@code Browser}s supported
+     * by this extension.
      *
      * @return an unmodifiable list with all browsers supported by this extension
      * @see #getName(Browser)
@@ -427,8 +442,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     /**
-     * Initialises the instance variable {@code browserUIList} with all {@code Browser}s supported by this extension.
-     * 
+     * Initialises the instance variable {@code browserUIList} with all {@code Browser}s supported
+     * by this extension.
+     *
      * @code {@link #browserUIList}
      */
     private synchronized void initialiseBrowserUIList() {
@@ -470,37 +486,45 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     /**
-     * Gets a {@code WebDriver} to the provided browser for the given requester, proxying through the given address and port.
+     * Gets a {@code WebDriver} to the provided browser for the given requester, proxying through
+     * the given address and port.
      *
      * @param requester the ID of the (ZAP) component that's requesting the {@code WebDriver}.
      * @param providedBrowserId the ID of the provided browser.
      * @param proxyAddress the address of the proxy.
      * @param proxyPort the port of the proxy.
-     * @return the {@code WebDriver} to the provided browser, proxying through the given address and port.
-     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if {@code proxyPort} is not a valid
-     *             port number (between 1 and 65535). Also, if the provided browser was not found.
+     * @return the {@code WebDriver} to the provided browser, proxying through the given address and
+     *     port.
+     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if
+     *     {@code proxyPort} is not a valid port number (between 1 and 65535). Also, if the provided
+     *     browser was not found.
      * @since 1.1.0
      */
-    public WebDriver getWebDriver(int requester, String providedBrowserId, String proxyAddress, int proxyPort) {
+    public WebDriver getWebDriver(
+            int requester, String providedBrowserId, String proxyAddress, int proxyPort) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
         return getWebDriverImpl(requester, providedBrowserId, proxyAddress, proxyPort);
     }
-    
+
     /**
      * Returns a WebDriver configured to proxy via ZAP
+     *
      * @param requester the ZAP component that will use the browser
      * @param providedBrowserId the browser id
      * @return
      */
     public WebDriver getWebDriverProxyingViaZAP(int requester, String providedBrowserId) {
-        return this.getWebDriver(requester, providedBrowserId, 
-                Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(), 
+        return this.getWebDriver(
+                requester,
+                providedBrowserId,
+                Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
                 Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
     }
 
     /**
      * Opens the identified browser for manual proxying through ZAP
+     *
      * @param providedBrowserId the browser id
      */
     public WebDriver getProxiedBrowser(String providedBrowserId) {
@@ -509,6 +533,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     /**
      * Opens the identified browser for manual proxying through ZAP
+     *
      * @param browserName the browser name
      */
     public WebDriver getProxiedBrowserByName(final String browserName) {
@@ -517,6 +542,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     /**
      * Opens the identified browser for manual proxying through ZAP
+     *
      * @param browserName the browser name
      * @param url the url to open
      */
@@ -526,11 +552,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     /**
      * Opens the identified browser for proxying through ZAP
+     *
      * @param requester the ZAP component that will use the browser
      * @param browserName the browser name
      * @param url the url to open
      */
-    public WebDriver getProxiedBrowserByName(final int requester, final String browserName, final String url) {
+    public WebDriver getProxiedBrowserByName(
+            final int requester, final String browserName, final String url) {
         for (ProvidedBrowserUI provided : providedBrowserUIList) {
             if (provided.getName().equals(browserName)) {
                 return getProxiedBrowser(requester, provided.getBrowser().getId(), url);
@@ -541,6 +569,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     /**
      * Opens the browser for manual proxying through ZAP
+     *
      * @param provided the browser
      * @param url the URL to open
      */
@@ -550,6 +579,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     /**
      * Opens the browser for manual proxying through ZAP
+     *
      * @param providedBrowserId the browser id
      * @param url the URL to open
      */
@@ -559,17 +589,24 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     /**
      * Opens the browser for manual proxying through ZAP
+     *
      * @param requester the ZAP componenet that will use this browser
      * @param providedBrowserId the browser id
      * @param url the URL to open
      */
-    public WebDriver getProxiedBrowser(final int requester, final String providedBrowserId, final String url) {
-        WebDriver webDriver = getWebDriver(requester, providedBrowserId, 
-            Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(), 
-            Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
+    public WebDriver getProxiedBrowser(
+            final int requester, final String providedBrowserId, final String url) {
+        WebDriver webDriver =
+                getWebDriver(
+                        requester,
+                        providedBrowserId,
+                        Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
+                        Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
 
         if (webDriver != null) {
-            proxiedWebDrivers.computeIfAbsent(providedBrowserId, k -> new ArrayList<>()).add(webDriver);
+            proxiedWebDrivers
+                    .computeIfAbsent(providedBrowserId, k -> new ArrayList<>())
+                    .add(webDriver);
             if (url != null) {
                 webDriver.get(url);
             }
@@ -580,11 +617,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     private static void validateProxyAddressPort(String proxyAddress, int proxyPort) {
         Validate.notEmpty(proxyAddress, "Parameter proxyAddress must not be null nor empty.");
         if (proxyPort < MIN_PORT || proxyPort > MAX_PORT) {
-            throw new IllegalArgumentException("Parameter proxyPort must be under: " + MIN_PORT + " <= port <= " + MAX_PORT);
+            throw new IllegalArgumentException(
+                    "Parameter proxyPort must be under: " + MIN_PORT + " <= port <= " + MAX_PORT);
         }
     }
 
-    private WebDriver getWebDriverImpl(int requester, String providedBrowserId, String proxyAddress, int proxyPort) {
+    private WebDriver getWebDriverImpl(
+            int requester, String providedBrowserId, String proxyAddress, int proxyPort) {
         ProvidedBrowser providedBrowser = getProvidedBrowser(providedBrowserId);
         if (providedBrowser == null) {
             throw new IllegalArgumentException("Unknown browser: " + providedBrowserId);
@@ -593,7 +632,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         if (proxyAddress == null) {
             return webDriverProviders.get(providedBrowser.getProviderId()).getWebDriver(requester);
         }
-        return webDriverProviders.get(providedBrowser.getProviderId()).getWebDriver(requester, proxyAddress, proxyPort);
+        return webDriverProviders
+                .get(providedBrowser.getProviderId())
+                .getWebDriver(requester, proxyAddress, proxyPort);
     }
 
     /**
@@ -620,14 +661,16 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     /**
-     * Gets a {@code WebDriver} for the given {@code browser} proxying through the given address and port.
+     * Gets a {@code WebDriver} for the given {@code browser} proxying through the given address and
+     * port.
      *
      * @param browser the target browser
      * @param proxyAddress the address of the proxy
      * @param proxyPort the port of the proxy
-     * @return the {@code WebDriver} to the given {@code browser}, proxying through the given address and port
-     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if {@code proxyPort} is not a valid
-     *             port number (between 1 and 65535)
+     * @return the {@code WebDriver} to the given {@code browser}, proxying through the given
+     *     address and port
+     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if
+     *     {@code proxyPort} is not a valid port number (between 1 and 65535)
      * @see #getWebDriver(Browser)
      */
     public static WebDriver getWebDriver(Browser browser, String proxyAddress, int proxyPort) {
@@ -635,24 +678,28 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     /**
-     * Gets a {@code WebDriver} for the given requester and {@code browser} proxying through the given address and port.
+     * Gets a {@code WebDriver} for the given requester and {@code browser} proxying through the
+     * given address and port.
      *
      * @param requester the ID of the component requesting the {@code WebDriver}.
      * @param browser the target browser.
      * @param proxyAddress the address of the proxy.
      * @param proxyPort the port of the proxy.
-     * @return the {@code WebDriver} to the given {@code browser}, proxying through the given address and port.
-     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if {@code proxyPort} is not a valid
-     *             port number (between 1 and 65535).
+     * @return the {@code WebDriver} to the given {@code browser}, proxying through the given
+     *     address and port.
+     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if
+     *     {@code proxyPort} is not a valid port number (between 1 and 65535).
      * @see #getWebDriver(Browser)
      */
-    public static WebDriver getWebDriver(int requester, Browser browser, String proxyAddress, int proxyPort) {
+    public static WebDriver getWebDriver(
+            int requester, Browser browser, String proxyAddress, int proxyPort) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
         return getWebDriverImpl(requester, browser, proxyAddress, proxyPort);
     }
-    
-    private static void setCommonOptions(MutableCapabilities capabilities, String proxyAddress, int proxyPort) {
+
+    private static void setCommonOptions(
+            MutableCapabilities capabilities, String proxyAddress, int proxyPort) {
         capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         // W3C capability
         capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
@@ -666,102 +713,108 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
     }
 
-    private static WebDriver getWebDriverImpl(int requester, Browser browser, String proxyAddress, int proxyPort) {
+    private static WebDriver getWebDriverImpl(
+            int requester, Browser browser, String proxyAddress, int proxyPort) {
         switch (browser) {
-        case CHROME:
-            ChromeOptions chromeOptions = new ChromeOptions();
-            setCommonOptions(chromeOptions, proxyAddress, proxyPort);
-            chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
-            return new ChromeDriver(chromeOptions);
-        case FIREFOX:
-            FirefoxOptions firefoxOptions = new FirefoxOptions();
-            setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
+            case CHROME:
+                ChromeOptions chromeOptions = new ChromeOptions();
+                setCommonOptions(chromeOptions, proxyAddress, proxyPort);
+                chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
+                return new ChromeDriver(chromeOptions);
+            case FIREFOX:
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
 
-            String geckoDriver = System.getProperty(SeleniumOptions.FIREFOX_DRIVER_SYSTEM_PROPERTY);
-            firefoxOptions.setLegacy(geckoDriver == null || geckoDriver.isEmpty());
+                String geckoDriver =
+                        System.getProperty(SeleniumOptions.FIREFOX_DRIVER_SYSTEM_PROPERTY);
+                firefoxOptions.setLegacy(geckoDriver == null || geckoDriver.isEmpty());
 
-            String binaryPath = System.getProperty(SeleniumOptions.FIREFOX_BINARY_SYSTEM_PROPERTY);
-            if (binaryPath != null && !binaryPath.isEmpty()) {
-                firefoxOptions.setBinary(binaryPath);
-            }
+                String binaryPath =
+                        System.getProperty(SeleniumOptions.FIREFOX_BINARY_SYSTEM_PROPERTY);
+                if (binaryPath != null && !binaryPath.isEmpty()) {
+                    firefoxOptions.setBinary(binaryPath);
+                }
 
-            // Ensure ServiceWorkers are enabled for the HUD.
-            firefoxOptions.addPreference("dom.serviceWorkers.enabled", true);
+                // Ensure ServiceWorkers are enabled for the HUD.
+                firefoxOptions.addPreference("dom.serviceWorkers.enabled", true);
 
-            // Disable the captive checks/requests, mainly to avoid flooding
-            // the AJAX Spider results (those requests are out of scope) but
-            // also useful for other launched browsers.
-            firefoxOptions.addPreference("network.captive-portal-service.enabled", false);
+                // Disable the captive checks/requests, mainly to avoid flooding
+                // the AJAX Spider results (those requests are out of scope) but
+                // also useful for other launched browsers.
+                firefoxOptions.addPreference("network.captive-portal-service.enabled", false);
 
-            if (requester == HttpSender.AJAX_SPIDER_INITIATOR) {
-                // Disable JSON viewer, otherwise AJAX Spider will crawl it.
-                // https://developer.mozilla.org/en-US/docs/Tools/JSON_viewer
-                firefoxOptions.addPreference("devtools.jsonview.enabled", false);
-            }
+                if (requester == HttpSender.AJAX_SPIDER_INITIATOR) {
+                    // Disable JSON viewer, otherwise AJAX Spider will crawl it.
+                    // https://developer.mozilla.org/en-US/docs/Tools/JSON_viewer
+                    firefoxOptions.addPreference("devtools.jsonview.enabled", false);
+                }
 
-            if (proxyAddress != null) {
-                // Some issues prevent the PROXY capability from being properly applied:
-                // https://bugzilla.mozilla.org/show_bug.cgi?id=1282873
-                // https://bugzilla.mozilla.org/show_bug.cgi?id=1369827
-                // For now set the preferences manually:
-                firefoxOptions.addPreference("network.proxy.type", 1);
-                firefoxOptions.addPreference("network.proxy.http", proxyAddress);
-                firefoxOptions.addPreference("network.proxy.http_port", proxyPort);
-                firefoxOptions.addPreference("network.proxy.ssl", proxyAddress);
-                firefoxOptions.addPreference("network.proxy.ssl_port", proxyPort);
-                firefoxOptions.addPreference("network.proxy.share_proxy_settings", true);
-                firefoxOptions.addPreference("network.proxy.no_proxies_on", "");
-                // And remove the PROXY capability:
-                firefoxOptions.setCapability(CapabilityType.PROXY, (Object) null);
-            }
+                if (proxyAddress != null) {
+                    // Some issues prevent the PROXY capability from being properly applied:
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1282873
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1369827
+                    // For now set the preferences manually:
+                    firefoxOptions.addPreference("network.proxy.type", 1);
+                    firefoxOptions.addPreference("network.proxy.http", proxyAddress);
+                    firefoxOptions.addPreference("network.proxy.http_port", proxyPort);
+                    firefoxOptions.addPreference("network.proxy.ssl", proxyAddress);
+                    firefoxOptions.addPreference("network.proxy.ssl_port", proxyPort);
+                    firefoxOptions.addPreference("network.proxy.share_proxy_settings", true);
+                    firefoxOptions.addPreference("network.proxy.no_proxies_on", "");
+                    // And remove the PROXY capability:
+                    firefoxOptions.setCapability(CapabilityType.PROXY, (Object) null);
+                }
 
-            return new FirefoxDriver(firefoxOptions);
-        case HTML_UNIT:
-            DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
-            setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);
-            return new HtmlUnitDriver(DesiredCapabilities.htmlUnit().merge(htmlunitCapabilities));
-        case INTERNET_EXPLORER:
-            throw new WebDriverException("No longer available, does not support the required capabilities.");
-            /* No longer supported in the Selenium standalone jar
-             * need to decide if we support older Opera versions 
-        case OPERA:
-            OperaDriver driver = new OperaDriver(capabilities);
-            if (proxyAddress != null) {
-                driver.proxy().setProxyLocal(true);
-                // XXX Workaround, in operadriver <= 1.5 the HTTPS proxy settings are not set according to desired capabilities
-                // For more details see OperaProxy.parse(Proxy)
-                driver.proxy().setHttpsProxy(proxyAddress + ":" + proxyPort);
-            }
+                return new FirefoxDriver(firefoxOptions);
+            case HTML_UNIT:
+                DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
+                setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);
+                return new HtmlUnitDriver(
+                        DesiredCapabilities.htmlUnit().merge(htmlunitCapabilities));
+            case INTERNET_EXPLORER:
+                throw new WebDriverException(
+                        "No longer available, does not support the required capabilities.");
+                /* No longer supported in the Selenium standalone jar
+                     * need to decide if we support older Opera versions
+                case OPERA:
+                    OperaDriver driver = new OperaDriver(capabilities);
+                    if (proxyAddress != null) {
+                        driver.proxy().setProxyLocal(true);
+                        // XXX Workaround, in operadriver <= 1.5 the HTTPS proxy settings are not set according to desired capabilities
+                        // For more details see OperaProxy.parse(Proxy)
+                        driver.proxy().setHttpsProxy(proxyAddress + ":" + proxyPort);
+                    }
 
-            return driver;
-            */
-        case PHANTOM_JS:
-            DesiredCapabilities phantomCapabilities = new DesiredCapabilities();
-            setCommonOptions(phantomCapabilities, proxyAddress, proxyPort);
-            final ArrayList<String> cliArgs = new ArrayList<>(4);
-            cliArgs.add("--ssl-protocol=any");
-            cliArgs.add("--ignore-ssl-errors=yes");
+                    return driver;
+                    */
+            case PHANTOM_JS:
+                DesiredCapabilities phantomCapabilities = new DesiredCapabilities();
+                setCommonOptions(phantomCapabilities, proxyAddress, proxyPort);
+                final ArrayList<String> cliArgs = new ArrayList<>(4);
+                cliArgs.add("--ssl-protocol=any");
+                cliArgs.add("--ignore-ssl-errors=yes");
 
-            cliArgs.add("--webdriver-logfile=" + Constant.getZapHome() + "phantomjsdriver.log");
-            cliArgs.add("--webdriver-loglevel=WARN");
+                cliArgs.add("--webdriver-logfile=" + Constant.getZapHome() + "phantomjsdriver.log");
+                cliArgs.add("--webdriver-loglevel=WARN");
 
-            phantomCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs);
+                phantomCapabilities.setCapability(
+                        PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs);
 
-            return new PhantomJSDriver(phantomCapabilities);
-        case SAFARI:
-            SafariOptions safariOptions = new SafariOptions();
-            setCommonOptions(safariOptions, proxyAddress, proxyPort);
-            return new SafariDriver(safariOptions);
-        default:
-            throw new IllegalArgumentException("Unknown browser: " + browser);
+                return new PhantomJSDriver(phantomCapabilities);
+            case SAFARI:
+                SafariOptions safariOptions = new SafariOptions();
+                setCommonOptions(safariOptions, proxyAddress, proxyPort);
+                return new SafariDriver(safariOptions);
+            default:
+                throw new IllegalArgumentException("Unknown browser: " + browser);
         }
     }
 
     /**
      * Returns an error message for the given provided browser that failed to start.
-     * <p>
-     * Some browsers require extra steps to start them with a WebDriver, for such cases there's a custom error message, for the
-     * remaining cases there's a generic error message.
+     *
+     * <p>Some browsers require extra steps to start them with a WebDriver, for such cases there's a
+     * custom error message, for the remaining cases there's a generic error message.
      *
      * @param providedBrowserId the ID of provided browser that failed to start
      * @param e the error/exception that was thrown while obtaining/starting the WebDriver/browser.
@@ -783,8 +836,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         if (browser != null) {
             return getWarnMessageFailedToStart(browser);
         }
-        return MessageFormat
-                .format(getMessages().getString("selenium.warn.message.failed.start.browser"), providedBrowser.getName());
+        return MessageFormat.format(
+                getMessages().getString("selenium.warn.message.failed.start.browser"),
+                providedBrowser.getName());
     }
 
     private String getProviderWarnMessage(ProvidedBrowser providedBrowser, Throwable e) {
@@ -797,21 +851,24 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     /**
      * Returns an error message for the given {@code browser} that failed to start.
-     * <p>
-     * Some browsers require extra steps to start them with a WebDriver, for such cases there's a custom error message, for the
-     * remaining cases there's a generic error message.
+     *
+     * <p>Some browsers require extra steps to start them with a WebDriver, for such cases there's a
+     * custom error message, for the remaining cases there's a generic error message.
      *
      * @param browser the browser that failed to start
      * @return a {@code String} with the error message
      */
     public String getWarnMessageFailedToStart(Browser browser) {
         switch (browser) {
-        case CHROME:
-            return getMessages().getString("selenium.warn.message.failed.start.browser.chrome");
-        case PHANTOM_JS:
-            return getMessages().getString("selenium.warn.message.failed.start.browser.phantomjs");
-        default:
-            return MessageFormat.format(getMessages().getString("selenium.warn.message.failed.start.browser"), getName(browser));
+            case CHROME:
+                return getMessages().getString("selenium.warn.message.failed.start.browser.chrome");
+            case PHANTOM_JS:
+                return getMessages()
+                        .getString("selenium.warn.message.failed.start.browser.phantomjs");
+            default:
+                return MessageFormat.format(
+                        getMessages().getString("selenium.warn.message.failed.start.browser"),
+                        getName(browser));
         }
     }
 
@@ -831,9 +888,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
         return browsers;
     }
-    
+
     /**
      * Returns true if the specified browser is configured for the platform
+     *
      * @param webdriverId the webdriver id
      * @return true if the specified browser is configured for the platform
      */
@@ -876,23 +934,23 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 getOptions().setFirefoxDriverPath("");
             }
         }
-
     }
 
     /**
      * Returns true if the specified built in browser is configured for the platform
+     *
      * @param browser
      * @return true if the specified built in browser is configured for the platform
      */
     public static boolean isConfigured(Browser browser) {
         switch (browser) {
-        case INTERNET_EXPLORER:
-            return false;
-        case SAFARI:
-            return Constant.isMacOsX();
-        default:
-            // All the rest should work on all platforms
-            return true;
+            case INTERNET_EXPLORER:
+                return false;
+            case SAFARI:
+                return Constant.isMacOsX();
+            default:
+                // All the rest should work on all platforms
+                return true;
         }
     }
 }

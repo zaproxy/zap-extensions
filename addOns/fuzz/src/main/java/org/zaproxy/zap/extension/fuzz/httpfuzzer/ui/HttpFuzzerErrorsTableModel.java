@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,9 +22,7 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.ui;
 import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.table.AbstractTableModel;
-
 import org.parosproxy.paros.Constant;
 
 public class HttpFuzzerErrorsTableModel extends AbstractTableModel {
@@ -32,9 +30,10 @@ public class HttpFuzzerErrorsTableModel extends AbstractTableModel {
     private static final long serialVersionUID = -7564323068526325209L;
 
     private static final String[] COLUMN_NAMES = {
-            Constant.messages.getString("fuzz.httpfuzzer.results.tab.errors.table.header.taskId"),
-            Constant.messages.getString("fuzz.httpfuzzer.results.tab.errors.table.header.source"),
-            Constant.messages.getString("fuzz.httpfuzzer.results.tab.errors.table.header.message") };
+        Constant.messages.getString("fuzz.httpfuzzer.results.tab.errors.table.header.taskId"),
+        Constant.messages.getString("fuzz.httpfuzzer.results.tab.errors.table.header.source"),
+        Constant.messages.getString("fuzz.httpfuzzer.results.tab.errors.table.header.message")
+    };
 
     private List<FuzzerError> errors;
 
@@ -43,15 +42,16 @@ public class HttpFuzzerErrorsTableModel extends AbstractTableModel {
     }
 
     public void addFuzzerError(final long taskId, final String source, final String message) {
-        EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(
+                new Runnable() {
 
-            @Override
-            public void run() {
-                int row = errors.size();
-                errors.add(new FuzzerError(taskId, source, message));
-                fireTableRowsInserted(row, row);
-            }
-        });
+                    @Override
+                    public void run() {
+                        int row = errors.size();
+                        errors.add(new FuzzerError(taskId, source, message));
+                        fireTableRowsInserted(row, row);
+                    }
+                });
     }
 
     @Override
@@ -73,12 +73,12 @@ public class HttpFuzzerErrorsTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         FuzzerError error = errors.get(rowIndex);
         switch (columnIndex) {
-        case 0:
-            return Long.valueOf(error.getTaskId());
-        case 1:
-            return error.getSource();
-        case 2:
-            return error.getMessage();
+            case 0:
+                return Long.valueOf(error.getTaskId());
+            case 1:
+                return error.getSource();
+            case 2:
+                return error.getMessage();
         }
         return "";
     }

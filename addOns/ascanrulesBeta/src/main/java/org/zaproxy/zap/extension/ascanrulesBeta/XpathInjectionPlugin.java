@@ -3,11 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2013 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +20,6 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -36,17 +37,13 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class XpathInjectionPlugin extends AbstractAppParamPlugin {
 
-	private static final String MESSAGE_PREFIX = "ascanbeta.xpathinjectionplugin.";
-	private static final int PLUGIN_ID = 90021;
-	
-    // Evil payloads able to generate 
+    private static final String MESSAGE_PREFIX = "ascanbeta.xpathinjectionplugin.";
+    private static final int PLUGIN_ID = 90021;
+
+    // Evil payloads able to generate
     // an XML explicit error as described in
     // https://www.owasp.org/index.php/Testing_for_XML_Injection
-    private static final String[] XPATH_PAYLOADS = {
-        "\"'",
-        "<!--",
-        "]]>"
-    };
+    private static final String[] XPATH_PAYLOADS = {"\"'", "<!--", "]]>"};
     // List of XPath errors (need to be improved)
     // Reference W3AF XPath injection plugin
     private static final String[] XPATH_ERRORS = {
@@ -77,20 +74,17 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
         "<p>msxml3.dll</font>",
         // Lotus notes error when document searching inside nsf files
         "4005 Notes error: Query is not understandable",
-        // PHP error 
+        // PHP error
         "SimpleXMLElement::xpath()",
-        
         "xmlXPathEval: evaluation failed",
         "Expression must evaluate to a node-set."
     };
-    
+
     // Get WASC Vulnerability description
-    private static final Vulnerability vuln 
-            = Vulnerabilities.getVulnerability("wasc_39");
-    
+    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_39");
+
     // Logger instance
-    private static final Logger log 
-            = Logger.getLogger(XpathInjectionPlugin.class);
+    private static final Logger log = Logger.getLogger(XpathInjectionPlugin.class);
 
     /**
      * Get the unique identifier of this plugin
@@ -119,7 +113,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String[] getDependency() {
-        return new String[]{};
+        return new String[] {};
     }
 
     /**
@@ -137,8 +131,8 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Give back the categorization of the vulnerability checked by this plugin
-     * (it's an injection category for CODEi)
+     * Give back the categorization of the vulnerability checked by this plugin (it's an injection
+     * category for CODEi)
      *
      * @return a category from the Category enum list
      */
@@ -189,7 +183,8 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public int getCweId() {
-        return 643; //CWE-643: Improper Neutralization of Data within XPath Expressions ('XPath Injection');
+        return 643; // CWE-643: Improper Neutralization of Data within XPath Expressions ('XPath
+        // Injection');
     }
 
     /**
@@ -212,9 +207,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
         return Alert.RISK_HIGH;
     }
 
-    /**
-     * Initialize the plugin according to the overall environment configuration
-     */
+    /** Initialize the plugin according to the overall environment configuration */
     @Override
     public void init() {
         // do nothing
@@ -223,8 +216,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
     /**
      * Scan for Xpath Injection Vulnerabilites.
      *
-     * @param msg a request only copy of the original message (the response
-     * isn't copied)
+     * @param msg a request only copy of the original message (the response isn't copied)
      * @param paramName the parameter name that need to be exploited
      * @param value the original parameter value
      */
@@ -235,10 +227,14 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
 
         // Begin plugin execution
         if (log.isDebugEnabled()) {
-            log.debug("Checking [" + msg.getRequestHeader().getMethod() + "]["
-                    + msg.getRequestHeader().getURI()
-                    + "], parameter [" + paramName
-                    + "] for XPath Injection vulnerabilites");
+            log.debug(
+                    "Checking ["
+                            + msg.getRequestHeader().getMethod()
+                            + "]["
+                            + msg.getRequestHeader().getURI()
+                            + "], parameter ["
+                            + paramName
+                            + "] for XPath Injection vulnerabilites");
         }
 
         // Start launching evil payloads
@@ -252,18 +248,18 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
             }
 
             try {
-                // Send the request and retrieve the response                
+                // Send the request and retrieve the response
                 sendAndReceive(msg, false);
                 responseContent = msg.getResponseBody().toString();
 
                 // Check if the injected content has generated an XML error
                 for (String errorString : XPATH_ERRORS) {
 
-                    // if the pattern was found in the new response, 
-                    // but not in the original response (for the unmodified request) 
+                    // if the pattern was found in the new response,
+                    // but not in the original response (for the unmodified request)
                     // then we have a match.. XPATH injection!
                     if ((responseContent.contains(errorString))) {
-                        
+
                         // Go to the next, it's a false positive
                         // Done separately because a good choice
                         // could be also to break the loop for this
@@ -271,11 +267,15 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
                             continue;
                         }
 
-                        // We Found IT!                     
+                        // We Found IT!
                         // First do logging
                         if (log.isDebugEnabled()) {
-                            log.debug("[XPath Injection Found] on parameter [" + paramName
-                                    + "] with payload [" + evilPayload + "]");
+                            log.debug(
+                                    "[XPath Injection Found] on parameter ["
+                                            + paramName
+                                            + "] with payload ["
+                                            + evilPayload
+                                            + "]");
                         }
 
                         // Now create the alert message
@@ -291,19 +291,24 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
                                 getSolution(),
                                 msg);
 
-                        // All done. No need to look for vulnerabilities on subsequent 
+                        // All done. No need to look for vulnerabilities on subsequent
                         // parameters on the same request (to reduce performance impact)
                         return;
                     }
                 }
-                
+
             } catch (IOException ex) {
-                //Do not try to internationalise this.. we need an error message in any event..
-                //if it's in English, it's still better than not having it at all.
-                log.warn("XPath Injection vulnerability check failed for parameter ["
-                        + paramName + "] and payload [" + evilPayload + "] due to an I/O error", ex);
+                // Do not try to internationalise this.. we need an error message in any event..
+                // if it's in English, it's still better than not having it at all.
+                log.warn(
+                        "XPath Injection vulnerability check failed for parameter ["
+                                + paramName
+                                + "] and payload ["
+                                + evilPayload
+                                + "] due to an I/O error",
+                        ex);
             }
-            
+
             // Check if the scan has been stopped
             // if yes dispose resources and exit
             if (isStop()) {

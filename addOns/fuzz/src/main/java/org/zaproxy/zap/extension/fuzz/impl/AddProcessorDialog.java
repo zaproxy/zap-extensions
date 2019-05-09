@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,12 +23,10 @@ import java.awt.CardLayout;
 import java.awt.Dialog;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUI;
@@ -42,11 +40,14 @@ public class AddProcessorDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 4460797449668634319L;
 
-    private static final String DIALOG_TITLE = Constant.messages.getString("fuzz.fuzzer.dialog.add.processor.title");
+    private static final String DIALOG_TITLE =
+            Constant.messages.getString("fuzz.fuzzer.dialog.add.processor.title");
 
-    private static final String CONFIRM_BUTTON_LABEL = Constant.messages.getString("fuzz.fuzzer.dialog.add.processor.button.confirm");
+    private static final String CONFIRM_BUTTON_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.dialog.add.processor.button.confirm");
 
-    private static final String TYPE_FIELD_LABEL = Constant.messages.getString("fuzz.fuzzer.dialog.add.processor.label.type");
+    private static final String TYPE_FIELD_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.dialog.add.processor.label.type");
 
     private JComboBox<String> payloadUIHandlersComboBox;
 
@@ -61,7 +62,11 @@ public class AddProcessorDialog extends AbstractFormDialog {
 
     private PayloadPreviewPanel previewPanel;
 
-    public AddProcessorDialog(Dialog owner, PayloadProcessorsContainer processorsUIHandlers, MessageLocation messageLocation, ResettableAutoCloseableIterator<Payload> payloads) {
+    public AddProcessorDialog(
+            Dialog owner,
+            PayloadProcessorsContainer processorsUIHandlers,
+            MessageLocation messageLocation,
+            ResettableAutoCloseableIterator<Payload> payloads) {
         super(owner, DIALOG_TITLE, false);
 
         this.processorsUIHandlers = processorsUIHandlers;
@@ -76,7 +81,8 @@ public class AddProcessorDialog extends AbstractFormDialog {
         contentsPanel = new JPanel(contentsPanelCardLayout);
 
         for (String payloadType : processorsUIHandlers.getPayloadUIHandlersNames()) {
-            contentsPanel.add(processorsUIHandlers.getPanel(payloadType).getComponent(), payloadType);
+            contentsPanel.add(
+                    processorsUIHandlers.getPanel(payloadType).getComponent(), payloadType);
         }
 
         getPayloadUIHandlersComboBox().setSelectedItem(processorsUIHandlers.getDefaultPanelName());
@@ -97,24 +103,36 @@ public class AddProcessorDialog extends AbstractFormDialog {
 
         JLabel typeLabel = new JLabel(TYPE_FIELD_LABEL);
 
-        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-                .addGroup(
-                        groupLayout.createSequentialGroup()
-                                .addGroup(
-                                        groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(typeLabel))
-                                .addGroup(
-                                        groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                getPayloadUIHandlersComboBox())))
-                .addComponent(contentsPanel)
-                .addComponent(previewPanel.getPanel()));
+        groupLayout.setHorizontalGroup(
+                groupLayout
+                        .createParallelGroup()
+                        .addGroup(
+                                groupLayout
+                                        .createSequentialGroup()
+                                        .addGroup(
+                                                groupLayout
+                                                        .createParallelGroup(
+                                                                GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(typeLabel))
+                                        .addGroup(
+                                                groupLayout
+                                                        .createParallelGroup(
+                                                                GroupLayout.Alignment.LEADING)
+                                                        .addComponent(
+                                                                getPayloadUIHandlersComboBox())))
+                        .addComponent(contentsPanel)
+                        .addComponent(previewPanel.getPanel()));
 
-        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(
-                        groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(typeLabel)
-                                .addComponent(getPayloadUIHandlersComboBox()))
-                .addComponent(contentsPanel)
-                .addComponent(previewPanel.getPanel()));
+        groupLayout.setVerticalGroup(
+                groupLayout
+                        .createSequentialGroup()
+                        .addGroup(
+                                groupLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(typeLabel)
+                                        .addComponent(getPayloadUIHandlersComboBox()))
+                        .addComponent(contentsPanel)
+                        .addComponent(previewPanel.getPanel()));
 
         return fieldsPanel;
     }
@@ -154,23 +172,24 @@ public class AddProcessorDialog extends AbstractFormDialog {
                 payloadUIHandlersComboBox.addItem(name);
             }
 
-            payloadUIHandlersComboBox.addItemListener(new ItemListener() {
+            payloadUIHandlersComboBox.addItemListener(
+                    new ItemListener() {
 
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    if (ItemEvent.SELECTED == e.getStateChange()) {
-                        String panelName = (String) e.getItem();
+                        @Override
+                        public void itemStateChanged(ItemEvent e) {
+                            if (ItemEvent.SELECTED == e.getStateChange()) {
+                                String panelName = (String) e.getItem();
 
-                        currentPanel = processorsUIHandlers.getPanel(panelName);
-                        contentsPanelCardLayout.show(contentsPanel, panelName);
+                                currentPanel = processorsUIHandlers.getPanel(panelName);
+                                contentsPanelCardLayout.show(contentsPanel, panelName);
 
-                        previewPanel.resetPreview();
-                        previewPanel.setPayloadProcessorUIPanel(currentPanel);
+                                previewPanel.resetPreview();
+                                previewPanel.setPayloadProcessorUIPanel(currentPanel);
 
-                        setHelpTarget(currentPanel.getHelpTarget());
-                    }
-                }
-            });
+                                setHelpTarget(currentPanel.getHelpTarget());
+                            }
+                        }
+                    });
         }
         return payloadUIHandlersComboBox;
     }

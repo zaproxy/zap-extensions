@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2013 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,17 +24,18 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public interface SpiderListener {
 
-	enum ResourceState {
-		PROCESSED,
-		OUT_OF_SCOPE,
-		OUT_OF_CONTEXT,
-		EXCLUDED,
-		IO_ERROR
-	}
+    enum ResourceState {
+        PROCESSED,
+        OUT_OF_SCOPE,
+        OUT_OF_CONTEXT,
+        EXCLUDED,
+        IO_ERROR
+    }
 
-	void spiderStarted();
+    void spiderStarted();
 
-	void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, ResourceState state);
+    void foundMessage(
+            HistoryReference historyReference, HttpMessage httpMessage, ResourceState state);
 
-	void spiderStopped();
+    void spiderStopped();
 }

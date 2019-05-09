@@ -3,18 +3,19 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2016 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * This file is based on the Paros code file ReportLastScan.java
  */
 package org.zaproxy.zap.extension.exportreport;
 
@@ -28,7 +29,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -83,6 +83,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     private CommandLineArgument[] arguments = new CommandLineArgument[4];
 
     private ExportReportAPI exportReportAPI;
+
     public ExtensionExportReport() {
         super();
         initialize();
@@ -112,17 +113,40 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
         alertDetails.add(Constant.messages.getString("exportreport.details.reference.label"));
 
         alertAdditional.clear();
-        alertAdditional.add(Constant.messages.getString("exportreport.details.requestheader.label"));
-        alertAdditional.add(Constant.messages.getString("exportreport.details.responseheader.label"));
+        alertAdditional.add(
+                Constant.messages.getString("exportreport.details.requestheader.label"));
+        alertAdditional.add(
+                Constant.messages.getString("exportreport.details.responseheader.label"));
         alertAdditional.add(Constant.messages.getString("exportreport.details.requestbody.label"));
         alertAdditional.add(Constant.messages.getString("exportreport.details.responsebody.label"));
 
-        fileList.add(Utils.HTML, Utils.HTML_TYPE, Utils.HTML, Utils.HTML_DESCRIPTION, Utils.HTML_ICON, true);
-        fileList.add(Utils.BOOTSTRAP, Utils.BOOTSTRAP_TYPE, Utils.BOOTSTRAP, Utils.BOOTSTRAP_DESCRIPTION, Utils.BOOTSTRAP_ICON, false);
-        fileList.add(Utils.XML, Utils.XML_TYPE, Utils.XML, Utils.XML_DESCRIPTION, Utils.XML_ICON, true);
-        fileList.add(Utils.JSON, Utils.JSON_TYPE, Utils.JSON, Utils.JSON_DESCRIPTION, Utils.JSON_ICON, true);
-        fileList.add(Utils.PDF, Utils.PDF_TYPE, Utils.PDF, Utils.PDF_DESCRIPTION, Utils.PDF_ICON, false);
-        fileList.add(Utils.DOC, Utils.DOC_TYPE, Utils.DOC, Utils.DOC_DESCRIPTION, Utils.DOC_ICON, false);
+        fileList.add(
+                Utils.HTML,
+                Utils.HTML_TYPE,
+                Utils.HTML,
+                Utils.HTML_DESCRIPTION,
+                Utils.HTML_ICON,
+                true);
+        fileList.add(
+                Utils.BOOTSTRAP,
+                Utils.BOOTSTRAP_TYPE,
+                Utils.BOOTSTRAP,
+                Utils.BOOTSTRAP_DESCRIPTION,
+                Utils.BOOTSTRAP_ICON,
+                false);
+        fileList.add(
+                Utils.XML, Utils.XML_TYPE, Utils.XML, Utils.XML_DESCRIPTION, Utils.XML_ICON, true);
+        fileList.add(
+                Utils.JSON,
+                Utils.JSON_TYPE,
+                Utils.JSON,
+                Utils.JSON_DESCRIPTION,
+                Utils.JSON_ICON,
+                true);
+        fileList.add(
+                Utils.PDF, Utils.PDF_TYPE, Utils.PDF, Utils.PDF_DESCRIPTION, Utils.PDF_ICON, false);
+        fileList.add(
+                Utils.DOC, Utils.DOC_TYPE, Utils.DOC, Utils.DOC_DESCRIPTION, Utils.DOC_ICON, false);
 
         maxList = alertDetails.size() + alertAdditional.size();
 
@@ -157,36 +181,43 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
         if (menuExportReport == null) {
             menuExportReport = new ZapMenuItem("exportreport.menu.export.label");
             // menuExportReport.setText(Constant.messages.getString("exportreport.menu.export.label"));
-            menuExportReport.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    if (frameER != null) {
-                        frameER.requestFocusInWindow();
-                        return;
-                    }
-
-                    getNewOptionFrame();
-
-                    // -Change the default close operation
-                    WindowAdapter exitListener = new WindowAdapter() {
+            menuExportReport.addActionListener(
+                    new java.awt.event.ActionListener() {
                         @Override
-                        public void windowClosing(WindowEvent e) {
-                            emitFrame();
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            if (frameER != null) {
+                                frameER.requestFocusInWindow();
+                                return;
+                            }
+
+                            getNewOptionFrame();
+
+                            // -Change the default close operation
+                            WindowAdapter exitListener =
+                                    new WindowAdapter() {
+                                        @Override
+                                        public void windowClosing(WindowEvent e) {
+                                            emitFrame();
+                                        }
+                                    };
+                            frameER.addWindowListener(exitListener);
+                            frameER.setSize(400, 500);
+                            frameER.setResizable(false);
+                            frameER.setVisible(true);
+                            frameER.centerFrame(); // frameER.setLocationRelativeTo(null);
                         }
-                    };
-                    frameER.addWindowListener(exitListener);
-                    frameER.setSize(400, 500);
-                    frameER.setResizable(false);
-                    frameER.setVisible(true);
-                    frameER.centerFrame();// frameER.setLocationRelativeTo(null);
-                }
-            });
+                    });
         }
         return menuExportReport;
     }
 
     public void getNewOptionFrame() {
-        frameER = new FrameExportReport(this, extensionGetCardSource(), extensionGetCardAlertRisk(), extensionGetCardAlertDetails());
+        frameER =
+                new FrameExportReport(
+                        this,
+                        extensionGetCardSource(),
+                        extensionGetCardAlertRisk(),
+                        extensionGetCardAlertDetails());
     }
 
     private PanelSource extensionGetCardSource() {
@@ -294,9 +325,15 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
         this.emitFrame();
     }
 
-    public boolean generateReport(String absolutePath, String fileExtension, ArrayList<String> sourceDetails, ArrayList<String> alertSeverity, ArrayList<String> alertDetails) {
+    public boolean generateReport(
+            String absolutePath,
+            String fileExtension,
+            ArrayList<String> sourceDetails,
+            ArrayList<String> alertSeverity,
+            ArrayList<String> alertDetails) {
         ExportReport report = new ExportReport();
-        return report.generateReport(this, absolutePath, fileExtension, sourceDetails, alertSeverity, alertDetails);
+        return report.generateReport(
+                this, absolutePath, fileExtension, sourceDetails, alertSeverity, alertDetails);
     }
 
     public boolean canWrite(String path) {
@@ -312,10 +349,10 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
 
     @Override
     public void execute(CommandLineArgument[] args) {
-        if (arguments[ARG_EXPORT_REPORT_IDX].isEnabled() &&
-                arguments[ARG_SOURCE_INFO_IDX].isEnabled() &&
-                arguments[ARG_ALERT_SEVERITY_IDX].isEnabled() &&
-                arguments[ARG_ALERT_DETAILS_IDX].isEnabled()) {
+        if (arguments[ARG_EXPORT_REPORT_IDX].isEnabled()
+                && arguments[ARG_SOURCE_INFO_IDX].isEnabled()
+                && arguments[ARG_ALERT_SEVERITY_IDX].isEnabled()
+                && arguments[ARG_ALERT_DETAILS_IDX].isEnabled()) {
 
             String absolutePath = arguments[ARG_EXPORT_REPORT_IDX].getArguments().get(0);
 
@@ -324,7 +361,9 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
             String fileExtension = fileList.compareExtension(file);
 
             if (!canWrite(absolutePath)) {
-                CommandLine.error(Constant.messages.getString("exportreport.message.console.error.file.writable", absolutePath));
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "exportreport.message.console.error.file.writable", absolutePath));
                 return;
             }
 
@@ -334,48 +373,146 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                 valid = true;
             }
             if (!valid) {
-                CommandLine.error(Constant.messages.getString("exportreport.message.console.error.file.extension", fileExtension));
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "exportreport.message.console.error.file.extension",
+                                fileExtension));
                 return;
             }
 
             CommandLine.info(Constant.messages.getString("exportreport.message.console.info.path"));
-            ArrayList<String> sourceDetails = new ArrayList<String>(Arrays.asList((arguments[ARG_SOURCE_INFO_IDX].getArguments().get(0)).split(";")));
-            ArrayList<String> alertSeverityFlags = new ArrayList<String>(Arrays.asList((arguments[ARG_ALERT_SEVERITY_IDX].getArguments().get(0)).split(";")));
-            ArrayList<String> alertDetailsFlags = new ArrayList<String>(Arrays.asList((arguments[ARG_ALERT_DETAILS_IDX].getArguments().get(0)).split(";")));
+            ArrayList<String> sourceDetails =
+                    new ArrayList<String>(
+                            Arrays.asList(
+                                    (arguments[ARG_SOURCE_INFO_IDX].getArguments().get(0))
+                                            .split(";")));
+            ArrayList<String> alertSeverityFlags =
+                    new ArrayList<String>(
+                            Arrays.asList(
+                                    (arguments[ARG_ALERT_SEVERITY_IDX].getArguments().get(0))
+                                            .split(";")));
+            ArrayList<String> alertDetailsFlags =
+                    new ArrayList<String>(
+                            Arrays.asList(
+                                    (arguments[ARG_ALERT_DETAILS_IDX].getArguments().get(0))
+                                            .split(";")));
 
             if (sourceDetails.size() != SOURCE_COUNT) {
-                CommandLine.error(Constant.messages.getString("exportreport.message.console.error.source", Constant.messages.getString("exportreport.menu.source.label"), sourceDetails.size(), SOURCE_COUNT, Constant.messages.getString("exportreport.source.title.label"), Constant.messages.getString("exportreport.source.by.label"), Constant.messages.getString("exportreport.source.for.label"), Constant.messages.getString("exportreport.source.scandate.label"), Constant.messages.getString("exportreport.source.reportdate.label"), Constant.messages.getString("exportreport.source.scanver.label"), Constant.messages.getString("exportreport.source.reportver.label"), Constant.messages.getString("exportreport.source.description.label")));
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "exportreport.message.console.error.source",
+                                Constant.messages.getString("exportreport.menu.source.label"),
+                                sourceDetails.size(),
+                                SOURCE_COUNT,
+                                Constant.messages.getString("exportreport.source.title.label"),
+                                Constant.messages.getString("exportreport.source.by.label"),
+                                Constant.messages.getString("exportreport.source.for.label"),
+                                Constant.messages.getString("exportreport.source.scandate.label"),
+                                Constant.messages.getString("exportreport.source.reportdate.label"),
+                                Constant.messages.getString("exportreport.source.scanver.label"),
+                                Constant.messages.getString("exportreport.source.reportver.label"),
+                                Constant.messages.getString(
+                                        "exportreport.source.description.label")));
                 return;
             }
 
-            CommandLine.info(Constant.messages.getString("exportreport.message.console.info.length", Constant.messages.getString("exportreport.menu.source.label"), Constant.messages.getString("exportreport.message.console.info.status.valid")));
-            CommandLine.info(Constant.messages.getString("exportreport.message.console.info.content", Constant.messages.getString("exportreport.menu.source.label"), Constant.messages.getString("exportreport.message.console.info.status.unchecked")));
+            CommandLine.info(
+                    Constant.messages.getString(
+                            "exportreport.message.console.info.length",
+                            Constant.messages.getString("exportreport.menu.source.label"),
+                            Constant.messages.getString(
+                                    "exportreport.message.console.info.status.valid")));
+            CommandLine.info(
+                    Constant.messages.getString(
+                            "exportreport.message.console.info.content",
+                            Constant.messages.getString("exportreport.menu.source.label"),
+                            Constant.messages.getString(
+                                    "exportreport.message.console.info.status.unchecked")));
 
             if (alertSeverityFlags.size() != alertSeverity.size()) {
-                CommandLine.error(Constant.messages.getString("exportreport.message.console.error.risk.severity", Constant.messages.getString("exportreport.menu.risk.label"), alertSeverityFlags.size(), alertSeverity.size(), Constant.messages.getString("exportreport.risk.severity.high.label"), Constant.messages.getString("exportreport.risk.severity.medium.label"), Constant.messages.getString("exportreport.risk.severity.low.label"), Constant.messages.getString("exportreport.risk.severity.info.label")));
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "exportreport.message.console.error.risk.severity",
+                                Constant.messages.getString("exportreport.menu.risk.label"),
+                                alertSeverityFlags.size(),
+                                alertSeverity.size(),
+                                Constant.messages.getString(
+                                        "exportreport.risk.severity.high.label"),
+                                Constant.messages.getString(
+                                        "exportreport.risk.severity.medium.label"),
+                                Constant.messages.getString("exportreport.risk.severity.low.label"),
+                                Constant.messages.getString(
+                                        "exportreport.risk.severity.info.label")));
                 return;
             }
-            CommandLine.info(Constant.messages.getString("exportreport.message.console.info.length", Constant.messages.getString("exportreport.menu.risk.label"), Constant.messages.getString("exportreport.message.console.info.status.valid")));
+            CommandLine.info(
+                    Constant.messages.getString(
+                            "exportreport.message.console.info.length",
+                            Constant.messages.getString("exportreport.menu.risk.label"),
+                            Constant.messages.getString(
+                                    "exportreport.message.console.info.status.valid")));
 
             if (!validList(alertSeverityFlags)) {
-                CommandLine.info(Constant.messages.getString("exportreport.message.console.error.valid.list", Constant.messages.getString("exportreport.menu.risk.label")));
+                CommandLine.info(
+                        Constant.messages.getString(
+                                "exportreport.message.console.error.valid.list",
+                                Constant.messages.getString("exportreport.menu.risk.label")));
                 return;
             }
-            CommandLine.info(Constant.messages.getString("exportreport.message.console.info.content", Constant.messages.getString("exportreport.menu.risk.label"), Constant.messages.getString("exportreport.message.console.info.status.valid")));
+            CommandLine.info(
+                    Constant.messages.getString(
+                            "exportreport.message.console.info.content",
+                            Constant.messages.getString("exportreport.menu.risk.label"),
+                            Constant.messages.getString(
+                                    "exportreport.message.console.info.status.valid")));
 
             if (alertDetailsFlags.size() != maxList) {
-                CommandLine.error(Constant.messages.getString("exportreport.message.console.error.details", Constant.messages.getString("exportreport.menu.details.label"), alertDetailsFlags.size(), maxList, Constant.messages.getString("exportreport.details.cweid.label"), Constant.messages.getString("exportreport.details.wascid.label"), Constant.messages.getString("exportreport.details.description.label"), Constant.messages.getString("exportreport.details.otherinfo.label"), Constant.messages.getString("exportreport.details.solution.label"), Constant.messages.getString("exportreport.details.reference.label"), Constant.messages.getString("exportreport.details.requestheader.label"), Constant.messages.getString("exportreport.details.responseheader.label"), Constant.messages.getString("exportreport.details.requestbody.label"), Constant.messages.getString("exportreport.details.responsebody.label")));
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "exportreport.message.console.error.details",
+                                Constant.messages.getString("exportreport.menu.details.label"),
+                                alertDetailsFlags.size(),
+                                maxList,
+                                Constant.messages.getString("exportreport.details.cweid.label"),
+                                Constant.messages.getString("exportreport.details.wascid.label"),
+                                Constant.messages.getString(
+                                        "exportreport.details.description.label"),
+                                Constant.messages.getString("exportreport.details.otherinfo.label"),
+                                Constant.messages.getString("exportreport.details.solution.label"),
+                                Constant.messages.getString("exportreport.details.reference.label"),
+                                Constant.messages.getString(
+                                        "exportreport.details.requestheader.label"),
+                                Constant.messages.getString(
+                                        "exportreport.details.responseheader.label"),
+                                Constant.messages.getString(
+                                        "exportreport.details.requestbody.label"),
+                                Constant.messages.getString(
+                                        "exportreport.details.responsebody.label")));
                 return;
             }
-            CommandLine.info(Constant.messages.getString("exportreport.message.console.info.length", Constant.messages.getString("exportreport.menu.details.label"), Constant.messages.getString("exportreport.message.console.info.status.valid")));
+            CommandLine.info(
+                    Constant.messages.getString(
+                            "exportreport.message.console.info.length",
+                            Constant.messages.getString("exportreport.menu.details.label"),
+                            Constant.messages.getString(
+                                    "exportreport.message.console.info.status.valid")));
 
             if (!validList(alertDetailsFlags)) {
-                CommandLine.info(Constant.messages.getString("exportreport.message.console.error.valid.list", Constant.messages.getString("exportreport.menu.details.label")));
+                CommandLine.info(
+                        Constant.messages.getString(
+                                "exportreport.message.console.error.valid.list",
+                                Constant.messages.getString("exportreport.menu.details.label")));
                 return;
             }
-            CommandLine.info(Constant.messages.getString("exportreport.message.console.info.content", Constant.messages.getString("exportreport.menu.details.label"), Constant.messages.getString("exportreport.message.console.info.status.valid")));
+            CommandLine.info(
+                    Constant.messages.getString(
+                            "exportreport.message.console.info.content",
+                            Constant.messages.getString("exportreport.menu.details.label"),
+                            Constant.messages.getString(
+                                    "exportreport.message.console.info.status.valid")));
 
-            CommandLine.info(Constant.messages.getString("exportreport.message.console.info.pass.generate"));
+            CommandLine.info(
+                    Constant.messages.getString("exportreport.message.console.info.pass.generate"));
 
             ArrayList<String> alertSeverityTemp = generateList(alertSeverityFlags, alertSeverity);
 
@@ -385,16 +522,25 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
             ArrayList<String> alertDetailsTemp = generateList(alertDetailsFlags, alertDetailsFull);
 
             try {
-                if (generateReport(absolutePath, fileExtension, sourceDetails, alertSeverityTemp, alertDetailsTemp)) {
-                    CommandLine.info(Constant.messages.getString("exportreport.message.console.info.pass.path", absolutePath));
+                if (generateReport(
+                        absolutePath,
+                        fileExtension,
+                        sourceDetails,
+                        alertSeverityTemp,
+                        alertDetailsTemp)) {
+                    CommandLine.info(
+                            Constant.messages.getString(
+                                    "exportreport.message.console.info.pass.path", absolutePath));
                 }
             } catch (Exception e) {
-                CommandLine.error(Constant.messages.getString("exportreport.message.console.error.exception", e.getMessage()), e);
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "exportreport.message.console.error.exception", e.getMessage()),
+                        e);
             }
         } else {
             return;
         }
-
     }
 
     public ArrayList<String> getAlertSeverity() {
@@ -425,10 +571,34 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
 
     private CommandLineArgument[] getCommandLineArguments() {
         // String name, int numOfArguments, String pattern, String errorMessage, String helpMessage
-        arguments[0] = new CommandLineArgument("-export_report", 1, null, "", Constant.messages.getString("exportreport.cmdline.export.help"));
-        arguments[1] = new CommandLineArgument("-source_info", 1, null, "", Constant.messages.getString("exportreport.cmdline.source.help"));
-        arguments[2] = new CommandLineArgument("-alert_severity", 1, null, "", Constant.messages.getString("exportreport.cmdline.risk.help"));
-        arguments[3] = new CommandLineArgument("-alert_details", 1, null, "", Constant.messages.getString("exportreport.cmdline.details.help"));
+        arguments[0] =
+                new CommandLineArgument(
+                        "-export_report",
+                        1,
+                        null,
+                        "",
+                        Constant.messages.getString("exportreport.cmdline.export.help"));
+        arguments[1] =
+                new CommandLineArgument(
+                        "-source_info",
+                        1,
+                        null,
+                        "",
+                        Constant.messages.getString("exportreport.cmdline.source.help"));
+        arguments[2] =
+                new CommandLineArgument(
+                        "-alert_severity",
+                        1,
+                        null,
+                        "",
+                        Constant.messages.getString("exportreport.cmdline.risk.help"));
+        arguments[3] =
+                new CommandLineArgument(
+                        "-alert_details",
+                        1,
+                        null,
+                        "",
+                        Constant.messages.getString("exportreport.cmdline.details.help"));
         return arguments;
     }
 

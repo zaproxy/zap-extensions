@@ -14,3 +14,13 @@ dependencies {
     implementation("org.json:json:20160212")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
 }
+
+spotless {
+    java {
+        target(fileTree(projectDir) {
+            include("**/*.java")
+            // 3rd-party code.
+            exclude("**/utility/SpringUtilities.java")
+        })
+    }
+}

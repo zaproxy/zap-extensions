@@ -3,11 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2014 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,14 +21,11 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 /**
  * thrown if an index file is not a valid V1 Git "pack index" file.
- * @author 70pointer@gmail.com
  *
+ * @author 70pointer@gmail.com
  */
 public class NotV1GitPackIndexFileException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 664525398598253409L;    	
-
+    /** */
+    private static final long serialVersionUID = 664525398598253409L;
 }

@@ -3,11 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2017 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,14 +21,11 @@ package org.zaproxy.zap.extension.formhandler;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.zaproxy.zap.extension.params.ExtensionParams;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
@@ -54,7 +53,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
         extensionHook.addOptionsParamSet(getParam());
         ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
         ExtensionSpider extension = extLoader.getExtension(ExtensionSpider.class);
-        if (extension != null){
+        if (extension != null) {
             extension.setValueGenerator(new FormHandlerValueGenerator(getParam()));
         }
 
@@ -68,20 +67,22 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
 
     @Override
     public boolean canUnload() {
-        // The extension can be dynamically unloaded, all resources used/added can be freed/removed from core.
+        // The extension can be dynamically unloaded, all resources used/added can be freed/removed
+        // from core.
         return true;
     }
 
     @Override
     public void unload() {
         super.unload();
-        ExtensionSpider extension = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-        if(extension != null){
+        ExtensionSpider extension =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
+        if (extension != null) {
             extension.setValueGenerator(new DefaultValueGenerator());
         }
     }
 
-    //Method for creating and obtaining the Options Panel
+    // Method for creating and obtaining the Options Panel
     private OptionsFormHandlerPanel getOptionsFormHandlerPanel() {
         if (optionsFormHandlerPanel == null) {
             optionsFormHandlerPanel = new OptionsFormHandlerPanel();
@@ -90,7 +91,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
     }
 
     protected FormHandlerParam getParam() {
-        if (param == null){
+        if (param == null) {
             param = new FormHandlerParam();
         }
         return param;

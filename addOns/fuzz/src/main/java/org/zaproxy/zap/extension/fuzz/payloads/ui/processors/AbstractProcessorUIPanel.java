@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,16 +23,17 @@ import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.model.MessageLocation;
 
-public abstract class AbstractProcessorUIPanel<T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>>
+public abstract class AbstractProcessorUIPanel<
+                T extends Payload,
+                T2 extends PayloadProcessor<T>,
+                T3 extends PayloadProcessorUI<T, T2>>
         implements PayloadProcessorUIPanel<T, T2, T3> {
 
     @Override
-    public void init(MessageLocation messageLocation) {
-    }
+    public void init(MessageLocation messageLocation) {}
 
     @Override
-    public void clear() {
-    }
+    public void clear() {}
 
     @Override
     public boolean validate() {
@@ -43,5 +44,4 @@ public abstract class AbstractProcessorUIPanel<T extends Payload, T2 extends Pay
     public String getHelpTarget() {
         return "addon.fuzzer.processors";
     }
-
 }

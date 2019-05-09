@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
@@ -58,20 +57,28 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
             String fuzzerScanName,
             HttpFuzzerOptions fuzzerOptions,
             HttpMessage message,
-            List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>> fuzzLocations,
+            List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>
+                    fuzzLocations,
             MultipleMessageLocationsReplacer<HttpMessage> multipleMessageLocationsReplacer,
             List<HttpFuzzerMessageProcessor> messageProcessors) {
-        super(fuzzerScanName, fuzzerOptions, message, fuzzLocations, multipleMessageLocationsReplacer);
+        super(
+                fuzzerScanName,
+                fuzzerOptions,
+                message,
+                fuzzLocations,
+                multipleMessageLocationsReplacer);
 
-        this.messageProcessors = messageProcessors.isEmpty()
-                ? Collections.<HttpFuzzerMessageProcessor> emptyList()
-                : Collections.synchronizedList(new ArrayList<>(messageProcessors));
+        this.messageProcessors =
+                messageProcessors.isEmpty()
+                        ? Collections.<HttpFuzzerMessageProcessor>emptyList()
+                        : Collections.synchronizedList(new ArrayList<>(messageProcessors));
         currentSession = Model.getSingleton().getSession();
 
-        httpSender = new HttpSender(
-                Model.getSingleton().getOptionsParam().getConnectionParam(),
-                true,
-                HttpSender.FUZZER_INITIATOR);
+        httpSender =
+                new HttpSender(
+                        Model.getSingleton().getOptionsParam().getConnectionParam(),
+                        true,
+                        HttpSender.FUZZER_INITIATOR);
 
         if (fuzzerOptions.isFollowRedirects()) {
             httpSender.setFollowRedirect(fuzzerOptions.isFollowRedirects());
@@ -100,21 +107,25 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                 }
                 increaseErrorCount(
                         0,
-                        Constant.messages.getString("fuzz.httpfuzzer.results.error.source.httpfuzzer"),
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.results.error.source.httpfuzzer"),
                         Constant.messages.getString(
                                 "fuzz.httpfuzzer.results.error.message.failedSendOriginalMessage",
                                 e.getLocalizedMessage()));
             }
         }
 
-        fuzzResultAvailable(new HttpFuzzResult(
-                0,
-                Constant.messages.getString("fuzz.httpfuzzer.messagetype.result.originalMessage"),
-                originalMessage));
+        fuzzResultAvailable(
+                new HttpFuzzResult(
+                        0,
+                        Constant.messages.getString(
+                                "fuzz.httpfuzzer.messagetype.result.originalMessage"),
+                        originalMessage));
     }
 
     @Override
-    protected HttpFuzzerTask createFuzzerTask(long taskId, HttpMessage message, List<Object> payloads) {
+    protected HttpFuzzerTask createFuzzerTask(
+            long taskId, HttpMessage message, List<Object> payloads) {
         return new HttpFuzzerTask(taskId, this, message, payloads);
     }
 
@@ -165,7 +176,8 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
             errorsModel.addFuzzerError(
                     taskId,
                     Constant.messages.getString("fuzz.httpfuzzer.results.error.source.httpfuzzer"),
-                    Constant.messages.getString("fuzz.httpfuzzer.results.error.message.maxErrorsReached"));
+                    Constant.messages.getString(
+                            "fuzz.httpfuzzer.results.error.message.maxErrorsReached"));
         }
     }
 
@@ -175,8 +187,10 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
         }
 
         synchronized (messageProcessors) {
-            HttpFuzzerTaskProcessorUtils utils = new HttpFuzzerTaskProcessorUtils(this, originalMessage, taskId, payloads);
-            for (Iterator<HttpFuzzerMessageProcessor> it = messageProcessors.iterator(); it.hasNext();) {
+            HttpFuzzerTaskProcessorUtils utils =
+                    new HttpFuzzerTaskProcessorUtils(this, originalMessage, taskId, payloads);
+            for (Iterator<HttpFuzzerMessageProcessor> it = messageProcessors.iterator();
+                    it.hasNext(); ) {
                 HttpFuzzerMessageProcessor messageProcessor = it.next();
                 try {
                     utils.setCurrentProcessorName(messageProcessor.getName());
@@ -184,11 +198,13 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                 } catch (ProcessingException e) {
                     errorsModel.addFuzzerError(
                             taskId,
-                            Constant.messages.getString("fuzz.httpfuzzer.results.error.source.httpfuzzer"),
+                            Constant.messages.getString(
+                                    "fuzz.httpfuzzer.results.error.source.httpfuzzer"),
                             Constant.messages.getString(
                                     "fuzz.httpfuzzer.results.error.message.removedProcessorOnError",
                                     messageProcessor.getName()));
-                    logger.warn("Error while executing a processor, it will not be called again:", e);
+                    logger.warn(
+                            "Error while executing a processor, it will not be called again:", e);
                     it.remove();
                 }
             }
@@ -208,14 +224,16 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
         }
 
         synchronized (messageProcessors) {
-            HttpFuzzerTaskProcessorUtils utils = new HttpFuzzerTaskProcessorUtils(
-                    this,
-                    originalMessage,
-                    taskId,
-                    result.getPayloads(),
-                    result,
-                    getExtensionAlert());
-            for (Iterator<HttpFuzzerMessageProcessor> it = messageProcessors.iterator(); it.hasNext();) {
+            HttpFuzzerTaskProcessorUtils utils =
+                    new HttpFuzzerTaskProcessorUtils(
+                            this,
+                            originalMessage,
+                            taskId,
+                            result.getPayloads(),
+                            result,
+                            getExtensionAlert());
+            for (Iterator<HttpFuzzerMessageProcessor> it = messageProcessors.iterator();
+                    it.hasNext(); ) {
                 HttpFuzzerMessageProcessor messageProcessor = it.next();
                 try {
                     utils.setCurrentProcessorName(messageProcessor.getName());
@@ -226,11 +244,13 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                 } catch (ProcessingException e) {
                     errorsModel.addFuzzerError(
                             taskId,
-                            Constant.messages.getString("fuzz.httpfuzzer.results.error.source.httpfuzzer"),
+                            Constant.messages.getString(
+                                    "fuzz.httpfuzzer.results.error.source.httpfuzzer"),
                             Constant.messages.getString(
                                     "fuzz.httpfuzzer.results.error.message.removedProcessorOnError",
                                     messageProcessor.getName()));
-                    logger.warn("Error while executing a processor, it will not be called again:", e);
+                    logger.warn(
+                            "Error while executing a processor, it will not be called again:", e);
                     it.remove();
                 }
             }

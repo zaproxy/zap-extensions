@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -38,7 +37,6 @@ import javax.swing.LayoutStyle;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import org.zaproxy.zap.extension.fuzz.FuzzOptions;
 import org.zaproxy.zap.extension.fuzz.FuzzerOptions;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationsReplacementStrategy;
@@ -70,58 +68,78 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         this.defaultOptions = defaultOptions;
         this.fuzzerHandlerOptions = fuzzerHandlerOptions;
 
-        retriesOnIOErrorNumberSpinner = new ZapNumberSpinner(0, defaultOptions.getRetriesOnIOError(), Integer.MAX_VALUE);
-        JLabel retriesOnIOErrorLabel = new JLabel(resourceBundle.getString("fuzz.options.label.retriesOnIOError"));
+        retriesOnIOErrorNumberSpinner =
+                new ZapNumberSpinner(0, defaultOptions.getRetriesOnIOError(), Integer.MAX_VALUE);
+        JLabel retriesOnIOErrorLabel =
+                new JLabel(resourceBundle.getString("fuzz.options.label.retriesOnIOError"));
         retriesOnIOErrorLabel.setLabelFor(retriesOnIOErrorNumberSpinner);
 
         maxErrorsAllowedEnabledCheckBox = new JCheckBox();
         maxErrorsAllowedEnabledCheckBox.setSelected(true);
-        JLabel maxErrorsAllowedEnabledLabel = new JLabel(
-                resourceBundle.getString("fuzz.fuzzer.dialog.tab.options.label.maxErrorsAllowedEnabled"));
+        JLabel maxErrorsAllowedEnabledLabel =
+                new JLabel(
+                        resourceBundle.getString(
+                                "fuzz.fuzzer.dialog.tab.options.label.maxErrorsAllowedEnabled"));
         maxErrorsAllowedEnabledLabel.setLabelFor(maxErrorsAllowedEnabledCheckBox);
-        maxErrorsAllowedEnabledCheckBox.addItemListener(new ItemListener() {
+        maxErrorsAllowedEnabledCheckBox.addItemListener(
+                new ItemListener() {
 
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                maxErrorsAllowedNumberSpinner.setEnabled(ItemEvent.SELECTED == e.getStateChange());
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        maxErrorsAllowedNumberSpinner.setEnabled(
+                                ItemEvent.SELECTED == e.getStateChange());
+                    }
+                });
 
-            }
-        });
-
-        maxErrorsAllowedNumberSpinner = new ZapNumberSpinner(0, defaultOptions.getMaxErrorsAllowed(), Integer.MAX_VALUE);
-        JLabel maxErrorsAllowedLabel = new JLabel(resourceBundle.getString("fuzz.options.label.maxErrorsAllowed"));
+        maxErrorsAllowedNumberSpinner =
+                new ZapNumberSpinner(0, defaultOptions.getMaxErrorsAllowed(), Integer.MAX_VALUE);
+        JLabel maxErrorsAllowedLabel =
+                new JLabel(resourceBundle.getString("fuzz.options.label.maxErrorsAllowed"));
         maxErrorsAllowedLabel.setLabelFor(maxErrorsAllowedNumberSpinner);
 
         JLabel currentDefaultThreadsPerFuzzerLabel = new JLabel();
-        defaultThreadsPerFuzzerSlider = createDefaultThreadsPerFuzzerSlider(
-                defaultOptions.getThreadCount(),
-                FuzzOptions.MAX_THREADS_PER_FUZZER,
-                currentDefaultThreadsPerFuzzerLabel);
-        JLabel defaultFuzzThreadsPerFuzzerLabel = new JLabel(resourceBundle.getString("fuzz.options.label.threads"));
+        defaultThreadsPerFuzzerSlider =
+                createDefaultThreadsPerFuzzerSlider(
+                        defaultOptions.getThreadCount(),
+                        FuzzOptions.MAX_THREADS_PER_FUZZER,
+                        currentDefaultThreadsPerFuzzerLabel);
+        JLabel defaultFuzzThreadsPerFuzzerLabel =
+                new JLabel(resourceBundle.getString("fuzz.options.label.threads"));
         defaultFuzzThreadsPerFuzzerLabel.setLabelFor(defaultThreadsPerFuzzerSlider);
-        currentDefaultThreadsPerFuzzerLabel.setText(Integer.toString(defaultOptions.getThreadCount()));
+        currentDefaultThreadsPerFuzzerLabel.setText(
+                Integer.toString(defaultOptions.getThreadCount()));
 
         JLabel currentDefaultFuzzDelayLabel = new JLabel();
-        defaultFuzzDelayInMsSlider = createDefaultFuzzDelayInMsSlider(
-                (int) defaultOptions.getSendMessageDelay(),
-                1000,
-                currentDefaultFuzzDelayLabel);
-        JLabel defaultFuzzDelayLabel = new JLabel(resourceBundle.getString("fuzz.options.label.delayInMs"));
+        defaultFuzzDelayInMsSlider =
+                createDefaultFuzzDelayInMsSlider(
+                        (int) defaultOptions.getSendMessageDelay(),
+                        1000,
+                        currentDefaultFuzzDelayLabel);
+        JLabel defaultFuzzDelayLabel =
+                new JLabel(resourceBundle.getString("fuzz.options.label.delayInMs"));
         defaultFuzzDelayLabel.setLabelFor(defaultFuzzDelayInMsSlider);
-        currentDefaultFuzzDelayLabel.setText(Integer.toString((int) defaultOptions.getSendMessageDelay()));
+        currentDefaultFuzzDelayLabel.setText(
+                Integer.toString((int) defaultOptions.getSendMessageDelay()));
 
         ButtonGroup replacementStrategyButtonGroup = new ButtonGroup();
-        depthFirstPayloadReplacementStrategyRadioButton = new JRadioButton(
-                resourceBundle.getString("fuzz.options.label.payloadReplacementStrategy.depthFirst"));
+        depthFirstPayloadReplacementStrategyRadioButton =
+                new JRadioButton(
+                        resourceBundle.getString(
+                                "fuzz.options.label.payloadReplacementStrategy.depthFirst"));
         replacementStrategyButtonGroup.add(depthFirstPayloadReplacementStrategyRadioButton);
-        breadthFirstPayloadReplacementStrategyRadioButton = new JRadioButton(
-                resourceBundle.getString("fuzz.options.label.payloadReplacementStrategy.breadthFirst"));
+        breadthFirstPayloadReplacementStrategyRadioButton =
+                new JRadioButton(
+                        resourceBundle.getString(
+                                "fuzz.options.label.payloadReplacementStrategy.breadthFirst"));
         replacementStrategyButtonGroup.add(breadthFirstPayloadReplacementStrategyRadioButton);
-        JLabel payloadReplacementStrategyLabel = new JLabel(
-                resourceBundle.getString("fuzz.options.label.payloadReplacementStrategy"));
-        payloadReplacementStrategyLabel.setLabelFor(depthFirstPayloadReplacementStrategyRadioButton);
+        JLabel payloadReplacementStrategyLabel =
+                new JLabel(
+                        resourceBundle.getString("fuzz.options.label.payloadReplacementStrategy"));
+        payloadReplacementStrategyLabel.setLabelFor(
+                depthFirstPayloadReplacementStrategyRadioButton);
 
-        if (MessageLocationsReplacementStrategy.DEPTH_FIRST == defaultOptions.getPayloadsReplacementStrategy()) {
+        if (MessageLocationsReplacementStrategy.DEPTH_FIRST
+                == defaultOptions.getPayloadsReplacementStrategy()) {
             depthFirstPayloadReplacementStrategyRadioButton.setSelected(true);
         } else {
             breadthFirstPayloadReplacementStrategyRadioButton.setSelected(true);
@@ -133,100 +151,123 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
-        layout.setHorizontalGroup(layout.createParallelGroup()
-                .addGroup(
-                        layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup().addComponent(retriesOnIOErrorLabel))
-                                .addGroup(layout.createParallelGroup().addComponent(retriesOnIOErrorNumberSpinner)))
-                .addGroup(
-                        layout.createParallelGroup()
-                                .addGroup(
-                                        layout.createSequentialGroup()
-                                                .addGroup(
-                                                        layout.createParallelGroup().addComponent(maxErrorsAllowedEnabledLabel))
-                                                .addGroup(
-                                                        layout.createParallelGroup().addComponent(
-                                                                maxErrorsAllowedEnabledCheckBox)))
-                                .addGroup(
-                                        layout.createSequentialGroup()
-                                                .addPreferredGap(
-                                                        maxErrorsAllowedEnabledLabel,
-                                                        maxErrorsAllowedLabel,
-                                                        LayoutStyle.ComponentPlacement.INDENT)
-                                                .addGroup(
-                                                        layout.createSequentialGroup()
-                                                                .addGroup(
-                                                                        layout.createParallelGroup().addComponent(
-                                                                                maxErrorsAllowedLabel))
-                                                                .addGroup(
-                                                                        layout.createParallelGroup().addComponent(
-                                                                                maxErrorsAllowedNumberSpinner)))))
-                .addGroup(
-                        layout.createParallelGroup()
-                                .addComponent(payloadReplacementStrategyLabel)
-                                .addGroup(
-                                        layout.createSequentialGroup()
-                                                .addPreferredGap(
-                                                        payloadReplacementStrategyLabel,
-                                                        depthFirstPayloadReplacementStrategyRadioButton,
-                                                        LayoutStyle.ComponentPlacement.INDENT)
-                                                .addComponent(depthFirstPayloadReplacementStrategyRadioButton))
-                                .addGroup(
-                                        layout.createSequentialGroup()
-                                                .addPreferredGap(
-                                                        payloadReplacementStrategyLabel,
-                                                        breadthFirstPayloadReplacementStrategyRadioButton,
-                                                        LayoutStyle.ComponentPlacement.INDENT)
-                                                .addComponent(breadthFirstPayloadReplacementStrategyRadioButton)))
-                .addGroup(
-                        layout.createParallelGroup()
-                                .addGroup(
-                                        layout.createSequentialGroup()
-                                                .addComponent(defaultFuzzThreadsPerFuzzerLabel)
-                                                .addComponent(currentDefaultThreadsPerFuzzerLabel))
-                                .addComponent(defaultThreadsPerFuzzerSlider))
-                .addGroup(
-                        layout.createParallelGroup()
-                                .addGroup(
-                                        layout.createSequentialGroup()
-                                                .addComponent(defaultFuzzDelayLabel)
-                                                .addComponent(currentDefaultFuzzDelayLabel))
-                                .addComponent(defaultFuzzDelayInMsSlider))
-                .addComponent(this.fuzzerHandlerOptions.getPanel()));
+        layout.setHorizontalGroup(
+                layout.createParallelGroup()
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addGroup(
+                                                layout.createParallelGroup()
+                                                        .addComponent(retriesOnIOErrorLabel))
+                                        .addGroup(
+                                                layout.createParallelGroup()
+                                                        .addComponent(
+                                                                retriesOnIOErrorNumberSpinner)))
+                        .addGroup(
+                                layout.createParallelGroup()
+                                        .addGroup(
+                                                layout.createSequentialGroup()
+                                                        .addGroup(
+                                                                layout.createParallelGroup()
+                                                                        .addComponent(
+                                                                                maxErrorsAllowedEnabledLabel))
+                                                        .addGroup(
+                                                                layout.createParallelGroup()
+                                                                        .addComponent(
+                                                                                maxErrorsAllowedEnabledCheckBox)))
+                                        .addGroup(
+                                                layout.createSequentialGroup()
+                                                        .addPreferredGap(
+                                                                maxErrorsAllowedEnabledLabel,
+                                                                maxErrorsAllowedLabel,
+                                                                LayoutStyle.ComponentPlacement
+                                                                        .INDENT)
+                                                        .addGroup(
+                                                                layout.createSequentialGroup()
+                                                                        .addGroup(
+                                                                                layout.createParallelGroup()
+                                                                                        .addComponent(
+                                                                                                maxErrorsAllowedLabel))
+                                                                        .addGroup(
+                                                                                layout.createParallelGroup()
+                                                                                        .addComponent(
+                                                                                                maxErrorsAllowedNumberSpinner)))))
+                        .addGroup(
+                                layout.createParallelGroup()
+                                        .addComponent(payloadReplacementStrategyLabel)
+                                        .addGroup(
+                                                layout.createSequentialGroup()
+                                                        .addPreferredGap(
+                                                                payloadReplacementStrategyLabel,
+                                                                depthFirstPayloadReplacementStrategyRadioButton,
+                                                                LayoutStyle.ComponentPlacement
+                                                                        .INDENT)
+                                                        .addComponent(
+                                                                depthFirstPayloadReplacementStrategyRadioButton))
+                                        .addGroup(
+                                                layout.createSequentialGroup()
+                                                        .addPreferredGap(
+                                                                payloadReplacementStrategyLabel,
+                                                                breadthFirstPayloadReplacementStrategyRadioButton,
+                                                                LayoutStyle.ComponentPlacement
+                                                                        .INDENT)
+                                                        .addComponent(
+                                                                breadthFirstPayloadReplacementStrategyRadioButton)))
+                        .addGroup(
+                                layout.createParallelGroup()
+                                        .addGroup(
+                                                layout.createSequentialGroup()
+                                                        .addComponent(
+                                                                defaultFuzzThreadsPerFuzzerLabel)
+                                                        .addComponent(
+                                                                currentDefaultThreadsPerFuzzerLabel))
+                                        .addComponent(defaultThreadsPerFuzzerSlider))
+                        .addGroup(
+                                layout.createParallelGroup()
+                                        .addGroup(
+                                                layout.createSequentialGroup()
+                                                        .addComponent(defaultFuzzDelayLabel)
+                                                        .addComponent(currentDefaultFuzzDelayLabel))
+                                        .addComponent(defaultFuzzDelayInMsSlider))
+                        .addComponent(this.fuzzerHandlerOptions.getPanel()));
 
-        layout.setVerticalGroup(layout.createSequentialGroup()
-                .addGroup(
-                        layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(retriesOnIOErrorLabel)
-                                .addComponent(retriesOnIOErrorNumberSpinner))
-                .addGroup(
-                        layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(maxErrorsAllowedEnabledLabel)
-                                .addComponent(maxErrorsAllowedEnabledCheckBox))
-                .addGroup(
-                        layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(maxErrorsAllowedLabel)
-                                .addComponent(maxErrorsAllowedNumberSpinner))
-                .addGroup(
-                        layout.createSequentialGroup()
-                                .addComponent(payloadReplacementStrategyLabel)
-                                .addComponent(depthFirstPayloadReplacementStrategyRadioButton)
-                                .addComponent(breadthFirstPayloadReplacementStrategyRadioButton))
-                .addGroup(
-                        layout.createSequentialGroup()
-                                .addGroup(
-                                        layout.createParallelGroup()
-                                                .addComponent(defaultFuzzThreadsPerFuzzerLabel)
-                                                .addComponent(currentDefaultThreadsPerFuzzerLabel))
-                                .addComponent(defaultThreadsPerFuzzerSlider))
-                .addGroup(
-                        layout.createSequentialGroup()
-                                .addGroup(
-                                        layout.createParallelGroup()
-                                                .addComponent(defaultFuzzDelayLabel)
-                                                .addComponent(currentDefaultFuzzDelayLabel))
-                                .addComponent(defaultFuzzDelayInMsSlider))
-                .addComponent(this.fuzzerHandlerOptions.getPanel()));
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(retriesOnIOErrorLabel)
+                                        .addComponent(retriesOnIOErrorNumberSpinner))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(maxErrorsAllowedEnabledLabel)
+                                        .addComponent(maxErrorsAllowedEnabledCheckBox))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(maxErrorsAllowedLabel)
+                                        .addComponent(maxErrorsAllowedNumberSpinner))
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(payloadReplacementStrategyLabel)
+                                        .addComponent(
+                                                depthFirstPayloadReplacementStrategyRadioButton)
+                                        .addComponent(
+                                                breadthFirstPayloadReplacementStrategyRadioButton))
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addGroup(
+                                                layout.createParallelGroup()
+                                                        .addComponent(
+                                                                defaultFuzzThreadsPerFuzzerLabel)
+                                                        .addComponent(
+                                                                currentDefaultThreadsPerFuzzerLabel))
+                                        .addComponent(defaultThreadsPerFuzzerSlider))
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addGroup(
+                                                layout.createParallelGroup()
+                                                        .addComponent(defaultFuzzDelayLabel)
+                                                        .addComponent(currentDefaultFuzzDelayLabel))
+                                        .addComponent(defaultFuzzDelayInMsSlider))
+                        .addComponent(this.fuzzerHandlerOptions.getPanel()));
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(innerPanel);
@@ -236,24 +277,22 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
     }
 
     private JSlider createDefaultThreadsPerFuzzerSlider(
-            int value,
-            int maxThreadsPerFuzzer,
-            final JLabel currentValueFeedbackLabel) {
+            int value, int maxThreadsPerFuzzer, final JLabel currentValueFeedbackLabel) {
         final JSlider threadsSlider = new PositiveValuesSlider(value, maxThreadsPerFuzzer);
-        threadsSlider.addChangeListener(new ChangeListener() {
+        threadsSlider.addChangeListener(
+                new ChangeListener() {
 
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                currentValueFeedbackLabel.setText(Integer.toString(threadsSlider.getValue()));
-            }
-        });
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        currentValueFeedbackLabel.setText(
+                                Integer.toString(threadsSlider.getValue()));
+                    }
+                });
         return threadsSlider;
     }
 
     private static JSlider createDefaultFuzzDelayInMsSlider(
-            int delayInMs,
-            int maxDelayInMs,
-            final JLabel currentValueFeedbackLabel) {
+            int delayInMs, int maxDelayInMs, final JLabel currentValueFeedbackLabel) {
         final JSlider delaySlider = new JSlider();
         delaySlider.setMinimum(0);
         delaySlider.setValue(delayInMs);
@@ -262,24 +301,26 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         delaySlider.setMajorTickSpacing(100);
         delaySlider.setPaintTicks(true);
         delaySlider.setPaintLabels(true);
-        delaySlider.addChangeListener(new ChangeListener() {
+        delaySlider.addChangeListener(
+                new ChangeListener() {
 
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                currentValueFeedbackLabel.setText(Integer.toString(delaySlider.getValue()));
-            }
-        });
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        currentValueFeedbackLabel.setText(Integer.toString(delaySlider.getValue()));
+                    }
+                });
         return delaySlider;
     }
 
     public boolean validateFields() {
-        FuzzerOptions baseOptions = new FuzzerOptions(
-                defaultThreadsPerFuzzerSlider.getValue(),
-                retriesOnIOErrorNumberSpinner.getValue().intValue(),
-                getMaxErrorsAllowed(),
-                defaultFuzzDelayInMsSlider.getValue(),
-                TimeUnit.MILLISECONDS,
-                getSelectedStrategy());
+        FuzzerOptions baseOptions =
+                new FuzzerOptions(
+                        defaultThreadsPerFuzzerSlider.getValue(),
+                        retriesOnIOErrorNumberSpinner.getValue().intValue(),
+                        getMaxErrorsAllowed(),
+                        defaultFuzzDelayInMsSlider.getValue(),
+                        TimeUnit.MILLISECONDS,
+                        getSelectedStrategy());
 
         return fuzzerHandlerOptions.validate(baseOptions);
     }
@@ -302,13 +343,14 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
     }
 
     public FO getFuzzerOptions() {
-        FuzzerOptions baseOptions = new FuzzerOptions(
-                defaultThreadsPerFuzzerSlider.getValue(),
-                retriesOnIOErrorNumberSpinner.getValue().intValue(),
-                getMaxErrorsAllowed(),
-                defaultFuzzDelayInMsSlider.getValue(),
-                TimeUnit.MILLISECONDS,
-                getSelectedStrategy());
+        FuzzerOptions baseOptions =
+                new FuzzerOptions(
+                        defaultThreadsPerFuzzerSlider.getValue(),
+                        retriesOnIOErrorNumberSpinner.getValue().intValue(),
+                        getMaxErrorsAllowed(),
+                        defaultFuzzDelayInMsSlider.getValue(),
+                        TimeUnit.MILLISECONDS,
+                        getSelectedStrategy());
 
         return fuzzerHandlerOptions.getOptions(baseOptions);
     }
@@ -319,7 +361,9 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         maxErrorsAllowedEnabledCheckBox.setSelected(true);
         maxErrorsAllowedNumberSpinner.setValue(defaultOptions.getMaxErrorsAllowed());
         defaultFuzzDelayInMsSlider.setValue((int) defaultOptions.getSendMessageDelay());
-        depthFirstPayloadReplacementStrategyRadioButton.setSelected(MessageLocationsReplacementStrategy.DEPTH_FIRST == defaultOptions.getPayloadsReplacementStrategy());
+        depthFirstPayloadReplacementStrategyRadioButton.setSelected(
+                MessageLocationsReplacementStrategy.DEPTH_FIRST
+                        == defaultOptions.getPayloadsReplacementStrategy());
         fuzzerHandlerOptions.reset();
     }
 }

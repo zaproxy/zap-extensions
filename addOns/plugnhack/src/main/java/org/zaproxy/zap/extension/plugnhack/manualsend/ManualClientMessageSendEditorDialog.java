@@ -1,32 +1,31 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Copyright 2013 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.zaproxy.zap.extension.plugnhack.manualsend;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.Insets;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
 import org.parosproxy.paros.extension.manualrequest.MessageSender;
@@ -37,175 +36,174 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-/**
- * Send custom crafted WebSocket messages.
- */
+/** Send custom crafted WebSocket messages. */
 public class ManualClientMessageSendEditorDialog extends ManualRequestEditorDialog {
 
-	private static final long serialVersionUID = -5830450800029295419L;
-	
-	private ClientMessagePanelSender sender;
+    private static final long serialVersionUID = -5830450800029295419L;
 
-	private HttpPanelRequest requestPanel;
-	private ClientMessagePanel wsMessagePanel;
+    private ClientMessagePanelSender sender;
 
-	private JToolBar controlToolbar;
-	
-	public ManualClientMessageSendEditorDialog(ClientMessagePanelSender sender, boolean isSendEnabled, String configurationKey) throws HeadlessException {
-		super(isSendEnabled, configurationKey);
-		this.sender = sender;
-		this.setTitle(Constant.messages.getString("plugnhack.resend.dialog.title"));
-		
-		initialize();
-	}
-	
-	@Override
-	protected void initialize() {
-		super.initialize();
+    private HttpPanelRequest requestPanel;
+    private ClientMessagePanel wsMessagePanel;
 
-		getWindowPanel().add(getControlToolbar(), BorderLayout.NORTH);
-	}
+    private JToolBar controlToolbar;
 
-	private JToolBar getControlToolbar() {
-		if (controlToolbar == null) {
-			controlToolbar = new JToolBar();
-			controlToolbar.setMargin(new Insets(5, 7, 5, 5));
-			controlToolbar.setEnabled(true);
-			controlToolbar.setFloatable(false);
-			controlToolbar.setRollover(true);
-			controlToolbar.setName("control_toolbar_top");
-		}
-		return controlToolbar;
-	}
+    public ManualClientMessageSendEditorDialog(
+            ClientMessagePanelSender sender, boolean isSendEnabled, String configurationKey)
+            throws HeadlessException {
+        super(isSendEnabled, configurationKey);
+        this.sender = sender;
+        this.setTitle(Constant.messages.getString("plugnhack.resend.dialog.title"));
 
-	@Override
-	public Class<? extends Message> getMessageType() {
-		return ClientMessage.class;
-	}
+        initialize();
+    }
 
-	@Override
-	public Message getMessage() {
-		ClientMessage message = (ClientMessage) getRequestPanel().getMessage();
+    @Override
+    protected void initialize() {
+        super.initialize();
 
-		// set metadata first (opcode, channel, direction)
-		wsMessagePanel.setMetadata(message);
-		
-		return message;
-	}
-	
-	@Override
-	public void setMessage(Message aMessage) {
-		ClientMessage message = (ClientMessage) aMessage;
-		if (message == null) {
-			return;
-		}
-		
-		getRequestPanel().setMessage(message);
-		wsMessagePanel.setMessageMetadata(message);
-	}
+        getWindowPanel().add(getControlToolbar(), BorderLayout.NORTH);
+    }
 
-	@Override
-	protected MessageSender getMessageSender() {
-		return sender;
-	}
+    private JToolBar getControlToolbar() {
+        if (controlToolbar == null) {
+            controlToolbar = new JToolBar();
+            controlToolbar.setMargin(new Insets(5, 7, 5, 5));
+            controlToolbar.setEnabled(true);
+            controlToolbar.setFloatable(false);
+            controlToolbar.setRollover(true);
+            controlToolbar.setName("control_toolbar_top");
+        }
+        return controlToolbar;
+    }
 
-	@Override
-	protected HttpPanelRequest getRequestPanel() {
-		if (requestPanel == null) {
-			requestPanel = new ClientMessageSendPanel(true, configurationKey);
-			requestPanel.setEnableViewSelect(true);
-			requestPanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
-		}
-		return requestPanel;
-	}
+    @Override
+    public Class<? extends Message> getMessageType() {
+        return ClientMessage.class;
+    }
 
-	@Override
-	protected Component getManualSendPanel() {
-		if (wsMessagePanel == null) {
-			wsMessagePanel = new ClientMessagePanel(getControlToolbar(), getRequestPanel());
-			
-			wsMessagePanel.addEndButton(getBtnSend());
-			wsMessagePanel.addSeparator();
-	
-			wsMessagePanel.loadConfig();
-		}
-		return wsMessagePanel;
-	}
+    @Override
+    public Message getMessage() {
+        ClientMessage message = (ClientMessage) getRequestPanel().getMessage();
 
-	@Override
-	protected void btnSendAction() {
-		Message message = getMessage();
-		send(message);
-	}
+        // set metadata first (opcode, channel, direction)
+        wsMessagePanel.setMetadata(message);
 
-	@Override
-	protected void saveConfig() {
-		wsMessagePanel.saveConfig();
-	}
+        return message;
+    }
 
-	@Override
-	public ZapMenuItem getMenuItem() {
-		// Not supported
-		return null;
-		/*
-		if (menuItem == null) {
-			menuItem = new JMenuItem();
-			menuItem.setText("TODO Not supported!"); // TODO Constant.messages.getString("plugnhack.resend.menu"));
-			menuItem.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Message message = getMessage();
-					if (message != null) {
-						setVisible(true);
-				    }
-				}
-			});
-		}
-		return menuItem;
-		*/
-	}
+    @Override
+    public void setMessage(Message aMessage) {
+        ClientMessage message = (ClientMessage) aMessage;
+        if (message == null) {
+            return;
+        }
 
-	@Override
-	public void setDefaultMessage() {
-		// DO nothing - can currently only resend messages
-	}
-	
-	private static final class ClientMessagePanel extends JPanel {
+        getRequestPanel().setMessage(message);
+        wsMessagePanel.setMessageMetadata(message);
+    }
 
-		private static final long serialVersionUID = -3335708932021769432L;
-		
-		private final HttpPanel messagePanel;
+    @Override
+    protected MessageSender getMessageSender() {
+        return sender;
+    }
 
-		public ClientMessagePanel(JToolBar controlToolbar, HttpPanel messagePanel) throws IllegalArgumentException {
-			super(new BorderLayout());
-			if (messagePanel == null) {
-				throw new IllegalArgumentException("The request panel cannot be null.");
-			}
-			this.messagePanel = messagePanel;
-		}
-		
-		public void setMessageMetadata(ClientMessage message) {
-		}
+    @Override
+    protected HttpPanelRequest getRequestPanel() {
+        if (requestPanel == null) {
+            requestPanel = new ClientMessageSendPanel(true, configurationKey);
+            requestPanel.setEnableViewSelect(true);
+            requestPanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
+        }
+        return requestPanel;
+    }
 
-		public void setMetadata(ClientMessage msg) {
-		}
+    @Override
+    protected Component getManualSendPanel() {
+        if (wsMessagePanel == null) {
+            wsMessagePanel = new ClientMessagePanel(getControlToolbar(), getRequestPanel());
 
-		public void loadConfig() {
-			messagePanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
-			add(messagePanel);			
-		}
+            wsMessagePanel.addEndButton(getBtnSend());
+            wsMessagePanel.addSeparator();
 
-		public void saveConfig() {
-			messagePanel.saveConfig(Model.getSingleton().getOptionsParam().getConfig());
-		}
-		
-		public void addSeparator() {
-			messagePanel.addOptionsSeparator();
-		}
-		
-		public void addEndButton(JButton button) {
-			messagePanel.addOptions(button, HttpPanel.OptionsLocation.END);
-		}
-	}
+            wsMessagePanel.loadConfig();
+        }
+        return wsMessagePanel;
+    }
+
+    @Override
+    protected void btnSendAction() {
+        Message message = getMessage();
+        send(message);
+    }
+
+    @Override
+    protected void saveConfig() {
+        wsMessagePanel.saveConfig();
+    }
+
+    @Override
+    public ZapMenuItem getMenuItem() {
+        // Not supported
+        return null;
+        /*
+        if (menuItem == null) {
+        	menuItem = new JMenuItem();
+        	menuItem.setText("TODO Not supported!"); // TODO Constant.messages.getString("plugnhack.resend.menu"));
+        	menuItem.addActionListener(new ActionListener() {
+
+        		@Override
+        		public void actionPerformed(ActionEvent e) {
+        			Message message = getMessage();
+        			if (message != null) {
+        				setVisible(true);
+        		    }
+        		}
+        	});
+        }
+        return menuItem;
+        */
+    }
+
+    @Override
+    public void setDefaultMessage() {
+        // DO nothing - can currently only resend messages
+    }
+
+    private static final class ClientMessagePanel extends JPanel {
+
+        private static final long serialVersionUID = -3335708932021769432L;
+
+        private final HttpPanel messagePanel;
+
+        public ClientMessagePanel(JToolBar controlToolbar, HttpPanel messagePanel)
+                throws IllegalArgumentException {
+            super(new BorderLayout());
+            if (messagePanel == null) {
+                throw new IllegalArgumentException("The request panel cannot be null.");
+            }
+            this.messagePanel = messagePanel;
+        }
+
+        public void setMessageMetadata(ClientMessage message) {}
+
+        public void setMetadata(ClientMessage msg) {}
+
+        public void loadConfig() {
+            messagePanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
+            add(messagePanel);
+        }
+
+        public void saveConfig() {
+            messagePanel.saveConfig(Model.getSingleton().getOptionsParam().getConfig());
+        }
+
+        public void addSeparator() {
+            messagePanel.addOptionsSeparator();
+        }
+
+        public void addEndButton(JButton button) {
+            messagePanel.addOptions(button, HttpPanel.OptionsLocation.END);
+        }
+    }
 }

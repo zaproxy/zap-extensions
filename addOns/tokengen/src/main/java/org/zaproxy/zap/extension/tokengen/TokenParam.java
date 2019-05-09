@@ -1,19 +1,21 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Copyright 2012 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.tokengen;
 
@@ -21,11 +23,12 @@ import org.zaproxy.zap.common.VersionedAbstractParam;
 
 /**
  * Manages the options saved in the configuration file.
- * <p>
- * It allows to change, programmatically, the following options:
+ *
+ * <p>It allows to change, programmatically, the following options:
+ *
  * <ul>
- * <li>Number of threads for the token generation;</li>
- * <li>The request delay;</li>
+ *   <li>Number of threads for the token generation;
+ *   <li>The request delay;
  * </ul>
  */
 public class TokenParam extends VersionedAbstractParam {
@@ -35,15 +38,14 @@ public class TokenParam extends VersionedAbstractParam {
     protected static final int DEFAULT_REQUEST_DELAY_IN_MS = 0;
 
     /**
-     * The version of the configurations. Used to keep track of configurations changes between releases, if updates are needed.
-     * <p>
-     * It only needs to be updated for configurations changes (not releases of the add-on).
+     * The version of the configurations. Used to keep track of configurations changes between
+     * releases, if updates are needed.
+     *
+     * <p>It only needs to be updated for configurations changes (not releases of the add-on).
      */
     private static final int PARAM_CURRENT_VERSION = 1;
 
-    /**
-     * The base configuration key for all configurations.
-     */
+    /** The base configuration key for all configurations. */
     private static final String PARAM_BASE_KEY = "tokengen";
 
     private static final String THREADS_PER_SCAN = PARAM_BASE_KEY + ".threadsPerScan";
@@ -54,8 +56,7 @@ public class TokenParam extends VersionedAbstractParam {
 
     private int requestDelayInMs = DEFAULT_REQUEST_DELAY_IN_MS;
 
-    public TokenParam() {
-    }
+    public TokenParam() {}
 
     @Override
     protected int getCurrentVersion() {

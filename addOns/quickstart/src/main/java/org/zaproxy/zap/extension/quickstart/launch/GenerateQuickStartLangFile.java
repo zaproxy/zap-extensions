@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2018 The ZAP development team
+ * Copyright 2018 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,20 +29,21 @@ import java.util.Properties;
 public class GenerateQuickStartLangFile {
 
     private static final String I18N_TAG = "quickstart.launch.browser.html";
-    private static final String LOGO_HTML = "<img src=\"https://github.com/zaproxy/zaproxy/raw/develop/src/resource/zap128x128.png\"\n"
-            + "  style=\"float:right;width:128px;height:128px;\">";
+    private static final String LOGO_HTML =
+            "<img src=\"https://github.com/zaproxy/zaproxy/raw/develop/src/resource/zap128x128.png\"\n"
+                    + "  style=\"float:right;width:128px;height:128px;\">";
 
-    public GenerateQuickStartLangFile() {
-    }
+    public GenerateQuickStartLangFile() {}
 
     private static File[] getLanguageFiles(File dir) {
-        FilenameFilter filter = new FilenameFilter() {
+        FilenameFilter filter =
+                new FilenameFilter() {
 
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.startsWith("Messages_") && name.endsWith(".properties");
-            }
-        };
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.startsWith("Messages_") && name.endsWith(".properties");
+                    }
+                };
         return dir.listFiles(filter);
     }
 
@@ -64,12 +65,14 @@ public class GenerateQuickStartLangFile {
         }
         File defaultLangFile = new File(dir, "Messages.properties");
         if (!defaultLangFile.isFile()) {
-            System.err.println("Failed to find default language file: " + defaultLangFile.getAbsolutePath());
+            System.err.println(
+                    "Failed to find default language file: " + defaultLangFile.getAbsolutePath());
             return false;
         }
         File[] files = getLanguageFiles(dir);
         if (files.length == 0) {
-            System.err.println("Failed to find not default language files in: " + dir.getAbsolutePath());
+            System.err.println(
+                    "Failed to find not default language files in: " + dir.getAbsolutePath());
             return false;
         }
 
@@ -98,7 +101,8 @@ public class GenerateQuickStartLangFile {
                 if (i18nStr != null && !enStr1stLine.equals(getFirstLine(i18nStr))) {
                     // Its been translated
                     String filename = f.getName();
-                    String locale = filename.substring(filename.indexOf("_") + 1, filename.indexOf("."));
+                    String locale =
+                            filename.substring(filename.indexOf("_") + 1, filename.indexOf("."));
 
                     System.out.print(ExtensionQuickStartLaunch.PAGE_LOCALE_SEPARATOR);
                     System.out.print(ExtensionQuickStartLaunch.PAGE_LOCALE_PREFIX);

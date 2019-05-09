@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -36,9 +35,8 @@ import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 
 /**
- * Provides the option to use the Ajax Spider when running a quick scan. This is
- * a separate extension so that the main extension still loads if the Ajax Spider is
- * not installed.
+ * Provides the option to use the Ajax Spider when running a quick scan. This is a separate
+ * extension so that the main extension still loads if the Ajax Spider is not installed.
  */
 public class ExtensionQuickStartAjaxSpider extends ExtensionAdaptor {
 
@@ -130,5 +128,4 @@ public class ExtensionQuickStartAjaxSpider extends ExtensionAdaptor {
     public ExtensionSelenium getExtSelenium() {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
     }
-
 }

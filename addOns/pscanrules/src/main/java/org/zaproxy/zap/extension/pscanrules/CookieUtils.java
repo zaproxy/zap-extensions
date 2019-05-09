@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2016 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,13 +23,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
-/**
- * Utility class to extract/parse/check Set-Cookie header values.
- */
+/** Utility class to extract/parse/check Set-Cookie header values. */
 class CookieUtils {
 
     private static final int NOT_FOUND = -1;
@@ -40,8 +37,9 @@ class CookieUtils {
 
     /**
      * Tells whether or not the given Set-Cookie header value has an attribute with the given name.
-     * <p>
-     * If the pair cookie name/value is not conformant (e.g. empty name, missing name/value separator) it returns {@code false}.
+     *
+     * <p>If the pair cookie name/value is not conformant (e.g. empty name, missing name/value
+     * separator) it returns {@code false}.
      *
      * @param headerValue the value of the header
      * @param attributeName the name of the attribute to check
@@ -71,7 +69,8 @@ class CookieUtils {
     }
 
     /**
-     * Return the value of the specified attribute in the given Set-Cookie header value, or null if it is not present.
+     * Return the value of the specified attribute in the given Set-Cookie header value, or null if
+     * it is not present.
      *
      * @param headerValue the value of the header
      * @param attributeName the name of the attribute
@@ -92,8 +91,7 @@ class CookieUtils {
 
         for (int i = 1; i < cookieElements.length; i++) {
             String[] attribute = cookieElements[i].split("=", 2);
-            if (attribute.length > 1 && 
-                    attributeName.equalsIgnoreCase(attribute[0].trim())) {
+            if (attribute.length > 1 && attributeName.equalsIgnoreCase(attribute[0].trim())) {
                 return attribute[1].trim();
             }
         }
@@ -122,8 +120,9 @@ class CookieUtils {
     }
 
     /**
-     * Returns the relevant SetCookie or SetCookie2 line as well as just the cookie name, or null if not found.
-     * Typically used for the evidence field in alerts as it does not include the cookie value.
+     * Returns the relevant SetCookie or SetCookie2 line as well as just the cookie name, or null if
+     * not found. Typically used for the evidence field in alerts as it does not include the cookie
+     * value.
      *
      * @param header the full header
      * @param cookieHeaderValue the value of the header value
@@ -139,7 +138,10 @@ class CookieUtils {
         String name = getCookieName(cookieHeaderValue);
 
         // First find the right line
-        Pattern pattern = Pattern.compile("Set-Cookie.*" + Pattern.quote(cookieHeaderValue), Pattern.CASE_INSENSITIVE);
+        Pattern pattern =
+                Pattern.compile(
+                        "Set-Cookie.*" + Pattern.quote(cookieHeaderValue),
+                        Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(header);
         if (matcher.find()) {
             // Found a line that matches
@@ -168,11 +170,13 @@ class CookieUtils {
             throw new IllegalArgumentException("The parameter " + name + " must not be null.");
         }
     }
-    
+
     public static Set<String> getCookieIgnoreList(Model model) {
         Set<String> ignoreList = new HashSet<String>();
-        String ignoreConf = model.getOptionsParam().getConfig().
-                getString(RuleConfigParam.RULE_COOKIE_IGNORE_LIST);
+        String ignoreConf =
+                model.getOptionsParam()
+                        .getConfig()
+                        .getString(RuleConfigParam.RULE_COOKIE_IGNORE_LIST);
         if (ignoreConf != null && ignoreConf.length() > 0) {
             for (String str : ignoreConf.split(",")) {
                 String strTrim = str.trim();

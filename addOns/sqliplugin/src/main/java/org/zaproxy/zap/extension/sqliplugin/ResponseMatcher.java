@@ -3,11 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2013 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,13 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class for string diff management used to compare the original content
- * to the one related to a specific evil payload.
- * The internal algorithm is based upon one published in the late 1980's 
- * by Ratcliff and Obershelp under the hyperbolic name "gestalt pattern matching". 
- * The idea is to find the longest contiguous matching subsequence that 
- * contains no "junk" elements.
- * 
+ * Class for string diff management used to compare the original content to the one related to a
+ * specific evil payload. The internal algorithm is based upon one published in the late 1980's by
+ * Ratcliff and Obershelp under the hyperbolic name "gestalt pattern matching". The idea is to find
+ * the longest contiguous matching subsequence that contains no "junk" elements.
+ *
  * @author yhawke (2013)
  */
 public class ResponseMatcher {
@@ -44,7 +44,7 @@ public class ResponseMatcher {
 
     // Maximum value for comparison ratio
     public static final double MAX_RATIO = 1.0;
-    
+
     private String strA;
     private String strB;
     // Inner helper class for strB string counting
@@ -57,36 +57,27 @@ public class ResponseMatcher {
         matchRatio = -1;
         negativeLogic = false;
     }
-    
-    /**
-     * 
-     * @param strA 
-     */
+
+    /** @param strA */
     public void setInjectedResponse(String a) {
         this.strA = a;
     }
 
-    /**
-     * 
-     * @param strB 
-     */
+    /** @param strB */
     public void setOriginalResponse(String b) {
         this.strB = b;
         this.fullBCount.clear();
         matchRatio = -1;
     }
 
-    /**
-     * 
-     * @param replacementMode 
-     */
+    /** @param replacementMode */
     public void setLogic(int replacementMode) {
         this.negativeLogic = (replacementMode == SQLiPayloadManager.WHERE_NEGATIVE);
     }
-    
+
     /**
-     * Return an upper bound on ratio() relatively quickly. This isn't defined
-     * beyond that it is an upper bound and is faster to compute.
+     * Return an upper bound on ratio() relatively quickly. This isn't defined beyond that it is an
+     * upper bound and is faster to compute.
      *
      * @return
      */
@@ -98,10 +89,10 @@ public class ResponseMatcher {
         while (start < Math.min(strA.length(), strB.length())) {
             if (strA.charAt(start) == strB.charAt(start)) {
                 start += 1;
-                
+
             } else break;
         }
-        
+
         // viewing strA and strB as multisets, set matches to the cardinality
         // of their intersection; this counts the number of matches
         // without regard to order, so is clearly an upper bound
@@ -138,30 +129,29 @@ public class ResponseMatcher {
         }
 
         int totalLength = strA.length() + strB.length();
-        
+
         return (totalLength > 0) ? 2.0 * (start + matches) / totalLength : 1.0;
     }
-    
+
     /**
-     * 
      * @param where
-     * @return 
+     * @return
      */
     public boolean isComparable() {
         double ratio = getQuickRatio();
 
         // If comparison has never been done
         // set it as base ratio value
-        if (matchRatio < 0)
-            matchRatio = ratio;
-        
-        boolean comparable = ((ratio > UPPER_RATIO_BOUND) || ((ratio - matchRatio) > DIFF_TOLERANCE));
+        if (matchRatio < 0) matchRatio = ratio;
+
+        boolean comparable =
+                ((ratio > UPPER_RATIO_BOUND) || ((ratio - matchRatio) > DIFF_TOLERANCE));
 
         // Test if we need strA negative logic approach.
         // This is used in raw page comparison scheme as that what is "different" than original
-        // WHERE_NEGATIVE response is considered as True; in switch based approach negative logic 
-        // is not applied as that what is by user considered as True is that what is returned 
-        // by the comparison mechanism itself        
+        // WHERE_NEGATIVE response is considered as True; in switch based approach negative logic
+        // is not applied as that what is by user considered as True is that what is returned
+        // by the comparison mechanism itself
         return negativeLogic ^ comparable;
     }
 }

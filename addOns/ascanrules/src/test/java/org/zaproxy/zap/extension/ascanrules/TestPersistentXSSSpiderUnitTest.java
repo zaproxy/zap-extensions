@@ -19,14 +19,11 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-/**
- * Unit test for {@link TestPersistentXSSSpider}.
- */
+/** Unit test for {@link TestPersistentXSSSpider}. */
 public class TestPersistentXSSSpiderUnitTest extends ActiveScannerAppTest<TestPersistentXSSSpider> {
 
     @Override
     protected TestPersistentXSSSpider createScanner() {
         return new TestPersistentXSSSpider();
     }
-
 }

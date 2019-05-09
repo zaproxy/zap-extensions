@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.extension.fuzz.AbstractFuzzer;
@@ -58,16 +57,23 @@ public class WebSocketFuzzer extends AbstractFuzzer<WebSocketMessageDTO> {
             FuzzerOptions fuzzerOptions,
             Map<Integer, WebSocketProxy> wsProxies,
             WebSocketMessageDTO message,
-            List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>> fuzzLocations,
+            List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>
+                    fuzzLocations,
             MultipleMessageLocationsReplacer<WebSocketMessageDTO> multipleMessageLocationsReplacer,
             List<WebSocketFuzzerMessageProcessor> messageProcessors) {
-        super(fuzzerScanName, fuzzerOptions, message, fuzzLocations, multipleMessageLocationsReplacer);
+        super(
+                fuzzerScanName,
+                fuzzerOptions,
+                message,
+                fuzzLocations,
+                multipleMessageLocationsReplacer);
 
         this.id = FUZZ_ID_GENERATOR.incrementAndGet();
         this.wsProxies = wsProxies;
-        this.messageProcessors = messageProcessors.isEmpty()
-                ? Collections.<WebSocketFuzzerMessageProcessor> emptyList()
-                : Collections.synchronizedList(new ArrayList<>(messageProcessors));
+        this.messageProcessors =
+                messageProcessors.isEmpty()
+                        ? Collections.<WebSocketFuzzerMessageProcessor>emptyList()
+                        : Collections.synchronizedList(new ArrayList<>(messageProcessors));
         currentSession = Model.getSingleton().getSession();
 
         this.originalMessage = message;
@@ -78,7 +84,8 @@ public class WebSocketFuzzer extends AbstractFuzzer<WebSocketMessageDTO> {
     }
 
     @Override
-    protected WebSocketFuzzerTask createFuzzerTask(long taskId, WebSocketMessageDTO message, List<Object> payloads) {
+    protected WebSocketFuzzerTask createFuzzerTask(
+            long taskId, WebSocketMessageDTO message, List<Object> payloads) {
         return new WebSocketFuzzerTask(taskId, this, message, payloads);
     }
 
@@ -91,7 +98,8 @@ public class WebSocketFuzzer extends AbstractFuzzer<WebSocketMessageDTO> {
     }
 
     protected void fuzzResultAvailable(WebSocketFuzzResult result) {
-        messagesModel.addResult(result, messagesSentCounter.get(), getMessagesSentCount() >= getMaximum());
+        messagesModel.addResult(
+                result, messagesSentCounter.get(), getMessagesSentCount() >= getMaximum());
     }
 
     public WebSocketFuzzMessagesViewModel getMessagesModel() {
@@ -121,24 +129,24 @@ public class WebSocketFuzzer extends AbstractFuzzer<WebSocketMessageDTO> {
         }
     }
 
-    protected void preProcessMessage(long taskId, WebSocketMessageDTO message, List<Object> payloads) {
+    protected void preProcessMessage(
+            long taskId, WebSocketMessageDTO message, List<Object> payloads) {
         if (messageProcessors.isEmpty()) {
             return;
         }
 
         synchronized (messageProcessors) {
-            WebSocketFuzzerTaskProcessorUtils utils = new WebSocketFuzzerTaskProcessorUtils(
-                    this,
-                    originalMessage,
-                    taskId,
-                    payloads);
-            for (Iterator<WebSocketFuzzerMessageProcessor> it = messageProcessors.iterator(); it.hasNext();) {
+            WebSocketFuzzerTaskProcessorUtils utils =
+                    new WebSocketFuzzerTaskProcessorUtils(this, originalMessage, taskId, payloads);
+            for (Iterator<WebSocketFuzzerMessageProcessor> it = messageProcessors.iterator();
+                    it.hasNext(); ) {
                 WebSocketFuzzerMessageProcessor messageProcessor = it.next();
                 try {
                     utils.setCurrentProcessorName(messageProcessor.getName());
                     messageProcessor.processMessage(utils, message);
                 } catch (ProcessingException e) {
-                    logger.warn("Error while executing a processor, it will not be called again:", e);
+                    logger.warn(
+                            "Error while executing a processor, it will not be called again:", e);
                     it.remove();
                 }
             }

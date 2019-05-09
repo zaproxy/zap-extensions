@@ -3,18 +3,19 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2016 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * This file is based on the Paros code file ReportLastScan.java
  */
 package org.zaproxy.zap.extension.exportreport.utility;
 
@@ -30,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -43,7 +43,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
-
 import org.apache.log4j.Logger;
 
 /*
@@ -57,7 +56,7 @@ public class SharedFunctions {
     private static String DEFAULT_FONT = "";
     private static boolean EXISTS_FONT = false;
 
-    public final static String DATE_FORMAT = "EEE, d MMM yyyy HH:mm:ss z(Z)";
+    public static final String DATE_FORMAT = "EEE, d MMM yyyy HH:mm:ss z(Z)";
 
     public static String getCurrentTimeStamp() {
         SimpleDateFormat date = new SimpleDateFormat(DATE_FORMAT);
@@ -102,16 +101,14 @@ public class SharedFunctions {
         Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
         fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         String name = UIManager.getDefaults().getFont("Label.font").getFamily();
-        if (getExistsFont())
-            name = getDefaultFont();
+        if (getExistsFont()) name = getDefaultFont();
         // System.out.println(name);
         return new Font(name, Font.BOLD, 30).deriveFont(fontAttributes);
     }
 
     public static Font getLabelFont() {
         String name = UIManager.getDefaults().getFont("Label.font").getFamily();
-        if (getExistsFont())
-            name = getDefaultFont();
+        if (getExistsFont()) name = getDefaultFont();
         // System.out.println(name);
         return new Font(name, Font.BOLD, 14);
     }
@@ -150,7 +147,8 @@ public class SharedFunctions {
         return txt;
     }
 
-    public static JTextField createTextField(JPanel pnl, String str, String tip, Boolean bool, int limit) {
+    public static JTextField createTextField(
+            JPanel pnl, String str, String tip, Boolean bool, int limit) {
         JTextField txt = new JTextField();
         if (limit > -1) {
             txt.setDocument(new JTextFieldLimit(limit));
@@ -188,14 +186,17 @@ public class SharedFunctions {
             for (int j = temp.length(); j < (Integer.toString(max)).length(); j++) {
                 compile[i] = ((compile[i] == null) ? "0" : compile[i] + "0");
             }
-            compile[i] = ((compile[i] == null) ? count + ". " + list.get(i) : compile[i] + count + ". " + list.get(i));
+            compile[i] =
+                    ((compile[i] == null)
+                            ? count + ". " + list.get(i)
+                            : compile[i] + count + ". " + list.get(i));
             count++;
         }
         return compile;
-
     }
 
-    public static SpringLayout setupConstraints(SpringLayout sl, JPanel content, JPanel container, int[] pad) {
+    public static SpringLayout setupConstraints(
+            SpringLayout sl, JPanel content, JPanel container, int[] pad) {
         sl.putConstraint(SpringLayout.NORTH, content, pad[0], SpringLayout.NORTH, container);
         sl.putConstraint(SpringLayout.WEST, content, pad[1], SpringLayout.WEST, container);
         sl.putConstraint(SpringLayout.SOUTH, content, pad[2], SpringLayout.NORTH, container);

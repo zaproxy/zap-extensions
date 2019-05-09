@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,11 +27,11 @@ public class FuzzLocationsTableModel extends MessageLocationsTableModel<FuzzLoca
     private static final long serialVersionUID = 4506544561803715504L;
 
     private static final String[] COLUMNS = {
-            Constant.messages.getString("fuzz.fuzzer.messagelocations.table.header.numberOfPayloads"),
-            Constant.messages.getString("fuzz.fuzzer.messagelocations.table.header.numberOfProcessors") };
+        Constant.messages.getString("fuzz.fuzzer.messagelocations.table.header.numberOfPayloads"),
+        Constant.messages.getString("fuzz.fuzzer.messagelocations.table.header.numberOfProcessors")
+    };
 
-    public FuzzLocationsTableModel() {
-    }
+    public FuzzLocationsTableModel() {}
 
     @Override
     public String getColumnName(int column) {

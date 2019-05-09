@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2017 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,11 +20,9 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
 import java.text.MessageFormat;
-
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.EmptyPayloadGenerator;
@@ -37,11 +35,13 @@ import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
 public class DefaultEmptyPayloadGeneratorUIHandler
-        implements PayloadGeneratorUIHandler<DefaultPayload, DefaultEmptyPayloadGenerator, DefaultEmptyPayloadGeneratorUI> {
+        implements PayloadGeneratorUIHandler<
+                DefaultPayload, DefaultEmptyPayloadGenerator, DefaultEmptyPayloadGeneratorUI> {
 
-    private static final String PAYLOAD_GENERATOR_NAME = Constant.messages.getString("fuzz.payloads.generator.empty.name");
-    private static final String PAYLOAD_GENERATOR_DESC = Constant.messages
-            .getString("fuzz.payloads.generator.empty.description");
+    private static final String PAYLOAD_GENERATOR_NAME =
+            Constant.messages.getString("fuzz.payloads.generator.empty.name");
+    private static final String PAYLOAD_GENERATOR_DESC =
+            Constant.messages.getString("fuzz.payloads.generator.empty.description");
 
     @Override
     public String getName() {
@@ -111,14 +111,14 @@ public class DefaultEmptyPayloadGeneratorUIHandler
         public DefaultEmptyPayloadGeneratorUI copy() {
             return this;
         }
-
     }
 
     public static class DefaultEmptyPayloadGeneratorUIPanel
-            implements PayloadGeneratorUIPanel<DefaultPayload, DefaultEmptyPayloadGenerator, DefaultEmptyPayloadGeneratorUI> {
+            implements PayloadGeneratorUIPanel<
+                    DefaultPayload, DefaultEmptyPayloadGenerator, DefaultEmptyPayloadGeneratorUI> {
 
-        private static final String NUMBER_REPETITIONS_FIELD_LABEL = Constant.messages
-                .getString("fuzz.payloads.generator.empty.repetitions.label");
+        private static final String NUMBER_REPETITIONS_FIELD_LABEL =
+                Constant.messages.getString("fuzz.payloads.generator.empty.repetitions.label");
 
         private static final int DEFAULT_NUMBER_REPETITIONS = 10;
 
@@ -139,7 +139,9 @@ public class DefaultEmptyPayloadGeneratorUIHandler
             valueLabel.setLabelFor(getRepetitionsNumberSpinner());
 
             layout.setHorizontalGroup(
-                    layout.createSequentialGroup().addComponent(valueLabel).addComponent(getRepetitionsNumberSpinner()));
+                    layout.createSequentialGroup()
+                            .addComponent(valueLabel)
+                            .addComponent(getRepetitionsNumberSpinner()));
 
             layout.setVerticalGroup(
                     layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -149,7 +151,8 @@ public class DefaultEmptyPayloadGeneratorUIHandler
 
         private ZapNumberSpinner getRepetitionsNumberSpinner() {
             if (repetitionsNumberSpinner == null) {
-                repetitionsNumberSpinner = new ZapNumberSpinner(1, DEFAULT_NUMBER_REPETITIONS, Integer.MAX_VALUE);
+                repetitionsNumberSpinner =
+                        new ZapNumberSpinner(1, DEFAULT_NUMBER_REPETITIONS, Integer.MAX_VALUE);
             }
             return repetitionsNumberSpinner;
         }
@@ -171,7 +174,8 @@ public class DefaultEmptyPayloadGeneratorUIHandler
 
         @Override
         public DefaultEmptyPayloadGeneratorUI getPayloadGeneratorUI() {
-            return new DefaultEmptyPayloadGeneratorUI(payloadValue, getRepetitionsNumberSpinner().getValue());
+            return new DefaultEmptyPayloadGeneratorUI(
+                    payloadValue, getRepetitionsNumberSpinner().getValue());
         }
 
         @Override
@@ -188,7 +192,6 @@ public class DefaultEmptyPayloadGeneratorUIHandler
         public String getHelpTarget() {
             return "addon.fuzzer.payloads";
         }
-
     }
 
     public static class DefaultEmptyPayloadGenerator extends EmptyPayloadGenerator<DefaultPayload> {
@@ -196,6 +199,5 @@ public class DefaultEmptyPayloadGeneratorUIHandler
         public DefaultEmptyPayloadGenerator(DefaultPayload value, int numberOfPayloads) {
             super(value, numberOfPayloads);
         }
-
     }
 }

@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2017 The ZAP development team
+ * Copyright 2017 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.zaproxy.zap.extension.scripts.autocomplete;
 
 import java.awt.Point;
@@ -27,10 +26,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.control.ExtensionFactory;
@@ -41,7 +38,8 @@ import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 
 public class ScriptAutoCompleteKeyListener extends KeyAdapter {
 
-    private Map<String, Map<String, String>> typeToClassMaps = new HashMap<String, Map<String, String>>();
+    private Map<String, Map<String, String>> typeToClassMaps =
+            new HashMap<String, Map<String, String>>();
 
     private JTextArea textInput;
     private ScriptAutoCompleteMenu textPopupMenu;
@@ -62,11 +60,12 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         activeRuleMap.put("value", "java.lang.String");
         typeToClassMaps.put(ExtensionActiveScan.SCRIPT_TYPE_ACTIVE, activeRuleMap);
 
-        // Authentication 
+        // Authentication
         HashMap<String, String> authMap = new HashMap<String, String>();
         authMap.put("helper", "org.zaproxy.zap.authentication.AuthenticationHelper");
         authMap.put("paramsValues", "java.util.Map");
-        authMap.put("credentials", "org.zaproxy.zap.authentication.GenericAuthenticationCredentials");
+        authMap.put(
+                "credentials", "org.zaproxy.zap.authentication.GenericAuthenticationCredentials");
         typeToClassMaps.put(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH, authMap);
 
         // Extender
@@ -76,18 +75,22 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
 
         // Fuzzer HTTP Processor
         HashMap<String, String> fuzzHttpMap = new HashMap<String, String>();
-        fuzzHttpMap.put("utils", "org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerTaskProcessorUtils");
+        fuzzHttpMap.put(
+                "utils", "org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerTaskProcessorUtils");
         fuzzHttpMap.put("message", "org.parosproxy.paros.network.HttpMessage");
         fuzzHttpMap.put("fuzzResult", "org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzResult");
         // Defined in org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.HttpFuzzerProcessorScript
         // not using directly as its in another add-on
         typeToClassMaps.put("httpfuzzerprocessor", fuzzHttpMap);
-        
+
         // Fuzzer Websocket Processor
         HashMap<String, String> fuzzWsMap = new HashMap<String, String>();
-        fuzzWsMap.put("utils", "org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerTaskProcessorUtils");
+        fuzzWsMap.put(
+                "utils",
+                "org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerTaskProcessorUtils");
         fuzzWsMap.put("message", "org.zaproxy.zap.extension.websocket.WebSocketMessageDTO");
-        // Defined in org.zaproxy.zap.extension.websocket.fuzz.processors.WebSocketFuzzerProcessorScript
+        // Defined in
+        // org.zaproxy.zap.extension.websocket.fuzz.processors.WebSocketFuzzerProcessorScript
         // not using directly as its in another add-on
         typeToClassMaps.put("websocketfuzzerprocessor", fuzzWsMap);
 
@@ -130,7 +133,6 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         HashMap<String, String> targetedMap = new HashMap<String, String>();
         targetedMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
         typeToClassMaps.put(ExtensionScript.TYPE_TARGETED, targetedMap);
-
     }
 
     public void insertText(String text) {
@@ -143,7 +145,6 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         sb.append(allText.substring(i));
         textInput.setText(sb.toString());
         textInput.setCaretPosition(i + text.length());
-
     }
 
     private void closeMenu() {
@@ -151,7 +152,6 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
             textPopupMenu.setVisible(false);
             textPopupMenu = null;
         }
-
     }
 
     @Override
@@ -174,7 +174,6 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
                 }
             }
         }
-
     }
 
     private String textBefore(String text, int posn) {
@@ -194,17 +193,15 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
             return "";
         }
         return text.substring(j, posn);
-
     }
 
     private void filterMenus(String text) {
         textPopupMenu.filterMenus(text);
-
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if (! enabled) {
+        if (!enabled) {
             return;
         }
         Point p = textInput.getCaret().getMagicCaretPosition();
@@ -212,7 +209,9 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         if (textPopupMenu != null && textPopupMenu.isVisible()) {
             // filter based on text typed
             if (Character.isAlphabetic(e.getKeyChar())) {
-                String txt = textBefore(textInput.getText(), textInput.getCaretPosition()) + e.getKeyChar();
+                String txt =
+                        textBefore(textInput.getText(), textInput.getCaretPosition())
+                                + e.getKeyChar();
                 filterMenus(txt);
             }
         }
@@ -230,13 +229,16 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
                             // Do we have any mappings for this script type?
                             Map<String, String> map = this.typeToClassMaps.get(this.scriptType);
                             if (map == null) {
-                                LOG.debug("No autocomplete map for script type: " + this.scriptType);
+                                LOG.debug(
+                                        "No autocomplete map for script type: " + this.scriptType);
                             } else {
                                 // Try to match the text against a variable name
                                 String className = map.get(var);
                                 if (className != null) {
                                     try {
-                                        Class<?> c = ExtensionFactory.getAddOnLoader().loadClass(className);
+                                        Class<?> c =
+                                                ExtensionFactory.getAddOnLoader()
+                                                        .loadClass(className);
                                         this.showMenuForClass(c, p);
                                     } catch (ClassNotFoundException e1) {
                                         LOG.error("Failed to find class " + className, e1);
@@ -250,15 +252,14 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
                                 // Try to parse the call stack
                                 if (this.lastReturnType != null) {
                                     this.showMenuForClass(this.lastReturnType, p);
-
                                 }
                             }
                         }
                     }
                 } else if (this.lastReturnType != null) {
-                    // they've typed something else, too hard to parse the method names and params right now
+                    // they've typed something else, too hard to parse the method names and params
+                    // right now
                     this.lastReturnType = null;
-
                 }
             }
         }
@@ -285,5 +286,4 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
     public void setEnabled(boolean enable) {
         this.enabled = enable;
     }
-
 }

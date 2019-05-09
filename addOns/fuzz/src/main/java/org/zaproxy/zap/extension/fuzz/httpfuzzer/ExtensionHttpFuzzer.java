@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import javax.swing.ImageIcon;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -58,8 +56,8 @@ import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 
 public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
-    private static final ImageIcon HTTP_FUZZER_PROCESSOR_SCRIPT_ICON = new ImageIcon(
-            ZAP.class.getResource("/resource/icon/16/script-fuzz.png"));
+    private static final ImageIcon HTTP_FUZZER_PROCESSOR_SCRIPT_ICON =
+            new ImageIcon(ZAP.class.getResource("/resource/icon/16/script-fuzz.png"));
 
     private static final List<Class<? extends Extension>> DEPENDENCIES;
 
@@ -103,25 +101,28 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
     public void init() {
         httpFuzzerHandler = new HttpFuzzerHandler();
 
-        MessageLocationReplacers.getInstance().addReplacer(HttpMessage.class, new TextHttpMessageLocationReplacerFactory());
+        MessageLocationReplacers.getInstance()
+                .addReplacer(HttpMessage.class, new TextHttpMessageLocationReplacerFactory());
     }
 
     @Override
     public void initView(ViewDelegate view) {
         super.initView(view);
 
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
-            scriptType = new ScriptType(
-                    HttpFuzzerProcessorScript.TYPE_NAME,
-                    "fuzz.httpfuzzer.script.type.fuzzerprocessor",
-                    HTTP_FUZZER_PROCESSOR_SCRIPT_ICON,
-                    true,
-                    true);
+            scriptType =
+                    new ScriptType(
+                            HttpFuzzerProcessorScript.TYPE_NAME,
+                            "fuzz.httpfuzzer.script.type.fuzzerprocessor",
+                            HTTP_FUZZER_PROCESSOR_SCRIPT_ICON,
+                            true,
+                            true);
             extensionScript.registerScriptType(scriptType);
 
-            httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(new FuzzerHttpMessageScriptProcessorAdapterUIHandler(
-                    extensionScript));
+            httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(
+                    new FuzzerHttpMessageScriptProcessorAdapterUIHandler(extensionScript));
         }
     }
 
@@ -129,40 +130,50 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        ExtensionFuzz extensionFuzz = Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
+        ExtensionFuzz extensionFuzz =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
         extensionFuzz.addFuzzerHandler(httpFuzzerHandler);
 
         if (getView() != null) {
-            extensionHook.getHookMenu().addPopupMenuItem(new HttpFuzzAttackPopupMenuItem(extensionFuzz, httpFuzzerHandler));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new HttpFuzzAttackPopupMenuItem(extensionFuzz, httpFuzzerHandler));
 
-            ExtensionSearch extensionSearch = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSearch.class);
+            ExtensionSearch extensionSearch =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSearch.class);
             if (extensionSearch != null) {
                 httpFuzzerSearcher = new HttpFuzzerSearcher(extensionFuzz);
                 extensionSearch.addCustomHttpSearcher(httpFuzzerSearcher);
             }
 
-            httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(new RequestContentLengthUpdaterProcessorUIHandler());
-            httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(new HttpFuzzerReflectionDetectorUIHandler());
+            httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(
+                    new RequestContentLengthUpdaterProcessorUIHandler());
+            httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(
+                    new HttpFuzzerReflectionDetectorUIHandler());
 
             addFuzzResultStateHighlighter(new HttpFuzzerReflectionDetectorStateHighlighter());
 
-            ExtensionUserManagement extensionUserManagement = Control.getSingleton()
-                    .getExtensionLoader()
-                    .getExtension(ExtensionUserManagement.class);
+            ExtensionUserManagement extensionUserManagement =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionUserManagement.class);
             if (extensionUserManagement != null) {
-                httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(new UserHttpFuzzerMessageProcessorUIHandler(
-                        extensionUserManagement));
+                httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(
+                        new UserHttpFuzzerMessageProcessorUIHandler(extensionUserManagement));
             }
 
-            ExtensionAntiCSRF extensionAntiCSRF = Control.getSingleton()
-                    .getExtensionLoader()
-                    .getExtension(ExtensionAntiCSRF.class);
+            ExtensionAntiCSRF extensionAntiCSRF =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionAntiCSRF.class);
             if (extensionAntiCSRF != null) {
-                httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(new AntiCsrfHttpFuzzerMessageProcessorUIHandler(
-                        extensionAntiCSRF));
+                httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(
+                        new AntiCsrfHttpFuzzerMessageProcessorUIHandler(extensionAntiCSRF));
             }
 
-            httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(new HttpFuzzerMessageProcessorTagUIHandler());
+            httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(
+                    new HttpFuzzerMessageProcessorTagUIHandler());
             addFuzzResultStateHighlighter(new HttpFuzzerMessageProcessorTagStateHighlighter());
         }
     }
@@ -172,12 +183,14 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
         super.unload();
 
         if (httpFuzzerSearcher != null) {
-            ExtensionSearch extensionSearch = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSearch.class);
+            ExtensionSearch extensionSearch =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSearch.class);
             extensionSearch.removeCustomHttpSearcher(httpFuzzerSearcher);
         }
 
         if (getView() != null) {
-            ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+            ExtensionScript extensionScript =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
             if (extensionScript != null) {
                 extensionScript.removeScripType(scriptType);
             }
@@ -190,26 +203,33 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
     }
 
     public void addFuzzResultStateHighlighter(HttpFuzzerResultStateHighlighter highlighter) {
-        httpFuzzerHandler.getHttpFuzzResultsContentPanel().addFuzzResultStateHighlighter(highlighter);
+        httpFuzzerHandler
+                .getHttpFuzzResultsContentPanel()
+                .addFuzzResultStateHighlighter(highlighter);
     }
 
     public void removeFuzzResultStateHighlighter(HttpFuzzerResultStateHighlighter highlighter) {
-        httpFuzzerHandler.getHttpFuzzResultsContentPanel().removeFuzzResultStateHighlighter(highlighter);
+        httpFuzzerHandler
+                .getHttpFuzzResultsContentPanel()
+                .removeFuzzResultStateHighlighter(highlighter);
     }
 
-    public <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>> void addFuzzerMessageProcessorUIHandler(
-            HttpFuzzerMessageProcessorUIHandler<T1, T2> handler) {
+    public <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>>
+            void addFuzzerMessageProcessorUIHandler(
+                    HttpFuzzerMessageProcessorUIHandler<T1, T2> handler) {
         httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(handler);
     }
 
-    public <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>> void removeFuzzerMessageProcessorUIHandler(
-            HttpFuzzerMessageProcessorUIHandler<T1, T2> handler) {
+    public <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>>
+            void removeFuzzerMessageProcessorUIHandler(
+                    HttpFuzzerMessageProcessorUIHandler<T1, T2> handler) {
         httpFuzzerHandler.removeFuzzerMessageProcessorUIHandler(handler);
     }
 
     public static class HttpFuzzerSearcher implements HttpSearcher {
 
-        public static final String SEARCHER_NAME = Constant.messages.getString("fuzz.httpfuzzer.searcher.name");
+        public static final String SEARCHER_NAME =
+                Constant.messages.getString("fuzz.httpfuzzer.searcher.name");
 
         private final ExtensionFuzz extensionFuzz;
 
@@ -241,12 +261,12 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
                 if (matchesLeftForMax <= 0) {
                     break;
                 }
-                List<SearchResult> fuzzerResult = fuzzer.search(pattern, inverse, matchesLeftForMax);
+                List<SearchResult> fuzzerResult =
+                        fuzzer.search(pattern, inverse, matchesLeftForMax);
                 matchesLeftForMax -= fuzzerResult.size();
                 results.addAll(fuzzerResult);
             }
             return results;
         }
-
     }
 }

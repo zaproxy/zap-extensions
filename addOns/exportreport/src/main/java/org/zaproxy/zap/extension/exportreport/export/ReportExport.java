@@ -3,18 +3,19 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2016 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * This file is based on the Paros code file ReportLastScan.java
  */
 package org.zaproxy.zap.extension.exportreport.export;
 
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
@@ -42,7 +42,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -70,8 +69,7 @@ import org.zaproxy.zap.utils.XMLStringUtil;
 // Since it's a utility class it should be marked final and added a private no-arg constructor.
 final class ReportExport {
 
-    private ReportExport() {
-    }
+    private ReportExport() {}
 
     private static final Logger logger = Logger.getLogger(ReportExport.class);
 
@@ -81,7 +79,8 @@ final class ReportExport {
         if (result == null) {
             return result;
         }
-        // There is an encoding issue with the passed in String, this is a fix to maintain encoding and escapes!
+        // There is an encoding issue with the passed in String, this is a fix to maintain encoding
+        // and escapes!
         byte ptext[] = result.getBytes(StandardCharsets.ISO_8859_1);
         String value = new String(ptext, StandardCharsets.UTF_8.name());
         String temp = XMLStringUtil.escapeControlChrs(value);
@@ -89,7 +88,20 @@ final class ReportExport {
         return temp;
     }
 
-    public static String generateDUMP(String path, String fileName, String reportTitle, String reportBy, String reportFor, String scanDate, String scanVersion, String reportDate, String reportVersion, String reportDesc, ArrayList<String> alertSeverity, ArrayList<String> alertDetails) throws UnsupportedEncodingException, URIException {
+    public static String generateDUMP(
+            String path,
+            String fileName,
+            String reportTitle,
+            String reportBy,
+            String reportFor,
+            String scanDate,
+            String scanVersion,
+            String reportDate,
+            String reportVersion,
+            String reportDesc,
+            ArrayList<String> alertSeverity,
+            ArrayList<String> alertDetails)
+            throws UnsupportedEncodingException, URIException {
 
         Report report = new Report();
         report.setTitle(entityEncode(reportTitle));
@@ -107,18 +119,33 @@ final class ReportExport {
         String reference = Constant.messages.getString("exportreport.details.reference.label");
         String cweid = Constant.messages.getString("exportreport.details.cweid.label");
         String wascid = Constant.messages.getString("exportreport.details.wascid.label");
-        String requestheader = Constant.messages.getString("exportreport.details.requestheader.label");
-        String responseheader = Constant.messages.getString("exportreport.details.responseheader.label");
+        String requestheader =
+                Constant.messages.getString("exportreport.details.requestheader.label");
+        String responseheader =
+                Constant.messages.getString("exportreport.details.responseheader.label");
         String requestbody = Constant.messages.getString("exportreport.details.requestbody.label");
-        String responsebody = Constant.messages.getString("exportreport.details.responsebody.label");
+        String responsebody =
+                Constant.messages.getString("exportreport.details.responsebody.label");
 
         Map<Integer, String> mapRiskToTranslation = new HashMap<>();
-        mapRiskToTranslation.put(Alert.RISK_HIGH, Constant.messages.getString("exportreport.risk.severity.high.label"));
-        mapRiskToTranslation.put(Alert.RISK_MEDIUM, Constant.messages.getString("exportreport.risk.severity.medium.label"));
-        mapRiskToTranslation.put(Alert.RISK_LOW, Constant.messages.getString("exportreport.risk.severity.low.label"));
-        mapRiskToTranslation.put(Alert.RISK_INFO, Constant.messages.getString("exportreport.risk.severity.info.label"));
+        mapRiskToTranslation.put(
+                Alert.RISK_HIGH,
+                Constant.messages.getString("exportreport.risk.severity.high.label"));
+        mapRiskToTranslation.put(
+                Alert.RISK_MEDIUM,
+                Constant.messages.getString("exportreport.risk.severity.medium.label"));
+        mapRiskToTranslation.put(
+                Alert.RISK_LOW,
+                Constant.messages.getString("exportreport.risk.severity.low.label"));
+        mapRiskToTranslation.put(
+                Alert.RISK_INFO,
+                Constant.messages.getString("exportreport.risk.severity.info.label"));
 
-        List<Alert> alerts = Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class).getAllAlerts();
+        List<Alert> alerts =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionAlert.class)
+                        .getAllAlerts();
 
         List<String> host = new ArrayList<String>();
         List<Sites> sites = new ArrayList<Sites>();
@@ -137,7 +164,15 @@ final class ReportExport {
                     URI u = a.getHistoryRef().getURI();
                     int getPort = -1;
                     boolean isSSL = (u.getScheme().startsWith("https"));
-                    getPort = isSSL ? ((u.getPort() == -1 && u.getScheme().equalsIgnoreCase("https")) ? 443 : u.getPort()) : ((u.getPort() == -1 && u.getScheme().equalsIgnoreCase("http")) ? 80 : u.getPort());
+                    getPort =
+                            isSSL
+                                    ? ((u.getPort() == -1
+                                                    && u.getScheme().equalsIgnoreCase("https"))
+                                            ? 443
+                                            : u.getPort())
+                                    : ((u.getPort() == -1 && u.getScheme().equalsIgnoreCase("http"))
+                                            ? 80
+                                            : u.getPort());
 
                     s.setHost(entityEncode(u.getHost()));
                     s.setName(entityEncode(u.getScheme() + "://" + u.getHost()));
@@ -169,14 +204,17 @@ final class ReportExport {
                         item.setAlert(entityEncode(alert.getName()));
                         item.setRiskCode(entityEncode(Integer.toString(alert.getRisk())));
                         item.setRiskDesc(entityEncode(Alert.MSG_RISK[alert.getRisk()]));
-                        item.setConfidence(entityEncode(Alert.MSG_CONFIDENCE[alert.getConfidence()]));
+                        item.setConfidence(
+                                entityEncode(Alert.MSG_CONFIDENCE[alert.getConfidence()]));
 
                         for (int j = 0; j < alertDetails.size(); j++) {
                             if (alertDetails.get(j).equalsIgnoreCase(description))
                                 item.setDesc(entityEncode(alert.getDescription()));
                             if (alertDetails.get(j).equalsIgnoreCase(solution))
                                 item.setSolution(entityEncode(alert.getSolution()));
-                            if (alertDetails.get(j).equalsIgnoreCase(otherinfo) && alert.getOtherInfo() != null && alert.getOtherInfo().length() > 0) {
+                            if (alertDetails.get(j).equalsIgnoreCase(otherinfo)
+                                    && alert.getOtherInfo() != null
+                                    && alert.getOtherInfo().length() > 0) {
                                 item.setOtherInfo(entityEncode(alert.getOtherInfo()));
                             }
                             if (alertDetails.get(j).equalsIgnoreCase(reference))
@@ -186,34 +224,46 @@ final class ReportExport {
                             if (alertDetails.get(j).equalsIgnoreCase(wascid))
                                 item.setWASCID(entityEncode(Integer.toString(alert.getWascId())));
 
-                            if (alertDetails.get(j).equalsIgnoreCase(requestheader) || alertDetails.get(j).equalsIgnoreCase(requestbody) || alertDetails.get(j).equalsIgnoreCase(responseheader) || alertDetails.get(j).equalsIgnoreCase(responsebody)) {
+                            if (alertDetails.get(j).equalsIgnoreCase(requestheader)
+                                    || alertDetails.get(j).equalsIgnoreCase(requestbody)
+                                    || alertDetails.get(j).equalsIgnoreCase(responseheader)
+                                    || alertDetails.get(j).equalsIgnoreCase(responsebody)) {
 
                                 HttpMessage tempMsg = alert.getMessage();
 
                                 temp = tempMsg.getRequestHeader().toString();
-                                if (alertDetails.get(j).equalsIgnoreCase(requestheader) && temp != null && temp.length() > 0) {
+                                if (alertDetails.get(j).equalsIgnoreCase(requestheader)
+                                        && temp != null
+                                        && temp.length() > 0) {
                                     item.setRequestHeader(entityEncode(temp));
                                 }
 
                                 temp = tempMsg.getRequestBody().toString();
-                                if (alertDetails.get(j).equalsIgnoreCase(requestbody) && temp != null && temp.length() > 0) {
+                                if (alertDetails.get(j).equalsIgnoreCase(requestbody)
+                                        && temp != null
+                                        && temp.length() > 0) {
                                     item.setRequestBody(entityEncode(temp));
                                 }
 
                                 temp = tempMsg.getResponseHeader().toString();
-                                if (alertDetails.get(j).equalsIgnoreCase(responseheader) && temp != null && temp.length() > 0) {
+                                if (alertDetails.get(j).equalsIgnoreCase(responseheader)
+                                        && temp != null
+                                        && temp.length() > 0) {
                                     item.setResponseHeader(entityEncode(temp));
                                 }
 
                                 temp = tempMsg.getResponseBody().toString();
-                                if (alertDetails.get(j).equalsIgnoreCase(responsebody) && temp != null && temp.length() > 0) {
+                                if (alertDetails.get(j).equalsIgnoreCase(responsebody)
+                                        && temp != null
+                                        && temp.length() > 0) {
                                     item.setResponseBody(entityEncode(temp));
                                 }
                             }
                         }
 
                         // TODO v2.0: Create unique field for Method instead of combining with URI
-                        //item.setURI(entityEncode(alert.getPluginId() + " : " + alert.getMethod() + ": " + alert.getUri()));
+                        // item.setURI(entityEncode(alert.getPluginId() + " : " + alert.getMethod()
+                        // + ": " + alert.getUri()));
                         item.setURI(entityEncode(alert.getMethod() + " : " + alert.getUri()));
                         if (alert.getParam() != null && alert.getParam().length() > 0)
                             item.setParam(entityEncode(alert.getParam()));
@@ -235,7 +285,8 @@ final class ReportExport {
             javax.xml.bind.JAXBContext jc = javax.xml.bind.JAXBContext.newInstance(Report.class);
             Marshaller jaxbMarshaller = jc.createMarshaller();
             jaxbMarshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            jaxbMarshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.name());
+            jaxbMarshaller.setProperty(
+                    javax.xml.bind.Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.name());
 
             jaxbMarshaller.marshal(report, new File(path + fileName + Utils.DUMP));
 
@@ -248,7 +299,8 @@ final class ReportExport {
         return "";
     }
 
-    public static File transformation(ViewDelegate view, String p_result, String p_source, String p_xslt) {
+    public static File transformation(
+            ViewDelegate view, String p_result, String p_source, String p_xslt) {
         File f_result = new File(p_result);
         StreamResult result = new StreamResult(f_result);
 
@@ -265,16 +317,24 @@ final class ReportExport {
         } catch (TransformerConfigurationException | TransformerFactoryConfigurationError e) {
             logger.error(e.getMessage(), e);
             if (view == null) {
-                CommandLine.error(Constant.messages.getString("exportreport.message.error.transformer.config"));
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "exportreport.message.error.transformer.config"));
             } else {
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.transformer.config"));
+                view.showWarningDialog(
+                        Constant.messages.getString(
+                                "exportreport.message.error.transformer.config"));
             }
         } catch (TransformerException e) {
             logger.error(e.getMessage(), e);
             if (view == null) {
-                CommandLine.error(Constant.messages.getString("exportreport.message.error.transformer.general"));
+                CommandLine.error(
+                        Constant.messages.getString(
+                                "exportreport.message.error.transformer.general"));
             } else {
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.transformer.general"));
+                view.showWarningDialog(
+                        Constant.messages.getString(
+                                "exportreport.message.error.transformer.general"));
             }
         }
         return f_result;
@@ -293,7 +353,8 @@ final class ReportExport {
             if (view == null) {
                 CommandLine.error(Constant.messages.getString("exportreport.message.error.parser"));
             } else {
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.parser"));
+                view.showWarningDialog(
+                        Constant.messages.getString("exportreport.message.error.parser"));
             }
             return null;
         }
@@ -305,7 +366,8 @@ final class ReportExport {
             if (view == null) {
                 CommandLine.error(Constant.messages.getString("exportreport.message.error.sax"));
             } else {
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.sax"));
+                view.showWarningDialog(
+                        Constant.messages.getString("exportreport.message.error.sax"));
             }
             return null;
         } catch (IOException e) {
@@ -313,7 +375,8 @@ final class ReportExport {
             if (view == null) {
                 CommandLine.error(Constant.messages.getString("exportreport.message.error.io"));
             } else {
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.io"));
+                view.showWarningDialog(
+                        Constant.messages.getString("exportreport.message.error.io"));
             }
             return null;
         }
@@ -327,7 +390,8 @@ final class ReportExport {
             if (view == null) {
                 CommandLine.error(Constant.messages.getString("exportreport.message.error.json"));
             } else {
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.json"));
+                view.showWarningDialog(
+                        Constant.messages.getString("exportreport.message.error.json"));
             }
             return null;
         }
@@ -337,9 +401,11 @@ final class ReportExport {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             if (view == null) {
-                CommandLine.error(Constant.messages.getString("exportreport.message.error.exception"));
+                CommandLine.error(
+                        Constant.messages.getString("exportreport.message.error.exception"));
             } else {
-                view.showWarningDialog(Constant.messages.getString("exportreport.message.error.exception"));
+                view.showWarningDialog(
+                        Constant.messages.getString("exportreport.message.error.exception"));
             }
         }
         return f;
@@ -355,7 +421,10 @@ final class ReportExport {
     private static File write(String path, String str, Boolean append) throws Exception {
         File f = new File(path);
 
-        try (Writer writer = Channels.newWriter(new FileOutputStream(f.getAbsoluteFile(), append).getChannel(), StandardCharsets.UTF_8.name())) {
+        try (Writer writer =
+                Channels.newWriter(
+                        new FileOutputStream(f.getAbsoluteFile(), append).getChannel(),
+                        StandardCharsets.UTF_8.name())) {
             writer.append(str);
         }
         return f;

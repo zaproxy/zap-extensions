@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
-
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -37,22 +36,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
-
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.utils.FontUtils;
 
 /**
  * The GUI Selenium options panel.
- * <p>
- * It allows to change the following options:
+ *
+ * <p>It allows to change the following options:
+ *
  * <ul>
- * <li>The path to ChromeDriver;</li>
- * <li>The path to Firefox binary.</li>
- * <li>The path to Firefox driver (geckodriver).</li>
- * <li>The path to PhantomJS binary.</li>
+ *   <li>The path to ChromeDriver;
+ *   <li>The path to Firefox binary.
+ *   <li>The path to Firefox driver (geckodriver).
+ *   <li>The path to PhantomJS binary.
  * </ul>
- * 
+ *
  * @see SeleniumOptions
  */
 class SeleniumOptionsPanel extends AbstractParamPanel {
@@ -72,55 +71,70 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     public SeleniumOptionsPanel(ResourceBundle resourceBundle) {
         setName(resourceBundle.getString("selenium.options.title"));
 
-        String selectFileButtonLabel = resourceBundle.getString("selenium.options.label.button.select.file");
-        String bundledWebDriverButtonLabel = resourceBundle.getString("selenium.options.label.button.bundleddriver");
-        String bundledWebDriverButtonToolTip = resourceBundle.getString("selenium.options.tooltip.button.bundleddriver");
+        String selectFileButtonLabel =
+                resourceBundle.getString("selenium.options.label.button.select.file");
+        String bundledWebDriverButtonLabel =
+                resourceBundle.getString("selenium.options.label.button.bundleddriver");
+        String bundledWebDriverButtonToolTip =
+                resourceBundle.getString("selenium.options.tooltip.button.bundleddriver");
 
-        String infoBundledWebDriverlabel = resourceBundle.getString("selenium.options.label.nobundleddriver");
-        String infoBundledWebDriverToolTip = resourceBundle.getString("selenium.options.tooltip.nobundleddriver");
-        ImageIcon infoIcon = new ImageIcon(
-                SeleniumOptionsPanel.class.getResource("/resource/icon/fugue/information-white.png"));
+        String infoBundledWebDriverlabel =
+                resourceBundle.getString("selenium.options.label.nobundleddriver");
+        String infoBundledWebDriverToolTip =
+                resourceBundle.getString("selenium.options.tooltip.nobundleddriver");
+        ImageIcon infoIcon =
+                new ImageIcon(
+                        SeleniumOptionsPanel.class.getResource(
+                                "/resource/icon/fugue/information-white.png"));
 
         chromeDriverTextField = createTextField();
-        JButton chromeDriverButton = createButtonFileChooser(selectFileButtonLabel, chromeDriverTextField);
-        JLabel chromeDriverLabel = new JLabel(resourceBundle.getString("selenium.options.label.driver.chrome"));
+        JButton chromeDriverButton =
+                createButtonFileChooser(selectFileButtonLabel, chromeDriverTextField);
+        JLabel chromeDriverLabel =
+                new JLabel(resourceBundle.getString("selenium.options.label.driver.chrome"));
         chromeDriverLabel.setLabelFor(chromeDriverButton);
 
-        infoBundledChromeDriverLabel = createBundledWebDriverLabel(
-                infoBundledWebDriverlabel,
-                infoBundledWebDriverToolTip,
-                infoIcon);
-        useBundledChromeDriverButton = createBundledWebDriverButton(
-                bundledWebDriverButtonLabel,
-                bundledWebDriverButtonToolTip,
-                infoBundledWebDriverToolTip,
-                chromeDriverTextField,
-                Browser.CHROME);
+        infoBundledChromeDriverLabel =
+                createBundledWebDriverLabel(
+                        infoBundledWebDriverlabel, infoBundledWebDriverToolTip, infoIcon);
+        useBundledChromeDriverButton =
+                createBundledWebDriverButton(
+                        bundledWebDriverButtonLabel,
+                        bundledWebDriverButtonToolTip,
+                        infoBundledWebDriverToolTip,
+                        chromeDriverTextField,
+                        Browser.CHROME);
 
         firefoxBinaryTextField = createTextField();
-        JButton firefoxBinaryButton = createButtonFileChooser(selectFileButtonLabel, firefoxBinaryTextField);
-        JLabel firefoxBinaryLabel = new JLabel(resourceBundle.getString("selenium.options.label.firefox.binary"));
+        JButton firefoxBinaryButton =
+                createButtonFileChooser(selectFileButtonLabel, firefoxBinaryTextField);
+        JLabel firefoxBinaryLabel =
+                new JLabel(resourceBundle.getString("selenium.options.label.firefox.binary"));
         firefoxBinaryLabel.setLabelFor(firefoxBinaryTextField);
 
         firefoxDriverTextField = createTextField();
-        JButton firefoxDriverButton = createButtonFileChooser(selectFileButtonLabel, firefoxDriverTextField);
-        JLabel firefoxDriverLabel = new JLabel(resourceBundle.getString("selenium.options.label.firefox.driver"));
+        JButton firefoxDriverButton =
+                createButtonFileChooser(selectFileButtonLabel, firefoxDriverTextField);
+        JLabel firefoxDriverLabel =
+                new JLabel(resourceBundle.getString("selenium.options.label.firefox.driver"));
         firefoxDriverLabel.setLabelFor(firefoxDriverTextField);
 
-        infoBundledFirefoxDriverLabel = createBundledWebDriverLabel(
-                infoBundledWebDriverlabel,
-                infoBundledWebDriverToolTip,
-                infoIcon);
-        useBundledFirefoxDriverButton = createBundledWebDriverButton(
-                bundledWebDriverButtonLabel,
-                bundledWebDriverButtonToolTip,
-                infoBundledWebDriverToolTip,
-                firefoxDriverTextField,
-                Browser.FIREFOX);
+        infoBundledFirefoxDriverLabel =
+                createBundledWebDriverLabel(
+                        infoBundledWebDriverlabel, infoBundledWebDriverToolTip, infoIcon);
+        useBundledFirefoxDriverButton =
+                createBundledWebDriverButton(
+                        bundledWebDriverButtonLabel,
+                        bundledWebDriverButtonToolTip,
+                        infoBundledWebDriverToolTip,
+                        firefoxDriverTextField,
+                        Browser.FIREFOX);
 
         phantomJsBinaryTextField = createTextField();
-        JButton phantomJsBinaryButton = createButtonFileChooser(selectFileButtonLabel, phantomJsBinaryTextField);
-        JLabel phantomJsBinaryLabel = new JLabel(resourceBundle.getString("selenium.options.label.phantomjs.binary"));
+        JButton phantomJsBinaryButton =
+                createButtonFileChooser(selectFileButtonLabel, phantomJsBinaryTextField);
+        JLabel phantomJsBinaryLabel =
+                new JLabel(resourceBundle.getString("selenium.options.label.phantomjs.binary"));
         phantomJsBinaryLabel.setLabelFor(phantomJsBinaryButton);
 
         JPanel driversPanel = new JPanel();
@@ -140,52 +154,74 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         driversLayout.setAutoCreateContainerGaps(true);
 
         driversLayout.setHorizontalGroup(
-                driversLayout.createSequentialGroup()
+                driversLayout
+                        .createSequentialGroup()
                         .addGroup(
-                                driversLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                driversLayout
+                                        .createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(chromeDriverLabel)
                                         .addComponent(firefoxDriverLabel))
                         .addGroup(
-                                driversLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                driversLayout
+                                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addGroup(
-                                                driversLayout.createSequentialGroup()
+                                                driversLayout
+                                                        .createSequentialGroup()
                                                         .addGroup(
-                                                                driversLayout.createParallelGroup()
-                                                                        .addComponent(chromeDriverTextField)
-                                                                        .addComponent(infoBundledChromeDriverLabel))
+                                                                driversLayout
+                                                                        .createParallelGroup()
+                                                                        .addComponent(
+                                                                                chromeDriverTextField)
+                                                                        .addComponent(
+                                                                                infoBundledChromeDriverLabel))
                                                         .addGroup(
-                                                                driversLayout.createParallelGroup()
-                                                                        .addComponent(chromeDriverButton)
-                                                                        .addComponent(useBundledChromeDriverButton)))
+                                                                driversLayout
+                                                                        .createParallelGroup()
+                                                                        .addComponent(
+                                                                                chromeDriverButton)
+                                                                        .addComponent(
+                                                                                useBundledChromeDriverButton)))
                                         .addGroup(
-                                                driversLayout.createSequentialGroup()
+                                                driversLayout
+                                                        .createSequentialGroup()
                                                         .addGroup(
-                                                                driversLayout.createParallelGroup()
-                                                                        .addComponent(firefoxDriverTextField)
-                                                                        .addComponent(infoBundledFirefoxDriverLabel))
+                                                                driversLayout
+                                                                        .createParallelGroup()
+                                                                        .addComponent(
+                                                                                firefoxDriverTextField)
+                                                                        .addComponent(
+                                                                                infoBundledFirefoxDriverLabel))
                                                         .addGroup(
-                                                                driversLayout.createParallelGroup()
-                                                                        .addComponent(firefoxDriverButton)
-                                                                        .addComponent(useBundledFirefoxDriverButton)))));
+                                                                driversLayout
+                                                                        .createParallelGroup()
+                                                                        .addComponent(
+                                                                                firefoxDriverButton)
+                                                                        .addComponent(
+                                                                                useBundledFirefoxDriverButton)))));
 
         driversLayout.setVerticalGroup(
-                driversLayout.createSequentialGroup()
+                driversLayout
+                        .createSequentialGroup()
                         .addGroup(
-                                driversLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                driversLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(chromeDriverLabel)
                                         .addComponent(chromeDriverTextField)
                                         .addComponent(chromeDriverButton))
                         .addGroup(
-                                driversLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                driversLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(infoBundledChromeDriverLabel)
                                         .addComponent(useBundledChromeDriverButton))
                         .addGroup(
-                                driversLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                driversLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(firefoxDriverLabel)
                                         .addComponent(firefoxDriverTextField)
                                         .addComponent(firefoxDriverButton))
                         .addGroup(
-                                driversLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                driversLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(infoBundledFirefoxDriverLabel)
                                         .addComponent(useBundledFirefoxDriverButton)));
 
@@ -206,31 +242,39 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         binariesLayout.setAutoCreateContainerGaps(true);
 
         binariesLayout.setHorizontalGroup(
-                binariesLayout.createSequentialGroup()
+                binariesLayout
+                        .createSequentialGroup()
                         .addGroup(
-                                binariesLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                binariesLayout
+                                        .createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(firefoxBinaryLabel)
                                         .addComponent(phantomJsBinaryLabel))
                         .addGroup(
-                                binariesLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                binariesLayout
+                                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addGroup(
-                                                binariesLayout.createSequentialGroup()
+                                                binariesLayout
+                                                        .createSequentialGroup()
                                                         .addComponent(firefoxBinaryTextField)
                                                         .addComponent(firefoxBinaryButton))
                                         .addGroup(
-                                                binariesLayout.createSequentialGroup()
+                                                binariesLayout
+                                                        .createSequentialGroup()
                                                         .addComponent(phantomJsBinaryTextField)
                                                         .addComponent(phantomJsBinaryButton))));
 
         binariesLayout.setVerticalGroup(
-                binariesLayout.createSequentialGroup()
+                binariesLayout
+                        .createSequentialGroup()
                         .addGroup(
-                                binariesLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                binariesLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(firefoxBinaryLabel)
                                         .addComponent(firefoxBinaryTextField)
                                         .addComponent(firefoxBinaryButton))
                         .addGroup(
-                                binariesLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                binariesLayout
+                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(phantomJsBinaryLabel)
                                         .addComponent(phantomJsBinaryTextField)
                                         .addComponent(phantomJsBinaryButton)));
@@ -241,8 +285,14 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
-        layout.setHorizontalGroup(layout.createParallelGroup().addComponent(driversPanel).addComponent(binariesPanel));
-        layout.setVerticalGroup(layout.createSequentialGroup().addComponent(driversPanel).addComponent(binariesPanel));
+        layout.setHorizontalGroup(
+                layout.createParallelGroup()
+                        .addComponent(driversPanel)
+                        .addComponent(binariesPanel));
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(driversPanel)
+                        .addComponent(binariesPanel));
     }
 
     private JButton createBundledWebDriverButton(
@@ -285,21 +335,24 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         infoBundledChromeDriverLabel.setVisible(!driverAvailable);
         useBundledChromeDriverButton.setEnabled(driverAvailable);
 
-        chromeDriverTextField
-                .setText(getEffectiveDriverPath(Browser.CHROME, seleniumOptions.getChromeDriverPath(), driverAvailable));
+        chromeDriverTextField.setText(
+                getEffectiveDriverPath(
+                        Browser.CHROME, seleniumOptions.getChromeDriverPath(), driverAvailable));
 
         driverAvailable = Browser.hasBundledWebDriver(Browser.FIREFOX);
         infoBundledFirefoxDriverLabel.setVisible(!driverAvailable);
         useBundledFirefoxDriverButton.setEnabled(driverAvailable);
 
-        firefoxDriverTextField
-                .setText(getEffectiveDriverPath(Browser.FIREFOX, seleniumOptions.getFirefoxDriverPath(), driverAvailable));
+        firefoxDriverTextField.setText(
+                getEffectiveDriverPath(
+                        Browser.FIREFOX, seleniumOptions.getFirefoxDriverPath(), driverAvailable));
 
         firefoxBinaryTextField.setText(seleniumOptions.getFirefoxBinaryPath());
         phantomJsBinaryTextField.setText(seleniumOptions.getPhantomJsBinaryPath());
     }
 
-    private static String getEffectiveDriverPath(Browser browser, String driverPath, boolean bundledDriverAvailable) {
+    private static String getEffectiveDriverPath(
+            Browser browser, String driverPath, boolean bundledDriverAvailable) {
         if (driverPath.isEmpty()) {
             if (bundledDriverAvailable) {
                 return Browser.getBundledWebDriverPath(browser);
@@ -323,8 +376,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     }
 
     @Override
-    public void validateParam(Object obj) throws Exception {
-    }
+    public void validateParam(Object obj) throws Exception {}
 
     @Override
     public void saveParam(Object obj) throws Exception {
@@ -402,7 +454,10 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         }
 
         private void updateCurrentToolTipText() {
-            super.setToolTipText((!isEnabled() && disabledToolTipText != null) ? disabledToolTipText : defaultToolTipText);
+            super.setToolTipText(
+                    (!isEnabled() && disabledToolTipText != null)
+                            ? disabledToolTipText
+                            : defaultToolTipText);
         }
 
         @Override

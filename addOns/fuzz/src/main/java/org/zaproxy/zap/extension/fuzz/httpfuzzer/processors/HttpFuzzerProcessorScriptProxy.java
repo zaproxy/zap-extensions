@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2017 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
 import java.util.Objects;
 import java.util.function.Function;
-
 import javax.script.ScriptException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -38,13 +37,16 @@ class HttpFuzzerProcessorScriptProxy implements HttpFuzzerProcessorScript {
     private final ScriptWrapper scriptWrapper;
     private final HttpFuzzerProcessorScript script;
 
-    public static HttpFuzzerProcessorScriptProxy create(ScriptWrapper scriptWrapper) throws Exception {
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+    public static HttpFuzzerProcessorScriptProxy create(ScriptWrapper scriptWrapper)
+            throws Exception {
+        ExtensionScript extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript == null) {
             throw new IllegalStateException("The ExtensionScript is not enabled.");
         }
 
-        HttpFuzzerProcessorScript script = extensionScript.getInterface(scriptWrapper, HttpFuzzerProcessorScript.class);
+        HttpFuzzerProcessorScript script =
+                extensionScript.getInterface(scriptWrapper, HttpFuzzerProcessorScript.class);
         if (script != null) {
             return new HttpFuzzerProcessorScriptProxy(scriptWrapper, script);
         }
@@ -57,18 +59,21 @@ class HttpFuzzerProcessorScriptProxy implements HttpFuzzerProcessorScript {
         throw new IllegalArgumentException("The script does not implement the expected interface.");
     }
 
-    private HttpFuzzerProcessorScriptProxy(ScriptWrapper scriptWrapper, HttpFuzzerProcessorScript script) {
+    private HttpFuzzerProcessorScriptProxy(
+            ScriptWrapper scriptWrapper, HttpFuzzerProcessorScript script) {
         this.scriptWrapper = Objects.requireNonNull(scriptWrapper);
         this.script = Objects.requireNonNull(script);
     }
 
     @Override
-    public void processMessage(HttpFuzzerTaskProcessorUtils utils, HttpMessage message) throws ScriptException {
+    public void processMessage(HttpFuzzerTaskProcessorUtils utils, HttpMessage message)
+            throws ScriptException {
         script.processMessage(utils, message);
     }
 
     @Override
-    public boolean processResult(HttpFuzzerTaskProcessorUtils utils, HttpFuzzResult result) throws ScriptException {
+    public boolean processResult(HttpFuzzerTaskProcessorUtils utils, HttpFuzzResult result)
+            throws ScriptException {
         return script.processResult(utils, result);
     }
 
@@ -77,12 +82,20 @@ class HttpFuzzerProcessorScriptProxy implements HttpFuzzerProcessorScript {
         return readScriptParams(s -> s.getRequiredParamsNames(), "getRequiredParamsNames");
     }
 
-    private String[] readScriptParams(Function<HttpFuzzerProcessorScript, String[]> paramsReader, String methodName) {
+    private String[] readScriptParams(
+            Function<HttpFuzzerProcessorScript, String[]> paramsReader, String methodName) {
         try {
             return paramsReader.apply(script);
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("An error occurred while calling '" + methodName + "' on script '" + scriptWrapper.getName() + "': " + e.getMessage(), e);
+                LOG.debug(
+                        "An error occurred while calling '"
+                                + methodName
+                                + "' on script '"
+                                + scriptWrapper.getName()
+                                + "': "
+                                + e.getMessage(),
+                        e);
             }
         }
         return HttpFuzzerProcessorScript.EMPTY_PARAMS;

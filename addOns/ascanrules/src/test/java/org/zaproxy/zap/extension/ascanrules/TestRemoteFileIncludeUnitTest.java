@@ -19,14 +19,12 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-/**
- * Unit test for {@link TestRemoteFileInclude}.
- */
-public class TestRemoteFileIncludeUnitTest extends ActiveScannerAppParamTest<TestRemoteFileInclude> {
+/** Unit test for {@link TestRemoteFileInclude}. */
+public class TestRemoteFileIncludeUnitTest
+        extends ActiveScannerAppParamTest<TestRemoteFileInclude> {
 
     @Override
     protected TestRemoteFileInclude createScanner() {
         return new TestRemoteFileInclude();
     }
-
 }

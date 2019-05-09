@@ -19,9 +19,6 @@
  */
 package org.zaproxy.zap.extension.frontendscanner;
 
-import java.lang.Exception;
-import java.lang.String;
-import java.lang.StringBuilder;
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
 import java.io.IOException;
@@ -36,14 +33,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.util.UUID;
-
 import javax.swing.ImageIcon;
-
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Source;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -53,17 +46,16 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.view.ZapToggleButton;
 
-
 /**
- * A ZAP extension which allow to run scripts in the browser to detect
- * vulnerabilities in web applications relying heavily on Javascript.
+ * A ZAP extension which allow to run scripts in the browser to detect vulnerabilities in web
+ * applications relying heavily on Javascript.
  */
 public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyListener {
 
@@ -95,7 +87,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     private static final List<Class<? extends Extension>> DEPENDENCIES;
 
     static {
-        List <Class<? extends Extension>> dependencies = new ArrayList<>(2);
+        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
         dependencies.add(ExtensionAlert.class);
         dependencies.add(ExtensionScript.class);
 
@@ -115,10 +107,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         this.api = new FrontEndScannerAPI(this);
         this.api.addApiOptions(options);
 
-        this.extensionScript = Control
-            .getSingleton()
-            .getExtensionLoader()
-            .getExtension(ExtensionScript.class);
+        this.extensionScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
     }
 
     @Override
@@ -134,22 +124,26 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
             extensionHook.getHookView().addMainToolBarComponent(getFrontEndScannerButton());
             options.addPropertyChangeListener(
                     "enabled",
-                    e -> EventQueue.invokeLater(() -> getFrontEndScannerButton().setSelected((boolean) e.getNewValue())));
+                    e ->
+                            EventQueue.invokeLater(
+                                    () ->
+                                            getFrontEndScannerButton()
+                                                    .setSelected((boolean) e.getNewValue())));
         }
 
-        activeScriptType = new ScriptType(
-            SCRIPT_TYPE_CLIENT_ACTIVE,
-            "frontendscanner.scripts.type.active",
-            createIcon(ASCAN_ICON),
-            true
-        );
+        activeScriptType =
+                new ScriptType(
+                        SCRIPT_TYPE_CLIENT_ACTIVE,
+                        "frontendscanner.scripts.type.active",
+                        createIcon(ASCAN_ICON),
+                        true);
 
-        passiveScriptType = new ScriptType(
-            SCRIPT_TYPE_CLIENT_PASSIVE,
-            "frontendscanner.scripts.type.passive",
-            createIcon(PSCAN_ICON),
-            true
-        );
+        passiveScriptType =
+                new ScriptType(
+                        SCRIPT_TYPE_CLIENT_PASSIVE,
+                        "frontendscanner.scripts.type.passive",
+                        createIcon(PSCAN_ICON),
+                        true);
 
         this.extensionScript.registerScriptType(activeScriptType);
         this.extensionScript.registerScriptType(passiveScriptType);
@@ -158,7 +152,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     @Override
     public void optionsLoaded() {
         if (getView() != null) {
-            EventQueue.invokeLater(() -> getFrontEndScannerButton().setSelected(options.isEnabled()));
+            EventQueue.invokeLater(
+                    () -> getFrontEndScannerButton().setSelected(options.isEnabled()));
         }
     }
 
@@ -172,7 +167,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
     @Override
     public boolean canUnload() {
-        // The extension can be dynamically unloaded, all resources used/added can be freed/removed from core.
+        // The extension can be dynamically unloaded, all resources used/added can be freed/removed
+        // from core.
         return true;
     }
 
@@ -220,20 +216,20 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
 
                 if (head != null && msg.getHistoryRef() != null) {
                     String host = msg.getRequestHeader().getHeader("host");
-                    String frontEndApiUrl = API
-                        .getInstance()
-                        .getCallBackUrl(this.api, "https://" + host);
+                    String frontEndApiUrl =
+                            API.getInstance().getCallBackUrl(this.api, "https://" + host);
 
                     int historyReferenceId = msg.getHistoryRef().getHistoryId();
 
-                    StringBuilder injectedContentBuilder = new StringBuilder(200)
-                        .append("<script src='")
-                        .append(frontEndApiUrl)
-                        .append("?action=getFile")
-                        .append("&filename=front-end-scanner.js")
-                        .append("&historyReferenceId=")
-                        .append(historyReferenceId)
-                        .append("'></script>");
+                    StringBuilder injectedContentBuilder =
+                            new StringBuilder(200)
+                                    .append("<script src='")
+                                    .append(frontEndApiUrl)
+                                    .append("?action=getFile")
+                                    .append("&filename=front-end-scanner.js")
+                                    .append("&historyReferenceId=")
+                                    .append(historyReferenceId)
+                                    .append("'></script>");
 
                     String injectedContent = injectedContentBuilder.toString();
 
@@ -241,8 +237,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
                     int insertPosition = head.getChildElements().get(0).getBegin();
                     newResponseBody.insert(insertPosition, injectedContent);
 
-                    msg.getResponseBody()
-                        .setBody(newResponseBody.toString());
+                    msg.getResponseBody().setBody(newResponseBody.toString());
 
                     int newLength = msg.getResponseBody().length();
                     msg.getResponseHeader().setContentLength(newLength);
@@ -274,9 +269,12 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     private ZapToggleButton getFrontEndScannerButton() {
         if (this.frontEndScannerButton == null) {
             this.frontEndScannerButton = new ZapToggleButton(createIcon(PSCAN_ICON));
-            this.frontEndScannerButton.setSelectedToolTipText(Constant.messages.getString(PREFIX + ".toolbar.button.on.tooltip"));
-            this.frontEndScannerButton.setToolTipText(Constant.messages.getString(PREFIX + ".toolbar.button.off.tooltip"));
-            this.frontEndScannerButton.addItemListener(e -> options.setEnabled(ItemEvent.SELECTED == e.getStateChange()));
+            this.frontEndScannerButton.setSelectedToolTipText(
+                    Constant.messages.getString(PREFIX + ".toolbar.button.on.tooltip"));
+            this.frontEndScannerButton.setToolTipText(
+                    Constant.messages.getString(PREFIX + ".toolbar.button.off.tooltip"));
+            this.frontEndScannerButton.addItemListener(
+                    e -> options.setEnabled(ItemEvent.SELECTED == e.getStateChange()));
         }
         return this.frontEndScannerButton;
     }
@@ -285,31 +283,32 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         if (getView() == null) {
             return null;
         }
-        return new ImageIcon(
-            ExtensionFrontEndScanner.class.getResource(path));
+        return new ImageIcon(ExtensionFrontEndScanner.class.getResource(path));
     }
 
     private void registerUserScripts(ScriptType scriptType) {
         String folder = SCRIPTS_FOLDER + scriptType.getName() + '/';
         Path scriptFolderPath = Paths.get(folder);
 
-        try(
-            Stream<Path> scriptFilePaths = Files.list(scriptFolderPath)
-        ) {
+        try (Stream<Path> scriptFilePaths = Files.list(scriptFolderPath)) {
             scriptFilePaths
-              .map(path -> path.toFile())
-              .filter(file -> file.isFile())
-              .map(file -> {
-                  return new ScriptWrapper(file.getName(), "", "Null", scriptType, true, file);
-              })
-              .map(scriptWrapper -> loadScript(scriptWrapper))
-              .filter(maybeScriptWrapper -> maybeScriptWrapper.isPresent())
-              .map(maybeScriptWrapper -> maybeScriptWrapper.get())
-              // Keep scripts are not registered yet.
-              .filter(scriptWrapper -> {
-                  return this.extensionScript.getScript(scriptWrapper.getName()) == null;
-              })
-              .forEach(scriptWrapper -> this.extensionScript.addScript(scriptWrapper, false));
+                    .map(path -> path.toFile())
+                    .filter(file -> file.isFile())
+                    .map(
+                            file -> {
+                                return new ScriptWrapper(
+                                        file.getName(), "", "Null", scriptType, true, file);
+                            })
+                    .map(scriptWrapper -> loadScript(scriptWrapper))
+                    .filter(maybeScriptWrapper -> maybeScriptWrapper.isPresent())
+                    .map(maybeScriptWrapper -> maybeScriptWrapper.get())
+                    // Keep scripts are not registered yet.
+                    .filter(
+                            scriptWrapper -> {
+                                return this.extensionScript.getScript(scriptWrapper.getName())
+                                        == null;
+                            })
+                    .forEach(scriptWrapper -> this.extensionScript.addScript(scriptWrapper, false));
         } catch (NoSuchFileException e) {
             return;
         } catch (IOException e) {

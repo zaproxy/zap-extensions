@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,45 +28,45 @@ import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class XBackendServerInformationLeakUnitTest extends PassiveScannerTest<XBackendServerInformationLeak> {
+public class XBackendServerInformationLeakUnitTest
+        extends PassiveScannerTest<XBackendServerInformationLeak> {
 
-	private static final String XBS_HEADER = "X-Backend-Server";
-	private static final String HEADER_VALUE = "developer1.webapp.scl3.mozilla.com";
+    private static final String XBS_HEADER = "X-Backend-Server";
+    private static final String HEADER_VALUE = "developer1.webapp.scl3.mozilla.com";
 
-	private HttpMessage createMessage() throws URIException {
-		HttpRequestHeader requestHeader = new HttpRequestHeader();
-		requestHeader.setURI(new URI("http://example.com", false));
+    private HttpMessage createMessage() throws URIException {
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        requestHeader.setURI(new URI("http://example.com", false));
 
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader(requestHeader);
-		return msg;
-	}
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+        return msg;
+    }
 
-	@Override
-	protected XBackendServerInformationLeak createScanner() {
-		return new XBackendServerInformationLeak();
-	}
+    @Override
+    protected XBackendServerInformationLeak createScanner() {
+        return new XBackendServerInformationLeak();
+    }
 
-	@Test
-	public void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised.size(), equalTo(0));
-	}
+    @Test
+    public void shouldNotRaiseAlertIfResponseHasNoRelevantHeader() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 
-	@Test
-	public void shouldRaiseAlertIfResponseHasRelevantContent() throws URIException {
-		// Given
-		HttpMessage msg = createMessage();
-		msg.getResponseHeader().addHeader(XBS_HEADER, HEADER_VALUE);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// THen
-		assertThat(alertsRaised.size(), equalTo(1));
-		assertThat(alertsRaised.get(0).getEvidence(), equalTo(HEADER_VALUE));
-	}
-
+    @Test
+    public void shouldRaiseAlertIfResponseHasRelevantContent() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().addHeader(XBS_HEADER, HEADER_VALUE);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // THen
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(HEADER_VALUE));
+    }
 }

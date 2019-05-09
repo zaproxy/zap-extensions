@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
@@ -52,7 +51,8 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
 
     private HttpFuzzResultsContentPanel httpFuzzResultsContentPanel;
 
-    private final List<HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>> messageProcessors;
+    private final List<HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>>
+            messageProcessors;
 
     public HttpFuzzerHandler() {
         this.messageProcessors = new ArrayList<>();
@@ -74,7 +74,8 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
     }
 
     @Override
-    public HttpFuzzer showFuzzerDialog(MessageContainer<HttpMessage> messageContainer, FuzzerOptions defaultOptions) {
+    public HttpFuzzer showFuzzerDialog(
+            MessageContainer<HttpMessage> messageContainer, FuzzerOptions defaultOptions) {
         if (!canFuzz(messageContainer)) {
             return null;
         }
@@ -109,13 +110,14 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
             HttpMessage message,
             SelectableContentMessageContainer<HttpMessage> container,
             FuzzerOptions defaultOptions) {
-        FuzzerDialog<HttpMessage, HttpFuzzerOptions, HttpFuzzerMessageProcessor> fuzzDialogue = new FuzzerDialog<>(
-                View.getSingleton().getMainFrame(),
-                defaultOptions,
-                message,
-                true,
-                new HttpFuzzerHandlerOptionsPanel(),
-                new HttpFuzzerMessageProcessorCollection(message, messageProcessors));
+        FuzzerDialog<HttpMessage, HttpFuzzerOptions, HttpFuzzerMessageProcessor> fuzzDialogue =
+                new FuzzerDialog<>(
+                        View.getSingleton().getMainFrame(),
+                        defaultOptions,
+                        message,
+                        true,
+                        new HttpFuzzerHandlerOptionsPanel(),
+                        new HttpFuzzerMessageProcessorCollection(message, messageProcessors));
 
         if (container != null) {
             if (fuzzDialogue.setSelectedContainer(container.getName())) {
@@ -143,19 +145,21 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
             return null;
         }
 
-        MessageLocationReplacer<HttpMessage> replacer = MessageLocationReplacers.getInstance().getMLR(
-                HttpMessage.class,
-                TextHttpMessageLocation.class);
+        MessageLocationReplacer<HttpMessage> replacer =
+                MessageLocationReplacers.getInstance()
+                        .getMLR(HttpMessage.class, TextHttpMessageLocation.class);
 
         replacer.init(message);
 
         MultipleMessageLocationsReplacer<HttpMessage> multipleMessageLocationsReplacer;
-        if (MessageLocationsReplacementStrategy.DEPTH_FIRST == options.getPayloadsReplacementStrategy()) {
+        if (MessageLocationsReplacementStrategy.DEPTH_FIRST
+                == options.getPayloadsReplacementStrategy()) {
             multipleMessageLocationsReplacer = new MultipleMessageLocationsDepthFirstReplacer<>();
         } else {
             multipleMessageLocationsReplacer = new MultipleMessageLocationsBreadthFirstReplacer<>();
         }
-        SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators = new TreeSet<>();
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators =
+                new TreeSet<>();
 
         for (PayloadGeneratorMessageLocation<?> fuzzLocation : fuzzLocations) {
             messageLocationReplacementGenerators.add(fuzzLocation);
@@ -166,7 +170,8 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
                 createFuzzerName(message),
                 options,
                 message,
-                (List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>) (ArrayList)fuzzLocations,
+                (List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>)
+                        (ArrayList) fuzzLocations,
                 multipleMessageLocationsReplacer,
                 processors);
     }
@@ -234,14 +239,17 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
     }
 
     @SuppressWarnings("unchecked")
-    protected <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>> void addFuzzerMessageProcessorUIHandler(
-            HttpFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
-        messageProcessors.add((HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>) processorUIHandler);
+    protected <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>>
+            void addFuzzerMessageProcessorUIHandler(
+                    HttpFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
+        messageProcessors.add(
+                (HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>)
+                        processorUIHandler);
     }
 
-    protected <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>> void removeFuzzerMessageProcessorUIHandler(
-            HttpFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
+    protected <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>>
+            void removeFuzzerMessageProcessorUIHandler(
+                    HttpFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
         messageProcessors.remove(processorUIHandler);
     }
-
 }

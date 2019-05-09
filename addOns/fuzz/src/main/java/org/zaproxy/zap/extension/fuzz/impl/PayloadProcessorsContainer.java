@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUI;
@@ -45,7 +44,9 @@ public class PayloadProcessorsContainer {
         String panelName = defaultPanelName;
         for (PayloadProcessorUIHandler<?, ?, ?> payloadUIHandler : payloadUIHandlers) {
             addHelper(payloadUIHandler);
-            panels.put(payloadUIHandler.getName(), panelsMap.get(payloadUIHandler.getPayloadProcessorUIClass()));
+            panels.put(
+                    payloadUIHandler.getName(),
+                    panelsMap.get(payloadUIHandler.getPayloadProcessorUIClass()));
         }
 
         if (!panels.containsKey(panelName)) {
@@ -54,11 +55,16 @@ public class PayloadProcessorsContainer {
         this.defaultPanelName = panelName;
     }
 
-    private <T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>> void addHelper(
-            PayloadProcessorUIHandler<T, T2, T3> payloadUIHandler) {
+    private <
+                    T extends Payload,
+                    T2 extends PayloadProcessor<T>,
+                    T3 extends PayloadProcessorUI<T, T2>>
+            void addHelper(PayloadProcessorUIHandler<T, T2, T3> payloadUIHandler) {
         panelsMap.put(
                 payloadUIHandler.getPayloadProcessorUIClass(),
-                payloadUIHandler.getPayloadProcessorUIPanelClass().cast(payloadUIHandler.createPanel()));
+                payloadUIHandler
+                        .getPayloadProcessorUIPanelClass()
+                        .cast(payloadUIHandler.createPanel()));
     }
 
     public Set<String> getPayloadUIHandlersNames() {
@@ -73,8 +79,12 @@ public class PayloadProcessorsContainer {
         return panels.get(name);
     }
 
-    public <T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>, T4 extends PayloadProcessorUIPanel<T, T2, T3>> T4 getPanel(
-            T3 PayloadProcessorUI) {
+    public <
+                    T extends Payload,
+                    T2 extends PayloadProcessor<T>,
+                    T3 extends PayloadProcessorUI<T, T2>,
+                    T4 extends PayloadProcessorUIPanel<T, T2, T3>>
+            T4 getPanel(T3 PayloadProcessorUI) {
         PayloadProcessorUIPanel<?, ?, ?> panel = panelsMap.get(PayloadProcessorUI.getClass());
         if (panel != null) {
             @SuppressWarnings("unchecked")

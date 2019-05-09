@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUIPanel;
 import org.zaproxy.zap.extension.fuzz.impl.FuzzerMessageProcessors;
@@ -35,19 +34,26 @@ public class WebSocketFuzzerMessageProcessorCollection
 
     private final String defaultPanelName;
     private List<WebSocketFuzzerMessageProcessorUIHandler<?, ?>> handlers;
-    private Map<String, WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?>> handlersMap;
-    private Map<String, WebSocketFuzzerMessageProcessorUIPanel<WebSocketFuzzerMessageProcessor, ?>> panelsMap;
-    private List<FuzzerMessageProcessorUI<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor>> defaultProcessors;
+    private Map<
+                    String,
+                    WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?>>
+            handlersMap;
+    private Map<String, WebSocketFuzzerMessageProcessorUIPanel<WebSocketFuzzerMessageProcessor, ?>>
+            panelsMap;
+    private List<FuzzerMessageProcessorUI<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor>>
+            defaultProcessors;
 
     public WebSocketFuzzerMessageProcessorCollection(
             WebSocketMessageDTO message,
-            Collection<WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?>> uiHandlers) {
+            Collection<WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?>>
+                    uiHandlers) {
         handlers = new ArrayList<>();
         handlersMap = new HashMap<>();
         panelsMap = new HashMap<>();
         defaultProcessors = new ArrayList<>();
 
-        for (WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?> uiHandler : uiHandlers) {
+        for (WebSocketFuzzerMessageProcessorUIHandler<WebSocketFuzzerMessageProcessor, ?>
+                uiHandler : uiHandlers) {
             if (uiHandler.isEnabled(message)) {
                 handlers.add(uiHandler);
                 handlersMap.put(uiHandler.getName(), uiHandler);
@@ -72,18 +78,30 @@ public class WebSocketFuzzerMessageProcessorCollection
     }
 
     @Override
-    public FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor, ?> getPanel(String name) {
+    public FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor, ?>
+            getPanel(String name) {
         return panelsMap.get(name);
     }
 
     @Override
-    public <T3 extends FuzzerMessageProcessorUI<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor>> FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor, T3> getPanel(
-            T3 fuzzerMessageProcessorUI) {
+    public <
+                    T3 extends
+                            FuzzerMessageProcessorUI<
+                                            WebSocketMessageDTO, WebSocketFuzzerMessageProcessor>>
+            FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor, T3>
+                    getPanel(T3 fuzzerMessageProcessorUI) {
         for (WebSocketFuzzerMessageProcessorUIHandler<?, ?> handler : handlers) {
-            if (handler.getFuzzerMessageProcessorUIType().equals(fuzzerMessageProcessorUI.getClass())) {
+            if (handler.getFuzzerMessageProcessorUIType()
+                    .equals(fuzzerMessageProcessorUI.getClass())) {
                 @SuppressWarnings("unchecked")
-                FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor, T3> panel = (FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor, T3>) panelsMap
-                        .get(handler.getName());
+                FuzzerMessageProcessorUIPanel<
+                                WebSocketMessageDTO, WebSocketFuzzerMessageProcessor, T3>
+                        panel =
+                                (FuzzerMessageProcessorUIPanel<
+                                                WebSocketMessageDTO,
+                                                WebSocketFuzzerMessageProcessor,
+                                                T3>)
+                                        panelsMap.get(handler.getName());
                 return panel;
             }
         }
@@ -91,12 +109,17 @@ public class WebSocketFuzzerMessageProcessorCollection
     }
 
     @Override
-    public FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor, ?> getDefaultPanel() {
+    public FuzzerMessageProcessorUIPanel<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor, ?>
+            getDefaultPanel() {
         return panelsMap.get(defaultPanelName);
     }
 
     @Override
-    public List<? extends FuzzerMessageProcessorUI<WebSocketMessageDTO, WebSocketFuzzerMessageProcessor>> getDefaultProcessors() {
+    public List<
+                    ? extends
+                            FuzzerMessageProcessorUI<
+                                    WebSocketMessageDTO, WebSocketFuzzerMessageProcessor>>
+            getDefaultProcessors() {
         return defaultProcessors;
     }
 
@@ -111,7 +134,8 @@ public class WebSocketFuzzerMessageProcessorCollection
     }
 
     @Override
-    public Collection<WebSocketFuzzerMessageProcessorUIPanel<WebSocketFuzzerMessageProcessor, ?>> getPanels() {
+    public Collection<WebSocketFuzzerMessageProcessorUIPanel<WebSocketFuzzerMessageProcessor, ?>>
+            getPanels() {
         return panelsMap.values();
     }
 }

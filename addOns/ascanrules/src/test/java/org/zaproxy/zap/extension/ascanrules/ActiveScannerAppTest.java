@@ -27,7 +27,8 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Plugin;
 
-public abstract class ActiveScannerAppTest<T extends AbstractAppPlugin> extends ActiveScannerTest<T> {
+public abstract class ActiveScannerAppTest<T extends AbstractAppPlugin>
+        extends ActiveScannerTest<T> {
 
     @Test
     public void shouldSendReasonableNumberOfMessagesInLowStrength() throws Exception {
@@ -38,7 +39,9 @@ public abstract class ActiveScannerAppTest<T extends AbstractAppPlugin> extends 
         // When
         rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerPage(strength))));
+        assertThat(
+                httpMessagesSent,
+                hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerPage(strength))));
         assertThat(alertsRaised, hasSize(0));
     }
 
@@ -51,7 +54,9 @@ public abstract class ActiveScannerAppTest<T extends AbstractAppPlugin> extends 
         // When
         rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerPage(strength))));
+        assertThat(
+                httpMessagesSent,
+                hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerPage(strength))));
         assertThat(alertsRaised, hasSize(0));
     }
 
@@ -64,7 +69,9 @@ public abstract class ActiveScannerAppTest<T extends AbstractAppPlugin> extends 
         // When
         rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerPage(strength))));
+        assertThat(
+                httpMessagesSent,
+                hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerPage(strength))));
         assertThat(alertsRaised, hasSize(0));
     }
 
@@ -77,8 +84,9 @@ public abstract class ActiveScannerAppTest<T extends AbstractAppPlugin> extends 
         // When
         rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerPage(strength))));
+        assertThat(
+                httpMessagesSent,
+                hasSize(lessThanOrEqualTo(getRecommendMaxNumberMessagesPerPage(strength))));
         assertThat(alertsRaised, hasSize(0));
     }
-
 }

@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,10 +20,8 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.Color;
-
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
@@ -48,6 +46,8 @@ public class QuickStartHelper {
     }
 
     public static void raiseOptionsChangedEvent() {
-        Control.getSingleton().getExtensionLoader().optionsChangedAllPlugin(Model.getSingleton().getOptionsParam());
+        Control.getSingleton()
+                .getExtensionLoader()
+                .optionsChangedAllPlugin(Model.getSingleton().getOptionsParam());
     }
 }

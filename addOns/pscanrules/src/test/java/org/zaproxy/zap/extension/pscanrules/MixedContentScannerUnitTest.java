@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2017 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -43,7 +42,8 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
     public void shouldNotRaiseAlertIfHttpResource() {
         // Given
         String uri = "http://example.com/";
-        HttpMessage msg = createHtmlResponse(uri, "<script src=\"https://example.com/script.js\"></script>");
+        HttpMessage msg =
+                createHtmlResponse(uri, "<script src=\"https://example.com/script.js\"></script>");
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
@@ -54,7 +54,8 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
     public void shouldNotRaiseAlertIfHttpsResourceContainsNoMixedContent() {
         // Given
         String uri = "https://example.com/";
-        HttpMessage msg = createHtmlResponse(uri, "<script src=\"https://example.com/script.js\"></script>");
+        HttpMessage msg =
+                createHtmlResponse(uri, "<script src=\"https://example.com/script.js\"></script>");
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
@@ -76,11 +77,13 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
     public void shouldNotRaiseAlertForNonHtmlContent() {
         // Given
         String uri = "https://example.com/script.js";
-        HttpMessage msg = createResponse(
-                uri,
-                "text/javascript",
-                // Extracted from: https://raw.githubusercontent.com/angular/angular.js/master/src/ng/directive/attrs.js
-                "/** <img src=\"http://www.gravatar.com/avatar/{{hash}}\" alt=\"Description\"/> */");
+        HttpMessage msg =
+                createResponse(
+                        uri,
+                        "text/javascript",
+                        // Extracted from:
+                        // https://raw.githubusercontent.com/angular/angular.js/master/src/ng/directive/attrs.js
+                        "/** <img src=\"http://www.gravatar.com/avatar/{{hash}}\" alt=\"Description\"/> */");
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
@@ -92,7 +95,8 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
         // Given
         String attribute = "unknown";
         String uri = "https://example.com/";
-        HttpMessage msg = createHtmlResponse(uri, "<tag " + attribute + "=\"http://example.com/file\" />");
+        HttpMessage msg =
+                createHtmlResponse(uri, "<tag " + attribute + "=\"http://example.com/file\" />");
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
@@ -101,29 +105,45 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
 
     @Test
     public void shouldRaiseLowAlertIfHttpsResourceContainsMixedContentInKnownAttributes() {
-        for (String attribute : Arrays
-                .asList("src", "background", "classid", "codebase", "data", "icon", "usemap", "action", "formaction")) {
+        for (String attribute :
+                Arrays.asList(
+                        "src",
+                        "background",
+                        "classid",
+                        "codebase",
+                        "data",
+                        "icon",
+                        "usemap",
+                        "action",
+                        "formaction")) {
             alertsRaised.clear();
             // Given
             String uri = "https://example.com/";
-            HttpMessage msg = createHtmlResponse(uri, "<tag " + attribute + "=\"http://example.com/file\" />");
+            HttpMessage msg =
+                    createHtmlResponse(
+                            uri, "<tag " + attribute + "=\"http://example.com/file\" />");
             // When
             rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
             // Then
             assertThat(alertsRaised.size(), is(1));
             assertThat(alertsRaised.get(0).getEvidence(), is("http://example.com/file"));
-            assertThat(alertsRaised.get(0).getOtherInfo(), is("tag=tag " + attribute + "=http://example.com/file\n"));
+            assertThat(
+                    alertsRaised.get(0).getOtherInfo(),
+                    is("tag=tag " + attribute + "=http://example.com/file\n"));
             assertThat(alertsRaised.get(0).getRisk(), is(Alert.RISK_LOW));
             assertThat(alertsRaised.get(0).getConfidence(), is(Alert.CONFIDENCE_MEDIUM));
         }
     }
 
     @Test
-    public void shouldNotRaiseAlertIfHttpsResourceContainsMixedContentInActionAndFormActionAttributesWhenInHighAlertTreshold() {
+    public void
+            shouldNotRaiseAlertIfHttpsResourceContainsMixedContentInActionAndFormActionAttributesWhenInHighAlertTreshold() {
         for (String attribute : Arrays.asList("action", "formaction")) {
             // Given
             String uri = "https://example.com/";
-            HttpMessage msg = createHtmlResponse(uri, "<tag " + attribute + "=\"http://example.com/file\" />");
+            HttpMessage msg =
+                    createHtmlResponse(
+                            uri, "<tag " + attribute + "=\"http://example.com/file\" />");
             rule.setAlertThreshold(AlertThreshold.HIGH);
             // When
             rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -136,13 +156,16 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
     public void shouldRaiseMediumAlertIfHttpsResourceContainsMixedContentInScriptTag() {
         // Given
         String uri = "https://example.com/";
-        HttpMessage msg = createHtmlResponse(uri, "<script src=\"http://example.com/script.js\"></script>");
+        HttpMessage msg =
+                createHtmlResponse(uri, "<script src=\"http://example.com/script.js\"></script>");
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getEvidence(), is("http://example.com/script.js"));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is("tag=script src=http://example.com/script.js\n"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is("tag=script src=http://example.com/script.js\n"));
         assertThat(alertsRaised.get(0).getRisk(), is(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), is(Alert.CONFIDENCE_MEDIUM));
         // THC verify other info
@@ -152,9 +175,11 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
     public void shouldRaiseOneAlertForMultipleMixedContent() {
         // Given
         String uri = "https://example.com/";
-        HttpMessage msg = createHtmlResponse(
-                uri,
-                "<script src=\"http://example.com/script.js\"></script>\n" + "<img src=\"http://example.com/image.png\" />");
+        HttpMessage msg =
+                createHtmlResponse(
+                        uri,
+                        "<script src=\"http://example.com/script.js\"></script>\n"
+                                + "<img src=\"http://example.com/image.png\" />");
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
@@ -162,7 +187,8 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
         assertThat(alertsRaised.get(0).getEvidence(), is("http://example.com/script.js"));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
-                is("tag=script src=http://example.com/script.js\ntag=img src=http://example.com/image.png\n"));
+                is(
+                        "tag=script src=http://example.com/script.js\ntag=img src=http://example.com/image.png\n"));
     }
 
     private static HttpMessage createHtmlResponse(String uri, String respBody) {

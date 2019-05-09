@@ -3,11 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2013 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,38 +20,35 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import net.htmlparser.jericho.Source;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.ContentMatcher;
 
-
 /**
- * Plugin able to analyze the content for Application Error messages. The plugin
- * find the first occurrence of an exact match or a regex pattern matching
- * according to an external file definition. The vulnerability can be included
- * inside the Information Leakage family (WASC-13)
+ * Plugin able to analyze the content for Application Error messages. The plugin find the first
+ * occurrence of an exact match or a regex pattern matching according to an external file
+ * definition. The vulnerability can be included inside the Information Leakage family (WASC-13)
  *
  * @author yhawke 2013
  */
 public class ApplicationErrorScanner extends PluginPassiveScanner {
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "pscanrules.applicationerrorscanner.";
-	
+    /** Prefix for internationalised messages used by this rule */
+    private static final String MESSAGE_PREFIX = "pscanrules.applicationerrorscanner.";
+
     // Name of the file related to pattern's definition list
-    private static final String APP_ERRORS_FILE = "/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml";
+    private static final String APP_ERRORS_FILE =
+            "/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml";
 
     // Inner Content Matcher component with pattern definitions
-    private static final ContentMatcher matcher = 
-    		ContentMatcher.getInstance(ApplicationErrorScanner.class.getResourceAsStream(APP_ERRORS_FILE));
+    private static final ContentMatcher matcher =
+            ContentMatcher.getInstance(
+                    ApplicationErrorScanner.class.getResourceAsStream(APP_ERRORS_FILE));
     // Inner Thread Parent variable
     private PassiveScanThread parent = null;
 
@@ -119,8 +118,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
     }
 
     /**
-     * Perform the passive scanning of application errors inside the response
-     * content
+     * Perform the passive scanning of application errors inside the response content
      *
      * @param msg the message that need to be checked
      * @param id the id of the session
@@ -135,11 +133,10 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
             // We found it!
             // The AS raise an Internal Error
             // so a possible disclosure can be found
-        	if(AlertThreshold.HIGH.equals(this.getAlertThreshold()))
-        	{
-        		//No need to alert
-        		return;
-        	}
+            if (AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
+                // No need to alert
+                return;
+            }
             raiseAlert(msg, id, msg.getResponseHeader().getPrimeHeader(), Alert.RISK_LOW);
 
         } else if (status != HttpStatusCode.NOT_FOUND) {
@@ -152,11 +149,11 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
             }
         }
     }
-        
+
     // Internal service method for alert management
     private void raiseAlert(HttpMessage msg, int id, String evidence, int risk) {
         // Raise an alert according to Passive Scan Rule model
-        // description, uri, param, attack, otherInfo, 
+        // description, uri, param, attack, otherInfo,
         // solution, reference, evidence, cweId, wascId, msg
         Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, getName());
         alert.setDetail(

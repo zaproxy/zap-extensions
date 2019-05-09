@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,12 +23,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import org.apache.commons.codec.binary.Hex;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
-public abstract class AbstractStringHashProcessor extends AbstractCharsetProcessor<DefaultPayload> implements
-        DefaultPayloadProcessor {
+public abstract class AbstractStringHashProcessor extends AbstractCharsetProcessor<DefaultPayload>
+        implements DefaultPayloadProcessor {
 
     protected static final Hex HEX_ASCII = new Hex(StandardCharsets.US_ASCII.name());
 
@@ -79,8 +78,8 @@ public abstract class AbstractStringHashProcessor extends AbstractCharsetProcess
         return payload;
     }
 
-    protected static MessageDigest createMessageDigest(String algorithm) throws NoSuchAlgorithmException {
+    protected static MessageDigest createMessageDigest(String algorithm)
+            throws NoSuchAlgorithmException {
         return MessageDigest.getInstance(algorithm);
     }
-
 }

@@ -1,22 +1,25 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *
+ * Copyright 2013 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.amf;
 
+import flex.messaging.io.ClassAliasRegistry;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -32,8 +35,6 @@ import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 
-import flex.messaging.io.ClassAliasRegistry;
-
 public class ExtensionAMF extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionAMF";
@@ -47,12 +48,13 @@ public class ExtensionAMF extends ExtensionAdaptor {
         super.hook(extensionHook);
         if (getView() != null) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
-            panelManager.addRequestViewFactory(RequestSplitComponent.NAME, new RequestAMFTextViewFactory());
+            panelManager.addRequestViewFactory(
+                    RequestSplitComponent.NAME, new RequestAMFTextViewFactory());
             panelManager.addRequestDefaultViewSelectorFactory(
-                    RequestSplitComponent.NAME,
-                    new RequestAMFTextViewDefaultViewSelectorFactory());
+                    RequestSplitComponent.NAME, new RequestAMFTextViewDefaultViewSelectorFactory());
 
-            panelManager.addResponseViewFactory(ResponseSplitComponent.NAME, new ResponseAMFTextViewFactory());
+            panelManager.addResponseViewFactory(
+                    ResponseSplitComponent.NAME, new ResponseAMFTextViewFactory());
             panelManager.addResponseDefaultViewSelectorFactory(
                     ResponseSplitComponent.NAME,
                     new ResponseAMFTextViewDefaultViewSelectorFactory());
@@ -66,7 +68,8 @@ public class ExtensionAMF extends ExtensionAdaptor {
         // Register alias used by BlazeDS.
         ClassAliasRegistry registry = ClassAliasRegistry.getRegistry();
         registry.registerAlias("DSC", flex.messaging.messages.CommandMessageExt.class.getName());
-        registry.registerAlias("DSK", flex.messaging.messages.AcknowledgeMessageExt.class.getName());
+        registry.registerAlias(
+                "DSK", flex.messaging.messages.AcknowledgeMessageExt.class.getName());
     }
 
     @Override
@@ -78,21 +81,22 @@ public class ExtensionAMF extends ExtensionAdaptor {
     public void unload() {
         if (getView() != null) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
-            panelManager.removeRequestViewFactory(RequestSplitComponent.NAME, RequestAMFTextViewFactory.NAME);
+            panelManager.removeRequestViewFactory(
+                    RequestSplitComponent.NAME, RequestAMFTextViewFactory.NAME);
             panelManager.removeRequestViews(
                     RequestSplitComponent.NAME,
                     RequestAMFTextView.NAME,
                     RequestSplitComponent.ViewComponent.BODY);
 
             panelManager.removeRequestDefaultViewSelectorFactory(
-                    RequestSplitComponent.NAME,
-                    RequestAMFTextViewDefaultViewSelectorFactory.NAME);
+                    RequestSplitComponent.NAME, RequestAMFTextViewDefaultViewSelectorFactory.NAME);
             panelManager.removeRequestDefaultViewSelectors(
                     RequestSplitComponent.NAME,
                     RequestAMFTextViewDefaultViewSelector.NAME,
                     RequestSplitComponent.ViewComponent.BODY);
 
-            panelManager.removeResponseViewFactory(ResponseSplitComponent.NAME, ResponseAMFTextViewFactory.NAME);
+            panelManager.removeResponseViewFactory(
+                    ResponseSplitComponent.NAME, ResponseAMFTextViewFactory.NAME);
             panelManager.removeResponseViews(
                     ResponseSplitComponent.NAME,
                     ResponseAMFTextView.NAME,
@@ -128,7 +132,8 @@ public class ExtensionAMF extends ExtensionAdaptor {
         }
     }
 
-    private static final class RequestAMFTextViewDefaultViewSelector implements HttpPanelDefaultViewSelector {
+    private static final class RequestAMFTextViewDefaultViewSelector
+            implements HttpPanelDefaultViewSelector {
 
         public static final String NAME = "RequestAMFTextViewDefaultViewSelector";
 
@@ -153,7 +158,8 @@ public class ExtensionAMF extends ExtensionAdaptor {
         }
     }
 
-    private static final class RequestAMFTextViewDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
+    private static final class RequestAMFTextViewDefaultViewSelectorFactory
+            implements HttpPanelDefaultViewSelectorFactory {
 
         public static final String NAME = "RequestAMFTextViewDefaultViewSelectorFactory";
 
@@ -208,7 +214,8 @@ public class ExtensionAMF extends ExtensionAdaptor {
         }
     }
 
-    private static final class ResponseAMFTextViewDefaultViewSelector implements HttpPanelDefaultViewSelector {
+    private static final class ResponseAMFTextViewDefaultViewSelector
+            implements HttpPanelDefaultViewSelector {
 
         public static final String NAME = "ResponseAMFTextViewDefaultViewSelector";
 
@@ -233,7 +240,8 @@ public class ExtensionAMF extends ExtensionAdaptor {
         }
     }
 
-    private static final class ResponseAMFTextViewDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
+    private static final class ResponseAMFTextViewDefaultViewSelectorFactory
+            implements HttpPanelDefaultViewSelectorFactory {
 
         private static HttpPanelDefaultViewSelector defaultViewSelector = null;
 

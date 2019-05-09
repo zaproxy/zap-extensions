@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 
@@ -51,14 +50,21 @@ public final class PayloadGeneratorUIHandlersRegistry {
         payloadUIHandlers = new HashMap<>();
     }
 
-    public < T2 extends Payload, T3 extends PayloadGenerator< T2>, T4 extends PayloadGeneratorUI< T2, T3>, T5 extends PayloadGeneratorUIHandler< T2, T3, T4>> void registerPayloadUI(
-            Class<T3> payloadGeneratorClass,
-            T5 uiHandler) {
+    public <
+                    T2 extends Payload,
+                    T3 extends PayloadGenerator<T2>,
+                    T4 extends PayloadGeneratorUI<T2, T3>,
+                    T5 extends PayloadGeneratorUIHandler<T2, T3, T4>>
+            void registerPayloadUI(Class<T3> payloadGeneratorClass, T5 uiHandler) {
         payloadUIHandlers.put(payloadGeneratorClass, uiHandler);
     }
 
-    public < T2 extends Payload, T3 extends PayloadGenerator< T2>, T4 extends PayloadGeneratorUI< T2, T3>, T5 extends PayloadGeneratorUIHandler< T2, T3, T4>> T5 getPayloadGeneratorUIHandler(
-            Class<T3> payloadGeneratorClass) {
+    public <
+                    T2 extends Payload,
+                    T3 extends PayloadGenerator<T2>,
+                    T4 extends PayloadGeneratorUI<T2, T3>,
+                    T5 extends PayloadGeneratorUIHandler<T2, T3, T4>>
+            T5 getPayloadGeneratorUIHandler(Class<T3> payloadGeneratorClass) {
         Object object = payloadUIHandlers.get(payloadGeneratorClass);
         if (object == null) {
             return null;
@@ -72,13 +78,21 @@ public final class PayloadGeneratorUIHandlersRegistry {
         return Collections.unmodifiableCollection(payloadUIHandlers.values());
     }
 
-    public < T2 extends Payload, T3 extends PayloadGenerator< T2>, T4 extends PayloadGeneratorUI< T2, T3>, T5 extends PayloadGeneratorUIHandler< T2, T3, T4>> void removePayloadGeneratorUIHandler(
-            Class<T3> payloadClass) {
+    public <
+                    T2 extends Payload,
+                    T3 extends PayloadGenerator<T2>,
+                    T4 extends PayloadGeneratorUI<T2, T3>,
+                    T5 extends PayloadGeneratorUIHandler<T2, T3, T4>>
+            void removePayloadGeneratorUIHandler(Class<T3> payloadClass) {
         payloadUIHandlers.remove(payloadClass);
     }
 
-    public < T2 extends Payload, T3 extends PayloadGenerator< T2>, T4 extends PayloadGeneratorUI< T2, T3>, T5 extends PayloadGeneratorUIHandler< T2, T3, T4>> void setDefaultPayloadGenerator(
-            T5 uiHandler) {
+    public <
+                    T2 extends Payload,
+                    T3 extends PayloadGenerator<T2>,
+                    T4 extends PayloadGeneratorUI<T2, T3>,
+                    T5 extends PayloadGeneratorUIHandler<T2, T3, T4>>
+            void setDefaultPayloadGenerator(T5 uiHandler) {
         if (payloadUIHandlers.containsValue(uiHandler)) {
             nameDefaultPayloadGenerator = uiHandler.getName();
         }

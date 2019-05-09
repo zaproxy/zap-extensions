@@ -17,20 +17,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
-
-import com.google.gson.*;
-import org.junit.*;
-import org.zaproxy.zap.extension.fuzz.payloads.*;
-import org.zaproxy.zap.utils.*;
-
-import java.util.*;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
+
+import com.google.gson.*;
+import java.util.*;
+import org.junit.*;
+import org.zaproxy.zap.extension.fuzz.payloads.*;
+import org.zaproxy.zap.utils.*;
 
 public class JsonPayloadGeneratorUnitTest {
 

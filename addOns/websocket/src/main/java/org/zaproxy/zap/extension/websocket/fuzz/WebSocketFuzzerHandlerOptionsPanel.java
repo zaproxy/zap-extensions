@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,11 +20,11 @@
 package org.zaproxy.zap.extension.websocket.fuzz;
 
 import javax.swing.JPanel;
-
 import org.zaproxy.zap.extension.fuzz.FuzzerOptions;
 import org.zaproxy.zap.extension.fuzz.impl.FuzzerHandlerOptionsPanel;
 
-public class WebSocketFuzzerHandlerOptionsPanel implements FuzzerHandlerOptionsPanel<FuzzerOptions> {
+public class WebSocketFuzzerHandlerOptionsPanel
+        implements FuzzerHandlerOptionsPanel<FuzzerOptions> {
 
     private final JPanel optionsPanel;
 
@@ -48,6 +48,5 @@ public class WebSocketFuzzerHandlerOptionsPanel implements FuzzerHandlerOptionsP
     }
 
     @Override
-    public void reset() {
-    }
+    public void reset() {}
 }

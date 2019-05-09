@@ -3,11 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
+ * Copyright 2011 The ZAP Development Team
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,18 +25,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Source;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -47,193 +46,206 @@ import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 
-	private static final Logger logger = Logger.getLogger(ExtensionReveal.class);
-	
-	public static final String NAME = "ExtensionReveal"; 
-	public static final int PROXY_LISTENER_ORDER = 10;
+    private static final Logger logger = Logger.getLogger(ExtensionReveal.class);
 
-	private static final String ATT_DISABLED 	= "DISABLED";
-	private static final String ATT_READONLY 	= "READONLY";
-	private static final String ATT_TYPE 		= "TYPE";
-	private static final String TYPE_HIDDEN 	= "HIDDEN";
-	
-	private boolean reveal;
+    public static final String NAME = "ExtensionReveal";
+    public static final int PROXY_LISTENER_ORDER = 10;
 
-	private RevealParam revealParam;
-	private RevealAPI revealAPI;
-	
-	private ZapToggleButton revealButton;
-	private JToolBar.Separator toolBarSeparator;
+    private static final String ATT_DISABLED = "DISABLED";
+    private static final String ATT_READONLY = "READONLY";
+    private static final String ATT_TYPE = "TYPE";
+    private static final String TYPE_HIDDEN = "HIDDEN";
 
-	public ExtensionReveal() {
-		super(NAME);
-		this.setOrder(18);
-	}
+    private boolean reveal;
 
-	@Override
-	public void init() {
-		super.init();
+    private RevealParam revealParam;
+    private RevealAPI revealAPI;
 
-		reveal = false;
-		revealParam = new RevealParam();
+    private ZapToggleButton revealButton;
+    private JToolBar.Separator toolBarSeparator;
 
-		revealAPI = new RevealAPI(this);
-	}
+    public ExtensionReveal() {
+        super(NAME);
+        this.setOrder(18);
+    }
 
-	@Override
-	public void hook(ExtensionHook extensionHook) {
-		super.hook(extensionHook);
+    @Override
+    public void init() {
+        super.init();
 
-		extensionHook.addProxyListener(this);
-		extensionHook.addOptionsParamSet(revealParam);
-		
-		if (getView() != null) {
-			ExtensionHookView extensionHookView = extensionHook.getHookView();
-			extensionHookView.addMainToolBarComponent(getRevealButton());
-			extensionHookView.addMainToolBarComponent(getToolBarSeparator());
-		}
+        reveal = false;
+        revealParam = new RevealParam();
 
-		extensionHook.addApiImplementor(revealAPI);
-	}
+        revealAPI = new RevealAPI(this);
+    }
 
-	@Override
-	public void optionsLoaded() {
-		super.optionsLoaded();
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
 
-		setReveal(revealParam.isReveal());
-	}
+        extensionHook.addProxyListener(this);
+        extensionHook.addOptionsParamSet(revealParam);
 
-	@Override
-	public boolean canUnload() {
-		return true;
-	}
-	
-	void setReveal(boolean reveal) {
-		if (this.reveal == reveal) {
-			return;
-		}
-		this.reveal = reveal; 
+        if (getView() != null) {
+            ExtensionHookView extensionHookView = extensionHook.getHookView();
+            extensionHookView.addMainToolBarComponent(getRevealButton());
+            extensionHookView.addMainToolBarComponent(getToolBarSeparator());
+        }
 
-		revealParam.setReveal(reveal);
-		try {
-			revealParam.getConfig().save();
-		} catch (ConfigurationException e) {
-			logger.error(e.getMessage(), e);
-		}
+        extensionHook.addApiImplementor(revealAPI);
+    }
 
-		if (revealButton != null) {
-			revealButton.setSelected(reveal);
-		}
-	}
+    @Override
+    public void optionsLoaded() {
+        super.optionsLoaded();
 
-	boolean isReveal() {
-		return reveal;
-	}
+        setReveal(revealParam.isReveal());
+    }
 
-	private JToggleButton getRevealButton() {
-		if (revealButton == null) {
-			revealButton = new ZapToggleButton();
-			revealButton.setIcon(new ImageIcon(ExtensionReveal.class.getResource("resources/icons/044.png"))); // 'light off' icon
-			revealButton.setToolTipText(Constant.messages.getString("reveal.button.enable"));
-			revealButton.setSelectedIcon(new ImageIcon(ExtensionReveal.class.getResource("resources/icons/043.png"))); // 'light on' icon
-			revealButton.setSelectedToolTipText(Constant.messages.getString("reveal.button.disable"));
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 
-			revealButton.addItemListener(new ItemListener() {
+    void setReveal(boolean reveal) {
+        if (this.reveal == reveal) {
+            return;
+        }
+        this.reveal = reveal;
 
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-					setReveal(ItemEvent.SELECTED == e.getStateChange());
-				}
-			});
-		}
-		return revealButton;
-	}
+        revealParam.setReveal(reveal);
+        try {
+            revealParam.getConfig().save();
+        } catch (ConfigurationException e) {
+            logger.error(e.getMessage(), e);
+        }
 
-	private JToolBar.Separator getToolBarSeparator() {
-		if (toolBarSeparator == null) {
-			toolBarSeparator = new JToolBar.Separator();
-		}
-		return toolBarSeparator;
-	}
+        if (revealButton != null) {
+            revealButton.setSelected(reveal);
+        }
+    }
 
-	@Override
-	public int getArrangeableListenerOrder() {
-		return PROXY_LISTENER_ORDER;
-	}
+    boolean isReveal() {
+        return reveal;
+    }
 
-	@Override
-	public boolean onHttpRequestSend(HttpMessage msg) {
-		return true;
-	}
+    private JToggleButton getRevealButton() {
+        if (revealButton == null) {
+            revealButton = new ZapToggleButton();
+            revealButton.setIcon(
+                    new ImageIcon(
+                            ExtensionReveal.class.getResource(
+                                    "resources/icons/044.png"))); // 'light off' icon
+            revealButton.setToolTipText(Constant.messages.getString("reveal.button.enable"));
+            revealButton.setSelectedIcon(
+                    new ImageIcon(
+                            ExtensionReveal.class.getResource(
+                                    "resources/icons/043.png"))); // 'light on' icon
+            revealButton.setSelectedToolTipText(
+                    Constant.messages.getString("reveal.button.disable"));
 
-	@Override
-	public boolean onHttpResponseReceive(HttpMessage msg) {
-		if (reveal) {
-			revealFields(msg);
-		}
-		return true;
-	}
+            revealButton.addItemListener(
+                    new ItemListener() {
 
-	private void revealFields(HttpMessage msg) {
-		boolean changed = false;
-		String response = msg.getResponseBody().toString();
-		Source src = new Source(response);
-		OutputDocument outputDocument = new OutputDocument(src);
-		
-		List<Element> formElements = src.getAllElements(HTMLElementName.FORM);
-		
-		if (formElements != null && formElements.size() > 0) {
-			// Loop through all of the FORM tags
-			logger.debug("Found " + formElements.size() + " forms");
-			
-			for (Element formElement : formElements) {
-				List<Element> elements = formElement.getAllElements();
-				
-				if (elements != null && elements.size() > 0) {
-					// Loop through all of the elements
-					logger.debug("Found " + elements.size() + " inputs");
-					for (Element element : elements) {
-						Attributes atts = element.getAttributes();
-						
-						if(atts != null && atts.size() > 0) {
-							Iterator<Attribute> iter = atts.iterator();
-							while (iter.hasNext()) {
-								Attribute att = iter.next();
-								if (ATT_DISABLED.equalsIgnoreCase(att.getName()) ||
-									ATT_READONLY.equalsIgnoreCase(att.getName()) ||
-									(ATT_TYPE.equalsIgnoreCase(att.getName()) && 
-											TYPE_HIDDEN.equalsIgnoreCase(att.getValue()))) {
-									logger.debug("Removing " + att.getName() + ": " + response.substring(att.getBegin(), att.getEnd()));
-									outputDocument.remove(att);
-									changed = true;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		if (changed) {
-			msg.setResponseBody(outputDocument.toString());
-		}
-	}
+                        @Override
+                        public void itemStateChanged(ItemEvent e) {
+                            setReveal(ItemEvent.SELECTED == e.getStateChange());
+                        }
+                    });
+        }
+        return revealButton;
+    }
 
-	@Override
-	public String getAuthor() {
-		return Constant.ZAP_TEAM;
-	}
+    private JToolBar.Separator getToolBarSeparator() {
+        if (toolBarSeparator == null) {
+            toolBarSeparator = new JToolBar.Separator();
+        }
+        return toolBarSeparator;
+    }
 
-	@Override
-	public String getDescription() {
-		return Constant.messages.getString("reveal.desc");
-	}
+    @Override
+    public int getArrangeableListenerOrder() {
+        return PROXY_LISTENER_ORDER;
+    }
 
-	@Override
-	public URL getURL() {
-		try {
-			return new URL(Constant.ZAP_HOMEPAGE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
+    @Override
+    public boolean onHttpRequestSend(HttpMessage msg) {
+        return true;
+    }
+
+    @Override
+    public boolean onHttpResponseReceive(HttpMessage msg) {
+        if (reveal) {
+            revealFields(msg);
+        }
+        return true;
+    }
+
+    private void revealFields(HttpMessage msg) {
+        boolean changed = false;
+        String response = msg.getResponseBody().toString();
+        Source src = new Source(response);
+        OutputDocument outputDocument = new OutputDocument(src);
+
+        List<Element> formElements = src.getAllElements(HTMLElementName.FORM);
+
+        if (formElements != null && formElements.size() > 0) {
+            // Loop through all of the FORM tags
+            logger.debug("Found " + formElements.size() + " forms");
+
+            for (Element formElement : formElements) {
+                List<Element> elements = formElement.getAllElements();
+
+                if (elements != null && elements.size() > 0) {
+                    // Loop through all of the elements
+                    logger.debug("Found " + elements.size() + " inputs");
+                    for (Element element : elements) {
+                        Attributes atts = element.getAttributes();
+
+                        if (atts != null && atts.size() > 0) {
+                            Iterator<Attribute> iter = atts.iterator();
+                            while (iter.hasNext()) {
+                                Attribute att = iter.next();
+                                if (ATT_DISABLED.equalsIgnoreCase(att.getName())
+                                        || ATT_READONLY.equalsIgnoreCase(att.getName())
+                                        || (ATT_TYPE.equalsIgnoreCase(att.getName())
+                                                && TYPE_HIDDEN.equalsIgnoreCase(att.getValue()))) {
+                                    logger.debug(
+                                            "Removing "
+                                                    + att.getName()
+                                                    + ": "
+                                                    + response.substring(
+                                                            att.getBegin(), att.getEnd()));
+                                    outputDocument.remove(att);
+                                    changed = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (changed) {
+            msg.setResponseBody(outputDocument.toString());
+        }
+    }
+
+    @Override
+    public String getAuthor() {
+        return Constant.ZAP_TEAM;
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString("reveal.desc");
+    }
+
+    @Override
+    public URL getURL() {
+        try {
+            return new URL(Constant.ZAP_HOMEPAGE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 }

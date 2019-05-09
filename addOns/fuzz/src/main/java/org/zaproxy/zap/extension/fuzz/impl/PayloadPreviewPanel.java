@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,6 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -35,7 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
@@ -49,10 +47,14 @@ class PayloadPreviewPanel {
 
     private static final Logger LOGGER = Logger.getLogger(PayloadPreviewPanel.class);
 
-    private static final String GENERATE_PREVIEW_BUTTON_LABEL = Constant.messages.getString("fuzz.fuzzer.processors.button.generatePreview.label");
-    private static final String LOCK_SCROLL_BARS_BUTTON_LABEL = Constant.messages.getString("fuzz.fuzzer.processors.button.lockScroll.label");
-    private static final String CURRENT_PAYLOADS_FIELD_LABEL = Constant.messages.getString("fuzz.fuzzer.processors.currentPayloads.label");
-    private static final String PROCESSED_PAYLOADS_FIELD_LABEL = Constant.messages.getString("fuzz.fuzzer.processors.processedPayloads.label");
+    private static final String GENERATE_PREVIEW_BUTTON_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.processors.button.generatePreview.label");
+    private static final String LOCK_SCROLL_BARS_BUTTON_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.processors.button.lockScroll.label");
+    private static final String CURRENT_PAYLOADS_FIELD_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.processors.currentPayloads.label");
+    private static final String PROCESSED_PAYLOADS_FIELD_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.processors.processedPayloads.label");
 
     private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 50;
 
@@ -78,14 +80,15 @@ class PayloadPreviewPanel {
         JScrollPane currentPayloadsScrollPane = new JScrollPane(getCurrentPayloadsTextArea());
         JScrollPane processedPayloadsScrollPane = new JScrollPane(getProcessedPayloadsTextArea());
 
-        SyncScrollBarsAdjustmentListener syncScrollPanes = new SyncScrollBarsAdjustmentListener(
-                currentPayloadsScrollPane,
-                processedPayloadsScrollPane);
+        SyncScrollBarsAdjustmentListener syncScrollPanes =
+                new SyncScrollBarsAdjustmentListener(
+                        currentPayloadsScrollPane, processedPayloadsScrollPane);
 
-        JPanel panel = createSplitPanel(
-                createLabelledPanel(currentPayloadsLabel, currentPayloadsScrollPane),
-                createLabelledPanel(processedPayloadsLabel, processedPayloadsScrollPane),
-                syncScrollPanes);
+        JPanel panel =
+                createSplitPanel(
+                        createLabelledPanel(currentPayloadsLabel, currentPayloadsScrollPane),
+                        createLabelledPanel(processedPayloadsLabel, processedPayloadsScrollPane),
+                        syncScrollPanes);
 
         mainPanel = new JPanel();
 
@@ -98,11 +101,12 @@ class PayloadPreviewPanel {
                         .addComponent(getPayloadsPreviewGenerateButton())
                         .addComponent(panel));
         layout.setVerticalGroup(
-                layout.createSequentialGroup().addComponent(getPayloadsPreviewGenerateButton()).addComponent(panel));
+                layout.createSequentialGroup()
+                        .addComponent(getPayloadsPreviewGenerateButton())
+                        .addComponent(panel));
 
         updatePayloadsTextArea(
-                getCurrentPayloadsTextArea(),
-                NullPayloadProcessor.getNullPayloadProcessor());
+                getCurrentPayloadsTextArea(), NullPayloadProcessor.getNullPayloadProcessor());
     }
 
     public void setPayloadProcessorUIPanel(PayloadProcessorUIPanel<?, ?, ?> panel) {
@@ -118,13 +122,14 @@ class PayloadPreviewPanel {
         if (payloadsPreviewGenerateButton == null) {
             payloadsPreviewGenerateButton = new JButton(GENERATE_PREVIEW_BUTTON_LABEL);
             payloadsPreviewGenerateButton.setEnabled(false);
-            payloadsPreviewGenerateButton.addActionListener(new ActionListener() {
+            payloadsPreviewGenerateButton.addActionListener(
+                    new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    updateProcessedPayloadsTextArea();
-                }
-            });
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            updateProcessedPayloadsTextArea();
+                        }
+                    });
         }
         return payloadsPreviewGenerateButton;
     }
@@ -166,7 +171,8 @@ class PayloadPreviewPanel {
                 LOGGER.debug("Failed to iterate the payloads: " + e.getMessage());
             }
             contents.setLength(0);
-            contents.append(Constant.messages.getString("fuzz.fuzzer.processors.payloadsPreview.error"));
+            contents.append(
+                    Constant.messages.getString("fuzz.fuzzer.processors.payloadsPreview.error"));
             textArea.setEnabled(false);
         } finally {
             try {
@@ -198,7 +204,8 @@ class PayloadPreviewPanel {
 
     private static class NullPayloadProcessor<T extends Payload> implements PayloadProcessor<T> {
 
-        private static final NullPayloadProcessor<?> NULL_PAYLOAD_PROCESSOR = new NullPayloadProcessor<>();
+        private static final NullPayloadProcessor<?> NULL_PAYLOAD_PROCESSOR =
+                new NullPayloadProcessor<>();
 
         @Override
         public T process(T payload) throws PayloadProcessingException {
@@ -232,19 +239,23 @@ class PayloadPreviewPanel {
 
         JCheckBox syncScrollBarsCheckbox = new JCheckBox(LOCK_SCROLL_BARS_BUTTON_LABEL);
         syncScrollBarsCheckbox.setSelected(true);
-        syncScrollBarsCheckbox.addItemListener(new ItemListener() {
+        syncScrollBarsCheckbox.addItemListener(
+                new ItemListener() {
 
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                syncScrollPanes.setSync(e.getStateChange() == ItemEvent.SELECTED);
-            }
-        });
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        syncScrollPanes.setSync(e.getStateChange() == ItemEvent.SELECTED);
+                    }
+                });
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(splitPane)
                         .addComponent(syncScrollBarsCheckbox));
-        layout.setVerticalGroup(layout.createSequentialGroup().addComponent(splitPane).addComponent(syncScrollBarsCheckbox));
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(splitPane)
+                        .addComponent(syncScrollBarsCheckbox));
 
         return panel;
     }
@@ -257,8 +268,11 @@ class PayloadPreviewPanel {
         layout.setAutoCreateGaps(true);
 
         layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(label).addComponent(component));
-        layout.setVerticalGroup(layout.createSequentialGroup().addComponent(label).addComponent(component));
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(label)
+                        .addComponent(component));
+        layout.setVerticalGroup(
+                layout.createSequentialGroup().addComponent(label).addComponent(component));
 
         return panel;
     }
@@ -283,13 +297,21 @@ class PayloadPreviewPanel {
         public void adjustmentValueChanged(AdjustmentEvent e) {
             if (sync) {
                 if (scrollPaneA.getVerticalScrollBar().equals(e.getSource())) {
-                    scrollPaneB.getVerticalScrollBar().setValue(scrollPaneA.getVerticalScrollBar().getValue());
+                    scrollPaneB
+                            .getVerticalScrollBar()
+                            .setValue(scrollPaneA.getVerticalScrollBar().getValue());
                 } else if (scrollPaneB.getVerticalScrollBar().equals(e.getSource())) {
-                    scrollPaneA.getVerticalScrollBar().setValue(scrollPaneB.getVerticalScrollBar().getValue());
+                    scrollPaneA
+                            .getVerticalScrollBar()
+                            .setValue(scrollPaneB.getVerticalScrollBar().getValue());
                 } else if (scrollPaneA.getHorizontalScrollBar().equals(e.getSource())) {
-                    scrollPaneB.getHorizontalScrollBar().setValue(scrollPaneA.getHorizontalScrollBar().getValue());
+                    scrollPaneB
+                            .getHorizontalScrollBar()
+                            .setValue(scrollPaneA.getHorizontalScrollBar().getValue());
                 } else if (scrollPaneB.getHorizontalScrollBar().equals(e.getSource())) {
-                    scrollPaneA.getHorizontalScrollBar().setValue(scrollPaneB.getHorizontalScrollBar().getValue());
+                    scrollPaneA
+                            .getHorizontalScrollBar()
+                            .setValue(scrollPaneB.getHorizontalScrollBar().getValue());
                 }
             }
         }

@@ -3,13 +3,13 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP development team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,27 +19,29 @@
  */
 package org.zaproxy.zap.testutils;
 
+import fi.iki.elonen.NanoHTTPD;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.iki.elonen.NanoHTTPD;
-
 public class HTTPDTestServer extends NanoHTTPD {
-    
-    private List<NanoServerHandler> handlers = 
-            new ArrayList<NanoServerHandler>();
-    
-    private NanoServerHandler handler404 = new NanoServerHandler(""){
-        @Override
-        protected Response serve(IHTTPSession session) {
-            return newFixedLengthResponse(
-                    Response.Status.NOT_FOUND, MIME_HTML, 
-                    "<html><head><title>404</title></head><body>404 Not Found</body></html>");
-        }};
+
+    private List<NanoServerHandler> handlers = new ArrayList<NanoServerHandler>();
+
+    private NanoServerHandler handler404 =
+            new NanoServerHandler("") {
+                @Override
+                protected Response serve(IHTTPSession session) {
+                    return newFixedLengthResponse(
+                            Response.Status.NOT_FOUND,
+                            MIME_HTML,
+                            "<html><head><title>404</title></head><body>404 Not Found</body></html>");
+                }
+            };
 
     public HTTPDTestServer(int port) {
         super(port);
     }
+
     @Override
     public Response serve(IHTTPSession session) {
         String uri = session.getUri();
@@ -51,16 +53,15 @@ public class HTTPDTestServer extends NanoHTTPD {
         return handler404.serve(session);
     }
 
-    public void addHandler (NanoServerHandler handler) {
+    public void addHandler(NanoServerHandler handler) {
         this.handlers.add(handler);
     }
 
-    public void removeHandler (NanoServerHandler handler) {
+    public void removeHandler(NanoServerHandler handler) {
         this.handlers.remove(handler);
     }
-    
-    public void setHandler404 (NanoServerHandler handler) {
+
+    public void setHandler404(NanoServerHandler handler) {
         this.handler404 = handler;
     }
-
 }

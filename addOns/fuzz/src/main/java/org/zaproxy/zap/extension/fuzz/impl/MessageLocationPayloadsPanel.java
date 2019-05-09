@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -34,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SortOrder;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
@@ -49,13 +47,18 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
     private static final long serialVersionUID = 693504188920055070L;
 
-    private static final String REMOVE_DIALOG_TITLE = Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.title");
-    private static final String REMOVE_DIALOG_TEXT = Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.text");
+    private static final String REMOVE_DIALOG_TITLE =
+            Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.title");
+    private static final String REMOVE_DIALOG_TEXT =
+            Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.text");
 
-    private static final String REMOVE_DIALOG_CONFIRM_BUTTON_LABEL = Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.button.confirm");
-    private static final String REMOVE_DIALOG_CANCEL_BUTTON_LABEL = Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.button.cancel");
+    private static final String REMOVE_DIALOG_CONFIRM_BUTTON_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.button.confirm");
+    private static final String REMOVE_DIALOG_CANCEL_BUTTON_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.button.cancel");
 
-    private static final String REMOVE_DIALOG_CHECKBOX_LABEL = Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.checkbox.label");
+    private static final String REMOVE_DIALOG_CHECKBOX_LABEL =
+            Constant.messages.getString("fuzz.fuzzer.dialog.remove.payload.checkbox.label");
 
     private final Window parent;
 
@@ -83,47 +86,66 @@ public class MessageLocationPayloadsPanel extends JPanel {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
-        JLabel locationLabel = new JLabel(
-                Constant.messages.getString("fuzz.fuzzer.dialog.payloads.messagelocation.label.location"));
+        JLabel locationLabel =
+                new JLabel(
+                        Constant.messages.getString(
+                                "fuzz.fuzzer.dialog.payloads.messagelocation.label.location"));
         JLabel messageLocationLabel = new JLabel(messageLocation.getDescription());
-        JLabel valueLabel = new JLabel(Constant.messages.getString("fuzz.fuzzer.dialog.payloads.messagelocation.label.value"));
+        JLabel valueLabel =
+                new JLabel(
+                        Constant.messages.getString(
+                                "fuzz.fuzzer.dialog.payloads.messagelocation.label.value"));
 
         JComponent messageLocationValue;
         String value = messageLocation.getValue();
         if (value.length() > 100) {
-            JTextArea messageLocationValueTextArea = new JTextArea(StringUIUtils.addVisibleNewLineChars(value));
+            JTextArea messageLocationValueTextArea =
+                    new JTextArea(StringUIUtils.addVisibleNewLineChars(value));
             messageLocationValueTextArea.setColumns(10);
             messageLocationValueTextArea.setRows(5);
             messageLocationValueTextArea.setEditable(false);
 
-            JScrollPane messageLocationValueScrollPane = new JScrollPane(messageLocationValueTextArea);
+            JScrollPane messageLocationValueScrollPane =
+                    new JScrollPane(messageLocationValueTextArea);
             messageLocationValue = messageLocationValueScrollPane;
         } else {
-            JLabel messageLocationValueLabel = new JLabel(StringUIUtils.containsNewLineChars(value)
-                    ? StringUIUtils.replaceWithVisibleWhiteSpaceChars(value)
-                    : value);
+            JLabel messageLocationValueLabel =
+                    new JLabel(
+                            StringUIUtils.containsNewLineChars(value)
+                                    ? StringUIUtils.replaceWithVisibleWhiteSpaceChars(value)
+                                    : value);
             messageLocationValue = messageLocationValueLabel;
         }
 
-        JLabel payloadsLabel = new JLabel(Constant.messages.getString("fuzz.fuzzer.dialog.payloads.payloads.label"));
+        JLabel payloadsLabel =
+                new JLabel(
+                        Constant.messages.getString("fuzz.fuzzer.dialog.payloads.payloads.label"));
 
-        layout.setHorizontalGroup(layout.createParallelGroup()
-                .addGroup(layout.createSequentialGroup().addComponent(locationLabel).addComponent(messageLocationLabel))
-                .addGroup(layout.createSequentialGroup().addComponent(valueLabel).addComponent(messageLocationValue))
-                .addComponent(payloadsLabel)
-                .addComponent(payloadsTablePanel));
+        layout.setHorizontalGroup(
+                layout.createParallelGroup()
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(locationLabel)
+                                        .addComponent(messageLocationLabel))
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(valueLabel)
+                                        .addComponent(messageLocationValue))
+                        .addComponent(payloadsLabel)
+                        .addComponent(payloadsTablePanel));
 
-        layout.setVerticalGroup(layout.createSequentialGroup()
-                .addGroup(
-                        layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(locationLabel)
-                                .addComponent(messageLocationLabel))
-                .addGroup(
-                        layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(valueLabel)
-                                .addComponent(messageLocationValue))
-                .addComponent(payloadsLabel)
-                .addComponent(payloadsTablePanel));
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(locationLabel)
+                                        .addComponent(messageLocationLabel))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(valueLabel)
+                                        .addComponent(messageLocationValue))
+                        .addComponent(payloadsLabel)
+                        .addComponent(payloadsTablePanel));
     }
 
     public void clear() {
@@ -144,7 +166,8 @@ public class MessageLocationPayloadsPanel extends JPanel {
         return payloadsTablePanel.hasPayloads();
     }
 
-    private class PayloadsTablePanel extends AbstractMultipleOrderedOptionsBaseTablePanel<PayloadTableEntry> {
+    private class PayloadsTablePanel
+            extends AbstractMultipleOrderedOptionsBaseTablePanel<PayloadTableEntry> {
 
         private static final long serialVersionUID = 779189100799721039L;
 
@@ -158,38 +181,61 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
             getTable().getColumnExt(0).setPrototypeValue(Integer.valueOf(99));
             getTable().getColumnExt(1).setPrototypeValue("Payload Type");
-            getTable().getColumnExt(2).setPrototypeValue("Value Of Payload which might be very very large");
+            getTable()
+                    .getColumnExt(2)
+                    .setPrototypeValue("Value Of Payload which might be very very large");
             getTable().getColumnExt(3).setPrototypeValue("7 Processors");
 
             getRemoveWithoutConfirmationCheckBox().setSelected(true);
 
             addButtonSpacer();
 
-            processorsButton = new JButton(Constant.messages.getString("fuzz.fuzzer.dialog.payloads.button.processors"));
-            processorsButton.setToolTipText(Constant.messages.getString("fuzz.fuzzer.dialog.payloads.button.processors.tooltip"));
+            processorsButton =
+                    new JButton(
+                            Constant.messages.getString(
+                                    "fuzz.fuzzer.dialog.payloads.button.processors"));
+            processorsButton.setToolTipText(
+                    Constant.messages.getString(
+                            "fuzz.fuzzer.dialog.payloads.button.processors.tooltip"));
             processorsButton.setEnabled(false);
-            processorsButton.addActionListener(new ActionListener() {
+            processorsButton.addActionListener(
+                    new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (processorsDialog == null) {
-                        processorsDialog = new ProcessorsPayloadDialog(parent, new PayloadProcessorsContainer(
-                                PayloadProcessorUIHandlersRegistry.getInstance().getProcessorUIHandlers(),
-                                PayloadProcessorUIHandlersRegistry.getInstance().getNameDefaultPayloadProcessor()));
-                        processorsDialog.pack();
-                    }
-                    int row = getSelectedRow();
-                    PayloadTableEntry payloadTableEntry = getMultipleOptionsModel().getElement(row);
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (processorsDialog == null) {
+                                processorsDialog =
+                                        new ProcessorsPayloadDialog(
+                                                parent,
+                                                new PayloadProcessorsContainer(
+                                                        PayloadProcessorUIHandlersRegistry
+                                                                .getInstance()
+                                                                .getProcessorUIHandlers(),
+                                                        PayloadProcessorUIHandlersRegistry
+                                                                .getInstance()
+                                                                .getNameDefaultPayloadProcessor()));
+                                processorsDialog.pack();
+                            }
+                            int row = getSelectedRow();
+                            PayloadTableEntry payloadTableEntry =
+                                    getMultipleOptionsModel().getElement(row);
 
-                    processorsDialog.setMessageLocation(messageLocation);
-                    processorsDialog.setPayloadProcessors(payloadTableEntry.getPayloadProcessors());
-                    processorsDialog.setPayloads((ResettableAutoCloseableIterator<Payload>) payloadTableEntry.getPayloadGeneratorUI().getPayloadGenerator().iterator());
-                    processorsDialog.setVisible(true);
+                            processorsDialog.setMessageLocation(messageLocation);
+                            processorsDialog.setPayloadProcessors(
+                                    payloadTableEntry.getPayloadProcessors());
+                            processorsDialog.setPayloads(
+                                    (ResettableAutoCloseableIterator<Payload>)
+                                            payloadTableEntry
+                                                    .getPayloadGeneratorUI()
+                                                    .getPayloadGenerator()
+                                                    .iterator());
+                            processorsDialog.setVisible(true);
 
-                    payloadTableEntry.setPayloadProcessors(processorsDialog.getProcessors());
-                    getMultipleOptionsModel().fireTableRowsUpdated(row, row);
-                }
-            });
+                            payloadTableEntry.setPayloadProcessors(
+                                    processorsDialog.getProcessors());
+                            getMultipleOptionsModel().fireTableRowsUpdated(row, row);
+                        }
+                    });
             addButton(processorsButton);
 
             addMoveButtons();
@@ -212,7 +258,8 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
         @Override
         public PayloadTableEntry showAddDialogue() {
-            AddPayloadDialog addPayloadDialog = new AddPayloadDialog(parent, payloadGeneratorsUIHandlers, messageLocation);
+            AddPayloadDialog addPayloadDialog =
+                    new AddPayloadDialog(parent, payloadGeneratorsUIHandlers, messageLocation);
             addPayloadDialog.pack();
             addPayloadDialog.setVisible(true);
 
@@ -221,7 +268,10 @@ public class MessageLocationPayloadsPanel extends JPanel {
                 return null;
             }
 
-            getMultipleOptionsModel().addElement(new PayloadTableEntry(getModel().getRowCount() + 1, payloadGeneratorUI));
+            getMultipleOptionsModel()
+                    .addElement(
+                            new PayloadTableEntry(
+                                    getModel().getRowCount() + 1, payloadGeneratorUI));
             updateMoveButtons();
 
             if (payloadsChangedListener != null) {
@@ -232,7 +282,8 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
         @Override
         public PayloadTableEntry showModifyDialogue(PayloadTableEntry e) {
-            PayloadGeneratorUI<?, ?> payloadGeneratorUI = showModifyDialogueHelper((PayloadGeneratorUI)e.getPayloadGeneratorUI());
+            PayloadGeneratorUI<?, ?> payloadGeneratorUI =
+                    showModifyDialogueHelper((PayloadGeneratorUI) e.getPayloadGeneratorUI());
 
             if (payloadGeneratorUI != null) {
                 e.setPayloadGeneratorUI(payloadGeneratorUI);
@@ -241,12 +292,16 @@ public class MessageLocationPayloadsPanel extends JPanel {
             return null;
         }
 
-        private <T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> T3 showModifyDialogueHelper(
-                T3 payloadGeneratorUI) {
-            ModifyPayloadDialog<T, T2, T3> modifyPayloadDialog = new ModifyPayloadDialog<>(
-                    parent,
-                    payloadGeneratorsUIHandlers.getPanel(payloadGeneratorUI),
-                    payloadGeneratorUI);
+        private <
+                        T extends Payload,
+                        T2 extends PayloadGenerator<T>,
+                        T3 extends PayloadGeneratorUI<T, T2>>
+                T3 showModifyDialogueHelper(T3 payloadGeneratorUI) {
+            ModifyPayloadDialog<T, T2, T3> modifyPayloadDialog =
+                    new ModifyPayloadDialog<>(
+                            parent,
+                            payloadGeneratorsUIHandlers.getPanel(payloadGeneratorUI),
+                            payloadGeneratorUI);
             modifyPayloadDialog.pack();
             modifyPayloadDialog.setVisible(true);
 
@@ -268,20 +323,26 @@ public class MessageLocationPayloadsPanel extends JPanel {
         }
 
         protected boolean showRemoveDialogueImpl(PayloadTableEntry payloadTableEntry) {
-            JCheckBox removeWithoutConfirmationCheckBox = new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
-            Object[] messages = { REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox };
-            int option = JOptionPane.showOptionDialog(
-                    parent,
-                    messages,
-                    REMOVE_DIALOG_TITLE,
-                    JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    new String[] { REMOVE_DIALOG_CONFIRM_BUTTON_LABEL, REMOVE_DIALOG_CANCEL_BUTTON_LABEL },
-                    null);
+            JCheckBox removeWithoutConfirmationCheckBox =
+                    new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
+            Object[] messages = {REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox};
+            int option =
+                    JOptionPane.showOptionDialog(
+                            parent,
+                            messages,
+                            REMOVE_DIALOG_TITLE,
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[] {
+                                REMOVE_DIALOG_CONFIRM_BUTTON_LABEL,
+                                REMOVE_DIALOG_CANCEL_BUTTON_LABEL
+                            },
+                            null);
 
             if (option == JOptionPane.OK_OPTION) {
-                getRemoveWithoutConfirmationCheckBox().setSelected(removeWithoutConfirmationCheckBox.isSelected());
+                getRemoveWithoutConfirmationCheckBox()
+                        .setSelected(removeWithoutConfirmationCheckBox.isSelected());
                 return true;
             }
 

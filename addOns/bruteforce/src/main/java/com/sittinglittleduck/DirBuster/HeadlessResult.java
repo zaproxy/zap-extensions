@@ -1,7 +1,6 @@
- 
 /*
- * HeadlessResult.java 
- * 
+ * HeadlessResult.java
+ *
  * Copyright 2008 James Fisher
  *
  * This library is free software; you can redistribute it and/or
@@ -21,44 +20,31 @@
 
 package com.sittinglittleduck.DirBuster;
 
-/**
- *
- * @author james
- */
-
-
-public class HeadlessResult 
-{
+/** @author james */
+public class HeadlessResult {
     public static final int DIR = 0;
     public static final int FILE = 1;
     public static final int ERROR = 2;
-    
+
     private String found;
     private int responceCode;
     private int type;
 
-    public HeadlessResult(String found, int responceCode, int type)
-    {
+    public HeadlessResult(String found, int responceCode, int type) {
         this.found = found;
         this.responceCode = responceCode;
         this.type = type;
     }
 
-    public String getFound()
-    {
+    public String getFound() {
         return found;
     }
 
-    public int getResponceCode()
-    {
+    public int getResponceCode() {
         return responceCode;
     }
 
-    public int getType()
-    {
+    public int getType() {
         return type;
     }
-    
-    
-
 }

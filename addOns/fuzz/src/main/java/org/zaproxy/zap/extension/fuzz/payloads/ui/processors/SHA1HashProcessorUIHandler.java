@@ -1,10 +1,10 @@
 /*
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
+ *
  * Copyright 2015 The ZAP Development Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,19 +20,19 @@
 package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 
 import java.nio.charset.Charset;
-
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.SHA1HashProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractStringHashProcessorUIPanel.AbstractStringHashProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.SHA1HashProcessorUIHandler.SHA1HashProcessorUI;
 
-public class SHA1HashProcessorUIHandler implements
-        PayloadProcessorUIHandler<DefaultPayload, SHA1HashProcessor, SHA1HashProcessorUI> {
+public class SHA1HashProcessorUIHandler
+        implements PayloadProcessorUIHandler<
+                DefaultPayload, SHA1HashProcessor, SHA1HashProcessorUI> {
 
-    private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.sha1Hash.name");
+    private static final String PROCESSOR_NAME =
+            Constant.messages.getString("fuzz.payload.processor.sha1Hash.name");
 
     @Override
     public String getName() {
@@ -54,7 +54,8 @@ public class SHA1HashProcessorUIHandler implements
         return new SHA1HashProcessorUIPanel();
     }
 
-    public static class SHA1HashProcessorUI extends AbstractStringHashProcessorUI<SHA1HashProcessor> {
+    public static class SHA1HashProcessorUI
+            extends AbstractStringHashProcessorUI<SHA1HashProcessor> {
 
         public SHA1HashProcessorUI(Charset charset, boolean upperCase) {
             super(charset, upperCase);
@@ -77,7 +78,8 @@ public class SHA1HashProcessorUIHandler implements
 
         @Override
         public String getDescription() {
-            return Constant.messages.getString("fuzz.payload.processor.sha1Hash.description", getCharset().name());
+            return Constant.messages.getString(
+                    "fuzz.payload.processor.sha1Hash.description", getCharset().name());
         }
 
         @Override
@@ -89,11 +91,10 @@ public class SHA1HashProcessorUIHandler implements
         public SHA1HashProcessorUI copy() {
             return this;
         }
-
     }
 
-    public static class SHA1HashProcessorUIPanel extends
-            AbstractStringHashProcessorUIPanel<SHA1HashProcessor, SHA1HashProcessorUI> {
+    public static class SHA1HashProcessorUIPanel
+            extends AbstractStringHashProcessorUIPanel<SHA1HashProcessor, SHA1HashProcessorUI> {
 
         private final JPanel fieldsPanel;
 
@@ -115,7 +116,9 @@ public class SHA1HashProcessorUIHandler implements
 
         @Override
         public SHA1HashProcessor getPayloadProcessor() {
-            return new SHA1HashProcessor((Charset) getCharsetComboBox().getSelectedItem(), getUpperCaseCheckBox().isSelected());
+            return new SHA1HashProcessor(
+                    (Charset) getCharsetComboBox().getSelectedItem(),
+                    getUpperCaseCheckBox().isSelected());
         }
     }
 }

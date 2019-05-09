@@ -17,3 +17,7 @@ dependencies {
     testImplementation(project(":testutils"))
     testImplementation("org.apache.commons:commons-lang3:3.5")
 }
+
+spotless {
+    javaWith3rdPartyFormatted(project, listOf("**/IntegerOverflow.java"))
+}
