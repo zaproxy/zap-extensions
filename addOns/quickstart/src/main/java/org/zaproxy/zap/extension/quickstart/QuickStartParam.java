@@ -56,6 +56,8 @@ public class QuickStartParam extends AbstractParam {
     private static final String PARAM_AJAX_SPIDER_DEFAULT_BROWSER =
             PARAM_AJAX_BASE_KEY + ".browser";
 
+    private static final String PARAM_CLEARED_NEWS_ITEM = PARAM_BASE_KEY + ".clearedNews";
+
     private boolean isTradSpiderEnabled;
     private List<Object> recentUrls = new ArrayList<Object>(0);
     private int maxRecentUrls;
@@ -64,6 +66,7 @@ public class QuickStartParam extends AbstractParam {
 
     private boolean isAjaxSpiderEnabled;
     private String ajaxSpiderDefaultBrowser;
+    private String clearedNewsItem;
 
     @Override
     protected void parse() {
@@ -102,6 +105,11 @@ public class QuickStartParam extends AbstractParam {
                     getConfig().getString(PARAM_AJAX_SPIDER_DEFAULT_BROWSER, DEFAULT_BROWSER);
         } catch (Exception e) {
             LOGGER.error("Failed to load the Ajax \"Default Browser\" configuration", e);
+        }
+        try {
+            clearedNewsItem = getConfig().getString(PARAM_CLEARED_NEWS_ITEM, "");
+        } catch (Exception e) {
+            LOGGER.error("Failed to load the cleared news item configuration", e);
         }
     }
 
@@ -190,5 +198,14 @@ public class QuickStartParam extends AbstractParam {
         }
         getConfig().setProperty(PARAM_RECENT_URLS, this.recentUrls);
         QuickStartHelper.raiseOptionsChangedEvent();
+    }
+
+    public String getClearedNewsItem() {
+        return clearedNewsItem;
+    }
+
+    public void setClearedNewsItem(String clearedNewsItem) {
+        this.clearedNewsItem = clearedNewsItem;
+        getConfig().setProperty(PARAM_CLEARED_NEWS_ITEM, clearedNewsItem);
     }
 }
