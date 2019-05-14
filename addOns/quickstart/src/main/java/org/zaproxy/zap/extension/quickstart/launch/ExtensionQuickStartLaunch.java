@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
@@ -36,12 +35,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.Version;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.AddOnInstallationStatusListener;
 import org.zaproxy.zap.extension.api.API;
@@ -56,13 +50,6 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
 
     public static final String NAME = "ExtensionQuickStartLaunch";
-    private static final String DEFAULT_LAUNCH_PAGE_URL_PREFIX = "https://bit.ly/owaspzap-start-";
-    private static final String DEV_LAUNCH_PAGE = "dev";
-    protected static final String PAGE_LOCALE_SEPARATOR =
-            "<!-- - - - - - - - - %< - - - - - - - - -->\n";
-    protected static final String PAGE_LOCALE_PREFIX = "<!-- Locale = ";
-    protected static final String PAGE_LOCALE_POSTFIX = " -->";
-    protected static final String PAGE_LOCALE_DEFAULT = "Default";
     private static final Logger LOGGER = Logger.getLogger(ExtensionQuickStartLaunch.class);
 
     public static final String RESOURCES = "/org/zaproxy/zap/extension/quickstart/resources";
@@ -83,8 +70,6 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
                             ExtensionQuickStart.class.getResource(RESOURCES + "/safari.png")));
-
-    private String defaultLaunchContent;
 
     private QuickStartLaunchAPI api;
     private OptionsQuickStartLaunchPanel optionsPanel;
@@ -153,9 +138,6 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     public void optionsLoaded() {
         super.optionsLoaded();
         if (View.isInitialised()) {
-            // Always init in case the user changes to use the default home page
-            // later
-            defaultLaunchContent = Constant.messages.getString("quickstart.launch.html");
             setToolbarButtonIcon(
                     this.getExtQuickStart().getQuickStartParam().getLaunchDefaultBrowser());
         }
@@ -164,81 +146,6 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
             // Dont request the online version if the user has opted out
             return;
         }
-
-        new Thread("ZAP-LaunchPageFetcher") {
-            @Override
-            public void run() {
-                // Try to read the default launch page
-                HttpMessage msg;
-                String launchPageUrl = getLaunchPageURL();
-                try {
-                    HttpSender httpSender =
-                            new HttpSender(
-                                    Model.getSingleton().getOptionsParam().getConnectionParam(),
-                                    true,
-                                    HttpSender.CHECK_FOR_UPDATES_INITIATOR);
-                    httpSender.setFollowRedirect(true);
-                    msg =
-                            new HttpMessage(
-                                    new URI(launchPageUrl, true),
-                                    Model.getSingleton().getOptionsParam().getConnectionParam());
-                    httpSender.sendAndReceive(msg, true);
-                    if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
-                        /*
-                         * This is split into different locales, so split up
-                         */
-                        String combinedDefaultContent = msg.getResponseBody().toString();
-                        String zapLocale = Constant.getLocale().toString();
-                        String[] localeContents =
-                                combinedDefaultContent.split(PAGE_LOCALE_SEPARATOR);
-                        for (String locContent : localeContents) {
-                            // First line should be a comment including the
-                            // locale name
-                            if (locContent.startsWith(PAGE_LOCALE_PREFIX)) {
-                                String locale =
-                                        locContent.substring(
-                                                PAGE_LOCALE_PREFIX.length(),
-                                                locContent.indexOf(PAGE_LOCALE_POSTFIX));
-                                if (PAGE_LOCALE_DEFAULT.equals(locale)) {
-                                    // The default one should be first
-                                    defaultLaunchContent = locContent;
-                                } else if (zapLocale.equals(locale)) {
-                                    // Found the right one for this locale
-                                    defaultLaunchContent = locContent;
-                                    break;
-                                }
-                            } else {
-                                LOGGER.debug("No locale comment?? " + locContent);
-                            }
-                        }
-                    } else {
-                        LOGGER.debug(
-                                "Response from "
-                                        + launchPageUrl
-                                        + " : "
-                                        + msg.getResponseHeader().getStatusCode());
-                    }
-                } catch (Exception e) {
-                    LOGGER.debug(
-                            "Failed to read from " + launchPageUrl + " : " + e.getMessage(), e);
-                }
-            }
-        }.start();
-    }
-
-    private String getLaunchPageURL() {
-        String page = DEV_LAUNCH_PAGE;
-        if (!Constant.isDevBuild() && !Constant.isDailyBuild()) {
-            // Converts the ZAP version to something like 2-8
-            try {
-                Version zapVersion = new Version(Constant.PROGRAM_VERSION);
-                page = zapVersion.getMajorVersion() + "-" + zapVersion.getMinorVersion();
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("Failed to parse ZAP version " + Constant.PROGRAM_VERSION, e);
-            }
-        }
-
-        return DEFAULT_LAUNCH_PAGE_URL_PREFIX + page;
     }
 
     private OptionsQuickStartLaunchPanel getOptionsPanel() {
@@ -353,7 +260,8 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     }
 
     public String getDefaultLaunchContent() {
-        return defaultLaunchContent;
+        // This is no longer read from a link
+        return Constant.messages.getString("quickstart.launch.html");
     }
 
     @Override

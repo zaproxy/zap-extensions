@@ -21,11 +21,14 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -46,6 +49,7 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.tab.Tab;
+import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.FontUtils.Size;
@@ -68,6 +72,9 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
     private LearnMorePanel learnMorePanel;
     private DefaultExplorePanel defaultExplorePanel;
     private QuickStartSubPanel explorePanel;
+    private JXPanel newsPanel;
+
+    private NewsItem newsItem;
 
     public QuickStartPanel(ExtensionQuickStart extension) {
         super();
@@ -140,6 +147,8 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         buttonPanel.add(this.getLearnMoreButton());
 
         panelContent.add(buttonPanel, LayoutHelper.getGBC(0, ++panelY, 5, 1.0D, 1.0D));
+
+        panelContent.add(getNewsPanel(), LayoutHelper.getGBC(0, ++panelY, 5, 1.0D, 1.0D));
 
         replacePadding();
 
@@ -280,5 +289,95 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
     public ComboBoxModel<String> getUrlModel() {
         return this.getAttackPanel().getUrlModel();
+    }
+
+    private JXPanel getNewsPanel() {
+        if (newsPanel == null) {
+            newsPanel = new JXPanel(new GridBagLayout());
+            newsPanel.setBackground(Color.WHITE);
+            if (newsItem != null) {
+                this.showNews(newsItem);
+            }
+        }
+        return newsPanel;
+    }
+
+    private void showNews(NewsItem newsItem) {
+
+        JXPanel innerPanel = new JXPanel(new GridBagLayout());
+
+        CloseButton closeButton = new CloseButton();
+        JPanel closePanel = new JPanel(new GridBagLayout());
+        closePanel.setBackground(Color.WHITE);
+        closePanel.add(new JLabel(""), LayoutHelper.getGBC(0, 0, 1, 1.0D)); // Spacer
+        closePanel.add(closeButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
+        closeButton.setVerticalAlignment(SwingConstants.TOP);
+        closeButton.addActionListener(
+                new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent arg0) {
+                        newsPanel.setVisible(false);
+                        extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
+                    }
+                });
+
+        JButton learnMoreButton =
+                new JButton(Constant.messages.getString("quickstart.button.news"));
+        learnMoreButton.addActionListener(
+                new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        DesktopUtils.openUrlInBrowser(newsItem.getUri());
+                    }
+                });
+
+        innerPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(Color.RED),
+                        Constant.messages.getString("quickstart.label.news")));
+        innerPanel.setBackground(Color.WHITE);
+        innerPanel.add(
+                new JLabel(newsItem.getText()),
+                LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
+        innerPanel.add(learnMoreButton, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
+        innerPanel.add(closeButton, LayoutHelper.getGBC(2, 0, 1, 0.0D));
+
+        newsPanel.add(
+                new JLabel(""),
+                LayoutHelper.getGBC(0, 0, 1, 0.5D, new Insets(5, 5, 5, 5))); // Spacer
+        newsPanel.add(innerPanel, LayoutHelper.getGBC(2, 0, 1, 0.5D, new Insets(5, 5, 5, 5)));
+        newsPanel.add(
+                new JLabel(""),
+                LayoutHelper.getGBC(3, 0, 1, 0.5D, new Insets(5, 5, 5, 5))); // Spacer
+
+        newsPanel.revalidate();
+    }
+
+    public void announceNews(NewsItem newsItem) {
+        this.newsItem = newsItem;
+        if (this.newsPanel != null) {
+            this.showNews(newsItem);
+        }
+    };
+
+    class CloseButton extends JButton {
+        private static final long serialVersionUID = 1L;
+
+        public CloseButton() {
+            super("x");
+            setForeground(Color.RED);
+            setBorder(BorderFactory.createEmptyBorder());
+            setFocusPainted(false);
+            setBorderPainted(false);
+            setContentAreaFilled(false);
+            setToolTipText(Constant.messages.getString("quickstart.button.tooltip.news.close"));
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(16, 16);
+        }
     }
 }
