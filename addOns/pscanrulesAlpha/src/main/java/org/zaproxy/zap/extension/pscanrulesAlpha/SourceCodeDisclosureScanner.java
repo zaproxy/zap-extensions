@@ -691,7 +691,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
             Alert alert =
                     new Alert(
                             getPluginId(),
-                            Alert.RISK_HIGH,
+                            Alert.RISK_MEDIUM,
                             Alert.CONFIDENCE_MEDIUM,
                             getName() + " - " + programminglanguage);
 

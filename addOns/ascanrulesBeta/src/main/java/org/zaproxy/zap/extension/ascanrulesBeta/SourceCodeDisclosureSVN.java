@@ -225,9 +225,9 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 
     @Override
     public int getRisk() {
-        return Alert
-                .RISK_HIGH; // definitely a High. If we get the source, we don't need to hack the
-        // app any more, because we can just analyse it off-line! Sweet..
+        // If we get the source (and its not open source), we don't need to hack the app any more,
+        // because we can just analyse it off-line! Sweet..
+        return Alert.RISK_MEDIUM;
     }
 
     @Override
@@ -349,7 +349,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                     // if we get to here, is is very likely that we have source file inclusion
                     // attack. alert it.
                     bingo(
-                            Alert.RISK_HIGH,
+                            Alert.RISK_MEDIUM,
                             getConfidence(attackmsgResponseStatusCode),
                             getName(),
                             getDescription(),
@@ -623,7 +623,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                                                 // if we get to here, is is very likely that we have
                                                 // source file inclusion attack. alert it.
                                                 bingo(
-                                                        Alert.RISK_HIGH,
+                                                        Alert.RISK_MEDIUM,
                                                         getConfidence(
                                                                 svnSourceFileAttackMsgStatusCode),
                                                         getName(),

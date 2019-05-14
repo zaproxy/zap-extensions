@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Correct HTTP message usage in Insecure HTTP Method scanner.
 - Fix missing resource messages with Cross-Domain Misconfiguration scanner.
 - Remove Source Code Disclosure WEB-INF Scanner (promoted to release Issue 4448).
+- Report source code disclosure alerts at Medium instead of High 
 
 ## 24 - 2018-07-31
 
