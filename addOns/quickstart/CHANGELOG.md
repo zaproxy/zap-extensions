@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Improve outgoing proxy failure error message (Issue 5304).
 - Introduce News panel and use default quick start page 
+- Dont make news request if -silent option used
 
 ## 25 - 2018-12-11
 

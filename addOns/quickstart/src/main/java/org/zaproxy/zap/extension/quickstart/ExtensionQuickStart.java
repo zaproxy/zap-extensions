@@ -23,6 +23,7 @@ import java.awt.Container;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -147,6 +148,20 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         super.optionsLoaded();
         if (View.isInitialised()) {
             getQuickStartPanel().optionsLoaded(this.getQuickStartParam());
+        }
+
+        // Check for silent mode - only available in 2.8.0 so must use reflection for now
+        try {
+            Method isSilentMethod = Constant.class.getMethod("isSilent");
+            Object res = isSilentMethod.invoke(null);
+            if (res instanceof Boolean) {
+                if ((Boolean) res) {
+                    LOGGER.info("Shh! No check-for-news - silent mode enabled");
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            // Ignore
         }
 
         new Thread("ZAP-NewsFetcher") {
