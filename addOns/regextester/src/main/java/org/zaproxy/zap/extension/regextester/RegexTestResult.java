@@ -19,40 +19,32 @@
  */
 package org.zaproxy.zap.extension.regextester;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class RegexTestResult {
-    private boolean match;
-    private boolean lookingAt;
-    private String result;
-    private String capture;
-    private List<RegexTestHighlight> highlights;
+    private final boolean match;
+    private final boolean lookingAt;
+    private final String result;
+    private final String capture;
+    private final List<Group> groups;
 
     public RegexTestResult(boolean match, boolean lookingAt, String result, String capture) {
-        this(match, lookingAt, result, capture, new ArrayList<>());
+        this(match, lookingAt, result, capture, Collections.emptyList());
     }
 
     public RegexTestResult(
-            boolean match,
-            boolean lookingAt,
-            String result,
-            String capture,
-            List<RegexTestHighlight> highlights) {
+            boolean match, boolean lookingAt, String result, String capture, List<Group> groups) {
         Objects.requireNonNull(result, "result is null");
-        Objects.requireNonNull(result, "capture is null");
-        Objects.requireNonNull(result, "highlights is null");
+        Objects.requireNonNull(capture, "capture is null");
+        Objects.requireNonNull(groups, "groups is null");
 
         this.match = match;
         this.lookingAt = lookingAt;
         this.capture = capture;
         this.result = result;
-        this.highlights = highlights;
-    }
-
-    public void add(RegexTestHighlight highlight) {
-        this.highlights.add(highlight);
+        this.groups = groups;
     }
 
     public boolean isMatch() {
@@ -71,16 +63,16 @@ public class RegexTestResult {
         return capture;
     }
 
-    public List<RegexTestHighlight> getHighlights() {
-        return highlights;
+    public List<Group> getGroups() {
+        return groups;
     }
 
-    public static class RegexTestHighlight {
+    public static class Group {
 
-        private int start;
-        private int end;
+        private final int start;
+        private final int end;
 
-        public RegexTestHighlight(int start, int end) {
+        public Group(int start, int end) {
             this.start = start;
             this.end = end;
         }

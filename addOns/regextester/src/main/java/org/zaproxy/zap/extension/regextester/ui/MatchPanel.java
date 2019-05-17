@@ -32,9 +32,9 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.regextester.RegexTest;
 import org.zaproxy.zap.extension.regextester.RegexTestInput;
 import org.zaproxy.zap.extension.regextester.RegexTestResult;
+import org.zaproxy.zap.extension.regextester.RegexTester;
 import org.zaproxy.zap.extension.regextester.ui.model.RegexModel;
 
 public class MatchPanel extends JPanel {
@@ -118,8 +118,7 @@ public class MatchPanel extends JPanel {
         }
 
         RegexTestInput input = new RegexTestInput(regexModel.getRegex(), regexModel.getTestValue());
-        RegexTest tester = new RegexTest();
-        RegexTestResult result = tester.test(input);
+        RegexTestResult result = RegexTester.test(input);
 
         matchField.setText(String.format(MATCHES_LABEL, result.isMatch()));
         lookingAtField.setText(String.format(LOOKING_AT_LABEL, result.isLookingAt()));
@@ -128,10 +127,9 @@ public class MatchPanel extends JPanel {
         captureField.setCaretPosition(0);
 
         Highlighter highlighter = resultField.getHighlighter();
-        for (RegexTestResult.RegexTestHighlight highlight : result.getHighlights()) {
+        for (RegexTestResult.Group group : result.getGroups()) {
             try {
-                highlighter.addHighlight(
-                        highlight.getStart(), highlight.getEnd(), highlightPainter);
+                highlighter.addHighlight(group.getStart(), group.getEnd(), highlightPainter);
             } catch (BadLocationException ignore) {
             }
         }

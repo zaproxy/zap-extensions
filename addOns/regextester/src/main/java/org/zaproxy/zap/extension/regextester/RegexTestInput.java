@@ -22,8 +22,8 @@ package org.zaproxy.zap.extension.regextester;
 import java.util.Objects;
 
 public class RegexTestInput {
-    private String pattern;
-    private String text;
+    private final String pattern;
+    private final String text;
 
     public RegexTestInput(String pattern, String text) {
         Objects.requireNonNull(pattern, "pattern is null");

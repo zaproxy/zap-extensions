@@ -23,10 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.parosproxy.paros.Constant;
 
-public class RegexTest {
+public final class RegexTester {
 
-    public RegexTestResult test(RegexTestInput input) {
+    private RegexTester() {}
+
+    public static RegexTestResult test(RegexTestInput input) {
         try {
             return testInternal(input);
         } catch (Exception e) {
@@ -34,20 +37,19 @@ public class RegexTest {
         }
     }
 
-    private RegexTestResult testInternal(RegexTestInput input) {
+    private static RegexTestResult testInternal(RegexTestInput input) {
         Pattern compiledPattern = Pattern.compile(input.getPattern());
         Matcher matcher = compiledPattern.matcher(input.getText());
         boolean match = matcher.matches();
         boolean lookingAt = matcher.lookingAt();
 
-        List<RegexTestResult.RegexTestHighlight> highlights = new ArrayList<>();
+        List<RegexTestResult.Group> highlights = new ArrayList<>();
         Matcher findMatcher = compiledPattern.matcher(input.getText());
         StringBuilder capture = new StringBuilder();
         int findIndex = 1;
         boolean matcherFound = false;
         while (findMatcher.find()) {
-            highlights.add(
-                    new RegexTestResult.RegexTestHighlight(findMatcher.start(), findMatcher.end()));
+            highlights.add(new RegexTestResult.Group(findMatcher.start(), findMatcher.end()));
             appendFind(findMatcher, findIndex, capture);
             appendAllGroups(findMatcher, findIndex, capture);
             capture.append("\n");
@@ -56,41 +58,34 @@ public class RegexTest {
         }
 
         if (!matcherFound) {
-            return new RegexTestResult(match, lookingAt, "No findings.", "");
+            return new RegexTestResult(
+                    match, lookingAt, Constant.messages.getString("regextester.result.none"), "");
         }
 
         return new RegexTestResult(
                 match, lookingAt, input.getText(), capture.toString().trim(), highlights);
     }
 
-    private void appendFind(Matcher matcher, int findIndex, StringBuilder capture) {
-        capture.append(findIndex)
-                .append("   ")
-                .append("[")
-                .append(matcher.start())
-                .append(",")
-                .append(matcher.end())
-                .append("]")
-                .append("\t")
-                .append(matcher.group())
-                .append("\n");
+    private static void appendFind(Matcher matcher, int findIndex, StringBuilder capture) {
+        capture.append(findIndex).append("   ");
+        buildGroup(capture, matcher, 0);
     }
 
-    private void appendAllGroups(Matcher matcher, int findIndex, StringBuilder capture) {
+    private static void appendAllGroups(Matcher matcher, int findIndex, StringBuilder capture) {
         for (int i = 1; i <= matcher.groupCount(); i++) {
-            capture.append("")
-                    .append(findIndex)
-                    .append(".")
-                    .append(i)
-                    .append(" ")
-                    .append("[")
-                    .append(matcher.start(i))
-                    .append(",")
-                    .append(matcher.end(i))
-                    .append("]")
-                    .append("\t")
-                    .append(matcher.group(i))
-                    .append("\n");
+            capture.append("").append(findIndex).append(".").append(i).append(" ");
+            buildGroup(capture, matcher, i);
         }
+    }
+
+    private static void buildGroup(StringBuilder capture, Matcher matcher, int index) {
+        capture.append("[")
+                .append(matcher.start(index))
+                .append(",")
+                .append(matcher.end(index))
+                .append("]")
+                .append("\t")
+                .append(matcher.group(index))
+                .append("\n");
     }
 }

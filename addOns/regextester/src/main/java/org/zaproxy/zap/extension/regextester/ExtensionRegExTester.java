@@ -43,12 +43,12 @@ public class ExtensionRegExTester extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         if (getView() != null) {
-            extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuItemRegExTester());
             extensionHook.getHookMenu().addPopupMenuItem(new RegExTesterPopupMenuItem(this));
         }
     }
 
-    private ZapMenuItem getMenuItemCustomScan() {
+    private ZapMenuItem getMenuItemRegExTester() {
         if (menuItemRegExTester == null) {
             menuItemRegExTester = new ZapMenuItem("regextester.menu.tools.name");
             menuItemRegExTester.addActionListener(e -> showDialog());
@@ -69,11 +69,6 @@ public class ExtensionRegExTester extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
     }
 
     @Override
