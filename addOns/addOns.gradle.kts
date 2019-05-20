@@ -2,15 +2,13 @@ import java.nio.charset.StandardCharsets
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.manifest.ManifestExtension
-import org.zaproxy.gradle.addon.manifest.tasks.ConvertChangelogToChanges
+import org.zaproxy.gradle.addon.misc.ConvertMarkdownToHtml
+import org.zaproxy.gradle.addon.misc.CreateGitHubRelease
+import org.zaproxy.gradle.addon.misc.ExtractLatestChangesFromChangelog
 import org.zaproxy.gradle.addon.wiki.WikiGenExtension
-import org.zaproxy.gradle.tasks.CreateGitHubRelease
-import org.zaproxy.gradle.tasks.ExtractLatestChangesChangelog
-import org.zaproxy.gradle.tasks.PrepareAddOnNextDevIter
-import org.zaproxy.gradle.tasks.PrepareAddOnRelease
 
 plugins {
-    id("org.zaproxy.add-on") version "0.1.0" apply false
+    id("org.zaproxy.add-on") version "0.2.0" apply false
 }
 
 description = "Common configuration of the add-ons."
@@ -114,31 +112,11 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.register<PrepareAddOnRelease>("prepareAddOnRelease") {
-        changelog.set(file("CHANGELOG.md"))
-        version.set(project.provider { zapAddOn.addOnVersion.get() })
-        releaseLink.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v${zapAddOn.addOnVersion.get()}" })
-    }
-
-    tasks.register<PrepareAddOnNextDevIter>("prepareAddOnNextDevIter") {
-        changelog.set(file("CHANGELOG.md"))
-        buildFile.set(file("${project.name}.gradle.kts"))
-        currentVersion.set(project.provider { zapAddOn.addOnVersion.get() })
-    }
-
-    tasks.register<ExtractLatestChangesChangelog>("extractLatestChanges") {
-        changelog.set(file("CHANGELOG.md"))
-        latestChanges.set(file("$buildDir/zapAddOn/latest-changes.md"))
-    }
-
-    val generateManifestChanges by tasks.registering(ConvertChangelogToChanges::class) {
-        changelog.set(file("CHANGELOG.md"))
-        manifestChanges.set(file("$buildDir/zapAddOn/manifest-changes.html"))
-    }
-
     zapAddOn {
+        releaseLink.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v@CURRENT_VERSION@" })
+
         manifest {
-            changesFile.set(generateManifestChanges.flatMap { it.manifestChanges })
+            changesFile.set(tasks.named<ConvertMarkdownToHtml>("generateManifestChanges").flatMap { it.html })
         }
 
         wikiGen {
@@ -163,7 +141,7 @@ System.getenv("GITHUB_REF")?.let { ref ->
         tag.set(targetTag)
 
         title.set(addOnProject.map { "${it.zapAddOn.addOnName.get()} version ${it.zapAddOn.addOnVersion.get()}" })
-        bodyFile.set(addOnProject.flatMap { it.tasks.named<ExtractLatestChangesChangelog>("extractLatestChanges").flatMap { it.latestChanges } })
+        bodyFile.set(addOnProject.flatMap { it.tasks.named<ExtractLatestChangesFromChangelog>("extractLatestChanges").flatMap { it.latestChanges } })
 
         assets {
             register("add-on") {
