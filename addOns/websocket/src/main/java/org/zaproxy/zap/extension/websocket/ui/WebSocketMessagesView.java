@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.EventQueue;
-import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -38,6 +37,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.TableColumnManager;
 
 /** Wraps a {@link JXTable} that is used to display WebSocket messages. */
@@ -89,7 +89,7 @@ public class WebSocketMessagesView implements Runnable {
 
             setColumnWidths();
 
-            view.setFont(new Font("Dialog", Font.PLAIN, 12));
+            view.setFont(FontUtils.getFont(FontUtils.Size.standard));
             view.setDoubleBuffered(true);
             view.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             view.addMouseListener(getMouseListener());

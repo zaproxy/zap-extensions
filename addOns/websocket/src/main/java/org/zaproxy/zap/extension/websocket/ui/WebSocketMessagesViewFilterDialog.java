@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.websocket.ui;
 
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -38,6 +37,7 @@ import javax.swing.KeyStroke;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.DisplayUtils;
 
 /** Filter WebSocket messages in {@link WebSocketPanel}. Show only specific ones. */
 public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
@@ -109,13 +109,16 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
         if (dialogPanel == null) {
             dialogPanel = new JPanel();
             dialogPanel.setLayout(new GridBagLayout());
-            dialogPanel.setPreferredSize(new Dimension(wsUiHelper.getDialogWidth() + 20, 360));
+            dialogPanel.setPreferredSize(
+                    DisplayUtils.getScaledDimension(wsUiHelper.getDialogWidth() + 20, 360));
 
             int y = 0;
 
             JLabel description = new JLabel(MSG);
-            description.setPreferredSize(new Dimension(wsUiHelper.getDialogWidth() - 20, 60));
-            description.setMaximumSize(new Dimension(wsUiHelper.getDialogWidth() - 20, 100));
+            description.setPreferredSize(
+                    DisplayUtils.getScaledDimension(wsUiHelper.getDialogWidth() - 20, 60));
+            description.setMaximumSize(
+                    DisplayUtils.getScaledDimension(wsUiHelper.getDialogWidth() - 20, 100));
             dialogPanel.add(description, wsUiHelper.getDescriptionConstraints(0, y++));
 
             // add opcode selection
@@ -126,7 +129,7 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
 
             JScrollPane opcodeListScrollPane = wsUiHelper.getOpcodeMultipleSelect();
             opcodeListScrollPane.setPreferredSize(
-                    new Dimension(wsUiHelper.getDialogWidth() - 200, 120));
+                    DisplayUtils.getScaledDimension(wsUiHelper.getDialogWidth() - 200, 120));
             dialogPanel.add(opcodeListScrollPane, constraints);
 
             // add title for upcoming WebSocket specific options

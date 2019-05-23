@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.websocket.ui;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
@@ -43,6 +42,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.utility.WebSocketUtils;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 
 public class WebSocketUiHelper {
@@ -640,7 +640,7 @@ public class WebSocketUiHelper {
 
     public JComponent createVerticalSeparator() {
         JSeparator x = new JSeparator(SwingConstants.VERTICAL);
-        x.setPreferredSize(new Dimension(20, 20));
+        x.setPreferredSize(DisplayUtils.getScaledDimension(20, 20));
         return x;
     }
 }

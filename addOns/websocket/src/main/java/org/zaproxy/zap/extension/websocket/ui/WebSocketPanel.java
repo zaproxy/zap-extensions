@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -65,6 +64,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInterface;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -95,21 +95,26 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
         connectedChannelIds = new HashSet<>();
 
         disconnectIcon =
-                new ImageIcon(
-                        WebSocketPanel.class.getResource(
-                                "/resource/icon/fugue/plug-disconnect.png"));
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                WebSocketPanel.class.getResource(
+                                        "/resource/icon/fugue/plug-disconnect.png")));
         connectIcon =
-                new ImageIcon(
-                        WebSocketPanel.class.getResource("/resource/icon/fugue/plug-connect.png"));
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                WebSocketPanel.class.getResource(
+                                        "/resource/icon/fugue/plug-connect.png")));
 
         disconnectTargetIcon =
-                new ImageIcon(
-                        WebSocketPanel.class.getResource(
-                                "/resource/icon/fugue/plug-disconnect-target.png"));
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                WebSocketPanel.class.getResource(
+                                        "/resource/icon/fugue/plug-disconnect-target.png")));
         connectTargetIcon =
-                new ImageIcon(
-                        WebSocketPanel.class.getResource(
-                                "/resource/icon/fugue/plug-connect-target.png"));
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                WebSocketPanel.class.getResource(
+                                        "/resource/icon/fugue/plug-connect-target.png")));
     };
 
     private JToolBar panelToolbar = null;
@@ -219,7 +224,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
             panelToolbar.setEnabled(true);
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
-            panelToolbar.setPreferredSize(new java.awt.Dimension(800, 30));
+            panelToolbar.setPreferredSize(DisplayUtils.getScaledDimension(800, 30));
             panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
             panelToolbar.setName("websocket.toolbar");
 
@@ -316,7 +321,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
             optionsButton.setToolTipText(
                     Constant.messages.getString("websocket.toolbar.button.options"));
             optionsButton.setIcon(
-                    new ImageIcon(WebSocketPanel.class.getResource("/resource/icon/16/041.png")));
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    WebSocketPanel.class.getResource(
+                                            "/resource/icon/16/041.png"))));
             optionsButton.addActionListener(
                     new ActionListener() {
                         @Override
@@ -334,9 +342,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
         if (filterButton == null) {
             filterButton = new JButton();
             filterButton.setIcon(
-                    new ImageIcon(
-                            WebSocketPanel.class.getResource(
-                                    "/resource/icon/16/054.png"))); // 'filter' icon
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    WebSocketPanel.class.getResource(
+                                            "/resource/icon/16/054.png")))); // 'filter' icon
             filterButton.setToolTipText(
                     Constant.messages.getString("websocket.filter.button.filter"));
 
@@ -367,8 +376,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
             handshakeButton = new JButton();
             handshakeButton.setEnabled(false);
             handshakeButton.setIcon(
-                    new ImageIcon(
-                            WebSocketPanel.class.getResource("/resource/icon/16/handshake.png")));
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    WebSocketPanel.class.getResource(
+                                            "/resource/icon/16/handshake.png"))));
             handshakeButton.setToolTipText(
                     Constant.messages.getString("websocket.filter.button.handshake"));
 
@@ -417,8 +428,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
         if (brkButton == null) {
             brkButton = new JButton();
             brkButton.setIcon(
-                    new ImageIcon(
-                            WebSocketPanel.class.getResource("/resource/icon/16/break_add.png")));
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    WebSocketPanel.class.getResource(
+                                            "/resource/icon/16/break_add.png"))));
             brkButton.setToolTipText(
                     Constant.messages.getString("websocket.filter.button.break_add"));
 
@@ -447,7 +460,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
             // updates viewport only when scrollbar is released
 
             scrollPanel = new JScrollPane(messagesView.getViewComponent());
-            scrollPanel.setPreferredSize(new Dimension(800, 200));
+            scrollPanel.setPreferredSize(DisplayUtils.getScaledDimension(800, 200));
             scrollPanel.setName("WebSocketPanelActions");
 
             scrollPanel
@@ -783,10 +796,15 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
         if (scopeButton == null) {
             scopeButton = new ZapToggleButton();
             scopeButton.setIcon(
-                    new ImageIcon(
-                            LogPanel.class.getResource("/resource/icon/fugue/target-grey.png")));
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    LogPanel.class.getResource(
+                                            "/resource/icon/fugue/target-grey.png"))));
             scopeButton.setSelectedIcon(
-                    new ImageIcon(LogPanel.class.getResource("/resource/icon/fugue/target.png")));
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    LogPanel.class.getResource(
+                                            "/resource/icon/fugue/target.png"))));
             scopeButton.setToolTipText(
                     Constant.messages.getString("history.scope.button.unselected"));
             scopeButton.setSelectedToolTipText(
