@@ -10,5 +10,6 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        notBeforeVersion.set("2.8.0")
     }
 }
