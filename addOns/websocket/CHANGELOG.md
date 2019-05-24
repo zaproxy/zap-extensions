@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Validate the Origin for API connections.
 - Generate websocket events.
 - Add break API endpoints.
+- Scale fonts and icons correctly
 
 ## 18 - 2018-08-01
 

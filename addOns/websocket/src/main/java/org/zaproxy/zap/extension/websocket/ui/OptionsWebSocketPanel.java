@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -30,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.zap.utils.FontUtils;
 
 /**
  * The GUI WebSocket options panel.
@@ -87,7 +87,7 @@ public class OptionsWebSocketPanel extends AbstractParamPanel {
     private Component getPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(2, 2, 2, 2));
-        panel.setFont(new Font("Dialog", java.awt.Font.PLAIN, 11));
+        panel.setFont(FontUtils.getFont(FontUtils.Size.standard));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
