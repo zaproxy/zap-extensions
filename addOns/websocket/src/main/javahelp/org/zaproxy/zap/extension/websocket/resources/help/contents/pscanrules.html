@@ -11,6 +11,19 @@
         <h2 id="scripts">Scripts</h2>
         Scripts which are included by default in the add-on and they implement the following WebSocket passive scan rules:
 
+        <h3>Information Disclosure: Email address</h3>
+
+        This script scans incoming WebSocket messages for email addresses. Email addresses may be not specifically meant for end user consumption.<br>
+
+        <br>
+        <table border="1"  width = "400">
+            <caption>Default Values</caption>
+            <tr><th>Risk</th><td>Info</td></tr>
+            <tr><th>Confidence</th><td>Info</td></tr>
+            <tr><th>CWE ID</th><td>200: Information Exposure</td></tr>
+            <tr><th>WASC ID</th><td>13: Information Leakage</td></tr>
+        </table>
+
         <h2 id="ip_add_disc">Private Address Disclosure</h2>
         Checks incoming WebSocket message payload for inclusion of RFC 1918 IPv4 addresses as well as Amazon EC2 private hostnames (for example, ip-10-0-56-78). This information can give an attacker useful information about the IP address scheme of the internal network, and might be helpful for further attacks targeting internal systems. <br>
 
