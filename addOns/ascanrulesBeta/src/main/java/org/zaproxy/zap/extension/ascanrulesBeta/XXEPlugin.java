@@ -55,7 +55,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     //
     private static final String ATTACK_ENTITY = "&zapxxe;";
 
-    private static final String ATTACK_HEADER =
+    static final String ATTACK_HEADER =
             "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
                     + "<!DOCTYPE foo [\n"
                     + "  <!ELEMENT foo ANY >\n"
@@ -87,8 +87,14 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     };
 
     private static final Pattern[] LOCAL_FILE_PATTERNS = {
-        Pattern.compile("root:.:0:0"), Pattern.compile("\\[drivers\\]")
+        Pattern.compile("root:.:0:0"),
+        Pattern.compile("\\[drivers\\]"),
+        Pattern.compile("\\[drivers\\]")
     };
+
+    private static final String xmlHeaderRegex = "<\\?xml.*?\\?>";
+    private static final Pattern xmlHeaderPattern =
+            Pattern.compile(xmlHeaderRegex, Pattern.CASE_INSENSITIVE);
 
     // API for the specific challenge/response model
     // Should be a common object for all this plugin instances
@@ -292,21 +298,10 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
             msg = getNewMsg();
 
             try {
-                String requestBody = msg.getRequestBody().toString();
-                Matcher matcher = tagPattern.matcher(requestBody);
-                StringBuilder sb = new StringBuilder(ATTACK_HEADER);
+                Matcher matcher;
                 String localFile;
                 String response;
-                int endIdx = 0;
-
-                while (matcher.find()) {
-                    sb.append(requestBody.substring(endIdx, matcher.start(1)));
-                    sb.append(ATTACK_ENTITY);
-                    endIdx = matcher.end(1);
-                }
-
-                sb.append(requestBody.substring(endIdx));
-                requestBody = sb.toString();
+                String requestBody = createLfrPayload(msg.getRequestBody().toString());
 
                 for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
                     // Prepare the message
@@ -494,5 +489,25 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
             ChallengeCallbackImplementor.getExtensionCallback()
                     .removeCallbackImplementor(callbackImplementor);
         }
+    }
+
+    static String createLfrPayload(String requestBody) {
+        StringBuilder sb = new StringBuilder(ATTACK_HEADER);
+
+        // Remove original xml header
+        Matcher headerMatcher = xmlHeaderPattern.matcher(requestBody);
+        requestBody = headerMatcher.replaceAll("");
+
+        // Replace all values in Elements with Attack Entity
+        Matcher matcher = tagPattern.matcher(requestBody);
+        int endIdx = 0;
+
+        while (matcher.find()) {
+            sb.append(requestBody.substring(endIdx, matcher.start(1)));
+            sb.append(ATTACK_ENTITY);
+            endIdx = matcher.end(1);
+        }
+        sb.append(requestBody.substring(endIdx));
+        return sb.toString();
     }
 }
