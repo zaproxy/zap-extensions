@@ -44,7 +44,7 @@ public class TestParameterTamperUnitTest extends ActiveScannerAppParamTest<TestP
     @Test
     public void shouldNotContinueScanningIfFirstResponseIsNotOK() throws Exception {
         // Given
-        rule.init(getHttpMessage("/"), parent);
+        rule.init(getHttpMessage("/?a=b"), parent);
         // When
         rule.scan();
         // Then

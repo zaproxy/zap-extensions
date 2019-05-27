@@ -30,6 +30,8 @@ import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.TreeSet;
 import org.junit.Test;
@@ -662,6 +664,13 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.nano.addHandler(handler);
         this.nano.setHandler404(handler);
+        try {
+            // TODO Call the method directly when targeting newer ZAP version.
+            Method method = ScannerParam.class.getDeclaredMethod("setAddQueryParam", boolean.class);
+            method.invoke(this.scannerParam, true);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            // Ignore, method not available.
+        }
 
         HttpMessage msg = this.getHttpMessage(test);
 
@@ -708,7 +717,7 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.nano.addHandler(handler);
 
-        HttpMessage msg = this.getHttpMessage(test);
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         msg.getRequestHeader().setMethod(HttpRequestHeader.PUT);
 
         rule.setConfig(new ZapXmlConfiguration());
@@ -750,7 +759,7 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.nano.addHandler(handler);
 
-        HttpMessage msg = this.getHttpMessage(test);
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         msg.getRequestHeader().setMethod(HttpRequestHeader.PUT);
 
         this.rule.setConfig(new ZapXmlConfiguration());
