@@ -735,6 +735,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     firefoxOptions.setBinary(binaryPath);
                 }
 
+                // Keep proxying localhost on Firefox >= 67
+                firefoxOptions.addPreference("network.proxy.allow_hijacking_localhost", true);
+
                 // Ensure ServiceWorkers are enabled for the HUD.
                 firefoxOptions.addPreference("dom.serviceWorkers.enabled", true);
 
