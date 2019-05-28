@@ -14,6 +14,8 @@ zapAddOn {
 }
 
 dependencies {
+    implementation("com.googlecode.java-diff-utils:diffutils:1.2.1")
+
     testImplementation(project(":testutils"))
     testImplementation("org.apache.commons:commons-lang3:3.5")
 }

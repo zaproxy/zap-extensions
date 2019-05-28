@@ -13,6 +13,10 @@ zapAddOn {
     }
 }
 
+dependencies {
+    implementation("com.googlecode.java-diff-utils:diffutils:1.2.1")
+}
+
 spotless {
     java {
         target(fileTree(projectDir) {

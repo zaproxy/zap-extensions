@@ -14,6 +14,7 @@ zapAddOn {
 }
 
 dependencies {
+    implementation("com.googlecode.java-diff-utils:diffutils:1.2.1")
     implementation("org.bitbucket.mstrobel:procyon-compilertools:0.5.25")
 
     testImplementation(project(":testutils"))

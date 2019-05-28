@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Maintenance changes.
+- Bundle Diff Utils library instead of relying on core.
 
 ## 8 - 2017-11-27
 

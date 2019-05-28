@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Maintenance changes.
 - Promote Source Code Disclosure WEB-INF (Issue 4448).
+- Bundle Diff Utils library instead of relying on core. 
 
 ## 32 - 2018-10-04
 
