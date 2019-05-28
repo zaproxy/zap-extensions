@@ -13,6 +13,10 @@ zapAddOn {
     }
 }
 
+dependencies {
+    implementation("org.jdom:jdom:1.1.3")
+}
+
 spotless {
     javaWith3rdPartyFormatted(project, listOf(
         "**/DBMSHelper.java",
