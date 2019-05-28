@@ -3,9 +3,11 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [9] - 2019-05-28
+
 ### Changed
- - Promote to release status.
+- Promote to release status.
+- Update ChromeDriver to v74.0.3729.6.
 
 ## [8] - 2019-04-23
 
@@ -52,4 +54,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[9]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v8
