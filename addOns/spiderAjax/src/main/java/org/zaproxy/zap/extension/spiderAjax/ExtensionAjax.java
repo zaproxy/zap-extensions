@@ -368,8 +368,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
     }
 
     URI getFirstUriInContext(Context context) {
-        return findFirstUriInContext(
-                context, (SiteNode) getModel().getSession().getSiteTree().getRoot());
+        return findFirstUriInContext(context, getModel().getSession().getSiteTree().getRoot());
     }
 
     private static URI findFirstUriInContext(Context context, SiteNode node) {

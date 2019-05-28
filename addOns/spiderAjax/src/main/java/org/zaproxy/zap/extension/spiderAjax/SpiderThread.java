@@ -56,6 +56,7 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
+import org.zaproxy.zap.model.ScanEventPublisher;
 import org.zaproxy.zap.network.HttpResponseBody;
 
 public class SpiderThread implements Runnable {
@@ -233,6 +234,12 @@ public class SpiderThread implements Runnable {
                         + displayName);
         this.running = true;
         notifyListenersSpiderStarted();
+        SpiderEventPublisher.publishScanEvent(
+                ScanEventPublisher.SCAN_STARTED_EVENT,
+                0,
+                this.target.toTarget(),
+                this.target.getUser());
+
         logger.info("Starting proxy...");
         this.proxyPort = proxy.startServer(LOCAL_PROXY_IP, 0, true);
         logger.info("Proxy started, listening at port [" + proxyPort + "].");
@@ -259,6 +266,7 @@ public class SpiderThread implements Runnable {
             stopProxy();
             logger.info("Proxy stopped.");
             notifyListenersSpiderStoped();
+            SpiderEventPublisher.publishScanEvent(ScanEventPublisher.SCAN_STOPPED_EVENT, 0);
             logger.info("Finished Crawljax: " + displayName);
         }
     }

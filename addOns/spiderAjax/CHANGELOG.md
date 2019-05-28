@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Correct WebDriver requester ID.
 - Remove unused resource messages.
+- Generate start and stop events.
 
 ## 22 - 2018-08-08
 
