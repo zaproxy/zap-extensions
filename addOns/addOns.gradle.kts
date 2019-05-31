@@ -83,7 +83,7 @@ subprojects {
 }
 
 System.getenv("GITHUB_REF")?.let { ref ->
-    if ("refs/tags/" !in ref) {
+    if ("refs/tags/" !in ref || !ref.contains(Regex(".*-v.*"))) {
         return@let
     }
 
