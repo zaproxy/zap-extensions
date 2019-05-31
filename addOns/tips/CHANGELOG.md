@@ -5,11 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-- Updated for 2.7.0.
+- Updated for 2.8.0.
 
 ## 6 - 2017-04-03
 
 - Minor code changes.
+- Updated for 2.7.0.
 
 ## 5 - 2015-08-23
 
