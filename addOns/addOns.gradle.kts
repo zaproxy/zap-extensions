@@ -21,7 +21,7 @@ val parentProjects = listOf(
     "webdrivers"
 )
 
-val mainAddOns = listOf(
+val addOnsInZapCoreHelp = listOf(
     "alertFilters",
     "ascanrules",
     "bruteforce",
@@ -54,50 +54,6 @@ val mainAddOns = listOf(
     "websocket",
     "zest"
 )
-val weeklyAddOns = mainAddOns + listOf(
-    "accessControl",
-    "ascanrulesBeta",
-    "formhandler",
-    "openapi",
-    "plugnhack",
-    "portscan",
-    "pscanrulesBeta",
-    "sequence"
-)
-
-val verifyDeclaredAddOnsExist by tasks.registering(ValidateDeclaredAddOns::class) {
-    declaredAddOns.addAll(mainAddOns)
-    declaredAddOns.addAll(weeklyAddOns)
-    addOns.set(subprojects.filter { !parentProjects.contains(it.name) }.mapTo(mutableSetOf(), { it.zapAddOn.addOnId.get() }))
-    validatedAddOns.set(project.layout.buildDirectory.file("validatedAddOns"))
-}
-
-tasks.check {
-    dependsOn(verifyDeclaredAddOnsExist)
-}
-
-mapOf("main" to mainAddOns, "weekly" to weeklyAddOns).forEach { entry ->
-    tasks {
-        val name = entry.key
-        val nameCapitalized = name.capitalize()
-        register("copy${nameCapitalized}AddOns") {
-            group = "ZAP"
-            description = "Copies the $name release add-ons to zaproxy project."
-            dependsOn(verifyDeclaredAddOnsExist)
-            subprojects(entry.value) {
-                dependsOn(it.tasks.named(AddOnPlugin.COPY_ADD_ON_TASK_NAME))
-            }
-        }
-
-        register("list${nameCapitalized}AddOns") {
-            group = "ZAP"
-            description = "Lists the $name release add-ons."
-            doLast {
-                subprojects(entry.value) { println(it.name) }
-            }
-        }
-    }
-}
 
 subprojects {
     if (parentProjects.contains(project.name)) {
@@ -121,7 +77,7 @@ subprojects {
 
         wikiGen {
             wikiFilesPrefix.set("HelpAddons${zapAddOn.addOnId.get().capitalize()}")
-            wikiDir.set(project.provider { project.layout.projectDirectory.dir(if (mainAddOns.contains(zapAddOn.addOnId.get())) zapCoreHelpWikiDir else zapExtensionsWikiDir) })
+            wikiDir.set(project.provider { project.layout.projectDirectory.dir(if (addOnsInZapCoreHelp.contains(zapAddOn.addOnId.get())) zapCoreHelpWikiDir else zapExtensionsWikiDir) })
         }
     }
 }
