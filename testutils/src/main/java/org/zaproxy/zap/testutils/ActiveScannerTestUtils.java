@@ -145,20 +145,17 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
 
                     @Override
                     public void notifyNewMessage(HttpMessage msg) {
-                        super.notifyNewMessage(msg);
                         httpMessagesSent.add(msg);
                         countMessagesSent++;
                     }
 
                     @Override
                     public void notifyNewMessage(Plugin plugin) {
-                        super.notifyNewMessage(plugin);
                         countMessagesSent++;
                     }
 
                     @Override
                     public void notifyNewMessage(Plugin plugin, HttpMessage msg) {
-                        super.notifyNewMessage(plugin, msg);
                         httpMessagesSent.add(msg);
                         countMessagesSent++;
                     }
