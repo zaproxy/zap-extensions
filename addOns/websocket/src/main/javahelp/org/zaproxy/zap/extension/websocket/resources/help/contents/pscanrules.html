@@ -11,5 +11,22 @@
         <h2 id="scripts">Scripts</h2>
         Scripts which are included by default in the add-on and they implement the following WebSocket passive scan rules:
 
+        <h2 id="ip_add_disc">Private Address Disclosure</h2>
+        Checks incoming WebSocket message payload for inclusion of RFC 1918 IPv4 addresses as well as Amazon EC2 private hostnames (for example, ip-10-0-56-78). This information can give an attacker useful information about the IP address scheme of the internal network, and might be helpful for further attacks targeting internal systems. <br>
+
+        This passive scanner may generate false positives in the case of larger dotted numeric strings, such as vp09.02.51.10.01.09.16, where the latter 4 octets appear to be a RFC 1918 IPv4 address. After review an analyst can mark such alerts as False Positives in ZAP.<br>
+        <br>
+        <table border="1"  width = "200">
+            <tr><th>Use case</th><th>Outcome</th></tr>
+            <tr><td>10.255.255.255</td><td>True Positive</td></tr>
+            <tr><td>ip-10.0.0.0</td><td>True Positive</td></tr>
+            <caption>Examples</caption>
+        </table>
+        <br>
+        <table border="1"  width = "200">
+            <caption>Default Values</caption>
+            <tr><th>Risk</th><td>Low</td></tr>
+            <tr><th>Confidence</th><td>Medium</td></tr>
+        </table>
     </BODY>
 </HTML>
