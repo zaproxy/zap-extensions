@@ -150,7 +150,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         providedBrowsers = Collections.synchronizedMap(new HashMap<String, ProvidedBrowser>());
 
         addBuiltInProvider(Browser.CHROME);
+        addBuiltInProvider(Browser.CHROME_HEADLESS);
         addBuiltInProvider(Browser.FIREFOX);
+        addBuiltInProvider(Browser.FIREFOX_HEADLESS);
         addBuiltInProvider(Browser.HTML_UNIT);
         addBuiltInProvider(Browser.PHANTOM_JS);
         addBuiltInProvider(Browser.SAFARI);
@@ -717,11 +719,14 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             int requester, Browser browser, String proxyAddress, int proxyPort) {
         switch (browser) {
             case CHROME:
+            case CHROME_HEADLESS:
                 ChromeOptions chromeOptions = new ChromeOptions();
                 setCommonOptions(chromeOptions, proxyAddress, proxyPort);
                 chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
+                chromeOptions.setHeadless(browser == Browser.CHROME_HEADLESS);
                 return new ChromeDriver(chromeOptions);
             case FIREFOX:
+            case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
 
@@ -768,6 +773,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     firefoxOptions.setCapability(CapabilityType.PROXY, (Object) null);
                 }
 
+                firefoxOptions.setHeadless(browser == Browser.FIREFOX_HEADLESS);
                 return new FirefoxDriver(firefoxOptions);
             case HTML_UNIT:
                 DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
