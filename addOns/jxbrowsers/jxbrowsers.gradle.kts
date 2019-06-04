@@ -103,7 +103,7 @@ subprojects {
                             dependencies {
                                 addOns {
                                     register("selenium") {
-                                        semVer.set(" >=2.0.0 & <3.0.0 ")
+                                        version.set("15.*")
                                     }
                                 }
                             }
