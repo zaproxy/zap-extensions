@@ -3,10 +3,14 @@ import org.zaproxy.gradle.addon.AddOnStatus
 version = "23.0.0"
 description = "Allows you to spider sites that make heavy use of JavaScript using Crawljax"
 
+repositories {
+    maven(url = uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+}
+
 zapAddOn {
     addOnName.set("Ajax Spider")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.8.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -28,6 +32,7 @@ zapAddOn {
 }
 
 dependencies {
+    zap("org.zaproxy:zap:2.8.0-SNAPSHOT")
     compileOnly(parent!!.childProjects.get("selenium")!!)
     implementation(files("lib/crawljax-core-3.7.jar"))
     implementation("commons-math:commons-math:1.2")
