@@ -24,6 +24,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
+import java.util.Optional;
 import javax.swing.Box;
 import javax.swing.ComboBoxModel;
 import javax.swing.JCheckBox;
@@ -34,6 +35,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.quickstart.PlugableSpider;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
+import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
@@ -107,7 +109,6 @@ public class AjaxSpiderExplorer implements PlugableSpider {
             browserComboBox = new JComboBox<ProvidedBrowserUI>();
             ProvidedBrowsersComboBoxModel model =
                     extension.getExtSelenium().createProvidedBrowsersComboBoxModel();
-            model.setIncludeHeadless(false);
             model.setIncludeUnconfigured(false);
             browserComboBox.setModel(model);
             browserComboBox.addActionListener(
@@ -122,6 +123,15 @@ public class AjaxSpiderExplorer implements PlugableSpider {
                                             browserComboBox.getSelectedItem().toString());
                         }
                     });
+
+            String defaultBrowserId = Browser.FIREFOX_HEADLESS.getId();
+            Optional<ProvidedBrowserUI> defaultItem =
+                    extension.getExtSelenium().getProvidedBrowserUIList().stream()
+                            .filter(e -> defaultBrowserId.equals(e.getBrowser().getId()))
+                            .findFirst();
+            if (defaultItem.isPresent()) {
+                browserComboBox.setSelectedItem(defaultItem.get());
+            }
         }
         return browserComboBox;
     }
