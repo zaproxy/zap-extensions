@@ -16,7 +16,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("selenium") {
-                    semVer.set("2.*")
+                    version.set("15.*")
                 }
             }
         }

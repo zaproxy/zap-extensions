@@ -11,11 +11,12 @@ DOM XSS Active Scan Rule
 An Active Scan rule for detecting DOM XSS vulnerabilities.
 <p>
 It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
-As it launches browser windows it is not suitable for headless environments,
-and will take significantly longer than other (non browser based) rules. 
+As it launches browser windows it will take significantly longer than other (non browser based) rules. 
 </p>
 <p>
-This version only supports Firefox.<br>
+This version only supports Firefox. It can be run with GUI or headless (default), it can be changed with
+the rule <code>rules.domxss.browserid</code>, via the Options 'Rule configuration' panel, with values
+<code>firefox</code> and <code>firefox-headless</code>, respectively.<br>
 Future versions may support other browsers.
 </p>
 <p>

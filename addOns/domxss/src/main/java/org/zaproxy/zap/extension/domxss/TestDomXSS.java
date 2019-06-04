@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
@@ -89,6 +90,11 @@ public class TestDomXSS extends AbstractAppParamPlugin {
 
     public static final String[] PARAM_ATTACK_STRINGS = {SCRIPT_ALERT, JAVASCRIPT_ALERT, IMG_ALERT};
 
+    /** The name of the rule to obtain the ID of the browser. */
+    private static final String RULE_BROWSER_ID = "rules.domxss.browserid";
+
+    private static final Browser DEFAULT_BROWSER = Browser.FIREFOX_HEADLESS;
+
     private static Stack<WebDriverWrapper> freeFirefoxDrivers = new Stack<WebDriverWrapper>();
     private static List<WebDriverWrapper> takenFirefoxDrivers = new ArrayList<WebDriverWrapper>();
 
@@ -100,6 +106,7 @@ public class TestDomXSS extends AbstractAppParamPlugin {
 
     private WebDriverWrapper driver;
     private boolean vulnerable = false;
+    private Browser browser;
 
     @Override
     public int getId() {
@@ -155,6 +162,43 @@ public class TestDomXSS extends AbstractAppParamPlugin {
     @Override
     public void init() {
         getProxy();
+
+        try {
+            String browserId = this.getConfig().getString(RULE_BROWSER_ID, DEFAULT_BROWSER.getId());
+            browser = Browser.getBrowserWithIdNoFailSafe(browserId);
+        } catch (ConversionException e) {
+            log.debug(
+                    "Invalid value for '"
+                            + RULE_BROWSER_ID
+                            + "': "
+                            + this.getConfig().getString(RULE_BROWSER_ID));
+        }
+
+        if (browser == null) {
+            browser = DEFAULT_BROWSER;
+        } else if (!isSupportedBrowser(browser)) {
+            log.warn(
+                    "Specified browser "
+                            + browser
+                            + " is not supported, defaulting to: "
+                            + DEFAULT_BROWSER);
+            browser = DEFAULT_BROWSER;
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Using browser: " + browser);
+        }
+    }
+
+    private static boolean isSupportedBrowser(Browser browser) {
+        /*
+         * TODO look at supporting other browsers
+         * Notes:
+         * 	HtmlUnit just logs a _load_ of errors
+         * 	Chrome doesnt seem to find anything, possibly due to its XSS protection
+         * 	Phantom JS doesnt find anything as 'alerts' arent yet supported
+         */
+        return browser == Browser.FIREFOX || browser == Browser.FIREFOX_HEADLESS;
     }
 
     /*
@@ -196,15 +240,8 @@ public class TestDomXSS extends AbstractAppParamPlugin {
         return proxy;
     }
 
-    private static WebDriver getNewFirefoxDriver() {
-        /*
-         * TODO look at supporting other browsers
-         * Notes:
-         * 	HtmlUnit just logs a _load_ of errors
-         * 	Chrome doesnt seem to find anything, possibly due to its XSS protection
-         * 	Phantom JS doesnt find anything as 'alerts' arent yet supported
-         */
-        WebDriver driver = ExtensionSelenium.getWebDriver(Browser.FIREFOX, "127.0.0.1", proxyPort);
+    private WebDriver createWebDriver() {
+        WebDriver driver = ExtensionSelenium.getWebDriver(browser, "127.0.0.1", proxyPort);
 
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
@@ -212,12 +249,12 @@ public class TestDomXSS extends AbstractAppParamPlugin {
         return driver;
     }
 
-    private static WebDriverWrapper getFirefoxDriver() {
+    private WebDriverWrapper getWebDriver() {
         WebDriverWrapper fxDriver;
         try {
             fxDriver = freeFirefoxDrivers.pop();
         } catch (Exception e) {
-            fxDriver = new WebDriverWrapper(getNewFirefoxDriver());
+            fxDriver = new WebDriverWrapper(createWebDriver());
         }
         synchronized (takenFirefoxDrivers) {
             takenFirefoxDrivers.add(fxDriver);
@@ -256,8 +293,7 @@ public class TestDomXSS extends AbstractAppParamPlugin {
                                                                             + wrapper.getDriver()
                                                                                     .hashCode());
                                                             wrapper.getDriver().quit();
-                                                            wrapper.setDriver(
-                                                                    getNewFirefoxDriver());
+                                                            wrapper.setDriver(createWebDriver());
                                                             log.debug(
                                                                     "New driver "
                                                                             + wrapper.getDriver()
@@ -512,7 +548,7 @@ public class TestDomXSS extends AbstractAppParamPlugin {
         }
 
         try {
-            driver = TestDomXSS.getFirefoxDriver();
+            driver = getWebDriver();
         } catch (Exception e) {
             getLog().warn("Skipping scanner, failed to start Firefox: " + e.getMessage());
             getParent()
