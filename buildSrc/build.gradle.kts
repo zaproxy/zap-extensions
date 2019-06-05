@@ -25,8 +25,6 @@ tasks.withType<JavaCompile>().configureEach {
 
 dependencies {
     implementation("io.github.bonigarcia:webdrivermanager:3.3.0")
-    // Force use of 1.11 needed by ZAP plugin.
-    implementation("commons-codec:commons-codec:1.11")
     implementation("com.diffplug.spotless:spotless-plugin-gradle:3.20.0")
 }
 
