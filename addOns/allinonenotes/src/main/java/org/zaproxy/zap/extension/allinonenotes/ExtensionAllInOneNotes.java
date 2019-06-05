@@ -19,14 +19,16 @@
  */
 package org.zaproxy.zap.extension.allinonenotes;
 
-import java.awt.CardLayout;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.swing.BoxLayout;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -41,11 +43,9 @@ import org.parosproxy.paros.model.HistoryReferenceEventPublisher;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.utils.TableExportButton;
-import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionChangedListener {
 
-    private ZapMenuItem menuReload;
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionAllInOneNotes";
     protected static final String PREFIX = "allinonenotes";
@@ -61,13 +61,15 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
             new ImageIcon(ExtensionAllInOneNotes.class.getResource(RESOURCES + "/notepad.png"));
 
     private AbstractPanel statusPanel;
-    protected static JXTable notesTable = new JXTable();
-    private static EventConsumerImpl eventConsumerImpl;
-
-    private static ExtensionHookView hookView;
-
-    private static JButton reload;
-    private static TableExportButton<JXTable> exportButton = null;
+    private NotesTableModel notesTableModel = null;
+    private JXTable notesTable = null;
+    private EventConsumerImpl eventConsumerImpl;
+    private ExtensionHookView hookView;
+    private ExtensionHistory extHistory;
+    private JToolBar toolBar;
+    private JButton reload;
+    private ActionListener reloadActionListener;
+    private TableExportButton<JXTable> exportButton = null;
 
     public ExtensionAllInOneNotes() {
         super(NAME);
@@ -77,44 +79,32 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
     @Override
     public void init() {
         super.init();
-        reload = new JButton(Constant.messages.getString(PREFIX + ".reload.button"));
-        eventConsumerImpl = new EventConsumerImpl();
-        ZAP.getEventBus()
-                .registerConsumer(
-                        eventConsumerImpl,
-                        HistoryReferenceEventPublisher.getPublisher().getPublisherName());
     }
 
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        extensionHook.addSessionListener(this);
         // As long as we're not running as a daemon
         if (getView() != null) {
-
-            extensionHook.getHookMenu().addToolsMenuItem(getMenuReload());
+            extensionHook.addSessionListener(this);
             hookView = extensionHook.getHookView();
+            eventConsumerImpl = new EventConsumerImpl(getNotesTableModel());
             hookView.addStatusPanel(getStatusPanel());
-
-            // TODO: supplement or remove reload with events to dynamicaly populate notes
-            reload.addActionListener(
-                    l -> {
-                        hookView.addStatusPanel(getStatusPanel());
-                    });
+            ZAP.getEventBus()
+                    .registerConsumer(
+                            eventConsumerImpl,
+                            HistoryReferenceEventPublisher.getPublisher().getPublisherName());
         }
     }
 
     @Override
     public boolean canUnload() {
-        // The extension can be dynamically unloaded, all resources used/added can be freed/removed
-        // from core.
         return true;
     }
 
     @Override
     public void unload() {
         super.unload();
-        // Unloading the event consumer
         ZAP.getEventBus()
                 .unregisterConsumer(
                         eventConsumerImpl,
@@ -123,9 +113,7 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
 
     @Override
     public void sessionChanged(final Session session) {
-        // session changed - extension should basically act as if "Reload" has been called and
-        // re-build the status panel
-        hookView.addStatusPanel(getStatusPanel());
+        resetNotesTable();
     }
 
     @Override
@@ -143,77 +131,113 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
         // Left empty for now
     }
 
+    private ExtensionHistory getExtensionHistory() {
+        if (extHistory == null) {
+            extHistory =
+                    org.parosproxy.paros.control.Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionHistory.class);
+        }
+        return extHistory;
+    }
+
     private AbstractPanel getStatusPanel() {
 
-        NotesTableModel notesTableModel = new NotesTableModel();
-        notesTable.setModel(notesTableModel);
-
-        ExtensionHistory extHist = org.parosproxy.paros.control.Control.getSingleton().getExtensionLoader()
-                .getExtension(ExtensionHistory.class);
-
-        if (extHist != null) {
-
-            int LastHistoryId = extHist.getLastHistoryId();
-
-            int i = 0;
-            while (i++ < LastHistoryId) {
-                HistoryReference hr = extHist.getHistoryReference(i);
-                if (hr != null) {
-                    if (hr.hasNote()) {
-                        eventConsumerImpl.addRowToNotesTable(i);
-                    }
-                }
-            }
-        }
-
-        notesTable.setColumnSelectionAllowed(false);
-        notesTable.setCellSelectionEnabled(false);
-        notesTable.setRowSelectionAllowed(true);
-        notesTable.setAutoCreateRowSorter(true);
-        notesTable.setColumnControlVisible(true);
-        notesTable
-                .getSelectionModel()
-                .addListSelectionListener(new NotesTableSelectionHandler(notesTable, extHist));
-
-        exportButton = new TableExportButton<>(notesTable);
-
-        JPanel buttonContainer = new JPanel();
-        buttonContainer.setLayout(new BoxLayout(buttonContainer, BoxLayout.X_AXIS));
-        buttonContainer.add(reload);
-        buttonContainer.add(exportButton);
-
-        JPanel pContainer = new JPanel();
-        pContainer.setLayout(new BoxLayout(pContainer, BoxLayout.Y_AXIS));
-        pContainer.add(buttonContainer);
-        pContainer.add(new JScrollPane(notesTable));
-
-        if (statusPanel != null) {
-            statusPanel.removeAll();
-            eventConsumerImpl.resetRowMapper();
-            statusPanel.add(pContainer);
-        } else {
-
+        if (statusPanel == null) {
             statusPanel = new AbstractPanel();
-            statusPanel.setLayout(new CardLayout());
+            statusPanel.setLayout(new BorderLayout());
             statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
             statusPanel.setIcon(ICON);
-
-            statusPanel.add(pContainer);
+            statusPanel.add(getToolBar(), BorderLayout.NORTH);
+            statusPanel.add(new JScrollPane(getNotesTable()), BorderLayout.CENTER);
         }
 
         return statusPanel;
     }
 
-    private ZapMenuItem getMenuReload() {
-        if (menuReload == null) {
-            menuReload = new ZapMenuItem(PREFIX + ".topmenu.tools.reload");
-
-            menuReload.addActionListener(
-                    ae -> {
-                        hookView.addStatusPanel(getStatusPanel());
-                    });
+    private NotesTableModel getNotesTableModel() {
+        if (notesTableModel == null) {
+            notesTableModel = new NotesTableModel();
         }
-        return menuReload;
+        return notesTableModel;
+    }
+
+    private JXTable getNotesTable() {
+        if (notesTable == null) {
+            notesTable = new JXTable();
+            notesTable.setModel(getNotesTableModel());
+            notesTable.setColumnSelectionAllowed(false);
+            notesTable.setCellSelectionEnabled(false);
+            notesTable.setRowSelectionAllowed(true);
+            notesTable.setAutoCreateRowSorter(true);
+            notesTable.setColumnControlVisible(true);
+            notesTable
+                    .getSelectionModel()
+                    .addListSelectionListener(
+                            new NotesTableSelectionHandler(notesTable, getExtensionHistory()));
+
+            fillTable();
+        }
+        return notesTable;
+    }
+
+    private void resetNotesTable() {
+        getNotesTableModel().clear();
+        eventConsumerImpl.resetRowMapper();
+        fillTable();
+    }
+
+    private void fillTable() {
+        int lastHistoryId = getExtensionHistory().getLastHistoryId();
+        int i = 0;
+        while (i++ < lastHistoryId) {
+            HistoryReference hr = getExtensionHistory().getHistoryReference(i);
+            if (hr != null) {
+                if (hr.hasNote()) {
+                    eventConsumerImpl.addRowToNotesTable(i);
+                }
+            }
+        }
+    }
+
+    private JToolBar getToolBar() {
+        if (toolBar == null) {
+            toolBar = new JToolBar();
+            toolBar.setFloatable(false);
+            toolBar.setRollover(true);
+            toolBar.add(getButtonReload());
+            toolBar.add(getButtonExport());
+            toolBar.add(Box.createHorizontalGlue());
+        }
+        return toolBar;
+    }
+
+    private JButton getButtonReload() {
+        if (reload == null) {
+            reload = new JButton(Constant.messages.getString(PREFIX + ".reload.button"));
+            reload.addActionListener(getReloadActionListener());
+        }
+        return reload;
+    }
+
+    private ActionListener getReloadActionListener() {
+        if (reloadActionListener == null) {
+            reloadActionListener =
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            resetNotesTable();
+                        }
+                    };
+        }
+        return reloadActionListener;
+    }
+
+    private TableExportButton<JXTable> getButtonExport() {
+        if (exportButton == null) {
+            exportButton = new TableExportButton<JXTable>(getNotesTable());
+        }
+        return exportButton;
     }
 
     @Override

@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.allinonenotes;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
@@ -27,14 +28,14 @@ public class NotesTableModel extends AbstractTableModel {
 
     private static final String PREFIX = "allinonenotes";
     private static final long serialVersionUID = 555559948904951733L;
-    private final Vector<String> columnNames;
+    private final List<String> columnNames;
     private static final int COLUMN_COUNT = 2;
-    private String[][] rowData = {};
+    private List<NoteRecord> rowData = new ArrayList<>();
 
     public NotesTableModel() {
         super();
 
-        columnNames = new Vector<>(COLUMN_COUNT);
+        columnNames = new ArrayList<>(COLUMN_COUNT);
         columnNames.add(Constant.messages.getString(PREFIX + ".columnHeaders.requestId"));
         columnNames.add(Constant.messages.getString(PREFIX + ".columnHeaders.noteContent"));
     };
@@ -46,7 +47,7 @@ public class NotesTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return rowData.length;
+        return rowData.size();
     }
 
     @Override
@@ -55,47 +56,50 @@ public class NotesTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Object getValueAt(int row, int col) {
-        return rowData[row][col];
+    public Object getValueAt(int rowIdx, int colIdx) {
+        NoteRecord row = rowData.get(rowIdx);
+        switch (colIdx) {
+            case 0:
+                return row.getMessageId();
+            case 1:
+                return row.getNote();
+            default:
+                return null;
+        }
     }
 
     public boolean isCellEditable(int row, int col) {
         return false;
     }
 
-    public void setValueAt(Object value, int row, int col) {
-        rowData[row][col] = value.toString();
-        fireTableCellUpdated(row, col);
+    public void setValueAt(Object value, int rowIdx, int colIdx) {
+        switch (colIdx) {
+            case 0:
+                rowData.get(rowIdx).setMessageId((int) value);
+                break;
+            case 1:
+                rowData.get(rowIdx).setNote(value.toString());
+                break;
+        }
+        fireTableCellUpdated(rowIdx, colIdx);
     }
 
-    public void addRow(String[] newRow) {
+    public NoteRecord getRow(int number) {
+        return rowData.get(number);
+    }
 
-        int prevRowCount = getRowCount();
-        String[][] tempRowData = new String[prevRowCount + 1][];
-
-        for (int i = 0; i < prevRowCount; i++) {
-            tempRowData[i] = rowData[i];
-        }
-
-        tempRowData[prevRowCount] = newRow;
-        rowData = tempRowData;
-        fireTableRowsInserted(prevRowCount, prevRowCount);
+    public void addRow(NoteRecord newRow) {
+        rowData.add(newRow);
+        fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
     }
 
     public void removeRow(int rowId) {
-
-        int prevRowCount = getRowCount();
-        String[][] tempRowData = new String[prevRowCount - 1][];
-
-        int counter = 0;
-        for (int i = 0; i < prevRowCount; i++) {
-            if (i != rowId) {
-                tempRowData[counter] = rowData[i];
-                counter++;
-            }
-        }
-
-        rowData = tempRowData;
+        rowData.remove(rowId);
         fireTableRowsDeleted(rowId, rowId);
+    }
+
+    public void clear() {
+        rowData.clear();
+        fireTableDataChanged();
     }
 }

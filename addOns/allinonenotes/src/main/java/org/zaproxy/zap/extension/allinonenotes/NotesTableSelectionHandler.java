@@ -27,22 +27,24 @@ import org.parosproxy.paros.model.HistoryReference;
 
 public class NotesTableSelectionHandler implements ListSelectionListener {
 
-    private ExtensionHistory _extHist;
-    private JTable _noteTable;
+    private ExtensionHistory extHist;
+    private JTable noteTable;
 
     public NotesTableSelectionHandler(JTable noteTable, ExtensionHistory extHist) {
-
-        _extHist = extHist;
-        _noteTable = noteTable;
+        this.extHist = extHist;
+        this.noteTable = noteTable;
     }
 
     public void valueChanged(ListSelectionEvent e) {
-
         if (!e.getValueIsAdjusting()) {
-            int selectedRow = _noteTable.getSelectedRow();
-            int noteID = Integer.parseInt((String) _noteTable.getValueAt(selectedRow, 0));
-            HistoryReference hr = _extHist.getHistoryReference(noteID);
-            _extHist.showInHistory(hr);
+            if (noteTable.getSelectedRow() == -1) {
+                return;
+            }
+            int selectedRow = noteTable.convertRowIndexToModel(noteTable.getSelectedRow());
+            int messageId =
+                    ((NotesTableModel) noteTable.getModel()).getRow(selectedRow).getMessageId();
+            HistoryReference hr = extHist.getHistoryReference(messageId);
+            extHist.showInHistory(hr);
         }
     }
 }

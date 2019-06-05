@@ -34,21 +34,31 @@ public class EventConsumerImpl implements EventConsumer {
 
     private static final Logger LOGGER = Logger.getLogger(EventConsumerImpl.class);
     private static Map<Integer, Integer> rowMapper = new HashMap<>();
+    private NotesTableModel notesTableModel;
+
+    public EventConsumerImpl(NotesTableModel ntm) {
+        this.notesTableModel = ntm;
+    }
+
+    private NotesTableModel getNotesTableModel() {
+        return notesTableModel;
+    }
 
     protected void deleteRowFromNotes(int requestID) {
         LOGGER.debug("NOTE deleted...");
-        NotesTableModel model = (NotesTableModel) ExtensionAllInOneNotes.notesTable.getModel();
-        int rowToDelete = rowMapper.get(requestID);
-
-        model.removeRow(rowToDelete);
-        rowMapper.remove(requestID);
+        if (rowMapper.get(requestID) != null) {
+            int rowToDelete = rowMapper.get(requestID);
+            getNotesTableModel().removeRow(rowToDelete);
+            rowMapper.remove(requestID);
+        }
     }
 
     protected void addRowToNotesTable(int requestID) {
-        ExtensionHistory extHist = org.parosproxy.paros.control.Control.getSingleton().getExtensionLoader()
-                .getExtension(ExtensionHistory.class);
+        ExtensionHistory extHist =
+                org.parosproxy.paros.control.Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionHistory.class);
         HistoryReference hr = extHist.getHistoryReference(requestID);
-        NotesTableModel model = (NotesTableModel) ExtensionAllInOneNotes.notesTable.getModel();
 
         if (hr != null) {
             if (hr.hasNote()) {
@@ -60,12 +70,12 @@ public class EventConsumerImpl implements EventConsumer {
                         // note updated
                         LOGGER.debug("NOTE updated...");
                         int rowToUpdate = rowMapper.get(requestID);
-                        model.setValueAt(note, rowToUpdate, 1);
+                        getNotesTableModel().setValueAt(note, rowToUpdate, 1);
                     } else {
                         // note created
                         LOGGER.debug("NOTE created...");
-                        rowMapper.put(requestID, model.getRowCount());
-                        model.addRow(new String[] {String.valueOf(requestID), note});
+                        rowMapper.put(requestID, getNotesTableModel().getRowCount());
+                        getNotesTableModel().addRow(new NoteRecord(requestID, note));
                     }
 
                 } catch (HttpMalformedHeaderException | DatabaseException e) {
