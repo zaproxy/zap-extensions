@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improve outgoing proxy failure error message (Issue 5304).
 - Introduce News panel and use default quick start page 
 - Dont make news request if -silent option used
+- Allow to use headless browsers in automated scans, use Firefox headless by default (Issue 3866).
+- Depend on newer version of Selenium add-on.
 
 ## 25 - 2018-12-11
 

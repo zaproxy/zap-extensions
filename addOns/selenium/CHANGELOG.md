@@ -1,7 +1,8 @@
 # Changelog
 All notable changes to this add-on will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
@@ -9,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Quit corresponding WebDrivers when removing WebDriver provider.
 - Enable ServiceWorker on launched Firefox browsers.
 - Ensure "localhost" is proxied through ZAP on Firefox >= 67.
+- Allow to start Chrome and Firefox in headless mode (Issue 3866).
+- Start using Semantic Versioning.
 
 ## 14 - 2019-01-31
 

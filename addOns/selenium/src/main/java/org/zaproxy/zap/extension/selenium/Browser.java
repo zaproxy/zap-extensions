@@ -35,7 +35,9 @@ import org.parosproxy.paros.Constant;
 /** Defines the browsers supported by the add-on. */
 public enum Browser {
     CHROME("chrome", false),
+    CHROME_HEADLESS("chrome-headless", true),
     FIREFOX("firefox", false),
+    FIREFOX_HEADLESS("firefox-headless", true),
     /**
      * Headless browser, guaranteed to be always available.
      *
@@ -108,8 +110,12 @@ public enum Browser {
 
         if (CHROME.id.equals(id)) {
             return CHROME;
+        } else if (CHROME_HEADLESS.id.equals(id)) {
+            return CHROME_HEADLESS;
         } else if (FIREFOX.id.equals(id)) {
             return FIREFOX;
+        } else if (FIREFOX_HEADLESS.id.equals(id)) {
+            return FIREFOX_HEADLESS;
         } else if (HTML_UNIT.id.equals(id)) {
             return HTML_UNIT;
         } else if (INTERNET_EXPLORER.id.equals(id)) {
@@ -224,8 +230,10 @@ public enum Browser {
     private static String getWebDriverName(Browser browser) {
         switch (browser) {
             case CHROME:
+            case CHROME_HEADLESS:
                 return "chromedriver";
             case FIREFOX:
+            case FIREFOX_HEADLESS:
                 return "geckodriver";
             default:
                 return null;

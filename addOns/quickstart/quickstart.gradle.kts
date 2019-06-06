@@ -18,10 +18,10 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("selenium") {
-                            semVer.set("2.*")
+                            version.set("15.*")
                         }
                         register("spiderAjax") {
-                            semVer.set("23.*")
+                            version.set("23.*")
                         }
                     }
                 }
@@ -33,7 +33,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("hud") {
-                            semVer.set(">= 0.4.0")
+                            version.set(">= 0.4.0")
                         }
                     }
                 }
@@ -45,7 +45,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("selenium") {
-                            semVer.set("2.*")
+                            version.set("15.*")
                         }
                     }
                 }
