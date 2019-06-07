@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [25] - 2019-06-07
 
 - Correct HTTP message usage in Insecure HTTP Method scanner.
 - Fix missing resource messages with Cross-Domain Misconfiguration scanner.
@@ -156,3 +156,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[25]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v25
