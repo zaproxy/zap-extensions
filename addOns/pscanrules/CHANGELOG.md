@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [24] - 2019-06-07
 
 - Maintenance changes.
 - Migrate CSP Scanner into the main passive scan release package (promoting it to Release). Upgrade Salvation (dependency) to 2.6.0.
@@ -126,3 +126,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[24]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v24

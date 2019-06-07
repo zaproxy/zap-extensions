@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [19] - 2019-06-07
 
 - Fix typo and correct term in help page.
 - Fix typo in scanner name.
@@ -101,3 +101,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v19

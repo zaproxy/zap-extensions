@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [24] - 2019-06-07
 
 ### Fixed
 - Fix typo in request header used by Apache Range Header DoS.
@@ -140,3 +140,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[24]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v24
