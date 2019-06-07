@@ -3,12 +3,12 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [8] - 2019-06-07
 
-- Two new options are provided as part of issue 173.
-- One option allows the user to specify the file extensions to ignore.
-- URIs ending with specified file extensions are ignored from making requests to the server.
-- The other option allows the user to specify fail case string.
+- Two new options are provided as part of issue 173:
+  - One option allows the user to specify the file extensions to ignore.
+  URIs ending with specified file extensions are ignored from making requests to the server.
+  - The other option allows the user to specify fail case string.
 - Inform of running scans (e.g. on session change, add-on uninstall).
 - Issue 2000 - Updated strings shown in attack menu with title caps.
 - Enable start button on file selection.
@@ -47,3 +47,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[8]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v8
