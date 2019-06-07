@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [14] - 2019-06-07
 ### Changed
 - Depend on newer version of Selenium add-on.
 
@@ -65,4 +65,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[14]: https://github.com/zaproxy/zap-extensions/releases/jxbrowser-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/jxbrowser-v13
