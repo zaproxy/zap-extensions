@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.0.0] - 2019-06-07
 
 - Correct WebDriver requester ID.
 - Remove unused resource messages.
@@ -144,3 +144,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[23.0.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.0.0

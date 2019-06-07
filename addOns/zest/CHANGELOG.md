@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [29] - 2019-06-07
 
 - Rely on script context writer for script output.
 - Correct message handling in HTTP Sender scripts.
@@ -189,3 +189,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated for 2.1.0
 
+[29]: https://github.com/zaproxy/zap-extensions/releases/zest-v29
