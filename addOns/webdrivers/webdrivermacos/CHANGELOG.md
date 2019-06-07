@@ -3,8 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
-
+## [10] - 2019-06-07
+### Changed
+- Update ChromeDriver to v75.0.3770.8.
 
 ## [9] - 2019-05-28
 
@@ -54,5 +55,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[10]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v8
