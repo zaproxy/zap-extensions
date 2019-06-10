@@ -161,7 +161,9 @@ public class DataGenerator {
                             return "";
                         } else {
                             refs.add(defn);
-                            return this.generators.getBodyGenerator().generate(defn, false, refs);
+                            return this.generators
+                                    .getBodyGenerator()
+                                    .generateBodyWithObjectMaps(defn, false, refs);
                         }
                     }
                 }

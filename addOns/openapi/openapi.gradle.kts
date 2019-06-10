@@ -6,7 +6,7 @@ zapAddOn {
     zapVersion.set("2.6.0")
 
     manifest {
-        author.set("ZAP Core Team plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak")
+        author.set("ZAP Core Team plus Joanna Bona, Artur Grzesica, Markus Kiss, Michal Materniak and Marcin Spiewak")
     }
 
     apiClientGen {

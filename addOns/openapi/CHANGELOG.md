@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added Accept header for importing an OpenAPI definition from an URL, in the proper format.
 - Correct import of v1.2 definitions (Issue 5262).
 - Fix exception when reporting errors.
+- Add support for primitive values (standalone and within arrays) in a request body (Issue 5250).
 
 ## 12 - 2018-05-18
 
