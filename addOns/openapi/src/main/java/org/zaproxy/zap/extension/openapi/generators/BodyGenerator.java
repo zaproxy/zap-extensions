@@ -71,9 +71,9 @@ public class BodyGenerator {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Generate body for object " + name);
         }
-        String jsonStr = generateJsonObject(name, refs);
+        String jsonStr = generateJsonObjectString(name, refs);
         if (isArray) {
-            jsonStr = convertJsonToArray(jsonStr);
+            jsonStr = convertJsonStringToArrayString(jsonStr);
         }
         return jsonStr;
     }
@@ -84,26 +84,24 @@ public class BodyGenerator {
         }
         String jsonStr = generateJsonPrimitiveValue(property);
         if (isArray) {
-            jsonStr = convertJsonToArray(jsonStr);
+            jsonStr = convertJsonStringToArrayString(jsonStr);
         }
         return jsonStr;
     }
 
-    private String convertJsonToArray(String jsonStr) {
-        jsonStr =
-                SYNTAX.get(Element.ARRAY_BEGIN)
-                        + jsonStr
-                        + SYNTAX.get(Element.OUTER_SEPARATOR)
-                        + jsonStr
-                        + SYNTAX.get(Element.ARRAY_END);
-        return jsonStr;
+    private String convertJsonStringToArrayString(String jsonStr) {
+        return SYNTAX.get(Element.ARRAY_BEGIN)
+                + jsonStr
+                + SYNTAX.get(Element.OUTER_SEPARATOR)
+                + jsonStr
+                + SYNTAX.get(Element.ARRAY_END);
     }
 
     private String generateJsonPrimitiveValue(Property property) {
         return dataGenerator.generateBodyValue("", property, new ArrayList<>());
     }
 
-    private String generateJsonObject(String name, List<String> refs) {
+    private String generateJsonObjectString(String name, List<String> refs) {
         StringBuilder json = new StringBuilder();
         json.append(SYNTAX.get(Element.OBJECT_BEGIN));
         boolean isFirst = true;
