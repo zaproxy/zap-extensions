@@ -24,8 +24,9 @@ configurations {
 }
 
 dependencies {
-    implementation("io.swagger:swagger-parser:1.0.33")
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.33") {
+    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
+    implementation("io.swagger:swagger-parser:1.0.44")
+    implementation("io.swagger:swagger-compat-spec-parser:1.0.44") {
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
