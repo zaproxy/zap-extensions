@@ -1,7 +1,7 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 import org.zaproxy.gradle.tasks.DownloadWebDriver
 
-version = "10"
+version = "11"
 description = "Windows WebDrivers for Firefox and Chrome."
 
 extra["targetOs"] = DownloadWebDriver.OS.WIN
