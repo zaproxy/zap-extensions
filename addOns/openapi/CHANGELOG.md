@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added Accept header for importing an OpenAPI definition from an URL, in the proper format.
 - Correct import of v1.2 definitions (Issue 5262).
 - Fix exception when reporting errors.
+- Update minimum ZAP version to 2.8.0.
 
 ## 12 - 2018-05-18
 
