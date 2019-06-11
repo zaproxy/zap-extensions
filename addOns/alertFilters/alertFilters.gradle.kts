@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "8"
+version = "9"
 description = "Allows you to automate the changing of alert risk levels."
 
 zapAddOn {

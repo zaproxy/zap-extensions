@@ -11,7 +11,7 @@ eclipse {
     }
 }
 
-version = "29"
+version = "30"
 description = "A graphical security scripting language, ZAPs macro language on steroids"
 
 zapAddOn {

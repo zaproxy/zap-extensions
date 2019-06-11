@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "13"
+version = "14"
 description = "An advanced active injection bundle for SQLi (derived by SQLMap)"
 
 zapAddOn {
