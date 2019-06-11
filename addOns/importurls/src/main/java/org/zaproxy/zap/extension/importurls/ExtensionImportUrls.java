@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.importurls;
 
 import java.awt.EventQueue;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +28,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.JFileChooser;
-import javax.swing.KeyStroke;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -74,18 +72,12 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
         extensionHook.addApiImplementor(api);
     }
 
-    @SuppressWarnings("deprecation")
     private ZapMenuItem getMenuImportUrls() {
         if (menuImportUrls == null) {
             menuImportUrls =
                     new ZapMenuItem(
                             "importurls.topmenu.tools.importurls",
-                            // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke
-                            // with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_I,
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
-                                    false));
+                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_I, 0, false));
             menuImportUrls.setToolTipText(
                     Constant.messages.getString("importurls.topmenu.tools.importurls.tooltip"));
 
