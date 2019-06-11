@@ -165,7 +165,9 @@ public class TestDomXSS extends AbstractAppParamPlugin {
 
         try {
             String browserId = this.getConfig().getString(RULE_BROWSER_ID, DEFAULT_BROWSER.getId());
-            browser = Browser.getBrowserWithIdNoFailSafe(browserId);
+            if (browserId != null && !browserId.isEmpty()) {
+                browser = Browser.getBrowserWithIdNoFailSafe(browserId);
+            }
         } catch (ConversionException e) {
             log.debug(
                     "Invalid value for '"
