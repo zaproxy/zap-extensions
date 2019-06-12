@@ -3,7 +3,7 @@ description = "Imports and scans WSDL files containing SOAP endpoints."
 
 zapAddOn {
     addOnName.set("SOAP Scanner")
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.8.0")
 
     manifest {
         author.set("Alberto (albertov91) + ZAP Core team")

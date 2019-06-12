@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Internationalise some strings.
+- Update minimum ZAP version to 2.8.0.
+- Add import menu to (new) top level Import menu instead of Analyse menu.
 
 ## 4 - 2017-05-05
 
