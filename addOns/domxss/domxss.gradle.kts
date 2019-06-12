@@ -1,4 +1,4 @@
-version = "9"
+version = "10"
 description = "DOM XSS Active scanner rule"
 
 zapAddOn {
