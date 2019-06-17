@@ -11,4 +11,9 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.alertFilters.AlertFilterAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/alertFilters/resources/Messages.properties"))
+    }
 }
