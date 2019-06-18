@@ -58,6 +58,11 @@ public class AlertFilterAPI extends ApiImplementor {
 
     private ExtensionAlertFilters extension;
 
+    /** Provided only for API client generator usage. */
+    public AlertFilterAPI() {
+        this(null);
+    }
+
     public AlertFilterAPI(ExtensionAlertFilters extension) {
         super();
         this.extension = extension;

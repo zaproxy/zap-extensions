@@ -36,7 +36,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -58,6 +57,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportLogFiles extends ExtensionAdaptor {
 
@@ -78,7 +78,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
         }
     }
 
-    private JMenuItem menuExample = null;
+    private ZapMenuItem menuExample = null;
 
     private static Logger log = Logger.getLogger(ExtensionImportLogFiles.class);
 
@@ -95,7 +95,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
         importLogAPI = new ImportLogAPI(null);
         extensionHook.addApiImplementor(importLogAPI);
         if (getView() != null) {
-            extensionHook.getHookMenu().addAnalyseMenuItem(getImportOption());
+            extensionHook.getHookMenu().addImportMenuItem(getImportOption());
         }
     }
 
@@ -104,10 +104,9 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
         return true;
     }
 
-    private JMenuItem getImportOption() {
+    private ZapMenuItem getImportOption() {
         if (menuExample == null) {
-            menuExample = new JMenuItem();
-            menuExample.setText(getMessageString("importLogFiles.analyze.import"));
+            menuExample = new ZapMenuItem("importLogFiles.import.importLOG");
 
             menuExample.addActionListener(
                     new java.awt.event.ActionListener() {

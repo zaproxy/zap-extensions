@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "8"
+version = "9"
 description = "Allows you to automate the changing of alert risk levels."
 
 zapAddOn {
@@ -10,5 +10,10 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+    }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.alertFilters.AlertFilterAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/alertFilters/resources/Messages.properties"))
     }
 }

@@ -89,8 +89,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         }
 
         if (getView() != null) {
-            extensionHook.getHookMenu().addToolsMenuItem(getMenuImportLocalOpenApi());
-            extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrlOpenApi());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalOpenApi());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlOpenApi());
         }
 
         extensionHook.addApiImplementor(new OpenApiAPI(this));
@@ -114,9 +114,9 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     /* Menu option to import a local OpenApi file. */
     private ZapMenuItem getMenuImportLocalOpenApi() {
         if (menuImportLocalOpenApi == null) {
-            menuImportLocalOpenApi = new ZapMenuItem("openapi.topmenu.tools.importopenapi");
+            menuImportLocalOpenApi = new ZapMenuItem("openapi.topmenu.import.importopenapi");
             menuImportLocalOpenApi.setToolTipText(
-                    Constant.messages.getString("openapi.topmenu.tools.importopenapi.tooltip"));
+                    Constant.messages.getString("openapi.topmenu.import.importopenapi.tooltip"));
 
             menuImportLocalOpenApi.addActionListener(
                     new java.awt.event.ActionListener() {
@@ -145,10 +145,10 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     /* Menu option to import a OpenApi file from a given URL. */
     private ZapMenuItem getMenuImportUrlOpenApi() {
         if (menuImportUrlOpenApi == null) {
-            menuImportUrlOpenApi = new ZapMenuItem("openapi.topmenu.tools.importremoteopenapi");
+            menuImportUrlOpenApi = new ZapMenuItem("openapi.topmenu.import.importremoteopenapi");
             menuImportUrlOpenApi.setToolTipText(
                     Constant.messages.getString(
-                            "openapi.topmenu.tools.importremoteopenapi.tooltip"));
+                            "openapi.topmenu.import.importremoteopenapi.tooltip"));
 
             final ExtensionOpenApi shadowCopy = this;
             menuImportUrlOpenApi.addActionListener(

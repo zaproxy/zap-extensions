@@ -3,7 +3,7 @@ description = "Imports and spiders Open API definitions."
 
 zapAddOn {
     addOnName.set("OpenAPI Support")
-    zapVersion.set("2.6.0")
+    zapVersion.set("2.8.0")
 
     manifest {
         author.set("ZAP Core Team plus Joanna Bona, Artur Grzesica, Markus Kiss, Michal Materniak and Marcin Spiewak")
