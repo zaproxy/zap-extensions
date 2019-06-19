@@ -24,10 +24,19 @@ zapAddOn {
         }
     }
 
+    val apiGenClasspath = configurations.detachedConfiguration(
+        dependencies.create("org.zaproxy:zap:2.8.0"),
+        dependencies.create(parent!!.childProjects.get("selenium")!!)
+    )
+
     apiClientGen {
         api.set("org.zaproxy.zap.extension.spiderAjax.AjaxSpiderAPI")
         options.set("org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam")
         messages.set(file("src/main/resources/org/zaproxy/zap/extension/spiderAjax/resources/Messages.properties"))
+        classpath.run {
+            setFrom(apiGenClasspath)
+            from(tasks.named(JavaPlugin.JAR_TASK_NAME))
+        }
     }
 }
 
