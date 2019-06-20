@@ -75,6 +75,15 @@ It will not raise an alert if a similar but safe payload also results in a 400 r
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Spring4ShellScanRule.java">Spring4ShellScanRule.java</a>
 
+<H2>Server Side Template Injection</H2>
+This rule attempts to detect situations in which user input might be interpreted as part of the template and processed on the server, versus the user input simply being used as an argument to the template/engine.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SstiScanRule.java">SstiScanRule.java</a>
+
+<H2>Server Side Template Injection (Blind)</H2>
+This rule goes one step further than the SSTI scan rule and attempts to find places where the impact of the user input is not immediately obvious, such as when used by an admin panel, report output, invoice, etc.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SstiBlindScanRule.java">SstiBlindScanRule.java</a>
 
 </BODY>
 </HTML>
