@@ -46,6 +46,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyServer;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -54,6 +55,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.model.ScanEventPublisher;
@@ -123,6 +125,13 @@ public class SpiderThread implements Runnable {
         proxy.setConnectionParam(extension.getModel().getOptionsParam().getConnectionParam());
         proxy.addOverrideMessageProxyListener(new SpiderProxyListener());
         proxy.addProxyListener(new SpiderProxyResponseListener());
+
+        // Enable websockets, as long as the add-on is installed
+        Extension wsExt =
+                Control.getSingleton().getExtensionLoader().getExtension("ExtensionWebSocket");
+        if (wsExt != null && wsExt instanceof PersistentConnectionListener) {
+            proxy.addPersistentConnectionListener((PersistentConnectionListener) wsExt);
+        }
     }
 
     private void createOutOfScopeResponse(String response) {

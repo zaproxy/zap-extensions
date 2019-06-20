@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+ - Enable websockets ([Issue 4521](https://github.com/zaproxy/zaproxy/issues/4521))
 
 ## [23.0.0] - 2019-06-07
 
