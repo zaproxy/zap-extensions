@@ -1,6 +1,7 @@
 import java.nio.charset.StandardCharsets
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
+import org.zaproxy.gradle.addon.apigen.ApiClientGenExtension
 import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.addon.misc.ConvertMarkdownToHtml
 import org.zaproxy.gradle.addon.misc.CreateGitHubRelease
@@ -68,6 +69,8 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.8.0"))
+
     zapAddOn {
         releaseLink.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v@CURRENT_VERSION@" })
 
@@ -78,6 +81,13 @@ subprojects {
         wikiGen {
             wikiFilesPrefix.set("HelpAddons${zapAddOn.addOnId.get().capitalize()}")
             wikiDir.set(project.provider { project.layout.projectDirectory.dir(if (addOnsInZapCoreHelp.contains(zapAddOn.addOnId.get())) zapCoreHelpWikiDir else zapExtensionsWikiDir) })
+        }
+
+        apiClientGen {
+            classpath.run {
+                setFrom(apiGenClasspath)
+                from(tasks.named(JavaPlugin.JAR_TASK_NAME))
+            }
         }
     }
 }
@@ -139,6 +149,9 @@ fun AddOnPluginExtension.manifest(configure: ManifestExtension.() -> Unit): Unit
 
 fun AddOnPluginExtension.wikiGen(configure: WikiGenExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("wikiGen", configure)
+
+fun AddOnPluginExtension.apiClientGen(configure: ApiClientGenExtension.() -> Unit): Unit =
+    (this as ExtensionAware).extensions.configure("apiClientGen", configure)
 
 open class ValidateDeclaredAddOns : DefaultTask() {
 
