@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
@@ -195,16 +196,21 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
      * @param fileExtension
      * @return
      */
-    private boolean dataMatchesExtension(byte[] data, String fileExtension) {
+    private String findEvidenceForExtension(byte[] data, String fileExtension) {
         if (fileExtension != null) {
+            Matcher matcher;
             if (fileExtension.equals("JSP")) {
-                if (PATTERN_JSP.matcher(new String(data)).find()) return true;
+                matcher = PATTERN_JSP.matcher(new String(data));
+                if (matcher.find()) return matcher.group();
             } else if (fileExtension.equals("PHP")) {
-                if (PATTERN_PHP.matcher(new String(data)).find()) return true;
+                matcher = PATTERN_PHP.matcher(new String(data));
+                if (matcher.find()) return matcher.group();
             } else if (fileExtension.equals("JAVA")) {
-                if (PATTERN_JAVA.matcher(new String(data)).find()) return true;
+                matcher = PATTERN_JAVA.matcher(new String(data));
+                if (matcher.find()) return matcher.group();
             } else if (fileExtension.equals("HTML")) {
-                if (PATTERN_HTML.matcher(new String(data)).find()) return true;
+                matcher = PATTERN_HTML.matcher(new String(data));
+                if (matcher.find()) return matcher.group();
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug(
@@ -212,14 +218,25 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                                     + fileExtension
                                     + ". Accepting this file type without verifying it. Could therefore be a false positive.");
                 }
-                // unknown file extension. just accept it as it is.
-                return true;
+                if (getAlertThreshold() == AlertThreshold.LOW) {
+                    // unknown file extension. just accept it as it is, despite no actual evidence
+                    return "";
+                } else {
+                    // Not good enough for medium / high thresholds
+                    return null;
+                }
             }
             // known file type, but not matched. do not accept it.
-            return false;
+            return null;
         } else {
-            // no file extension, therefore no way to verify the source code.. so accept it as it is
-            return true;
+            if (getAlertThreshold() == AlertThreshold.LOW) {
+                // no file extension, therefore no way to verify the source code.. so accept it as
+                // it is, despite no actual evidence
+                return "";
+            } else {
+                // Not good enough for medium / high thresholds
+                return null;
+            }
         }
     }
 
@@ -324,7 +341,15 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                 return false;
             }
 
-            if (!UNWANTED_RESPONSE_CODES.contains(
+            if (originalMessage
+                    .getResponseBody()
+                    .toString()
+                    .equals(svnsourcefileattackmsg.getResponseBody().toString())) {
+                if (log.isDebugEnabled()) {
+                    log.debug(
+                            "Response bodies are exactly the same, so can not be the source code");
+                }
+            } else if (!UNWANTED_RESPONSE_CODES.contains(
                     attackmsgResponseStatusCode)) { // If the response is wanted (not on the
                 // unwanted list)
 
@@ -344,8 +369,10 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                 }
                 // check the contents of the output to some degree, if we have a file extension.
                 // if not, just try it (could be a false positive, but hey)
-                if (dataMatchesExtension(
-                        svnsourcefileattackmsg.getResponseBody().getBytes(), fileExtension)) {
+                String evidence =
+                        findEvidenceForExtension(
+                                svnsourcefileattackmsg.getResponseBody().getBytes(), fileExtension);
+                if (evidence != null) {
                     // if we get to here, is is very likely that we have source file inclusion
                     // attack. alert it.
                     bingo(
@@ -358,7 +385,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                             attackFilename,
                             getExtraInfo(urlfilename, attackFilename),
                             getSolution(),
-                            null,
+                            evidence,
                             svnsourcefileattackmsg);
                     // if we found one, do not even try the "super" method, which tries each of the
                     // parameters,
@@ -433,7 +460,15 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                     return false;
                 }
 
-                if (!UNWANTED_RESPONSE_CODES.contains(
+                if (originalMessage
+                        .getResponseBody()
+                        .toString()
+                        .equals(svnWCDBAttackMsg.getResponseBody().toString())) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(
+                                "Response bodies are exactly the same, so can not be the source code");
+                    }
+                } else if (!UNWANTED_RESPONSE_CODES.contains(
                         svnWCDBAttackMsgStatusCode)) { // If the response is wanted (not on the
                     // unwanted list)
                     // calculate the path used to access the wc.db, as well as the matching relpath
@@ -615,11 +650,13 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                                             // we have a file extension.
                                             // if not, just try it (could be a false positive, but
                                             // hey)
-                                            if (dataMatchesExtension(
-                                                    svnSourceFileAttackMsg
-                                                            .getResponseBody()
-                                                            .getBytes(),
-                                                    fileExtension)) {
+                                            String evidence =
+                                                    findEvidenceForExtension(
+                                                            svnSourceFileAttackMsg
+                                                                    .getResponseBody()
+                                                                    .getBytes(),
+                                                            fileExtension);
+                                            if (evidence != null) {
                                                 // if we get to here, is is very likely that we have
                                                 // source file inclusion attack. alert it.
                                                 bingo(
@@ -636,7 +673,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                                                         attackFilename,
                                                         getExtraInfo(urlfilename, attackFilename),
                                                         getSolution(),
-                                                        null,
+                                                        evidence,
                                                         svnSourceFileAttackMsg);
                                                 // do not return.. need to tidy up first
                                             } else {
