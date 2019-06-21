@@ -167,6 +167,9 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
                             + e.getMessage());
             return;
         }
+        if (isFalsePositive(newRequest)) {
+            return;
+        }
         int statusCode = newRequest.getResponseHeader().getStatusCode();
         if (statusCode == HttpStatusCode.OK) {
             raiseAlert(newRequest, getRisk(), "");
@@ -174,6 +177,16 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
                 || statusCode == HttpStatusCode.FORBIDDEN) {
             raiseAlert(newRequest, Alert.RISK_INFO, getOtherInfo());
         }
+    }
+
+    /**
+     * Always returns false - override to add functionality to detect FPs
+     *
+     * @param msg
+     * @return true if its a false positive
+     */
+    public boolean isFalsePositive(HttpMessage msg) {
+        return false;
     }
 
     private String createTestablePath(String baseUriPath) {

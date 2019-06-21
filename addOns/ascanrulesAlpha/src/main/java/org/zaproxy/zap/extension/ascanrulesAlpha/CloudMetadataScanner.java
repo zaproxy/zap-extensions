@@ -133,7 +133,8 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
         try {
             newRequest.getRequestHeader().getURI().setPath(METADATA_PATH);
             this.sendMessageWithCustomHostHeader(newRequest, METADATA_HOST);
-            if (HttpStatusCode.isSuccess(newRequest.getResponseHeader().getStatusCode())) {
+            if (HttpStatusCode.isSuccess(newRequest.getResponseHeader().getStatusCode())
+                    && newRequest.getResponseBody().length() > 0) {
                 this.raiseAlert(newRequest);
             }
         } catch (Exception e) {

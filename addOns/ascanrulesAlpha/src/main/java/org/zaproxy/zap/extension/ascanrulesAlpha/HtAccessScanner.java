@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -39,5 +42,35 @@ public class HtAccessScanner extends AbstractAppFilePlugin {
     @Override
     public boolean targets(TechSet technologies) {
         return technologies.includes(Tech.Apache);
+    }
+
+    @Override
+    public boolean isFalsePositive(HttpMessage msg) {
+        if (msg.getResponseBody().length() == 0) {
+            // No content
+            return true;
+        }
+        if (msg.getResponseHeader().isXml()) {
+            // Pretty unlikely to be an htaccess file
+            return true;
+        }
+        if (msg.getResponseHeader().isJson()) {
+            // Pretty unlikely to be an htaccess file
+            return true;
+        }
+        if (msg.getResponseHeader().isHtml()) {
+            // Double check it does really look like HTML
+            try {
+                Source src = new Source(msg.getResponseBody().toString());
+                if (src.getFirstElement(HTMLElementName.HTML) != null) {
+                    // Yep, it really looks like HTML
+                    return true;
+                }
+            } catch (Exception e) {
+                // Ignore exceptions - they indicate its probably not really HTML
+            }
+        }
+
+        return false;
     }
 }
