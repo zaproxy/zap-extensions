@@ -65,6 +65,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FilenameExtensionFilter;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
+import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
@@ -125,6 +126,8 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
     private JLabel requestCountNameLabel;
 
     private JLabel requestCountValueLabel;
+
+    private TableExportButton<HistoryReferencesTable> exportButton = null;
 
     private static Logger log = Logger.getLogger(BruteForcePanel.class);
 
@@ -238,6 +241,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
             GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
             GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+            GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
             // Dummy
             GridBagConstraints gridBagConstraintsx = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsy = new GridBagConstraints();
@@ -305,6 +309,11 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             gridBagConstraints12.insets = new java.awt.Insets(0, 0, 0, 0);
             gridBagConstraints12.anchor = java.awt.GridBagConstraints.EAST;
 
+            gridBagConstraints13.gridx = 12;
+            gridBagConstraints13.gridy = 0;
+            gridBagConstraints13.insets = new java.awt.Insets(0, 0, 0, 0);
+            gridBagConstraints13.anchor = java.awt.GridBagConstraints.EAST;
+
             gridBagConstraintsx.gridx = 20;
             gridBagConstraintsx.gridy = 0;
             gridBagConstraintsx.weightx = 1.0;
@@ -334,6 +343,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             panelToolbar.add(getActiveScansValueLabel(), gridBagConstraints10);
             panelToolbar.add(getRequestCountNameLabel(), gridBagConstraints11);
             panelToolbar.add(getRequestCountValueLabel(), gridBagConstraints12);
+            panelToolbar.add(getExportButton(), gridBagConstraints13);
 
             panelToolbar.add(new JLabel(), gridBagConstraintsx); // Filler
             // panelToolbar.add(getLaunchButton(), gridBagConstraintsx);
@@ -560,6 +570,13 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             jScrollPane.setFont(FontUtils.getFont("Dialog"));
         }
         return jScrollPane;
+    }
+
+    private TableExportButton<HistoryReferencesTable> getExportButton() {
+        if (exportButton == null) {
+            exportButton = new TableExportButton<HistoryReferencesTable>(getBruteForceTable());
+        }
+        return exportButton;
     }
 
     private void resetBruteForceTable() {
