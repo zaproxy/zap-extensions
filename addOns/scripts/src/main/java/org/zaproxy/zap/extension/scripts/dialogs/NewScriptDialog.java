@@ -31,7 +31,6 @@ import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
-import org.zaproxy.zap.extension.scripts.NullScriptEngineWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class NewScriptDialog extends StandardFieldsDialog {
@@ -180,11 +179,6 @@ public class NewScriptDialog extends StandardFieldsDialog {
             list.add("");
         }
         list.addAll(extension.getExtScript().getScriptingEngines());
-        // TODO Remove the following workaround once targeting core version that respects
-        // ScriptEngineWrapper.isVisible.
-        // Remove the null scripting engine - unfortunately there is no easy way to do this
-        // and ExtensionScript.LANG_ENGINE_SEP (" : ") is private
-        list.remove(" : " + NullScriptEngineWrapper.NAME);
         return list;
     }
 
