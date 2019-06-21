@@ -95,6 +95,7 @@ public class GenBaseCase {
                 if (!fileExtention.startsWith(".")) {
                     fileExtention = "." + fileExtention;
                 }
+                url = !url.endsWith("/") ? url + "/" : url;
                 failurl = new URL(url + failString + fileExtention);
             }
         }
