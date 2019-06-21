@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Fix FP in "Source Code Disclosure SVN" where the contents exactly matches, and only report issues with less evidence at a LOW threshold.
+- Changed "Source Code Disclosure CVE20121823" to only analyze JSON responses when a LOW alert threshold is used.
 
 ## [25] - 2019-06-07
 
