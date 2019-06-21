@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+ - Close dialogues when the add-on is uninstalled.
 
 ## [1] - 2019-06-19
 
