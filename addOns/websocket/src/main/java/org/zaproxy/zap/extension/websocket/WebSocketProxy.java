@@ -41,6 +41,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.client.HandshakeConfig;
 import org.zaproxy.zap.extension.websocket.client.RequestOutOfScopeException;
 import org.zaproxy.zap.extension.websocket.client.ServerConnectionEstablisher;
+import org.zaproxy.zap.utils.Stats;
 
 /**
  * Intercepts WebSocket communication and forwards frames. Code is inspired by the <a
@@ -57,6 +58,12 @@ import org.zaproxy.zap.extension.websocket.client.ServerConnectionEstablisher;
 public abstract class WebSocketProxy {
 
     private static final Logger logger = Logger.getLogger(WebSocketProxy.class);
+
+    public static final String WEBSOCKET_OPEN_STATS = "stats.websockets.open";
+    public static final String WEBSOCKET_CLOSE_STATS = "stats.websockets.close";
+    public static final String WEBSOCKET_OPCODE_STATS_PREFIX = "stats.websockets.opcode.";
+    public static final String WEBSOCKET_COUNT_STATS_PREFIX = "stats.websockets.count.";
+    public static final String WEBSOCKET_BYTES_STATS_PREFIX = "stats.websockets.bytes.";
 
     /** WebSocket communication state. */
     public enum State {
@@ -155,6 +162,9 @@ public abstract class WebSocketProxy {
     /** Port of remote socket. */
     private final int port;
 
+    /** Host name with protocol used for the stats */
+    private String statsHostName;
+
     /** Just a consecutive number, identifying one channel within a session. */
     private final int channelId;
 
@@ -251,6 +261,7 @@ public abstract class WebSocketProxy {
                             + version
                             + "' provided in factory method!");
         }
+        Stats.incCounter(getSiteName(targetHost, targetPort), WEBSOCKET_OPEN_STATS);
 
         return wsProxy;
     }
@@ -500,6 +511,7 @@ public abstract class WebSocketProxy {
 
             setState(State.CLOSED);
         }
+        Stats.incCounter(getStatsHostname(), WEBSOCKET_CLOSE_STATS);
     }
 
     /** @return True if proxy's state is {@link State#OPEN}. */
@@ -701,6 +713,16 @@ public abstract class WebSocketProxy {
      * @return False if message should be dropped.
      */
     protected boolean notifyMessageObservers(WebSocketMessage message) {
+        String dirStr = message.getDirection().name().toLowerCase();
+        Stats.incCounter(getStatsHostname(), WEBSOCKET_COUNT_STATS_PREFIX + dirStr);
+        Stats.incCounter(
+                getStatsHostname(),
+                WEBSOCKET_BYTES_STATS_PREFIX + dirStr,
+                message.getPayloadLength());
+        Stats.incCounter(
+                getStatsHostname(),
+                WEBSOCKET_OPCODE_STATS_PREFIX + message.getOpcodeString().toLowerCase());
+
         for (WebSocketObserver observer : observerList) {
             try {
                 if (!observer.onMessageFrame(channelId, message)) {
@@ -1027,5 +1049,30 @@ public abstract class WebSocketProxy {
             serverEstablisher = new ServerConnectionEstablisher();
         }
         return serverEstablisher;
+    }
+
+    private String getStatsHostname() {
+        if (statsHostName == null) {
+            // Make our best attempt at getting the same host name that other stats will use
+            HistoryReference hsr = getHandshakeReference();
+            if (hsr != null) {
+                statsHostName = getSiteName(host, hsr.getURI().getPort());
+            } else {
+                statsHostName = "http://" + host;
+            }
+        }
+        return statsHostName;
+    }
+
+    private static String getSiteName(String host, int port) {
+        String statsHost;
+        if (port == 80) {
+            statsHost = "http://" + host;
+        } else if (port == 443) {
+            statsHost = "https://" + host;
+        } else {
+            statsHost = "http://" + host + ":" + port;
+        }
+        return statsHost;
     }
 }
