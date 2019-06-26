@@ -142,7 +142,7 @@ public class SessionFixation extends AbstractAppPlugin {
             // now loop, and see if the url is a login url in each of the contexts in turn...
             for (Context context : contextList) {
                 URI loginUri = extAuth.getLoginRequestURIForContext(context);
-                if (loginUri != null) {
+                if (loginUri != null && requestUri.getPath() != null) {
                     if (requestUri.getScheme().equals(loginUri.getScheme())
                             && requestUri.getHost().equals(loginUri.getHost())
                             && requestUri.getPort() == loginUri.getPort()
