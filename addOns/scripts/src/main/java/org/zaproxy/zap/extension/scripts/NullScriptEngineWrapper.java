@@ -21,15 +21,15 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.util.Collections;
 import java.util.List;
-import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 
 public class NullScriptEngineWrapper extends DefaultEngineWrapper {
 
     public static final String NAME = "Null";
 
-    public NullScriptEngineWrapper(ScriptEngine engine) {
-        super(engine);
+    public NullScriptEngineWrapper() {
+        super((ScriptEngineFactory) null);
     }
 
     @Override
@@ -47,8 +47,7 @@ public class NullScriptEngineWrapper extends DefaultEngineWrapper {
         return Collections.emptyList();
     }
 
-    // TODO Uncomment the annotation once targeting newer core version.
-    // @Override
+    @Override
     public boolean isVisible() {
         return false;
     }

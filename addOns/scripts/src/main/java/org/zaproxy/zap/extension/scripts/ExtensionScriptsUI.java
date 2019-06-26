@@ -143,7 +143,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         this.getExtScript().addListener(this);
         this.getExtScript().registerScriptType(extScriptType);
 
-        nullEngineWrapper = new NullScriptEngineWrapper(new NullScriptEngine());
+        nullEngineWrapper = new NullScriptEngineWrapper();
         this.getExtScript().registerScriptEngineWrapper(nullEngineWrapper);
 
         if (getView() != null) {
@@ -702,8 +702,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         }
     }
 
-    // TODO uncomment once available in targeted ZAP version.
-    // @Override
+    @Override
     public void addSelectionListener(TreeSelectionListener tsl) {
         if (getView() == null) {
             return;
@@ -711,8 +710,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         this.getScriptsPanel().getTree().addTreeSelectionListener(tsl);
     }
 
-    // TODO uncomment once available in targeted ZAP version.
-    // @Override
+    @Override
     public void removeSelectionListener(TreeSelectionListener tsl) {
         if (getView() == null) {
             return;
