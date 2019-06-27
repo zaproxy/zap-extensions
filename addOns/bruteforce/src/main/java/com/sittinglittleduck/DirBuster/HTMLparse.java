@@ -256,7 +256,7 @@ public class HTMLparse extends Thread {
         try {
             boolean isDir = false;
             String fileExtention = null;
-            if (item.length() == 1) {
+            if (item.length() == 1 || item.length() == 0) {
                 // System.out.println("found a / in findBaseCasePoint");
                 return GenBaseCase.genBaseCase(
                         manager, manager.getFirstPartOfURL() + "/", true, null);

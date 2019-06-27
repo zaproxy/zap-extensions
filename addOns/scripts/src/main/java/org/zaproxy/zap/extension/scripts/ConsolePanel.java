@@ -21,12 +21,10 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -38,7 +36,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -79,10 +76,6 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 
     private Map<ScriptWrapper, WeakReference<ScriptExecutorThread>> runnableScriptsToThreadMap;
 
-    // TODO remove once a later version of ZAP has been published
-    private Boolean after2_7_0 = null;
-    private Method scriptHasChangedOnDiskMethod = null;
-    private Method scriptReloadMethod = null;
     private Runnable dialogRunnable = null;
     private Thread changesPollingThread = null;
     private boolean pollForChanges;
@@ -100,25 +93,19 @@ public class ConsolePanel extends AbstractPanel implements Tab {
         initialize();
     }
 
-    @SuppressWarnings("deprecation")
     private void initialize() {
         this.setIcon(
                 new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png"))); // 'script' icon
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        KeyEvent.VK_C,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.ALT_DOWN_MASK
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(
+                                KeyEvent.VK_C,
+                                KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
+                                false));
         this.setMnemonic(Constant.messages.getChar("scripts.panel.mnemonic"));
         this.setLayout(new BorderLayout());
-        if (isAfter2_7_0()) {
-            // Scripts changed on disk will now be detected by the core
-            startPollingForChanges();
-        }
+        startPollingForChanges();
 
         runnableScriptsToThreadMap =
                 Collections.synchronizedMap(
@@ -138,44 +125,9 @@ public class ConsolePanel extends AbstractPanel implements Tab {
         panelContent.add(splitPane, LayoutHelper.getGBC(0, 1, 1, 1.0D, 1.0D));
     }
 
-    private Method getScriptHasChangedOnDiskMethod() {
-        if (after2_7_0 == null) {
-            // not tried yet
-            try {
-                scriptHasChangedOnDiskMethod = ScriptWrapper.class.getMethod("hasChangedOnDisk");
-                after2_7_0 = Boolean.TRUE;
-            } catch (Exception e) {
-                after2_7_0 = Boolean.FALSE;
-            }
-        }
-        return scriptHasChangedOnDiskMethod;
-    }
-
-    private boolean isAfter2_7_0() {
-        if (after2_7_0 == null) {
-            // Sets after2_7_0 as a side effect
-            getScriptHasChangedOnDiskMethod();
-        }
-        return after2_7_0;
-    }
-
     private boolean isScriptUpdatedOnDisk() {
         if (script != null) {
-            // Check to see if its also changed on disk
-            try {
-                Object result = getScriptHasChangedOnDiskMethod().invoke(script);
-                if (result instanceof Boolean) {
-                    return (Boolean) result;
-                } else {
-                    LOG.error(
-                            "ScriptWrapper.isChanged() unexpected return "
-                                    + result
-                                    + " "
-                                    + result.getClass().getCanonicalName());
-                }
-            } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
-            }
+            return script.hasChangedOnDisk();
         }
         return false;
     }
@@ -250,15 +202,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
     }
 
     private void reloadScript() {
-        if (this.scriptReloadMethod == null) {
-            try {
-                scriptReloadMethod = ScriptWrapper.class.getMethod("reloadScript");
-            } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
         try {
-            this.scriptReloadMethod.invoke(this.script);
+            this.script.reloadScript();
             this.updateCommandPanelState(this.script);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
