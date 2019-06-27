@@ -20,23 +20,25 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.HTMLElementName;
-import net.htmlparser.jericho.Source;
-import net.htmlparser.jericho.StartTagType;
-import net.htmlparser.jericho.Tag;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTagType;
+import net.htmlparser.jericho.Tag;
 
 public class InformationDisclosureSuspiciousComments extends PluginPassiveScanner {
 
@@ -45,17 +47,18 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
     private static final int PLUGIN_ID = 10027;
 
     private PassiveScanThread parent = null;
-    private static final String databaseErrorFile = "xml/suspicious-comments.txt";
+    private static final String suspiciousCommentsListFile = "/xml/suspicious-comments.txt";
     private static final Logger logger =
             Logger.getLogger(InformationDisclosureSuspiciousComments.class);
 
-    private List<Pattern> patterns = null;
+    private final List<Pattern> PATTERNS = setPatterns();
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {}
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
             StringBuilder todoComments = new StringBuilder();
 
@@ -63,7 +66,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                 // Just treat as text
                 String[] lines = msg.getResponseBody().toString().split("\n");
                 for (String line : lines) {
-                    for (Pattern pattern : this.getPatterns()) {
+                    for (Pattern pattern : PATTERNS) {
                         if (pattern.matcher(line).find()) {
                             todoComments.append(line);
                             todoComments.append("\n");
@@ -78,7 +81,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                 List<Tag> tags = source.getAllTags(StartTagType.COMMENT);
                 for (Tag tag : tags) {
                     String tagStr = tag.toString();
-                    for (Pattern pattern : this.getPatterns()) {
+                    for (Pattern pattern : PATTERNS) {
                         if (pattern.matcher(tagStr).find()) {
                             todoComments.append(tagStr);
                             todoComments.append("\n");
@@ -91,7 +94,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                 int offset = 0;
                 while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
                     String elStr = el.toString();
-                    for (Pattern pattern : this.getPatterns()) {
+                    for (Pattern pattern : PATTERNS) {
                         if (pattern.matcher(elStr).find()) {
                             todoComments.append(elStr);
                             todoComments.append("\n");
@@ -125,24 +128,29 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
         parent.raiseAlert(id, alert);
     }
 
-    private List<Pattern> getPatterns() {
-        if (patterns == null) {
-            patterns = new ArrayList<>();
-            String line = null;
-            File f = new File(Constant.getZapHome() + File.separator + databaseErrorFile);
+    private List<Pattern> setPatterns() {
+        if (PATTERNS == null) {
+            List<Pattern> newPatterns = new ArrayList<>();
+
             BufferedReader reader = null;
             try {
-                reader = new BufferedReader(new FileReader(f));
+                String line = null;
+                URL suspiciousCommentsFile = getClass().getResource(suspiciousCommentsListFile);
+                if (suspiciousCommentsFile == null) {
+                    throw new IOException("Couldn't find resource: " + suspiciousCommentsListFile);
+                }
+                reader = new BufferedReader(new InputStreamReader(suspiciousCommentsFile.openStream()));
                 while ((line = reader.readLine()) != null) {
+                    line = line.trim(); // in case someone puts trailing whitespace in the suspicious cmts file by accident
                     if (!line.startsWith("#") && line.length() > 0) {
-                        patterns.add(
-                                Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+                        newPatterns.add(
+                            Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
                     }
                 }
             } catch (IOException e) {
                 logger.error(
-                        "Error on opening/reading database error file. File: "
-                                + f.getAbsolutePath()
+                        "Error on opening/reading suspicious comments file: "
+                                + suspiciousCommentsListFile
                                 + " Error: "
                                 + e.getMessage());
             } finally {
@@ -154,8 +162,9 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                     }
                 }
             }
+            return newPatterns;
         }
-        return patterns;
+        return PATTERNS;
     }
 
     @Override
