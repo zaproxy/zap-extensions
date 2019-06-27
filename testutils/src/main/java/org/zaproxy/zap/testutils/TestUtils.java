@@ -85,6 +85,8 @@ import org.zaproxy.zap.utils.I18N;
 @RunWith(MockitoJUnitRunner.class)
 public abstract class TestUtils {
 
+    public static final String DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1";
+
     /**
      * A temporary directory where ZAP home/installation dirs are created.
      *
@@ -270,7 +272,23 @@ public abstract class TestUtils {
      * @throws HttpMalformedHeaderException if an error occurred while creating the HTTP message.
      */
     protected HttpMessage getHttpMessage(String path) throws HttpMalformedHeaderException {
-        return this.getHttpMessage("GET", path, "<html></html>");
+        return this.getHttpMessage("GET", DEFAULT_CONTENT_TYPE, path, "<html></html>");
+    }
+
+    /**
+     * Creates a (GET) HTTP message with the given path, for the {@link #nano test server}.
+     *
+     * <p>The response contains empty HTML tags, {@code <html></html>}.
+     *
+     * @param path the path component of the request-target, for example, {@code /dir/file.txt}.
+     * @return the HTTP message, never {@code null}.
+     * @throws IllegalStateException if the server was not {@link #startServer() started} prior
+     *     calling this method.
+     * @throws HttpMalformedHeaderException if an error occurred while creating the HTTP message.
+     */
+    protected HttpMessage getHttpMessage(String path, String contentType)
+            throws HttpMalformedHeaderException {
+        return this.getHttpMessage("GET", contentType, path, "<html></html>");
     }
 
     /**
@@ -285,6 +303,23 @@ public abstract class TestUtils {
      * @throws HttpMalformedHeaderException if an error occurred while creating the HTTP message.
      */
     protected HttpMessage getHttpMessage(String method, String path, String responseBody)
+            throws HttpMalformedHeaderException {
+        return getHttpMessage(method, DEFAULT_CONTENT_TYPE, path, responseBody);
+    }
+    /**
+     * Creates a HTTP message with the given data, for the {@link #nano test server}.
+     *
+     * @param method the HTTP method.
+     * @param contentType the Content-Type header
+     * @param path the path component of the request-target, for example, {@code /dir/file.txt}.
+     * @param responseBody the body of the response.
+     * @return the HTTP message, never {@code null}.
+     * @throws IllegalStateException if the server was not {@link #startServer() started} prior
+     *     calling this method.
+     * @throws HttpMalformedHeaderException if an error occurred while creating the HTTP message.
+     */
+    protected HttpMessage getHttpMessage(
+            String method, String contentType, String path, String responseBody)
             throws HttpMalformedHeaderException {
         if (nano == null) {
             throw new IllegalStateException("The HTTP test server was not started.");
@@ -307,7 +342,9 @@ public abstract class TestUtils {
         StringBuilder respHeaderSB = new StringBuilder();
         respHeaderSB.append("HTTP/1.1 200 OK\r\n");
         respHeaderSB.append("Server: Apache-Coyote/1.1\r\n");
-        respHeaderSB.append("Content-Type: text/html;charset=ISO-8859-1\r\n");
+        respHeaderSB.append("Content-Type: ");
+        respHeaderSB.append(contentType);
+        respHeaderSB.append("\r\n");
         respHeaderSB.append("Content-Length: ");
         respHeaderSB.append(msg.getResponseBody().length());
         respHeaderSB.append("\r\n");
