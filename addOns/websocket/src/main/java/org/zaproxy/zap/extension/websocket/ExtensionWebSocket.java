@@ -63,6 +63,7 @@ import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
@@ -73,6 +74,7 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.httppanel.view.hex.HttpPanelHexView;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
+import org.zaproxy.zap.extension.websocket.alerts.AlertManager;
 import org.zaproxy.zap.extension.websocket.brk.PopupMenuAddBreakWebSocket;
 import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointMessageHandler;
 import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInterface;
@@ -81,6 +83,8 @@ import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
+import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScannerManager;
+import org.zaproxy.zap.extension.websocket.pscan.scripts.ScriptsWebSocketPassiveScanner;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.OptionsWebSocketPanel;
@@ -121,9 +125,16 @@ public class ExtensionWebSocket extends ExtensionAdaptor
      *
      * <p>Lazily initialised.
      *
-     * @see #getScriptIcon()
+     * @see #getScriptSenderIcon()
      */
-    private static ImageIcon scriptIcon;
+    private static ImageIcon scriptSenderIcon;
+
+    /**
+     * The websocket passive scan icon Lazily initialised
+     *
+     * @see #getScriptPassiveScanIcon()
+     */
+    private static ImageIcon scriptPassiveScanIcon;
 
     public static final int HANDSHAKE_LISTENER = 10;
 
@@ -132,6 +143,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
     /** Used to identify the type of Websocket sender scripts */
     public static final String SCRIPT_TYPE_WEBSOCKET_SENDER = "websocketsender";
+
+    /** Used to identify the type of Websocket passive scan scripts */
+    public static final String SCRIPT_TYPE_WEBSOCKET_PASSIVE = "websocketpassive";
 
     /** Used to shorten the time, a listener is started on a WebSocket channel. */
     private ExecutorService listenerThreadPool;
@@ -193,6 +207,14 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
     private WebSocketEventPublisher eventPublisher;
 
+    /** That runs user-provided WebSocket Passive Scan Scripts */
+    private ScriptsWebSocketPassiveScanner webSocketScriptPassiveScanner;
+
+    /** Script type used to register Websocket passive scan scripts. */
+    private ScriptType websocketPassiveScanScriptType;
+
+    private WebSocketPassiveScannerManager webSocketPassiveScannerManager = null;
+
     public ExtensionWebSocket() {
         super(NAME);
 
@@ -236,6 +258,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 addAllChannelObserver(storage);
             } else {
                 storage.setTable(table);
+            }
+            if (webSocketPassiveScannerManager != null) {
+                webSocketPassiveScannerManager.setTable(table);
             }
             if (View.isInitialised()) {
                 getWebSocketPanel().setTable(table);
@@ -372,7 +397,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                     new ScriptType(
                             SCRIPT_TYPE_WEBSOCKET_SENDER,
                             "websocket.script.type.websocketsender",
-                            getView() != null ? getScriptIcon() : null,
+                            getView() != null ? getScriptSenderIcon() : null,
                             true);
             extensionScript.registerScriptType(websocketSenderSciptType);
             webSocketSenderScriptListener = new WebSocketSenderScriptListener();
@@ -381,6 +406,44 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
         eventPublisher = new WebSocketEventPublisher(this);
         this.addAllChannelSenderListener(eventPublisher);
+
+        // setup websocket passive scanner
+        ExtensionAlert extensionAlert =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
+        if (extensionScript != null && extensionAlert != null) {
+
+            // Set up AlertManager so as to use it in WebSocketPassiveScannerManager
+            AlertManager alertManager = new AlertManager(extensionAlert);
+
+            webSocketPassiveScannerManager = new WebSocketPassiveScannerManager(alertManager);
+
+            // Proxies which their's mode are equal to SERVER mode, they are ignored from passive
+            // scanner
+            webSocketPassiveScannerManager.setServerModeIgnored(true);
+            addAllChannelObserver(webSocketPassiveScannerManager.getWebSocketScannerObserver());
+
+            websocketPassiveScanScriptType =
+                    new ScriptType(
+                            SCRIPT_TYPE_WEBSOCKET_PASSIVE,
+                            "websocket.pscan.scripts.type.passive",
+                            getView() != null ? getScriptPassiveScanIcon() : null,
+                            true);
+            extensionScript.registerScriptType(websocketPassiveScanScriptType);
+            webSocketScriptPassiveScanner = new ScriptsWebSocketPassiveScanner();
+
+            webSocketPassiveScannerManager.add(webSocketScriptPassiveScanner);
+            webSocketPassiveScannerManager.setAllEnable(true);
+            webSocketPassiveScannerManager.startThread();
+        }
+    }
+
+    @Override
+    public void postInit() {
+        super.postInit();
+
+        if (webSocketPassiveScannerManager != null && !webSocketPassiveScannerManager.hasTable()) {
+            webSocketPassiveScannerManager.setTable(table);
+        }
     }
 
     @Override
@@ -453,6 +516,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             extensionScript.removeScripType(websocketSenderSciptType);
         }
 
+        // shut down Passive Scanner & unregister the WebSocket Passive Scan script type
+        if (webSocketPassiveScannerManager != null) {
+            webSocketPassiveScannerManager.shutdownThread();
+            extensionScript.removeScripType(websocketPassiveScanScriptType);
+        }
+
         eventPublisher.shutdown();
     }
 
@@ -473,14 +542,31 @@ public class ExtensionWebSocket extends ExtensionAdaptor
      *
      * @return the script icon, never {@code null}.
      */
-    private static ImageIcon getScriptIcon() {
-        if (scriptIcon == null) {
-            scriptIcon =
+    private static ImageIcon getScriptSenderIcon() {
+        if (scriptSenderIcon == null) {
+            scriptSenderIcon =
                     new ImageIcon(
                             ExtensionWebSocket.class.getResource(
                                     "/org/zaproxy/zap/extension/websocket/resources/script-plug.png"));
         }
-        return scriptIcon;
+        return scriptSenderIcon;
+    }
+
+    /**
+     * Gets the icon for scripts types.
+     *
+     * <p>Should be called/used only when in view mode.
+     *
+     * @return the script icon, never {@code null}.
+     */
+    private ImageIcon getScriptPassiveScanIcon() {
+        if (scriptPassiveScanIcon == null) {
+            scriptPassiveScanIcon =
+                    new ImageIcon(
+                            ExtensionWebSocket.class.getResource(
+                                    "/org/zaproxy/zap/extension/websocket/resources/icons/plug--passive.png"));
+        }
+        return scriptPassiveScanIcon;
     }
 
     /**

@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+- Add WebSocket passive scan infrastructure.
+- Add WebSocket passive scan script plugin.
+- Add javascript template for WebSocket passive scan.
+- Add python template for WebSocket passive scan.
 
 ## [19] - 2019-06-07
 
