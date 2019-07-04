@@ -20,5 +20,13 @@ A template script is provided which gives details of the methods and parameters 
 Fuzzer WebSocket Processor scripts are called before forwarding a fuzzed WebSocket message to the client/server. The payloads will have already been injected at this point.<br>
 A template script is provided which gives details of the methods and parameters supported. 
 
+<h2>WebSocket Passive Rules</h2>
+
+WebSocket Passive Scan scripts are called every time a WebSocket message frame is transmitted over a WebSocket connection. Scripts can access WebSocket messages in order to examine the payload and raise an alert.<br>
+They are initially disabled, to enable them right click the relevant script in the Scripts tree and select "enable".<br>
+Template scripts are provided which give details of the methods and parameters supported.<br>
+In the <a href="pscanrules.html#scripts">WebSocket Passive Scan Rules</a> section, there are descriptions for scripts which are included by default in the add-on.
+
 </BODY>
 </HTML>
+
