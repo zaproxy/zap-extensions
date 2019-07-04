@@ -134,6 +134,10 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
             if (!getBaseMsg().getResponseHeader().isText()) {
                 return; // Ignore images, pdfs, etc.
             }
+            if (getAlertThreshold() != AlertThreshold.LOW
+                    && getBaseMsg().getResponseHeader().isJavaScript()) {
+                return;
+            }
             // at Low or Medium strength, do not attack URLs which returned "Not Found"
             AttackStrength attackStrength = getAttackStrength();
             if ((attackStrength == AttackStrength.LOW || attackStrength == AttackStrength.MEDIUM)

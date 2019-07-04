@@ -30,6 +30,7 @@ import fi.iki.elonen.NanoHTTPD.Response;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -303,6 +304,64 @@ public class SourceCodeDisclosureCVE20121823UnitTest
         // Then
         assertThat(httpMessagesSent, hasSize(1));
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotAlertIfJavaScriptFilesAtDefaultThreshold() throws Exception {
+        // Given
+        String test = "/shouldNotAlertIfJavaScriptFilesAtDefaultThreshold/";
+        nano.addHandler(
+                new NanoServerHandler(test) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_ECHO_TAG);
+                        Response response =
+                                newFixedLengthResponse(
+                                        Response.Status.OK,
+                                        "text/javascript",
+                                        "/* javascript comment blah blah " + encodedPhpCode + "*/");
+                        response.addHeader("Content-Type", "text/javascript");
+                        return response;
+                    }
+                });
+        HttpMessage message = getHttpMessage(test, "text/javascript");
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldAlertIfJavaScriptFilesAtLowThreshold() throws Exception {
+        // Given
+        String test = "/shouldAlertIfJavaScriptFilesAtLowThreshold/";
+        nano.addHandler(
+                new NanoServerHandler(test) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String encodedPhpCode = StringEscapeUtils.escapeHtml4(PHP_SOURCE_ECHO_TAG);
+                        return newFixedLengthResponse(
+                                Response.Status.OK,
+                                "text/javascript",
+                                "/* javascript comment blah blah " + encodedPhpCode + "*/");
+                    }
+                });
+        HttpMessage message = getHttpMessage(test, "text/javascript");
+        rule.init(message, parent);
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("")));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo("")));
+        assertThat(alertsRaised.get(0).getAttack(), is(equalTo("")));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo(PHP_SOURCE_ECHO_TAG)));
     }
 
     private HttpMessage httpMessage404NotFound() throws Exception {

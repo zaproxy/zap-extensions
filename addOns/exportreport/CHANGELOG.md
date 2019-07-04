@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [6] - 2019-06-24
+
 - Remove API when uninstalling.
 - Fix exception with Java 9+ (Issue 4214).
 
@@ -28,3 +31,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6]: https://github.com/zaproxy/zap-extensions/releases/exportreport-v6

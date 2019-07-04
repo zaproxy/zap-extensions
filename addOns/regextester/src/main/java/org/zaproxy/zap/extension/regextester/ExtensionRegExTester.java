@@ -19,8 +19,11 @@
  */
 package org.zaproxy.zap.extension.regextester;
 
+import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -33,6 +36,7 @@ public class ExtensionRegExTester extends ExtensionAdaptor {
     public static final int EXTENSION_ORDER = 85;
 
     private ZapMenuItem menuItemRegExTester = null;
+    private List<WeakReference<RegexDialog>> dialogs;
 
     public ExtensionRegExTester() {
         super(NAME);
@@ -43,6 +47,7 @@ public class ExtensionRegExTester extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         if (getView() != null) {
+            dialogs = new ArrayList<>();
             extensionHook.getHookMenu().addToolsMenuItem(getMenuItemRegExTester());
             extensionHook.getHookMenu().addPopupMenuItem(new RegExTesterPopupMenuItem(this));
         }
@@ -62,6 +67,7 @@ public class ExtensionRegExTester extends ExtensionAdaptor {
 
     public RegexDialog showDialog(String regex, String text) {
         RegexDialog dialog = new RegexDialog(new RegexModel(regex, text));
+        dialogs.add(new WeakReference<>(dialog));
         dialog.setVisible(true);
         return dialog;
     }
@@ -69,6 +75,22 @@ public class ExtensionRegExTester extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void unload() {
+        super.unload();
+
+        if (dialogs != null) {
+            dialogs.forEach(
+                    e -> {
+                        RegexDialog dialog = e.get();
+                        if (dialog != null) {
+                            dialog.dispose();
+                            e.clear();
+                        }
+                    });
+        }
     }
 
     @Override

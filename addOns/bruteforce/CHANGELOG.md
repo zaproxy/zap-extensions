@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Now targets ZAP 2.8.0.
+- Fix un-handled exception when base request doesn't end in a slash (Issue 5435).
 
 ## Added
 - Table export button.
