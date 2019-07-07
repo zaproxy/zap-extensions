@@ -19,206 +19,251 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
-
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 public class InformationDisclosureSuspiciousCommentsUnitTest
         extends PassiveScannerTest<InformationDisclosureSuspiciousComments> {
-	
-    private HttpMessage msg;
-    
+
     @Override
     protected InformationDisclosureSuspiciousComments createScanner() {
-    	return new InformationDisclosureSuspiciousComments();
+        return new InformationDisclosureSuspiciousComments();
     }
-    
-	    protected HttpMessage createHttpMessageWithRespBody(String responseBody,
-	    		String contentType) throws HttpMalformedHeaderException, URIException {
-	
-            HttpRequestHeader requestHeader = new HttpRequestHeader();
-            requestHeader.setURI(new URI("http://example.com", false));
 
-            msg = new HttpMessage();
-            msg.setRequestHeader(requestHeader);
-	        msg.setResponseBody(responseBody);
-	        msg.setResponseHeader(
-	                "HTTP/1.1 200 OK\r\n"
-	                        + "Server: Apache-Coyote/1.1\r\n"
-	                        + "Content-Type: " + contentType + "\r\n"
-	                        + "Content-Length: " + responseBody.length() + "\r\n");
-	        return msg;
-	    }
-       
-        @Test
-        public void shouldSuspiciousCommentsFile() {
-            // Given
-            String suspiciousCommentsFilePath = "/xml/suspicious-comments.txt";
-            // When
-            URL suspiciousCommentsFile = getClass().getResource(suspiciousCommentsFilePath);
-            // Then
-            assertThat(suspiciousCommentsFile, notNullValue());
-        }
-        
-        @Test
-        public void containsSuspiciousCommentInJavaScriptResponse() 
-        		throws HttpMalformedHeaderException, URIException {
-        	
-        	String body = "Some text <script>Some Script Element FixMe: DO something </script>\nLine 2\n";
-            // Given
-            HttpMessage msg = createHttpMessageWithRespBody(body, 
-            		"text/javascript;charset=ISO-8859-1");
-            
-            assertTrue(msg.getResponseHeader().isText());
-            assertTrue(msg.getResponseHeader().isJavaScript());
-            
-            // When
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-            
-            // Then
-            assertEquals(1, alertsRaised.size());
-        }
-        
-        @Test
-        public void suspiciousCommentIsPartOfWordInJavaScriptResponse() 
-        		throws HttpMalformedHeaderException, URIException {
-        	
-        	String body = "Some text <script>Some Script Element FixMeNot: DO something </script>\nLine 2\n";
-            // Given
-            HttpMessage msg = createHttpMessageWithRespBody(body, 
-            		"text/javascript;charset=ISO-8859-1");
-            
-            assertTrue(msg.getResponseHeader().isText());
-            assertTrue(msg.getResponseHeader().isJavaScript());
-            
-            // When
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-            
-            // Then
-            assertEquals(0, alertsRaised.size());
-        }
-        
-        @Test
-        public void noSuspiciousCommentInJavaScriptResponse() 
-        		throws HttpMalformedHeaderException, URIException {
-        	
-        	String body = "Some <script>text, nothing suspicious here...</script>\nLine 2\n";
-            // Given
-            HttpMessage msg = createHttpMessageWithRespBody(body, 
-            		"text/javascript;charset=ISO-8859-1");
-            
-            assertTrue(msg.getResponseHeader().isText());
-            assertTrue(msg.getResponseHeader().isJavaScript());
-            
-            // When
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-            
-            // Then
-            assertEquals(0, alertsRaised.size());
-        }
-        
-        @Test
-        public void containsSuspiciousCommentInElements() 
-        		throws HttpMalformedHeaderException, URIException {
-        	
-        	String body = "<h1>Some text <script>Some Html Element FixMe DO something </script></h1>\n"
-        			+ "<b>No script here</b>\n";
-            // Given
-            HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
-            
-            assertTrue(msg.getResponseHeader().isText());
-            assertFalse(msg.getResponseHeader().isJavaScript());
-            
-            // When
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-            
-            // Then
-            assertEquals(1, alertsRaised.size());
-        }
-        
-        @Test
-        public void noSuspiciousCommentInElements() 
-        		throws HttpMalformedHeaderException, URIException {
-        	
-        	String body = "<h1>Some text <script>Some Html Element Fix: DO something </script></h1>\n"
-        			+ "<b>No script here</b>\n";
-            // Given
-            HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
-            
-            assertTrue(msg.getResponseHeader().isText());
-            assertFalse(msg.getResponseHeader().isJavaScript());
-            
-            // When
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-            
-            // Then
-            assertEquals(0, alertsRaised.size());
-        }
-        
-        @Test
-        public void containsSuspiciousCommentInHTML() 
-        		throws HttpMalformedHeaderException, URIException {
-        	
-        	String body = "<h1>Some text <!--Some Html comment FixMe: DO something --></h1>\n"
-        			+ "<b>No script here</b>\n";
-            // Given
-            HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
-            
-            assertTrue(msg.getResponseHeader().isText());
-            assertFalse(msg.getResponseHeader().isJavaScript());
-            
-            // When
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-            
-            // Then
-            assertEquals(1, alertsRaised.size());
-        }
-        
-        @Test
-        public void noSuspiciousCommentInHTML() throws HttpMalformedHeaderException, URIException {
-        	String body = "<h1>Some text <!--Some Html comment Fix: DO something --></h1>\n"
-        			+ "<b>No script here</b>\n";
-            // Given
-            HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
-            
-            assertTrue(msg.getResponseHeader().isText());
-            assertFalse(msg.getResponseHeader().isJavaScript());
-            
-            // When
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-            
-            // Then
-            assertEquals(0, alertsRaised.size());
-        }
+    @Override
+    public void setUpZap() throws Exception {
+        super.setUpZap();
 
-        @Test
-        public void passesIfResponseIsEmpty() throws HttpMalformedHeaderException, URIException {
-            HttpMessage msg = createHttpMessageWithRespBody("", "text/html;charset=ISO-8859-1");
+        Path xmlDir =
+                Files.createDirectories(
+                        Paths.get(
+                                Constant.getZapHome(),
+                                InformationDisclosureSuspiciousComments.suspiciousCommentsListDir));
+        Path testFile =
+                xmlDir.resolve(InformationDisclosureSuspiciousComments.suspiciousCommentsListFile);
+        Files.write(testFile, Arrays.asList("# FixMeNot", "  FixMe  ", "TODO", "\t "));
+    }
 
-            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+    protected HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)
+            throws HttpMalformedHeaderException, URIException {
 
-            assertEquals(0, alertsRaised.size());
-        }
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        requestHeader.setURI(new URI("http://example.com", false));
 
-        @Test
-        public void passesIfResponseIsNotText() throws HttpMalformedHeaderException, URIException {
-            HttpMessage msg = createHttpMessageWithRespBody(
-            		"Some text <script>Some Script Element FixMe: DO something </script>\nLine 2\n",
-            		"application/octet-stream;charset=ISO-8859-1");
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+        msg.setResponseBody(responseBody);
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: "
+                        + contentType
+                        + "\r\n"
+                        + "Content-Length: "
+                        + responseBody.length()
+                        + "\r\n");
+        return msg;
+    }
 
-            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+    @Test
+    public void shouldSuspiciousCommentsFile() {
 
-            assertEquals(0, alertsRaised.size());
-        }
+        // When
+        File suspiciousCommentsFile =
+                new File(
+                        Constant.getZapHome()
+                                + File.separator
+                                + InformationDisclosureSuspiciousComments.suspiciousCommentsListDir
+                                + File.separator
+                                + InformationDisclosureSuspiciousComments
+                                        .suspiciousCommentsListFile);
+
+        // Then
+        assertTrue(
+                "Couldn't find "
+                        + InformationDisclosureSuspiciousComments.suspiciousCommentsListFile
+                        + " file at: "
+                        + suspiciousCommentsFile.getAbsolutePath(),
+                suspiciousCommentsFile.exists());
+    }
+
+    @Test
+    public void shouldAlertOnSuspiciousCommentInJavaScriptResponse()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body =
+                "Some text <script>Some Script Element FIXME: DO something </script>\nLine 2\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertTrue(msg.getResponseHeader().isJavaScript());
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertEquals(1, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldNotAlertOnSuspiciousCommentIsPartOfWordInJavaScriptResponse()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body =
+                "Some text <script>Some Script Element FixMeNot: DO something </script>\nLine 2\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertTrue(msg.getResponseHeader().isJavaScript());
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldNotAlertWithoutSuspiciousCommentInJavaScriptResponse()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body = "Some <script>text, nothing suspicious here...</script>\nLine 2\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertTrue(msg.getResponseHeader().isJavaScript());
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldAlertOnSuspiciousCommentInHtmlElements()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body =
+                "<h1>Some text <script>Some Html Element todo DO something </script></h1>\n"
+                        + "<b>No script here</b>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(msg.getResponseHeader().isJavaScript());
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertEquals(1, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldNotAlertWithoutSuspiciousCommentInElements()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body =
+                "<h1>Some text <script>Some Html Element Fix: DO something </script></h1>\n"
+                        + "<b>No script here</b>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(msg.getResponseHeader().isJavaScript());
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldAlertOnSuspiciousCommentInHTML()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body =
+                "<h1>Some text <!--Some Html comment FixMe: DO something --></h1>\n"
+                        + "<b>No script here</b>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(msg.getResponseHeader().isJavaScript());
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertEquals(1, alertsRaised.size());
+    }
+
+    @Test
+    public void noSuspiciousCommentInHTML() throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body =
+                "<h1>Some text <!--Some Html comment Fix: DO something --></h1>\n"
+                        + "<b>No script here</b>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(msg.getResponseHeader().isJavaScript());
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldNotAlertIfResponseIsEmpty()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        HttpMessage msg = createHttpMessageWithRespBody("", "text/html;charset=ISO-8859-1");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldNotAlertIfResponseIsNotText()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        HttpMessage msg =
+                createHttpMessageWithRespBody(
+                        "Some text <script>Some Script Element FixMe: DO something </script>\nLine 2\n",
+                        "application/octet-stream;charset=ISO-8859-1");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
 }

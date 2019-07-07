@@ -20,25 +20,23 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTagType;
+import net.htmlparser.jericho.Tag;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.HTMLElementName;
-import net.htmlparser.jericho.Source;
-import net.htmlparser.jericho.StartTagType;
-import net.htmlparser.jericho.Tag;
 
 public class InformationDisclosureSuspiciousComments extends PluginPassiveScanner {
 
@@ -47,11 +45,60 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
     private static final int PLUGIN_ID = 10027;
 
     private PassiveScanThread parent = null;
-    private static final String suspiciousCommentsListFile = "/xml/suspicious-comments.txt";
+    public static final String suspiciousCommentsListDir = "xml";
+    public static final String suspiciousCommentsListFile = "suspicious-comments.txt";
     private static final Logger logger =
             Logger.getLogger(InformationDisclosureSuspiciousComments.class);
 
-    private final List<Pattern> PATTERNS = setPatterns();
+    private static final List<Pattern> PATTERNS;
+
+    /*
+     * Static initializer to load the suspicious comments list from the file system
+     * and put the results into the PATTERNS List.
+     */
+    static {
+        PATTERNS = new ArrayList<>();
+
+        BufferedReader reader = null;
+        try {
+            File f =
+                    new File(
+                            Constant.getZapHome()
+                                    + File.separator
+                                    + suspiciousCommentsListDir
+                                    + File.separator
+                                    + suspiciousCommentsListFile);
+            if (!f.exists()) {
+                throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
+            }
+            reader = new BufferedReader(new FileReader(f));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!line.startsWith("#") && line.length() > 0) {
+                    PATTERNS.add(Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.error(
+                    "Error on opening/reading suspicious comments file: "
+                            + File.separator
+                            + suspiciousCommentsListDir
+                            + File.separator
+                            + suspiciousCommentsListFile
+                            + " Error: "
+                            + e.getMessage());
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    logger.debug("Error on closing the file reader. Error: " + e.getMessage());
+                }
+            }
+        }
+    }
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {}
@@ -126,45 +173,6 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                 msg);
 
         parent.raiseAlert(id, alert);
-    }
-
-    private List<Pattern> setPatterns() {
-        if (PATTERNS == null) {
-            List<Pattern> newPatterns = new ArrayList<>();
-
-            BufferedReader reader = null;
-            try {
-                String line = null;
-                URL suspiciousCommentsFile = getClass().getResource(suspiciousCommentsListFile);
-                if (suspiciousCommentsFile == null) {
-                    throw new IOException("Couldn't find resource: " + suspiciousCommentsListFile);
-                }
-                reader = new BufferedReader(new InputStreamReader(suspiciousCommentsFile.openStream()));
-                while ((line = reader.readLine()) != null) {
-                    line = line.trim(); // in case someone puts trailing whitespace in the suspicious cmts file by accident
-                    if (!line.startsWith("#") && line.length() > 0) {
-                        newPatterns.add(
-                            Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
-                    }
-                }
-            } catch (IOException e) {
-                logger.error(
-                        "Error on opening/reading suspicious comments file: "
-                                + suspiciousCommentsListFile
-                                + " Error: "
-                                + e.getMessage());
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        logger.debug("Error on closing the file reader. Error: " + e.getMessage());
-                    }
-                }
-            }
-            return newPatterns;
-        }
-        return PATTERNS;
     }
 
     @Override
