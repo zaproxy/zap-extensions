@@ -37,7 +37,7 @@ import java.util.Locale;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -48,8 +48,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-
-import net.htmlparser.jericho.Source;
 
 /**
  * Plugin refactored for URL ID session disclosure starting from the previous Active plugin
@@ -66,11 +64,11 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     private static final int SESSION_TOKEN_MIN_LENGTH = 8;
 
     /*
-     * This scanner looks for session ID tokens as defined in
-     * HttpSessionsParam.DEFAULT_TOKENS. They generally look like these: ASP =
-     * ASPSESSIONIDxxxxx=xxxxxx PHP = PHPSESSID Cold fusion = CFID, CFTOKEN
-     * (confirmed, checked with Macromedia) Java (tomcat, jrun, websphere, sunone,
-     * weblogic )= JSESSIONID=xxxxx
+     * private static Pattern staticSessionCookieNamePHP = Pattern("PHPSESSID", PATTERN.PARAM);
+     * ASP = ASPSESSIONIDxxxxx=xxxxxx
+     * PHP = PHPSESSID
+     * Cold fusion = CFID, CFTOKEN	(firmed, checked with Macromedia)
+     * Java (tomcat, jrun, websphere, sunone, weblogic )= JSESSIONID=xxxxx
      *
      * List of session id available also on this site:
      * http://www.portent.com/blog/random/session-id-parameters-list.htm
@@ -134,31 +132,25 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     }
 
     /**
-     * Scan the response. Currently it does nothing.
+     * Scan the request. Currently it does nothing.
      *
-     * @param msg    the HTTP message
-     * @param id     the id of the response
+     * @param msg the HTTP message
+     * @param id the id of the request
+     */
+    @Override
+    public void scanHttpRequestSend(HttpMessage msg, int id) {
+        // do Nothing it's related to response managed
+    }
+
+    /**
+     * Perform the passive scanning of URL based session IDs
+     *
+     * @param msg the message that need to be checked
+     * @param id the id of the session
      * @param source the source code of the response
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        // do Nothing. All work currently is done scanning the request.
-    }
-
-    // Pattern used only in scanHttpRequestSend() method below.
-    private static final Pattern PATHSESSIONIDPATTERN =
-            Pattern.compile(
-                    "(jsession|cf)id=[\\dA-Z]{" + SESSION_TOKEN_MIN_LENGTH + ",}",
-                    Pattern.CASE_INSENSITIVE);
-
-    /**
-     * Perform passive scanning for URL based session IDs in the HTTP request
-     *
-     * @param msg the message that needs to be checked
-     * @param id  the id of the session
-     */
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
 
         TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
 
@@ -172,7 +164,6 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
         if (sessionOptions != null) {
             sessionIds = sessionOptions.getDefaultTokensEnabled();
         }
-
         if (!urlParams.isEmpty()) {
             for (HtmlParameter param : urlParams) { // Iterate through the parameters
                 // If the parameter name is one of those on the Session Token list from the options
@@ -209,21 +200,19 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                 }
             }
         }
-
         if (!found && msg.getRequestHeader().getURI().getEscapedPath() != null) {
             // Handle jsessionid like:
             // http://tld.gtld/fred;jsessionid=1A530637289A03B07199A44E8D531427?foo=bar
             Matcher jsessMatcher = null;
-            String path = "";
             try {
-                // We lowercase the path because the regex has a specific session ID
-                // in it which can't be made case insensitive
-                path = msg.getRequestHeader().getURI().getPath().toLowerCase();
-                jsessMatcher = PATHSESSIONIDPATTERN.matcher(path);
+                jsessMatcher =
+                        Pattern.compile("jsessionid=[\\dA-Z]*", Pattern.CASE_INSENSITIVE)
+                                .matcher(msg.getRequestHeader().getURI().getPath());
             } catch (URIException e) {
-                e.printStackTrace();
             }
-            if (jsessMatcher != null && jsessMatcher.find()) {
+            if (jsessMatcher != null
+                    && jsessMatcher.find()
+                    && sessionIds.contains(jsessMatcher.group().split("=")[0].trim())) {
                 Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_HIGH, getName());
                 alert.setDetail(
                         getDescription(),
@@ -264,7 +253,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     // also dynamically composed along page execution
     // so we search only for pattern like these:
     // ='url or ('url because it's suitable to all the previous possibilities
-    // and we check for no quoted URLs only if href or src
+    // and we check for no quoted urls only if href or src
     // ---------------------------------
     private static final String EXT_LINK = "https?://([\\w\\.\\-_]+)";
     private static final Pattern[] EXT_LINK_PATTERNS = {
@@ -291,11 +280,11 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     }
 
     /**
-     * Check if an external link is present inside a vulnerable URL
+     * Check if an external link is present inside a vulnerable url
      *
      * @param msg the message that need to be checked
-     * @param id  the id of the session
-     * @throws URIException if there's some trouble with the Request
+     * @param id the id of the session
+     * @throws URIException if there're some trouble with the Request
      */
     private void checkSessionIDExposure(HttpMessage msg, int id) throws URIException {
         // Vector<String> referrer = msg.getRequestHeader().getHeaders(HttpHeader.REFERER);
