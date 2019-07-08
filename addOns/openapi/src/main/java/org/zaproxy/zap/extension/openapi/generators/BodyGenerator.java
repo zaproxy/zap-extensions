@@ -52,7 +52,7 @@ public class BodyGenerator {
     }
 
     @SuppressWarnings("serial")
-    private final Map<Element, String> SYNTAX =
+    private static final Map<Element, String> SYNTAX =
             Collections.unmodifiableMap(
                     new HashMap<Element, String>() {
 
@@ -67,29 +67,29 @@ public class BodyGenerator {
                         }
                     });
 
-    public String generateBodyWithObjectMaps(String name, boolean isArray, List<String> refs) {
+    public String generate(String name, boolean isArray, List<String> refs) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Generate body for object " + name);
         }
         String jsonStr = generateJsonObjectString(name, refs);
         if (isArray) {
-            jsonStr = convertJsonStringToArrayString(jsonStr);
+            jsonStr = createJsonArrayWith(jsonStr);
         }
         return jsonStr;
     }
 
-    public String generateBodyWithPrimitives(Property property, boolean isArray) {
+    public String generate(Property property, boolean isArray) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Generate body for primitive type " + property.getType());
         }
         String jsonStr = generateJsonPrimitiveValue(property);
         if (isArray) {
-            jsonStr = convertJsonStringToArrayString(jsonStr);
+            jsonStr = createJsonArrayWith(jsonStr);
         }
         return jsonStr;
     }
 
-    private String convertJsonStringToArrayString(String jsonStr) {
+    private static String createJsonArrayWith(String jsonStr) {
         return SYNTAX.get(Element.ARRAY_BEGIN)
                 + jsonStr
                 + SYNTAX.get(Element.OUTER_SEPARATOR)
@@ -125,7 +125,7 @@ public class BodyGenerator {
                 } else {
                     if (property.getValue() instanceof RefProperty) {
                         value =
-                                generateBodyWithObjectMaps(
+                                generate(
                                         ((RefProperty) property.getValue()).getSimpleRef(),
                                         false,
                                         refs);
@@ -136,7 +136,7 @@ public class BodyGenerator {
                                         .getValue(
                                                 property.getKey(),
                                                 property.getValue().getType(),
-                                                generateBodyWithObjectMaps(
+                                                generate(
                                                         property.getValue().getName(),
                                                         false,
                                                         refs));

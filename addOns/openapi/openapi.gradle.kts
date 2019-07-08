@@ -24,7 +24,7 @@ configurations {
 }
 
 dependencies {
-    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
+    compileOnly("org.glassfish.jaxb:jaxb-runtime:2.3.2")
     implementation("io.swagger:swagger-parser:1.0.44")
     implementation("io.swagger:swagger-compat-spec-parser:1.0.44") {
         // Not needed:

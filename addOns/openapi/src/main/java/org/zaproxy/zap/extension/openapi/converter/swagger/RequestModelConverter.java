@@ -77,7 +77,7 @@ public class RequestModelConverter {
                         body =
                                 generators
                                         .getBodyGenerator()
-                                        .generateBodyWithObjectMaps(
+                                        .generate(
                                                 ((RefModel) schema).getSimpleRef(),
                                                 false,
                                                 new ArrayList<String>());
@@ -89,15 +89,12 @@ public class RequestModelConverter {
                             body =
                                     generators
                                             .getBodyGenerator()
-                                            .generateBodyWithObjectMaps(
+                                            .generate(
                                                     ((RefProperty) items).getSimpleRef(),
                                                     true,
                                                     new ArrayList<String>());
                         } else {
-                            body =
-                                    generators
-                                            .getBodyGenerator()
-                                            .generateBodyWithPrimitives(items, true);
+                            body = generators.getBodyGenerator().generate(items, true);
                         }
 
                         break;
@@ -105,10 +102,7 @@ public class RequestModelConverter {
                         ModelImpl model = ((ModelImpl) schema);
                         Property propertyFromModel =
                                 PropertyBuilder.build(model.getType(), model.getFormat(), null);
-                        body =
-                                generators
-                                        .getBodyGenerator()
-                                        .generateBodyWithPrimitives(propertyFromModel, false);
+                        body = generators.getBodyGenerator().generate(propertyFromModel, false);
                         break;
                 }
             }
