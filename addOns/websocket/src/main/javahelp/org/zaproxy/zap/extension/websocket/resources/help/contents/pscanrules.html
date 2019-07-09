@@ -55,6 +55,29 @@
             <tr><th>WASC ID</th><td>13: Information Leakage</td></tr>
         </table>
 
+        <h3>Information Disclosure: Credit Card Number</h3>
+
+        This script scans for the presence of Personally Information Identifiable in incoming WebSocket message paylaod.
+        More specifically, it passively scans payload for credit card numbers. The available scans are for the following credit card types:
+        {American Express, Diners Club, Discover, Jcb, Mestro, Master Card, Visa}.<br>
+
+        <br>
+        <table border="1"  width = "500">
+            <tr><th>Use case</th><th>Outcome</th></tr>
+            <tr><td>5264 8109 66944441</td><td>True Positive</td></tr>
+            <tr><td>{"z":0.4333009597918351}</td><td>False Positive</td></tr>
+            <caption>Examples</caption>
+        </table>
+
+        <br>
+        <table border="1"  width = "500">
+            <caption>Default Values</caption>
+            <tr><th>Risk</th><td>High</td></tr>
+            <tr><th>Confidence</th><td>High</td></tr>
+            <tr><th>CWE ID</th><td>359: Exposure of Private Information ('Privacy Violation')</td></tr>
+            <tr><th>WASC ID</th><td>13: Information Leakage</td></tr>
+        </table>
+
         <h3>Information Disclosure: Email address</h3>
 
         This script scans incoming WebSocket messages for email addresses. Email addresses may be not specifically meant for end user consumption.<br>
