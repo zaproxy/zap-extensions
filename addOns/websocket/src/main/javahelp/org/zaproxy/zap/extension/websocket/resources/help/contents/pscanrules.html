@@ -34,6 +34,27 @@
             <tr><th>Confidence</th><td>Medium</td></tr>
         </table>
 
+        <h3>Information Disclosure: Application Errors</h3>
+
+        This passive scanner checks incoming WebSocket message payload for known Application Error messages. Access to such details may provide a malicious individual with means by which to further abuse the web site. They may also leak data not specifically meant for end user consumption.<br>
+
+        <br>
+        <table border="1"  width = "500">
+            <tr><th>Use case</th><th>Outcome</th></tr>
+            <tr><td>Warning: Cannot modify header information - headers already sent</td><td>True Positive</td></tr>
+            <tr><td>'this' is null or not an object</td><td>True Positive</td></tr>
+            <tr><td>System.Data.OleDb.OleDbException: Syntax error in string in query expression 'User ID = ? And Password = ?\'</td><td>True Positive</td></tr>
+            <caption>Examples</caption>
+        </table>
+        <br>
+        <table border="1"  width = "500">
+            <caption>Default Values</caption>
+            <tr><th>Risk</th><td>Medium</td></tr>
+            <tr><th>Confidence</th><td>Medium</td></tr>
+            <tr><th>CWE ID</th><td>209: Information Exposure Through an Error Message</td></tr>
+            <tr><th>WASC ID</th><td>13: Information Leakage</td></tr>
+        </table>
+
         <h3>Information Disclosure: Email address</h3>
 
         This script scans incoming WebSocket messages for email addresses. Email addresses may be not specifically meant for end user consumption.<br>
