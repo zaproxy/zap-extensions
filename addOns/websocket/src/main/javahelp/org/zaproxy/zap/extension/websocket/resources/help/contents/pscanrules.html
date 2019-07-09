@@ -11,6 +11,29 @@
         <h2 id="scripts">Scripts</h2>
         Scripts which are included by default in the add-on and they implement the following WebSocket passive scan rules:
 
+        <h3>Base64 Disclosure</h3>
+
+        This script analyzes incoming WebSocket message payload for Base64 strings. The encoded information may include sensitive data which may not specifically meant for end user consumption.<br>
+
+        The regular expression which is used to identify the Base64 string is based on padding characters. As result False Negative may occur if the encoded string has length N bits where (N)mod6 = 0. On the other hand, False Positives may occur if the input text contains strings ending with '='. <br>
+
+        <br>
+        <table border="1"  width = "500">
+            <tr><th>Original</th><th>Payload</th><th>Outcome</th></tr>
+            <tr><td>Hello World</td><td>SGVsbG8gV29ybGQ=</td><td>True Positive</td></tr>
+            <tr><td>Hello World</td><td>THIS_ISSGVsbG8gV29ybGQ=TEXT</td><td>True Positive</td></tr>
+            <tr><td>Hello World!</td><td>SGVsbG8gV29ybGQK</td><td>False Negative</td></tr>
+            <tr><td>122==122</td><td><i>Invalid</i></td><td>False Positive</td>
+                <caption>Examples</caption>
+        </table>
+
+        <br>
+        <table border="1"  width = "500">
+            <caption>Default Values</caption>
+            <tr><th>Risk</th><td>Info</td></tr>
+            <tr><th>Confidence</th><td>Medium</td></tr>
+        </table>
+
         <h3>Information Disclosure: Email address</h3>
 
         This script scans incoming WebSocket messages for email addresses. Email addresses may be not specifically meant for end user consumption.<br>
