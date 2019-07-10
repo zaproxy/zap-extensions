@@ -112,6 +112,33 @@
             <tr><th>WASC ID</th><td>13: Information Leakage</td></tr>
         </table>
 
+        <h3>Information Disclosure: Suspicious XML Comments</h3>
+
+        This script checks incoming WebSocket messages payloads, which are XML formatted, for suspicious comments. The comments it is searching for are relevant to components with which an attacker can extract useful information. Comments like FIXME, BUG, etc might be helpful for further attacks targeting the weaknesses of the web application.<br>
+
+        <br>
+        <table border="1"  width = "500">
+            <tr><th>Use case</th><th>Outcome</th></tr>
+            <tr><td>
+                <pre>&lt;xml_test&gt;&lt;!-- This is a comments section --&gt;&lt;/xml_test&gt;</pre>
+            </td><td>True Negative</td>
+            </tr>
+            <tr><td>
+                <pre>&lt;user_form&gt;&lt;!-- FIXME: Encode --&gt;&lt;/user_form&gt;</pre>
+            </td><td>True Positive</td>
+            </tr>
+            <caption>Examples</caption>
+        </table>
+
+        <br>
+        <table border="1"  width = "500">
+            <caption>Default Values</caption>
+            <tr><th>Risk</th><td>Info</td></tr>
+            <tr><th>Confidence</th><td>Medium</td></tr>
+            <tr><th>CWE ID</th><td>200: Information Exposure</td></tr>
+            <tr><th>WASC ID</th><td>13: Info Leakage</td></tr>
+        </table>
+
         <h3 id="ip_add_disc">Private Address Disclosure</h3>
         Checks incoming WebSocket message payload for inclusion of RFC 1918 IPv4 addresses as well as Amazon EC2 private hostnames (for example, ip-10-0-56-78). This information can give an attacker useful information about the IP address scheme of the internal network, and might be helpful for further attacks targeting internal systems. <br>
 
