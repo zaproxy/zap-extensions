@@ -108,5 +108,24 @@
             <tr><th>Risk</th><td>Low</td></tr>
             <tr><th>Confidence</th><td>Medium</td></tr>
         </table>
+
+        <h3>Username Disclosure</h3>
+
+        Checks incoming WebSocket message payload for usernames. This script can find usernames which are hashed with the following methods:
+        {MD2, MD5, SHA256, SHA384, SHA512}. The usernames have to be defined in any context before. In order to a add user in a Context follow the steps below:
+        <ol>
+            <li>Include the handshake request in `Context`</li>
+            <li>Set the target user in `Session Context`</li>
+        </ol>
+
+        <br>
+        <table border="1"  width = "400">
+            <caption>Default Values</caption>
+            <tr><th>Risk</th><td>Info</td></tr>
+            <tr><th>Confidence</th><td>High</td></tr>
+            <tr><th>CWE ID</th><td>284: Improper Access Control</td></tr>
+            <tr><th>WASC ID</th><td>2: Insufficient Authorization</td></tr>
+        </table>
+        
     </BODY>
 </HTML>
