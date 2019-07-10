@@ -78,6 +78,27 @@
             <tr><th>WASC ID</th><td>13: Information Leakage</td></tr>
         </table>
 
+        <h3>Information Disclosure: Debug Errors</h3>
+
+        This script checks the incoming WebSocket message payload for known Debug Error message fragments. Access to such details may provide a malicious individual with means by which to further abuse the web site. They may also leak data not specifically meant for end user consumption.<br>
+
+        <br>
+        <table border="1"  width = "500">
+            <tr><th>Use case</th><th>Outcome</th></tr>
+            <tr><td>Error Occurred While Processing Request</td><td>True Positive</td></tr>
+            <tr><td>PHP Warning: Error While Sending QUERY Packet</td><td>True Positive</td></tr>
+            <caption>Examples</caption>
+        </table>
+
+        <br>
+        <table border="1"  width = "500">
+            <caption>Default Values</caption>
+            <tr><th>Risk</th><td>Info</td></tr>
+            <tr><th>Confidence</th><td>Medium</td></tr>
+            <tr><th>CWE ID</th><td>200: Information Exposure</td></tr>
+            <tr><th>WASC ID</th><td>13: Info Leakage</td></tr>
+        </table>
+
         <h3>Information Disclosure: Email address</h3>
 
         This script scans incoming WebSocket messages for email addresses. Email addresses may be not specifically meant for end user consumption.<br>
