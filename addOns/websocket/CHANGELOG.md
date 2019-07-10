@@ -6,9 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Add WebSocket passive scan infrastructure.
-- Add WebSocket passive scan script plugin.
-- Add javascript template for WebSocket passive scan.
-- Add python template for WebSocket passive scan.
+  - Add WebSocket Passive scan script plugin.
+    - Template scripts for:
+      - Python
+      - Javascript
+    - Default scripts for (loaded and enabled by default):
+      - Base64 disclosure
+      - Email disclosure
+      - Error Application disclosure
+      - Private IP disclosure
+      - Credit Card disclosure
+      - Username disclosure
+      - Debug Error disclosure
+      - Suspicious XML Comments disclosure
+    - Help content for the default scripts.
 
 ## [19] - 2019-06-07
 
