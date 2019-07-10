@@ -112,7 +112,7 @@
             <tr><th>WASC ID</th><td>13: Information Leakage</td></tr>
         </table>
 
-        <h2 id="ip_add_disc">Private Address Disclosure</h2>
+        <h3 id="ip_add_disc">Private Address Disclosure</h3>
         Checks incoming WebSocket message payload for inclusion of RFC 1918 IPv4 addresses as well as Amazon EC2 private hostnames (for example, ip-10-0-56-78). This information can give an attacker useful information about the IP address scheme of the internal network, and might be helpful for further attacks targeting internal systems. <br>
 
         This passive scanner may generate false positives in the case of larger dotted numeric strings, such as vp09.02.51.10.01.09.16, where the latter 4 octets appear to be a RFC 1918 IPv4 address. After review an analyst can mark such alerts as False Positives in ZAP.<br>
