@@ -14,7 +14,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.shapesecurity:salvation:2.6.0")
+    implementation("com.shapesecurity:salvation:2.7.0")
 
     testImplementation(project(":testutils"))
     testImplementation("org.apache.commons:commons-lang3:3.7")

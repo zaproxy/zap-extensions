@@ -73,9 +73,10 @@ public class ContentSecurityPolicyScannerUnitTest
         assertThat(
                 alertsRaised.get(1).getDescription(),
                 equalTo(
-                        "The following directives either allow wildcard sources (or ancestors), are not defined, or are overly broadly defined: \n"
-                                + "script-src, style-src, img-src, connect-src, frame-src, frame-ancestor, font-src, media-src, object-src, manifest-src, "
-                                + "worker-src, prefetch-src"));
+                        "The following directives either allow wildcard sources (or ancestors), are not "
+                                + "defined, or are overly broadly defined: \nscript-src, script-src-elem, script-src-attr"
+                                + ", style-src, style-src-elem, style-src-attr, img-src, connect-src, frame-src, "
+                                + "frame-ancestor, font-src, media-src, object-src, manifest-src, worker-src, prefetch-src"));
         assertThat(
                 alertsRaised.get(1).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
