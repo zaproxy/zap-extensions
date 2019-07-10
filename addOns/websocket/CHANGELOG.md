@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add WebSocket passive scan script plugin.
 - Add javascript template for WebSocket passive scan.
 - Add python template for WebSocket passive scan.
+- Add stats for websocket frames sent and time taken for passive scanning.
 
 ## [19] - 2019-06-07
 
