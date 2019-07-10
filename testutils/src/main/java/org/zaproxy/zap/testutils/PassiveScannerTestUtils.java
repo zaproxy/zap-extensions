@@ -71,9 +71,15 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
     protected void defaultAssertions(Alert alert) {
         if (rule instanceof PluginPassiveScanner) {
             PluginPassiveScanner pps = (PluginPassiveScanner) rule;
-            assertThat(alert.getPluginId(), is(equalTo(pps.getPluginId())));
+            assertThat(
+                    "PluginPassiveScanner rules should set its ID to the alert.",
+                    alert.getPluginId(),
+                    is(equalTo(pps.getPluginId())));
         }
-        assertThat(alert.getAttack(), isEmptyOrNullString());
+        assertThat(
+                "Passive rules should not raise alerts with attack field.",
+                alert.getAttack(),
+                isEmptyOrNullString());
     }
 
     protected abstract T createScanner();

@@ -21,9 +21,12 @@ package org.zaproxy.zap.extension.openapi.converter.swagger;
 
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,14 +83,26 @@ public class RequestModelConverter {
                                                 new ArrayList<String>());
                         break;
                     case "ArrayModel":
-                        body =
-                                generators
-                                        .getBodyGenerator()
-                                        .generate(
-                                                ((RefProperty) ((ArrayModel) schema).getItems())
-                                                        .getSimpleRef(),
-                                                true,
-                                                new ArrayList<String>());
+                        Property items = ((ArrayModel) schema).getItems();
+
+                        if (items instanceof RefProperty) {
+                            body =
+                                    generators
+                                            .getBodyGenerator()
+                                            .generate(
+                                                    ((RefProperty) items).getSimpleRef(),
+                                                    true,
+                                                    new ArrayList<String>());
+                        } else {
+                            body = generators.getBodyGenerator().generate(items, true);
+                        }
+
+                        break;
+                    case "ModelImpl":
+                        ModelImpl model = ((ModelImpl) schema);
+                        Property propertyFromModel =
+                                PropertyBuilder.build(model.getType(), model.getFormat(), null);
+                        body = generators.getBodyGenerator().generate(propertyFromModel, false);
                         break;
                 }
             }

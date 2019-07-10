@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix exception when reporting errors.
 - Update minimum ZAP version to 2.8.0.
 - Add import menu to (new) top level Import menu instead of Tools menu.
+- Add support for primitive values (standalone and within arrays) in a request body (Issue 5250).
 
 ## 12 - 2018-05-18
 

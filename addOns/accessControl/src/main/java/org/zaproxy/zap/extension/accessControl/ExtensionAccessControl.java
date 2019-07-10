@@ -112,6 +112,8 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     /** The scanner threads manager. */
     private AccessControlScannerThreadManager threadManager;
 
+    private AccessControlAPI api;
+
     public ExtensionAccessControl() {
         super(NAME);
         this.setOrder(601);
@@ -126,6 +128,9 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         // Register this where needed
         extensionHook.addContextDataFactory(this);
         extensionHook.addSessionListener(this);
+
+        this.api = new AccessControlAPI(this);
+        extensionHook.addApiImplementor(this.api);
 
         if (getView() != null) {
             ExtensionHookView viewHook = extensionHook.getHookView();
@@ -626,5 +631,39 @@ public class ExtensionAccessControl extends ExtensionAdaptor
                 contextManager.importSerializedRule(serializedRule.toString());
             }
         }
+    }
+
+    protected int getScanProgress(int contextId) {
+
+        AccessControlScannerThread scannerThread = threadManager.getScannerThread(contextId);
+
+        if (scannerThread.isRunning() || scannerThread.hasRun()) {
+            double progress =
+                    scannerThread.getScanProgress()
+                            * 1.0
+                            / scannerThread.getScanMaximumProgress()
+                            * 100;
+            return (int) Math.round(progress);
+        } else {
+            throw new IllegalStateException("A scan is not running for context: " + contextId);
+        }
+    }
+
+    protected String getScanStatus(int contextId) {
+
+        AccessControlScannerThread scannerThread = threadManager.getScannerThread(contextId);
+        String result = null;
+
+        if (scannerThread.isRunning()) {
+            result = "RUNNING";
+        } else if (scannerThread.isPaused()) {
+            result = "PAUSED";
+        } else if (scannerThread.isInterrupted()) {
+            result = "INTERRUPTED";
+        } else {
+            result = "NOT RUNNING";
+        }
+
+        return result;
     }
 }

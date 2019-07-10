@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.openapi.generators;
 
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,7 @@ public class BodyGenerator {
     }
 
     @SuppressWarnings("serial")
-    private final Map<Element, String> SYNTAX =
+    private static final Map<Element, String> SYNTAX =
             Collections.unmodifiableMap(
                     new HashMap<Element, String>() {
 
@@ -68,8 +69,39 @@ public class BodyGenerator {
 
     public String generate(String name, boolean isArray, List<String> refs) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Generate " + name);
+            LOG.debug("Generate body for object " + name);
         }
+        String jsonStr = generateJsonObjectString(name, refs);
+        if (isArray) {
+            jsonStr = createJsonArrayWith(jsonStr);
+        }
+        return jsonStr;
+    }
+
+    public String generate(Property property, boolean isArray) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Generate body for primitive type " + property.getType());
+        }
+        String jsonStr = generateJsonPrimitiveValue(property);
+        if (isArray) {
+            jsonStr = createJsonArrayWith(jsonStr);
+        }
+        return jsonStr;
+    }
+
+    private static String createJsonArrayWith(String jsonStr) {
+        return SYNTAX.get(Element.ARRAY_BEGIN)
+                + jsonStr
+                + SYNTAX.get(Element.OUTER_SEPARATOR)
+                + jsonStr
+                + SYNTAX.get(Element.ARRAY_END);
+    }
+
+    private String generateJsonPrimitiveValue(Property property) {
+        return dataGenerator.generateBodyValue("", property, new ArrayList<>());
+    }
+
+    private String generateJsonObjectString(String name, List<String> refs) {
         StringBuilder json = new StringBuilder();
         json.append(SYNTAX.get(Element.OBJECT_BEGIN));
         boolean isFirst = true;
@@ -115,15 +147,6 @@ public class BodyGenerator {
             }
         }
         json.append(SYNTAX.get(Element.OBJECT_END));
-        String jsonStr = json.toString();
-        if (isArray) {
-            jsonStr =
-                    SYNTAX.get(Element.ARRAY_BEGIN)
-                            + jsonStr
-                            + SYNTAX.get(Element.OUTER_SEPARATOR)
-                            + jsonStr
-                            + SYNTAX.get(Element.ARRAY_END);
-        }
-        return jsonStr;
+        return json.toString();
     }
 }
