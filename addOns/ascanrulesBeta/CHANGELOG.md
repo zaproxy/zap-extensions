@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [26] - 2019-07-11
 
 - Fix FP in "Source Code Disclosure SVN" where the contents exactly matches, and only report issues with less evidence at a LOW threshold.
 - Fix NPE in "Session Fixation" scan rule when the path of the request URI is null.
@@ -162,4 +162,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v25
