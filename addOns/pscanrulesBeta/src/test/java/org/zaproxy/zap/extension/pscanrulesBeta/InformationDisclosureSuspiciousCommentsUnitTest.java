@@ -80,7 +80,7 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
     }
 
     @Test
-    public void shouldSuspiciousCommentsFile() {
+    public void shouldReadSuspiciousCommentsFile() {
 
         // When
         File suspiciousCommentsFile =
@@ -218,7 +218,8 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
     }
 
     @Test
-    public void noSuspiciousCommentInHTML() throws HttpMalformedHeaderException, URIException {
+    public void shouldNotAlertWhenNoSuspiciousCommentInHtml()
+            throws HttpMalformedHeaderException, URIException {
 
         // Given
         String body =

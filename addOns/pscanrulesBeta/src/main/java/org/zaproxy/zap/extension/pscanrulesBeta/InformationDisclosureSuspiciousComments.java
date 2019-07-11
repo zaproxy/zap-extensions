@@ -59,7 +59,6 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
     static {
         PATTERNS = new ArrayList<>();
 
-        BufferedReader reader = null;
         try {
             File f =
                     new File(
@@ -71,16 +70,17 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
             if (!f.exists()) {
                 throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
             }
-            reader = new BufferedReader(new FileReader(f));
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (!line.startsWith("#") && line.length() > 0) {
-                    PATTERNS.add(Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+            try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (!line.startsWith("#") && line.length() > 0) {
+                        PATTERNS.add(
+                                Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+                    }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
             logger.error(
                     "Error on opening/reading suspicious comments file: "
                             + File.separator
@@ -89,14 +89,6 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                             + suspiciousCommentsListFile
                             + " Error: "
                             + e.getMessage());
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    logger.debug("Error on closing the file reader. Error: " + e.getMessage());
-                }
-            }
         }
     }
 
