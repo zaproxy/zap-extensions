@@ -49,3 +49,11 @@ function scan(helper,msg) {
         });
     }
 }
+
+function getName(){
+    return "Base64 Disclosure script";
+}
+
+function getId(){
+    return 110002;
+}
