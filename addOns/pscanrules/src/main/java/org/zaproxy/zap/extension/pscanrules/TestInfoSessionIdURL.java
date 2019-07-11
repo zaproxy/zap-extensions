@@ -134,7 +134,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     }
 
     /**
-     * Scan the response. Currently it does nothing.
+     * Scan the response for TODO.
      *
      * @param msg    the HTTP message
      * @param id     the id of the response
@@ -142,7 +142,43 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        // do Nothing. All work currently is done scanning the request.
+
+        /*
+         * This method should be invoked when a URL contains a session ID and then it
+         * looks for URLs to 3rd party sites like this in the Response body: <a
+         * href="http://other.domain.tld/">link</a>
+         */
+        int risk = (msg.getRequestHeader().isSecure()) ? Alert.RISK_MEDIUM : Alert.RISK_LOW;
+        String body = msg.getResponseBody().toString();
+        // String host = msg.getRequestHeader().getURI().getHost();
+        String linkHostName;
+        Matcher matcher;
+
+        for (Pattern pattern : EXT_LINK_PATTERNS) {
+            matcher = pattern.matcher(body);
+
+            if (matcher.find()) {
+                linkHostName = matcher.group(1);
+//                if (host.compareToIgnoreCase(linkHostName) != 0) {
+
+                    // Raise an alert according to Passive Scan Rule model
+                    // description, uri, param, attack, otherInfo,
+                    // solution, reference, evidence, cweId, wascId, msg
+                    System.out.println("JONO: Alerting 3rd party exposure");
+                    Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, getRefererAlert());
+                alert.setDetail(getRefererDescription(), msg.getRequestHeader().getURI().toString(), "", "", "",
+                            getRefererSolution(), getReference(), linkHostName, // evidence
+                            getCweId(), // CWE Id
+                            getWascId(), // WASC Id - Info leakage
+                            msg);
+
+                    System.out.println("JONO: 3rd party alert is: " + alert.toString());
+                    parent.raiseAlert(id, alert);
+
+                    break; // Only need one
+//                }
+            }
+        }
     }
 
     // Pattern used only in scanHttpRequestSend() method below.
@@ -155,7 +191,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      * Perform passive scanning for URL based session IDs in the HTTP request
      *
      * @param msg the message that needs to be checked
-     * @param id  the id of the session
+     * @param id the id of the session
      */
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -247,7 +283,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
             // i.e.: There is an external link for which
             // a referer header would be passed including this session token
             try {
-                checkSessionIDExposure(msg, id);
+                checkSessionIDExposureTo3rdParty(msg, id);
             } catch (URIException e) {
             }
         }
@@ -260,18 +296,17 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     // window.location='url
     // location.href='url
     // document.location='url
-    // and also internal variables containing urls that can be
+    // and also internal variables containing URLs that can be
     // also dynamically composed along page execution
     // so we search only for pattern like these:
     // ='url or ('url because it's suitable to all the previous possibilities
-    // and we check for no quoted URLs only if href or src
+    // and we check for unquoted URLs only if href or src
     // ---------------------------------
     private static final String EXT_LINK = "https?://([\\w\\.\\-_]+)";
     private static final Pattern[] EXT_LINK_PATTERNS = {
-        // Pattern.compile("src\\s*=\\s*\"?" + EXT_LINK, Pattern.CASE_INSENSITIVE),
-        // Pattern.compile("href\\s*=\\s*\"?" + EXT_LINK, Pattern.CASE_INSENSITIVE),
-        Pattern.compile("src\\s*=\\s*[\"']" + EXT_LINK, Pattern.CASE_INSENSITIVE),
-        Pattern.compile("href\\s*=\\s*[\"']" + EXT_LINK, Pattern.CASE_INSENSITIVE),
+        Pattern.compile("src\\s*=\\s*[\"']?" + EXT_LINK, Pattern.CASE_INSENSITIVE),
+        Pattern.compile("href\\s*=\\s*[\"']?" + EXT_LINK, Pattern.CASE_INSENSITIVE),
+        // This regex looks for DOM URLs (per above)
         Pattern.compile("[=\\(]\\s*[\"']" + EXT_LINK, Pattern.CASE_INSENSITIVE)
     };
 
@@ -291,14 +326,21 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     }
 
     /**
-     * Check if an external link is present inside a vulnerable URL
+     * Checks if the session ID in the URL might be exposed to 3rd-parties via a link to that 3rd
+     * party. The referer header value sent to the 3rd party will include the URL with the included
+     * session ID. This method should only be invoked if the requesting URL includes a session ID.
      *
-     * @param msg the message that need to be checked
-     * @param id  the id of the session
+     * @param msg the message that needs to be checked
+     * @param id the id of the session
      * @throws URIException if there's some trouble with the Request
      */
-    private void checkSessionIDExposure(HttpMessage msg, int id) throws URIException {
-        // Vector<String> referrer = msg.getRequestHeader().getHeaders(HttpHeader.REFERER);
+    private void checkSessionIDExposureTo3rdParty(HttpMessage msg, int id) throws URIException {
+
+        /*
+         * This method should be invoked when a URL contains a session ID and then it
+         * looks for URLs to 3rd party sites like this in the Response body: 
+         * <a href="http://other.domain.tld/">link</a>
+         */
         int risk = (msg.getRequestHeader().isSecure()) ? Alert.RISK_MEDIUM : Alert.RISK_LOW;
         String body = msg.getResponseBody().toString();
         String host = msg.getRequestHeader().getURI().getHost();
@@ -325,7 +367,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                             getRefererDescription(),
                             msg.getRequestHeader().getURI().getURI(),
                             "",
-                            linkHostName,
+                            "",
                             "",
                             getRefererSolution(),
                             getReference(),
