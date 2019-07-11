@@ -87,3 +87,12 @@ function validateLuhnCheckSum(match){
     }
     return (sum % 2) == 0;
 }
+
+
+function getName(){
+    return "Credit Card Disclosure script";
+}
+
+function getId(){
+    return 110005;
+}
