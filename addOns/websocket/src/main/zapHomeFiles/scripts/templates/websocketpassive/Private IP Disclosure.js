@@ -83,3 +83,11 @@ function scan(helper,msg) {
         });
     }
 }
+
+function getName(){
+    return "Private IP Disclosure script";
+}
+
+function getId(){
+    return 110006;
+}
