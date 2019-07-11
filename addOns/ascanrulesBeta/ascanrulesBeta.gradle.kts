@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "26"
+version = "27"
 description = "The beta quality Active Scanner rules"
 
 zapAddOn {
