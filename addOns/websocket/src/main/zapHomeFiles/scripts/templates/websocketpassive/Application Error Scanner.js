@@ -171,3 +171,11 @@ function raiseAlert(helper, evidence){
         .setWascId(13) // Information Leakage
         .raise();
 }
+
+function getName(){
+    return "Application Error Disclosure script";
+}
+
+function getId(){
+    return 110001;
+}
