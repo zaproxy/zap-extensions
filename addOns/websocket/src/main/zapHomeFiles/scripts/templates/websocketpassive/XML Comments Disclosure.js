@@ -91,3 +91,11 @@ function getParsedDocument(message){
     }
     return result;
 }
+
+function getName(){
+    return "Suspicious XML Comments Disclosure script";
+}
+
+function getId(){
+    return 110008;
+}
