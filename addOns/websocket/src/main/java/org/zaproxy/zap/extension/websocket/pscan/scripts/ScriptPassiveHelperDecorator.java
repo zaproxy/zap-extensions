@@ -17,21 +17,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.websocket.pscan;
+package org.zaproxy.zap.extension.websocket.pscan.scripts;
 
-import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.alerts.WebSocketAlertRaiser;
+import org.zaproxy.zap.extension.websocket.pscan.WebSocketScanHelper;
 
-/**
- * This interface implemented by {@link WebSocketScanHelper} and is used in {@link
- * WebSocketPassiveScanner#scanMessage(WebSocketScanHelper, WebSocketMessageDTO)} in order to
- * provide some useful utilities at WebSocketPlugin.
- */
-public interface WebSocketScanHelper {
+public class ScriptPassiveHelperDecorator implements WebSocketScanHelper {
 
-    /** Use this method to build and raise an Alert. */
-    WebSocketAlertRaiser newAlert();
+    private WebSocketScanHelper helper;
+    private WebSocketPassiveScriptDecorator scriptDecorator;
 
-    /** Use this method to build and raise an Alert. */
-    WebSocketAlertRaiser newAlert(int pluginId);
+    public ScriptPassiveHelperDecorator(
+            WebSocketScanHelper helper, WebSocketPassiveScriptDecorator scriptDecorator) {
+        this.helper = helper;
+        this.scriptDecorator = scriptDecorator;
+    }
+
+    @Override
+    public WebSocketAlertRaiser newAlert() {
+        return this.newAlert(scriptDecorator.getId());
+    }
+
+    @Override
+    public WebSocketAlertRaiser newAlert(int pluginId) {
+        return helper.newAlert(pluginId);
+    }
 }

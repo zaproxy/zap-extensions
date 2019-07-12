@@ -31,3 +31,11 @@ function scan(helper,msg) {
         });
     }
 }
+
+function getName(){
+    return "Email Disclosure script";
+}
+
+function getId(){
+    return 110004;
+}

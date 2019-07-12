@@ -44,4 +44,12 @@ public interface WebSocketPassiveScript {
      * @throws ScriptException
      */
     void scan(WebSocketScanHelper helper, WebSocketMessageDTO msg) throws ScriptException;
+
+    default int getId() {
+        return ScriptsWebSocketPassiveScanner.PLUGIN_ID;
+    }
+
+    default String getName() {
+        return ScriptsWebSocketPassiveScanner.PLUGIN_NAME;
+    }
 }

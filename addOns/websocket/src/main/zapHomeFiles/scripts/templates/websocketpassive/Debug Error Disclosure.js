@@ -68,3 +68,12 @@ function scan(helper,msg) {
         }
     });
 }
+
+
+function getName(){
+    return "Debug Error Disclosure script";
+}
+
+function getId(){
+    return 110003;
+}

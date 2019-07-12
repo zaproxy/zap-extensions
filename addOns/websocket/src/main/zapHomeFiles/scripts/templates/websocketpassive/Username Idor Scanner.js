@@ -101,3 +101,11 @@ function getExtensionUserManagment(){
     }
     return extUserManagment;
 }
+
+function getName(){
+    return "Username Disclosure script";
+}
+
+function getId(){
+    return 110007;
+}
