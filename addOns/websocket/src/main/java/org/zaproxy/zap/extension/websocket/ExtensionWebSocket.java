@@ -808,6 +808,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                             wsVersion,
                             localSocket,
                             remoteSocket,
+                            handshakeMessage.getHistoryRef(),
                             targetHost,
                             targetPort,
                             wsProtocol,
@@ -829,21 +830,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 wsProxy.addSenderListener(senderListener);
             }
 
-            // wait until HistoryReference is saved to database
-            if (!wsProxy.isServerMode()) {
-                // TODO Remove the wait once targeting the newer core version that saves the message
-                // synchronously.
-                int count = 0;
-                while (handshakeMessage.getHistoryRef() == null && count < 10) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        logger.warn(e.getMessage(), e);
-                    }
-                    count++;
-                }
-            }
-            wsProxy.setHandshakeReference(handshakeMessage.getHistoryRef());
             wsProxy.setForwardOnly(isChannelIgnored(wsProxy.getDTO()));
             wsProxy.startListeners(getListenerThreadPool(), remoteReader);
 

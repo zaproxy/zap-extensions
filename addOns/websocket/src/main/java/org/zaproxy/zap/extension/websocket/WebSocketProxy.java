@@ -32,15 +32,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.client.HandshakeConfig;
 import org.zaproxy.zap.extension.websocket.client.RequestOutOfScopeException;
 import org.zaproxy.zap.extension.websocket.client.ServerConnectionEstablisher;
+import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.utils.Stats;
 
 /**
@@ -162,8 +165,8 @@ public abstract class WebSocketProxy {
     /** Port of remote socket. */
     private final int port;
 
-    /** Host name with protocol used for the stats */
-    private String statsHostName;
+    /** The base key used for the stats - host name with protocol */
+    private String statsBaseKey;
 
     /** Just a consecutive number, identifying one channel within a session. */
     private final int channelId;
@@ -232,10 +235,47 @@ public abstract class WebSocketProxy {
      * @return Version specific proxy object.
      * @see #create(String, Socket, Socket, String, Map)
      */
+    @Deprecated
     public static WebSocketProxy create(
             String version,
             Socket localSocket,
             Socket remoteSocket,
+            String targetHost,
+            int targetPort,
+            String subprotocol,
+            Map<String, String> extensions)
+            throws WebSocketException {
+        return WebSocketProxy.create(
+                version,
+                localSocket,
+                remoteSocket,
+                null,
+                targetHost,
+                targetPort,
+                subprotocol,
+                extensions);
+    }
+
+    /**
+     * Factory method to create appropriate version.
+     *
+     * @param version Protocol version.
+     * @param localSocket Channel from browser to ZAP.
+     * @param remoteSocket Channel from ZAP to server (possibly a proxy).
+     * @param handshakeReference the handshake HttpMessage.
+     * @param targetHost the hostname of the target (remote) machine
+     * @param targetPort the port of the target (remote) machine
+     * @param subprotocol Provide null if there is no subprotocol specified.
+     * @param extensions Map of negotiated extensions, null or empty list.
+     * @throws WebSocketException
+     * @return Version specific proxy object.
+     * @see #create(String, Socket, Socket, String, Map)
+     */
+    public static WebSocketProxy create(
+            String version,
+            Socket localSocket,
+            Socket remoteSocket,
+            HistoryReference handshakeReference,
             String targetHost,
             int targetPort,
             String subprotocol,
@@ -261,7 +301,8 @@ public abstract class WebSocketProxy {
                             + version
                             + "' provided in factory method!");
         }
-        Stats.incCounter(getSiteName(targetHost, targetPort), WEBSOCKET_OPEN_STATS);
+        wsProxy.setHandshakeReference(handshakeReference);
+        Stats.incCounter(wsProxy.getStatsBaseKey(), WEBSOCKET_OPEN_STATS);
 
         return wsProxy;
     }
@@ -510,8 +551,8 @@ public abstract class WebSocketProxy {
             }
 
             setState(State.CLOSED);
+            Stats.incCounter(getStatsBaseKey(), WEBSOCKET_CLOSE_STATS);
         }
-        Stats.incCounter(getStatsHostname(), WEBSOCKET_CLOSE_STATS);
     }
 
     /** @return True if proxy's state is {@link State#OPEN}. */
@@ -713,15 +754,15 @@ public abstract class WebSocketProxy {
      * @return False if message should be dropped.
      */
     protected boolean notifyMessageObservers(WebSocketMessage message) {
-        String dirStr = message.getDirection().name().toLowerCase();
-        Stats.incCounter(getStatsHostname(), WEBSOCKET_COUNT_STATS_PREFIX + dirStr);
+        String dirStr = message.getDirection().name().toLowerCase(Locale.ROOT);
+        Stats.incCounter(getStatsBaseKey(), WEBSOCKET_COUNT_STATS_PREFIX + dirStr);
         Stats.incCounter(
-                getStatsHostname(),
+                getStatsBaseKey(),
                 WEBSOCKET_BYTES_STATS_PREFIX + dirStr,
                 message.getPayloadLength());
         Stats.incCounter(
-                getStatsHostname(),
-                WEBSOCKET_OPCODE_STATS_PREFIX + message.getOpcodeString().toLowerCase());
+                getStatsBaseKey(),
+                WEBSOCKET_OPCODE_STATS_PREFIX + message.getOpcodeString().toLowerCase(Locale.ROOT));
 
         for (WebSocketObserver observer : observerList) {
             try {
@@ -1051,28 +1092,21 @@ public abstract class WebSocketProxy {
         return serverEstablisher;
     }
 
-    private String getStatsHostname() {
-        if (statsHostName == null) {
+    private String getStatsBaseKey() {
+        if (statsBaseKey == null) {
             // Make our best attempt at getting the same host name that other stats will use
             HistoryReference hsr = getHandshakeReference();
             if (hsr != null) {
-                statsHostName = getSiteName(host, hsr.getURI().getPort());
+                try {
+                    statsBaseKey = SessionStructure.getHostName(hsr.getURI());
+                } catch (URIException e) {
+                    // Unlikely, but just in case
+                    statsBaseKey = "http://" + host;
+                }
             } else {
-                statsHostName = "http://" + host;
+                statsBaseKey = "http://" + host;
             }
         }
-        return statsHostName;
-    }
-
-    private static String getSiteName(String host, int port) {
-        String statsHost;
-        if (port == 80) {
-            statsHost = "http://" + host;
-        } else if (port == 443) {
-            statsHost = "https://" + host;
-        } else {
-            statsHost = "http://" + host + ":" + port;
-        }
-        return statsHost;
+        return statsBaseKey;
     }
 }
