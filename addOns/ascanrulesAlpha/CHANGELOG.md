@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [25] - 2019-07-11
+
 ### Fixed
 - Fix FP in Cloud Metadata rule where no content returned.
 - Fix FP in Ht Access Scanner where HTML, XML, JSON or empty response is returned (Issue 5433).
@@ -146,4 +149,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[25]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v24
