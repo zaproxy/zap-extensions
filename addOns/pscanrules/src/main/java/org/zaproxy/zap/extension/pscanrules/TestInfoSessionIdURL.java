@@ -29,6 +29,7 @@
 // ZAP: 2015/09/23 Issue 1594: Change matching mechanism
 // ZAP: 2017/11/10 Remove N/A from alert parameter.
 // ZAP: 2019/05/08 Normalise format/indentation.
+// ZAP: 2019/07/11 Change URL regex to find unquoted URLs in HREFs/SRC tags.
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.Collections;
@@ -134,7 +135,12 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     }
 
     /**
-     * Scan the response for TODO.
+     * Scan the response. Currently it does nothing. TODO: This method should really
+     * scan the contents of the response to see if it is HTML, and if so, look for
+     * HREFs and SRC tags and check if the URLs in them contain session IDs. This
+     * would enable ZAP to detect Session IDs in URLs exactly where they are
+     * occurring, rather than simply detecting the symptom of the problem in URLs of
+     * requests.
      *
      * @param msg    the HTTP message
      * @param id     the id of the response
@@ -142,43 +148,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-
-        /*
-         * This method should be invoked when a URL contains a session ID and then it
-         * looks for URLs to 3rd party sites like this in the Response body: <a
-         * href="http://other.domain.tld/">link</a>
-         */
-        int risk = (msg.getRequestHeader().isSecure()) ? Alert.RISK_MEDIUM : Alert.RISK_LOW;
-        String body = msg.getResponseBody().toString();
-        // String host = msg.getRequestHeader().getURI().getHost();
-        String linkHostName;
-        Matcher matcher;
-
-        for (Pattern pattern : EXT_LINK_PATTERNS) {
-            matcher = pattern.matcher(body);
-
-            if (matcher.find()) {
-                linkHostName = matcher.group(1);
-//                if (host.compareToIgnoreCase(linkHostName) != 0) {
-
-                    // Raise an alert according to Passive Scan Rule model
-                    // description, uri, param, attack, otherInfo,
-                    // solution, reference, evidence, cweId, wascId, msg
-                    System.out.println("JONO: Alerting 3rd party exposure");
-                    Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, getRefererAlert());
-                alert.setDetail(getRefererDescription(), msg.getRequestHeader().getURI().toString(), "", "", "",
-                            getRefererSolution(), getReference(), linkHostName, // evidence
-                            getCweId(), // CWE Id
-                            getWascId(), // WASC Id - Info leakage
-                            msg);
-
-                    System.out.println("JONO: 3rd party alert is: " + alert.toString());
-                    parent.raiseAlert(id, alert);
-
-                    break; // Only need one
-//                }
-            }
-        }
+        // do Nothing. All work currently is done scanning the request.
     }
 
     // Pattern used only in scanHttpRequestSend() method below.
@@ -338,7 +308,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
 
         /*
          * This method should be invoked when a URL contains a session ID and then it
-         * looks for URLs to 3rd party sites like this in the Response body: 
+         * looks for URLs to 3rd party sites like this in the Response body:
          * <a href="http://other.domain.tld/">link</a>
          */
         int risk = (msg.getRequestHeader().isSecure()) ? Alert.RISK_MEDIUM : Alert.RISK_LOW;

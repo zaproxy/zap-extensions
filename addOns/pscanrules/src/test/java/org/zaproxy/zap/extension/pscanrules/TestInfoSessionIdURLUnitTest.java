@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
@@ -38,8 +38,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
-
-import net.htmlparser.jericho.Source;
 
 public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSessionIdURL> {
 
@@ -217,7 +215,11 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         assertEquals(1, alertsRaised.size());
     }
 
-    //    @Test
+    // @Test
+    // TODO: The scanHttpResponseReceive() method in this scanner currently does not
+    // look for session IDs in the response embedded in HREFs. As such, this test
+    // case fails so is commented out. When this scanner is enhanced to do this,
+    // enable this test case.
     public void containsJSESSIONIDInResponseHREFParams()
             throws HttpMalformedHeaderException, URIException {
 
@@ -238,7 +240,11 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         assertEquals(1, alertsRaised.size());
     }
 
-    //    @Test
+    // @Test
+    // TODO: The scanHttpResponseReceive() method in this scanner currently does not
+    // look for session IDs in the response embedded in HREFs before the parameters.
+    // As such, this test case fails so is commented out. When this scanner is
+    // enhanced to do this, enable this test case.
     public void containsCFIDInResponseHREFBeforeParams()
             throws HttpMalformedHeaderException, URIException {
 
@@ -278,9 +284,10 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         // Then
         assertEquals(2, alertsRaised.size());
     }
-    
+
     @Test
-    public void detectExposureTo3rdPartyInHREFwCustomPort() throws HttpMalformedHeaderException, URIException {
+    public void detectExposureTo3rdPartyInHREFwCustomPort()
+            throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com:8888/foo?jsessionid=1A530637289A03B07199A44E8D531427";
@@ -298,9 +305,10 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         // Then
         assertEquals(2, alertsRaised.size());
     }
-    
+
     @Test
-    public void detectExposureTo3rdPartyUnquotedHREF() throws HttpMalformedHeaderException, URIException {
+    public void detectExposureTo3rdPartyUnquotedHREF()
+            throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
@@ -318,7 +326,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         // Then
         assertEquals(2, alertsRaised.size());
     }
-    
+
     @Test
     public void detectExposureTo3rdPartyInSRC() throws HttpMalformedHeaderException, URIException {
 
@@ -326,7 +334,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
         String body =
                 "<html>\n<body>\n<h2>HTML Links</h2>\n"
-                        + "<p><a href=\"default.jsp\">\n" 
+                        + "<p><a href=\"default.jsp\">\n"
                         + " <img src=\"https://www.w3schools.com/images/smiley.gif\" alt=\"HTML tutorial\" "
                         + "style=\"width:42px;height:42px;border:0;\">\n</a>"
                         + "</p>\n"
@@ -340,7 +348,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         // Then
         assertEquals(2, alertsRaised.size());
     }
-    
+
     @Test
     public void ignoreExposureToSelf() throws HttpMalformedHeaderException, URIException {
 
@@ -365,13 +373,14 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void ignoreExposureToSelfRelativeLink() throws HttpMalformedHeaderException, URIException {
+    public void ignoreExposureToSelfRelativeLink()
+            throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
         String body =
                 "<html>\n<body>\n<h2>HTML Links</h2>\n"
-                        + "<p><a href=\"default.jsp\">\n" 
+                        + "<p><a href=\"default.jsp\">\n"
                         + " <img src=\"smiley.gif\" alt=\"HTML tutorial\" "
                         + "style=\"width:42px;height:42px;border:0;\">\n</a>"
                         + "</p>\n"
@@ -395,7 +404,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
         String body =
                 "<html>\n<body>\n<h2>HTML Links</h2>\n"
-                        + "<h2 id=\"C4\">Chapter 4</h2>" 
+                        + "<h2 id=\"C4\">Chapter 4</h2>"
                         + "<p><a href=\"#C4\">Jump to Chapter 4</a></p>\n"
                         + "</body>\n</html>";
         HttpMessage msg = createHttpMessageWithRespBody(body);
@@ -409,7 +418,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         // href in the body is also self relative, it should not raise a 2nd alert.
         assertEquals(1, alertsRaised.size());
     }
-    
+
     private void setUpHttpSessionsParam() {
         HttpSessionsParam sessionOptions = new HttpSessionsParam();
         sessionOptions.load(new ZapXmlConfiguration());
