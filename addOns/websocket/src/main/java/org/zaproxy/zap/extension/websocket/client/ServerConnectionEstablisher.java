@@ -199,6 +199,7 @@ public class ServerConnectionEstablisher {
                             wsVersion,
                             null,
                             remoteSocket,
+                            handshakeMessage.getHistoryRef(),
                             targetHost,
                             targetPort,
                             wsProtocol,
@@ -207,7 +208,6 @@ public class ServerConnectionEstablisher {
             addChannelObserversIfAny(webSocketProxy, handshakeConfig);
             addChannelSenderListenerIfAny(webSocketProxy, handshakeConfig);
 
-            webSocketProxy.setHandshakeReference(handshakeMessage.getHistoryRef());
             webSocketProxy.startListeners(getListenerThreadPool(), remoteReader);
 
         } catch (WebSocketException e) {

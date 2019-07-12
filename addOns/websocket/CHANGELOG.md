@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       - Debug Error disclosure
       - Suspicious XML Comments disclosure
     - Help content for the default scripts.
+- Add stats for websocket frames sent and time taken for passive scanning.
 
 ## [19] - 2019-06-07
 

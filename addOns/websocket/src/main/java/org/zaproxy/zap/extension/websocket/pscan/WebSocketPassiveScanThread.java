@@ -32,10 +32,13 @@ import org.zaproxy.zap.extension.websocket.alerts.WebSocketAlertThread;
 import org.zaproxy.zap.extension.websocket.alerts.WebSocketAlertWrapper;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
+import org.zaproxy.zap.utils.Stats;
 
 /** Implements a background thread for passive scanning */
 public class WebSocketPassiveScanThread extends Thread
         implements WebSocketObserver, WebSocketAlertThread {
+
+    public static final String WEBSOCKET_PSCAN_STATS_PREFIX = "stats.websockets.pscan.";
 
     private static final Logger LOGGER = Logger.getLogger(WebSocketPassiveScanThread.class);
 
@@ -131,10 +134,14 @@ public class WebSocketPassiveScanThread extends Thread
                     iterator = passiveScannerManager.getIterator();
                     while (iterator.hasNext()) {
                         if ((currentPassiveScanner = iterator.next()).isEnabled()) {
+                            long startTime = System.currentTimeMillis();
                             currentPassiveScanner.scanMessage(
                                     helper.getWebSocketScanHelper(
                                             currentPassiveScanner.getId(), currentMessage),
                                     currentMessage);
+                            Stats.incCounter(
+                                    WEBSOCKET_PSCAN_STATS_PREFIX + currentPassiveScanner.getName(),
+                                    System.currentTimeMillis() - startTime);
                         }
                     }
                 } catch (DatabaseException e) {

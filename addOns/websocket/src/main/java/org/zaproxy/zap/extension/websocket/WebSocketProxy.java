@@ -32,15 +32,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.client.HandshakeConfig;
 import org.zaproxy.zap.extension.websocket.client.RequestOutOfScopeException;
 import org.zaproxy.zap.extension.websocket.client.ServerConnectionEstablisher;
+import org.zaproxy.zap.model.SessionStructure;
+import org.zaproxy.zap.utils.Stats;
 
 /**
  * Intercepts WebSocket communication and forwards frames. Code is inspired by the <a
@@ -57,6 +61,12 @@ import org.zaproxy.zap.extension.websocket.client.ServerConnectionEstablisher;
 public abstract class WebSocketProxy {
 
     private static final Logger logger = Logger.getLogger(WebSocketProxy.class);
+
+    public static final String WEBSOCKET_OPEN_STATS = "stats.websockets.open";
+    public static final String WEBSOCKET_CLOSE_STATS = "stats.websockets.close";
+    public static final String WEBSOCKET_OPCODE_STATS_PREFIX = "stats.websockets.opcode.";
+    public static final String WEBSOCKET_COUNT_STATS_PREFIX = "stats.websockets.count.";
+    public static final String WEBSOCKET_BYTES_STATS_PREFIX = "stats.websockets.bytes.";
 
     /** WebSocket communication state. */
     public enum State {
@@ -155,6 +165,9 @@ public abstract class WebSocketProxy {
     /** Port of remote socket. */
     private final int port;
 
+    /** The base key used for the stats - host name with protocol */
+    private String statsBaseKey;
+
     /** Just a consecutive number, identifying one channel within a session. */
     private final int channelId;
 
@@ -222,10 +235,47 @@ public abstract class WebSocketProxy {
      * @return Version specific proxy object.
      * @see #create(String, Socket, Socket, String, Map)
      */
+    @Deprecated
     public static WebSocketProxy create(
             String version,
             Socket localSocket,
             Socket remoteSocket,
+            String targetHost,
+            int targetPort,
+            String subprotocol,
+            Map<String, String> extensions)
+            throws WebSocketException {
+        return WebSocketProxy.create(
+                version,
+                localSocket,
+                remoteSocket,
+                null,
+                targetHost,
+                targetPort,
+                subprotocol,
+                extensions);
+    }
+
+    /**
+     * Factory method to create appropriate version.
+     *
+     * @param version Protocol version.
+     * @param localSocket Channel from browser to ZAP.
+     * @param remoteSocket Channel from ZAP to server (possibly a proxy).
+     * @param handshakeReference the handshake HttpMessage.
+     * @param targetHost the hostname of the target (remote) machine
+     * @param targetPort the port of the target (remote) machine
+     * @param subprotocol Provide null if there is no subprotocol specified.
+     * @param extensions Map of negotiated extensions, null or empty list.
+     * @throws WebSocketException
+     * @return Version specific proxy object.
+     * @see #create(String, Socket, Socket, String, Map)
+     */
+    public static WebSocketProxy create(
+            String version,
+            Socket localSocket,
+            Socket remoteSocket,
+            HistoryReference handshakeReference,
             String targetHost,
             int targetPort,
             String subprotocol,
@@ -251,6 +301,8 @@ public abstract class WebSocketProxy {
                             + version
                             + "' provided in factory method!");
         }
+        wsProxy.setHandshakeReference(handshakeReference);
+        Stats.incCounter(wsProxy.getStatsBaseKey(), WEBSOCKET_OPEN_STATS);
 
         return wsProxy;
     }
@@ -499,6 +551,7 @@ public abstract class WebSocketProxy {
             }
 
             setState(State.CLOSED);
+            Stats.incCounter(getStatsBaseKey(), WEBSOCKET_CLOSE_STATS);
         }
     }
 
@@ -701,6 +754,16 @@ public abstract class WebSocketProxy {
      * @return False if message should be dropped.
      */
     protected boolean notifyMessageObservers(WebSocketMessage message) {
+        String dirStr = message.getDirection().name().toLowerCase(Locale.ROOT);
+        Stats.incCounter(getStatsBaseKey(), WEBSOCKET_COUNT_STATS_PREFIX + dirStr);
+        Stats.incCounter(
+                getStatsBaseKey(),
+                WEBSOCKET_BYTES_STATS_PREFIX + dirStr,
+                message.getPayloadLength());
+        Stats.incCounter(
+                getStatsBaseKey(),
+                WEBSOCKET_OPCODE_STATS_PREFIX + message.getOpcodeString().toLowerCase(Locale.ROOT));
+
         for (WebSocketObserver observer : observerList) {
             try {
                 if (!observer.onMessageFrame(channelId, message)) {
@@ -1027,5 +1090,23 @@ public abstract class WebSocketProxy {
             serverEstablisher = new ServerConnectionEstablisher();
         }
         return serverEstablisher;
+    }
+
+    private String getStatsBaseKey() {
+        if (statsBaseKey == null) {
+            // Make our best attempt at getting the same host name that other stats will use
+            HistoryReference hsr = getHandshakeReference();
+            if (hsr != null) {
+                try {
+                    statsBaseKey = SessionStructure.getHostName(hsr.getURI());
+                } catch (URIException e) {
+                    // Unlikely, but just in case
+                    statsBaseKey = "http://" + host;
+                }
+            } else {
+                statsBaseKey = "http://" + host;
+            }
+        }
+        return statsBaseKey;
     }
 }

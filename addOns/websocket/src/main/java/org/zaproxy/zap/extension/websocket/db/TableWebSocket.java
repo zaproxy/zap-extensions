@@ -83,55 +83,51 @@ public class TableWebSocket extends ParosAbstractTable {
         try {
             if (!DbUtils.hasTable(conn, "WEBSOCKET_CHANNEL")) {
                 // need to create the tables
-                PreparedStatement stmt =
-                        conn.prepareStatement(
-                                "CREATE CACHED TABLE websocket_channel ("
-                                        + "channel_id BIGINT PRIMARY KEY,"
-                                        + "host VARCHAR(255) NOT NULL,"
-                                        + "port INTEGER NOT NULL,"
-                                        + "url VARCHAR(1048576) NOT NULL,"
-                                        + "start_timestamp TIMESTAMP NOT NULL,"
-                                        + "end_timestamp TIMESTAMP NULL,"
-                                        + "history_id INTEGER NULL,"
-                                        + "FOREIGN KEY (history_id) REFERENCES HISTORY(HISTORYID) ON DELETE SET NULL ON UPDATE SET NULL"
-                                        + ")");
-                DbUtils.executeAndClose(stmt);
+                DbUtils.execute(
+                        conn,
+                        "CREATE CACHED TABLE websocket_channel ("
+                                + "channel_id BIGINT PRIMARY KEY,"
+                                + "host VARCHAR(255) NOT NULL,"
+                                + "port INTEGER NOT NULL,"
+                                + "url VARCHAR(1048576) NOT NULL,"
+                                + "start_timestamp TIMESTAMP NOT NULL,"
+                                + "end_timestamp TIMESTAMP NULL,"
+                                + "history_id INTEGER NULL,"
+                                + "FOREIGN KEY (history_id) REFERENCES HISTORY(HISTORYID) ON DELETE SET NULL ON UPDATE SET NULL"
+                                + ")");
 
-                stmt =
-                        conn.prepareStatement(
-                                "CREATE CACHED TABLE websocket_message ("
-                                        + "message_id BIGINT NOT NULL,"
-                                        + "channel_id BIGINT NOT NULL,"
-                                        + "timestamp TIMESTAMP NOT NULL,"
-                                        + "opcode TINYINT NOT NULL,"
-                                        + "payload_utf8 CLOB(16M) NULL,"
-                                        + "payload_bytes BLOB(16M) NULL,"
-                                        + "payload_length BIGINT NOT NULL,"
-                                        + "is_outgoing BOOLEAN NOT NULL,"
-                                        + "PRIMARY KEY (message_id, channel_id),"
-                                        + "FOREIGN KEY (channel_id) REFERENCES websocket_channel(channel_id)"
-                                        + ")");
-                DbUtils.executeAndClose(stmt);
+                DbUtils.execute(
+                        conn,
+                        "CREATE CACHED TABLE websocket_message ("
+                                + "message_id BIGINT NOT NULL,"
+                                + "channel_id BIGINT NOT NULL,"
+                                + "timestamp TIMESTAMP NOT NULL,"
+                                + "opcode TINYINT NOT NULL,"
+                                + "payload_utf8 CLOB(16M) NULL,"
+                                + "payload_bytes BLOB(16M) NULL,"
+                                + "payload_length BIGINT NOT NULL,"
+                                + "is_outgoing BOOLEAN NOT NULL,"
+                                + "PRIMARY KEY (message_id, channel_id),"
+                                + "FOREIGN KEY (channel_id) REFERENCES websocket_channel(channel_id)"
+                                + ")");
 
-                stmt =
-                        conn.prepareStatement(
-                                "ALTER TABLE websocket_message "
-                                        + "ADD CONSTRAINT websocket_message_payload "
-                                        + "CHECK (payload_utf8 IS NOT NULL OR payload_bytes IS NOT NULL)");
-                DbUtils.executeAndClose(stmt);
+                DbUtils.execute(
+                        conn,
+                        "ALTER TABLE websocket_message "
+                                + "ADD CONSTRAINT websocket_message_payload "
+                                + "CHECK (payload_utf8 IS NOT NULL OR payload_bytes IS NOT NULL)");
 
-                stmt =
-                        conn.prepareStatement(
-                                "CREATE CACHED TABLE websocket_message_fuzz ("
-                                        + "fuzz_id BIGINT NOT NULL,"
-                                        + "message_id BIGINT NOT NULL,"
-                                        + "channel_id BIGINT NOT NULL,"
-                                        + "state VARCHAR(50) NOT NULL,"
-                                        + "fuzz LONGVARCHAR NOT NULL,"
-                                        + "PRIMARY KEY (fuzz_id, message_id, channel_id),"
-                                        + "FOREIGN KEY (message_id, channel_id) REFERENCES websocket_message(message_id, channel_id) ON DELETE CASCADE"
-                                        + ")");
-                DbUtils.executeAndClose(stmt);
+                DbUtils.execute(
+                        conn,
+                        "CREATE CACHED TABLE websocket_message_fuzz ("
+                                + "fuzz_id BIGINT NOT NULL,"
+                                + "message_id BIGINT NOT NULL,"
+                                + "channel_id BIGINT NOT NULL,"
+                                + "state VARCHAR(50) NOT NULL,"
+                                + "fuzz LONGVARCHAR NOT NULL,"
+                                + "PRIMARY KEY (fuzz_id, message_id, channel_id),"
+                                + "FOREIGN KEY (message_id, channel_id) REFERENCES websocket_message(message_id, channel_id) ON DELETE CASCADE"
+                                + ")");
 
                 channelIds = new HashSet<>();
             } else {
