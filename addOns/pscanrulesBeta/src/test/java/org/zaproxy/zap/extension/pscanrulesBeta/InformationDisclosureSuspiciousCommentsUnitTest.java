@@ -158,7 +158,7 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
     }
 
     @Test
-    public void shouldAlertOnSuspiciousCommentInHtmlElements()
+    public void shouldAlertOnSuspiciousCommentInHtmlScriptElements()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -178,7 +178,7 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
     }
 
     @Test
-    public void shouldNotAlertWithoutSuspiciousCommentInElements()
+    public void shouldNotAlertWithoutSuspiciousCommentInHtmlScriptElements()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -198,7 +198,7 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
     }
 
     @Test
-    public void shouldAlertOnSuspiciousCommentInHTML()
+    public void shouldAlertOnSuspiciousCommentInHtmlComments()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -218,7 +218,7 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
     }
 
     @Test
-    public void shouldNotAlertWhenNoSuspiciousCommentInHtml()
+    public void shouldNotAlertWhenNoSuspiciousCommentInHtmlComments()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
