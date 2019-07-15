@@ -60,7 +60,7 @@ public class ServerConnectionEstablisherUnitTest extends WebSocketTestUtils {
         NanoWebSocketTestServer webSocketServer = super.getWebSocketTestServer();
         HttpMessage handshakeRequest =
                 new HttpMessage(
-                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
+                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServerUrl()));
         establisher.send(new HandshakeConfig(handshakeRequest, false, false));
         assertEquals(101, handshakeRequest.getResponseHeader().getStatusCode());
         assertEquals(
@@ -79,7 +79,7 @@ public class ServerConnectionEstablisherUnitTest extends WebSocketTestUtils {
         ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
         HttpMessage handshakeRequest =
                 new HttpMessage(
-                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
+                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServerUrl()));
         WebSocketProxy webSocketProxy =
                 establisher.send(new HandshakeConfig(handshakeRequest, false, false));
         NanoWebSocketConnection webSocketConnection =
