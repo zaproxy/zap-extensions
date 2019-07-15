@@ -31,7 +31,4 @@ public interface WebSocketScanHelper {
 
     /** Use this method to build and raise an Alert. */
     WebSocketAlertRaiser newAlert();
-
-    /** Use this method to build and raise an Alert. */
-    WebSocketAlertRaiser newAlert(int pluginId);
 }
