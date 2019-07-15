@@ -79,7 +79,7 @@ public abstract class WebSocketTestUtils extends TestUtils {
         return webSocketTestServer.getHostname();
     }
 
-    public URI getServertUrl() throws URIException {
+    public URI getServerUrl() throws URIException {
         return new URI(
                 webSocketTestServer.isSecure() ? "https" : "http",
                 null,

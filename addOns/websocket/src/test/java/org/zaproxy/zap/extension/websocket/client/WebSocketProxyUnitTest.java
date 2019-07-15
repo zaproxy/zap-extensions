@@ -62,7 +62,7 @@ public class WebSocketProxyUnitTest extends WebSocketTestUtils {
         ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
         HttpMessage handshakeRequest =
                 new HttpMessage(
-                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
+                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServerUrl()));
 
         WebSocketProxy webSocketProxy =
                 establisher.send(new HandshakeConfig(handshakeRequest, false, false));
@@ -86,7 +86,7 @@ public class WebSocketProxyUnitTest extends WebSocketTestUtils {
         ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
         HttpMessage handshakeRequest =
                 new HttpMessage(
-                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServertUrl()));
+                        HttpHandshakeBuilder.getHttpHandshakeRequestHeader(super.getServerUrl()));
 
         WebSocketProxy webSocketProxy =
                 establisher.send(new HandshakeConfig(handshakeRequest, false, false));
