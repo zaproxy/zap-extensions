@@ -58,6 +58,15 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 
     @Override
     protected Void doInBackground() throws Exception {
+        try {
+            generate();
+        } catch (Throwable e) {
+            log.error("An error occurred during token generation:", e);
+        }
+        return null;
+    }
+
+    private void generate() throws InterruptedException {
         TreeSet<HtmlParameter> cookies = this.httpMessage.getRequestHeader().getCookieParams();
         HttpMessage msg = this.httpMessage.cloneRequest();
 
@@ -101,8 +110,6 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
             this.extension.addTokenResult(msg, targetToken);
         }
         this.extension.generatorStopped(this);
-
-        return null;
     }
 
     public void setNumberTokens(int numberTokens) {
