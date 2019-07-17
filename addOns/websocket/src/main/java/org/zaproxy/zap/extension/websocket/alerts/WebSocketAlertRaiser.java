@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.websocket.alerts;
 
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.alerts.WebSocketAlertWrapper.WebSocketAlertBuilder;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScanner;
@@ -40,7 +41,8 @@ public class WebSocketAlertRaiser extends WebSocketAlertBuilder {
      */
     public WebSocketAlertRaiser(
             WebSocketAlertThread alertThread, int pluginId, WebSocketMessageDTO webSocketMessage) {
-        super(pluginId, alertThread.getAlertSource());
+        super.setPluginId(pluginId);
+        super.setSource(alertThread.getAlertSource());
         super.setMessage(webSocketMessage);
         this.alertThread = alertThread;
     }
@@ -48,11 +50,23 @@ public class WebSocketAlertRaiser extends WebSocketAlertBuilder {
     /**
      * Build and Raise the Alert
      *
-     * @return the {@link WebSocketAlertWrapper} tha is raised.
+     * @return the {@link WebSocketAlertWrapper} that is raised.
+     * @throws IllegalStateException If Plugin ID, Alert Source or Name have not been set.
+     * @see WebSocketAlertRaiser#setPluginId(int)
+     * @see WebSocketAlertRaiser#setSource(Alert.Source)
+     * @see WebSocketAlertRaiser#setName(String)
      */
     public WebSocketAlertWrapper raise() {
         WebSocketAlertWrapper webSocketAlert = super.build();
         alertThread.raiseAlert(webSocketAlert);
         return webSocketAlert;
+    }
+
+    public static class WebSocketAlertScriptRaiser {
+        public static WebSocketAlertRaiser getWebSocketAlertRaiser(
+                WebSocketAlertRaiser webSocketAlertRaiser, int pluginId) {
+            webSocketAlertRaiser.setPluginId(pluginId);
+            return webSocketAlertRaiser;
+        }
     }
 }

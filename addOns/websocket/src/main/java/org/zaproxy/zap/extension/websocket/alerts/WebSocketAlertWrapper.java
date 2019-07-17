@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.websocket.alerts;
 
+import java.util.ArrayList;
+import java.util.Objects;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -128,34 +131,55 @@ public class WebSocketAlertWrapper {
 
     public abstract static class WebSocketAlertBuilder {
 
-        private Alert alert;
+        private Alert.Source source = null;
+        private String name = "";
+        private String description = "";
+        private String param = "";
+        private String attack = "";
+        private HttpMessage handshakeMessage = null;
+        private String uri = "";
+        private String otherInfo = "";
+        private String solution = "";
+        private String reference = "";
+        private String evidence = "";
+        private int cweId = 0;
+        private int wascId = 0;
+        private int pluginId = -1;
+        private int risk = Alert.RISK_LOW;
+        private int confidence = Alert.CONFIDENCE_MEDIUM;
 
         private static final String OTHER_INFO_LABEL = "[WebSocket Message] ";
 
-        private WebSocketMessageDTO webSocketMessageDTO;
+        private WebSocketMessageDTO webSocketMessageDTO = null;
 
-        public WebSocketAlertBuilder(int pluginId, Alert.Source source) {
-            alert = new Alert(pluginId);
-            alert.setSource(source);
+        protected WebSocketAlertBuilder setSource(Alert.Source source) {
+            this.source = source;
+            return this;
         }
 
+        protected WebSocketAlertBuilder setPluginId(int pluginId) {
+            this.pluginId = pluginId;
+            return this;
+        }
+
+        /** @throws NullPointerException If name is null */
         public WebSocketAlertBuilder setName(String name) {
-            alert.setName(name);
+            this.name = Objects.requireNonNull(name);
             return this;
         }
 
         public WebSocketAlertBuilder setDescription(String description) {
-            alert.setDescription(description);
+            this.description = description;
             return this;
         }
 
         public WebSocketAlertBuilder setParam(String param) {
-            alert.setParam(param);
+            this.param = param;
             return this;
         }
 
         public WebSocketAlertBuilder setAttack(String attack) {
-            alert.setAttack(attack);
+            this.attack = attack;
             return this;
         }
 
@@ -175,52 +199,81 @@ public class WebSocketAlertWrapper {
                 return this;
             }
 
-            alert.setMessage(handshakeMessage);
-            alert.setUri(handshakeMessage.getRequestHeader().getURI().toString());
+            this.handshakeMessage = handshakeMessage;
+            this.uri = handshakeMessage.getRequestHeader().getURI().toString();
 
             this.webSocketMessageDTO = webSocketMessageDTO;
             try {
-                alert.setOtherInfo(OTHER_INFO_LABEL + webSocketMessageDTO.getReadablePayload());
+                this.otherInfo = OTHER_INFO_LABEL + webSocketMessageDTO.getReadablePayload();
             } catch (InvalidUtf8Exception e) {
-                alert.setOtherInfo(
+                this.otherInfo =
                         OTHER_INFO_LABEL
-                                + Constant.messages.getString("websocket.payload.invalid_utf8"));
+                                + Constant.messages.getString("websocket.payload.invalid_utf8");
             }
             return this;
         }
 
         public WebSocketAlertBuilder setSolution(String solution) {
-            alert.setSolution(solution);
+            this.solution = solution;
             return this;
         }
 
         public WebSocketAlertBuilder setReference(String reference) {
-            alert.setReference(reference);
+            this.reference = reference;
             return this;
         }
 
         public WebSocketAlertBuilder setEvidence(String evidence) {
-            alert.setEvidence(evidence);
+            this.evidence = evidence;
             return this;
         }
 
         public WebSocketAlertBuilder setCweId(int cweId) {
-            alert.setCweId(cweId);
+            this.cweId = cweId;
             return this;
         }
 
         public WebSocketAlertBuilder setWascId(int wascId) {
-            alert.setWascId(wascId);
+            this.wascId = wascId;
             return this;
         }
 
         public WebSocketAlertBuilder setRiskConfidence(int risk, int confidence) {
-            alert.setRiskConfidence(risk, confidence);
+            this.risk = risk;
+            this.confidence = confidence;
             return this;
         }
 
+        /** @throws IllegalStateException If Plugin ID, Alert Source or Name have not been set. */
         public WebSocketAlertWrapper build() {
-            return new WebSocketAlertWrapper(webSocketMessageDTO, alert);
+
+            if (pluginId != -1 && source != null && !name.isEmpty()) {
+
+                Alert alert = new Alert(pluginId, risk, confidence, name);
+                alert.setSource(source);
+                alert.setDetail(
+                        description,
+                        uri,
+                        param,
+                        attack,
+                        otherInfo,
+                        solution,
+                        reference,
+                        evidence,
+                        cweId,
+                        wascId,
+                        handshakeMessage);
+                return new WebSocketAlertWrapper(webSocketMessageDTO, alert);
+            }
+            StringBuilder exceptionMsg =
+                    new StringBuilder("Alert can't be built. Missing values for: {");
+            ArrayList<String> missingValues = new ArrayList<>();
+
+            if (pluginId == -1) missingValues.add("Plugin ID");
+            if (source == null) missingValues.add("Alert Source");
+            if (name.isEmpty()) missingValues.add("Alert Name");
+            exceptionMsg.append(StringUtils.join(missingValues, ", ")).append("}");
+            throw new IllegalStateException(exceptionMsg.toString());
         }
 
         protected abstract WebSocketAlertWrapper raise();

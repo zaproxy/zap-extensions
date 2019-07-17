@@ -59,9 +59,4 @@ public class WebSocketScanHelperImpl implements WebSocketScanHelper {
     public WebSocketAlertRaiser newAlert() {
         return new WebSocketAlertRaiser(webSocketAlertThread, pluginId, webSocketMessage);
     }
-
-    @Override
-    public WebSocketAlertRaiser newAlert(int pluginId) {
-        return new WebSocketAlertRaiser(webSocketAlertThread, pluginId, webSocketMessage);
-    }
 }

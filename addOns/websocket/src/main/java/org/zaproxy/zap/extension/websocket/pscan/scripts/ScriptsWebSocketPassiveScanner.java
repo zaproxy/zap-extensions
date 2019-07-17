@@ -28,6 +28,7 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
+import org.zaproxy.zap.extension.websocket.alerts.WebSocketAlertRaiser;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScanner;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketScanHelper;
 
@@ -52,10 +53,18 @@ public class ScriptsWebSocketPassiveScanner implements WebSocketPassiveScanner {
 
     @Override
     public void scanMessage(WebSocketScanHelper helper, WebSocketMessageDTO webSocketMessage) {
+
         run(
                 scriptDecorator ->
                         scriptDecorator.scan(
-                                new ScriptPassiveHelperDecorator(helper, scriptDecorator),
+                                new WebSocketScanHelper() {
+                                    @Override
+                                    public WebSocketAlertRaiser newAlert() {
+                                        return WebSocketAlertRaiser.WebSocketAlertScriptRaiser
+                                                .getWebSocketAlertRaiser(
+                                                        helper.newAlert(), scriptDecorator.getId());
+                                    }
+                                },
                                 webSocketMessage));
     }
 
