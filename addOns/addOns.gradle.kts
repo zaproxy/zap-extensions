@@ -18,7 +18,6 @@ val zapCoreHelpWikiDir = "$rootDir/../zap-core-help-wiki/"
 val zapExtensionsWikiDir = "$rootDir/../zap-extensions-wiki/"
 
 val parentProjects = listOf(
-    "jxbrowsers",
     "webdrivers"
 )
 
@@ -33,11 +32,6 @@ val addOnsInZapCoreHelp = listOf(
     "gettingStarted",
     "importurls",
     "invoke",
-    "jxbrowser",
-    "jxbrowserlinux64",
-    "jxbrowsermacos",
-    "jxbrowserwindows",
-    "jxbrowserwindows64",
     "onlineMenu",
     "pscanrules",
     "quickstart",
