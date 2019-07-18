@@ -28,8 +28,6 @@ public class RequestModel {
     private List<HttpHeaderField> headers;
     private String body;
     private RequestMethod method;
-    private String bodyType; // parameter: consumes
-    private FormData formData;
 
     public String getUrl() {
         return url;
@@ -61,21 +59,5 @@ public class RequestModel {
 
     public void setHeaders(List<HttpHeaderField> headers) {
         this.headers = headers;
-    }
-
-    public String getBodyType() {
-        return bodyType;
-    }
-
-    public void setBodyType(String bodyType) {
-        this.bodyType = bodyType;
-    }
-
-    public FormData getFormData() {
-        return formData;
-    }
-
-    public void setFormData(FormData formData) {
-        this.formData = formData;
     }
 }

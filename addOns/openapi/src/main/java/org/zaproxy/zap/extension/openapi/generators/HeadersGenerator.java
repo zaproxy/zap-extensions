@@ -19,12 +19,13 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import io.swagger.models.Operation;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import java.util.ArrayList;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
@@ -56,9 +57,7 @@ public class HeadersGenerator {
                 }
                 if (HEADER.equals(parameter.getIn())) {
                     String name = parameter.getName();
-                    String value =
-                            dataGenerator.generate(
-                                    name, (HeaderParameter) parameter, new ArrayList<String>());
+                    String value = dataGenerator.generate(name, parameter);
                     HttpHeaderField header = new HttpHeaderField(name, value);
                     headers.add(header);
                 }
@@ -67,28 +66,44 @@ public class HeadersGenerator {
     }
 
     private void generateContentTypeHeaders(Operation operation, List<HttpHeaderField> headers) {
-        if (operation.getConsumes() != null) {
-            for (String type : operation.getConsumes()) {
-                if (type.toLowerCase().contains("json")) {
-                    // We currently only generate json
-                    headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, type));
-                    break;
-                }
+        if (operation.getRequestBody() == null || operation.getRequestBody().getContent() == null) {
+            return;
+        }
+
+        for (String type : operation.getRequestBody().getContent().keySet()) {
+            if (type.toLowerCase().contains("json")
+                    || type.toLowerCase().contains("x-www-form-urlencoded")) {
+                headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, type));
+                break;
             }
         }
     }
 
     private void generateAcceptHeaders(Operation operation, List<HttpHeaderField> headers) {
-        if (operation.getProduces() != null) {
+
+        Set<String> contentSet = new HashSet<>();
+        operation.getResponses().values().stream()
+                .map(
+                        response -> {
+                            if (response.getContent() == null) {
+                                return Collections.<String>emptySet();
+                            }
+                            return response.getContent().keySet();
+                        })
+                .forEach(contentSet::addAll);
+        StringBuilder sb = new StringBuilder();
+        for (String type : contentSet) {
             // Claim we accept everything
-            StringBuilder sb = new StringBuilder();
-            for (String type : operation.getProduces()) {
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append(type);
+            if (sb.length() > 0) {
+                sb.append(", ");
             }
-            headers.add(new HttpHeaderField(ACCEPT, sb.toString()));
+            sb.append(type);
         }
+
+        String headerValue = sb.toString();
+        if (headerValue.isEmpty()) {
+            headerValue = "*/*";
+        }
+        headers.add(new HttpHeaderField(ACCEPT, headerValue));
     }
 }

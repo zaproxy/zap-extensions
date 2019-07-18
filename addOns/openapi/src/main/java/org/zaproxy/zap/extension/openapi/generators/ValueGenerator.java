@@ -53,7 +53,7 @@ public class ValueGenerator {
         }
 
         HashMap<String, String> fieldAtts = new HashMap<String, String>();
-        fieldAtts.put("Control Type", type);
+        fieldAtts.put("Control Type", type == null ? "" : type);
         String value =
                 coreValGen.getValue(
                         null,

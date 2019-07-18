@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2017 The ZAP Development Team
+ * Copyright 2019 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.openapi.v2;
+package org.zaproxy.zap.extension.openapi.v3;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.empty;
@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.Test;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
@@ -116,7 +117,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldExplorePetStoreOverridingHost()
+    public void shouldExplorePetStoreJsonOverrideHost()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
@@ -152,21 +153,23 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
-    public void shouldExplorePetStoreWithDefaultHost()
+    public void shouldExplorePetStoreWithDefaultUrl()
             throws NullPointerException, IOException, SwaggerException {
         // Given
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
         String defaultHost = "localhost:" + nano.getListeningPort();
+        String defaultUrl = "http://" + defaultHost + "/PetStore";
 
-        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_no_host.json"));
+        this.nano.addHandler(
+                new DefnServerHandler(test, defnName, "PetStore_defn_no_servers.json"));
 
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         HttpMessage defnMsg = this.getHttpMessage(test + defnName);
         Converter converter =
                 new SwaggerConverter(
                         null,
-                        "http://" + defaultHost,
+                        defaultUrl,
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
         final Map<String, String> accessedUrls = new HashMap<>();
@@ -186,7 +189,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
         // When
         requestor.run(converter.getRequestModels());
         // Then
-        checkPetStoreRequests(accessedUrls, defaultHost);
+        checkPetStoreRequests(accessedUrls, "http", defaultHost, "");
     }
 
     @Test(expected = SwaggerException.class)
@@ -194,91 +197,16 @@ public class OpenApiUnitTest extends AbstractServerTest {
         // Given
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
-        String defaultHost = null;
 
-        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_no_host.json"));
+        this.nano.addHandler(
+                new DefnServerHandler(test, defnName, "PetStore_defn_no_servers.json"));
 
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         HttpMessage defnMsg = this.getHttpMessage(test + defnName);
         Converter converter =
                 new SwaggerConverter(
                         null,
-                        defaultHost,
-                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
-                        null);
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
-        RequesterListener listener =
-                new RequesterListener() {
-
-                    @Override
-                    public void handleMessage(HttpMessage message, int initiator) {
-                        accessedUrls.put(
-                                message.getRequestHeader().getMethod()
-                                        + " "
-                                        + message.getRequestHeader().getURI().toString(),
-                                message.getRequestBody().toString());
-                    }
-                };
-        requestor.addListener(listener);
-        // When
-        requestor.run(converter.getRequestModels());
-        // Then = SwaggerException
-    }
-
-    @Test
-    public void shouldExplorePetStoreWithDefaultScheme() throws Exception {
-        // Given
-        String test = "/PetStoreJson/";
-        String defnName = "defn.json";
-        String defaultScheme = "http://";
-
-        this.nano.addHandler(
-                new DefnServerHandler(test, defnName, "PetStore_defn_no_schemes.json"));
-
-        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
-        HttpMessage defnMsg = this.getHttpMessage(test + "defn.json");
-        Converter converter =
-                new SwaggerConverter(
                         null,
-                        defaultScheme + "localhost:" + nano.getListeningPort(),
-                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
-                        null);
-        final Map<String, String> accessedUrls = new HashMap<>();
-        RequesterListener listener =
-                new RequesterListener() {
-
-                    @Override
-                    public void handleMessage(HttpMessage message, int initiator) {
-                        accessedUrls.put(
-                                message.getRequestHeader().getMethod()
-                                        + " "
-                                        + message.getRequestHeader().getURI().toString(),
-                                message.getRequestBody().toString());
-                    }
-                };
-        requestor.addListener(listener);
-        // When
-        requestor.run(converter.getRequestModels());
-        // Then
-        checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
-    }
-
-    @Test(expected = SwaggerException.class)
-    public void shouldFailToExplorePetStoreWithoutScheme() throws Exception {
-        // Given
-        String test = "/PetStoreJson/";
-        String defnName = "defn.json";
-        String defaultScheme = null;
-
-        this.nano.addHandler(
-                new DefnServerHandler(test, defnName, "PetStore_defn_no_schemes.json"));
-
-        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
-        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
-        Converter converter =
-                new SwaggerConverter(
-                        null,
-                        defaultScheme,
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
         // When
@@ -286,12 +214,37 @@ public class OpenApiUnitTest extends AbstractServerTest {
         // Then = SwaggerException
     }
 
+    @Test(expected = SwaggerException.class)
+    public void shouldFailToExplorePetStoreWithoutFullURL() throws Exception {
+        String test = "/PetStoreJson/";
+        String defnName = "defn.json";
+
+        this.nano.addHandler(
+                new DefnServerHandler(test, defnName, "PetStore_defn_all_relative_urls.yaml"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        Converter converter =
+                new SwaggerConverter(
+                        null,
+                        null,
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
+                        null);
+        // When
+        converter.getRequestModels();
+
+        // Then = SwaggerException
+    }
+
     @Test
     public void shouldExplorePetStoreYamlLoop()
             throws NullPointerException, IOException, SwaggerException {
+        // loops are not causing any serious issues
+        // the result will be a string parameter instead of a ref that is part of a the loop
+        // loops are not detected by the parser, but in this case a $ref is left
+        // so may be the existence of a $ref means a loop
         String test = "/PetStoreYamlLoop/";
         String defnName = "defn.yaml";
-        String host = "localhost:" + nano.getListeningPort();
 
         this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_loop.yaml"));
 
@@ -300,6 +253,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
         SwaggerConverter converter =
                 new SwaggerConverter(
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
         final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
@@ -314,13 +268,11 @@ public class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        // When
+
         requestor.run(converter.getRequestModels());
-        // Then
-        assertThat(converter.getErrorMessages(), is(empty()));
-        assertEquals(
-                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\",\"x\":\"John Doe\"}],\"status\":\"available\"}",
-                accessedUrls.get("POST http://" + host + "/PetStore/pet"));
+
+        // what is the expected behavior?
+        assertEquals(accessedUrls.size(), 20);
     }
 
     @Test
@@ -389,6 +341,249 @@ public class OpenApiUnitTest extends AbstractServerTest {
         requestor.run(converter.getRequestModels());
 
         checkPetStoreRequestsValGen(accessedUrls, "localhost:" + nano.getListeningPort());
+    }
+
+    @Test
+    public void shouldInterpretServerVariables()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/PetStoreYaml/";
+        String defnName = "defn.yaml";
+
+        this.nano.addHandler(
+                new DefnServerHandler(
+                        test, defnName, "Petstore_defn_variable_in_server_definition.yaml"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        RequesterListener listener =
+                (message, initiator) -> {
+                    accessedUrls.put(
+                            message.getRequestHeader().getMethod()
+                                    + " "
+                                    + message.getRequestHeader().getURI().toString(),
+                            message.getRequestBody().toString());
+                };
+        requestor.addListener(listener);
+        requestor.run(converter.getRequestModels());
+
+        checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
+    }
+
+    @Test
+    public void shouldGenerateAcceptHeaders()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/PetStoreJson/";
+        String defnName = "defn.json";
+
+        this.nano.addHandler(
+                new OpenApiUnitTest.DefnServerHandler(test, defnName, "PetStore_defn.json"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        requestor.addListener(
+                (message, initiator) -> {
+                    accessedUrls.put(
+                            message.getRequestHeader().getMethod()
+                                    + " "
+                                    + message.getRequestHeader().getURI().toString(),
+                            message.getRequestHeader().getHeader("Accept"));
+                });
+        requestor.run(converter.getRequestModels());
+
+        checkRequestAcceptHeaders(accessedUrls, "localhost:" + nano.getListeningPort());
+    }
+
+    @Test
+    public void shouldGenerateContentTypeHeaders()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/PetStoreJson/";
+        String defnName = "defn.json";
+
+        this.nano.addHandler(
+                new OpenApiUnitTest.DefnServerHandler(test, defnName, "PetStore_defn.json"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        requestor.addListener(
+                (message, initiator) -> {
+                    accessedUrls.put(
+                            message.getRequestHeader().getMethod()
+                                    + " "
+                                    + message.getRequestHeader().getURI().toString(),
+                            message.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
+                });
+        requestor.run(converter.getRequestModels());
+
+        checkRequestContentTypeHeaders(accessedUrls, "localhost:" + nano.getListeningPort());
+    }
+
+    private void checkRequestContentTypeHeaders(Map<String, String> accessedUrls, String host) {
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet"));
+        assertEquals("application/json", accessedUrls.get("POST http://" + host + "/PetStore/pet"));
+        assertTrue(accessedUrls.containsKey("PUT http://" + host + "/PetStore/pet"));
+        assertEquals("application/json", accessedUrls.get("PUT http://" + host + "/PetStore/pet"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://" + host + "/PetStore/pet/findByStatus?status=available"));
+        assertEquals(
+                null,
+                accessedUrls.get(
+                        "GET http://" + host + "/PetStore/pet/findByStatus?status=available"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://" + host + "/PetStore/pet/findByTags?tags=tags"));
+        assertEquals(
+                null,
+                accessedUrls.get("GET http://" + host + "/PetStore/pet/findByTags?tags=tags"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/pet/10"));
+        assertEquals(null, accessedUrls.get("GET http://" + host + "/PetStore/pet/10"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/10"));
+        assertEquals(
+                "application/x-www-form-urlencoded",
+                accessedUrls.get("POST http://" + host + "/PetStore/pet/10"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/pet/10"));
+        assertEquals(null, accessedUrls.get("DELETE http://" + host + "/PetStore/pet/10"));
+        assertTrue(
+                accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/10/uploadImage"));
+        assertEquals(
+                null, accessedUrls.get("POST http://" + host + "/PetStore/pet/10/uploadImage"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
+        assertEquals(null, accessedUrls.get("GET http://" + host + "/PetStore/store/inventory"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/store/order"));
+        assertEquals(
+                "application/json",
+                accessedUrls.get("POST http://" + host + "/PetStore/store/order"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/order/10"));
+        assertEquals(null, accessedUrls.get("GET http://" + host + "/PetStore/store/order/10"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/store/order/10"));
+        assertEquals(null, accessedUrls.get("DELETE http://" + host + "/PetStore/store/order/10"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/user"));
+        assertEquals(
+                "application/json", accessedUrls.get("POST http://" + host + "/PetStore/user"));
+        assertTrue(
+                accessedUrls.containsKey("POST http://" + host + "/PetStore/user/createWithArray"));
+        assertEquals(
+                "application/json",
+                accessedUrls.get("POST http://" + host + "/PetStore/user/createWithArray"));
+        assertTrue(
+                accessedUrls.containsKey("POST http://" + host + "/PetStore/user/createWithList"));
+        assertEquals(
+                "application/json",
+                accessedUrls.get("POST http://" + host + "/PetStore/user/createWithList"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://"
+                                + host
+                                + "/PetStore/user/login?username=username&password=password"));
+        assertEquals(
+                null,
+                accessedUrls.get(
+                        "GET http://"
+                                + host
+                                + "/PetStore/user/login?username=username&password=password"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/user/logout"));
+        assertEquals(null, accessedUrls.get("GET http://" + host + "/PetStore/user/logout"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/user/username"));
+        assertEquals(null, accessedUrls.get("GET http://" + host + "/PetStore/user/username"));
+        assertTrue(accessedUrls.containsKey("PUT http://" + host + "/PetStore/user/username"));
+        assertEquals(
+                "application/json",
+                accessedUrls.get("PUT http://" + host + "/PetStore/user/username"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/user/username"));
+        assertEquals(null, accessedUrls.get("DELETE http://" + host + "/PetStore/user/username"));
+    }
+
+    private void checkRequestAcceptHeaders(Map<String, String> accessedUrls, String host) {
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet"));
+        assertEquals("*/*", accessedUrls.get("POST http://" + host + "/PetStore/pet"));
+        assertTrue(accessedUrls.containsKey("PUT http://" + host + "/PetStore/pet"));
+        assertEquals("*/*", accessedUrls.get("PUT http://" + host + "/PetStore/pet"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://" + host + "/PetStore/pet/findByStatus?status=available"));
+        assertEquals(
+                "application/xml, application/json",
+                accessedUrls.get(
+                        "GET http://" + host + "/PetStore/pet/findByStatus?status=available"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://" + host + "/PetStore/pet/findByTags?tags=tags"));
+        assertEquals(
+                "application/xml, application/json",
+                accessedUrls.get("GET http://" + host + "/PetStore/pet/findByTags?tags=tags"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/pet/10"));
+        assertEquals(
+                "application/xml, application/json",
+                accessedUrls.get("GET http://" + host + "/PetStore/pet/10"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/10"));
+        assertEquals("*/*", accessedUrls.get("POST http://" + host + "/PetStore/pet/10"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/pet/10"));
+        assertEquals("*/*", accessedUrls.get("DELETE http://" + host + "/PetStore/pet/10"));
+        assertTrue(
+                accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/10/uploadImage"));
+        assertEquals(
+                "application/json",
+                accessedUrls.get("POST http://" + host + "/PetStore/pet/10/uploadImage"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
+        assertEquals(
+                "application/json",
+                accessedUrls.get("GET http://" + host + "/PetStore/store/inventory"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/store/order"));
+        assertEquals(
+                "application/xml, application/json",
+                accessedUrls.get("POST http://" + host + "/PetStore/store/order"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/order/10"));
+        assertEquals(
+                "application/xml, application/json",
+                accessedUrls.get("GET http://" + host + "/PetStore/store/order/10"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/store/order/10"));
+        assertEquals("*/*", accessedUrls.get("DELETE http://" + host + "/PetStore/store/order/10"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/user"));
+        assertEquals("*/*", accessedUrls.get("POST http://" + host + "/PetStore/user"));
+        assertTrue(
+                accessedUrls.containsKey("POST http://" + host + "/PetStore/user/createWithArray"));
+        assertEquals(
+                "*/*", accessedUrls.get("POST http://" + host + "/PetStore/user/createWithArray"));
+        assertTrue(
+                accessedUrls.containsKey("POST http://" + host + "/PetStore/user/createWithList"));
+        assertEquals(
+                "*/*", accessedUrls.get("POST http://" + host + "/PetStore/user/createWithList"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://"
+                                + host
+                                + "/PetStore/user/login?username=username&password=password"));
+        assertEquals(
+                "application/xml, application/json",
+                accessedUrls.get(
+                        "GET http://"
+                                + host
+                                + "/PetStore/user/login?username=username&password=password"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/user/logout"));
+        assertEquals("*/*", accessedUrls.get("GET http://" + host + "/PetStore/user/logout"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/user/username"));
+        assertEquals(
+                "application/xml, application/json",
+                accessedUrls.get("GET http://" + host + "/PetStore/user/username"));
+        assertTrue(accessedUrls.containsKey("PUT http://" + host + "/PetStore/user/username"));
+        assertEquals("*/*", accessedUrls.get("PUT http://" + host + "/PetStore/user/username"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/user/username"));
+        assertEquals("*/*", accessedUrls.get("DELETE http://" + host + "/PetStore/user/username"));
     }
 
     private void checkPetStoreRequestsValGen(Map<String, String> accessedUrls, String host) {

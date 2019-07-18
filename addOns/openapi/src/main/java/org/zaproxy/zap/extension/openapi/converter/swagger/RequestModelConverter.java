@@ -19,22 +19,14 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.RefModel;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.PropertyBuilder;
-import io.swagger.models.properties.RefProperty;
-import java.util.ArrayList;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import java.util.List;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
 import org.zaproxy.zap.extension.openapi.generators.HeadersGenerator;
 import org.zaproxy.zap.extension.openapi.generators.PathGenerator;
-import org.zaproxy.zap.extension.openapi.network.FormData;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
 
 public class RequestModelConverter {
@@ -50,7 +42,6 @@ public class RequestModelConverter {
         requestModel.setBody(this.generateBody());
         requestModel.setMethod(operationModel.getRequestMethod());
         requestModel.setHeaders(this.generateHeaders());
-        requestModel.setFormData(this.generateFormData());
         return requestModel;
     }
 
@@ -65,52 +56,29 @@ public class RequestModelConverter {
     }
 
     private String generateBody() {
-        String body = null;
-        for (Parameter parameter : operationModel.getOperation().getParameters()) {
-            if (parameter == null) {
-                continue;
+        RequestBody requestBody = operationModel.getOperation().getRequestBody();
+        if (requestBody != null) {
+            Content content = requestBody.getContent();
+            Schema<?> schema;
+
+            if (content.containsKey("application/json")) {
+                schema = content.get("application/json").getSchema();
+                return generators.getBodyGenerator().generate(schema);
             }
-            if ("body".equals(parameter.getIn())) {
-                Model schema = ((BodyParameter) parameter).getSchema();
-                switch (schema.getClass().getSimpleName()) {
-                    case "RefModel":
-                        body =
-                                generators
-                                        .getBodyGenerator()
-                                        .generate(
-                                                ((RefModel) schema).getSimpleRef(),
-                                                false,
-                                                new ArrayList<String>());
-                        break;
-                    case "ArrayModel":
-                        Property items = ((ArrayModel) schema).getItems();
+            if (content.containsKey("application/x-www-form-urlencoded")) {
+                schema = content.get("application/x-www-form-urlencoded").getSchema();
+                return generators.getBodyGenerator().generateForm(schema);
+            }
+            if (content.containsKey("application/octet-stream")
+                    || content.containsKey("multipart/form-data")) {
+                return "";
+            }
 
-                        if (items instanceof RefProperty) {
-                            body =
-                                    generators
-                                            .getBodyGenerator()
-                                            .generate(
-                                                    ((RefProperty) items).getSimpleRef(),
-                                                    true,
-                                                    new ArrayList<String>());
-                        } else {
-                            body = generators.getBodyGenerator().generate(items, true);
-                        }
-
-                        break;
-                    case "ModelImpl":
-                        ModelImpl model = ((ModelImpl) schema);
-                        Property propertyFromModel =
-                                PropertyBuilder.build(model.getType(), model.getFormat(), null);
-                        body = generators.getBodyGenerator().generate(propertyFromModel, false);
-                        break;
-                }
+            if (!content.isEmpty()) {
+                schema = content.entrySet().iterator().next().getValue().getSchema();
+                return generators.getBodyGenerator().generate(schema);
             }
         }
-        return body;
-    }
-
-    private FormData generateFormData() {
-        return generators.getFormGenerator().generate(operationModel);
+        return "";
     }
 }

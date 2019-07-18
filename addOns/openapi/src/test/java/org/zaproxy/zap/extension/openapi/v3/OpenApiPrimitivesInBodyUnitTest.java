@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.openapi.v2;
+package org.zaproxy.zap.extension.openapi.v3;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.junit.Assert.assertEquals;
@@ -50,10 +50,10 @@ public class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
                     protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
                         String response;
                         String uri = session.getUri();
-                        if (uri.endsWith("defn.json")) {
+                        if (uri.endsWith("defn.yaml")) {
                             response =
                                     getHtml(
-                                            "OpenApi_defn_body_with_primitives.json",
+                                            "OpenApi_defn_body_with_primitives.yaml",
                                             new String[][] {
                                                 {"PORT", String.valueOf(nano.getListeningPort())}
                                             });
@@ -66,7 +66,7 @@ public class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
                 });
 
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
-        HttpMessage defnMsg = this.getHttpMessage(test + "defn.json");
+        HttpMessage defnMsg = this.getHttpMessage(test + "defn.yaml");
         Converter converter =
                 new SwaggerConverter(
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
@@ -84,7 +84,6 @@ public class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
         requestor.run(converter.getRequestModels());
-
         checkRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
