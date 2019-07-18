@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,28 +76,6 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
                         + responseBody.length()
                         + "\r\n");
         return msg;
-    }
-
-    @Test
-    public void shouldReadSuspiciousCommentsFile() {
-
-        // When
-        File suspiciousCommentsFile =
-                new File(
-                        Constant.getZapHome()
-                                + File.separator
-                                + InformationDisclosureSuspiciousComments.suspiciousCommentsListDir
-                                + File.separator
-                                + InformationDisclosureSuspiciousComments
-                                        .suspiciousCommentsListFile);
-
-        // Then
-        assertTrue(
-                "Couldn't find "
-                        + InformationDisclosureSuspiciousComments.suspiciousCommentsListFile
-                        + " file at: "
-                        + suspiciousCommentsFile.getAbsolutePath(),
-                suspiciousCommentsFile.exists());
     }
 
     @Test

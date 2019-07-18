@@ -3,9 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [20] - 2019-07-06
-
-- Tweak InformationDisclosureSuspiciousComments scanner to ignore whitespace before/after suspicious comments terms in the suspicious-comments.txt config file.
+- Tweak Information Disclosure - Suspicious Comments scanner to ignore whitespace before/after suspicious comments terms in the suspicious-comments.txt config file.
 
 ## Unreleased
 
