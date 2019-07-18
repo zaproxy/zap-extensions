@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [13] - 2019-07-18
 
 - Added Accept header for importing an OpenAPI definition from an URL, in the proper format.
 - Correct import of v1.2 definitions (Issue 5262).
@@ -67,3 +67,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[13]: https://github.com/zaproxy/zap-extensions/releases/openapi-v13
