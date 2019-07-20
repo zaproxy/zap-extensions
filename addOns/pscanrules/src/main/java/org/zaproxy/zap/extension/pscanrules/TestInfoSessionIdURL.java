@@ -38,7 +38,7 @@ import java.util.Locale;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -49,8 +49,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-
-import net.htmlparser.jericho.Source;
 
 /**
  * Plugin refactored for URL ID session disclosure starting from the previous Active plugin
@@ -152,12 +150,11 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                     Pattern.CASE_INSENSITIVE);
 
     /**
-     * Perform passive scanning for URL based session IDs in the HTTP request.
-     * TODO: This method should really scan the contents of the response to see if it
-     * is HTML, and if so, look for HREFs and SRC tags and check if the URLs in them
-     * contain session IDs. This would enable ZAP to detect Session IDs in URLs
-     * exactly where they are occurring, rather than simply detecting the symptom of
-     * the problem in URLs of requests.
+     * Perform passive scanning for URL based session IDs in the HTTP request. TODO: This method
+     * should really scan the contents of the response to see if it is HTML, and if so, look for
+     * HREFs and SRC tags and check if the URLs in them contain session IDs. This would enable ZAP
+     * to detect Session IDs in URLs exactly where they are occurring, rather than simply detecting
+     * the symptom of the problem in URLs of requests.
      *
      * @param msg the message that needs to be checked
      * @param id the id of the session
@@ -221,7 +218,8 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
             // http://tld.gtld/fred;jsessionid=1A530637289A03B07199A44E8D531427?foo=bar
             Matcher jsessMatcher = null;
             try {
-                jsessMatcher = PATHSESSIONIDPATTERN.matcher(msg.getRequestHeader().getURI().getPath());
+                jsessMatcher =
+                        PATHSESSIONIDPATTERN.matcher(msg.getRequestHeader().getURI().getPath());
             } catch (URIException e) {
             }
             if (jsessMatcher != null && jsessMatcher.find()) {
