@@ -30,7 +30,9 @@ import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -90,7 +92,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void containsJSESSIONIDAsUrlParameter()
+    public void constainsSessionIdAsUrlParameter()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -122,7 +124,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void noSessionIdInHTTPS() throws HttpMalformedHeaderException, URIException {
+    public void noSessionIdInURL() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/";
@@ -137,8 +139,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void noSessionIDAsUrlParameterInHTTPS()
-            throws HttpMalformedHeaderException, URIException {
+    public void noSessionIDAsUrlParameter() throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testURI = "https://example.com/session/foo?session=false";
@@ -170,7 +171,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void containsJSESSIONIDInUrlBeforeParams()
+    public void containsJSESSIONIDInUrlPathBeforeParams()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -201,21 +202,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void containsCFIDInUrlBeforeParams() throws HttpMalformedHeaderException, URIException {
-
-        // Given
-        String testURI = "http://tld.gtld/fred;CFID=asdfasdfasdf1234?foo=bar";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
-
-        // When
-        rule.scanHttpRequestSend(msg, -1);
-
-        // Then
-        assertEquals(1, alertsRaised.size());
-    }
-
-    // @Test
+    @Ignore
     // TODO: The scanHttpResponseReceive() method in this scanner currently does not
     // look for session IDs in the response embedded in HREFs. As such, this test
     // case fails so is commented out. When this scanner is enhanced to do this,
@@ -240,7 +227,8 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         assertEquals(1, alertsRaised.size());
     }
 
-    // @Test
+    @Test
+    @Ignore
     // TODO: The scanHttpResponseReceive() method in this scanner currently does not
     // look for session IDs in the response embedded in HREFs before the parameters.
     // As such, this test case fails so is commented out. When this scanner is
@@ -283,6 +271,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
 
         // Then
         assertEquals(2, alertsRaised.size());
+        assertEquals(Alert.RISK_LOW, alertsRaised.get(2 - 1).getRisk());
     }
 
     @Test

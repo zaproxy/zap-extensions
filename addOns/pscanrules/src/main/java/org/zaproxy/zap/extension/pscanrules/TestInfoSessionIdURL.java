@@ -135,36 +135,36 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     }
 
     /**
-     * Scan the response. Currently it does nothing. TODO: This method should really
-     * scan the contents of the response to see if it is HTML, and if so, look for
-     * HREFs and SRC tags and check if the URLs in them contain session IDs. This
-     * would enable ZAP to detect Session IDs in URLs exactly where they are
-     * occurring, rather than simply detecting the symptom of the problem in URLs of
-     * requests.
+     * Scan the request. Currently it does nothing.
      *
-     * @param msg    the HTTP message
-     * @param id     the id of the response
+     * @param msg the HTTP message
+     * @param id the id of the response
+     */
+    @Override
+    public void scanHttpRequestSend(HttpMessage msg, int id) {
+        // do Nothing. All work currently is done in the scanHttpResponseReceive()
+        // method.
+    }
+
+    private static final Pattern PATHSESSIONIDPATTERN =
+            Pattern.compile(
+                    "jsessionid=[\\dA-Z]{" + SESSION_TOKEN_MIN_LENGTH + ",}",
+                    Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Perform passive scanning for URL based session IDs in the HTTP request.
+     * TODO: This method should really scan the contents of the response to see if it
+     * is HTML, and if so, look for HREFs and SRC tags and check if the URLs in them
+     * contain session IDs. This would enable ZAP to detect Session IDs in URLs
+     * exactly where they are occurring, rather than simply detecting the symptom of
+     * the problem in URLs of requests.
+     *
+     * @param msg the message that needs to be checked
+     * @param id the id of the session
      * @param source the source code of the response
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        // do Nothing. All work currently is done scanning the request.
-    }
-
-    // Pattern used only in scanHttpRequestSend() method below.
-    private static final Pattern PATHSESSIONIDPATTERN =
-            Pattern.compile(
-                    "(jsession|cf)id=[\\dA-Z]{" + SESSION_TOKEN_MIN_LENGTH + ",}",
-                    Pattern.CASE_INSENSITIVE);
-
-    /**
-     * Perform passive scanning for URL based session IDs in the HTTP request
-     *
-     * @param msg the message that needs to be checked
-     * @param id the id of the session
-     */
-    @Override
-    public void scanHttpRequestSend(HttpMessage msg, int id) {
 
         TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
 
@@ -220,14 +220,9 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
             // Handle jsessionid like:
             // http://tld.gtld/fred;jsessionid=1A530637289A03B07199A44E8D531427?foo=bar
             Matcher jsessMatcher = null;
-            String path = "";
             try {
-                // We lowercase the path because the regex has a specific session ID
-                // in it which can't be made case insensitive
-                path = msg.getRequestHeader().getURI().getPath().toLowerCase();
-                jsessMatcher = PATHSESSIONIDPATTERN.matcher(path);
+                jsessMatcher = PATHSESSIONIDPATTERN.matcher(msg.getRequestHeader().getURI().getPath());
             } catch (URIException e) {
-                e.printStackTrace();
             }
             if (jsessMatcher != null && jsessMatcher.find()) {
                 Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_HIGH, getName());
