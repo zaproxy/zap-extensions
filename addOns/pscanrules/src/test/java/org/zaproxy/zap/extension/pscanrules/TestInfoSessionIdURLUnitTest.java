@@ -92,7 +92,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void constainsSessionIdAsUrlParameter()
+    public void containsSessionIdAsUrlParameter()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -101,7 +101,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -117,7 +117,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -132,7 +132,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -147,7 +147,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -164,7 +164,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
 
         // When
 
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -180,7 +180,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -195,7 +195,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -267,11 +267,11 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(body));
 
         // Then
         assertEquals(2, alertsRaised.size());
-        assertEquals(Alert.RISK_LOW, alertsRaised.get(2 - 1).getRisk());
+        assertEquals(Alert.RISK_MEDIUM, alertsRaised.get(2 - 1).getRisk());
     }
 
     @Test
@@ -289,10 +289,11 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(body));
 
         // Then
         assertEquals(2, alertsRaised.size());
+        assertEquals(Alert.RISK_MEDIUM, alertsRaised.get(2 - 1).getRisk());
     }
 
     @Test
@@ -310,7 +311,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(body));
 
         // Then
         assertEquals(2, alertsRaised.size());
@@ -332,7 +333,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(body));
 
         // Then
         assertEquals(2, alertsRaised.size());
@@ -352,7 +353,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(body));
 
         // Then:
         // Passing means it detects the session ID in the URL (alert #1), but since the
@@ -378,7 +379,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(body));
 
         // Then:
         // Passing means it detects the session ID in the URL (alert #1), but since the
@@ -400,7 +401,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         msg.getRequestHeader().setURI(new URI(testURI, false));
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        rule.scanHttpResponseReceive(msg, -1, new Source(body));
 
         // Then:
         // Passing means it detects the session ID in the URL (alert #1), but since the
