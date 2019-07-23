@@ -28,21 +28,22 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Base64;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
 
-    public static final String URI_ENCODED_JSO =
+    private static final String URI_ENCODED_JSO =
             "%C2%AC%C3%AD%00%05sr%00Eorg.zaproxy.zap.extension.pscanrulesAlpha.JsoScannerUnitTest%24AnObject%00%00%00%00%00%00%00%01%02%00%00xp";
 
+    /* Testing JSO in response */
     @Test
-    public void shouldNotRaiseAlertGivenNoJsoHasBeenDetected() throws Exception {
+    public void shouldNotRaiseAlertGivenNoJsoHasBeenDetectedInResponse() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "X-Custom-Info: NOPE\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n" + "X-Custom-Info: NOPE\r\n" + "Set-Cookie: NOPE=NOPE");
 
         // When
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -52,7 +53,8 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
     }
 
     @Test
-    public void shouldRaiseAlertGivenJsoMagicBytesAreDetectedInHeaderOfResponse() throws Exception {
+    public void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInHeaderOfResponse()
+            throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -67,7 +69,8 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
     }
 
     @Test
-    public void shouldRaiseAlertGivenJsoMagicBytesAreDetectedInCookieOfResponse() throws Exception {
+    public void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInCookieOfResponse()
+            throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -82,7 +85,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
     }
 
     @Test
-    public void shouldRaiseAlertGivenJsoMagicBytesAreDetectedInRawBodyOfResponse()
+    public void shouldRaiseAlertGivenRawJsoMagicBytesAreDetectedInRawBodyOfResponse()
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -105,7 +108,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
     }
 
     @Test
-    public void shouldRaiseAlertGivenJsoMagicBytesAreDetectedInBase64BodyOfResponse()
+    public void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInBodyOfResponse()
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -127,6 +130,21 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         assertThat(alertsRaised, hasSize(1));
     }
 
+    /* Testing JSO in request */
+    @Test
+    public void shouldNotRaiseAlertGivenNoJsoHasBeenDetectedInRequest() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(
+                "GET / HTTP/1.1\r\n" + "X-Custom-Info: NOPE\r\n" + "Cookie: NOPE=NOPE\r\n");
+
+        // When
+        rule.scanHttpRequestSend(msg, -1);
+
+        // Then
+        assertThat(alertsRaised, empty());
+    }
+
     @Test
     public void shouldRaiseAlertGivenUriEncodedJsoMagicBytesAreDetectedInRequestParameterOfRequest()
             throws Exception {
@@ -142,7 +160,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
     }
 
     @Test
-    public void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInRequestParameterOfResponse()
+    public void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInRequestParameterOfRequest()
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -157,7 +175,22 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
     }
 
     @Test
-    public void shouldRaiseAlertGivenJsoMagicBytesAreDetectedInHeaderOfRequest() throws Exception {
+    public void shouldRaiseAlertGivenUriEncodedJsoMagicBytesAreDetectedInHeaderOfRequest()
+            throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "X-Custom-Info: " + URI_ENCODED_JSO);
+
+        // When
+        rule.scanHttpRequestSend(msg, -1);
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInHeaderOfRequest()
+            throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         String jso = Base64.getEncoder().encodeToString(createJso());
@@ -171,7 +204,22 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
     }
 
     @Test
-    public void shouldRaiseAlertGivenJsoMagicBytesAreDetectedInCookieOfRequest() throws Exception {
+    public void shouldRaiseAlertGivenUriEncodedJsoMagicBytesAreDetectedInCookieOfRequest()
+            throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "Cookie: CRUNCHY=" + URI_ENCODED_JSO + "\r\n");
+
+        // When
+        rule.scanHttpRequestSend(msg, -1);
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInCookieOfRequest()
+            throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         String jso = Base64.getEncoder().encodeToString(createJso());
@@ -185,8 +233,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
     }
 
     @Test
-    public void shouldRaiseAlertGivenJsoMagicBytesAreDetectedInRawBodyOfPOSTRequest()
-            throws Exception {
+    public void shouldRaiseAlertGivenRawJsoMagicBytesAreDetectedInBodyOfRequest() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         byte[] jso = createJso();
@@ -206,9 +253,8 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         assertThat(alertsRaised, hasSize(1));
     }
 
-    @Ignore
     @Test
-    public void shouldRaiseAlertGivenJsoMagicBytesAreDetectedInBase64BodyOfRequest()
+    public void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInBodyOfRequest()
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -220,51 +266,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
                         + "Content-Length: "
                         + jso.length()
                         + "\r\n");
-        msg.setResponseBody(jso);
-
-        // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-    }
-
-    @Ignore
-    @Test
-    public void shouldRaiseAlertGivenJsoMagicBytesAreDetectedInRequestParameterOfRequest()
-            throws Exception {
-        // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET /some_action?q=" + URI_ENCODED_JSO + "&p= HTTP/1.1");
-
-        // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-    }
-
-    @Test
-    public void shouldRaiseAlertGivenUriEncodedJsoMagicBytesAreDetectedInHeaderOfResponse()
-            throws Exception {
-        // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "X-Custom-Info: " + URI_ENCODED_JSO);
-
-        // When
-        rule.scanHttpRequestSend(msg, -1);
-
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-    }
-
-    @Test
-    public void shouldRaiseAlertGivenUriEncodedJsoMagicBytesAreDetectedInCookieOfRequest()
-            throws Exception {
-        // Given
-        HttpMessage msg = new HttpMessage();
-        String jso = Base64.getEncoder().encodeToString(createJso());
-        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "Cookie: CRUNCHY=" + URI_ENCODED_JSO + "\r\n");
+        msg.setRequestBody(jso);
 
         // When
         rule.scanHttpRequestSend(msg, -1);

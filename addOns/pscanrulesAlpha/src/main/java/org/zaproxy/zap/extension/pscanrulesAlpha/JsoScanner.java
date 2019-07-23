@@ -25,12 +25,13 @@ import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-/** Java Serialized Objects (JSO) scanner. Detect the magic sequence and generate an alarm */
+/** Java Serialized Objects (JSO) scanner. Detect the magic sequence and generate an alert */
 public class JsoScanner extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
@@ -49,7 +50,7 @@ public class JsoScanner extends PluginPassiveScanner {
 
         checkJsoInCookies(msg, msg.getRequestHeader().getHttpCookies());
 
-        checkJsoInBody(msg, msg.getRequestBody().getBytes(), msg.getRequestBody().toString());
+        checkJsoInBody(msg, msg.getRequestBody());
     }
 
     @Override
@@ -58,7 +59,7 @@ public class JsoScanner extends PluginPassiveScanner {
 
         checkJsoInCookies(msg, msg.getResponseHeader().getHttpCookies(null));
 
-        checkJsoInBody(msg, msg.getResponseBody().getBytes(), msg.getResponseBody().toString());
+        checkJsoInBody(msg, msg.getResponseBody());
     }
 
     private void checkJsoInQueryParameters(HttpMessage msg) {
@@ -79,10 +80,10 @@ public class JsoScanner extends PluginPassiveScanner {
         }
     }
 
-    private void checkJsoInBody(HttpMessage msg, byte[] bytes, String body) {
-        byte[] startOfBody = Arrays.copyOfRange(bytes, 0, JSO_BYTE_MAGIC_SEQUENCE.length);
+    private void checkJsoInBody(HttpMessage msg, HttpBody body) {
+        byte[] startOfBody = Arrays.copyOfRange(body.getBytes(), 0, JSO_BYTE_MAGIC_SEQUENCE.length);
         if (Arrays.equals(JSO_BYTE_MAGIC_SEQUENCE, startOfBody)
-                || hasJsoBase64MagicSequence(body)) {
+                || hasJsoBase64MagicSequence(body.toString())) {
             raiseAlert(msg, "");
         }
     }
