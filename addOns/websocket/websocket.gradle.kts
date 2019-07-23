@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "20"
+version = "21"
 description = "Allows you to inspect WebSocket communication."
 
 zapAddOn {
