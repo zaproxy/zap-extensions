@@ -22,8 +22,10 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -37,18 +39,29 @@ public class ServletParameterPollutionScannerUnitTest
         return new ServletParameterPollutionScanner();
     }
 
+    @Before
+    public void before() {
+        rule.setAlertThreshold(AlertThreshold.LOW);
+    }
+
     @Test
     public void givenNoFormsWhenScanHttpResponseReceiveThenNoAlertsRaised() throws Exception {
+        // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("");
+        // When
         scanHttpResponseReceive(msg);
+        // Then
         assertNumberOfAlertsRaised(0);
     }
 
     @Test
     public void givenFormWithActionAttributeWhenScanHttpResponseReceiveThenNoAlertsRaised()
             throws Exception {
+        // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form action='ActionMan'>");
+        // When
         scanHttpResponseReceive(msg);
+        // Then
         assertNumberOfAlertsRaised(0);
     }
 
@@ -56,9 +69,12 @@ public class ServletParameterPollutionScannerUnitTest
     public void
             givenFormWithNoActionAttributeWhenScanHttpResponseReceiveThenAlertRaisedAndAlertPopulated()
                     throws Exception {
+        // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form />");
+        // When
         scanHttpResponseReceive(msg);
         Alert alert = getFirstAlertRaised();
+        // Then
         assertEquals(alert.getRisk(), Alert.RISK_MEDIUM);
         assertEquals(alert.getConfidence(), Alert.CONFIDENCE_LOW);
         assertEquals(alert.getUri(), URI);
@@ -66,18 +82,50 @@ public class ServletParameterPollutionScannerUnitTest
     }
 
     @Test
+    public void
+            givenFormWithNoActionAttributeWhenScanHttpResponseReceiveThenAtMediumThresholdThenNoAlertRaised()
+                    throws Exception {
+        // Given
+        HttpMessage msg = createHttpMessageFromHtml("<form />");
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertNumberOfAlertsRaised(0);
+    }
+
+    @Test
+    public void
+            givenFormWithNoActionAttributeWhenScanHttpResponseReceiveThenAtHighThresholdThenNoAlertRaised()
+                    throws Exception {
+        // Given
+        HttpMessage msg = createHttpMessageFromHtml("<form />");
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertNumberOfAlertsRaised(0);
+    }
+
+    @Test
     public void givenFormWithValuelessActionAttributeWhenScanHttpResponseReceiveThenAlertRaised()
             throws Exception {
+        // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form action />");
+        // When
         scanHttpResponseReceive(msg);
+        // Then
         assertNumberOfAlertsRaised(1);
     }
 
     @Test
     public void givenFormWithEmptyActionAttributeWhenScanHttpResponseReceiveThenAlertRaised()
             throws Exception {
+        // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form action='' />");
+        // When
         scanHttpResponseReceive(msg);
+        // Then
         assertNumberOfAlertsRaised(1);
     }
 
@@ -85,8 +133,11 @@ public class ServletParameterPollutionScannerUnitTest
     public void
             givenFormWithEmptyAndPopulatedActionAttributesWhenScanHttpResponseReceiveThenAlertRaised()
                     throws Exception {
+        // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form action action='ActionMan' />");
+        // When
         scanHttpResponseReceive(msg);
+        // Then
         assertNumberOfAlertsRaised(1);
     }
 
@@ -94,8 +145,11 @@ public class ServletParameterPollutionScannerUnitTest
     public void
             givenTwoFormsWithNoActionAttributeWhenScanHttpResponseReceiveThenOnlyOneAlertRaised()
                     throws Exception {
+        // Given - Threshold set LOW in before()
         HttpMessage msg = createHttpMessageFromHtml("<form /><form />");
+        // When
         scanHttpResponseReceive(msg);
+        // Then
         assertNumberOfAlertsRaised(1);
     }
 

@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -63,6 +64,10 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+            return;
+        }
+
         List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
 
         if (formElements != null && formElements.size() > 0) {
