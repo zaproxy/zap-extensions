@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
@@ -290,10 +289,6 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
             return vuln.getDescription();
         }
         return "Failed to load vulnerability description from file";
-    }
-
-    public int getCategory() {
-        return Category.MISC;
     }
 
     public String getSolution() {

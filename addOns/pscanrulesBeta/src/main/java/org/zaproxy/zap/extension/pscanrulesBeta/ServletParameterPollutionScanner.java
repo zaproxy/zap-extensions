@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -118,10 +117,6 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 
     public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public int getCategory() {
-        return Category.MISC;
     }
 
     public String getSolution() {

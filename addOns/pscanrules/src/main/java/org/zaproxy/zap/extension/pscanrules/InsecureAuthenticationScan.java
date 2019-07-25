@@ -29,7 +29,6 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -275,12 +274,6 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 
     public String getDescription() {
         return Constant.messages.getString("pscanrules.insecureauthentication.desc");
-    }
-
-    public int getCategory() {
-        return Category
-                .INFO_GATHER; // leaking username or username + password.. therefore information
-        // gathering
     }
 
     public String getSolution() {
