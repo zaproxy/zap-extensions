@@ -93,9 +93,8 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
             }
             site = site + "/";
         }
-        if (msg.getRequestBody() != null) {
-            postdata = msg.getRequestBody().toString();
-            postdata = postdata.replaceAll("\n", "\\n");
+        if (msg.getRequestBody().length() != 0) {
+            postdata = msg.getRequestBody().toString().replaceAll("\n", "\\n");
         }
         Vector<String> cookies = msg.getRequestHeader().getHeaders(HttpHeader.COOKIE);
         if (cookies != null && cookies.size() > 0) {
