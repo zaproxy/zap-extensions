@@ -158,7 +158,7 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 
     // Relaxed accessibility for testing.
     int scanResponse(HttpMessage msg, HttpMessage originalMsg) {
-        if (msg.getResponseBody() == null) return EMPTY_RESPONSE;
+        if (msg.getResponseBody().length() == 0) return EMPTY_RESPONSE;
         String responseContent = new String(msg.getResponseBody().getBytes());
         responseContent = responseContent.trim();
 
