@@ -58,6 +58,7 @@ public class OpenApiSpider extends SpiderParser {
             requestor.run(converter.getRequestModels());
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
+            return false;
         }
 
         return true;
