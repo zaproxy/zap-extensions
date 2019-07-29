@@ -19,22 +19,22 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+import org.parosproxy.paros.network.HttpMessage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import org.junit.Test;
-import org.parosproxy.paros.network.HttpMessage;
+
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
 
 public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
-
-    private static final String URI_ENCODED_JSO =
-            "%C2%AC%C3%AD%00%05sr%00Eorg.zaproxy.zap.extension.pscanrulesAlpha.JsoScannerUnitTest%24AnObject%00%00%00%00%00%00%00%01%02%00%00xp";
 
     /* Testing JSO in response */
     @Test
@@ -150,7 +150,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET /some_action?q=" + URI_ENCODED_JSO + "&p=&m HTTP/1.1");
+        msg.setRequestHeader("GET /some_action?q=" + createUriEncodedJso() + "&p=&m HTTP/1.1");
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -179,7 +179,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "X-Custom-Info: " + URI_ENCODED_JSO);
+        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "X-Custom-Info: " + createUriEncodedJso());
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -208,7 +208,8 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
             throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "Cookie: CRUNCHY=" + URI_ENCODED_JSO + "\r\n");
+        msg.setRequestHeader(
+                "GET / HTTP/1.1\r\n" + "Cookie: CRUNCHY=" + createUriEncodedJso() + "\r\n");
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -281,6 +282,12 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
         objectOutputStream.writeObject(anObject);
         return out.toByteArray();
+    }
+
+    private static String createUriEncodedJso() throws IOException {
+        return URLEncoder.encode(
+                new String(createJso(), StandardCharsets.ISO_8859_1),
+                StandardCharsets.UTF_8.name());
     }
 
     @Override
