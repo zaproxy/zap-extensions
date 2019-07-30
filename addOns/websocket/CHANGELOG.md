@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [20] - 2019-07-23
+
+- Add WebSocket passive scan infrastructure.
+  - Add WebSocket Passive scan script plugin.
+    - Template scripts for:
+      - Python
+      - Javascript
+    - Default scripts for (loaded and enabled by default):
+      - Base64 disclosure
+      - Email disclosure
+      - Error Application disclosure
+      - Private IP disclosure
+      - Credit Card disclosure
+      - Username disclosure
+      - Debug Error disclosure
+      - Suspicious XML Comments disclosure
+    - Help content for the default scripts.
+- Add stats for websocket frames sent and time taken for passive scanning.
+
 ## [19] - 2019-06-07
 
 - Fix exceptions when handling/dispatching events.
@@ -122,4 +141,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[20]: https://github.com/zaproxy/zap-extensions/releases/websocket-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/websocket-v19

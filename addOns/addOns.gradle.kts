@@ -9,6 +9,7 @@ import org.zaproxy.gradle.addon.misc.ExtractLatestChangesFromChangelog
 import org.zaproxy.gradle.addon.wiki.WikiGenExtension
 
 plugins {
+    jacoco
     id("org.zaproxy.add-on") version "0.2.0" apply false
 }
 
@@ -18,7 +19,6 @@ val zapCoreHelpWikiDir = "$rootDir/../zap-core-help-wiki/"
 val zapExtensionsWikiDir = "$rootDir/../zap-extensions-wiki/"
 
 val parentProjects = listOf(
-    "jxbrowsers",
     "webdrivers"
 )
 
@@ -33,11 +33,6 @@ val addOnsInZapCoreHelp = listOf(
     "gettingStarted",
     "importurls",
     "invoke",
-    "jxbrowser",
-    "jxbrowserlinux64",
-    "jxbrowsermacos",
-    "jxbrowserwindows",
-    "jxbrowserwindows64",
     "onlineMenu",
     "pscanrules",
     "quickstart",
@@ -56,17 +51,27 @@ val addOnsInZapCoreHelp = listOf(
     "zest"
 )
 
+val jacocoToolVersion = "0.8.4"
+jacoco {
+    toolVersion = jacocoToolVersion
+}
+
 subprojects {
     if (parentProjects.contains(project.name)) {
         return@subprojects
     }
 
     apply(plugin = "java-library")
+    apply(plugin = "jacoco")
     apply(plugin = "org.zaproxy.add-on")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    jacoco {
+        toolVersion = jacocoToolVersion
     }
 
     val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.8.0"))
@@ -89,6 +94,49 @@ subprojects {
                 from(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
         }
+    }
+}
+
+tasks.register<TestReport>("testReport") {
+    destinationDir = file("$buildDir/reports/allTests")
+    subprojects.forEach {
+        it.plugins.withType(JavaPlugin::class) {
+            reportOn(it.tasks.withType<Test>())
+        }
+    }
+
+    doLast {
+        val reportUrl = File(destinationDir, "index.html").toURL()
+        logger.lifecycle("Test Report: $reportUrl")
+    }
+}
+
+val jacocoMerge by tasks.registering(JacocoMerge::class) {
+    destinationFile = file("$buildDir/jacoco/all.exec")
+    subprojects.forEach {
+        it.plugins.withType(JavaPlugin::class) {
+            executionData(it.tasks.withType<Test>())
+        }
+    }
+
+    doFirst {
+        executionData = files(executionData.files.filter { it.exists() })
+    }
+}
+
+val jacocoReport by tasks.registering(JacocoReport::class) {
+    executionData(jacocoMerge)
+    subprojects.forEach {
+        it.plugins.withType(JavaPlugin::class) {
+            val sourceSets = it.extensions.getByName("sourceSets") as SourceSetContainer
+            sourceDirectories.from(files(sourceSets["main"].java.srcDirs))
+            classDirectories.from(files(sourceSets["main"].output.classesDirs))
+        }
+    }
+
+    doLast {
+        val reportUrl = File(reports.html.destination, "index.html").toURL()
+        logger.lifecycle("Coverage Report: $reportUrl")
     }
 }
 
@@ -137,6 +185,9 @@ fun subproject(addOnId: String): Provider<Project> =
 
 fun Project.java(configure: JavaPluginExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("java", configure)
+
+fun Project.jacoco(configure: JacocoPluginExtension.() -> Unit): Unit =
+    (this as ExtensionAware).extensions.configure("jacoco", configure)
 
 fun Project.zapAddOn(configure: AddOnPluginExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("zapAddOn", configure)

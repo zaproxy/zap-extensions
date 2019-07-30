@@ -36,6 +36,7 @@ This checks response headers for the presence of X-Powered-By details.
 Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
 Java Servlet spec calls for aggregation of query string and post data elements which may result in 
 unintended handling of user controlled data. This may impact other frameworks and technologies as well.
+<strong>Note:</strong> This scan rule will only analyze responses on LOW Threshold.
 
 <H2>Timestamp Disclosure</H2>
 A timestamp was disclosed by the application/web server.

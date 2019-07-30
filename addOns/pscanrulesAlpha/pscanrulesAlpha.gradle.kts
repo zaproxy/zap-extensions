@@ -1,4 +1,4 @@
-version = "25"
+version = "26"
 description = "The alpha quality Passive Scanner rules"
 
 zapAddOn {

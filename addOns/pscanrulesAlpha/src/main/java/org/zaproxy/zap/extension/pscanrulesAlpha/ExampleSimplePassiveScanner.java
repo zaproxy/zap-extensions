@@ -24,7 +24,6 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -123,10 +122,6 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
             return vuln.getDescription();
         }
         return "Failed to load vulnerability description from file";
-    }
-
-    public int getCategory() {
-        return Category.MISC;
     }
 
     public String getSolution() {

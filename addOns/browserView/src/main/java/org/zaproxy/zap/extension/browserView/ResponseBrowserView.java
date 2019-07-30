@@ -169,7 +169,7 @@ public class ResponseBrowserView implements HttpPanelView, HttpPanelViewModelLis
     static boolean isHtml(final Message aMessage) {
         if (aMessage instanceof HttpMessage) {
             HttpMessage httpMessage = (HttpMessage) aMessage;
-            if (httpMessage.getResponseBody() == null) {
+            if (httpMessage.getResponseBody().length() == 0) {
                 return false;
             }
             return httpMessage.getResponseHeader().isHtml();

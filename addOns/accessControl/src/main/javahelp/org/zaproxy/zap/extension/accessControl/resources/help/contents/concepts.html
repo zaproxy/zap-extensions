@@ -69,6 +69,27 @@
 </ul>
 <strong>Note:</strong> Access control testing is not allowed in <code>Safe</code> mode nor <code>Protected</code> if the context is not in scope.
 
+<H2>API</H2>
+
+The Addon exposes the following API endpoints:
+
+<H3>Actions</H3>
+	<H4>scan</H4>
+	Starts an Access Control scan with the given context ID and user ID (can be comma separated list of IDs). 
+	(Optional parameters: boolean identifying if an unauthenticated user should be included (default false), boolean 
+	identifying whether or not Alerts are raised (default true), and the Risk level for the Alerts (default High).) 
+	[<strong>Note:</strong>This assumes the Access Control rules were previously established via ZAP gui and the necessary Context exported/imported.]
+
+	<H4>writeHTMLreport</H4>
+	Generates an Access Control report for the given context ID and saves it based on the provided filename (path).
+
+<H3>Views</H3>
+	<H4>getScanProgress</H4>
+	Gets the Access Control scan progress (percentage integer) for the given context ID.
+
+	<H4>getScanStatus</H4>
+	Gets the Access Control scan status (description string) for the given context ID.
+
 <H2>See also</H2>
 <table>
     <tr>

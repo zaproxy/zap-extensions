@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [13] - 2019-07-15
+
 - Maintenance changes.
+- Address problem from v12 where analysis dialog wasn't being shown after collection (this was due to a build issue).
 
 ## 12 - 2018-05-17
 
@@ -70,3 +74,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[13]: https://github.com/zaproxy/zap-extensions/releases/tokengen-v13

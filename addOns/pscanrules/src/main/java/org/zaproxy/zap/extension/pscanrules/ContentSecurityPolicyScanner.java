@@ -268,9 +268,13 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 
         if (pol.allowsScriptFromSource(PARSED_WILDCARD_URI)) {
             allowedSources.add("script-src");
+            allowedSources.add("script-src-elem");
+            allowedSources.add("script-src-attr");
         }
         if (pol.allowsStyleFromSource(PARSED_WILDCARD_URI)) {
             allowedSources.add("style-src");
+            allowedSources.add("style-src-elem");
+            allowedSources.add("style-src-attr");
         }
         if (pol.allowsImgFromSource(PARSED_WILDCARD_URI)) {
             allowedSources.add("img-src");

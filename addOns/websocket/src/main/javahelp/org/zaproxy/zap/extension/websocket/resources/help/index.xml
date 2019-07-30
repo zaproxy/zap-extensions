@@ -8,6 +8,7 @@
     <indexitem text="websocket" target="websocket.introduction" />
     <indexitem text="websocket api" target="websocket.api" />
     <indexitem text="websocket scripts" target="websocket.script" />
+    <indexitem text="websocket pscans" target="websocket.pscanrules" />
     <indexitem text="websocket tab" target="websocket.tab" />
     <indexitem text="websocket options" target="websocket.options" />
     <indexitem text="websocket session properties" target="websocket.sessionProperties" />

@@ -198,16 +198,11 @@ public class WSDLCustomParser {
                 return;
             }
 
-            /* Checks response content. */
-            if (httpRequest.getResponseBody() != null) {
-                String content = httpRequest.getResponseBody().toString();
-                if (content == null || content.trim().length() <= 0) {
-                    // LOG.warn("URL response from WSDL file request has no body
-                    // content.");
-                } else {
-                    // WSDL parsing.
-                    parseWSDLContent(content);
-                }
+            String content = httpRequest.getResponseBody().toString();
+            if (content.trim().isEmpty()) {
+                LOG.debug("Response from WSDL file request has no body content, url: " + url);
+            } else {
+                parseWSDLContent(content);
             }
         } catch (Exception e) {
             LOG.error("There was an error while parsing WSDL from URL. ", e);
