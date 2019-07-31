@@ -92,6 +92,21 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
+    public void noAlertOnIDSmallerThanMinimum() throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String testURI = "http://example.com/foo?jsessionid=1A53063";
+        HttpMessage msg = createHttpMessageWithRespBody(BODY);
+        msg.getRequestHeader().setURI(new URI(testURI, false));
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
+
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
     public void containsSessionIdAsUrlParameter()
             throws HttpMalformedHeaderException, URIException {
 
