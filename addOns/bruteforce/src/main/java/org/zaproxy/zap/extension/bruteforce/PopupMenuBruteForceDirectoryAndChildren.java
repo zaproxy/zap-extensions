@@ -32,7 +32,7 @@ class PopupMenuBruteForceDirectoryAndChildren extends PopupMenuBruteForceSite {
     @Override
     public void performAction(SiteNode node) {
         if (node != null) {
-            getExtensionBruteForce().bruteForceDirectoryAndChildren(node);
+            getExtensionBruteForce().getBruteForcePanel().bruteForceDirectoryAndChildren(node);
         }
     }
 }

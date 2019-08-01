@@ -60,7 +60,7 @@ public class PopupMenuBruteForceSite extends PopupMenuItemSiteNodeContainer {
         while (node.getParent() != null && node.getParent().getParent() != null) {
             node = node.getParent();
         }
-        extension.bruteForceSite(node);
+        extension.getBruteForcePanel().bruteForceSite(node);
     }
 
     @Override

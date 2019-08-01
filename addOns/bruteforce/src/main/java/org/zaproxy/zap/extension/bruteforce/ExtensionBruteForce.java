@@ -19,14 +19,21 @@
  */
 package org.zaproxy.zap.extension.bruteforce;
 
+import com.sittinglittleduck.DirBuster.BaseCase;
 import java.awt.EventQueue;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.tree.TreeNode;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -43,6 +50,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
+import org.zaproxy.zap.utils.FilenameExtensionFilter;
 import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
@@ -50,7 +58,8 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         implements SessionChangedListener,
                 ProxyListener,
                 SiteMapListener,
-                AddonFilesChangedListener {
+                AddonFilesChangedListener,
+                BruteForceListenner {
 
     private static final Logger logger = Logger.getLogger(ExtensionBruteForce.class);
 
@@ -67,8 +76,15 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     private PopupMenuBruteForceDirectoryAndChildren popupMenuBruteForceDirectoryAndChildren = null;
 
     private BruteForceParam params = null;
+    private List<ScanTarget> activeScans = new ArrayList<>();
+    private Map<ScanTarget, BruteForce> bruteForceMap = new HashMap<>();
+    private Map<Integer, BruteForce> bruteForceIndexes = new HashMap<>();
+    private List<ForcedBrowseFile> fileList = null;
+    private String fileDirectory = Constant.getZapHome() + "fuzzers/dirbuster";
+    private String customFileDirectory = Constant.getInstance().DIRBUSTER_CUSTOM_DIR;
+    private String fileExtension = ".txt";
+    private int lastScanId = 0;
 
-    /** */
     public ExtensionBruteForce() {
         super("ExtensionBruteForce");
         this.setOrder(32);
@@ -121,7 +137,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
         String activeActionPrefix = Constant.messages.getString("bruteforce.activeActionPrefix");
         List<String> activeActions = new ArrayList<>();
-        for (BruteForce scan : getBruteForcePanel().getBruteForceScans()) {
+        for (BruteForce scan : getBruteForceScans()) {
             if (scan.isAlive()) {
                 activeActions.add(
                         MessageFormat.format(
@@ -152,16 +168,161 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         }
     }
 
-    protected void bruteForceSite(SiteNode siteNode) {
-        this.getBruteForcePanel().bruteForceSite(siteNode);
+    public int bruteForceSite(SiteNode siteNode, String payloadFileName) {
+        for (ForcedBrowseFile file : this.getFileList()) {
+            if (file.getFile().getName().equals(payloadFileName)) {
+                return this.bruteForceSite(siteNode, file.getFile());
+            }
+        }
+        throw new IllegalArgumentException("File not found: " + payloadFileName);
     }
 
-    protected void bruteForceDirectory(SiteNode siteNode) {
-        this.getBruteForcePanel().bruteForceDirectory(siteNode);
+    public int bruteForceSite(SiteNode siteNode, File payloadFile) {
+        if (siteNode == null) {
+            throw new IllegalArgumentException("Null site node supplied");
+        }
+        ScanTarget scanTarget = createScanTarget(siteNode);
+        BruteForce bf = this.startScan(scanTarget, null, payloadFile, false);
+        return bf.getScanId();
     }
 
-    protected void bruteForceDirectoryAndChildren(SiteNode siteNode) {
-        this.getBruteForcePanel().bruteForceDirectoryAndChildren(siteNode);
+    private BruteForce getBruteForce(int scanId) {
+        BruteForce bf = this.bruteForceIndexes.get(scanId);
+        if (bf != null) {
+            return bf;
+        }
+        throw new IllegalArgumentException("ScanId not found: " + scanId);
+    }
+
+    public boolean isRunning(int scanId) {
+        return !this.getBruteForce(scanId).isStopped();
+    }
+
+    public boolean isPaused(int scanId) {
+        return this.getBruteForce(scanId).isPaused();
+    }
+
+    public int getProgress(int scanId) {
+        BruteForce bf = this.getBruteForce(scanId);
+        return 100 * bf.getWorkDone() / bf.getWorkTotal();
+    }
+
+    public boolean stopScan(int scanId) {
+        BruteForce bf = this.getBruteForce(scanId);
+        if (bf.isStopped()) {
+            return false;
+        }
+        bf.stopScan();
+        return true;
+    }
+
+    public boolean pauseScan(int scanId) {
+        BruteForce bf = this.getBruteForce(scanId);
+        if (bf.isPaused()) {
+            return false;
+        }
+        bf.pauseScan();
+        return true;
+    }
+
+    public boolean resumeScan(int scanId) {
+        BruteForce bf = this.getBruteForce(scanId);
+        if (!bf.isPaused()) {
+            return false;
+        }
+        bf.unpauseScan();
+        return true;
+    }
+
+    public List<ScanTarget> getActiveScans() {
+        return this.activeScans;
+    }
+
+    BruteForce getBruteForce(ScanTarget target) {
+        return this.bruteForceMap.get(target);
+    }
+
+    int addBruteForce(ScanTarget target, BruteForce bruteForce) {
+        this.bruteForceMap.put(target, bruteForce);
+        int scanId = ++lastScanId;
+        this.bruteForceIndexes.put(scanId, bruteForce);
+        return scanId;
+    }
+
+    boolean stopScan(ScanTarget target) {
+        BruteForce bruteForce = getBruteForce(target);
+        if (bruteForce != null) {
+            logger.debug("Stopping scan on " + target);
+            bruteForce.stopScan();
+            return true;
+        }
+        logger.debug("Failed to find scan on " + target);
+        return false;
+    }
+
+    boolean pauseScan(ScanTarget target) {
+        BruteForce bruteForce = getBruteForce(target);
+        if (bruteForce != null) {
+            logger.debug("Pausing scan on " + target);
+            bruteForce.pauseScan();
+            return true;
+        }
+        logger.debug("Failed to find scan on " + target);
+        return false;
+    }
+
+    boolean resumeScan(ScanTarget target) {
+        BruteForce bruteForce = getBruteForce(target);
+        if (bruteForce != null) {
+            logger.debug("Resuming scan on " + target);
+            bruteForce.unpauseScan();
+            return true;
+        }
+        logger.debug("Failed to find scan on " + target);
+        return false;
+    }
+
+    BruteForce startScan(
+            ScanTarget currentSite, String directory, File file, boolean onlyUnderDirectory) {
+
+        this.activeScans.add(currentSite);
+
+        BruteForce bruteForce =
+                new BruteForce(currentSite, file, this, this.getBruteForceParam(), directory);
+        if (onlyUnderDirectory) {
+            bruteForce.setOnlyUnderDirectory(onlyUnderDirectory);
+        }
+        int scanId = addBruteForce(currentSite, bruteForce);
+
+        bruteForce.start();
+        bruteForce.setScanId(scanId);
+
+        currentSite.setScanned(true);
+        return bruteForce;
+    }
+
+    public Collection<BruteForce> getBruteForceScans() {
+        return bruteForceMap.values();
+    }
+
+    public void stopAllScans() {
+        for (BruteForce scanner : bruteForceMap.values()) {
+            scanner.stopScan();
+            scanner.clearModel();
+        }
+        // Allow 2 secs for the threads to stop - if we wait 'for ever' then we can get deadlocks
+        for (int i = 0; i < 20; i++) {
+            if (activeScans.size() == 0) {
+                break;
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // Ignore
+            }
+        }
+        bruteForceMap.clear();
+        activeScans.clear();
     }
 
     @Override
@@ -189,20 +350,24 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     }
 
     private void sessionChangedEventHandler(Session session) {
-        // Clear all scans
-        this.getBruteForcePanel().reset();
-        if (session == null) {
-            // Closedown
-            return;
-        }
-        // Add new hosts
-        SiteNode root = (SiteNode) session.getSiteTree().getRoot();
-        @SuppressWarnings("unchecked")
-        Enumeration<TreeNode> en = root.children();
-        while (en.hasMoreElements()) {
-            HistoryReference hRef = ((SiteNode) en.nextElement()).getHistoryReference();
-            if (hRef != null) {
-                this.getBruteForcePanel().addSite(hRef.getURI());
+        stopAllScans();
+        lastScanId = 0;
+
+        if (getView() != null) {
+            this.getBruteForcePanel().reset();
+            if (session == null) {
+                // Closedown
+                return;
+            }
+            // Add new hosts
+            SiteNode root = (SiteNode) session.getSiteTree().getRoot();
+            @SuppressWarnings("unchecked")
+            Enumeration<TreeNode> en = root.children();
+            while (en.hasMoreElements()) {
+                HistoryReference hRef = ((SiteNode) en.nextElement()).getHistoryReference();
+                if (hRef != null) {
+                    this.getBruteForcePanel().addSite(hRef.getURI());
+                }
             }
         }
     }
@@ -281,22 +446,82 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         return this.getOptionsBruteForcePanel().getRecursive();
     }
 
+    protected ScanTarget createScanTarget(SiteNode node) {
+        if (node != null) {
+            while (node.getParent() != null && node.getParent().getParent() != null) {
+                node = node.getParent();
+            }
+
+            HistoryReference hRef = node.getHistoryReference();
+            if (hRef != null) {
+                return new ScanTarget(hRef.getURI());
+            }
+        }
+        return null;
+    }
+
     public boolean isScanning(SiteNode node) {
-        return this.getBruteForcePanel().isScanning(node);
+        ScanTarget target = createScanTarget(node);
+        if (target != null) {
+            BruteForce bf = getBruteForce(target);
+            if (bf != null) {
+                return bf.isAlive();
+            }
+        }
+        return false;
     }
 
     public void refreshFileList() {
+        fileList = null;
         if (getView() != null) {
             this.getBruteForcePanel().refreshFileList();
         }
     }
 
     public List<ForcedBrowseFile> getFileList() {
-        return this.getBruteForcePanel().getFileList();
+        if (fileList == null) {
+            fileList = new ArrayList<>();
+            File dir = new File(fileDirectory);
+            FilenameFilter filter = new FilenameExtensionFilter(fileExtension, true);
+            File[] files = dir.listFiles(filter);
+            if (files != null) {
+                Arrays.sort(files);
+                for (File file : files) {
+                    fileList.add(new ForcedBrowseFile(file));
+                }
+            }
+
+            // handle local/custom files
+            File customDir = new File(customFileDirectory);
+            if (!dir.equals(customDir)) {
+                File[] customFiles = customDir.listFiles();
+                if (customFiles != null) {
+                    Arrays.sort(customFiles);
+                    for (File file : customFiles) {
+                        if (!file.isDirectory()) {
+                            fileList.add(new ForcedBrowseFile(file));
+                        }
+                    }
+                }
+            }
+            Collections.sort(fileList);
+        }
+
+        return fileList;
+    }
+
+    public List<String> getFileNamesList() {
+        List<String> names = new ArrayList<String>();
+        for (ForcedBrowseFile file : this.getFileList()) {
+            names.add(file.getFile().getName());
+        }
+        return names;
     }
 
     public void setDefaultFile(ForcedBrowseFile file) {
-        this.getBruteForcePanel().setDefaultFile(file);
+        if (getView() != null) {
+            this.getBruteForcePanel().setDefaultFile(file);
+        }
     }
 
     @Override
@@ -323,15 +548,19 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public void sessionScopeChanged(Session session) {
-        if (getView() == null) {
-            return;
+        if (getView() != null) {
+            this.getBruteForcePanel().sessionScopeChanged(session);
         }
-        this.getBruteForcePanel().sessionScopeChanged(session);
     }
 
     @Override
     public void sessionModeChanged(Mode mode) {
-        this.getBruteForcePanel().sessionModeChanged(mode);
+        if (mode.equals(Mode.safe)) {
+            stopAllScans();
+        }
+        if (getView() != null) {
+            this.getBruteForcePanel().sessionModeChanged(mode);
+        }
     }
 
     @Override
@@ -343,4 +572,28 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     public void filesRemoved() {
         this.refreshFileList();
     }
+
+    @Override
+    public void scanFinshed(ScanTarget target) {
+        this.activeScans.remove(target);
+        if (getView() != null) {
+            this.getBruteForcePanel().scanFinshed(target);
+        }
+    }
+
+    @Override
+    public void scanProgress(ScanTarget target, int done, int todo) {
+        if (getView() != null) {
+            this.getBruteForcePanel().scanProgress(target, done, todo);
+        }
+    }
+
+    @Override
+    public void foundDir(
+            URL url,
+            int statusCode,
+            String response,
+            String baseCase,
+            String rawResponse,
+            BaseCase baseCaseObj) {}
 }
