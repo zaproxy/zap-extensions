@@ -45,6 +45,7 @@ public abstract class WebSocketAddonTestUtils extends WebSocketTestUtils {
         WebSocketMessageDTO webSocketMessage = new WebSocketMessageDTO(webSocketProxy.getDTO());
         webSocketMessage.payload = message;
         webSocketMessage.opcode = WebSocketMessage.OPCODE_TEXT;
+        webSocketMessage.isOutgoing = true;
 
         try {
             return webSocketProxy.send(webSocketMessage, WebSocketProxy.Initiator.MANUAL_REQUEST)
