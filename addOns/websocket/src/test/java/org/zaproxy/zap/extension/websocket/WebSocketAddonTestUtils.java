@@ -19,8 +19,16 @@
  */
 package org.zaproxy.zap.extension.websocket;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
+import org.apache.commons.httpclient.URI;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.websocket.client.HandshakeConfig;
 import org.zaproxy.zap.extension.websocket.client.HttpHandshakeBuilder;
 import org.zaproxy.zap.extension.websocket.client.ServerConnectionEstablisher;
@@ -54,5 +62,56 @@ public abstract class WebSocketAddonTestUtils extends WebSocketTestUtils {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public HistoryReference getMockHistoryReference(URI serverUrl)
+            throws HttpMalformedHeaderException, DatabaseException {
+
+        HttpRequestHeader handshakeRequest =
+                HttpHandshakeBuilder.getHttpHandshakeRequestHeader(serverUrl);
+        HttpMessage handshakeMessage = new HttpMessage(handshakeRequest);
+
+        HistoryReference historyReference = mock(HistoryReference.class);
+        when(historyReference.getURI()).thenReturn(serverUrl);
+        when(historyReference.getHttpMessage()).thenReturn(handshakeMessage);
+        return historyReference;
+    }
+
+    public WebSocketProxy getMockWebSocketProxy(
+            HistoryReference handshakeRef, WebSocketChannelDTO channel) {
+        WebSocketProxy proxy = mock(WebSocketProxy.class);
+        when(proxy.getDTO()).thenReturn(channel);
+        when(proxy.getHandshakeReference()).thenReturn(handshakeRef);
+        when(proxy.getChannelId()).thenReturn(channel.id);
+        return proxy;
+    }
+
+    public WebSocketChannelDTO getWebSocketChannelDTO(int id, String hostName, String url) {
+        WebSocketChannelDTO channel = new WebSocketChannelDTO(hostName);
+        channel.id = id;
+        channel.port = 443;
+        channel.url = url;
+        return channel;
+    }
+
+    public WebSocketChannelDTO getWebSocketChannelDTO(int id, String hostName) {
+        return getWebSocketChannelDTO(id, hostName, hostName);
+    }
+
+    public WebSocketMessageDTO getWebSocketMessageDTO(
+            WebSocketChannelDTO channel,
+            Integer opcode,
+            boolean isOutgoing,
+            Object payload,
+            int id) {
+        WebSocketMessageDTO message = new WebSocketMessageDTO(channel);
+        message.isOutgoing = isOutgoing;
+        message.opcode = opcode;
+        message.id = id;
+        message.payload = payload;
+        if (payload instanceof String) {
+            message.payloadLength = ((String) payload).length() * 4;
+        }
+        return message;
     }
 }
