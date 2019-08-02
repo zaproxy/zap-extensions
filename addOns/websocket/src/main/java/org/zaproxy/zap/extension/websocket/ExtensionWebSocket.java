@@ -91,6 +91,8 @@ import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorD
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScannerManager;
 import org.zaproxy.zap.extension.websocket.pscan.scripts.ScriptsWebSocketPassiveScanner;
+import org.zaproxy.zap.extension.websocket.treemap.WebSocketTreeMap;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketSimpleNodeNamer;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.OptionsWebSocketPanel;
@@ -233,6 +235,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     private WebSocketPassiveScannerManager webSocketPassiveScannerManager = null;
 
     private ExtensionScript extensionScript = null;
+
+    private WebSocketTreeMap webSocketTreeMap = null;
 
     public ExtensionWebSocket() {
         super(NAME);
@@ -454,6 +458,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             webSocketPassiveScannerManager.setAllEnable(true);
             webSocketPassiveScannerManager.startThread();
         }
+
+        webSocketTreeMap = new WebSocketTreeMap(new WebSocketSimpleNodeNamer());
+        addAllChannelObserver(webSocketTreeMap);
     }
 
     @Override
