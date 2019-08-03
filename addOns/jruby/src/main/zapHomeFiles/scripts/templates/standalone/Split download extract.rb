@@ -11,7 +11,7 @@ if (extHist != nil)
   File.open 'YOUR FILE PATH', 'wb' do |f|
     extHist.getSelectedHistoryReferences.each do |hr|
       content_type = hr.getHttpMessage.getResponseHeader.getHeader("Content-Type")
-      url = url = hr.getHttpMessage.getRequestHeader.getURI.toString
+      url = hr.getHttpMessage.getRequestHeader.getURI.toString
       # additional filter to jump over files that are not desired - for example if you have a application
       # that is polling data open in background so and you just do not want to manually select them in the history.
       # if you do not want the filter, commment out the next line and the corresponding end
