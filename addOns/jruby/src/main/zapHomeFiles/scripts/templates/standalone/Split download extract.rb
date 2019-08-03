@@ -5,7 +5,6 @@ require 'java'
 # to reduce the risk of a broken connection.
 
 extHist = org.parosproxy.paros.control.Control.getSingleton().getExtensionLoader().getExtension("ExtensionHistory")
-raw_data = []
 if (extHist != nil)
   
   File.open 'YOUR FILE PATH', 'wb' do |f|
