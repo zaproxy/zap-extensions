@@ -113,6 +113,13 @@ Sun Java System Web Server<br>
 TornadoServer web server<br>
 WordPress<br>
 
+<H2>Java Serialization Object</H2>
+Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
+Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
+An attacker can also modify the data and exploit JSO to do a Remote Code Execution on the server.<br>
+JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
+JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
+
 <H2>Modern Web Application</H2>
 This raises an informational alert if a site appears to be a modern web application.<br>
 It does not indicate any potential vulnerabilities but it could indicate that the ajax spider might be more effective at exploring this site compared to the traditional spider.
