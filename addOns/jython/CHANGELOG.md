@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Update the help to mention the bundled Jython version.
 - Jython templates now includes an extender script (getInputsFromuser.py) for setting global script variables based on user input.
+- Fix link in a script template.
 
 ## 10 - 2018-05-08
 

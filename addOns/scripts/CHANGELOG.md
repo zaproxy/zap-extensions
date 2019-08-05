@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.8.0.
 
+### Fixed
+- Fix links in script templates.
+
 ## [25] - 2019-06-07
 
 - Fix typo in help page.

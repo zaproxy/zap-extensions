@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-
+### Fixed
+ - Fix link in API endpoint description.
 
 ## 7 - 2018-10-26
 
