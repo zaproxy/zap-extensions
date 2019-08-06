@@ -290,8 +290,9 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
 
     /**
      * Checks if the session ID in the URL might be exposed to 3rd-parties via a link to that 3rd
-     * party. The referer header value sent to the 3rd party will include the URL with the included
-     * session ID. This method should only be invoked if the requesting URL includes a session ID.
+     * party in the response body. For example: <a href="http://other.domain.tld/">link</a>. The
+     * referer header value sent to the 3rd party will include the URL with the included session ID.
+     * This method should only be invoked if the requesting URL includes a session ID.
      *
      * @param msg the message that needs to be checked
      * @param id the id of the session
@@ -299,11 +300,6 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      */
     private void checkSessionIDExposureTo3rdParty(HttpMessage msg, int id) throws URIException {
 
-        /*
-         * This method should be invoked when a URL contains a session ID and then it
-         * looks for URLs to 3rd party sites like this in the Response body:
-         * <a href="http://other.domain.tld/">link</a>
-         */
         int risk = (msg.getRequestHeader().isSecure()) ? Alert.RISK_MEDIUM : Alert.RISK_LOW;
         String body = msg.getResponseBody().toString();
         String host = msg.getRequestHeader().getURI().getHost();

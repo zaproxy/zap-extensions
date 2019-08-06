@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.htmlparser.jericho.Source;
+
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Ignore;
@@ -40,6 +40,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
+
+import net.htmlparser.jericho.Source;
 
 public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSessionIdURL> {
 
@@ -123,7 +125,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void containsJSESSIONIDAsUrlParameterInHTTPS()
+    public void containsSessionIdAsUrlParameterInHTTPS()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -169,7 +171,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void containsJSESSIONIDAsUrlParameterInHTTPSOnCustomPort()
+    public void containsSessionIdAsUrlParameterInHTTPSOnCustomPort()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -186,7 +188,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void containsJSESSIONIDInUrlPathBeforeParams()
+    public void containsSessionIdInUrlPathBeforeParams()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -222,7 +224,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     // look for session IDs in the response embedded in HREFs. As such, this test
     // case fails so is commented out. When this scanner is enhanced to do this,
     // enable this test case.
-    public void containsJSESSIONIDInResponseHREFParams()
+    public void containsSessionIdInResponseHREFParams()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
