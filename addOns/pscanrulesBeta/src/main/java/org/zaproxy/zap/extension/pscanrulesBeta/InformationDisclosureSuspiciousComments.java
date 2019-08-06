@@ -26,17 +26,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.HTMLElementName;
-import net.htmlparser.jericho.Source;
-import net.htmlparser.jericho.StartTagType;
-import net.htmlparser.jericho.Tag;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTagType;
+import net.htmlparser.jericho.Tag;
 
 public class InformationDisclosureSuspiciousComments extends PluginPassiveScanner {
 
@@ -45,59 +47,17 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
     private static final int PLUGIN_ID = 10027;
 
     private PassiveScanThread parent = null;
-    public static final String suspiciousCommentsListDir = "xml";
-    public static final String suspiciousCommentsListFile = "suspicious-comments.txt";
+    private static final String databaseErrorFile = "xml/suspicious-comments.txt";
     private static final Logger logger =
             Logger.getLogger(InformationDisclosureSuspiciousComments.class);
 
-    private static final List<Pattern> PATTERNS;
-
-    /*
-     * Static initializer to load the suspicious comments list from the file system
-     * and put the results into the PATTERNS List.
-     */
-    static {
-        PATTERNS = new ArrayList<>();
-
-        try {
-            File f =
-                    new File(
-                            Constant.getZapHome()
-                                    + File.separator
-                                    + suspiciousCommentsListDir
-                                    + File.separator
-                                    + suspiciousCommentsListFile);
-            if (!f.exists()) {
-                throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
-            }
-            try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    line = line.trim();
-                    if (!line.startsWith("#") && line.length() > 0) {
-                        PATTERNS.add(
-                                Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
-                    }
-                }
-            }
-        } catch (IOException e) {
-            logger.error(
-                    "Error on opening/reading suspicious comments file: "
-                            + File.separator
-                            + suspiciousCommentsListDir
-                            + File.separator
-                            + suspiciousCommentsListFile
-                            + " Error: "
-                            + e.getMessage());
-        }
-    }
+    private List<Pattern> patterns = null;
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {}
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
             StringBuilder todoComments = new StringBuilder();
 
@@ -105,7 +65,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                 // Just treat as text
                 String[] lines = msg.getResponseBody().toString().split("\n");
                 for (String line : lines) {
-                    for (Pattern pattern : PATTERNS) {
+                    for (Pattern pattern : this.getPatterns()) {
                         if (pattern.matcher(line).find()) {
                             todoComments.append(line);
                             todoComments.append("\n");
@@ -120,7 +80,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                 List<Tag> tags = source.getAllTags(StartTagType.COMMENT);
                 for (Tag tag : tags) {
                     String tagStr = tag.toString();
-                    for (Pattern pattern : PATTERNS) {
+                    for (Pattern pattern : this.getPatterns()) {
                         if (pattern.matcher(tagStr).find()) {
                             todoComments.append(tagStr);
                             todoComments.append("\n");
@@ -133,7 +93,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                 int offset = 0;
                 while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
                     String elStr = el.toString();
-                    for (Pattern pattern : PATTERNS) {
+                    for (Pattern pattern : this.getPatterns()) {
                         if (pattern.matcher(elStr).find()) {
                             todoComments.append(elStr);
                             todoComments.append("\n");
@@ -165,6 +125,35 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                 msg);
 
         parent.raiseAlert(id, alert);
+    }
+
+    private List<Pattern> getPatterns() {
+        if (patterns == null) {
+            patterns = new ArrayList<>();
+            String line = null;
+            File f = new File(Constant.getZapHome() + File.separator + databaseErrorFile);
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(f));
+                while ((line = reader.readLine()) != null) {
+                    if (!line.startsWith("#") && line.length() > 0) {
+                        patterns.add(Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+                    }
+                }
+            } catch (IOException e) {
+                logger.error("Error on opening/reading database error file. File: " + f.getAbsolutePath() + " Error: "
+                        + e.getMessage());
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        logger.debug("Error on closing the file reader. Error: " + e.getMessage());
+                    }
+                }
+            }
+        }
+        return patterns;
     }
 
     @Override

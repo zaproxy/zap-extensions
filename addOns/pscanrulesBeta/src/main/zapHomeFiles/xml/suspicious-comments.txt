@@ -1,7 +1,6 @@
 # This file is used by the class InformationDisclosureSuspiciousComments under org.zaproxy.zap.extension.pscan.scanner
 # Strings below are used to search for suspicious words in comments and scripts
-# Note that the words are case insensitive, but only match full words, ie BUG will _not_ match DEBUG
-# Any leading and trailing whitespace is ignored
+# Note that the words are case insensitive, but only match full words, ie BUG will _not_ match DEBUG  
 TODO
 FIXME
 BUG
@@ -17,4 +16,3 @@ SELECT
 WHERE
 FROM
 LATER
-
