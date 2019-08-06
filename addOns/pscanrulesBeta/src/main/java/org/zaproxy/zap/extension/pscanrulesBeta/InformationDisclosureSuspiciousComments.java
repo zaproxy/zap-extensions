@@ -26,19 +26,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTagType;
+import net.htmlparser.jericho.Tag;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.HTMLElementName;
-import net.htmlparser.jericho.Source;
-import net.htmlparser.jericho.StartTagType;
-import net.htmlparser.jericho.Tag;
 
 public class InformationDisclosureSuspiciousComments extends PluginPassiveScanner {
 
@@ -137,12 +135,16 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
                 reader = new BufferedReader(new FileReader(f));
                 while ((line = reader.readLine()) != null) {
                     if (!line.startsWith("#") && line.length() > 0) {
-                        patterns.add(Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+                        patterns.add(
+                                Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
                     }
                 }
             } catch (IOException e) {
-                logger.error("Error on opening/reading database error file. File: " + f.getAbsolutePath() + " Error: "
-                        + e.getMessage());
+                logger.error(
+                        "Error on opening/reading database error file. File: "
+                                + f.getAbsolutePath()
+                                + " Error: "
+                                + e.getMessage());
             } finally {
                 if (reader != null) {
                     try {
