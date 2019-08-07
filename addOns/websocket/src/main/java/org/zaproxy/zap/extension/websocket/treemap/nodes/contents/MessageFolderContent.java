@@ -100,6 +100,11 @@ public class MessageFolderContent extends WebSocketContent implements Cloneable 
         return type == that.type && this.compareTo(that) == 0;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
     public MessageFolderContent replaceValues(WebSocketNodeNamer namer, Integer opcode) {
         this.type = Type.getType(opcode);
         name = namer.getName(this);
