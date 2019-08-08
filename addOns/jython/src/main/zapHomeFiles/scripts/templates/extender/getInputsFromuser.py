@@ -1,4 +1,8 @@
 """
+Author: kamalpreetSec
+"""
+
+"""
 Extender scripts allow you to add completely new functionality to ZAP.
 The install function is called when the script is enabled and the uninstall function when it is disabled.
 Any functionality added in the install function should be removed in the uninstall method.
