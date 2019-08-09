@@ -44,7 +44,7 @@ public class HeartBleedScanner extends PluginPassiveScanner {
      * check nginx, so don't even try. The only way to be absolutely sure is to exploit it :)
      */
     static Pattern openSSLversionPattern =
-            Pattern.compile("Server:.*?(OpenSSL/([0-9.]+[a-z-]+))", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("Server:.*?(OpenSSL/([0-9.]+[a-z\\-]+))", Pattern.CASE_INSENSITIVE);
 
     /**
      * vulnerable versions, courtesy of
