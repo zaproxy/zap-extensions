@@ -106,40 +106,40 @@ public class HeartBleedScanner extends PluginPassiveScanner {
         Matcher matcher = openSSLversionPattern.matcher(responseheaders);
         if (matcher.find()) {
             openSSLfullVersionString = matcher.group(1); // get the OpenSSL/1.0.1e string
-            versionNumber =
-                    matcher.group(
-                            2); // get the sub-match, since this contains the version details..
+            versionNumber = matcher.group(2); // get the sub-match, since this contains the version details.
         }
 
-        if (versionNumber != null && versionNumber.length() > 0) {
-            // if the version matches any of the known vulnerable versions, raise an alert.
-            for (int i = 0; i < openSSLvulnerableVersions.length; i++) {
-                if (versionNumber.equalsIgnoreCase(openSSLvulnerableVersions[i])) {
-                    // Suspicious, but not a warning, because the reported version could have a
-                    // security back-port.
-                    Alert alert =
-                            new Alert(
-                                    getPluginId(),
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_LOW,
-                                    getName());
+        if (versionNumber == null || versionNumber.length() == 0) {
+            return;
+        }
 
-                    alert.setDetail(
-                            getDescription(),
-                            msg.getRequestHeader().getURI().toString(),
-                            "", // param
-                            "", // attack
-                            getExtraInfo(msg, openSSLfullVersionString), // other info
-                            getSolution(),
-                            getReference(),
-                            openSSLfullVersionString,
-                            119, // CWE 119: Failure to Constrain Operations within the Bounds of a
-                            // Memory Buffer
-                            20, // WASC-20: Improper Input Handling
-                            msg);
-                    parent.raiseAlert(id, alert);
-                    return;
-                }
+        // if the version matches any of the known vulnerable versions, raise an alert.
+        for (int i = 0; i < openSSLvulnerableVersions.length; i++) {
+            if (versionNumber.equalsIgnoreCase(openSSLvulnerableVersions[i])) {
+                // Suspicious, but not a warning, because the reported version could have a
+                // security back-port.
+                Alert alert =
+                        new Alert(
+                                getPluginId(),
+                                Alert.RISK_HIGH,
+                                Alert.CONFIDENCE_LOW,
+                                getName());
+
+                alert.setDetail(
+                        getDescription(),
+                        msg.getRequestHeader().getURI().toString(),
+                        "", // param
+                        "", // attack
+                        getExtraInfo(msg, openSSLfullVersionString), // other info
+                        getSolution(),
+                        getReference(),
+                        openSSLfullVersionString,
+                        119, // CWE 119: Failure to Constrain Operations within the Bounds of a
+                        // Memory Buffer
+                        20, // WASC-20: Improper Input Handling
+                        msg);
+                parent.raiseAlert(id, alert);
+                return;
             }
         }
     }
