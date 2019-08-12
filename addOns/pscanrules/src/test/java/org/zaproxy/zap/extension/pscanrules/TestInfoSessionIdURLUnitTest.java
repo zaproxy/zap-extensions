@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Ignore;
@@ -41,8 +41,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
-
-import net.htmlparser.jericho.Source;
 
 public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSessionIdURL> {
 
