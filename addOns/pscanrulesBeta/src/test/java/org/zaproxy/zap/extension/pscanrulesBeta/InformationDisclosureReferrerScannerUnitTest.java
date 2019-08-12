@@ -38,29 +38,28 @@ public class InformationDisclosureReferrerScannerUnitTest
 
     private static final String URI = "http://example.com/";
     private static final String BODY = "Some text in the response, doesn't matter.\nLine 2\n";
-    private HttpMessage msg;
 
     @Override
     protected InformationDisclosureReferrerScanner createScanner() {
         return new InformationDisclosureReferrerScanner();
     }
 
-    protected HttpMessage createHttpMessageWithRespBody(String responseBody, String testReferer)
+    protected HttpMessage createHttpMessageWithRespBody(String testReferer)
             throws HttpMalformedHeaderException, URIException {
 
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI(URI, false));
         requestHeader.setHeader("Referer", testReferer);
 
-        msg = new HttpMessage();
+        HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
-        msg.setResponseBody(responseBody);
+        msg.setResponseBody(BODY);
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
                         + "Content-Type: text/plain\r\n"
                         + "Content-Length: "
-                        + responseBody.length()
+                        + BODY.length()
                         + "\r\n");
         return msg;
     }
@@ -73,9 +72,9 @@ public class InformationDisclosureReferrerScannerUnitTest
                 Files.createDirectories(
                         Paths.get(
                                 Constant.getZapHome(),
-                                InformationDisclosureReferrerScanner.URLSensitiveInformationDir));
+                                InformationDisclosureReferrerScanner.URLSENSITIVEINFORMATIONDIR));
         Path testFile =
-                xmlDir.resolve(InformationDisclosureReferrerScanner.URLSensitiveInformationFile);
+                xmlDir.resolve(InformationDisclosureReferrerScanner.URLSENSITIVEINFORMATIONFILE);
         Files.write(testFile, Arrays.asList(" user", " Password ", "# notused", "session "));
     }
 
@@ -84,7 +83,7 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Given
         String testReferer = URI + "?password=whatsup&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY, testReferer);
+        HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -94,11 +93,12 @@ public class InformationDisclosureReferrerScannerUnitTest
     }
 
     @Test
-    public void sensitiveInfoInReferer() throws HttpMalformedHeaderException, URIException {
+    public void shouldRaiseAlertWhenSensitiveInfoInReferer()
+            throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testReferer = "http://foo.com/?passWord=whatsup&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY, testReferer);
+        HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -112,7 +112,7 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Given
         String testReferer = "http://foo.com/?words=whatsup&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY, testReferer);
+        HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -122,11 +122,12 @@ public class InformationDisclosureReferrerScannerUnitTest
     }
 
     @Test
-    public void creditCardInReferer() throws HttpMalformedHeaderException, URIException {
+    public void shouldRaiseAlertWhenCreditCardInReferrer()
+            throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testReferer = "http://foo.com/?docid=6011000990139424&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY, testReferer);
+        HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -140,7 +141,7 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Given
         String testReferer = "http://foo.com/?docid=applepie&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY, testReferer);
+        HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -150,11 +151,12 @@ public class InformationDisclosureReferrerScannerUnitTest
     }
 
     @Test
-    public void emailAddressInReferer() throws HttpMalformedHeaderException, URIException {
+    public void shouldRaiseAlertWhenEmailAddressInReferer()
+            throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testReferer = "http://foo.com/?docid=example@gmail.com&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY, testReferer);
+        HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -168,7 +170,7 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Given
         String testReferer = "http://foo.com/?docid=examplegmail.com&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY, testReferer);
+        HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -178,11 +180,12 @@ public class InformationDisclosureReferrerScannerUnitTest
     }
 
     @Test
-    public void SSNInReferer() throws HttpMalformedHeaderException, URIException {
+    public void shouldRaiseAlertWhenSSNInReferer()
+            throws HttpMalformedHeaderException, URIException {
 
         // Given
         String testReferer = "http://foo.com/?docid=000-00-0000&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY, testReferer);
+        HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -196,7 +199,7 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Given
         String testReferer = "http://foo.com/?docid=ssn-no-here&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY, testReferer);
+        HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
         rule.scanHttpRequestSend(msg, -1);

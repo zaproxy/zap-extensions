@@ -43,8 +43,8 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
     private static final int PLUGIN_ID = 10024;
 
     private PassiveScanThread parent = null;
-    public static final String URLSensitiveInformationDir = "xml";
-    public static final String URLSensitiveInformationFile =
+    public static final String URLSENSITIVEINFORMATIONDIR = "xml";
+    public static final String URLSENSITIVEINFORMATIONFILE =
             "URL-information-disclosure-messages.txt";
     private static final Logger logger = Logger.getLogger(InformationDisclosureInURL.class);
     private static List<String> messages = null;
@@ -143,9 +143,9 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
         if (InformationDisclosureInURL.messages == null) {
             InformationDisclosureInURL.messages =
                     loadFile(
-                            URLSensitiveInformationDir
+                            URLSENSITIVEINFORMATIONDIR
                                     + File.separator
-                                    + URLSensitiveInformationFile);
+                                    + URLSENSITIVEINFORMATIONFILE);
         }
         String ciParamName = paramName.toLowerCase();
         for (String msg : InformationDisclosureInURL.messages) {

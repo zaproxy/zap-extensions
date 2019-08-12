@@ -39,7 +39,6 @@ public class InformationDisclosureInURLUnitTest
 
     private static final String URI = "http://example.com/";
     private static final String BODY = "Some text in the response, doesn't matter.\nLine 2\n";
-    private HttpMessage msg;
 
     @Override
     protected InformationDisclosureInURL createScanner() {
@@ -54,26 +53,26 @@ public class InformationDisclosureInURLUnitTest
                 Files.createDirectories(
                         Paths.get(
                                 Constant.getZapHome(),
-                                InformationDisclosureInURL.URLSensitiveInformationDir));
-        Path testFile = xmlDir.resolve(InformationDisclosureInURL.URLSensitiveInformationFile);
+                                InformationDisclosureInURL.URLSENSITIVEINFORMATIONDIR));
+        Path testFile = xmlDir.resolve(InformationDisclosureInURL.URLSENSITIVEINFORMATIONFILE);
         Files.write(testFile, Arrays.asList(" user", "password", "# notused", "session "));
     }
 
-    protected HttpMessage createHttpMessageWithRespBody(String responseBody)
+    protected HttpMessage createHttpMessageWithRespBody(String testURI)
             throws HttpMalformedHeaderException, URIException {
 
         HttpRequestHeader requestHeader = new HttpRequestHeader();
-        requestHeader.setURI(new URI(URI, false));
+        requestHeader.setURI(new URI(testURI, false));
 
-        msg = new HttpMessage();
+        HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
-        msg.setResponseBody(responseBody);
+        msg.setResponseBody(BODY);
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
                         + "Content-Type: text/plain\r\n"
                         + "Content-Length: "
-                        + responseBody.length()
+                        + BODY.length()
                         + "\r\n");
         return msg;
     }
@@ -83,8 +82,7 @@ public class InformationDisclosureInURLUnitTest
 
         // Given
         String testURI = URI + "foo?bar=whodat&UserName=Jonathon&what=up";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
+        HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -98,8 +96,7 @@ public class InformationDisclosureInURLUnitTest
 
         // Given
         String testURI = URI + "?notused=45365";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
+        HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -114,8 +111,7 @@ public class InformationDisclosureInURLUnitTest
 
         // Given
         String testURI = URI + "?docid=6011000990139424&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
+        HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -135,8 +131,7 @@ public class InformationDisclosureInURLUnitTest
 
         // Given
         String testURI = URI + "?docid=6011-0009-9013-9424&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
+        HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -150,8 +145,7 @@ public class InformationDisclosureInURLUnitTest
 
         // Given
         String testURI = URI + "?docid=123456&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
+        HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -165,8 +159,7 @@ public class InformationDisclosureInURLUnitTest
 
         // Given
         String testURI = URI + "?mailto=me&docid=example@gmail.com&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
+        HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -180,8 +173,7 @@ public class InformationDisclosureInURLUnitTest
 
         // Given
         String testURI = URI + "?docid=exampleatgmail.com&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
+        HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -195,8 +187,7 @@ public class InformationDisclosureInURLUnitTest
 
         // Given
         String testURI = URI + "?docid=000-00-0000&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
+        HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
@@ -210,8 +201,7 @@ public class InformationDisclosureInURLUnitTest
 
         // Given
         String testURI = URI + "?docid=snn-no-test&hl=en";
-        HttpMessage msg = createHttpMessageWithRespBody(BODY);
-        msg.getRequestHeader().setURI(new URI(testURI, false));
+        HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
         rule.scanHttpRequestSend(msg, -1);
