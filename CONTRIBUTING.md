@@ -6,6 +6,12 @@ The relevant changes done to each add-on are tracked in its own `CHANGELOG.md` f
 pull request consider updating it with the change done. The changes should be added to the
 Unreleased section.
 
+## Help
+
+The help of each add-on should be updated accordingly to the changes done. The help files are under
+`addOns/<addOnId>/src/main/javahelp/`, only the main files (English, under `help` directory) need
+to be changed, translated files are maintained from Crowdin.
+
 ## Format/Style Java Code
 
 The Java code is formatted according to Google Java Style (AOSP variant). The build automatically checks
