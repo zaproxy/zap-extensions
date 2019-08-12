@@ -46,7 +46,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
 
     private static final String FAQ_LINK = "https://github.com/zaproxy/zaproxy/wiki/FAQtoplevel";
     private static final String GETTING_STARTED_LINK =
-            "https://github.com/zaproxy/zaproxy/releases/download/2.7.0/ZAPGettingStartedGuide-2.7.pdf";
+            "https://github.com/zaproxy/zaproxy/releases/download/v2.8.0/ZAPGettingStartedGuide-2.8.pdf";
     private static final String USER_GROUP_LINK = "https://groups.google.com/group/zaproxy-users";
     private static final String USER_GUIDE_LINK = "https://github.com/zaproxy/zap-core-help/wiki";
 
