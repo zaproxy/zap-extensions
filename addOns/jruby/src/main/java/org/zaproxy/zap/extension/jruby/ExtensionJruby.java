@@ -118,14 +118,16 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
     public void unload() {
         super.unload();
 
-        String engineName = getRubyScriptEngine().getFactory().getEngineName();
-        for (ScriptType type : this.getExtScript().getScriptTypes()) {
-            for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
-                if (script.getEngineName().equals(engineName)) {
-                    if (script instanceof JrubyScriptWrapper) {
-                        ScriptNode node =
-                                this.getExtScript().getTreeModel().getNodeForScript(script);
-                        node.setUserObject(((JrubyScriptWrapper) script).getOriginal());
+        if (rubyScriptEngine != null) {
+            String engineName = rubyScriptEngine.getFactory().getEngineName();
+            for (ScriptType type : this.getExtScript().getScriptTypes()) {
+                for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
+                    if (script.getEngineName().equals(engineName)) {
+                        if (script instanceof JrubyScriptWrapper) {
+                            ScriptNode node =
+                                    this.getExtScript().getTreeModel().getNodeForScript(script);
+                            node.setUserObject(((JrubyScriptWrapper) script).getOriginal());
+                        }
                     }
                 }
             }
