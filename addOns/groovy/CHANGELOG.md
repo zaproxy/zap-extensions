@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
 - Promote to beta status.
 - Change add-on name/description and update help.
 - Start using Semantic Versioning.
+
+### Fixed
+- Fix links in script templates.
 
 ## 2 - 2018-04-19
 
