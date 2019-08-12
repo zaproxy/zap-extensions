@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.httpclient.URI;
@@ -195,6 +196,34 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         String testURI = "http://tld.gtld/fred;JSESSIONID=asdfasdfasdf1234?foo=bar";
         HttpMessage msg = createHttpMessageWithRespBody(BODY);
         msg.getRequestHeader().setURI(new URI(testURI, false));
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
+
+        // Then
+        assertEquals(1, alertsRaised.size());
+    }
+
+    @Test
+    public void alertsWithoutJSessionidInOptions()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String testURI = "http://tld.gtld/fred;JSESSIONID=asdfasdfasdf1234?foo=bar";
+        HttpMessage msg = createHttpMessageWithRespBody(BODY);
+        msg.getRequestHeader().setURI(new URI(testURI, false));
+
+        // Set the session options to blank and verify it still reports the presence of
+        // the jsessionid in the URL path before the parameters.
+        OptionsParam options = Model.getSingleton().getOptionsParam();
+        HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
+        if (sessionOptions != null) {
+            sessionOptions.setDefaultTokens(Collections.emptyList());
+        } else {
+            sessionOptions = new HttpSessionsParam();
+            sessionOptions.setDefaultTokens(Collections.emptyList());
+            options.addParamSet(sessionOptions);
+        }
 
         // When
         rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
@@ -427,8 +456,8 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     private void setUpHttpSessionsParam() {
-        HttpSessionsParam sessionOptions = new HttpSessionsParam();
-        sessionOptions.load(new ZapXmlConfiguration());
-        Model.getSingleton().getOptionsParam().addParamSet(sessionOptions);
+        OptionsParam options = Model.getSingleton().getOptionsParam();
+        options.load(new ZapXmlConfiguration());
+        options.addParamSet(new HttpSessionsParam());
     }
 }
