@@ -23,6 +23,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
@@ -113,5 +116,23 @@ public abstract class WebSocketAddonTestUtils extends WebSocketTestUtils {
             message.payloadLength = ((String) payload).length() * 4;
         }
         return message;
+    }
+
+    public WebSocketMessageDTO getTextOutgoingMessage(
+            WebSocketChannelDTO channel, String payload, int id) {
+
+        return getWebSocketMessageDTO(channel, WebSocketMessage.OPCODE_TEXT, true, payload, id);
+    }
+
+    public WebSocketMessageDTO getTextOutgoingMessage(String payload) {
+        return getTextOutgoingMessage(getWebSocketChannelDTO(1, "hostname"), payload, 1);
+    }
+
+    protected static List<WebSocketMessageDTO> messages(WebSocketMessageDTO... messages) {
+
+        if (messages == null || messages.length == 0) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(messages);
     }
 }
