@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Update the help to mention the bundled JRuby version.
 - Fix link in a script template.
+- Fix exception while uninstalling the add-on with newer Java versions.
 
 ## 6 - 2017-11-27
 
