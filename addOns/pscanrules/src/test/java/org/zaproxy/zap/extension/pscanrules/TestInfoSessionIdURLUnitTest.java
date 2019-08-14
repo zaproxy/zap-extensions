@@ -51,8 +51,17 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     protected TestInfoSessionIdURL createScanner() {
 
         TestInfoSessionIdURL scanner = new TestInfoSessionIdURL();
-        //        scanner.setConfig(new ZapXmlConfiguration());
         setUpHttpSessionsParam();
+
+        OptionsParam options = Model.getSingleton().getOptionsParam();
+        HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
+
+        List<String> sessionIds = new ArrayList<String>();
+        if (sessionOptions != null) {
+            sessionIds = sessionOptions.getDefaultTokensEnabled();
+        }
+
+        assertThat(sessionIds, is(not(empty())));
         return scanner;
     }
 
@@ -73,23 +82,6 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
                         + responseBody.length()
                         + "\r\n");
         return msg;
-    }
-
-    @Test
-    public void shouldHaveSessionIdsInConfig() throws Exception {
-
-        // Given
-        OptionsParam options = Model.getSingleton().getOptionsParam();
-        HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
-
-        // When
-        List<String> sessionIds = new ArrayList<String>();
-        if (sessionOptions != null) {
-            sessionIds = sessionOptions.getDefaultTokensEnabled();
-        }
-
-        // Then
-        assertThat(sessionIds, is(not(empty())));
     }
 
     @Test
@@ -187,7 +179,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    public void containsSessionIdInUrlPathBeforeParams()
+    public void containsJsessionIdInUrlPathBeforeParams()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -258,7 +250,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         String testURI = "http://tld.gtld/fred?foo=bar";
         String body =
                 "<html>\n<body>\n<h2>HTML Links</h2>\n"
-                        + "<p><a href=\"https://www.w3schools.com/html/?jsessionid=1A530637289A03B07199A44E8D531427\">Testing ZAP</a>"
+                        + "<p><a href=\"https://www.example.org/html/?jsessionid=1A530637289A03B07199A44E8D531427\">Testing ZAP</a>"
                         + "</p>\n"
                         + "</body>\n</html>";
         HttpMessage msg = createHttpMessageWithRespBody(body);
@@ -284,7 +276,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         String testURI = "http://tld.gtld/fred?foo=bar";
         String body =
                 "<html>\n<body>\n<h2>HTML Links</h2>\n"
-                        + "<p><a href=\"https://www.w3schools.com/html/;CFID=asdfasdfasdf1234?foo=bar\">Testing ZAP</a>"
+                        + "<p><a href=\"https://www.example.org/html/;CFID=asdfasdfasdf1234?foo=bar\">Testing ZAP</a>"
                         + "</p>\n"
                         + "</body>\n</html>";
         HttpMessage msg = createHttpMessageWithRespBody(body);
@@ -304,7 +296,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
         String body =
                 "<html>\n<body>\n<h2>HTML Links</h2>\n"
-                        + "<p><a href=\"https://www.w3schools.com/html/\">Testing ZAP</a>"
+                        + "<p><a href=\"https://www.example.org/html/\">Testing ZAP</a>"
                         + "</p>\n"
                         + "</body>\n</html>";
         HttpMessage msg = createHttpMessageWithRespBody(body);
@@ -326,7 +318,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         String testURI = "https://example.com:8888/foo?jsessionid=1A530637289A03B07199A44E8D531427";
         String body =
                 "<html>\n<body>\n<h2>HTML Links</h2>\n"
-                        + "<p><a href=\"https://www.w3schools.com/html/\">Testing ZAP</a>"
+                        + "<p><a href=\"https://www.example.org/html/\">Testing ZAP</a>"
                         + "</p>\n"
                         + "</body>\n</html>";
         HttpMessage msg = createHttpMessageWithRespBody(body);
@@ -348,7 +340,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         String testURI = "https://example.com/foo?jsessionid=1A530637289A03B07199A44E8D531427";
         String body =
                 "<html>\n<body>\n<h2>HTML Links</h2>\n"
-                        + "<p><a href=https://www.w3schools.com/html/hello>Testing ZAP</a>"
+                        + "<p><a href=https://www.example.org/html/hello>Testing ZAP</a>"
                         + "</p>\n"
                         + "</body>\n</html>";
         HttpMessage msg = createHttpMessageWithRespBody(body);
@@ -369,7 +361,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         String body =
                 "<html>\n<body>\n<h2>HTML Links</h2>\n"
                         + "<p><a href=\"default.jsp\">\n"
-                        + " <img src=\"https://www.w3schools.com/images/smiley.gif\" alt=\"HTML tutorial\" "
+                        + " <img src=\"https://www.example.org/images/smiley.gif\" alt=\"HTML tutorial\" "
                         + "style=\"width:42px;height:42px;border:0;\">\n</a>"
                         + "</p>\n"
                         + "</body>\n</html>";
