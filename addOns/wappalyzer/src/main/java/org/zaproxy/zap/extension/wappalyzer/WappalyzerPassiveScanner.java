@@ -120,6 +120,9 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     private void checkAppMatches(HttpMessage msg, Source source) {
         checkUrlMatches(msg);
         checkHeadersMatches(msg);
+        if (!msg.getResponseHeader().isText()) {
+            return; // Don't check body if not text'ish
+        }
         checkBodyMatches(msg);
         checkMetaElementsMatches(source);
         checkScriptMatches(msg);

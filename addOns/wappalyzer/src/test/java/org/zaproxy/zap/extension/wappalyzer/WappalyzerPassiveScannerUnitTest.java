@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
@@ -34,6 +35,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
 public class WappalyzerPassiveScannerUnitTest
@@ -83,6 +85,7 @@ public class WappalyzerPassiveScannerUnitTest
     @Test
     public void testModernizr() throws HttpMalformedHeaderException {
         HttpMessage msg = makeHttpMessage();
+
         msg.setResponseBody(
                 "<html>"
                         + "<script type='text/javascript' src='libs/modernizr.min.js?ver=4.1.1'>"
@@ -92,6 +95,36 @@ public class WappalyzerPassiveScannerUnitTest
 
         assertFoundAppCount("www.example.com:443", 1);
         assertFoundApp("www.example.com:443", "Modernizr");
+    }
+
+    @Test
+    public void shouldNotMatchOnNontextResponse() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "image/x-icon");
+        // Purposefully set the body to something that should match but be ignored
+        msg.setResponseBody("<html><script src=\"/bitrix/js\"></script></html>");
+        // When
+        scan(msg);
+        // Then
+        assertNull(getDefaultHolder().getAppsForSite("www.example.com:443"));
+    }
+
+    @Test
+    public void shouldMatchOnNontextResponseWhenHeaderMatches()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "image/x-icon");
+        msg.getResponseHeader().setHeader("X-Powered-CMS", "Bitrix Site Manager");
+        // Purposefully set the body to something that should match but be ignored
+        msg.setResponseBody("<html><script src=\"/bitrix/js\"></script></html>");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("www.example.com:443", 2);
+        assertFoundApp("www.example.com:443", "1C-Bitrix"); // Matched
+        assertFoundApp("www.example.com:443", "PHP"); // Implied
     }
 
     private void scan(HttpMessage msg) {
@@ -110,6 +143,7 @@ public class WappalyzerPassiveScannerUnitTest
 
         httpMessage.setRequestHeader("GET https://www.example.com/ HTTP/1.1");
         httpMessage.setResponseHeader("HTTP/1.1 200 OK");
+        httpMessage.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
         return httpMessage;
     }
 
