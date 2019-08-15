@@ -182,10 +182,11 @@ public class UserControlledOpenRedirectScannerUnitTest
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
     }
-    
+
     @Test
-    public void shouldNotRaiseAlertIfLocationHeaderIsBasedOnGetParamButValueIsSameAsOriginDuringPost()
-            throws Exception {
+    public void
+            shouldNotRaiseAlertIfLocationHeaderIsBasedOnGetParamButValueIsSameAsOriginDuringPost()
+                    throws Exception {
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://evil.com/i.php?place=evil.com", false));
@@ -200,9 +201,10 @@ public class UserControlledOpenRedirectScannerUnitTest
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
-    
+
     @Test
-    public void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParamButSameAsOrigin() {
+    public void
+            shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParamButSameAsOrigin() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
