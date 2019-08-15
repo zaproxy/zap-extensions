@@ -182,4 +182,37 @@ public class UserControlledOpenRedirectScannerUnitTest
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
     }
+    
+    @Test
+    public void shouldNotRaiseAlertIfLocationHeaderIsBasedOnGetParamButValueIsSameAsOriginDuringPost()
+            throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://evil.com/i.php?place=evil.com", false));
+        msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
+        TreeSet<HtmlParameter> formParams = new TreeSet<HtmlParameter>();
+        formParams.add(new HtmlParameter(HtmlParameter.Type.form, "name", "jane"));
+        msg.setFormParams(formParams);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.FOUND);
+        msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+    
+    @Test
+    public void shouldNotRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParamButSameAsOrigin() {
+        // Given
+        HttpMessage msg = createMessage();
+        TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
+        params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "http://example.com"));
+        msg.setGetParams(params);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
+        msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://example.com");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 }

@@ -24,6 +24,9 @@ import java.net.URL;
 import java.util.Set;
 import java.util.TreeSet;
 import net.htmlparser.jericho.Source;
+
+import org.apache.commons.httpclient.URIException;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -41,6 +44,8 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 
     private PassiveScanThread parent = null;
 
+    private static final Logger logger = Logger.getLogger(UserControlledOpenRedirectScanner.class);
+    
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledopenredirect.";
 
@@ -79,6 +84,13 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
             return;
         }
 
+        String requestDomain = null;
+		try {
+			requestDomain = msg.getRequestHeader().getURI().getAuthority();
+		} catch (URIException ex) {
+			logger.error("unable to get URI from Request. Ignoring and moving ahead with the scanning OpenRedirect", ex);
+		}
+		
         String protocol = null;
         String domain = null;
         String token = null;
@@ -119,7 +131,11 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
                     || paramValue.equalsIgnoreCase(token)
                     || (responseLocation.indexOf("://") > 0
                             && paramValue.indexOf(responseLocation) >= 0)) {
-                raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
+            	// requestDomain is null if some exception occurred. if requestDomain is equal to location header then it is not considered as an issue.
+            	// https://github.com/zaproxy/zaproxy/issues/5289
+            	if(token != null || requestDomain == null || !requestDomain.equalsIgnoreCase(domain)) {
+            		raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
+            	}
             }
         }
     }
