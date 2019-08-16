@@ -43,7 +43,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 
     private PassiveScanThread parent = null;
 
-    private static final Logger logger = Logger.getLogger(UserControlledOpenRedirectScanner.class);
+    private static final Logger LOGGER = Logger.getLogger(UserControlledOpenRedirectScanner.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledopenredirect.";
@@ -87,14 +87,12 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
         try {
             requestDomain = msg.getRequestHeader().getURI().getAuthority();
         } catch (URIException ex) {
-            logger.error(
-                    "unable to get URI from Request. Ignoring and moving ahead with the scanning OpenRedirect",
+            LOGGER.error(
+                    "Unable to get URI from Request. Ignoring and moving ahead with the scanning OpenRedirect",
                     ex);
         }
 
-        String protocol = null;
         String domain = null;
-        String token = null;
 
         // if contains protocol/domain name separator
         if (responseLocation.indexOf("://") > 0) {
@@ -104,20 +102,9 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
             } catch (MalformedURLException e) {
                 return;
             }
-            // get protocol
-            protocol = responseURL.getProtocol();
 
             // get domain name
             domain = responseURL.getAuthority();
-        }
-        // is local path
-        else {
-            // get up to first slash
-            if (responseLocation.indexOf("/") > 0) {
-                token = responseLocation.substring(0, responseLocation.indexOf("/"));
-            } else {
-                token = responseLocation;
-            }
         }
 
         for (HtmlParameter param : params) {
@@ -127,17 +114,10 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
                 continue;
             }
 
-            if (paramValue.equalsIgnoreCase(protocol)
-                    || paramValue.equalsIgnoreCase(domain)
-                    || paramValue.equalsIgnoreCase(token)
+            if (paramValue.equalsIgnoreCase(domain)
                     || (responseLocation.indexOf("://") > 0
                             && paramValue.indexOf(responseLocation) >= 0)) {
-                // requestDomain is null if some exception occurred. if requestDomain is equal to
-                // location header then it is not considered as an issue.
-                // https://github.com/zaproxy/zaproxy/issues/5289
-                if (token != null
-                        || requestDomain == null
-                        || !requestDomain.equalsIgnoreCase(domain)) {
+                if (requestDomain == null || !requestDomain.equalsIgnoreCase(domain)) {
                     raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
                 }
             }

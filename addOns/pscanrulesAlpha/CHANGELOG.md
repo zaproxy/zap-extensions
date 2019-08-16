@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Add Java Serialized Object (JSO) Scanner.
 
+## [26] - 2019-08-15
+
+- Fixed false positive when redirect destination is the same domain (Issue 5289).
+
 ## [25] - 2019-07-11
 
 - Added Modern App Detection Scanner
