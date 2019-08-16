@@ -220,7 +220,7 @@ public class UserControlledOpenRedirectScannerUnitTest
 
     @Test
     public void
-            shouldNotRaiseAlertIfresponseIsRedirectAndParamIsOnlyMatchingProtocolOfLocationHeader() {
+            shouldNotRaiseAlertIfResponseIsRedirectAndParamIsOnlyMatchingProtocolOfLocationHeader() {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<HtmlParameter>();
