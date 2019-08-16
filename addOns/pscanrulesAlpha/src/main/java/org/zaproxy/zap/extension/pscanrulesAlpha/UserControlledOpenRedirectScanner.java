@@ -24,6 +24,8 @@ import java.net.URL;
 import java.util.Set;
 import java.util.TreeSet;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.URIException;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -40,6 +42,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 
     private PassiveScanThread parent = null;
+
+    private static final Logger LOGGER = Logger.getLogger(UserControlledOpenRedirectScanner.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledopenredirect.";
@@ -79,9 +83,18 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
             return;
         }
 
-        String protocol = null;
+        String requestDomain = null;
+        try {
+            requestDomain = msg.getRequestHeader().getURI().getAuthority();
+        } catch (URIException ex) {
+            LOGGER.warn(
+                    "Unable to get authority from URI :"
+                            + msg.getRequestHeader().getURI()
+                            + ". Ignoring and moving ahead with the scanning OpenRedirect",
+                    ex);
+        }
+
         String domain = null;
-        String token = null;
 
         // if contains protocol/domain name separator
         if (responseLocation.indexOf("://") > 0) {
@@ -91,20 +104,13 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
             } catch (MalformedURLException e) {
                 return;
             }
-            // get protocol
-            protocol = responseURL.getProtocol();
 
             // get domain name
             domain = responseURL.getAuthority();
         }
-        // is local path
-        else {
-            // get up to first slash
-            if (responseLocation.indexOf("/") > 0) {
-                token = responseLocation.substring(0, responseLocation.indexOf("/"));
-            } else {
-                token = responseLocation;
-            }
+
+        if (requestDomain != null && requestDomain.equalsIgnoreCase(domain)) {
+            return;
         }
 
         for (HtmlParameter param : params) {
@@ -114,9 +120,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
                 continue;
             }
 
-            if (paramValue.equalsIgnoreCase(protocol)
-                    || paramValue.equalsIgnoreCase(domain)
-                    || paramValue.equalsIgnoreCase(token)
+            if (paramValue.equalsIgnoreCase(domain)
                     || (responseLocation.indexOf("://") > 0
                             && paramValue.indexOf(responseLocation) >= 0)) {
                 raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
