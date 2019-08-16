@@ -87,8 +87,10 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
         try {
             requestDomain = msg.getRequestHeader().getURI().getAuthority();
         } catch (URIException ex) {
-            LOGGER.error(
-                    "Unable to get URI from Request. Ignoring and moving ahead with the scanning OpenRedirect",
+            LOGGER.warn(
+                    "Unable to get authority from URI :"
+                            + msg.getRequestHeader().getURI()
+                            + ". Ignoring and moving ahead with the scanning OpenRedirect",
                     ex);
         }
 
@@ -107,6 +109,10 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
             domain = responseURL.getAuthority();
         }
 
+        if (requestDomain != null && requestDomain.equalsIgnoreCase(domain)) {
+            return;
+        }
+
         for (HtmlParameter param : params) {
             String paramValue = param.getValue();
 
@@ -117,9 +123,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
             if (paramValue.equalsIgnoreCase(domain)
                     || (responseLocation.indexOf("://") > 0
                             && paramValue.indexOf(responseLocation) >= 0)) {
-                if (requestDomain == null || !requestDomain.equalsIgnoreCase(domain)) {
-                    raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
-                }
+                raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
             }
         }
     }
