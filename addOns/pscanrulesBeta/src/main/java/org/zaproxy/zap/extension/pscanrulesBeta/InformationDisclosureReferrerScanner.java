@@ -45,8 +45,8 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
     private static final int PLUGIN_ID = 10025;
 
     private PassiveScanThread parent = null;
-    public static final String URLSENSITIVEINFORMATIONDIR = "xml";
-    public static final String URLSENSITIVEINFORMATIONFILE =
+    public static final String URL_SENSITIVE_INFORMATION_DIR = "xml";
+    public static final String URL_SENSITIVE_INFORMATION_FILE =
             "URL-information-disclosure-messages.txt";
     private static final Logger logger =
             Logger.getLogger(InformationDisclosureReferrerScanner.class);
@@ -162,9 +162,9 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
         if (this.messages == null) {
             this.messages =
                     loadFile(
-                            URLSENSITIVEINFORMATIONDIR
+                            URL_SENSITIVE_INFORMATION_DIR
                                     + File.separator
-                                    + URLSENSITIVEINFORMATIONFILE);
+                                    + URL_SENSITIVE_INFORMATION_FILE);
         }
         String lcUrl = url.toLowerCase();
         for (String msg : this.messages) {

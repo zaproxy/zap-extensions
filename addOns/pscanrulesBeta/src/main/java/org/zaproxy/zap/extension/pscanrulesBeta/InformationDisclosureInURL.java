@@ -39,12 +39,12 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureInURL extends PluginPassiveScanner {
 
-    private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosureinurl.";
+    public static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosureinurl.";
     private static final int PLUGIN_ID = 10024;
 
     private PassiveScanThread parent = null;
-    public static final String URLSENSITIVEINFORMATIONDIR = "xml";
-    public static final String URLSENSITIVEINFORMATIONFILE =
+    public static final String URL_SENSITIVE_INFORMATION_DIR = "xml";
+    public static final String URL_SENSITIVE_INFORMATION_FILE =
             "URL-information-disclosure-messages.txt";
     private static final Logger logger = Logger.getLogger(InformationDisclosureInURL.class);
     private static List<String> messages = null;
@@ -143,9 +143,9 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
         if (InformationDisclosureInURL.messages == null) {
             InformationDisclosureInURL.messages =
                     loadFile(
-                            URLSENSITIVEINFORMATIONDIR
+                            URL_SENSITIVE_INFORMATION_DIR
                                     + File.separator
-                                    + URLSENSITIVEINFORMATIONFILE);
+                                    + URL_SENSITIVE_INFORMATION_FILE);
         }
         String ciParamName = paramName.toLowerCase();
         for (String msg : InformationDisclosureInURL.messages) {
