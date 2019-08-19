@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [13] - 2019-08-19
 
 - Performance improvements.
 
@@ -65,4 +65,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[13]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v12
