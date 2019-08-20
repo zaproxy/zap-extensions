@@ -140,7 +140,10 @@ public class InformationDisclosureReferrerScannerUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String testReferer = "http://%Jexample.org/?passWord=whatsup&hl=en";
+        String sensitiveParamName = "passWord";
+        String sensitiveValue = "whatsup";
+        String testReferer =
+                "http://%Jexample.org/?" + sensitiveParamName + "=" + sensitiveValue + "&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
@@ -148,6 +151,12 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
+        assertEquals(sensitiveParamName, alertsRaised.get(0).getEvidence());
+        assertEquals(
+                Constant.messages.getString(
+                        InformationDisclosureReferrerScanner.MESSAGE_PREFIX
+                                + "otherinfo.sensitiveinfo"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -155,7 +164,10 @@ public class InformationDisclosureReferrerScannerUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String testReferer = "http:example/bar?passWord=whatsup&hl=en";
+        String sensitiveParamName = "passWord";
+        String sensitiveValue = "whatsup";
+        String testReferer =
+                "http:example/bar?" + sensitiveParamName + "=" + sensitiveValue + "&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
@@ -163,6 +175,12 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
+        assertEquals(sensitiveParamName, alertsRaised.get(0).getEvidence());
+        assertEquals(
+                Constant.messages.getString(
+                        InformationDisclosureReferrerScanner.MESSAGE_PREFIX
+                                + "otherinfo.sensitiveinfo"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
