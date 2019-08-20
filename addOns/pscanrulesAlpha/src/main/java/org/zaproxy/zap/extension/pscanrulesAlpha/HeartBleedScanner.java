@@ -41,10 +41,10 @@ public class HeartBleedScanner extends PluginPassiveScanner {
     /**
      * a pattern to identify the version reported in the header. This works for Apache2 (subject to
      * the reported version containing back-ported security fixes). There is no equivalent way to
-     * check nginx, so don't even try. The only way to be absolutely sure is to exploit it :)
+     * check Nginx, so don't even try. The only way to be absolutely sure is to exploit it :)
      */
-    static Pattern openSSLversionPattern =
-            Pattern.compile("Server:.*?(OpenSSL/([0-9.]+[a-z-]+))", Pattern.CASE_INSENSITIVE);
+    private static Pattern openSSLversionPattern =
+            Pattern.compile("Server:.*?(OpenSSL/([0-9.]+[a-z-0-9]+))", Pattern.CASE_INSENSITIVE);
 
     /**
      * vulnerable versions, courtesy of
@@ -99,49 +99,42 @@ public class HeartBleedScanner extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         // get the body contents as a String, so we can match against it
-        String responseheaders = msg.getResponseHeader().getHeadersAsString();
+        String responseHeaders = msg.getResponseHeader().getHeadersAsString();
 
-        String versionNumber = null;
-        String openSSLfullVersionString = null;
-        Matcher matcher = openSSLversionPattern.matcher(responseheaders);
-        if (matcher.find()) {
-            openSSLfullVersionString = matcher.group(1); // get the OpenSSL/1.0.1e string
-            versionNumber =
-                    matcher.group(
-                            2); // get the sub-match, since this contains the version details..
-        }
+        Matcher matcher = openSSLversionPattern.matcher(responseHeaders);
+        while (matcher.find()) {
+            String fullVersionString = matcher.group(1); // get the full string e.g. OpenSSL/1.0.1e
+            String versionNumber = matcher.group(2); // get the version e.g. 1.0.1e
 
-        if (versionNumber != null && versionNumber.length() > 0) {
             // if the version matches any of the known vulnerable versions, raise an alert.
-            for (int i = 0; i < openSSLvulnerableVersions.length; i++) {
-                if (versionNumber.equalsIgnoreCase(openSSLvulnerableVersions[i])) {
-                    // Suspicious, but not a warning, because the reported version could have a
-                    // security back-port.
-                    Alert alert =
-                            new Alert(
-                                    getPluginId(),
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_LOW,
-                                    getName());
-
-                    alert.setDetail(
-                            getDescription(),
-                            msg.getRequestHeader().getURI().toString(),
-                            "", // param
-                            "", // attack
-                            getExtraInfo(msg, openSSLfullVersionString), // other info
-                            getSolution(),
-                            getReference(),
-                            openSSLfullVersionString,
-                            119, // CWE 119: Failure to Constrain Operations within the Bounds of a
-                            // Memory Buffer
-                            20, // WASC-20: Improper Input Handling
-                            msg);
-                    parent.raiseAlert(id, alert);
+            for (String openSSLvulnerableVersion : openSSLvulnerableVersions) {
+                if (versionNumber.equalsIgnoreCase(openSSLvulnerableVersion)) {
+                    raiseAlert(msg, id, fullVersionString);
                     return;
                 }
             }
         }
+    }
+
+    private void raiseAlert(HttpMessage msg, int id, String fullVersionString) {
+        // Suspicious, but not a warning, because the reported version could have a
+        // security back-port.
+        Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, getName());
+
+        alert.setDetail(
+                getDescription(),
+                msg.getRequestHeader().getURI().toString(),
+                "", // param
+                "", // attack
+                getExtraInfo(fullVersionString), // other info
+                getSolution(),
+                getReference(),
+                fullVersionString,
+                119, // CWE 119: Failure to Constrain Operations within the Bounds of a
+                // Memory Buffer
+                20, // WASC-20: Improper Input Handling
+                msg);
+        parent.raiseAlert(id, alert);
     }
 
     /**
@@ -194,11 +187,10 @@ public class HeartBleedScanner extends PluginPassiveScanner {
     /**
      * gets extra information associated with the alert
      *
-     * @param msg
-     * @param arg0
+     * @param opensslVersion
      * @return
      */
-    private String getExtraInfo(HttpMessage msg, String arg0) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", arg0);
+    private String getExtraInfo(String opensslVersion) {
+        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", opensslVersion);
     }
 }
