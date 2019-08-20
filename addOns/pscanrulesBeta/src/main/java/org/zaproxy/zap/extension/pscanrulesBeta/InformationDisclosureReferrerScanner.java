@@ -41,7 +41,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
-    private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosurereferrerscanner.";
+    protected static final String MESSAGE_PREFIX =
+            "pscanbeta.informationdisclosurereferrerscanner.";
     private static final int PLUGIN_ID = 10025;
 
     private PassiveScanThread parent = null;

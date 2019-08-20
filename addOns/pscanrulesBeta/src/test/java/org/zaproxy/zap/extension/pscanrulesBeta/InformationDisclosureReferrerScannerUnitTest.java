@@ -170,6 +170,8 @@ public class InformationDisclosureReferrerScannerUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
+        String sensitiveParamName = "passWord";
+        String sensitiveValue = "whatsup";
         String testReferer = "http://example.org/?passWord=whatsup&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
@@ -178,6 +180,12 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
+        assertEquals(sensitiveParamName, alertsRaised.get(0).getEvidence());
+        assertEquals(
+                Constant.messages.getString(
+                        InformationDisclosureReferrerScanner.MESSAGE_PREFIX
+                                + "otherinfo.sensitiveinfo"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -200,7 +208,10 @@ public class InformationDisclosureReferrerScannerUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String testReferer = "http://example.org/?docid=6011000990139424&hl=en";
+        String sensitiveParamName = "docid";
+        String sensitiveValue = "6011000990139424";
+        String testReferer =
+                "http://example.org/?" + sensitiveParamName + "=" + sensitiveValue + "&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
@@ -208,6 +219,11 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
+        assertEquals(sensitiveValue, alertsRaised.get(0).getEvidence());
+        assertEquals(
+                Constant.messages.getString(
+                        InformationDisclosureReferrerScanner.MESSAGE_PREFIX + "otherinfo.cc"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -230,7 +246,10 @@ public class InformationDisclosureReferrerScannerUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String testReferer = "http://example.org/?docid=example@gmail.com&hl=en";
+        String sensitiveParamName = "docid";
+        String sensitiveValue = "example@gmail.com";
+        String testReferer =
+                "http://example.org/?" + sensitiveParamName + "=" + sensitiveValue + "&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
@@ -238,6 +257,11 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
+        assertEquals(sensitiveValue, alertsRaised.get(0).getEvidence());
+        assertEquals(
+                Constant.messages.getString(
+                        InformationDisclosureReferrerScanner.MESSAGE_PREFIX + "otherinfo.email"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -260,7 +284,10 @@ public class InformationDisclosureReferrerScannerUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String testReferer = "http://example.org/?docid=000-00-0000&hl=en";
+        String sensitiveParamName = "docid";
+        String sensitiveValue = "000-00-0000";
+        String testReferer =
+                "http://example.org/?" + sensitiveParamName + "=" + sensitiveValue + "&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
@@ -268,6 +295,11 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
+        assertEquals(sensitiveValue, alertsRaised.get(0).getEvidence());
+        assertEquals(
+                Constant.messages.getString(
+                        InformationDisclosureReferrerScanner.MESSAGE_PREFIX + "otherinfo.ssn"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test

@@ -81,10 +81,10 @@ public class InformationDisclosureInURLUnitTest
     public void sensitiveInfoInURLParamName() throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String SENSITIVE_PARAM_NAME = "UserName";
-        String SENSITIVE_VALUE = "Jonathon";
+        String sensitiveParamName = "UserName";
+        String sensitiveValue = "Jonathon";
         String testURI =
-                URI + "foo?bar=whodat&" + SENSITIVE_PARAM_NAME + "=" + SENSITIVE_VALUE + "&what=up";
+                URI + "foo?bar=whodat&" + sensitiveParamName + "=" + sensitiveValue + "&what=up";
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
@@ -92,12 +92,12 @@ public class InformationDisclosureInURLUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(alertsRaised.get(0).getParam(), SENSITIVE_PARAM_NAME);
-        assertEquals(alertsRaised.get(0).getEvidence(), SENSITIVE_VALUE);
+        assertEquals(sensitiveParamName, alertsRaised.get(0).getParam());
+        assertEquals(sensitiveValue, alertsRaised.get(0).getEvidence());
         assertEquals(
-                alertsRaised.get(0).getOtherInfo(),
                 Constant.messages.getString(
-                        InformationDisclosureInURL.MESSAGE_PREFIX + "otherinfo.sensitiveinfo"));
+                        InformationDisclosureInURL.MESSAGE_PREFIX + "otherinfo.sensitiveinfo"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -119,9 +119,9 @@ public class InformationDisclosureInURLUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String SENSITIVE_PARAM_NAME = "docid";
-        String SENSITIVE_VALUE = "6011000990139424";
-        String testURI = URI + "?docid=6011000990139424&hl=en";
+        String sensitiveParamName = "docid";
+        String sensitiveValue = "6011000990139424";
+        String testURI = URI + "?" + sensitiveParamName + "=" + sensitiveValue + "&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
@@ -129,12 +129,12 @@ public class InformationDisclosureInURLUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(alertsRaised.get(0).getParam(), SENSITIVE_PARAM_NAME);
-        assertEquals(alertsRaised.get(0).getEvidence(), SENSITIVE_VALUE);
+        assertEquals(sensitiveParamName, alertsRaised.get(0).getParam());
+        assertEquals(sensitiveValue, alertsRaised.get(0).getEvidence());
         assertEquals(
-                alertsRaised.get(0).getOtherInfo(),
                 Constant.messages.getString(
-                        InformationDisclosureInURL.MESSAGE_PREFIX + "otherinfo.cc"));
+                        InformationDisclosureInURL.MESSAGE_PREFIX + "otherinfo.cc"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -175,9 +175,9 @@ public class InformationDisclosureInURLUnitTest
     public void emailAddressInURLParamValue() throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String SENSITIVE_PARAM_NAME = "docid";
-        String SENSITIVE_VALUE = "example@gmail.com";
-        String testURI = URI + "?mailto=me&docid=example@gmail.com&hl=en";
+        String sensitiveParamName = "docid";
+        String sensitiveValue = "example@gmail.com";
+        String testURI = URI + "?mailto=me&" + sensitiveParamName + "=" + sensitiveValue + "&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
@@ -185,12 +185,12 @@ public class InformationDisclosureInURLUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(alertsRaised.get(0).getParam(), SENSITIVE_PARAM_NAME);
-        assertEquals(alertsRaised.get(0).getEvidence(), SENSITIVE_VALUE);
+        assertEquals(sensitiveParamName, alertsRaised.get(0).getParam());
+        assertEquals(sensitiveValue, alertsRaised.get(0).getEvidence());
         assertEquals(
-                alertsRaised.get(0).getOtherInfo(),
                 Constant.messages.getString(
-                        InformationDisclosureInURL.MESSAGE_PREFIX + "otherinfo.email"));
+                        InformationDisclosureInURL.MESSAGE_PREFIX + "otherinfo.email"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -211,9 +211,9 @@ public class InformationDisclosureInURLUnitTest
     public void SsnDashesInURLParamValue() throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String SENSITIVE_PARAM_NAME = "docid";
-        String SENSITIVE_VALUE = "000-00-0000";
-        String testURI = URI + "?docid=000-00-0000&hl=en";
+        String sensitiveParamName = "docid";
+        String sensitiveValue = "000-00-0000";
+        String testURI = URI + "?" + sensitiveParamName + "=" + sensitiveValue + "&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
@@ -221,12 +221,12 @@ public class InformationDisclosureInURLUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(alertsRaised.get(0).getParam(), SENSITIVE_PARAM_NAME);
-        assertEquals(alertsRaised.get(0).getEvidence(), SENSITIVE_VALUE);
+        assertEquals(sensitiveParamName, alertsRaised.get(0).getParam());
+        assertEquals(sensitiveValue, alertsRaised.get(0).getEvidence());
         assertEquals(
-                alertsRaised.get(0).getOtherInfo(),
                 Constant.messages.getString(
-                        InformationDisclosureInURL.MESSAGE_PREFIX + "otherinfo.ssn"));
+                        InformationDisclosureInURL.MESSAGE_PREFIX + "otherinfo.ssn"),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
