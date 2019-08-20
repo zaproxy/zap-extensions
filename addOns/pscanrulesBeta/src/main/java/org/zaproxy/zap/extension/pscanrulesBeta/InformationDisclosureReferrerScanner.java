@@ -41,15 +41,23 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
-    private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosurereferrerscanner.";
+    protected static final String MESSAGE_PREFIX =
+            "pscanbeta.informationdisclosurereferrerscanner.";
     private static final int PLUGIN_ID = 10025;
 
     private PassiveScanThread parent = null;
-    private static final String URLSensitiveInformationFile =
-            "xml/URL-information-disclosure-messages.txt";
+    public static final String URL_SENSITIVE_INFORMATION_DIR = "xml";
+    public static final String URL_SENSITIVE_INFORMATION_FILE =
+            "URL-information-disclosure-messages.txt";
     private static final Logger logger =
             Logger.getLogger(InformationDisclosureReferrerScanner.class);
     private List<String> messages = null;
+    static Pattern emailAddressPattern =
+            Pattern.compile("\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\b");
+    static Pattern creditCardPattern =
+            Pattern.compile(
+                    "\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})\\b");
+    static Pattern usSSNPattern = Pattern.compile("\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b");
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -131,15 +139,14 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
     private List<String> loadFile(String file) {
         List<String> strings = new ArrayList<String>();
-        BufferedReader reader = null;
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
             logger.error("No such file: " + f.getAbsolutePath());
             return strings;
         }
-        try {
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             String line;
-            reader = new BufferedReader(new FileReader(f));
             while ((line = reader.readLine()) != null) {
                 if (!line.startsWith("#")) {
                     strings.add(line.trim().toLowerCase());
@@ -147,21 +154,18 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
             }
         } catch (IOException e) {
             logger.debug("Error on opening/reading debug error file. Error: " + e.getMessage(), e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    logger.debug("Error on closing the file reader. Error: " + e.getMessage(), e);
-                }
-            }
         }
+
         return strings;
     }
 
     private String doesURLContainsSensitiveInformation(String url) {
         if (this.messages == null) {
-            this.messages = loadFile(URLSensitiveInformationFile);
+            this.messages =
+                    loadFile(
+                            URL_SENSITIVE_INFORMATION_DIR
+                                    + File.separator
+                                    + URL_SENSITIVE_INFORMATION_FILE);
         }
         String lcUrl = url.toLowerCase();
         for (String msg : this.messages) {
@@ -201,8 +205,6 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
     }
 
     private String doesContainEmailAddress(String emailAddress) {
-        Pattern emailAddressPattern =
-                Pattern.compile("\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\b");
         Matcher matcher = emailAddressPattern.matcher(emailAddress);
         if (matcher.find()) {
             return matcher.group();
@@ -211,9 +213,6 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
     }
 
     private String doesContainCreditCard(String creditCard) {
-        Pattern creditCardPattern =
-                Pattern.compile(
-                        "\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})\\b");
         Matcher matcher = creditCardPattern.matcher(creditCard);
         if (matcher.find()) {
             return matcher.group();
@@ -222,7 +221,6 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
     }
 
     private String doesContainUsSSN(String usSSN) {
-        Pattern usSSNPattern = Pattern.compile("\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b");
         Matcher matcher = usSSNPattern.matcher(usSSN);
         if (matcher.find()) {
             return matcher.group();
