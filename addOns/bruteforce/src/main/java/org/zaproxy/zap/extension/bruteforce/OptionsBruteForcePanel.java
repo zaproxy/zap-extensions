@@ -465,7 +465,9 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
                                                         + File.separator
                                                         + fcCommand.getSelectedFile().getName());
                                 if (newFile.exists()
-                                        || extension.getFileList().contains(newFile.getName())) {
+                                        || extension
+                                                .getFileNamesList()
+                                                .contains(newFile.getName())) {
                                     View.getSingleton()
                                             .showWarningDialog(
                                                     Constant.messages.getString(

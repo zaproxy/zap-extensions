@@ -27,17 +27,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -56,13 +49,11 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractPanel;
-import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.utils.FilenameExtensionFilter;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.utils.TableExportButton;
@@ -88,21 +79,15 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     private static final BruteForceTableModel EMPTY_RESULTS_MODEL = new BruteForceTableModel();
 
-    // private ExtensionBruteForce extension = null;
+    private ExtensionBruteForce extension = null;
     private BruteForceParam bruteForceParam = null;
     private JPanel panelCommand = null;
     private JToolBar panelToolbar = null;
     private JScrollPane jScrollPane = null;
     private JLabel activeScansNameLabel = null;
     private JLabel activeScansValueLabel = null;
-    private List<ScanTarget> activeScans = new ArrayList<>();
-    private List<ForcedBrowseFile> fileList = null;
     private JComboBox<ForcedBrowseFile> fileSelect = null;
     private DefaultComboBoxModel<ForcedBrowseFile> fileSelectModel = null;
-
-    private String fileDirectory = Constant.getZapHome() + "fuzzers/dirbuster";
-    private String customFileDirectory = Constant.getInstance().DIRBUSTER_CUSTOM_DIR;
-    private String fileExtension = ".txt";
 
     private ScanTarget currentSite = null;
     private JComboBox<ScanTarget> siteSelect = null;
@@ -113,10 +98,8 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
     private JButton stopScanButton = null;
     private ZapToggleButton pauseScanButton = null;
     private JButton optionsButton = null;
-    // private JButton launchButton = null;
     private HistoryReferencesTable bruteForceTable = null;
     private JProgressBar progressBar = null;
-    private Map<ScanTarget, BruteForce> bruteForceMap = new HashMap<>();
 
     private ScanStatus scanStatus = null;
     private Mode mode = Control.getSingleton().getMode();
@@ -134,7 +117,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
     /** @param bruteForceParam */
     public BruteForcePanel(ExtensionBruteForce extension, BruteForceParam bruteForceParam) {
         super();
-        // this.extension = extension;
+        this.extension = extension;
         this.bruteForceParam = bruteForceParam;
         this.fileSelectModel = new DefaultComboBoxModel<>();
         this.noSelectionScanTarget =
@@ -171,6 +154,8 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                                 BruteForcePanel.class.getResource(
                                         ExtensionBruteForce.HAMMER_ICON_RESOURCE)),
                         Constant.messages.getString("bruteforce.panel.title"));
+
+        this.refreshFileList();
 
         if (View.isInitialised()) {
             View.getSingleton()
@@ -346,7 +331,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             panelToolbar.add(getExportButton(), gridBagConstraints13);
 
             panelToolbar.add(new JLabel(), gridBagConstraintsx); // Filler
-            // panelToolbar.add(getLaunchButton(), gridBagConstraintsx);
             panelToolbar.add(getOptionsButton(), gridBagConstraintsy);
         }
         return panelToolbar;
@@ -364,7 +348,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
     private JLabel getActiveScansValueLabel() {
         if (activeScansValueLabel == null) {
             activeScansValueLabel = new javax.swing.JLabel();
-            activeScansValueLabel.setText(String.valueOf(activeScans.size()));
+            activeScansValueLabel.setText(String.valueOf(extension.getActiveScans().size()));
         }
         return activeScansValueLabel;
     }
@@ -387,6 +371,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
     }
 
     private void setActiveScanLabels() {
+        List<ScanTarget> activeScans = extension.getActiveScans();
         getActiveScansValueLabel().setText(String.valueOf(activeScans.size()));
         StringBuilder sb = new StringBuilder();
         Iterator<ScanTarget> iter = activeScans.iterator();
@@ -447,7 +432,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            stopScan();
+                            extension.stopScan(currentSite);
                         }
                     });
         }
@@ -474,7 +459,12 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            pauseScan();
+                            BruteForce bf = extension.getBruteForce(currentSite);
+                            if (bf.isPaused()) {
+                                extension.resumeScan(currentSite);
+                            } else {
+                                extension.pauseScan(currentSite);
+                            }
                         }
                     });
         }
@@ -502,66 +492,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         }
         return optionsButton;
     }
-
-    // Not working yet:)
-    /*
-    private JButton getLaunchButton() {
-    	if (launchButton == null) {
-    		launchButton = new JButton();
-    		launchButton.setToolTipText("TBI LAUNCH");
-    		launchButton.setIcon(new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/142.png")));
-    		launchButton.addActionListener(new ActionListener () {
-    			@Override
-    			public void actionPerformed(ActionEvent e) {
-    				launchDirBuster();
-    			}
-
-    		});
-    	}
-    	return launchButton;
-    }
-
-    private void launchDirBuster() {
-    	StringBuilder sb = new StringBuilder();
-    	sb.append("/usr/bin/java -classpath ");
-
-    	sb.append("lib/BrowserLauncher2-1_3.jar:");
-    	sb.append("lib/commons-codec-1.2.jar:");
-    	sb.append("lib/commons-collections-3.1.jar:");
-    	sb.append("lib/commons-configuration-1.1.jar:");
-    	sb.append("lib/commons-httpclient-3.0.jar:");
-    	sb.append("lib/commons-lang-2.0.jar:");
-    	sb.append("lib/commons-logging-api.jar:");
-    	sb.append("lib/commons-logging.jar:");
-    	sb.append("lib/DirBuster-0.12.jar:");
-    	sb.append("lib/hsqldb.jar:");
-    	sb.append("lib/java-getopt-1.0.13.jar:");
-    	sb.append("lib/jdom.jar:");
-    	sb.append("lib/jericho-html-2.6.jar:");
-    	sb.append("lib/jh.jar:");
-    	sb.append("lib/js.jar:");
-    	sb.append("lib/log4j-1.2.8.jar:");
-    	sb.append("lib/looks-2.2.0.jar:");
-    	sb.append("lib/swing-layout-1.0.3.jar:");
-    	sb.append("lib/zaphelp.jar ");
-
-    	sb.append("com.sittinglittleduck.DirBuster.Start");
-
-    	System.out.println(sb.toString());
-    	try {
-    		// TODO works from cmdline, but not from ZAP :(
-    		Process proc = Runtime.getRuntime().exec(sb.toString());
-
-    		// Currently exists with 1...
-    		System.out.println("Exit value=" + proc.waitFor());
-    		//System.out.println("Exit value=" + proc.exitValue());
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	} catch (InterruptedException e) {
-    		e.printStackTrace();
-    	}
-    }
-    */
 
     private JScrollPane getJScrollPane() {
         if (jScrollPane == null) {
@@ -596,7 +526,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         if (fileSelect == null) {
             fileSelect = new JComboBox<>();
             fileSelect.addItemListener(e -> updateSiteSelection());
-            this.refreshFileList();
         }
         return fileSelect;
     }
@@ -654,7 +583,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
             siteModel.setSelectedItem(scanTarget);
 
-            BruteForce bruteForce = bruteForceMap.get(scanTarget);
+            BruteForce bruteForce = extension.getBruteForce(scanTarget);
             if (bruteForce == null) {
                 final ForcedBrowseFile selectedForcedBrowseFile =
                         (ForcedBrowseFile) this.fileSelectModel.getSelectedItem();
@@ -668,7 +597,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                 }
 
                 bruteForce = new BruteForce(scanTarget, file, this, this.bruteForceParam);
-                bruteForceMap.put(scanTarget, bruteForce);
+                extension.addBruteForce(scanTarget, bruteForce);
             }
             if (bruteForce.isAlive()) {
                 getStartScanButton().setEnabled(false);
@@ -702,20 +631,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         getProgressBar().setEnabled(false);
     }
 
-    protected ScanTarget createScanTarget(SiteNode node) {
-        if (node != null) {
-            while (node.getParent() != null && node.getParent().getParent() != null) {
-                node = node.getParent();
-            }
-
-            HistoryReference hRef = node.getHistoryReference();
-            if (hRef != null) {
-                return new ScanTarget(hRef.getURI());
-            }
-        }
-        return null;
-    }
-
     protected SiteNode getSiteNode(ScanTarget scanTarget) {
         SiteMap siteTree = Model.getSingleton().getSession().getSiteTree();
         SiteNode rootNode = (SiteNode) siteTree.getRoot();
@@ -724,7 +639,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         Enumeration<TreeNode> en = rootNode.children();
         while (en.hasMoreElements()) {
             SiteNode sn = (SiteNode) en.nextElement();
-            ScanTarget snScanTarget = createScanTarget(sn);
+            ScanTarget snScanTarget = extension.createScanTarget(sn);
             if (snScanTarget != null && snScanTarget.equals(scanTarget)) {
                 return sn;
             }
@@ -733,7 +648,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
     }
 
     public void nodeSelected(SiteNode node) {
-        ScanTarget scanTarget = createScanTarget(node);
+        ScanTarget scanTarget = extension.createScanTarget(node);
 
         if (!isScanTargetAdded(scanTarget)) {
             siteModel.addElement(scanTarget);
@@ -791,13 +706,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
     }
 
     private void startScan(String directory, boolean onlyUnderDirectory) {
-
-        this.getStartScanButton().setEnabled(false);
-        this.getStopScanButton().setEnabled(true);
-        this.getPauseScanButton().setEnabled(true);
-
-        this.activeScans.add(currentSite);
-
         final ForcedBrowseFile selectedForcedBrowseFile =
                 (ForcedBrowseFile) this.fileSelectModel.getSelectedItem();
         if (selectedForcedBrowseFile == null) {
@@ -809,13 +717,13 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             return;
         }
 
-        BruteForce bruteForce = new BruteForce(currentSite, file, this, bruteForceParam, directory);
-        if (onlyUnderDirectory) {
-            bruteForce.setOnlyUnderDirectory(onlyUnderDirectory);
-        }
-        bruteForceMap.put(currentSite, bruteForce);
+        this.getStartScanButton().setEnabled(false);
+        this.getStopScanButton().setEnabled(true);
+        this.getPauseScanButton().setEnabled(true);
 
-        bruteForce.start();
+        BruteForce bruteForce =
+                extension.startScan(currentSite, directory, file, onlyUnderDirectory);
+
         setActiveScanLabels();
         getProgressBar().setEnabled(true);
         getProgressBar().setMaximum(bruteForce.getWorkTotal());
@@ -825,32 +733,11 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         siteModel.elementChanged(currentSite);
     }
 
-    private void stopScan() {
-        log.debug("Stopping scan on " + currentSite);
-        BruteForce bruteForce = bruteForceMap.get(currentSite);
-        if (bruteForce != null) {
-            bruteForce.stopScan();
-        }
-    }
-
-    private void pauseScan() {
-        log.debug("Pausing scan on " + currentSite);
-        BruteForce bruteForce = bruteForceMap.get(currentSite);
-        if (bruteForce != null) {
-            if (bruteForce.isPaused()) {
-                bruteForce.unpauseScan();
-            } else {
-                bruteForce.pauseScan();
-            }
-        }
-    }
-
     @Override
     public void scanFinshed(ScanTarget scanTarget) {
         if (scanTarget.equals(currentSite)) {
             resetScanButtonsAndProgressBarStates(true);
         }
-        this.activeScans.remove(scanTarget);
         setActiveScanLabels();
     }
 
@@ -864,35 +751,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
     }
 
     public void reset() {
-        stopAllScans();
-
         siteModel.removeAllElements();
         siteSelect.addItem(noSelectionScanTarget);
         siteSelect.setSelectedIndex(0);
-    }
-
-    protected Collection<BruteForce> getBruteForceScans() {
-        return bruteForceMap.values();
-    }
-
-    private void stopAllScans() {
-        for (BruteForce scanner : bruteForceMap.values()) {
-            scanner.stopScan();
-            scanner.clearModel();
-        }
-        // Allow 2 secs for the threads to stop - if we wait 'for ever' then we can get deadlocks
-        for (int i = 0; i < 20; i++) {
-            if (activeScans.size() == 0) {
-                break;
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                // Ignore
-            }
-        }
-        bruteForceMap.clear();
-        activeScans.clear();
         setActiveScanLabels();
         resetScanState();
     }
@@ -912,22 +773,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             String rawResponce,
             BaseCase baseCaseObj) {}
 
-    public boolean isScanning(SiteNode node) {
-        ScanTarget target = createScanTarget(node);
-        if (target != null) {
-            BruteForce bf = bruteForceMap.get(target);
-            if (bf != null) {
-                return bf.isAlive();
-            }
-        }
-        return false;
-    }
-
     public void refreshFileList() {
-        fileList = null;
-
         fileSelectModel = new DefaultComboBoxModel<>();
-        for (ForcedBrowseFile file : getFileList()) {
+        for (ForcedBrowseFile file : extension.getFileList()) {
             fileSelectModel.addElement(file);
         }
 
@@ -938,38 +786,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         if (defaultFile != null) {
             fileSelectModel.setSelectedItem(defaultFile);
         }
-    }
-
-    public List<ForcedBrowseFile> getFileList() {
-        if (fileList == null) {
-            fileList = new ArrayList<>();
-            File dir = new File(fileDirectory);
-            FilenameFilter filter = new FilenameExtensionFilter(fileExtension, true);
-            File[] files = dir.listFiles(filter);
-            if (files != null) {
-                Arrays.sort(files);
-                for (File file : files) {
-                    fileList.add(new ForcedBrowseFile(file));
-                }
-            }
-
-            // handle local/custom files
-            File customDir = new File(customFileDirectory);
-            if (!dir.equals(customDir)) {
-                File[] customFiles = customDir.listFiles();
-                if (customFiles != null) {
-                    Arrays.sort(customFiles);
-                    for (File file : customFiles) {
-                        if (!file.isDirectory()) {
-                            fileList.add(new ForcedBrowseFile(file));
-                        }
-                    }
-                }
-            }
-            Collections.sort(fileList);
-        }
-
-        return fileList;
     }
 
     public void setDefaultFile(ForcedBrowseFile file) {
@@ -987,14 +803,13 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         switch (mode) {
             case standard:
             case protect:
+            case attack:
                 getSiteSelect().setEnabled(true);
                 if (currentSite != null) {
                     this.siteSelected(currentSite, true);
                 }
                 break;
             case safe:
-                // Stop all scans, disable everything
-                stopAllScans();
                 getSiteSelect().setEnabled(false);
         }
     }

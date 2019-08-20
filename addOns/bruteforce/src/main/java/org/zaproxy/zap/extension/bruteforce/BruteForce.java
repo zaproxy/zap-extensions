@@ -55,6 +55,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
     private boolean recursive = BruteForceParam.DEFAULT_RECURSIVE;
     private DirBusterManager manager = null;
     private List<String> extensions = null;
+    private int scanId;
 
     private boolean onlyUnderDirectory;
 
@@ -351,5 +352,13 @@ public class BruteForce extends Thread implements BruteForceListenner {
         if (onlyUnderDirectory) {
             this.recursive = true;
         }
+    }
+
+    void setScanId(int scanId) {
+        this.scanId = scanId;
+    }
+
+    public int getScanId() {
+        return scanId;
     }
 }
