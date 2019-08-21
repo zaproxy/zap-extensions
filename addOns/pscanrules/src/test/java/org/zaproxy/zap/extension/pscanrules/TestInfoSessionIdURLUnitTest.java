@@ -19,15 +19,10 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -39,6 +34,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.extension.httpsessions.HttpSessionToken;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -52,16 +48,6 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
 
         TestInfoSessionIdURL scanner = new TestInfoSessionIdURL();
         setUpHttpSessionsParam();
-
-        OptionsParam options = Model.getSingleton().getOptionsParam();
-        HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
-
-        List<String> sessionIds = new ArrayList<String>();
-        if (sessionOptions != null) {
-            sessionIds = sessionOptions.getDefaultTokensEnabled();
-        }
-
-        assertThat(sessionIds, is(not(empty())));
         return scanner;
     }
 
@@ -207,13 +193,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
         // the jsessionid in the URL path before the parameters.
         OptionsParam options = Model.getSingleton().getOptionsParam();
         HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
-        if (sessionOptions != null) {
-            sessionOptions.setDefaultTokens(Collections.emptyList());
-        } else {
-            sessionOptions = new HttpSessionsParam();
-            sessionOptions.setDefaultTokens(Collections.emptyList());
-            options.addParamSet(sessionOptions);
-        }
+        sessionOptions.setDefaultTokens(Collections.emptyList());
 
         // When
         rule.scanHttpResponseReceive(msg, -1, new Source(BODY));
@@ -448,6 +428,9 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     private void setUpHttpSessionsParam() {
         OptionsParam options = Model.getSingleton().getOptionsParam();
         options.load(new ZapXmlConfiguration());
-        options.addParamSet(new HttpSessionsParam());
+        HttpSessionsParam httpSessions = new HttpSessionsParam();
+        options.addParamSet(httpSessions);
+        httpSessions.setDefaultTokens(
+                Arrays.asList(new HttpSessionToken("jsessionid"), new HttpSessionToken("cfid")));
     }
 }
