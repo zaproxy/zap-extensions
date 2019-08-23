@@ -56,9 +56,9 @@ public class CommandInjectionPluginUnitTest
             default:
                 return recommendMax + 20;
             case HIGH:
-                return recommendMax + 22;
+                return recommendMax + 27;
             case INSANE:
-                return recommendMax;
+                return recommendMax + 14;
         }
     }
 
