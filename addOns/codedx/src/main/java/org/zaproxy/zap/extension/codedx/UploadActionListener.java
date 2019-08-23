@@ -20,10 +20,15 @@ package org.zaproxy.zap.extension.codedx;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -42,6 +47,13 @@ public class UploadActionListener implements ActionListener{
 
 	private static final Logger LOGGER = Logger.getLogger(UploadActionListener.class);
 	
+	private static final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+
+	static {
+		xmlInputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
+		xmlInputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+	}
+
 	private CodeDxExtension extension;
 	private UploadPropertiesDialog prop;
 	
@@ -58,11 +70,8 @@ public class UploadActionListener implements ActionListener{
 	public void generateAndUploadReport(){
 		String error = null;
 		try {
-			final StringBuilder report = new StringBuilder();
-			final File reportFile = generateReportFile(extension, report);
-
-			// Check report length before splitting to avoid splitting large reports for no reason
-			if(report.length() > 200 || report.toString().trim().split("\n").length > 2){
+			final File reportFile = generateReportFile(extension);
+			if(!reportIsEmpty(reportFile)) {
 				Thread uploadThread = new Thread(){
 					@Override
 					public void run(){
@@ -177,13 +186,30 @@ public class UploadActionListener implements ActionListener{
 		saver.generate(report, extension.getModel());
 	}
 
-	public static File generateReportFile(CodeDxExtension extension, StringBuilder report) throws Exception{
-		generateReportString(extension, report);
-
+	public static File generateReportFile(CodeDxExtension extension) throws Exception {
 		File reportFile = File.createTempFile("codedx-zap-report", ".xml");
 		reportFile.deleteOnExit();
 
-		Files.write(reportFile.toPath(), report.toString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+		ReportLastScanHttp saver = new ReportLastScanHttp();
+		saver.generate(reportFile.getCanonicalPath(), extension.getModel(), null);
+
 		return reportFile;
+	}
+
+	public static Boolean reportIsEmpty(File reportFile) throws IOException, XMLStreamException {
+		BufferedReader br = Files.newBufferedReader(reportFile.toPath());
+		try {
+			XMLEventReader reader = xmlInputFactory.createXMLEventReader(br);
+
+			while(reader.hasNext()) {
+				XMLEvent event = reader.nextEvent();
+				if(event.isStartElement() && !event.asStartElement().getName().getLocalPart().equals("OWASPZAPReport")) {
+					return false;
+				}
+			}
+		} finally {
+			br.close();
+		}
+		return true;
 	}
 }

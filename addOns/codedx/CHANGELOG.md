@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-
+- Make fixes to the report generation process to handle encoding the same as other ZAP reports
 
 ## 7 - 2018-07-02
 

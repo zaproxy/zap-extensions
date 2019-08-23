@@ -89,16 +89,16 @@ public class CodeDxAPI extends ApiImplementor {
 			String fingerprint = this.getParam(params, ACTION_PARAM_FINGERPRINT, "");
 			boolean acceptPermanently = this.getParam(params, ACTION_PARAM_ACCEPT_PERM, false);
 
-			StringBuilder report = new StringBuilder();
+			boolean isEmpty = false;
 			try {
-				reportFile = UploadActionListener.generateReportFile(extension, report);
+				reportFile = UploadActionListener.generateReportFile(extension);
+				isEmpty = UploadActionListener.reportIsEmpty(reportFile);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 				throw new ApiException(Type.INTERNAL_ERROR, e.getMessage());
 			}
 			try {
-				// Check report length before splitting to avoid splitting large reports for no reason
-				if(report.length() > 200 || report.toString().trim().split("\n").length > 2) 
+				if(!isEmpty)
 					uploadFile(reportFile, serverUrl, apiKey, projectId, fingerprint, acceptPermanently);
 				else
 					return new ApiResponseElement("Result", "empty");
