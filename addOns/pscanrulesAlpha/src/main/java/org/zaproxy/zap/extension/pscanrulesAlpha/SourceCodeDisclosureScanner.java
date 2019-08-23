@@ -700,7 +700,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
                     msg.getRequestHeader().getURI().toString(),
                     "", // param
                     "", // attack
-                    getExtraInfo(msg, evidence), // other info
+                    getExtraInfo(evidence), // other info
                     getSolution(),
                     getReference(),
                     evidence,
@@ -761,11 +761,10 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
     /**
      * gets extra information associated with the alert
      *
-     * @param msg
-     * @param arg0
+     * @param evidence
      * @return
      */
-    private String getExtraInfo(HttpMessage msg, String arg0) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", arg0);
+    private String getExtraInfo(String evidence) {
+        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", evidence);
     }
 }
