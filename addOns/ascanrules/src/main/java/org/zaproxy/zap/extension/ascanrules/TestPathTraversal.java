@@ -372,7 +372,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         if (sendAndCheckPayload(
                                         param,
                                         NIX_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER,
-                                        WIN_PATTERN)
+                                        NIX_PATTERN)
                                 || isStop()) {
                             return;
                         }
@@ -380,7 +380,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                             if (sendAndCheckPayload(
                                             param,
                                             NIX_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER + ext,
-                                            WIN_PATTERN)
+                                            NIX_PATTERN)
                                     || isStop()) {
                                 return;
                             }
