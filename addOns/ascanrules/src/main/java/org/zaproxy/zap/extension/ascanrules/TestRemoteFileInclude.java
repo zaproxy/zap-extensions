@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
+
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,7 +50,8 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
         "www.google.com:80/",
         "www.google.com",
         "www.google.com/search?q=OWASP%20ZAP",
-        "www.google.com:80/search?q=OWASP%20ZAP"
+        "www.google.com:80/search?q=OWASP%20ZAP",
+        "www.google.com/" + NULL_BYTE_CHARACTER
     };
     /** the patterns to look for, associated with the equivalent remote file targets above */
     private static final Pattern[] REMOTE_FILE_PATTERNS = {
@@ -56,7 +59,8 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title.*?Google.*?/title>"),
-        Pattern.compile("<title.*?Google.*?/title>")
+        Pattern.compile("<title.*?Google.*?/title>"),
+        Pattern.compile("<title>Google</title>")
     };
     /** The number of requests we will send per parameter, based on the attack strength */
     private static final int REQ_PER_PARAM_OFF = 0;
