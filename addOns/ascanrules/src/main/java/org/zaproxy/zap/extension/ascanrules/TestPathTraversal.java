@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.zaproxy.zap.extension.ascanrules.utils.Constants.COMMON_FILE_EXTENSIONS;
+import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -175,6 +178,8 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     /** the logger object */
     private static final Logger log = Logger.getLogger(TestPathTraversal.class);
 
+    private boolean includeNullByteInjectionPayload = false;
+
     /**
      * returns the plugin id
      *
@@ -285,6 +290,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     winCount = WIN_LOCAL_FILE_TARGETS.length;
                     dirCount = LOCAL_DIR_TARGETS.length;
                     localTraversalLength = 4;
+                    includeNullByteInjectionPayload = true;
                     break;
 
                 default:
@@ -317,6 +323,24 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         // Exit the plugin
                         return;
                     }
+                    if (includeNullByteInjectionPayload) {
+                        if (sendAndCheckPayload(
+                                        param,
+                                        WIN_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER,
+                                        WIN_PATTERN)
+                                || isStop()) {
+                            return;
+                        }
+                        for (String ext : COMMON_FILE_EXTENSIONS) {
+                            if (sendAndCheckPayload(
+                                            param,
+                                            WIN_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER + ext,
+                                            WIN_PATTERN)
+                                    || isStop()) {
+                                return;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -334,6 +358,25 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         // Dispose all resources
                         // Exit the plugin
                         return;
+                    }
+
+                    if (includeNullByteInjectionPayload) {
+                        if (sendAndCheckPayload(
+                                        param,
+                                        NIX_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER,
+                                        WIN_PATTERN)
+                                || isStop()) {
+                            return;
+                        }
+                        for (String ext : COMMON_FILE_EXTENSIONS) {
+                            if (sendAndCheckPayload(
+                                            param,
+                                            NIX_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER + ext,
+                                            WIN_PATTERN)
+                                    || isStop()) {
+                                return;
+                            }
+                        }
                     }
                 }
             }
