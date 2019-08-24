@@ -22,9 +22,11 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
+import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -36,6 +38,7 @@ import org.apache.commons.configuration.Configuration;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -181,6 +184,98 @@ public class CommandInjectionPluginUnitTest
         Configuration config = new ZapXmlConfiguration();
         config.setProperty(RuleConfigParam.RULE_COMMON_SLEEP_TIME, value);
         return config;
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseHasPasswdFileContentAndPayloadIsNullByteBased()
+            throws HttpMalformedHeaderException {
+        // Given
+        // While checking for relevant handler in HTTPDTestServer, it checks handler
+        // Name with the URI so ensure you pass URI same as ServerHandler Name
+        NullByteVulnerableServerHandler vulnServerHandler =
+                new NullByteVulnerableServerHandler("/", "p", Tech.Linux);
+        nano.addHandler(vulnServerHandler);
+        rule.init(getHttpMessage("/?p=a"), parent);
+        rule.setAttackStrength(AttackStrength.INSANE);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseHasSystemINIFileContentAndPayloadIsNullByteBased()
+            throws HttpMalformedHeaderException {
+        // Given
+        NullByteVulnerableServerHandler vulnServerHandler =
+                new NullByteVulnerableServerHandler("/", "p", Tech.Windows);
+        nano.addHandler(vulnServerHandler);
+        rule.init(getHttpMessage("/?p=a"), parent);
+        rule.setAttackStrength(AttackStrength.INSANE);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    private static class NullByteVulnerableServerHandler extends NanoServerHandler {
+
+        protected String param;
+        protected Tech tech;
+
+        protected static final String GENERIC_VULN_RESPONSE_NIX =
+                "<!DOCTYPE html>\n"
+                        + "<html>"
+                        + "<head>"
+                        + "<title>Page Title</title>"
+                        + "</head>"
+                        + "<body>"
+                        + "<p>root:x:0:0:root:/root:/bin/bash\n"
+                        + "daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\n"
+                        + "bin:x:2:2:bin:/bin:/usr/sbin/nologin\n"
+                        + "sys:x:3:3:sys:/dev:/usr/sbin/nologin\n"
+                        + "sync:x:4:65534:sync:/bin:/bin/sync\n"
+                        + "</p>"
+                        + "</body>"
+                        + "</html>";
+
+        protected static final String GENERIC_VULN_RESPONSE_WIN =
+                "<!DOCTYPE html>\n"
+                        + "<html>"
+                        + "<head>"
+                        + "<title>Page Title</title>"
+                        + "</head>"
+                        + "<body>"
+                        + "<p>[drivers]\n"
+                        + "wave=mmdrv.dll\n"
+                        + "timer=timer.drv\n"
+                        + "[fonts]\n"
+                        + "</p>"
+                        + "</body>"
+                        + "</html>";
+
+        public NullByteVulnerableServerHandler(String name, String param, Tech tech) {
+            super(name);
+            this.param = param;
+            this.tech = tech;
+        }
+
+        public String getContent(IHTTPSession session) {
+            String value = getFirstParamValue(session, this.param);
+            if (value.contains(NULL_BYTE_CHARACTER)) {
+                return this.tech.equals(Tech.Linux) || this.tech.equals(Tech.MacOS)
+                        ? GENERIC_VULN_RESPONSE_NIX
+                        : GENERIC_VULN_RESPONSE_WIN;
+            } else {
+                return "<html></html>";
+            }
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            return newFixedLengthResponse(
+                    Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(session));
+        }
     }
 
     private static class PayloadCollectorHandler extends NanoServerHandler {
