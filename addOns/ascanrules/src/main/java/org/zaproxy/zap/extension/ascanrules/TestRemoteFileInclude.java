@@ -60,7 +60,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title.*?Google.*?/title>"),
         Pattern.compile("<title.*?Google.*?/title>"),
-        Pattern.compile("<title>Google</title>")
+        Pattern.compile("<title>Error 404 [(]Not Found[)].*</title>")
     };
     /** The number of requests we will send per parameter, based on the attack strength */
     private static final int REQ_PER_PARAM_OFF = 0;

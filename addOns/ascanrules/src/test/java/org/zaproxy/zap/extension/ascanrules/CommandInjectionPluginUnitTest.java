@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
-import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -216,66 +215,6 @@ public class CommandInjectionPluginUnitTest
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
-    }
-
-    private static class NullByteVulnerableServerHandler extends NanoServerHandler {
-
-        protected String param;
-        protected Tech tech;
-
-        protected static final String GENERIC_VULN_RESPONSE_NIX =
-                "<!DOCTYPE html>\n"
-                        + "<html>"
-                        + "<head>"
-                        + "<title>Page Title</title>"
-                        + "</head>"
-                        + "<body>"
-                        + "<p>root:x:0:0:root:/root:/bin/bash\n"
-                        + "daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\n"
-                        + "bin:x:2:2:bin:/bin:/usr/sbin/nologin\n"
-                        + "sys:x:3:3:sys:/dev:/usr/sbin/nologin\n"
-                        + "sync:x:4:65534:sync:/bin:/bin/sync\n"
-                        + "</p>"
-                        + "</body>"
-                        + "</html>";
-
-        protected static final String GENERIC_VULN_RESPONSE_WIN =
-                "<!DOCTYPE html>\n"
-                        + "<html>"
-                        + "<head>"
-                        + "<title>Page Title</title>"
-                        + "</head>"
-                        + "<body>"
-                        + "<p>[drivers]\n"
-                        + "wave=mmdrv.dll\n"
-                        + "timer=timer.drv\n"
-                        + "[fonts]\n"
-                        + "</p>"
-                        + "</body>"
-                        + "</html>";
-
-        public NullByteVulnerableServerHandler(String name, String param, Tech tech) {
-            super(name);
-            this.param = param;
-            this.tech = tech;
-        }
-
-        public String getContent(IHTTPSession session) {
-            String value = getFirstParamValue(session, this.param);
-            if (value.contains(NULL_BYTE_CHARACTER)) {
-                return this.tech.equals(Tech.Linux) || this.tech.equals(Tech.MacOS)
-                        ? GENERIC_VULN_RESPONSE_NIX
-                        : GENERIC_VULN_RESPONSE_WIN;
-            } else {
-                return "<html></html>";
-            }
-        }
-
-        @Override
-        protected Response serve(IHTTPSession session) {
-            return newFixedLengthResponse(
-                    Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(session));
-        }
     }
 
     private static class PayloadCollectorHandler extends NanoServerHandler {
