@@ -91,6 +91,10 @@ import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorD
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScannerManager;
 import org.zaproxy.zap.extension.websocket.pscan.scripts.ScriptsWebSocketPassiveScanner;
+import org.zaproxy.zap.extension.websocket.treemap.WebSocketMap;
+import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketMapPanel;
+import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketMapUI;
+import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketNodeUI;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.OptionsWebSocketPanel;
@@ -224,6 +228,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
     private WebSocketEventPublisher eventPublisher;
 
+    private WebSocketMap webSocketMap;
+
     /** That runs user-provided WebSocket Passive Scan Scripts */
     private ScriptsWebSocketPassiveScanner webSocketScriptPassiveScanner;
 
@@ -325,6 +331,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
         HttpSender.addListener(httpSenderListener);
 
+        webSocketMap = getWebSocketMap();
+        addAllChannelObserver(webSocketMap.getWebSocketMapListener());
+
         try {
             setChannelIgnoreList(Model.getSingleton().getSession().getExcludeFromProxyRegexs());
         } catch (WebSocketException e) {
@@ -407,6 +416,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                     httpSendEditor.addPersistentConnectionListener(this);
                 }
             }
+            //WebSocket Map Tree
+            hookView.addSelectPanel(getWebSocketMapPanel());
+            getWebSocketMap().addNodeObserver(getWebSocketMapUI());
         }
         // setup sender script interface
         this.extensionScript =
@@ -454,6 +466,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             webSocketPassiveScannerManager.setAllEnable(true);
             webSocketPassiveScannerManager.startThread();
         }
+
+        // set up WebSocket Tree map
+        WebSocketMap webSocketMap = WebSocketMap.createTree();
+        addAllChannelObserver(webSocketMap.getWebSocketMapListener());
     }
 
     @Override
@@ -1217,6 +1233,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             // Nothing to do.
         }
     }
+    public WebSocketMap getWebSocketMap() {
+        if(webSocketMap == null){
+            webSocketMap = WebSocketMap.createTree();
+        }
+        return webSocketMap;
+    }
 
     /*
      * ************************************************************************
@@ -1244,6 +1266,26 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     /** Resends custom WebSocket messages. */
     private ManualWebSocketSendEditorDialog resenderDialog;
 
+    /**
+     *
+     */
+    private WebSocketMapUI webSocketMapUI;
+
+    private WebSocketMapPanel webSocketMapPanel;
+
+    public WebSocketMapPanel getWebSocketMapPanel() {
+        if(webSocketMapPanel == null){
+            webSocketMapPanel = new WebSocketMapPanel(this, getWebSocketMapUI());
+        }
+        return webSocketMapPanel;
+    }
+
+    private WebSocketMapUI getWebSocketMapUI(){
+        if(webSocketMapUI == null){
+            webSocketMapUI = new WebSocketMapUI(new WebSocketNodeUI(getWebSocketMap().getRoot()), getWebSocketMap(),getModel());
+        }
+        return webSocketMapUI;
+    }
     private WebSocketPanel getWebSocketPanel() {
         if (panel == null) {
             panel = new WebSocketPanel(storage.getTable(), getBrkManager());
