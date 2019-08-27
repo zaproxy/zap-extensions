@@ -103,9 +103,6 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
     }
 
     @Override
-    public void init() {}
-
-    @Override
     public void scan(HttpMessage msg, NameValuePair originalParam) {
         currentParamType = originalParam.getType();
         super.scan(msg, originalParam);

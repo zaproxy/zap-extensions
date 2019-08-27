@@ -441,8 +441,6 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
         "\") UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
     };
 
-    /** plugin dependencies */
-    private static final String[] dependency = {};
     /** for logging. */
     private static Logger log = Logger.getLogger(TestSQLInjection.class);
     /** determines if we should output Debug level logging */
@@ -456,11 +454,6 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

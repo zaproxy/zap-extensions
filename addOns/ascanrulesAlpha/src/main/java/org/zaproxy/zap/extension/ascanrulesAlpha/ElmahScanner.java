@@ -76,11 +76,6 @@ public class ElmahScanner extends AbstractHostPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public boolean targets(TechSet technologies) {
         return technologies.includes(Tech.IIS)
                 || technologies.includes(Tech.Windows)
@@ -107,9 +102,6 @@ public class ElmahScanner extends AbstractHostPlugin {
     public int getWascId() {
         return 13; // WASC-13: Informatin Leakage
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan() {

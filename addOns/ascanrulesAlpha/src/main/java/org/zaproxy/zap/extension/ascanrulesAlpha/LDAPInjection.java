@@ -46,8 +46,6 @@ import org.zaproxy.zap.utils.HirshbergMatcher;
  */
 public class LDAPInjection extends AbstractAppParamPlugin {
 
-    /** plugin dependencies */
-    private static final String[] dependency = {};
     /** for logging. */
     private static Logger log = Logger.getLogger(LDAPInjection.class);
 
@@ -114,11 +112,6 @@ public class LDAPInjection extends AbstractAppParamPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString(I18N_PREFIX + "ldapinjection.name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

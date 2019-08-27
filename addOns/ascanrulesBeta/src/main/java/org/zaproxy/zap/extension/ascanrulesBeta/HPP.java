@@ -66,12 +66,6 @@ public class HPP extends AbstractAppPlugin {
         return Constant.messages.getString("ascanbeta.HTTPParamPoll.name");
     }
 
-    /** @return dependencies of the plugin (none) */
-    @Override
-    public String[] getDependency() {
-        return null;
-    }
-
     /** @return the description of the vulnerability */
     @Override
     public String getDescription() {
@@ -95,10 +89,6 @@ public class HPP extends AbstractAppPlugin {
     public String getReference() {
         return Constant.messages.getString("ascanbeta.HTTPParamPoll.extrainfo");
     }
-
-    /** */
-    @Override
-    public void init() {}
 
     /**
      * Main method of the class. It is executed for each page. Determined whether the page in

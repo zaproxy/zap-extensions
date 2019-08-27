@@ -182,16 +182,6 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         return Constant.messages.getString(ALERT_MESSAGE_PREFIX + "refs");
     }
 
-    /**
-     * Give back specific pugin dependancies (none for this)
-     *
-     * @return the list of plugins that need to be executed before
-     */
-    @Override
-    public String[] getDependency() {
-        return new String[] {};
-    }
-
     @Override
     public boolean targets(TechSet technologies) {
         if (technologies.includes(Tech.Db)) {

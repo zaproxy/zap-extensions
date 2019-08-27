@@ -66,11 +66,6 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public boolean targets(
             TechSet technologies) { // This method allows the programmer or user to restrict when a
         // scanner is run based on the technologies selected.  For example, to restrict the scanner
@@ -114,9 +109,6 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
         }
         return "Failed to load vulnerability reference from file";
     }
-
-    @Override
-    public void init() {}
 
     /*
      * This method is called by the active scanner for each GET and POST parameter for every page

@@ -235,16 +235,6 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /**
-     * Give back specific plugin dependencies (none for this)
-     *
-     * @return the list of plugins that need to be executed before
-     */
-    @Override
-    public String[] getDependency() {
-        return new String[] {};
-    }
-
     @Override
     public boolean targets(TechSet technologies) {
         if (technologies.includes(Tech.Linux)

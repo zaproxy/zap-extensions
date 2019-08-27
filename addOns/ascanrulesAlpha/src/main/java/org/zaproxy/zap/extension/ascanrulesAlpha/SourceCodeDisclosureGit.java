@@ -82,11 +82,6 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("ascanalpha.sourcecodedisclosure.desc");
     }
@@ -120,9 +115,6 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
         return Constant.messages.getString(
                 "ascanalpha.sourcecodedisclosure.gitbased.evidence", filename, gitURIs);
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan() {

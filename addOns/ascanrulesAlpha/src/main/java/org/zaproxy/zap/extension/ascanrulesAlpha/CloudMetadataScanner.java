@@ -83,11 +83,6 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public int getCategory() {
         return Category.INJECTION;
     }
@@ -106,9 +101,6 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
     public int getWascId() {
         return 0;
     }
-
-    @Override
-    public void init() {}
 
     public void raiseAlert(HttpMessage newRequest) {
         bingo(

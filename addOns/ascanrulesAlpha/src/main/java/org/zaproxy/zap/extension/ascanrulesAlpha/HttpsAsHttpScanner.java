@@ -70,11 +70,6 @@ public class HttpsAsHttpScanner extends AbstractAppPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public int getCategory() {
         return Category.MISC;
     }
@@ -93,9 +88,6 @@ public class HttpsAsHttpScanner extends AbstractAppPlugin {
     public int getWascId() {
         return 4; // WASC-04: Insufficient Transport Layer Protection
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan() {

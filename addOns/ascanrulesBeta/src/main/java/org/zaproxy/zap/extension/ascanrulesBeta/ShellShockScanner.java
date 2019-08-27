@@ -61,11 +61,6 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("ascanbeta.shellshock.desc");
     }

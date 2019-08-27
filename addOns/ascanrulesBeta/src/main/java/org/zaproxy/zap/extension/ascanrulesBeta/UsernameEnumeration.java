@@ -55,8 +55,6 @@ import org.zaproxy.zap.utils.HirshbergMatcher;
  * @author 70pointer
  */
 public class UsernameEnumeration extends AbstractAppPlugin {
-    /** plugin dependencies */
-    private static final String[] dependency = {};
 
     /** for logging. */
     private static Logger log = Logger.getLogger(UsernameEnumeration.class);
@@ -81,11 +79,6 @@ public class UsernameEnumeration extends AbstractAppPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString("ascanbeta.usernameenumeration.name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

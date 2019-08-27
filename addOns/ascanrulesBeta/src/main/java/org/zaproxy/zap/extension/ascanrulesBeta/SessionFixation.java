@@ -62,8 +62,6 @@ import org.zaproxy.zap.model.Context;
  * @author 70pointer
  */
 public class SessionFixation extends AbstractAppPlugin {
-    /** plugin dependencies */
-    private static final String[] dependency = {};
 
     /** for logging. */
     private static Logger log = Logger.getLogger(SessionFixation.class);
@@ -79,11 +77,6 @@ public class SessionFixation extends AbstractAppPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString("ascanbeta.sessionfixation.name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

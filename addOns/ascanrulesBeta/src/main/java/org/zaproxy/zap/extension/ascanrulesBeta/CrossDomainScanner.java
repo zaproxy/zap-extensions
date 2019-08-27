@@ -83,11 +83,6 @@ public class CrossDomainScanner extends AbstractHostPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         return "";
     }

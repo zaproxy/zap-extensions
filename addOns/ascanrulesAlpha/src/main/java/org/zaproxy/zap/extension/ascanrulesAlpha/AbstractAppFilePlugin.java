@@ -63,11 +63,6 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public int getCategory() {
         return Category.INFO_GATHER;
     }
@@ -86,9 +81,6 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
     public int getWascId() {
         return 13; // WASC-13: Information Leakage
     }
-
-    @Override
-    public void init() {}
 
     private String getOtherInfo() {
         return Constant.messages.getString(messagePrefix + "otherinfo");

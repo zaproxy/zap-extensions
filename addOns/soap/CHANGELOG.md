@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix exception with Java 9+ (Issue 4037).
 - Update minimum ZAP version to 2.8.0.
 - Add import menus to (new) top level Import menu instead of Tools menu.
+- Maintenance changes.
 
 ## 3 - 2017-03-31
 

@@ -68,11 +68,6 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public boolean targets(TechSet technologies) {
         if (technologies.includes(Tech.Linux)
                 || technologies.includes(Tech.MacOS)
@@ -101,9 +96,6 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
     public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
-
-    @Override
-    public void init() {}
 
     // Pre-check the original response for the detection pattern (to avoid false positives)
     private boolean isEvidencePresent(Pattern pattern) {

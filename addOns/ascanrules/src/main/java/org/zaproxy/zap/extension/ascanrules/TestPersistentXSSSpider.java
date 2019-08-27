@@ -69,9 +69,6 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
     }
 
     @Override
-    public void init() {}
-
-    @Override
     public void scan() {
 
         HttpMessage msg = getBaseMsg();

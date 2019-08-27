@@ -73,11 +73,6 @@ public class ApacheRangeHeaderDos extends AbstractAppPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public boolean targets(TechSet technologies) {
         return technologies.includes(Tech.Apache);
     }
@@ -101,9 +96,6 @@ public class ApacheRangeHeaderDos extends AbstractAppPlugin {
     public int getWascId() {
         return 10; // WASC-10: Denial of Service
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan() {

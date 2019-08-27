@@ -83,11 +83,6 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         if (vuln != null) {
             return vuln.getDescription();
@@ -122,9 +117,6 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
         }
         return "Failed to load vulnerability reference from file";
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {

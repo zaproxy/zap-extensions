@@ -44,11 +44,6 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "misc");
     }
@@ -67,9 +62,6 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
     public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "misc");
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
