@@ -27,6 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 
@@ -35,7 +36,8 @@ public class ScopePanel extends AbstractPanel {
     /** */
     private static final long serialVersionUID = 1L;
 
-    private JTextArea name, description;
+    private JTextField name;
+    private JTextArea description;
     private JComboBox<String> template;
     private JCheckBox onlyInScope;
 
@@ -58,23 +60,23 @@ public class ScopePanel extends AbstractPanel {
         this.add(new JLabel(Constant.messages.getString("customreport.scopepanel.name")), gbc);
 
         gbc.gridx++;
-        name = new JTextArea(Constant.messages.getString("customreport.scopepanel.report"));
-        this.add(
-                new JScrollPane(
-                        name,
-                        JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
-                gbc);
+        gbc.weightx = 1D;
+        name = new JTextField(Constant.messages.getString("customreport.scopepanel.report"));
+        this.add(name, gbc);
 
         // description line
         gbc.gridy++;
         gbc.gridx = 0;
+        gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         this.add(
                 new JLabel(Constant.messages.getString("customreport.scopepanel.description")),
                 gbc);
 
         gbc.gridx++;
+        gbc.weightx = 1D;
+        gbc.weighty = 1D;
+        gbc.fill = GridBagConstraints.BOTH;
         description =
                 new JTextArea(Constant.messages.getString("customreport.scopepanel.desc"), 3, 30);
         description.setLineWrap(true);
@@ -82,6 +84,9 @@ public class ScopePanel extends AbstractPanel {
 
         // template line
         gbc.gridx = 0;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.WEST;
         this.add(new JLabel(Constant.messages.getString("customreport.scopepanel.template")), gbc);
@@ -94,17 +99,20 @@ public class ScopePanel extends AbstractPanel {
         template = new JComboBox<>(selection);
         template.setSelectedIndex(0);
         gbc.gridx++;
+        gbc.weightx = 1D;
         gbc.anchor = GridBagConstraints.EAST;
         this.add(template, gbc);
 
         // just alert check box line
         gbc.gridx = 0;
+        gbc.weightx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.WEST;
         this.add(new JLabel(Constant.messages.getString("customreport.scopepanel.scope")), gbc);
 
         onlyInScope = new JCheckBox();
         gbc.gridx++;
+        gbc.weightx = 1D;
         gbc.anchor = GridBagConstraints.EAST;
         this.add(onlyInScope, gbc);
     }

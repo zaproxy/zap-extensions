@@ -55,7 +55,7 @@ public class OptionDialog extends AbstractFrame {
         buttonpane.add(getCancelButton());
         buttonpane.add(getHTMLButton());
 
-        optiondialog.add(mainpane, BorderLayout.NORTH);
+        optiondialog.add(mainpane, BorderLayout.CENTER);
         optiondialog.add(buttonpane, BorderLayout.SOUTH);
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
