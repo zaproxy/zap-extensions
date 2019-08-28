@@ -89,9 +89,6 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                     "<html"); // helps eliminate some common false positives in the case of 403s,
     // 302s, etc
 
-    @Override
-    public void init() {}
-
     /** returns the plugin id */
     @Override
     public int getId() {
@@ -102,11 +99,6 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return null;
     }
 
     @Override

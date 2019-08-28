@@ -164,9 +164,6 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
     /** the number of Max-Forwards to apply. Set depending on the Attack strength. */
     private int MAX_FORWARDS_MAXIMUM = 0;
 
-    /** plugin dependencies (none) */
-    private static final String[] dependency = {};
-
     /** for logging. */
     private static Logger log = Logger.getLogger(ProxyDisclosureScanner.class);
 
@@ -178,11 +175,6 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

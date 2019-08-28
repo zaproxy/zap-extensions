@@ -52,11 +52,6 @@ public class IntegerOverflow extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public boolean targets(TechSet technologies) {
         return technologies.includes(Tech.C);
     }
@@ -84,9 +79,6 @@ public class IntegerOverflow extends AbstractAppParamPlugin {
     private String getError(char c) {
         return Constant.messages.getString(MESSAGE_PREFIX + "error" + c);
     }
-
-    @Override
-    public void init() {}
 
     /*
      * This method is called by the active scanner for each GET and POST parameter for every page

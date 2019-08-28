@@ -124,16 +124,6 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
     }
 
     /**
-     * Give back specific plugin dependencies (none for this)
-     *
-     * @return the list of plugins that need to be executed before
-     */
-    @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    /**
      * Get the description of the vulnerability when found
      *
      * @return the vulnerability description
@@ -192,10 +182,6 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
 
         return "Failed to load vulnerability reference from file";
     }
-
-    /** Initialize the plugin according to the overall environment configuration */
-    @Override
-    public void init() {}
 
     /**
      * Scan for External Redirect vulnerabilities

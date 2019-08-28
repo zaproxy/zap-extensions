@@ -76,11 +76,6 @@ public class HttpOnlySite extends AbstractHostPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public int getCategory() {
         return Category.MISC;
     }
@@ -99,9 +94,6 @@ public class HttpOnlySite extends AbstractHostPlugin {
     public int getWascId() {
         return 4; // WASC-04: Insufficient Transport Layer Protection
     }
-
-    @Override
-    public void init() {}
 
     public void raiseAlert(HttpMessage newRequest, String message) {
         String newUri = newRequest.getRequestHeader().getURI().toString();

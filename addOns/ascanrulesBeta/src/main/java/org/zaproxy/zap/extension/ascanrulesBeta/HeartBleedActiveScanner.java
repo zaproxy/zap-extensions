@@ -866,11 +866,6 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }

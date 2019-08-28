@@ -78,12 +78,6 @@ public class Csrftokenscan extends AbstractAppPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /** @return dependencies of the plugin (none) */
-    @Override
-    public String[] getDependency() {
-        return null;
-    }
-
     /** @return the description of the vulnerability */
     @Override
     public String getDescription() {

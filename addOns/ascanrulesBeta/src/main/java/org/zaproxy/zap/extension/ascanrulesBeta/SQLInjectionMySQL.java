@@ -187,9 +187,6 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
                 + ") ) and \"\"=\"", // MySQL >= 5.0.12. Param in WHERE clause.
     };
 
-    /** plugin dependencies (none! not even "SQL Injection") */
-    private static final String[] dependency = {};
-
     /** for logging. */
     private static Logger log = Logger.getLogger(SQLInjectionMySQL.class);
 
@@ -204,11 +201,6 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString("ascanbeta.sqlinjection.mysql.name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

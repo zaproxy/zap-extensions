@@ -125,16 +125,6 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     }
 
     /**
-     * Give back specific pugin dependancies (none for this)
-     *
-     * @return the list of plugins that need to be executed before
-     */
-    @Override
-    public String[] getDependency() {
-        return new String[] {};
-    }
-
-    /**
      * Get the description of the vulnerbaility when found
      *
      * @return the vulnerability description

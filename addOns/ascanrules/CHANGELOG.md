@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Improved PowerShell injection control patterns to reduce false positives.
+- Maintenance changes.
 
 ## [33] - 2019-06-07
 
