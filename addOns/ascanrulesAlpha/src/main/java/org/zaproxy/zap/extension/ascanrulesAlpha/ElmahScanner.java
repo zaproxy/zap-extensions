@@ -100,7 +100,7 @@ public class ElmahScanner extends AbstractHostPlugin {
 
     @Override
     public int getWascId() {
-        return 13; // WASC-13: Informatin Leakage
+        return 13; // WASC-13: Information Leakage
     }
 
     @Override
