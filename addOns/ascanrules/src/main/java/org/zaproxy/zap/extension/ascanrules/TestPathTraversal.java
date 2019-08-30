@@ -260,6 +260,8 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             int winCount = 0;
             int dirCount = 0;
             int localTraversalLength = 0;
+            int index = -1;
+            String extension = null;
 
             // DEBUG only
             if (log.isDebugEnabled()) {
@@ -298,6 +300,12 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     dirCount = LOCAL_DIR_TARGETS.length;
                     localTraversalLength = 4;
                     includeNullByteInjectionPayload = true;
+                    if(value != null) {
+                    	index = value.lastIndexOf(".");
+                        if (index != -1) {
+                            extension = value.substring(index);
+                        }
+                    }
                     break;
 
                 default:
@@ -315,14 +323,6 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                                 + "] for Path Traversal to local files");
             }
 
-            int index = -1;
-            String extension = null;
-            if(value != null) {
-            	index = value.lastIndexOf(".");
-                if (index != -1) {
-                    extension = value.substring(index);
-                }
-            }
             // Check 1: Start detection for Windows patterns
             // note that depending on the AttackLevel, the number of prefixes that we will try
             // changes.
