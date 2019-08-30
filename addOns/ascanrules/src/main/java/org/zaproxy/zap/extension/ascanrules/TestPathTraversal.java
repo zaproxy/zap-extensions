@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import static org.zaproxy.zap.extension.ascanrules.utils.Constants.COMMON_FILE_EXTENSIONS;
 import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
 import java.io.IOException;
@@ -316,6 +315,14 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                                 + "] for Path Traversal to local files");
             }
 
+            int index = -1;
+            String extension = null;
+            if(value != null) {
+            	index = value.lastIndexOf(".");
+                if (index != -1) {
+                    extension = value.substring(index);
+                }
+            }
             // Check 1: Start detection for Windows patterns
             // note that depending on the AttackLevel, the number of prefixes that we will try
             // changes.
@@ -339,10 +346,12 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                                 || isStop()) {
                             return;
                         }
-                        for (String ext : COMMON_FILE_EXTENSIONS) {
+                        if (index != -1) {
                             if (sendAndCheckPayload(
                                             param,
-                                            WIN_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER + ext,
+                                            WIN_LOCAL_FILE_TARGETS[h]
+                                                    + NULL_BYTE_CHARACTER
+                                                    + extension,
                                             WIN_PATTERN)
                                     || isStop()) {
                                 return;
@@ -376,10 +385,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                                 || isStop()) {
                             return;
                         }
-                        for (String ext : COMMON_FILE_EXTENSIONS) {
+
+                        if (index != -1) {
                             if (sendAndCheckPayload(
                                             param,
-                                            NIX_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER + ext,
+                                            NIX_LOCAL_FILE_TARGETS[h]
+                                                    + NULL_BYTE_CHARACTER
+                                                    + extension,
                                             NIX_PATTERN)
                                     || isStop()) {
                                 return;

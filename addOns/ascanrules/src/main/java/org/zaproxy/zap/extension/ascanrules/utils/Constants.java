@@ -23,12 +23,4 @@ package org.zaproxy.zap.extension.ascanrules.utils;
 public class Constants {
 
     public static final String NULL_BYTE_CHARACTER = String.valueOf((char) 0);
-
-    /**
-     * Extensions which might be used to filter the parameter but due to null byte injection can be
-     * bypassed.
-     */
-    public static final String[] COMMON_FILE_EXTENSIONS = {
-        ".html", ".asp", ".php", ".jsp", ".jspf", ".txt", ".htm", ".aspx", ".config"
-    };
 }
