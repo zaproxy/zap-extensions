@@ -53,7 +53,7 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
             case HIGH:
                 return recommendMax + 7;
             case INSANE:
-                return 300;
+                return recommendMax + 9;
         }
     }
 

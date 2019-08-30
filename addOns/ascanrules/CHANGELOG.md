@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improved PowerShell injection control patterns to reduce false positives.
 - Maintenance changes.
 - Issue 5271: Fix SQLi false positive (and potential false negative) when response bodies contain injection strings.
-- Command Injection , Test Path Traversal and Remote File Include plugins are updated to include payloads for Null byte injection(Issue 3877).
+- Command Injection, Test Path Traversal, and Remote File Include rules are updated to include payloads for Null Byte Injection (Issue 3877).
 
 ## [33] - 2019-06-07
 
