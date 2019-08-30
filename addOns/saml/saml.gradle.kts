@@ -1,4 +1,4 @@
-version = "8"
+version = "9"
 description = "Detect, Show, Edit, Fuzz SAML requests"
 
 zapAddOn {
