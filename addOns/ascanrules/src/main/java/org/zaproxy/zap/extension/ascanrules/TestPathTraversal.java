@@ -292,8 +292,8 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     dirCount = LOCAL_DIR_TARGETS.length;
                     localTraversalLength = 4;
                     includeNullByteInjectionPayload = true;
-                    if(value != null) {
-                    	index = value.lastIndexOf(".");
+                    if (value != null) {
+                        index = value.lastIndexOf(".");
                         if (index != -1) {
                             extension = value.substring(index);
                         }
