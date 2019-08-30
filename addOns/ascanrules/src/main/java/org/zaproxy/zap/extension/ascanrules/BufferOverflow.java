@@ -55,11 +55,6 @@ public class BufferOverflow extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public boolean targets(TechSet technologies) {
         return technologies.includes(Tech.C);
     }
@@ -87,9 +82,6 @@ public class BufferOverflow extends AbstractAppParamPlugin {
     public String getOther() {
         return Constant.messages.getString(MESSAGE_PREFIX + "other");
     }
-
-    @Override
-    public void init() {}
 
     /*
      * This method is called by the active scanner for each GET and POST parameter for every page

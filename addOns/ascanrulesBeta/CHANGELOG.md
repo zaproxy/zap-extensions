@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Fixed ArrayIndexOutOfBoundsException issue in XML External Entity Attack scan rule.
   - Now removes original XML header in "Local File Reflection Attack".
+- Maintenance changes.
 
 ## [26] - 2019-07-11
 

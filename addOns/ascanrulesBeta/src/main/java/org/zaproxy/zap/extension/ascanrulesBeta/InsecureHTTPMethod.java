@@ -105,11 +105,6 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         if (vuln != null) {
             return vuln.getDescription();
@@ -144,9 +139,6 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         }
         return "Failed to load vulnerability reference from file";
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan() {

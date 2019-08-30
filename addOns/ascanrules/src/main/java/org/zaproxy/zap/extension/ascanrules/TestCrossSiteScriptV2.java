@@ -63,11 +63,6 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         if (vuln != null) {
             return vuln.getDescription();
@@ -102,9 +97,6 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         }
         return "Failed to load vulnerability reference from file";
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan(HttpMessage msg, NameValuePair originalParam) {

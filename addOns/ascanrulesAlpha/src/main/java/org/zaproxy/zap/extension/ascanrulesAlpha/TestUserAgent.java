@@ -78,11 +78,6 @@ public class TestUserAgent extends AbstractAppPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
@@ -101,9 +96,6 @@ public class TestUserAgent extends AbstractAppPlugin {
     public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan() {

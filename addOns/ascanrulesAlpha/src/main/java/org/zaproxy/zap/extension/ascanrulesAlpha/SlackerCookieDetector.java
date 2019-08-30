@@ -307,11 +307,6 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("ascanalpha.cookieslack.desc");
     }
@@ -340,9 +335,6 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
         }
         return "Cookie Slack Detector: Failed to load vulnerability reference from file";
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public int getRisk() {

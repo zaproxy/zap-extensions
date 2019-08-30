@@ -139,9 +139,6 @@ public class SQLInjectionOracle extends AbstractAppParamPlugin {
                 + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
     };
 
-    /** plugin dependencies (none! not even "SQL Injection") */
-    private static final String[] dependency = {};
-
     /** for logging. */
     private static Logger log = Logger.getLogger(SQLInjectionOracle.class);
 
@@ -156,11 +153,6 @@ public class SQLInjectionOracle extends AbstractAppParamPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString("ascanbeta.sqlinjection.oracle.name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

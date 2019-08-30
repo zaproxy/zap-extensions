@@ -73,9 +73,6 @@ public class GetForPostScanner extends AbstractAppPlugin {
     }
 
     @Override
-    public void init() {}
-
-    @Override
     public void scan() {
         // Check if the user stopped things. One request per URL so check before
         // sending the request

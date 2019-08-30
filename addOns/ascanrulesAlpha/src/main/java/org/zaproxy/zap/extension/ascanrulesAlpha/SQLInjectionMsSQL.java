@@ -76,8 +76,6 @@ public class SQLInjectionMsSQL extends AbstractAppParamPlugin {
         ORIG_VALUE_TOKEN + ")) \" WAITFOR DELAY '" + SLEEP_TOKEN + "' ((",
     };
 
-    /** plugin dependencies (none! not even "SQL Injection") */
-    private static final String[] dependency = {};
     /** for logging. */
     private static final Logger log = Logger.getLogger(SQLInjectionMsSQL.class);
 
@@ -97,11 +95,6 @@ public class SQLInjectionMsSQL extends AbstractAppParamPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString("ascanalpha.sqlinjection.mssql.name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

@@ -206,9 +206,6 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 
     private char[] RANDOM_PARAMETER_CHARS = "abcdefghijklmnopqrstuvwyxz0123456789".toCharArray();
 
-    /** plugin dependencies (none! not even "SQL Injection") */
-    private static final String[] dependency = {};
-
     /** for logging. */
     private static Logger log = Logger.getLogger(SQLInjectionSQLite.class);
 
@@ -223,11 +220,6 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString("ascanalpha.sqlinjection.sqlite.name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

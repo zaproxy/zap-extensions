@@ -79,11 +79,6 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public boolean targets(TechSet technologies) {
         if (technologies.includes(Tech.PHP)) {
             return true;
@@ -126,9 +121,6 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
         }
         return "Failed to load vulnerability reference from file";
     }
-
-    @Override
-    public void init() {}
 
     @Override
     public void scan() {

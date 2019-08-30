@@ -175,9 +175,6 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
                 + SQL_ONE_LINE_COMMENT, // Param in WHERE clause.
     };
 
-    /** plugin dependencies (none! not even "SQL Injection") */
-    private static final String[] dependency = {};
-
     /** for logging. */
     private static Logger log = Logger.getLogger(SQLInjectionPostgresql.class);
 
@@ -192,11 +189,6 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
     @Override
     public String getName() {
         return Constant.messages.getString("ascanbeta.sqlinjection.postgres.name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return dependency;
     }
 
     @Override

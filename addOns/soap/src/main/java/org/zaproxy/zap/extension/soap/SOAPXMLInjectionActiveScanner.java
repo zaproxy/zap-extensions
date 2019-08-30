@@ -66,17 +66,9 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public int getCategory() {
         return Category.MISC;
     }
-
-    @Override
-    public void init() {}
 
     /*
      * This method is called by the active scanner for each GET and POST parameter

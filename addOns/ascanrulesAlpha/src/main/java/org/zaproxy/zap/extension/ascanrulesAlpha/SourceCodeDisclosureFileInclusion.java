@@ -148,11 +148,6 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         if (vuln != null) {
             return vuln.getDescription();

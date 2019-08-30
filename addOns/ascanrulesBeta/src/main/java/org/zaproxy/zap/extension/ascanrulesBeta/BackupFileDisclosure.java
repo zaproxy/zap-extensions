@@ -299,11 +299,6 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
     }
 
     @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    @Override
     public String getDescription() {
         if (vuln != null) {
             return vuln.getDescription();

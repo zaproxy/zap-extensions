@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [5] - 2019-08-30
+
+- Improve layout/sizing of Generate Report dialogue (Issue 5521).
 - Remove unused library.
 
 ## 4 - 2018-06-27
@@ -23,4 +27,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 1 - 2015-12-04
 
 
-
+[5]: https://github.com/zaproxy/zap-extensions/releases/customreport-v5
