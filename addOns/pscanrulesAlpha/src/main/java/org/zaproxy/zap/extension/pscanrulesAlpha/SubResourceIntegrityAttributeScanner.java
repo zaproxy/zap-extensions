@@ -15,7 +15,7 @@ import static net.htmlparser.jericho.HTMLElementName.LINK;
 import static net.htmlparser.jericho.HTMLElementName.SCRIPT;
 
 /** Detect missing attribute integrity in tag <script> */
-public class SRIIntegrityAttributeScanner extends PluginPassiveScanner {
+public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
   /** Prefix for internationalized messages used by this rule */
   private static final String MESSAGE_PREFIX = "pscanalpha.sri-integrity.";
 
@@ -41,7 +41,12 @@ public class SRIIntegrityAttributeScanner extends PluginPassiveScanner {
     boolean unsafeElement =
         sourceElements.stream()
             .filter(e -> SUPPORTED_ELEMENTS.contains(e.getName()))
-            .noneMatch(e -> e.getAttributeValue("integrity") != null);
+            .anyMatch(
+                e ->
+                    e.getAttributeValue("integrity") == null
+                        && !e.getAttributeValue("src")
+                            .matches(
+                                "^https://[^/]*" + msg.getRequestHeader().getHostName() + "/.*"));
 
     if (unsafeElement) {
       Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());

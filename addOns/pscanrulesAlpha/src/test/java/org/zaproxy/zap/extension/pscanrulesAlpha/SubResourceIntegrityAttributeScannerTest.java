@@ -7,8 +7,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class SRIIntegrityAttributeScannerTest
-    extends PassiveScannerTest<SRIIntegrityAttributeScanner> {
+public class SubResourceIntegrityAttributeScannerTest
+    extends PassiveScannerTest<SubResourceIntegrityAttributeScanner> {
 
   // Test cases
   // Without attribute but in the current domain => No alert
@@ -18,8 +18,9 @@ public class SRIIntegrityAttributeScannerTest
   // TODO: update CHANGELOG.md
 
   @Test
-  public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInLinkTag() throws HttpMalformedHeaderException {
-    // Given a HTML page with link tag containing an integrity attribute
+  public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInLinkElement()
+      throws HttpMalformedHeaderException {
+    // Given a HTML page with link element containing an integrity attribute
     HttpMessage msg = new HttpMessage();
     msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
     // from https://www.w3.org/TR/SRI/#use-casesexamples
@@ -36,8 +37,9 @@ public class SRIIntegrityAttributeScannerTest
   }
 
   @Test
-  public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInScriptTag() throws HttpMalformedHeaderException {
-    // Given a HTML page with link tag containing an integrity attribute
+  public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInScriptElement()
+      throws HttpMalformedHeaderException {
+    // Given a HTML page with link element containing an integrity attribute
     HttpMessage msg = new HttpMessage();
     msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
     // from https://www.w3.org/TR/SRI/#use-casesexamples
@@ -54,8 +56,9 @@ public class SRIIntegrityAttributeScannerTest
   }
 
   @Test
-  public void shouldRaiseAlertGivenIntegrityAttributeIsMissingInLinkTag() throws HttpMalformedHeaderException {
-    // Given a HTML page with link tag containing an integrity attribute
+  public void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElement()
+      throws HttpMalformedHeaderException {
+    // Given a HTML page with a script element containing an integrity attribute
     HttpMessage msg = new HttpMessage();
     msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
     // from https://www.w3.org/TR/SRI/#use-casesexamples
@@ -70,8 +73,26 @@ public class SRIIntegrityAttributeScannerTest
     assertThat(alertsRaised.size(), equalTo(1));
   }
 
+  @Test
+  public void shouldNotRaiseAlertGivenElementIsServedBySameDomainServer()
+      throws HttpMalformedHeaderException {
+    // Given a HTML page with an element served by the same (sub-)domain
+    HttpMessage msg = new HttpMessage();
+    msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
+    // from https://www.w3.org/TR/SRI/#use-casesexamples
+    msg.setResponseBody(
+        "<html><head><script src=\"https://static.example.com/v1.0/include.js\"\n"
+            + "        ></script></head><body></body></html>");
+
+    // When the page is scanned
+    rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+    // Then the alert "Sub resource integrity attribute missing" should be raised
+    assertThat(alertsRaised.size(), equalTo(0));
+  }
+
   @Override
-  protected SRIIntegrityAttributeScanner createScanner() {
-    return new SRIIntegrityAttributeScanner();
+  protected SubResourceIntegrityAttributeScanner createScanner() {
+    return new SubResourceIntegrityAttributeScanner();
   }
 }
