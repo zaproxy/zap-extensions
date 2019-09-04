@@ -10,7 +10,6 @@ import static org.junit.Assert.assertThat;
 public class SubResourceIntegrityAttributeScannerTest
     extends PassiveScannerTest<SubResourceIntegrityAttributeScanner> {
 
-  // TODO: update pscanalpha.html
   // TODO: update CHANGELOG.md
 
   @Test

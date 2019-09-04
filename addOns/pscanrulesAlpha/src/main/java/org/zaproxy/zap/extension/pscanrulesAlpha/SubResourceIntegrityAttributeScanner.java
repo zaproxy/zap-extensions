@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static net.htmlparser.jericho.HTMLElementName.LINK;
 import static net.htmlparser.jericho.HTMLElementName.SCRIPT;
@@ -61,14 +60,14 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
               alert.setDetail(
                   getString("desc"),
                   msg.getRequestHeader().getURI().toString(),
-                  "", // param
-                  "", // attack
-                  "", // other info
+                  "",
+                  "",
+                  "",
                   getString("soln"),
                   getString("refs"),
                   element.toString(),
-                  693, // Protection Mechanism Failure
-                  -1, // No
+                  287, // Improper Authentication
+                  -1, // Not applicable
                   msg);
               parent.raiseAlert(id, alert);
             });
