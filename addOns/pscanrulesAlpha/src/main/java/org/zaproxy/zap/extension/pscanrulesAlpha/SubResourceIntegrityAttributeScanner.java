@@ -9,7 +9,11 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static net.htmlparser.jericho.HTMLElementName.LINK;
 import static net.htmlparser.jericho.HTMLElementName.SCRIPT;
@@ -28,6 +32,14 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
   // and video elements.
   private static final List<String> SUPPORTED_ELEMENTS = Arrays.asList(SCRIPT, LINK);
 
+  private static final Map<String, String> CONTENT_ATTRIBUTES =
+      new HashMap<String, String>() {
+        {
+          put(SCRIPT, "src");
+          put(LINK, "href");
+        }
+      };
+
   private PassiveScanThread parent;
 
   @Override
@@ -38,33 +50,36 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
   @Override
   public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
     List<Element> sourceElements = source.getAllElements();
-    boolean unsafeElement =
-        sourceElements.stream()
-            .filter(e -> SUPPORTED_ELEMENTS.contains(e.getName()))
-            .anyMatch(
-                e ->
-                    e.getAttributeValue("integrity") == null
-                        && !e.getAttributeValue("src")
-                            .matches(
-                                "^https://[^/]*" + msg.getRequestHeader().getHostName() + "/.*"));
+    sourceElements.stream()
+        .filter(element -> SUPPORTED_ELEMENTS.contains(element.getName()))
+        .filter(unsafeSubResource(msg.getRequestHeader().getHostName()))
+        .forEach(
+            element -> {
+              Alert alert =
+                  new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_HIGH, getName());
 
-    if (unsafeElement) {
-      Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
+              alert.setDetail(
+                  getString("desc"),
+                  msg.getRequestHeader().getURI().toString(),
+                  "", // param
+                  "", // attack
+                  "", // other info
+                  getString("soln"),
+                  getString("refs"),
+                  element.toString(),
+                  693, // Protection Mechanism Failure
+                  -1, // No
+                  msg);
+              parent.raiseAlert(id, alert);
+            });
+  }
 
-      alert.setDetail(
-          getString("desc"),
-          msg.getRequestHeader().getURI().toString(),
-          "", // param
-          "", // attack
-          "", // other info
-          getString("soln"),
-          getString("refs"),
-          "",
-          693, // Protection Mechanism Failure
-          -1, // No
-          msg);
-      parent.raiseAlert(id, alert);
-    }
+  private static Predicate<Element> unsafeSubResource(String hostname) {
+    return element ->
+        element.getAttributeValue("integrity") == null
+            && !element
+                .getAttributeValue(CONTENT_ATTRIBUTES.get(element.getName()))
+                .matches("^https?://[^/]*" + hostname + "/.*");
   }
 
   @Override
