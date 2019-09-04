@@ -10,8 +10,6 @@ import static org.junit.Assert.assertThat;
 public class SubResourceIntegrityAttributeScannerTest
     extends PassiveScannerTest<SubResourceIntegrityAttributeScanner> {
 
-  // TODO: update CHANGELOG.md
-
   @Test
   public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInLinkElement()
       throws HttpMalformedHeaderException {
