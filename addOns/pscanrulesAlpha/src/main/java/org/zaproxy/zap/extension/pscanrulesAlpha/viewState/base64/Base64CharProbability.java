@@ -66,6 +66,6 @@ public enum Base64CharProbability {
     public boolean isUnlikelyToBeBase64(String base64EvidenceString, float probabilityThreshold) {
         return hasNotThisCharClass(base64EvidenceString)
                 && calculateProbabilityOfNotContainingCharClass(base64EvidenceString)
-                < probabilityThreshold;
+                        < probabilityThreshold;
     }
 }

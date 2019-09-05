@@ -70,17 +70,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
         // 50% probability threshold (ie, "on balance of probability")
         PROBABILITY_THRESHOLD.put(Plugin.AlertThreshold.HIGH, 0.50F);
     }
-    /**
-     * patterns used to identify strings withut each of the given character sets which is used to
-     * calculate the probability of this occurring, and eliminate potential Base64 strings which are
-     * extremely improbable
-     */
-    static Pattern digitPattern = Pattern.compile("[0-9]");
-
-    static Pattern alphaPattern = Pattern.compile("[a-zA-Z]");
-    static Pattern otherPattern = Pattern.compile("[\\+\\\\/\\-_]");
-    static Pattern lowercasePattern = Pattern.compile("[a-z]");
-    static Pattern uppercasePattern = Pattern.compile("[A-Z]");
 
     /** the logger. logs stuff. strange that! */
     private static Logger log = Logger.getLogger(Base64Disclosure.class);
@@ -88,11 +77,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.base64disclosure.";
 
-    /**
-     * gets the name of the scanner
-     *
-     * @return
-     */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
@@ -197,8 +181,8 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                         + charClass.name().toLowerCase()
                                         + " characters, and the the probability of this occurring for a string of this length is "
                                         + (charClass.calculateProbabilityOfNotContainingCharClass(
-                                        base64evidenceString)
-                                        * 100)
+                                                        base64evidenceString)
+                                                * 100)
                                         + "%. The threshold is "
                                         + (probabilityThreshold * 100)
                                         + "%");
@@ -343,7 +327,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
                 msg);
         parent.raiseAlert(id, alert);
     }
-
 
     /**
      * sets the parent

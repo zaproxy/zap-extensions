@@ -1,3 +1,22 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2019 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.pscanrulesAlpha.viewState;
 
 import org.apache.commons.codec.binary.Hex;
@@ -14,186 +33,191 @@ import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteR
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateDecoder.decodeObjectAsXML;
 
 public enum Decoders {
-  ARRAY_OF_STRING(
-      0x15,
-      bb -> {
-        StringBuilder sb2 = new StringBuilder();
-        int stringarraysize = readLittleEndianBase128Number(bb);
-        sb2.append(String.format("<stringarray size=\"%d\">", stringarraysize));
-        for (int j = 0; j < stringarraysize; j++) {
-          int stringlength = bb.get();
-          String string = new String(readBytes(bb, stringlength));
-          sb2.append(String.format("<stringwithlength length=\"%d\">", stringlength));
-          sb2.append(ViewStateByteReader.escapeString(string));
-          sb2.append("</stringwithlength>");
-        }
-        sb2.append("</stringarray>");
-        return Optional.of(sb2);
-      }),
-  CONTAINERS_OF_BOOLEANS(
-      0x03,
-      bb -> {
-        StringBuilder sb = new StringBuilder();
-        int booleancontainersize = readLittleEndianBase128Number(bb);
-        sb.append(String.format("<booleanarray size=\"%d\">", booleancontainersize));
-        for (int i = 0; i < booleancontainersize; i++) {
-          try {
-            sb.append(decodeObjectAsXML(bb));
-          } catch (Exception e) {
-            return Optional.empty();
-          }
-        }
-        sb.append("</booleanarray>");
-        return Optional.of(sb);
-      }),
-  CONTAINER_OF_OBJECTS(
-      0x16,
-      bb -> {
-        int objectcontainersize = readLittleEndianBase128Number(bb);
-        StringBuilder sb1 = new StringBuilder();
-        sb1.append(String.format("<objectarray size=\"%d\">", objectcontainersize));
-        for (int i = 0; i < objectcontainersize; i++) {
-          try {
-            sb1.append(decodeObjectAsXML(bb));
-          } catch (Exception e) {
-            return Optional.empty();
-          }
-        }
-        sb1.append("</objectarray>");
-        return Optional.of(sb1);
-      }),
-  CONTROL_STATE(
-      0x18,
-      bb -> {
-        int controlstatelength = readLittleEndianBase128Number(bb);
-        StringBuilder sb =
-            new StringBuilder(String.format("<controlstate size=\"%d\">", controlstatelength));
-        try {
-          sb.append(decodeObjectAsXML(bb));
-          sb.append(decodeObjectAsXML(bb));
-        } catch (Exception e) {
-          return Optional.empty();
-        }
-        sb.append("</controlstate>");
-        return Optional.of(sb);
-      }),
-  EMPTY_NODE(0x64, bb -> Optional.of(new StringBuilder("<emptynode></emptynode>"))),
-  EMPTY_STRING(0x65, bb -> Optional.of(new StringBuilder("<emptystring></emptystring>"))),
-  FALSE(0x68, bb -> Optional.of(new StringBuilder("<boolean>false</boolean>"))),
-  NULL_TERMINATED_STRING(
-      0x0B,
-      bb -> {
-        String nullterminatedString = readNullTerminatedString(bb);
-        StringBuilder sb = new StringBuilder("<stringnullterminated>");
-        sb.append(ViewStateByteReader.escapeString(nullterminatedString));
-        sb.append("</stringnullterminated>");
-        return Optional.of(sb);
-      }),
-  STRING_REFERENCE(
-      0x1F,
-      bb -> {
-        int stringref = readLittleEndianBase128Number(bb);
-        StringBuilder sb = new StringBuilder("<stringreference>");
-        sb.append(stringref);
-        sb.append("</stringreference>");
-        return Optional.of(sb);
-      }),
-  STRING(
-      0x05,
-      bb -> {
-        int stringsize = readLittleEndianBase128Number(bb);
-        String string = new String(readBytes(bb, stringsize));
-        StringBuilder sb = new StringBuilder("<string>");
-        sb.append(ViewStateByteReader.escapeString(string));
-        sb.append("</string>");
-        return Optional.of(sb);
-      }),
-  OTHER_STRING(0x1E, STRING.decoder),
-  RGBA_COMPONENT(
-      0x09,
-      bb -> {
-        byte[] rgbabytes = new byte[4];
-        bb.get(rgbabytes);
-        String rgbaashexstring = Hex.encodeHexString(rgbabytes);
-        StringBuilder sb = new StringBuilder("<rgba>0x");
-        sb.append(rgbaashexstring);
-        sb.append("</rgba>");
-        return Optional.of(sb);
-      }),
-  TRIPLE(0x10, bb ->{
-      StringBuilder sb = new StringBuilder("<triple>");
-      try {
-          sb.append(decodeObjectAsXML(bb));
-          sb.append(decodeObjectAsXML(bb));
-          sb.append(decodeObjectAsXML(bb));
-      } catch (Exception e) {
-          return Optional.empty();
-      }
-      sb.append("</triple>");
-      return Optional.of(sb);
-  }),
-  TRUE(0x67, bb -> Optional.of(new StringBuilder("<boolean>true</boolean>"))),
-  TUPLE(0x0F, bb -> {
-      StringBuilder sb = new StringBuilder("<pair>");
-      try {
-          sb.append(decodeObjectAsXML(bb));
-          sb.append(decodeObjectAsXML(bb));
-      } catch (Exception e) {
-          return Optional.empty();
-      }
-      sb.append("</pair>");
-      return Optional.of(sb);
-  }),
-  UNIT(
-      0x1B,
-      bb -> {
-        byte[] unitbytes = new byte[12];
-        bb.get(unitbytes);
-        String unitashexstring = Hex.encodeHexString(unitbytes);
-        StringBuilder sb = new StringBuilder("<unit>0x");
-        sb.append(unitashexstring);
-        sb.append("</unit>");
-        return Optional.of(sb);
-      }),
-  UNSIGNED_INT(
-      0x02,
-      bb -> {
-        int intSize = readLittleEndianBase128Number(bb);
-        StringBuilder sb = new StringBuilder("<uint32>");
-        sb.append(intSize);
-        sb.append("</uint32>");
-        return Optional.of(sb);
-      }),
-  UUID(
-      0x24,
-      bb -> {
-        byte[] uuidbytes = new byte[36];
-        bb.get(uuidbytes);
-        String uuidashexstring = Hex.encodeHexString(uuidbytes);
-        StringBuilder sb = new StringBuilder("<uuid>0x");
-        sb.append(uuidashexstring);
-        sb.append("</uuid>");
-        return Optional.of(sb);
-      }),
-  ZERO(0x66, bb -> Optional.of(new StringBuilder("<zero></zero>")));
+    ARRAY_OF_STRING(
+            0x15,
+            bb -> {
+                StringBuilder sb2 = new StringBuilder();
+                int stringarraysize = readLittleEndianBase128Number(bb);
+                sb2.append(String.format("<stringarray size=\"%d\">", stringarraysize));
+                for (int j = 0; j < stringarraysize; j++) {
+                    int stringlength = bb.get();
+                    String string = new String(readBytes(bb, stringlength));
+                    sb2.append(String.format("<stringwithlength length=\"%d\">", stringlength));
+                    sb2.append(ViewStateByteReader.escapeString(string));
+                    sb2.append("</stringwithlength>");
+                }
+                sb2.append("</stringarray>");
+                return Optional.of(sb2);
+            }),
+    CONTAINERS_OF_BOOLEANS(
+            0x03,
+            bb -> {
+                StringBuilder sb = new StringBuilder();
+                int booleancontainersize = readLittleEndianBase128Number(bb);
+                sb.append(String.format("<booleanarray size=\"%d\">", booleancontainersize));
+                for (int i = 0; i < booleancontainersize; i++) {
+                    try {
+                        sb.append(decodeObjectAsXML(bb));
+                    } catch (Exception e) {
+                        return Optional.empty();
+                    }
+                }
+                sb.append("</booleanarray>");
+                return Optional.of(sb);
+            }),
+    CONTAINER_OF_OBJECTS(
+            0x16,
+            bb -> {
+                int objectcontainersize = readLittleEndianBase128Number(bb);
+                StringBuilder sb1 = new StringBuilder();
+                sb1.append(String.format("<objectarray size=\"%d\">", objectcontainersize));
+                for (int i = 0; i < objectcontainersize; i++) {
+                    try {
+                        sb1.append(decodeObjectAsXML(bb));
+                    } catch (Exception e) {
+                        return Optional.empty();
+                    }
+                }
+                sb1.append("</objectarray>");
+                return Optional.of(sb1);
+            }),
+    CONTROL_STATE(
+            0x18,
+            bb -> {
+                int controlstatelength = readLittleEndianBase128Number(bb);
+                StringBuilder sb =
+                        new StringBuilder(
+                                String.format("<controlstate size=\"%d\">", controlstatelength));
+                try {
+                    sb.append(decodeObjectAsXML(bb));
+                    sb.append(decodeObjectAsXML(bb));
+                } catch (Exception e) {
+                    return Optional.empty();
+                }
+                sb.append("</controlstate>");
+                return Optional.of(sb);
+            }),
+    EMPTY_NODE(0x64, bb -> Optional.of(new StringBuilder("<emptynode></emptynode>"))),
+    EMPTY_STRING(0x65, bb -> Optional.of(new StringBuilder("<emptystring></emptystring>"))),
+    FALSE(0x68, bb -> Optional.of(new StringBuilder("<boolean>false</boolean>"))),
+    NULL_TERMINATED_STRING(
+            0x0B,
+            bb -> {
+                String nullterminatedString = readNullTerminatedString(bb);
+                StringBuilder sb = new StringBuilder("<stringnullterminated>");
+                sb.append(ViewStateByteReader.escapeString(nullterminatedString));
+                sb.append("</stringnullterminated>");
+                return Optional.of(sb);
+            }),
+    STRING_REFERENCE(
+            0x1F,
+            bb -> {
+                int stringref = readLittleEndianBase128Number(bb);
+                StringBuilder sb = new StringBuilder("<stringreference>");
+                sb.append(stringref);
+                sb.append("</stringreference>");
+                return Optional.of(sb);
+            }),
+    STRING(
+            0x05,
+            bb -> {
+                int stringsize = readLittleEndianBase128Number(bb);
+                String string = new String(readBytes(bb, stringsize));
+                StringBuilder sb = new StringBuilder("<string>");
+                sb.append(ViewStateByteReader.escapeString(string));
+                sb.append("</string>");
+                return Optional.of(sb);
+            }),
+    OTHER_STRING(0x1E, STRING.decoder),
+    RGBA_COMPONENT(
+            0x09,
+            bb -> {
+                byte[] rgbabytes = new byte[4];
+                bb.get(rgbabytes);
+                String rgbaashexstring = Hex.encodeHexString(rgbabytes);
+                StringBuilder sb = new StringBuilder("<rgba>0x");
+                sb.append(rgbaashexstring);
+                sb.append("</rgba>");
+                return Optional.of(sb);
+            }),
+    TRIPLE(
+            0x10,
+            bb -> {
+                StringBuilder sb = new StringBuilder("<triple>");
+                try {
+                    sb.append(decodeObjectAsXML(bb));
+                    sb.append(decodeObjectAsXML(bb));
+                    sb.append(decodeObjectAsXML(bb));
+                } catch (Exception e) {
+                    return Optional.empty();
+                }
+                sb.append("</triple>");
+                return Optional.of(sb);
+            }),
+    TRUE(0x67, bb -> Optional.of(new StringBuilder("<boolean>true</boolean>"))),
+    TUPLE(
+            0x0F,
+            bb -> {
+                StringBuilder sb = new StringBuilder("<pair>");
+                try {
+                    sb.append(decodeObjectAsXML(bb));
+                    sb.append(decodeObjectAsXML(bb));
+                } catch (Exception e) {
+                    return Optional.empty();
+                }
+                sb.append("</pair>");
+                return Optional.of(sb);
+            }),
+    UNIT(
+            0x1B,
+            bb -> {
+                byte[] unitbytes = new byte[12];
+                bb.get(unitbytes);
+                String unitashexstring = Hex.encodeHexString(unitbytes);
+                StringBuilder sb = new StringBuilder("<unit>0x");
+                sb.append(unitashexstring);
+                sb.append("</unit>");
+                return Optional.of(sb);
+            }),
+    UNSIGNED_INT(
+            0x02,
+            bb -> {
+                int intSize = readLittleEndianBase128Number(bb);
+                StringBuilder sb = new StringBuilder("<uint32>");
+                sb.append(intSize);
+                sb.append("</uint32>");
+                return Optional.of(sb);
+            }),
+    UUID(
+            0x24,
+            bb -> {
+                byte[] uuidbytes = new byte[36];
+                bb.get(uuidbytes);
+                String uuidashexstring = Hex.encodeHexString(uuidbytes);
+                StringBuilder sb = new StringBuilder("<uuid>0x");
+                sb.append(uuidashexstring);
+                sb.append("</uuid>");
+                return Optional.of(sb);
+            }),
+    ZERO(0x66, bb -> Optional.of(new StringBuilder("<zero></zero>")));
 
-  final int type;
-  final Function<ByteBuffer, Optional<StringBuilder>> decoder;
+    final int type;
+    final Function<ByteBuffer, Optional<StringBuilder>> decoder;
 
-  Decoders(int type, Function<ByteBuffer, Optional<StringBuilder>> decoder) {
-    this.type = type;
-    this.decoder = decoder;
-  }
-
-  private static final Map<Integer, Decoders> BY_TYPE = new HashMap<>();
-
-  static {
-    for (Decoders e : values()) {
-      BY_TYPE.put(e.type, e);
+    Decoders(int type, Function<ByteBuffer, Optional<StringBuilder>> decoder) {
+        this.type = type;
+        this.decoder = decoder;
     }
-  }
 
-  public static Optional<Decoders> findBy(int type) {
-    return Optional.ofNullable(BY_TYPE.get(type));
-  }
+    private static final Map<Integer, Decoders> BY_TYPE = new HashMap<>();
+
+    static {
+        for (Decoders e : values()) {
+            BY_TYPE.put(e.type, e);
+        }
+    }
+
+    public static Optional<Decoders> findBy(int type) {
+        return Optional.ofNullable(BY_TYPE.get(type));
+    }
 }

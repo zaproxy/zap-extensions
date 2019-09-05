@@ -107,8 +107,14 @@ public class ViewStateDecoder {
                     String.format(
                             "<hmactype>%1$s</hmactype>",
                             HMAC_TYPES.getOrDefault(bytesRemainingToBeRead, "HMAC-UNKNOWN")));
-            representation.append("<hmaclength>").append(bytesRemainingToBeRead).append("</hmaclength>");
-            representation.append("<hmacvalue>0x").append(dataremainderhexencoded).append("</hmacvalue>");
+            representation
+                    .append("<hmaclength>")
+                    .append(bytesRemainingToBeRead)
+                    .append("</hmaclength>");
+            representation
+                    .append("<hmacvalue>0x")
+                    .append(dataremainderhexencoded)
+                    .append("</hmacvalue>");
         } else {
             // No unread bytes --> no MAC. The Viewstate can be messed with!! Yee-Ha!
             // NOTE: if this pattern changes, change patternNoHMAC

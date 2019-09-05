@@ -31,8 +31,6 @@ import static org.junit.Assert.assertThat;
 
 public class ViewStateDecoderTest {
 
-    private ViewStateDecoder viewStateDecoder = new ViewStateDecoder();
-
     @Test
     public void shouldDecodeHMAC_SHA0_Viewstate() throws Exception {
         // Given
@@ -42,7 +40,7 @@ public class ViewStateDecoderTest {
                         + "/6kXnY15AUSAwa";
 
         // When
-        String content = viewStateDecoder.decodeAsXML(Base64.decode(viewState.getBytes()));
+        String content = ViewStateDecoder.decodeAsXML(Base64.decode(viewState.getBytes()));
 
         // Then
         assertThat(
@@ -93,7 +91,7 @@ public class ViewStateDecoderTest {
                 "/wEPDwUJODczNjQ5OTk0D2QWAgIDD2QWAgIFDw8WAh4EVGV4dAUWSSBMb3ZlIERvdG5ldEN1cnJ5LmNvbWRkZA==";
 
         // When
-        String content = viewStateDecoder.decodeAsXML(Base64.decode(viewState.getBytes()));
+        String content = ViewStateDecoder.decodeAsXML(Base64.decode(viewState.getBytes()));
 
         // Then
         assertThat(
@@ -146,7 +144,7 @@ public class ViewStateDecoderTest {
         String viewState = "emFwCg==";
 
         // When
-        viewStateDecoder.decodeAsXML(Base64.decode(viewState.getBytes()));
+        ViewStateDecoder.decodeAsXML(Base64.decode(viewState.getBytes()));
     }
 
     @Before
