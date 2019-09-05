@@ -706,7 +706,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     public synchronized void foundError(URL url, String reason) {
         headlessResult.addElement(
                 new HeadlessResult(url.getFile() + ":" + reason, -1, HeadlessResult.ERROR));
-        LOG.error("ERROR: " + url.toString() + " - " + reason);
+        LOG.error(url.toString() + " - " + reason);
     }
 
     public String getInputFile() {
@@ -922,7 +922,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                     totalDirsFound--;
                 } else {
-                    LOG.error("FAILED Removed " + processWork + " from dir queue");
+                    LOG.error("Removed " + processWork + " from dir queue");
                 }
             }
         }
