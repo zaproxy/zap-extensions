@@ -244,13 +244,13 @@ public class ViewStateDecoder {
             throw new Exception("Invalid Viewstate preamble");
         }
 
-        StringBuffer representation = new StringBuffer("<?xml version=\"1.0\" ?>\n");
-        representation.append("<viewstate>\n");
+        StringBuilder representation = new StringBuilder("<?xml version=\"1.0\" ?>");
+        representation.append("<viewstate>");
 
         // if the viewstate were encrypted, we would not have been able to decode it at all.
         // because we don't attempt to decrypt it, because we don't have the shared secret key to do
         // so.
-        representation.append("<encrypted>false</encrypted>\n");
+        representation.append("<encrypted>false</encrypted>");
 
         // decode the root object, which contains the remainder of the ViewState
         representation.append(decodeObjectAsXML(dataBuffer));
@@ -265,20 +265,20 @@ public class ViewStateDecoder {
             dataBuffer.get(dataremaininginbuffer);
             String dataremainderhexencoded = Hex.encodeHexString(dataremaininginbuffer);
 
-            representation.append("<hmac>true</hmac>\n");
+            representation.append("<hmac>true</hmac>");
             representation.append(
                     String.format(
                             "<hmactype>%1$s</hmactype>",
                             HMAC_TYPES.getOrDefault(bytesRemainingToBeRead, "HMAC-UNKNOWN")));
-            representation.append("<hmaclength>" + bytesRemainingToBeRead + "</hmaclength>\n");
-            representation.append("<hmacvalue>0x" + dataremainderhexencoded + "</hmacvalue>\n");
+            representation.append("<hmaclength>").append(bytesRemainingToBeRead).append("</hmaclength>");
+            representation.append("<hmacvalue>0x").append(dataremainderhexencoded).append("</hmacvalue>");
         } else {
             // No unread bytes --> no MAC. The Viewstate can be messed with!! Yee-Ha!
             // NOTE: if this pattern changes, change patternNoHMAC
-            representation.append("<hmac>false</hmac>\n");
+            representation.append("<hmac>false</hmac>");
         }
 
-        representation.append("</viewstate>\n");
+        representation.append("</viewstate>");
 
         // my work here is done.
         return format(representation.toString());
