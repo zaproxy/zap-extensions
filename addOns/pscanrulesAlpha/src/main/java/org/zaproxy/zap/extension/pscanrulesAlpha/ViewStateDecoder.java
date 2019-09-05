@@ -35,9 +35,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.EMPTY_NODE;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.EMPTY_STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.FALSE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.TRUE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.ZERO;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.CHARS_TO_ENCODE_IN_XML_PATTERN;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readBytes;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readLittleEndianBase128Number;
@@ -176,28 +181,15 @@ public class ViewStateDecoder {
                 representation.append("<uuid>0x" + uuidashexstring + "</uuid>");
                 return representation;
             case 0x64:
-                // Empty Node
-                representation.append("<emptynode>");
-                representation.append("</emptynode>\n");
-                return representation;
+                return EMPTY_NODE.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x65:
-                // Empty String
-                representation.append("<emptystring>");
-                representation.append("</emptystring>\n");
-                return representation;
+                return EMPTY_STRING.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x66:
-                // Zero
-                representation.append("<zero>");
-                representation.append("</zero>\n");
-                return representation;
+                return ZERO.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x67:
-                // True
-                representation.append("<boolean>true</boolean>\n");
-                return representation;
+                return TRUE.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x68:
-                // True
-                representation.append("<boolean>false</boolean>\n");
-                return representation;
+                return FALSE.decoder.apply(bb).orElseThrow(Exception::new);
             default:
                 throw new Exception("Unsupported object type 0x" + Integer.toHexString(b));
         }

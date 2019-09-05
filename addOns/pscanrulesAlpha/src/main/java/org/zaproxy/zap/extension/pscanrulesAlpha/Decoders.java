@@ -13,6 +13,9 @@ import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteR
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readNullTerminatedString;
 
 public enum Decoders {
+  EMPTY_NODE(0x64, bb -> Optional.of(new StringBuilder("<emptynode></emptynode>"))),
+  EMPTY_STRING(0x65, bb -> Optional.of(new StringBuilder("<emptystring></emptystring>"))),
+  FALSE(0x68, bb -> Optional.of(new StringBuilder("<boolean>false</boolean>"))),
   NULL_TERMINATED_STRING(
       0x0B,
       bb -> {
@@ -33,6 +36,7 @@ public enum Decoders {
         return Optional.of(sb);
       }),
   OTHER_STRING(0x1E, STRING.decoder),
+  TRUE(0x67, bb -> Optional.of(new StringBuilder("<boolean>true</boolean>"))),
   UNSIGNED_INT(
       0x02,
       bb -> {
@@ -41,7 +45,8 @@ public enum Decoders {
         sb.append(intSize);
         sb.append("</uint32>");
         return Optional.of(sb);
-      });
+      }),
+  ZERO(0x66, bb -> Optional.of(new StringBuilder("<zero></zero>")));
 
   final int type;
   final Function<ByteBuffer, Optional<StringBuilder>> decoder;
