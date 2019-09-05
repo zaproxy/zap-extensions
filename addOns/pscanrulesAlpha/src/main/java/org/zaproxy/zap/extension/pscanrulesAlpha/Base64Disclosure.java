@@ -23,19 +23,26 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateDecoder;
+import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.base64.Base64CharProbability;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.base64.Base64Data;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toSet;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.PATTERN_NO_HMAC;
 
 /**
@@ -51,6 +58,20 @@ public class Base64Disclosure extends PluginPassiveScanner {
     private static final Pattern BASE64_PATTERN =
             Pattern.compile("[a-zA-Z0-9+\\\\/\\-_]{30,}={0,2}");
 
+    private static final Map<Plugin.AlertThreshold, Float> PROBABILITY_THRESHOLD =
+            new EnumMap<>(Plugin.AlertThreshold.class);
+
+    static {
+        // 0% probability threshold (all structurally valid Base64 data is
+        // considered, regardless of how improbable  it is given character
+        // frequencies, etc)
+        PROBABILITY_THRESHOLD.put(Plugin.AlertThreshold.DEFAULT, 0.0F);
+        PROBABILITY_THRESHOLD.put(Plugin.AlertThreshold.OFF, 0.0F);
+        PROBABILITY_THRESHOLD.put(Plugin.AlertThreshold.LOW, 0.10F);
+        PROBABILITY_THRESHOLD.put(Plugin.AlertThreshold.MEDIUM, 0.25F);
+        // 50% probability threshold (ie, "on balance of probability")
+        PROBABILITY_THRESHOLD.put(Plugin.AlertThreshold.HIGH, 0.50F);
+    }
     /**
      * patterns used to identify strings withut each of the given character sets which is used to
      * calculate the probability of this occurring, and eliminate potential Base64 strings which are
@@ -103,118 +124,12 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
         List<Base64Data> possibleBase64Patterns = extractPossibleBase64String(msg);
 
-        if (log.isDebugEnabled()) log.debug("Trying Base64 Pattern: " + BASE64_PATTERN);
-        for (Base64Data haystack : possibleBase64Patterns) {
-                // does the base 64 encoded string actually contain the various characters that
-                // we might expect?
-                // (note: we may not care, depending on the threshold set by the user)
-                String base64evidenceString = new String(haystack.transformData);
-                boolean noDigitInString = !digitPattern.matcher(base64evidenceString).find();
-                boolean noAlphaInString = !alphaPattern.matcher(base64evidenceString).find();
-                // boolean noOtherInString = !
-                // otherPattern.matcher(base64evidenceString).find();
-                boolean noLowerInString =
-                        !lowercasePattern.matcher(base64evidenceString).find();
-                boolean noUpperInString =
-                        !uppercasePattern.matcher(base64evidenceString).find();
+        List<Base64Data> base64Patterns =
+                filterBase64StringByLikelihood(
+                        possibleBase64Patterns, PROBABILITY_THRESHOLD.get(getAlertThreshold()));
 
-                // calculate the actual probability of a Base64 string of this length *not*
-                // containing a given character class (digit/alphabetic/other Base64 character)
-                // right about now, I expect to get flamed by the statistics geeks in our
-                // midst.. wait for it! :)
-                float probabilityOfNoDigitInString =
-                        (float) Math.pow(((float) 64 - 10) / 64, haystack.originalData.length());
-                float probabilityOfNoAlphaInString =
-                        (float) Math.pow(((float) 64 - 52) / 64, haystack.originalData.length());
-                // float probabilityOfNoOtherInString = (float)Math.pow(((float)64-2)/64,
-                // haystack.originalData.length());
-                float probabilityOfNoLowerInString =
-                        (float) Math.pow(((float) 64 - 26) / 64, haystack.originalData.length());
-                float probabilityOfNoUpperInString = probabilityOfNoLowerInString;
 
-                // set the threshold percentage based on what threshold was set by the user
-                float probabilityThreshold = 0.0F; // 0% probability threshold
-                switch (this.getAlertThreshold()) {
-                        // 50% probability threshold (ie, "on balance of probability")
-                    case HIGH:
-                        probabilityThreshold = 0.50F;
-                        break;
-                        // 25% probability threshold
-                    case MEDIUM:
-                        probabilityThreshold = 0.25F;
-                        break;
-                        // 10% probability threshold
-                    case LOW:
-                        probabilityThreshold = 0.10F;
-                        break;
-                        // 0% probability threshold (all structurally valid Base64 data is
-                        // considered, regardless of how improbable  it is given character
-                        // frequencies, etc)
-                    default:
-                }
-
-                // if the String is unlikely to be Base64, given the distribution of the
-                // characters
-                // ie, less probable than the threshold probability controlled by the user, then
-                // do not process it.
-                if ((noDigitInString && probabilityOfNoDigitInString < probabilityThreshold)
-                        || (noAlphaInString
-                                && probabilityOfNoAlphaInString < probabilityThreshold)
-                        ||
-                        // (noOtherInString && probabilityOfNoOtherInString <
-                        // probabilityThreshold) ||
-                        (noLowerInString && probabilityOfNoLowerInString < probabilityThreshold)
-                        || (noUpperInString
-                                && probabilityOfNoUpperInString < probabilityThreshold)) {
-                    if (log.isTraceEnabled()) {
-                        log.trace(
-                                "The following candidate Base64 has been excluded on probabilistic grounds: ["
-                                        + haystack.originalData
-                                        + "] ");
-                        if (noDigitInString)
-                            log.trace(
-                                    "The candidate Base64 has no digit characters, and the the probability of this occurring for a string of this length is "
-                                            + (probabilityOfNoDigitInString * 100)
-                                            + "%. The threshold is "
-                                            + (probabilityThreshold * 100)
-                                            + "%");
-                        if (noAlphaInString)
-                            log.trace(
-                                    "The candidate Base64 has no alphabetic characters, and the the probability of this occurring for a string of this length is "
-                                            + (probabilityOfNoAlphaInString * 100)
-                                            + "%. The threshold is "
-                                            + (probabilityThreshold * 100)
-                                            + "%");
-                        // if (noOtherInString)
-                        //	log.trace("The candidate Base64 has no 'other' characters, and the
-                        // the probability of this occurring for a string of this length is "+
-                        // (probabilityOfNoOtherInString * 100) + "%. The threshold is "+
-                        // (probabilityThreshold *100)+ "%");
-                        if (noLowerInString)
-                            log.trace(
-                                    "The candidate Base64 has no lowercase characters, and the the probability of this occurring for a string of this length is "
-                                            + (probabilityOfNoLowerInString * 100)
-                                            + "%. The threshold is "
-                                            + (probabilityThreshold * 100)
-                                            + "%");
-                        if (noUpperInString)
-                            log.trace(
-                                    "The candidate Base64 has no uppercase characters, and the the probability of this occurring for a string of this length is "
-                                            + (probabilityOfNoUpperInString * 100)
-                                            + "%. The threshold is "
-                                            + (probabilityThreshold * 100)
-                                            + "%");
-                    }
-                    continue;
-                }
-
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "Found a match for Base64, of length "
-                                    + haystack.originalData.length()
-                                    + ":"
-                                    + haystack.originalData);
-
+        for (Base64Data haystack : base64Patterns) {
                 // so it's valid Base64.  Is it valid .NET ViewState data?
                 // This will be true for both __VIEWSTATE and __EVENTVALIDATION data, although
                 // currently, we can only interpret/decode __VIEWSTATE.
@@ -230,7 +145,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                     "The following Base64 string has a ViewState preamble: ["
                                             + haystack.originalData
                                             + "]");
-                        viewstatexml = viewstatedecoded.decodeAsXML(Base64.decode(haystack.originalData.getBytes()));
+                        viewstatexml = ViewStateDecoder.decodeAsXML(Base64.decode(haystack.originalData.getBytes()));
                         if (log.isDebugEnabled())
                             log.debug(
                                     "The data was successfully decoded as ViewState data of length "
@@ -392,6 +307,52 @@ public class Base64Disclosure extends PluginPassiveScanner {
             }
         }
         return possibleBase64Patterns;
+    }
+
+    private static List<Base64Data> filterBase64StringByLikelihood(
+            List<Base64Data> possibleBase64Patterns, float probabilityThreshold) {
+        List<Base64Data> base64Patterns = new ArrayList<>();
+
+        for (Base64Data data : possibleBase64Patterns) {
+            String base64evidenceString = data.transformData;
+            // set the threshold percentage based on what threshold was set by the user
+            Set<Base64CharProbability> charClasses =
+                    Stream.of(Base64CharProbability.values())
+                            .filter(
+                                    x ->
+                                            x.isUnlikelyToBeBase64(
+                                                    base64evidenceString, probabilityThreshold))
+                            .collect(toSet());
+            if (!charClasses.isEmpty()) {
+                if (log.isTraceEnabled()) {
+                    log.trace(
+                            "The following candidate Base64 has been excluded on probabilistic grounds: ["
+                                    + base64evidenceString
+                                    + "] ");
+                    for (Base64CharProbability charClass : charClasses) {
+                        log.trace(
+                                "The candidate Base64 has no "
+                                        + charClass.name().toLowerCase()
+                                        + " characters, and the the probability of this occurring for a string of this length is "
+                                        + (charClass.calculateProbabilityOfNotContainingCharClass(
+                                        base64evidenceString)
+                                        * 100)
+                                        + "%. The threshold is "
+                                        + (probabilityThreshold * 100)
+                                        + "%");
+                    }
+                }
+                continue;
+            }
+            base64Patterns.add(data);
+            if (log.isDebugEnabled())
+                log.debug(
+                        "Found a match for Base64, of length "
+                                + data.originalData.length()
+                                + ":"
+                                + data.originalData);
+        }
+        return base64Patterns;
     }
 
 
