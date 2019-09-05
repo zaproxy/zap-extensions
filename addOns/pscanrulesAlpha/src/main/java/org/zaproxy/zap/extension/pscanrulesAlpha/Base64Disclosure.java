@@ -128,104 +128,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
         List<Base64Data> possibleViewState = tryToTransformIntoViewState(base64Patterns);
 
-        for (Base64Data haystack : possibleViewState) {
-
-                if (haystack.isValidViewState()) {
-                    String viewstatexml = haystack.getViewStateXml();
-                    if (log.isDebugEnabled())
-                        log.debug("Raising a ViewState informational alert");
-
-                    // raise an (informational) Alert with the human readable ViewState data
-                    Alert alert =
-                            new Alert(
-                                    getPluginId(),
-                                    Alert.RISK_INFO,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    Constant.messages.getString(
-                                            "pscanalpha.base64disclosure.viewstate.name"));
-                    alert.setDetail(
-                            Constant.messages.getString(
-                                    "pscanalpha.base64disclosure.viewstate.desc"),
-                            msg.getRequestHeader().getURI().toString(),
-                            "", // param
-                            "", // attack
-                            Constant.messages.getString(
-                                    "pscanalpha.base64disclosure.viewstate.extrainfo",
-                                    viewstatexml), // other info
-                            Constant.messages.getString(
-                                    "pscanalpha.base64disclosure.viewstate.soln"),
-                            Constant.messages.getString(
-                                    "pscanalpha.base64disclosure.viewstate.refs"),
-                            viewstatexml, // evidence
-                            200, // Information Exposure,
-                            13, // Information Leakage
-                            msg);
-                    parent.raiseAlert(id, alert);
-                    // do NOT break at this point.. we need to find *all* the issues
-
-                    // if the ViewState is not protected by a MAC, alert it as a High, cos we
-                    // can mess with the parameters for sure..
-                    if (haystack.isViewStateNotProtectedByMAC()) {
-                        Alert alertmacless =
-                                new Alert(
-                                        getPluginId(),
-                                        Alert.RISK_HIGH,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        Constant.messages.getString(
-                                                "pscanalpha.base64disclosure.viewstatewithoutmac.name"));
-                        alertmacless.setDetail(
-                                Constant.messages.getString(
-                                        "pscanalpha.base64disclosure.viewstatewithoutmac.desc"),
-                                msg.getRequestHeader().getURI().toString(),
-                                "", // param
-                                "", // attack
-                                Constant.messages.getString(
-                                        "pscanalpha.base64disclosure.viewstatewithoutmac.extrainfo",
-                                        viewstatexml), // other info
-                                Constant.messages.getString(
-                                        "pscanalpha.base64disclosure.viewstatewithoutmac.soln"),
-                                Constant.messages.getString(
-                                        "pscanalpha.base64disclosure.viewstatewithoutmac.refs"),
-                                viewstatexml,
-                                642, // CWE-642 = External Control of Critical State Data
-                                13, // Information Leakage
-                                msg);
-                        parent.raiseAlert(id, alertmacless);
-                        // do NOT break at this point.. we need to find *all* the issues
-                    }
-                    // TODO: if the ViewState contains sensitive data, alert it (particularly if
-                    // running over HTTP)
-                } else {
-                    if (log.isDebugEnabled()) log.debug("Raising a Base64 informational alert");
-
-                    // the Base64 decoded data is not a valid ViewState (even though it may have
-                    // a valid ViewStatet pre-amble)
-                    // so treat it as normal Base64 data, and raise an informational alert.
-                    if (haystack.originalData.length() > 0) {
-                        Alert alert =
-                                new Alert(
-                                        getPluginId(),
-                                        Alert.RISK_INFO,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        getName());
-                        alert.setDetail(
-                                getDescription(),
-                                msg.getRequestHeader().getURI().toString(),
-                                "", // param
-                                null,
-                                getExtraInfo(msg, haystack.originalData, haystack.decodedData), // other info
-                                getSolution(),
-                                getReference(),
-                                haystack.originalData,
-                                200, // Information Exposure,
-                                13, // Information Leakage
-                                msg);
-                        parent.raiseAlert(id, alert);
-                        // do NOT break at this point.. we need to find *all* the potential
-                        // Base64 encoded data in the response..
-                    }
-                }
-            }
+        possibleViewState.forEach(data -> raiseAlert(msg, id, data));
     }
 
     private static List<Base64Data> extractPossibleBase64String(HttpMessage msg) {
@@ -344,6 +247,103 @@ public class Base64Disclosure extends PluginPassiveScanner {
         return viewStateContents;
     }
 
+    private void raiseAlert(HttpMessage msg, int id, Base64Data data) {
+        String base64evidence = data.originalData;
+        byte[] decodeddata = data.decodedData;
+
+        if (data.isValidViewState()) {
+            raiseViewStateInformationalAlert(msg, id, data.getViewStateXml());
+
+            if (data.isViewStateNotProtectedByMAC()) {
+                raiseMacLessAlert(msg, id, data.getViewStateXml());
+            }
+            // TODO: if the ViewState contains sensitive data, alert it (particularly if
+            // running over HTTP)
+        } else {
+
+            // the Base64 decoded data is not a valid ViewState (even though it may have
+            // a valid ViewStatet pre-amble)
+            // so treat it as normal Base64 data, and raise an informational alert.
+            if (base64evidence.length() > 0) {
+                raiseBase64InformationalAlert(msg, id, base64evidence, decodeddata);
+                // do NOT break at this point.. we need to find *all* the potential
+                // Base64 encoded data in the response..
+            }
+        }
+    }
+
+    private void raiseViewStateInformationalAlert(HttpMessage msg, int id, String viewstatexml) {
+        if (log.isDebugEnabled()) log.debug("Raising a ViewState informational alert");
+
+        // raise an (informational) Alert with the human readable ViewState data
+        Alert alert =
+                new Alert(
+                        getPluginId(),
+                        Alert.RISK_INFO,
+                        Alert.CONFIDENCE_MEDIUM,
+                        Constant.messages.getString("pscanalpha.base64disclosure.viewstate.name"));
+        alert.setDetail(
+                Constant.messages.getString("pscanalpha.base64disclosure.viewstate.desc"),
+                msg.getRequestHeader().getURI().toString(),
+                "", // param
+                "", // attack
+                Constant.messages.getString(
+                        "pscanalpha.base64disclosure.viewstate.extrainfo",
+                        viewstatexml), // other info
+                Constant.messages.getString("pscanalpha.base64disclosure.viewstate.soln"),
+                Constant.messages.getString("pscanalpha.base64disclosure.viewstate.refs"),
+                viewstatexml, // evidence
+                200, // Information Exposure,
+                13, // Information Leakage
+                msg);
+        parent.raiseAlert(id, alert);
+    }
+
+    private void raiseMacLessAlert(HttpMessage msg, int id, String viewstatexml) {
+        Alert alertmacless =
+                new Alert(
+                        getPluginId(),
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_MEDIUM,
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.name"));
+        alertmacless.setDetail(
+                Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.desc"),
+                msg.getRequestHeader().getURI().toString(),
+                "", // param
+                "", // attack
+                Constant.messages.getString(
+                        "pscanalpha.base64disclosure.viewstatewithoutmac.extrainfo",
+                        viewstatexml), // other info
+                Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.soln"),
+                Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.refs"),
+                viewstatexml,
+                642, // CWE-642 = External Control of Critical State Data
+                13, // Information Leakage
+                msg);
+        parent.raiseAlert(id, alertmacless);
+    }
+
+    private void raiseBase64InformationalAlert(
+            HttpMessage msg, int id, String base64evidence, byte[] decodeddata) {
+        if (log.isDebugEnabled()) log.debug("Raising a Base64 informational alert");
+
+        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getName());
+        alert.setDetail(
+                getDescription(),
+                msg.getRequestHeader().getURI().toString(),
+                "", // param
+                null,
+                getExtraInfo(msg, base64evidence, decodeddata), // other info
+                getSolution(),
+                getReference(),
+                base64evidence,
+                200, // Information Exposure,
+                13, // Information Leakage
+                msg);
+        parent.raiseAlert(id, alert);
+    }
+
 
     /**
      * sets the parent
@@ -365,39 +365,18 @@ public class Base64Disclosure extends PluginPassiveScanner {
         return 10094;
     }
 
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
     private String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    /**
-     * get the solution for the alert
-     *
-     * @return
-     */
     private String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    /**
-     * gets references for the alert
-     *
-     * @return
-     */
     private String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    /**
-     * gets extra information associated with the alert
-     *
-     * @param msg
-     * @return
-     */
     private String getExtraInfo(HttpMessage msg, String evidence, byte[] decodeddata) {
         return Constant.messages.getString(
                 MESSAGE_PREFIX + "extrainfo", evidence, new String(decodeddata));
