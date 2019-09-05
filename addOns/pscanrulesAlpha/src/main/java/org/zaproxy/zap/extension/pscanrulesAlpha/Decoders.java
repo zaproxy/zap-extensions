@@ -48,6 +48,15 @@ public enum Decoders {
         sb.append("</rgba>");
         return Optional.of(sb);
       }),
+  STRING_REFERENCE(
+      0x1F,
+      bb -> {
+        int stringref = readLittleEndianBase128Number(bb);
+        StringBuilder sb = new StringBuilder("<stringreference>");
+        sb.append(stringref);
+        sb.append("</stringreference>");
+        return Optional.of(sb);
+      }),
   TRUE(0x67, bb -> Optional.of(new StringBuilder("<boolean>true</boolean>"))),
   UNIT(
       0x1B,

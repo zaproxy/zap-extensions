@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.RGBA_COMPONENT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING_REFERENCE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNIT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UUID;
@@ -140,5 +141,20 @@ public class DecodersTest {
 
         // Then
         assertThat(content, equalTo(Optional.of("<unit>0xdeadbeefdeadbeefdeadbeef</unit>")));
+    }
+
+    @Test
+    public void shouldDecodeStringReference() {
+        // Given
+        byte[] data = new byte[] {(byte) 0xDE, (byte) 0xAD, (byte) 0xBE, (byte) 0xEF, 0x00};
+
+        // When
+        Optional<String> content =
+                STRING_REFERENCE.decoder
+                        .apply(ByteBuffer.wrap(data))
+                        .map(StringBuilder::toString);
+
+        // Then
+        assertThat(content, equalTo(Optional.of("<stringreference>233805534</stringreference>")));
     }
 }

@@ -41,6 +41,7 @@ import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.FALSE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.RGBA_COMPONENT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING_REFERENCE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.TRUE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNIT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
@@ -146,12 +147,7 @@ public class ViewStateDecoder {
             case 0x1B:
                 return UNIT.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x1F:
-                // String reference
-                int stringref = readLittleEndianBase128Number(bb);
-                representation.append("<stringreference>");
-                representation.append(stringref);
-                representation.append("</stringreference>\n");
-                return representation;
+                return STRING_REFERENCE.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x18:
                 // Control State
                 // this logic is based to some degree on https://gist.github.com/Noxwizard/6396665
