@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.CHARS_TO_ENCODE_IN_XML_PATTERN;
@@ -271,26 +273,19 @@ public class ViewStateDecoder {
         // Look at whether the ViewState is protected by a MAC
         // we can tell by looking at how many bytes remain at the end of the data, once
         // the ViewState data has been read out.
-        int bytesremainingtoberead = dataBuffer.remaining();
-        if (bytesremainingtoberead > 0) {
+        int bytesRemainingToBeRead = dataBuffer.remaining();
+        if (bytesRemainingToBeRead > 0) {
             // there are bytes at the end that were not read. This is probably the MAC.
-            byte[] dataremaininginbuffer = new byte[bytesremainingtoberead];
+            byte[] dataremaininginbuffer = new byte[bytesRemainingToBeRead];
             dataBuffer.get(dataremaininginbuffer);
             String dataremainderhexencoded = Hex.encodeHexString(dataremaininginbuffer);
 
             representation.append("<hmac>true</hmac>\n");
-            if (bytesremainingtoberead == 16)
-                representation.append("<hmactype>HMAC-MD5</hmactype>\n");
-            else if (bytesremainingtoberead == 20)
-                representation.append("<hmactype>HMAC-SHA0/HMAC-SHA1</hmactype>\n");
-            else if (bytesremainingtoberead == 32)
-                representation.append("<hmactype>HMAC-SHA256</hmactype>\n");
-            else if (bytesremainingtoberead == 48)
-                representation.append("<hmactype>HMAC-SHA384</hmactype>\n");
-            else if (bytesremainingtoberead == 64)
-                representation.append("<hmactype>HMAC-SHA512</hmactype>\n");
-            else representation.append("<hmactype>HMAC-UNKNOWN</hmactype>\n");
-            representation.append("<hmaclength>" + bytesremainingtoberead + "</hmaclength>\n");
+            representation.append(
+                    String.format(
+                            "<hmactype>%1$s</hmactype>",
+                            HMAC_TYPES.getOrDefault(bytesRemainingToBeRead, "HMAC-UNKNOWN")));
+            representation.append("<hmaclength>" + bytesRemainingToBeRead + "</hmaclength>\n");
             representation.append("<hmacvalue>0x" + dataremainderhexencoded + "</hmacvalue>\n");
         } else {
             // No unread bytes --> no MAC. The Viewstate can be messed with!! Yee-Ha!
@@ -302,6 +297,16 @@ public class ViewStateDecoder {
 
         // my work here is done.
         return format(representation.toString());
+    }
+
+    private static final Map<Integer, String> HMAC_TYPES = new HashMap<>();
+
+    static {
+        HMAC_TYPES.put(16, "HMAC-MD5");
+        HMAC_TYPES.put(20, "HMAC-SHA0/HMAC-SHA1");
+        HMAC_TYPES.put(32, "HMAC-SHA256");
+        HMAC_TYPES.put(48, "HMAC-SHA384");
+        HMAC_TYPES.put(64, "HMAC-SHA512");
     }
 
     private static String format(String xml) {
