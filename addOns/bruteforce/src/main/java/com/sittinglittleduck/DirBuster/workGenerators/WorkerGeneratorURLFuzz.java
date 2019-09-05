@@ -65,7 +65,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
 
     private String urlFuzzStart;
     private String urlFuzzEnd;
-    
+
     /* Logger object for the class */
     private static final Logger LOG = Logger.getLogger(WorkerGeneratorURLFuzz.class.getName());
 
@@ -139,8 +139,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                     httphead.setFollowRedirects(Config.followRedirects);
                     int responceCode = httpclient.executeMethod(httphead);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "DEBUG WokerGen: responce code for head check = " + responceCode);
+                        LOG.debug("DEBUG WokerGen: responce code for head check = " + responceCode);
                     }
                     if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
                         if (LOG.isDebugEnabled()) {
@@ -155,8 +154,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
             }
 
             d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
-            LOG.info(
-                    "Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
+            LOG.info("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
             int filesProcessed = 0;
 
             BaseCase baseCaseObj =

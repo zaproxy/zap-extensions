@@ -32,7 +32,7 @@ public class ProcessChecker extends TimerTask {
 
     /* Logger object for the class */
     private static final Logger LOG = Logger.getLogger(ProcessChecker.class.getName());
-    
+
     /** Creates a new instance of ProcessChecker */
     public interface ProcessUpdate {
 
@@ -118,19 +118,45 @@ public class ProcessChecker extends TimerTask {
 
             if (Config.debug) {
                 if (average == 0 || lastTenTotal == 0 || averageLastTen == 0) {
-                    LOG.info("Current Speed: " + current + " requests/sec\n"
-                            + "Average Speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec\n"
-                            + "Total Requests: " + currentTotal + "/" + totalToDo +"\n"
-                            + "Time To Finish: ~" + parseQueueLength);
+                    LOG.info(
+                            "Current Speed: "
+                                    + current
+                                    + " requests/sec\n"
+                                    + "Average Speed: (T) "
+                                    + average
+                                    + ", (C) "
+                                    + averageLastTen
+                                    + " requests/sec\n"
+                                    + "Total Requests: "
+                                    + currentTotal
+                                    + "/"
+                                    + totalToDo
+                                    + "\n"
+                                    + "Time To Finish: ~"
+                                    + parseQueueLength);
 
                 } else {
                     long timeLeft = (totalToDo - currentTotal) / averageLastTen;
                     String timeToCompelete = convertSecsToTime(timeLeft);
                     lastTotal = currentTotal;
-                    LOG.info("Current speed: " + current + " request/sec\n"
-                            + "Average Speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec\n"
-                            + "Total Requests: " + currentTotal + "/" + totalToDo + "\n"
-                            + "Time To Finish: " + timeToCompelete + "\n" + parseQueueLength);
+                    LOG.info(
+                            "Current speed: "
+                                    + current
+                                    + " request/sec\n"
+                                    + "Average Speed: (T) "
+                                    + average
+                                    + ", (C) "
+                                    + averageLastTen
+                                    + " requests/sec\n"
+                                    + "Total Requests: "
+                                    + currentTotal
+                                    + "/"
+                                    + totalToDo
+                                    + "\n"
+                                    + "Time To Finish: "
+                                    + timeToCompelete
+                                    + "\n"
+                                    + parseQueueLength);
                 }
 
                 // System.out.println("workQ: " + manager.workQueue.size());

@@ -181,7 +181,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     // ZAP: Option to control whether only the dirs found under the startPoint should be
     // parsed/fetched.
     private boolean onlyUnderStartPoint = true;
-    
+
     /* Logger object for the class */
     private static final Logger LOG = Logger.getLogger(Manager.class.getName());
 
@@ -665,7 +665,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
                 }
             }
 
-            if(LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 LOG.info("Dir found: " + url.getFile() + " - " + statusCode);
             }
 

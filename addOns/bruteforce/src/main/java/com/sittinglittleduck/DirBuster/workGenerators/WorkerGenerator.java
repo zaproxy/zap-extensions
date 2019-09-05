@@ -42,7 +42,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.log4j.Logger;
 
-
 /** Produces the work to be done, when we are reading from a list */
 public class WorkerGenerator implements Runnable {
 
@@ -57,7 +56,7 @@ public class WorkerGenerator implements Runnable {
     private boolean stopMe = false;
     private boolean skipCurrent = false;
     HttpClient httpclient;
-    
+
     /* Logger Object for the class */
     private static final Logger LOG = Logger.getLogger(WorkerGenerator.class.getName());
 
@@ -147,7 +146,8 @@ public class WorkerGenerator implements Runnable {
                 // 400!
                 if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("DEBUG WokerGen: Changing to GET only HEAD test returned 501(method no implmented) or a 400");
+                        LOG.debug(
+                                "DEBUG WokerGen: Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                     }
                     // switch the mode to just GET requests
                     manager.setAuto(false);
@@ -239,10 +239,11 @@ public class WorkerGenerator implements Runnable {
                             // System.out.println("current dir = " + currentDir);
                             workQueue.put(new WorkUnit(currentURL, true, "GET", baseCaseObj, null));
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("DEBUG WokerGen: 1 adding dir to work list "
-                                        + method
-                                        + " "
-                                        + currentDir.toString());
+                                LOG.debug(
+                                        "DEBUG WokerGen: 1 adding dir to work list "
+                                                + method
+                                                + " "
+                                                + currentDir.toString());
                             }
                         } catch (MalformedURLException ex) {
                             ex.printStackTrace();
@@ -287,10 +288,11 @@ public class WorkerGenerator implements Runnable {
                                         new WorkUnit(currentURL, true, method, baseCaseObj, line));
                                 // System.out.println("Gen finshed adding to queue");
                                 if (LOG.isDebugEnabled()) {
-                                    LOG.debug("DEBUG WokerGen: 2 adding dir to work list "
-                                              + method
-                                              + " "
-                                              + currentURL.toString());
+                                    LOG.debug(
+                                            "DEBUG WokerGen: 2 adding dir to work list "
+                                                    + method
+                                                    + " "
+                                                    + currentURL.toString());
                                 }
                             } catch (MalformedURLException e) {
                                 // TODO deal with bad line

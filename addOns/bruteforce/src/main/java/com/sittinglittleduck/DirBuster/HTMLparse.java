@@ -25,11 +25,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
-import org.apache.log4j.Logger;
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
+import org.apache.log4j.Logger;
 
 /**
  * This class is to paser the returned html pages and extract other dirs and files from them
@@ -43,7 +43,7 @@ public class HTMLparse extends Thread {
     private final Manager manager;
     boolean working;
     private boolean continueWorking = true;
-    
+
     /* Logging object for the class */
     private static final Logger LOG = Logger.getLogger(HTMLparse.class.getName());
 
@@ -78,7 +78,8 @@ public class HTMLparse extends Thread {
                 if (!sourceAsString.equals("")) {
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("DEBUG HTMLParser: Parsing text from " + work.getWork().toString());
+                        LOG.debug(
+                                "DEBUG HTMLParser: Parsing text from " + work.getWork().toString());
                         LOG.debug("DEBUG HTMLParser: text - " + sourceAsString);
                     }
 

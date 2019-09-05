@@ -61,7 +61,7 @@ public class BruteForceWorkGenerator implements Runnable {
     Vector extToCheck = new Vector(10, 5);
     private int failcode = 404;
     private boolean doingDirs = true;
-    
+
     /* Logger object for the class */
     private static final Logger LOG = Logger.getLogger(BruteForceWorkGenerator.class.getName());
 
@@ -304,9 +304,15 @@ public class BruteForceWorkGenerator implements Runnable {
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("BruteForceWorkGenerator: listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
+            LOG.debug(
+                    "BruteForceWorkGenerator: listLen: "
+                            + listLength
+                            + " minLen: "
+                            + minLen
+                            + " maxLen: "
+                            + maxLen);
         }
-        
+
         double total = 0;
         for (int a = minLen; a <= maxLen; a++) {
             total = total + Math.pow(listLength, a);

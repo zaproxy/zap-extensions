@@ -55,7 +55,7 @@ public class BruteForceURLFuzz implements Runnable {
     HttpClient httpclient;
     private String urlFuzzStart;
     private String urlFuzzEnd;
-    
+
     /* Logger object for the class */
     private static final Logger LOG = Logger.getLogger(BruteForceURLFuzz.class.getName());
 
@@ -244,9 +244,15 @@ public class BruteForceURLFuzz implements Runnable {
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("BruteForceURLFuzz: listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
+            LOG.debug(
+                    "BruteForceURLFuzz: listLen: "
+                            + listLength
+                            + " minLen: "
+                            + minLen
+                            + " maxLen: "
+                            + maxLen);
         }
-        
+
         double total = 0;
         for (int a = minLen; a <= maxLen; a++) {
             total = total + Math.pow(listLength, a);
@@ -255,7 +261,7 @@ public class BruteForceURLFuzz implements Runnable {
         if (LOG.isDebugEnabled()) {
             LOG.debug("BruteForceURLFuzz: Total for a pure brute force = " + total);
         }
-        
+
         manager.setTotalPass(total);
     }
 }

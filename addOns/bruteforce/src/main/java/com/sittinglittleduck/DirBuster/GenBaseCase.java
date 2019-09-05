@@ -27,10 +27,10 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
-import org.apache.log4j.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.Logger;
 
 /**
  * Generates a base case for a dir or file rangle that is about to be scanned
@@ -38,7 +38,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
  * @author James
  */
 public class GenBaseCase {
-    
+
     /* Log object for this class */
     private static final Logger LOG = Logger.getLogger(GenBaseCase.class.getName());
 
@@ -127,7 +127,10 @@ public class GenBaseCase {
         // we now need to get the content as we need a base case!
         if (failcode == 200) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("DEBUG GenbaseCase: base case for " + failurl.toString() + " came back as 200!");
+                LOG.debug(
+                        "DEBUG GenbaseCase: base case for "
+                                + failurl.toString()
+                                + " came back as 200!");
             }
 
             BufferedReader input =
@@ -265,7 +268,10 @@ public class GenBaseCase {
 
         if (failcode == 200) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("DEBUG GenBaseCase: base case for " + failurl.toString() + " came back as 200!");
+                LOG.debug(
+                        "DEBUG GenBaseCase: base case for "
+                                + failurl.toString()
+                                + " came back as 200!");
             }
 
             BufferedReader input =
@@ -329,7 +335,10 @@ public class GenBaseCase {
         // we now need to get the content as we need a base case!
         if (failcode == 200) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("DEBUG GenBaseCase: base case for " + failurl.toString() + " came back as 200!");
+                LOG.debug(
+                        "DEBUG GenBaseCase: base case for "
+                                + failurl.toString()
+                                + " came back as 200!");
             }
 
             BufferedReader input =

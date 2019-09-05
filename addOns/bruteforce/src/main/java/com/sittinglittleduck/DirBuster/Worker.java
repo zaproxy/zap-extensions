@@ -40,7 +40,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.log4j.Logger;
 
-
 /** This class process workunit and determines if the link has been found or not */
 public class Worker implements Runnable {
 
@@ -56,8 +55,7 @@ public class Worker implements Runnable {
 
     /* Logger object for the class */
     private static final Logger LOG = Logger.getLogger(Worker.class.getName());
-   
-    
+
     /**
      * Creates a new instance of Worker
      *
@@ -152,8 +150,13 @@ public class Worker implements Runnable {
                     } else if (code == HttpStatus.SC_NOT_FOUND
                             || code == HttpStatus.SC_BAD_REQUEST) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("DEBUG Worker[" + threadId + "]: "
-                                    + code + " for: " + url.toString());
+                            LOG.debug(
+                                    "DEBUG Worker["
+                                            + threadId
+                                            + "]: "
+                                            + code
+                                            + " for: "
+                                            + url.toString());
                         }
                     } else {
                         notifyItemFound(
@@ -171,7 +174,12 @@ public class Worker implements Runnable {
                     if (m.find()) {
                         // do nothing as we have a 404
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("DEBUG Worker[" + threadId + "]: Regex matched 404 code. (" + url.toString() + ")");
+                            LOG.debug(
+                                    "DEBUG Worker["
+                                            + threadId
+                                            + "]: Regex matched 404 code. ("
+                                            + url.toString()
+                                            + ")");
                         }
 
                     } else {
@@ -274,7 +282,13 @@ public class Worker implements Runnable {
     private int makeRequest(HttpMethodBase httpMethod)
             throws HttpException, IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DEBUG Worker[" + threadId + "]: " + httpMethod.getName() + " : " + url.toString());
+            LOG.debug(
+                    "DEBUG Worker["
+                            + threadId
+                            + "]: "
+                            + httpMethod.getName()
+                            + " : "
+                            + url.toString());
         }
 
         // set the custom HTTP headers
