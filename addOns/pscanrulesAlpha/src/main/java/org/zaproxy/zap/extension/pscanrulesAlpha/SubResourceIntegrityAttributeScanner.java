@@ -52,13 +52,17 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
     // and video elements.
     private static final List<String> SUPPORTED_ELEMENTS = Arrays.asList(SCRIPT, LINK);
 
-    private static final Map<String, String> CONTENT_ATTRIBUTES =
-            new HashMap<String, String>() {
-                {
-                    put(SCRIPT, "src");
-                    put(LINK, "href");
-                }
-            };
+    private static final Map<String, String> CONTENT_ATTRIBUTES;
+
+    static {
+        CONTENT_ATTRIBUTES =
+                new HashMap<String, String>() {
+                    {
+                        put(SCRIPT, "src");
+                        put(LINK, "href");
+                    }
+                };
+    }
 
     private PassiveScanThread parent;
 
