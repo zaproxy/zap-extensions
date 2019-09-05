@@ -26,6 +26,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -58,7 +59,8 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
 
-        if (!msg.getResponseHeader().isHtml()
+        if ((!msg.getResponseHeader().isHtml()
+                        || HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode()))
                 && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
             // Only really applies to HTML responses, but also check on Low threshold
             return;

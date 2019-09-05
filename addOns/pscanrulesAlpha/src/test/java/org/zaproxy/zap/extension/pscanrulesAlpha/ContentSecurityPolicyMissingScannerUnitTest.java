@@ -57,6 +57,34 @@ public class ContentSecurityPolicyMissingScannerUnitTest
     }
 
     @Test
+    public void givenMissingCspHeaderInRedirectAtMediumAlertThresholdThenNoAlertRaised()
+            throws Exception {
+        // Given
+        rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
+        HttpMessage msg = createHttpMessageWithHeaders(301, HEADER_HTML);
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    public void givenMissingCspHeaderInRedirectAtLowAlertThresholdThenAlertRaised()
+            throws Exception {
+        // Given
+        rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
+        HttpMessage msg = createHttpMessageWithHeaders(301, HEADER_HTML);
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertContentSecurityPolicyAlertRaised();
+    }
+
+    @Test
     public void givenCspHeaderAtMediumAlertThresholdThenNoAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
@@ -215,8 +243,14 @@ public class ContentSecurityPolicyMissingScannerUnitTest
     }
 
     private static HttpMessage createHttpMessageWithHeaders(String... headers) throws Exception {
+        return createHttpMessageWithHeaders(200, headers);
+    }
+
+    private static HttpMessage createHttpMessageWithHeaders(int responseCode, String... headers)
+            throws Exception {
         HttpMessage msg = new HttpMessage(new URI(URI, false));
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + String.join("\r\n", headers));
+        msg.setResponseHeader(
+                "HTTP/1.1 " + responseCode + " OK\r\n" + String.join("\r\n", headers));
         return msg;
     }
 }

@@ -24,7 +24,9 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -50,6 +52,10 @@ public class FeaturePolicyScanner extends PluginPassiveScanner {
 
         if (!httpMessage.getResponseHeader().isHtml()
                 && !httpMessage.getResponseHeader().isJavaScript()) {
+            return;
+        }
+        if (HttpStatusCode.isRedirection(httpMessage.getResponseHeader().getStatusCode())
+                && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
             return;
         }
 

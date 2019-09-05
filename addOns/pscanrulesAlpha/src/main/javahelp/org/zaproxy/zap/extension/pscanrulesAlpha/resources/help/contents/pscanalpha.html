@@ -37,7 +37,8 @@ Alerts generated:
 <H2>Content Security Policy (CSP) Header Not Set</H2>
 This checks HTML response headers for the presence of a Content Security Policy header.<br>
 By default this rule checks for the presence of the "Content-Security-Policy" header, 
-and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
+and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.<br>
+Redirects and non HTML responses are ignored except at the Low threshold.
 <p>
 If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
 that is actively being refined or developed, or one which is only partially implemented.
@@ -54,7 +55,8 @@ For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passiv
 
 <H2>Feature Policy Header Not Set</H2>
 This scanner checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Feature-Policy" header, 
-and alerts if one is not found.
+and alerts if one is not found.<br>
+Redirects are ignored except at the Low threshold.
 
 <H2>Hash Disclosure</H2>
 Passively scan for password hashes disclosed by the web server. <br>
