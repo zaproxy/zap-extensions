@@ -42,6 +42,7 @@ import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.TRUE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UUID;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.ZERO;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.CHARS_TO_ENCODE_IN_XML_PATTERN;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readBytes;
@@ -173,13 +174,7 @@ public class ViewStateDecoder {
                 representation.append("</controlstate>\n");
                 return representation;
             case 0x24:
-                // UUID
-                // TODO: test this case.
-                byte uuidbytes[] = new byte[36];
-                bb.get(uuidbytes);
-                String uuidashexstring = Hex.encodeHexString(uuidbytes);
-                representation.append("<uuid>0x" + uuidashexstring + "</uuid>");
-                return representation;
+                return UUID.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x64:
                 return EMPTY_NODE.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x65:

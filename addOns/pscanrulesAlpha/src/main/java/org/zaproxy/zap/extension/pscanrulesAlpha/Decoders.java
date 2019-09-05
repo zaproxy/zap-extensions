@@ -1,5 +1,6 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import org.apache.commons.codec.binary.Hex;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader;
 
 import java.nio.ByteBuffer;
@@ -44,6 +45,17 @@ public enum Decoders {
         StringBuilder sb = new StringBuilder("<uint32>");
         sb.append(intSize);
         sb.append("</uint32>");
+        return Optional.of(sb);
+      }),
+  UUID(
+      0x24,
+      bb -> {
+        byte[] uuidbytes = new byte[36];
+        bb.get(uuidbytes);
+        String uuidashexstring = Hex.encodeHexString(uuidbytes);
+        StringBuilder sb = new StringBuilder("<uuid>0x");
+        sb.append(uuidashexstring);
+        sb.append("</uuid>");
         return Optional.of(sb);
       }),
   ZERO(0x66, bb -> Optional.of(new StringBuilder("<zero></zero>")));

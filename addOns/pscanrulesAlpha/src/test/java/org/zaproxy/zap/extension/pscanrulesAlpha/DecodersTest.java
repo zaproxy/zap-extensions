@@ -3,6 +3,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -10,6 +11,7 @@ import static org.junit.Assert.assertThat;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UUID;
 
 public class DecodersTest {
     @Test
@@ -82,5 +84,23 @@ public class DecodersTest {
 
         // Then
         assertThat(content, equalTo(Optional.of("<string><![CDATA[&]]></string>")));
+    }
+
+    @Test
+    public void shouldDecodeAnUuid() {
+        // Given
+        byte[] data = new byte[36];
+        Arrays.fill(data, (byte) 0xDE);
+
+        // When
+        Optional<String> content =
+                UUID.decoder.apply(ByteBuffer.wrap(data)).map(StringBuilder::toString);
+
+        // Then
+        assertThat(
+                content,
+                equalTo(
+                        Optional.of(
+                                "<uuid>0xdededededededededededededededededededededededededededededededededededede</uuid>")));
     }
 }
