@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.CHARS_TO_ENCODE_IN_XML_PATTERN;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readBytes;
@@ -88,17 +89,7 @@ public class ViewStateDecoder {
                 return representation;
             case 0x05:
             case 0x1E:
-                // String
-                int stringsize = readLittleEndianBase128Number(bb);
-                String s = new String(readBytes(bb, stringsize));
-                representation.append("<string>");
-                matcher = CHARS_TO_ENCODE_IN_XML_PATTERN.matcher(s);
-                malicious = matcher.find();
-                if (malicious) representation.append("<![CDATA[");
-                representation.append(s);
-                if (malicious) representation.append("]]>");
-                representation.append("</string>\n");
-                return representation;
+                return STRING.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x0B:
                 return NULL_TERMINATED_STRING.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x0F:

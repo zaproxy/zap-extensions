@@ -8,6 +8,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
 
 public class DecodersTest {
@@ -55,5 +56,31 @@ public class DecodersTest {
         assertThat(
                 content,
                 equalTo(Optional.of("<stringnullterminated><![CDATA[&]]></stringnullterminated>")));
+    }
+
+    @Test
+    public void shouldDecodeString() {
+        // Given
+        byte[] data = new byte[] {0x04, 't', 'e', 's', 't'};
+
+        // When
+        Optional<String> content =
+                STRING.decoder.apply(ByteBuffer.wrap(data)).map(StringBuilder::toString);
+
+        // Then
+        assertThat(content, equalTo(Optional.of("<string>test</string>")));
+    }
+
+    @Test
+    public void shouldDecodeMaliciousString() {
+        // Given
+        byte[] data = new byte[] {0x01, '&'};
+
+        // When
+        Optional<String> content =
+                STRING.decoder.apply(ByteBuffer.wrap(data)).map(StringBuilder::toString);
+
+        // Then
+        assertThat(content, equalTo(Optional.of("<string><![CDATA[&]]></string>")));
     }
 }

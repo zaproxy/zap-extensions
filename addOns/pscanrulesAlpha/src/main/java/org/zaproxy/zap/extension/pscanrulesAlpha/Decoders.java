@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readBytes;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readLittleEndianBase128Number;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readNullTerminatedString;
 
@@ -21,6 +22,17 @@ public enum Decoders {
         sb.append("</stringnullterminated>");
         return Optional.of(sb);
       }),
+  STRING(
+      0x05,
+      bb -> {
+        int stringsize = readLittleEndianBase128Number(bb);
+        String string = new String(readBytes(bb, stringsize));
+        StringBuilder sb = new StringBuilder("<string>");
+        sb.append(ViewStateByteReader.escapeString(string));
+        sb.append("</string>");
+        return Optional.of(sb);
+      }),
+  OTHER_STRING(0x1E, STRING.decoder),
   UNSIGNED_INT(
       0x02,
       bb -> {
