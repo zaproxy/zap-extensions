@@ -39,10 +39,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.log4j.Logger;
 
 /** Produces the work to be done, when we are reading from a list */
 public class WorkerGeneratorURLFuzz implements Runnable {
@@ -66,6 +65,9 @@ public class WorkerGeneratorURLFuzz implements Runnable {
 
     private String urlFuzzStart;
     private String urlFuzzEnd;
+    
+    /* Logger object for the class */
+    private static final Logger LOG = Logger.getLogger(WorkerGeneratorURLFuzz.class.getName());
 
     /**
      * Creates a new instance of WorkerGenerator
@@ -136,13 +138,13 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                     }
                     httphead.setFollowRedirects(Config.followRedirects);
                     int responceCode = httpclient.executeMethod(httphead);
-                    if (Config.debug) {
-                        System.out.println(
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(
                                 "DEBUG WokerGen: responce code for head check = " + responceCode);
                     }
                     if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
-                        if (Config.debug) {
-                            System.out.println(
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(
                                     "DEBUG WokerGen: Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                         }
                         manager.setAuto(false);
@@ -153,7 +155,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
             }
 
             d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
-            System.out.println(
+            LOG.info(
                     "Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
             int filesProcessed = 0;
 
@@ -188,18 +190,17 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 Thread.sleep(3);
             }
         } catch (InterruptedException ex) {
-            Logger.getLogger(WorkerGeneratorURLFuzz.class.getName()).log(Level.SEVERE, null, ex);
+        	LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(WorkerGeneratorURLFuzz.class.getName()).log(Level.SEVERE, null, ex);
+        	LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
         } catch (IOException ex) {
-            Logger.getLogger(WorkerGeneratorURLFuzz.class.getName()).log(Level.SEVERE, null, ex);
+        	LOG.error("WorkerGeneratorURLFuzz IOException" + ex.toString());
         } finally {
             try {
                 d.close();
                 manager.setURLFuzzGenFinished(true);
             } catch (IOException ex) {
-                Logger.getLogger(WorkerGeneratorURLFuzz.class.getName())
-                        .log(Level.SEVERE, null, ex);
+            	LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
             }
         }
     }

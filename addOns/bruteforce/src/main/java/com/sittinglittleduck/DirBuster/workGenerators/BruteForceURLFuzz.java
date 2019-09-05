@@ -156,7 +156,7 @@ public class BruteForceURLFuzz implements Runnable {
                     incrementCounter(x);
                     Thread.sleep(20);
                 } catch (InterruptedException ex) {
-                	continue;
+                	LOG.error("BruteForceURLFuzz: makeList " + ex.toString());
                 }
             }
             /* re-initialize the index */
