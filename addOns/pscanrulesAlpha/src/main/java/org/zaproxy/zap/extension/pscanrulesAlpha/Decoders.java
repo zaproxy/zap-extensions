@@ -49,6 +49,17 @@ public enum Decoders {
         return Optional.of(sb);
       }),
   TRUE(0x67, bb -> Optional.of(new StringBuilder("<boolean>true</boolean>"))),
+  UNIT(
+      0x1B,
+      bb -> {
+        byte[] unitbytes = new byte[12];
+        bb.get(unitbytes);
+        String unitashexstring = Hex.encodeHexString(unitbytes);
+        StringBuilder sb = new StringBuilder("<unit>0x");
+        sb.append(unitashexstring);
+        sb.append("</unit>");
+        return Optional.of(sb);
+      }),
   UNSIGNED_INT(
       0x02,
       bb -> {

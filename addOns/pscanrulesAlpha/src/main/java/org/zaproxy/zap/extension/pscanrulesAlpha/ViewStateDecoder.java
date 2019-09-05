@@ -42,6 +42,7 @@ import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.RGBA_COMPONENT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.TRUE;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNIT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UUID;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.ZERO;
@@ -143,13 +144,7 @@ public class ViewStateDecoder {
             case 0x09:
                 return RGBA_COMPONENT.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x1B:
-                // Unit
-                // TODO: test this case.
-                byte unitbytes[] = new byte[12];
-                bb.get(unitbytes);
-                String unitashexstring = Hex.encodeHexString(unitbytes);
-                representation.append("<unit>0x" + unitashexstring + "</unit>");
-                return representation;
+                return UNIT.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x1F:
                 // String reference
                 int stringref = readLittleEndianBase128Number(bb);
