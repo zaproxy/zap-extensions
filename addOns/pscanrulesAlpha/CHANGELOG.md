@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Add Java Serialized Object (JSO) Scanner.
 - Fixed false positive when redirect destination is the same domain (Issue 5289).
+- CSP Missing and Feature Policy scan rule: Ignore missing headers on redirects unless Low threshold used.
+
 
 ## [25] - 2019-07-11
 

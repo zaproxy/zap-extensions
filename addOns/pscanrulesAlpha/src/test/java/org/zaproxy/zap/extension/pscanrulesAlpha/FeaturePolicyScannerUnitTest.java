@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import org.apache.commons.httpclient.URI;
 import org.junit.Before;
 import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -89,5 +90,31 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then
         assertEquals(alertsRaised.size(), 0);
+    }
+
+    @Test
+    public void shouldNotRaiseAlertOnMissingFeaturePolicyRedirectMediumThreshold()
+            throws Exception {
+        // Given
+        rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
+        msg.setResponseHeader("HTTP/1.1 301 Moved Permanently\r\n");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(alertsRaised.size(), 0);
+    }
+
+    @Test
+    public void shouldRaiseAlertOnMissingFeaturePolicyRedirectLowThreshold() throws Exception {
+        // Given
+        rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
+        msg.setResponseHeader("HTTP/1.1 301 Moved Permanently\r\n");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(alertsRaised.size(), 1);
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "name"));
     }
 }
