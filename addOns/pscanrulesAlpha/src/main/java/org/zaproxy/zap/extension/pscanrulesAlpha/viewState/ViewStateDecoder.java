@@ -71,7 +71,7 @@ public class ViewStateDecoder {
      * @throws Exception
      * @param decodedData
      */
-    public String decodeAsXML(byte[] decodedData) throws Exception {
+    public static String decodeAsXML(byte[] decodedData) throws Exception {
         // prepare to parse the base64 decoded data as ViewState data
         ByteBuffer dataBuffer = ByteBuffer.wrap(decodedData);
         byte[] preamble = new byte[2];

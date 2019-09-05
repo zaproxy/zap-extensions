@@ -28,8 +28,11 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateDecoder;
+import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.base64.Base64Data;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,15 +48,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
     private PassiveScanThread parent = null;
 
-    /**
-     * a set of patterns used to identify Base64 encoded data. Set a minimum length to reduce false
-     * positives. Note that because we only look for patterns ending in at least one "=", we will
-     * have false negatives (ie, we will not detect ALL Base64 references). If we do not include
-     * this condition, however, we will have a very large number of false positives. TODO: find a
-     * different way to reduce false positives without causing false negatives.
-     */
-    // static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={1,2}");
-    // static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}");
     private static final Pattern BASE64_PATTERN =
             Pattern.compile("[a-zA-Z0-9+\\\\/\\-_]{30,}={0,2}");
 
@@ -105,48 +99,16 @@ public class Base64Disclosure extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-
-        // DEBUG only
-        // log.setLevel(Level.DEBUG);
-
         if (log.isDebugEnabled()) log.debug("Checking message " + msg + " for Base64 encoded data");
 
-        // get the body contents as a String, so we can match against it
-        String responseheader = msg.getResponseHeader().getHeadersAsString();
-        String responsebody = msg.getResponseBody().toString();
-        String[] responseparts = {responseheader, responsebody};
+        List<Base64Data> possibleBase64Patterns = extractPossibleBase64String(msg);
 
         if (log.isDebugEnabled()) log.debug("Trying Base64 Pattern: " + BASE64_PATTERN);
-        for (String haystack : responseparts) {
-            Matcher matcher = BASE64_PATTERN.matcher(haystack);
-            while (matcher.find()) {
-                String base64evidence = matcher.group();
-                String tempbase64evidence = base64evidence;
-                byte[] decodeddata = null;
-                try {
-                    // if the string had the "-_" alphabet, replace the - and _ with + and /
-                    // respectively
-                    tempbase64evidence = tempbase64evidence.replace('-', '+');
-                    tempbase64evidence = tempbase64evidence.replace('_', '/');
-
-                    // decode the data
-                    decodeddata = Base64.decode(tempbase64evidence);
-                } catch (IOException e) {
-                    // it's not actually Base64. so skip it.
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "["
-                                        + tempbase64evidence
-                                        + "] (modified from ["
-                                        + base64evidence
-                                        + "]) could not be decoded as Base64 data");
-                    continue;
-                }
-
+        for (Base64Data haystack : possibleBase64Patterns) {
                 // does the base 64 encoded string actually contain the various characters that
                 // we might expect?
                 // (note: we may not care, depending on the threshold set by the user)
-                String base64evidenceString = new String(tempbase64evidence);
+                String base64evidenceString = new String(haystack.transformData);
                 boolean noDigitInString = !digitPattern.matcher(base64evidenceString).find();
                 boolean noAlphaInString = !alphaPattern.matcher(base64evidenceString).find();
                 // boolean noOtherInString = !
@@ -161,13 +123,13 @@ public class Base64Disclosure extends PluginPassiveScanner {
                 // right about now, I expect to get flamed by the statistics geeks in our
                 // midst.. wait for it! :)
                 float probabilityOfNoDigitInString =
-                        (float) Math.pow(((float) 64 - 10) / 64, base64evidence.length());
+                        (float) Math.pow(((float) 64 - 10) / 64, haystack.originalData.length());
                 float probabilityOfNoAlphaInString =
-                        (float) Math.pow(((float) 64 - 52) / 64, base64evidence.length());
+                        (float) Math.pow(((float) 64 - 52) / 64, haystack.originalData.length());
                 // float probabilityOfNoOtherInString = (float)Math.pow(((float)64-2)/64,
-                // base64evidence.length());
+                // haystack.originalData.length());
                 float probabilityOfNoLowerInString =
-                        (float) Math.pow(((float) 64 - 26) / 64, base64evidence.length());
+                        (float) Math.pow(((float) 64 - 26) / 64, haystack.originalData.length());
                 float probabilityOfNoUpperInString = probabilityOfNoLowerInString;
 
                 // set the threshold percentage based on what threshold was set by the user
@@ -207,7 +169,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                     if (log.isTraceEnabled()) {
                         log.trace(
                                 "The following candidate Base64 has been excluded on probabilistic grounds: ["
-                                        + base64evidence
+                                        + haystack.originalData
                                         + "] ");
                         if (noDigitInString)
                             log.trace(
@@ -249,9 +211,9 @@ public class Base64Disclosure extends PluginPassiveScanner {
                 if (log.isDebugEnabled())
                     log.debug(
                             "Found a match for Base64, of length "
-                                    + base64evidence.length()
+                                    + haystack.originalData.length()
                                     + ":"
-                                    + base64evidence);
+                                    + haystack.originalData);
 
                 // so it's valid Base64.  Is it valid .NET ViewState data?
                 // This will be true for both __VIEWSTATE and __EVENTVALIDATION data, although
@@ -259,16 +221,16 @@ public class Base64Disclosure extends PluginPassiveScanner {
                 boolean validviewstate = false;
                 boolean macless = false;
                 String viewstatexml = null;
-                if (decodeddata[0] == -1 || decodeddata[1] == 0x01) {
+                if (haystack.decodedData[0] == -1 || haystack.decodedData[1] == 0x01) {
                     // TODO: decode __EVENTVALIDATION data
                     ViewStateDecoder viewstatedecoded = new ViewStateDecoder();
                     try {
                         if (log.isDebugEnabled())
                             log.debug(
                                     "The following Base64 string has a ViewState preamble: ["
-                                            + base64evidence
+                                            + haystack.originalData
                                             + "]");
-                        viewstatexml = viewstatedecoded.decodeAsXML(Base64.decode(base64evidence.getBytes()));
+                        viewstatexml = viewstatedecoded.decodeAsXML(Base64.decode(haystack.originalData.getBytes()));
                         if (log.isDebugEnabled())
                             log.debug(
                                     "The data was successfully decoded as ViewState data of length "
@@ -290,7 +252,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         if (log.isDebugEnabled())
                             log.debug(
                                     "The Base64 value ["
-                                            + base64evidence
+                                            + haystack.originalData
                                             + "] has a valid ViewState pre-amble, but is not a valid viewstate. It may be an EVENTVALIDATION value, is not yet decodable.");
                     }
                 }
@@ -365,7 +327,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                     // the Base64 decoded data is not a valid ViewState (even though it may have
                     // a valid ViewStatet pre-amble)
                     // so treat it as normal Base64 data, and raise an informational alert.
-                    if (base64evidence.length() > 0) {
+                    if (haystack.originalData.length() > 0) {
                         Alert alert =
                                 new Alert(
                                         getPluginId(),
@@ -377,10 +339,10 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                 msg.getRequestHeader().getURI().toString(),
                                 "", // param
                                 null,
-                                getExtraInfo(msg, base64evidence, decodeddata), // other info
+                                getExtraInfo(msg, haystack.originalData, haystack.decodedData), // other info
                                 getSolution(),
                                 getReference(),
-                                base64evidence,
+                                haystack.originalData,
                                 200, // Information Exposure,
                                 13, // Information Leakage
                                 msg);
@@ -390,8 +352,48 @@ public class Base64Disclosure extends PluginPassiveScanner {
                     }
                 }
             }
-        }
     }
+
+    private static List<Base64Data> extractPossibleBase64String(HttpMessage msg) {
+        // get the body contents as a String, so we can match against it
+        String responseheader = msg.getResponseHeader().getHeadersAsString();
+        String responsebody = msg.getResponseBody().toString();
+        String[] responseparts = {responseheader, responsebody};
+
+        if (log.isDebugEnabled()) log.debug("Trying Base64 Pattern: " + BASE64_PATTERN);
+        List<Base64Data> possibleBase64Patterns = new ArrayList<>();
+        for (String haystack : responseparts) {
+            Matcher matcher = BASE64_PATTERN.matcher(haystack);
+            while (matcher.find()) {
+                String base64evidence = matcher.group();
+                String tempbase64evidence = base64evidence;
+                byte[] decodeddata;
+                try {
+                    // if the string had the "-_" alphabet, replace the - and _ with + and /
+                    // respectively
+                    tempbase64evidence = tempbase64evidence.replace('-', '+');
+                    tempbase64evidence = tempbase64evidence.replace('_', '/');
+
+                    // decode the data
+                    decodeddata = Base64.decode(tempbase64evidence);
+                    possibleBase64Patterns.add(
+                            new Base64Data(base64evidence, tempbase64evidence, decodeddata));
+
+                } catch (IOException e) {
+                    // it's not actually Base64. so skip it.
+                    if (log.isDebugEnabled())
+                        log.debug(
+                                "["
+                                        + tempbase64evidence
+                                        + "] (modified from ["
+                                        + base64evidence
+                                        + "]) could not be decoded as Base64 data");
+                }
+            }
+        }
+        return possibleBase64Patterns;
+    }
+
 
     /**
      * sets the parent
