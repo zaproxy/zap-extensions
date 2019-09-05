@@ -1,4 +1,4 @@
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesAlpha.viewState;
 
 import org.junit.Test;
 
@@ -8,19 +8,19 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.ARRAY_OF_STRING;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.CONTAINERS_OF_BOOLEANS;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.CONTAINER_OF_OBJECTS;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.CONTROL_STATE;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.RGBA_COMPONENT;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING_REFERENCE;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.TRIPLE;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.TUPLE;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNIT;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UUID;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.ARRAY_OF_STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.CONTAINERS_OF_BOOLEANS;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.CONTAINER_OF_OBJECTS;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.CONTROL_STATE;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.NULL_TERMINATED_STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.RGBA_COMPONENT;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.STRING_REFERENCE;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.TRIPLE;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.TUPLE;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.UNIT;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.UNSIGNED_INT;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.UUID;
 
 public class DecodersTest {
   @Test

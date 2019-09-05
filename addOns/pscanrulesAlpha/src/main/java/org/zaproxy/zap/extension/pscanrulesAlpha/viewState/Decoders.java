@@ -1,7 +1,6 @@
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesAlpha.viewState;
 
 import org.apache.commons.codec.binary.Hex;
-import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -9,10 +8,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static org.zaproxy.zap.extension.pscanrulesAlpha.ViewStateDecoder.decodeObjectAsXML;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readBytes;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readLittleEndianBase128Number;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readNullTerminatedString;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateDecoder.decodeObjectAsXML;
 
 public enum Decoders {
   ARRAY_OF_STRING(

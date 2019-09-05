@@ -27,6 +27,7 @@ import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateDecoder;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
