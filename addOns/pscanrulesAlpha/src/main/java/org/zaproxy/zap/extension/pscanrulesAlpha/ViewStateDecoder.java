@@ -39,6 +39,7 @@ import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.EMPTY_NODE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.EMPTY_STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.FALSE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.RGBA_COMPONENT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.TRUE;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
@@ -140,14 +141,7 @@ public class ViewStateDecoder {
                 representation.append("</objectarray>\n");
                 return representation;
             case 0x09:
-                // RGBA component
-                // TODO: test this case.
-                byte rgbabytes[] = new byte[4];
-                bb.get(rgbabytes);
-                String rgbaashexstring = Hex.encodeHexString(rgbabytes);
-
-                representation.append("<rgba>0x" + rgbaashexstring + "</rgba>");
-                return representation;
+                return RGBA_COMPONENT.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x1B:
                 // Unit
                 // TODO: test this case.

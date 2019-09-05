@@ -9,6 +9,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.RGBA_COMPONENT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UUID;
@@ -102,5 +103,23 @@ public class DecodersTest {
                 equalTo(
                         Optional.of(
                                 "<uuid>0xdededededededededededededededededededededededededededededededededededede</uuid>")));
+    }
+
+    @Test
+    public void shouldDecodeRgbaComponent() {
+        // Given
+        byte[] data =
+                new byte[] {
+                        (byte) 0xDE, (byte) 0xAD, (byte) 0xBE, (byte) 0xEF,
+                };
+
+        // When
+        Optional<String> content =
+                RGBA_COMPONENT.decoder
+                        .apply(ByteBuffer.wrap(data))
+                        .map(StringBuilder::toString);
+
+        // Then
+        assertThat(content, equalTo(Optional.of("<rgba>0xdeadbeef</rgba>")));
     }
 }

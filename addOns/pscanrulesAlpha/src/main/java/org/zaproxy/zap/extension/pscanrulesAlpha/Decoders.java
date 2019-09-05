@@ -37,6 +37,17 @@ public enum Decoders {
         return Optional.of(sb);
       }),
   OTHER_STRING(0x1E, STRING.decoder),
+  RGBA_COMPONENT(
+      0x09,
+      bb -> {
+        byte[] rgbabytes = new byte[4];
+        bb.get(rgbabytes);
+        String rgbaashexstring = Hex.encodeHexString(rgbabytes);
+        StringBuilder sb = new StringBuilder("<rgba>0x");
+        sb.append(rgbaashexstring);
+        sb.append("</rgba>");
+        return Optional.of(sb);
+      }),
   TRUE(0x67, bb -> Optional.of(new StringBuilder("<boolean>true</boolean>"))),
   UNSIGNED_INT(
       0x02,
