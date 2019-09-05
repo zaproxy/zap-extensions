@@ -33,23 +33,6 @@ import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.EMPTY_NODE;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.EMPTY_STRING;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.FALSE;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.RGBA_COMPONENT;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.STRING_REFERENCE;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.TRUE;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNIT;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UUID;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.ZERO;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.CHARS_TO_ENCODE_IN_XML_PATTERN;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readBytes;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readLittleEndianBase128Number;
 
 /**
  * Decodes a ViewState into an XML based format.
@@ -57,122 +40,27 @@ import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteR
  * @author 70pointer@gmail.com
  */
 public class ViewStateDecoder {
-
-    /**
-     * Exception class to allow the application to throw custom "Out Of Data" type of exceptions
-     *
-     * @author root
-     */
-    private class NoMoreDataException extends Exception {
-
-        /** */
-        private static final long serialVersionUID = 428921470671268371L;
-    }
-
-
     /**
      * decodes a single (ViewState-specific) object from the ByteBuffer.
      *
      * @param bb the ByteBuffer from which to read the next ViewState object
      * @return a StringBuilder containing the human-readable and machine parseable representation
      *     (XML based)
-     * @throws NoMoreDataException
      * @throws Exception
      */
-    public StringBuilder decodeObjectAsXML(ByteBuffer bb) throws NoMoreDataException, Exception {
-        int b = (int) bb.get();
-        StringBuilder representation = new StringBuilder();
-        Matcher matcher = null;
-        boolean malicious = false;
-        switch (b) {
-            case 0x02:
-                return UNSIGNED_INT.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x03:
-                // Container of Booleans
-                // TODO: test this case.
-                int booleancontainersize = readLittleEndianBase128Number(bb);
-                representation.append("<booleanarray size=\"" + booleancontainersize + "\">\n");
-                for (int i = 0; i < booleancontainersize; i++)
-                    representation.append(decodeObjectAsXML(bb));
-                representation.append("</booleanarray>\n");
-                return representation;
-            case 0x05:
-            case 0x1E:
-                return STRING.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x0B:
-                return NULL_TERMINATED_STRING.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x0F:
-                // Tuple
-                representation.append("<pair>\n");
-                representation.append(decodeObjectAsXML(bb));
-                representation.append(decodeObjectAsXML(bb));
-                representation.append("</pair>\n");
-                return representation;
-            case 0x10:
-                // Triple
-                // TODO: test this case.
-                representation.append("<triple>\n");
-                representation.append(decodeObjectAsXML(bb));
-                representation.append(decodeObjectAsXML(bb));
-                representation.append(decodeObjectAsXML(bb));
-                representation.append("</triple>\n");
-                return representation;
-            case 0x15:
-                // Array of Strings
-                int stringarraysize = readLittleEndianBase128Number(bb);
-                representation.append("<stringarray size=\"" + stringarraysize + "\">\n");
-                for (int j = 0; j < stringarraysize; j++) {
-                    int stringlength = (int) bb.get();
-                    String s2 = new String(readBytes(bb, stringlength));
-                    representation.append("<stringwithlength length=\"" + stringlength + "\">");
-                    matcher = CHARS_TO_ENCODE_IN_XML_PATTERN.matcher(s2);
-                    malicious = matcher.find();
-                    if (malicious) representation.append("<![CDATA[");
-                    representation.append(s2);
-                    if (malicious) representation.append("]]>");
-                    representation.append("</stringwithlength>\n");
-                }
-                representation.append("</stringarray>\n");
-                return representation;
-            case 0x16:
-                // Container of Objects
-                int objectcontainersize = readLittleEndianBase128Number(bb);
-                representation.append("<objectarray size=\"" + objectcontainersize + "\">\n");
-                for (int i = 0; i < objectcontainersize; i++)
-                    representation.append(decodeObjectAsXML(bb));
-                representation.append("</objectarray>\n");
-                return representation;
-            case 0x09:
-                return RGBA_COMPONENT.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x1B:
-                return UNIT.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x1F:
-                return STRING_REFERENCE.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x18:
-                // Control State
-                // this logic is based to some degree on https://gist.github.com/Noxwizard/6396665
-                // TODO: test this case.
-                int controlstatelength = readLittleEndianBase128Number(bb);
-                representation.append("<controlstate size=\"" + controlstatelength + "\">\n");
-                representation.append(decodeObjectAsXML(bb));
-                representation.append(decodeObjectAsXML(bb));
-                representation.append("</controlstate>\n");
-                return representation;
-            case 0x24:
-                return UUID.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x64:
-                return EMPTY_NODE.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x65:
-                return EMPTY_STRING.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x66:
-                return ZERO.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x67:
-                return TRUE.decoder.apply(bb).orElseThrow(Exception::new);
-            case 0x68:
-                return FALSE.decoder.apply(bb).orElseThrow(Exception::new);
-            default:
-                throw new Exception("Unsupported object type 0x" + Integer.toHexString(b));
-        }
+    public static StringBuffer decodeObjectAsXML(ByteBuffer bb) throws Exception {
+        int b = bb.get();
+        StringBuffer representation = new StringBuffer();
+        StringBuilder sb =
+                Decoders.findBy(b)
+                        .flatMap(decoder -> decoder.decoder.apply(bb))
+                        .orElseThrow(
+                                () ->
+                                        new Exception(
+                                                "Unsupported object type 0x"
+                                                        + Integer.toHexString(b)));
+        representation.append(sb);
+        return representation;
     }
 
     /**
