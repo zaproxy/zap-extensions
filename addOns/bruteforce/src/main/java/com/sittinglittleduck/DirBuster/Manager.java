@@ -183,7 +183,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     private boolean onlyUnderStartPoint = true;
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(Manager.class.getName());
+    private static final Logger LOG = Logger.getLogger(Manager.class);
 
     // ZAP: Changed to public to allow it to be extended
     public Manager() {
@@ -665,9 +665,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
                 }
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.info("Dir found: " + url.getFile() + " - " + statusCode);
-            }
+            LOG.info("Dir found: " + url.getFile() + " - " + statusCode);
 
             // add to list of items that have already processed
             addParsedLink(url.getPath());
@@ -697,9 +695,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             String rawResponce,
             BaseCase baseCaseObj) {
 
-        if (LOG.isDebugEnabled()) {
-            LOG.info("File found: " + url.getFile() + " - " + statusCode);
-        }
+        LOG.info("File found: " + url.getFile() + " - " + statusCode);
 
         addParsedLink(url.getPath());
 

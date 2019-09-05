@@ -67,7 +67,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
     private String urlFuzzEnd;
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(WorkerGeneratorURLFuzz.class.getName());
+    private static final Logger LOG = Logger.getLogger(WorkerGeneratorURLFuzz.class);
 
     /**
      * Creates a new instance of WorkerGenerator
@@ -139,12 +139,12 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                     httphead.setFollowRedirects(Config.followRedirects);
                     int responceCode = httpclient.executeMethod(httphead);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("DEBUG WokerGen: responce code for head check = " + responceCode);
+                        LOG.debug("Response code for head check = " + responceCode);
                     }
                     if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(
-                                    "DEBUG WokerGen: Changing to GET only HEAD test returned 501(method no implmented) or a 400");
+                                    "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                         }
                         manager.setAuto(false);
                     }
@@ -188,17 +188,17 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 Thread.sleep(3);
             }
         } catch (InterruptedException ex) {
-            LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
+            LOG.error(ex.toString());
         } catch (MalformedURLException ex) {
-            LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
+            LOG.error(ex.toString());
         } catch (IOException ex) {
-            LOG.error("WorkerGeneratorURLFuzz IOException" + ex.toString());
+            LOG.error(ex.toString());
         } finally {
             try {
                 d.close();
                 manager.setURLFuzzGenFinished(true);
             } catch (IOException ex) {
-                LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
+                LOG.error(ex.toString());
             }
         }
     }

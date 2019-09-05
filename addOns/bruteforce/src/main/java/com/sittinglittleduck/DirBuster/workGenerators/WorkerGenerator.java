@@ -58,7 +58,7 @@ public class WorkerGenerator implements Runnable {
     HttpClient httpclient;
 
     /* Logger Object for the class */
-    private static final Logger LOG = Logger.getLogger(WorkerGenerator.class.getName());
+    private static final Logger LOG = Logger.getLogger(WorkerGenerator.class);
 
     /**
      * Creates a new instance of WorkerGenerator
@@ -139,7 +139,7 @@ public class WorkerGenerator implements Runnable {
                 int responceCode = httpclient.executeMethod(httphead);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("DEBUG WokerGen: responce code for head check = " + responceCode);
+                    LOG.debug("Response code for head check = " + responceCode);
                 }
 
                 // if the responce code is method not implemented or if the head requests return
@@ -147,7 +147,7 @@ public class WorkerGenerator implements Runnable {
                 if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(
-                                "DEBUG WokerGen: Changing to GET only HEAD test returned 501(method no implmented) or a 400");
+                                "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                     }
                     // switch the mode to just GET requests
                     manager.setAuto(false);
@@ -218,7 +218,7 @@ public class WorkerGenerator implements Runnable {
                                     new InputStreamReader(new FileInputStream(inputFile)));
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("DEBUG WokerGen: Generating dir list for " + firstPart);
+                        LOG.debug("Generating dir list for " + firstPart);
                     }
 
                     URL currentURL;
@@ -240,7 +240,7 @@ public class WorkerGenerator implements Runnable {
                             workQueue.put(new WorkUnit(currentURL, true, "GET", baseCaseObj, null));
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug(
-                                        "DEBUG WokerGen: 1 adding dir to work list "
+                                        "1 adding dir to work list "
                                                 + method
                                                 + " "
                                                 + currentDir.toString());
@@ -289,7 +289,7 @@ public class WorkerGenerator implements Runnable {
                                 // System.out.println("Gen finshed adding to queue");
                                 if (LOG.isDebugEnabled()) {
                                     LOG.debug(
-                                            "DEBUG WokerGen: 2 adding dir to work list "
+                                            "2 adding dir to work list "
                                                     + method
                                                     + " "
                                                     + currentURL.toString());
@@ -397,7 +397,7 @@ public class WorkerGenerator implements Runnable {
                                                         line));
                                         if (LOG.isDebugEnabled()) {
                                             LOG.debug(
-                                                    "DEBUG WokerGen: adding file to work list "
+                                                    "adding file to work list "
                                                             + method
                                                             + " "
                                                             + currentURL.toString());

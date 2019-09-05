@@ -31,7 +31,7 @@ public class ProcessChecker extends TimerTask {
     private Vector lastTen = new Vector(10, 1);
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(ProcessChecker.class.getName());
+    private static final Logger LOG = Logger.getLogger(ProcessChecker.class);
 
     /** Creates a new instance of ProcessChecker */
     public interface ProcessUpdate {
@@ -116,9 +116,9 @@ public class ProcessChecker extends TimerTask {
                 parseQueueLength = String.valueOf(manager.parseQueue.size());
             }
 
-            if (Config.debug) {
+            if (LOG.isDebugEnabled()) {
                 if (average == 0 || lastTenTotal == 0 || averageLastTen == 0) {
-                    LOG.info(
+                    LOG.debug(
                             "Current Speed: "
                                     + current
                                     + " requests/sec\n"
@@ -139,7 +139,7 @@ public class ProcessChecker extends TimerTask {
                     long timeLeft = (totalToDo - currentTotal) / averageLastTen;
                     String timeToCompelete = convertSecsToTime(timeLeft);
                     lastTotal = currentTotal;
-                    LOG.info(
+                    LOG.debug(
                             "Current speed: "
                                     + current
                                     + " request/sec\n"

@@ -45,7 +45,7 @@ public class HTMLparse extends Thread {
     private boolean continueWorking = true;
 
     /* Logging object for the class */
-    private static final Logger LOG = Logger.getLogger(HTMLparse.class.getName());
+    private static final Logger LOG = Logger.getLogger(HTMLparse.class);
 
     /** Creates a new instance of HTMLparse */
     public HTMLparse(Manager manager) {
@@ -78,9 +78,8 @@ public class HTMLparse extends Thread {
                 if (!sourceAsString.equals("")) {
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "DEBUG HTMLParser: Parsing text from " + work.getWork().toString());
-                        LOG.debug("DEBUG HTMLParser: text - " + sourceAsString);
+                        LOG.debug("Parsing text from " + work.getWork().toString());
+                        LOG.debug("Parsed text - " + sourceAsString);
                     }
 
                     Vector links = new Vector(50, 10);

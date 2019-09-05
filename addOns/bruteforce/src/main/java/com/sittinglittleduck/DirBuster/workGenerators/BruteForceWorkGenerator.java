@@ -63,7 +63,7 @@ public class BruteForceWorkGenerator implements Runnable {
     private boolean doingDirs = true;
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(BruteForceWorkGenerator.class.getName());
+    private static final Logger LOG = Logger.getLogger(BruteForceWorkGenerator.class);
 
     // find bug UuF
     // HttpState initialState;
@@ -304,13 +304,7 @@ public class BruteForceWorkGenerator implements Runnable {
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug(
-                    "BruteForceWorkGenerator: listLen: "
-                            + listLength
-                            + " minLen: "
-                            + minLen
-                            + " maxLen: "
-                            + maxLen);
+            LOG.debug("listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
         }
 
         double total = 0;
@@ -319,7 +313,7 @@ public class BruteForceWorkGenerator implements Runnable {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("BruteForceWorkGenerator: Total for a pure brute force = " + total);
+            LOG.debug("Total for a pure brute force = " + total);
         }
         manager.setTotalPass(total);
     }

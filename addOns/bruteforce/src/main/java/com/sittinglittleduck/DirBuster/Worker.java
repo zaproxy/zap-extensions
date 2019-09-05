@@ -54,7 +54,7 @@ public class Worker implements Runnable {
     private boolean stop = false;
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(Worker.class.getName());
+    private static final Logger LOG = Logger.getLogger(Worker.class);
 
     /**
      * Creates a new instance of Worker
@@ -151,7 +151,7 @@ public class Worker implements Runnable {
                             || code == HttpStatus.SC_BAD_REQUEST) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(
-                                    "DEBUG Worker["
+                                    "Worker["
                                             + threadId
                                             + "]: "
                                             + code
@@ -175,7 +175,7 @@ public class Worker implements Runnable {
                         // do nothing as we have a 404
                         if (LOG.isDebugEnabled()) {
                             LOG.debug(
-                                    "DEBUG Worker["
+                                    "Worker["
                                             + threadId
                                             + "]: Regex matched 404 code. ("
                                             + url.toString()
@@ -282,13 +282,7 @@ public class Worker implements Runnable {
     private int makeRequest(HttpMethodBase httpMethod)
             throws HttpException, IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug(
-                    "DEBUG Worker["
-                            + threadId
-                            + "]: "
-                            + httpMethod.getName()
-                            + " : "
-                            + url.toString());
+            LOG.debug("Worker[" + threadId + "]: " + httpMethod.getName() + " : " + url.toString());
         }
 
         // set the custom HTTP headers
@@ -322,7 +316,7 @@ public class Worker implements Runnable {
         int code = httpclient.executeMethod(httpMethod);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DEBUG Worker[" + threadId + "]: " + code + " " + url.toString());
+            LOG.debug("Worker[" + threadId + "]: " + code + " " + url.toString());
         }
         return code;
     }
@@ -333,7 +327,7 @@ public class Worker implements Runnable {
 
     private void verifyResponseForValidRequests(int code, String response, String rawResponse) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DEBUG Worker[" + threadId + "]: Base Case Check " + url.toString());
+            LOG.debug("Worker[" + threadId + "]: Base Case Check " + url.toString());
         }
 
         // TODO move this option to the Adv options
@@ -349,7 +343,7 @@ public class Worker implements Runnable {
 
         if (m.find()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("DEBUG Worker[" + threadId + "]: 404 for: " + url.toString());
+                LOG.debug("Worker[" + threadId + "]: 404 for: " + url.toString());
             }
         } else if (!response.equalsIgnoreCase(basecase)) {
             notifyItemFound(code, response, rawResponse, basecase);
@@ -360,26 +354,14 @@ public class Worker implements Runnable {
             int code, String response, String rawResponse, String basecase, String type) {
         if (work.isDir()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                        "DEBUG Worker["
-                                + threadId
-                                + "]: Found Dir ("
-                                + type
-                                + ")"
-                                + url.toString());
+                LOG.debug("Worker[" + threadId + "]: Found Dir (" + type + ")" + url.toString());
             }
             // we found a dir
             manager.foundDir(url, code, response, basecase, rawResponse, work.getBaseCaseObj());
         } else {
             // found a file
             if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                        "DEBUG Worker["
-                                + threadId
-                                + "]: Found File ("
-                                + type
-                                + ")"
-                                + url.toString());
+                LOG.debug("Worker[" + threadId + "]: Found File (" + type + ")" + url.toString());
             }
             manager.foundFile(url, code, response, basecase, rawResponse, work.getBaseCaseObj());
         }
