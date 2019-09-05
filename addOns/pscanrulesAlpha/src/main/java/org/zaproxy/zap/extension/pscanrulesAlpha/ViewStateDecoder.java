@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.CHARS_TO_ENCODE_IN_XML_PATTERN;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readBytes;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readLittleEndianBase128Number;
@@ -63,24 +64,19 @@ public class ViewStateDecoder {
      * decodes a single (ViewState-specific) object from the ByteBuffer.
      *
      * @param bb the ByteBuffer from which to read the next ViewState object
-     * @return a StringBuffer containing the human-readable and machine parseable representation
+     * @return a StringBuilder containing the human-readable and machine parseable representation
      *     (XML based)
      * @throws NoMoreDataException
      * @throws Exception
      */
-    public StringBuffer decodeObjectAsXML(ByteBuffer bb) throws NoMoreDataException, Exception {
+    public StringBuilder decodeObjectAsXML(ByteBuffer bb) throws NoMoreDataException, Exception {
         int b = (int) bb.get();
-        StringBuffer representation = new StringBuffer();
+        StringBuilder representation = new StringBuilder();
         Matcher matcher = null;
         boolean malicious = false;
         switch (b) {
             case 0x02:
-                // Unsigned integer
-                int intsize = readLittleEndianBase128Number(bb);
-                representation.append("<uint32>");
-                representation.append(intsize);
-                representation.append("</uint32>\n");
-                return representation;
+                return UNSIGNED_INT.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x03:
                 // Container of Booleans
                 // TODO: test this case.
