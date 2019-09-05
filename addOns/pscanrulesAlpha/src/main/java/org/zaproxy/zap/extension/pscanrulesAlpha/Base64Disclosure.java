@@ -28,7 +28,6 @@ import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateDecoder;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.base64.Base64CharProbability;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.base64.Base64Data;
 
@@ -43,7 +42,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.PATTERN_NO_HMAC;
 
 /**
  * A class to passively scan responses for Base64 encoded data, including ASP ViewState data, which
@@ -128,51 +126,12 @@ public class Base64Disclosure extends PluginPassiveScanner {
                 filterBase64StringByLikelihood(
                         possibleBase64Patterns, PROBABILITY_THRESHOLD.get(getAlertThreshold()));
 
+        List<Base64Data> possibleViewState = tryToTransformIntoViewState(base64Patterns);
 
-        for (Base64Data haystack : base64Patterns) {
-                // so it's valid Base64.  Is it valid .NET ViewState data?
-                // This will be true for both __VIEWSTATE and __EVENTVALIDATION data, although
-                // currently, we can only interpret/decode __VIEWSTATE.
-                boolean validviewstate = false;
-                boolean macless = false;
-                String viewstatexml = null;
-                if (haystack.decodedData[0] == -1 || haystack.decodedData[1] == 0x01) {
-                    // TODO: decode __EVENTVALIDATION data
-                    ViewStateDecoder viewstatedecoded = new ViewStateDecoder();
-                    try {
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "The following Base64 string has a ViewState preamble: ["
-                                            + haystack.originalData
-                                            + "]");
-                        viewstatexml = ViewStateDecoder.decodeAsXML(Base64.decode(haystack.originalData.getBytes()));
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "The data was successfully decoded as ViewState data of length "
-                                            + viewstatexml.length()
-                                            + ": "
-                                            + viewstatexml);
-                        validviewstate = true;
+        for (Base64Data haystack : possibleViewState) {
 
-                        // is the ViewState protected by a MAC?
-                        Matcher hmaclessmatcher =
-                                PATTERN_NO_HMAC.matcher(viewstatexml);
-                        macless = hmaclessmatcher.find();
-
-                        if (log.isDebugEnabled()) log.debug("MAC-less??? " + macless);
-                    } catch (Exception e) {
-                        // no need to do anything here.. just don't set "validviewstate" to true
-                        // :)
-                        // e.printStackTrace();
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "The Base64 value ["
-                                            + haystack.originalData
-                                            + "] has a valid ViewState pre-amble, but is not a valid viewstate. It may be an EVENTVALIDATION value, is not yet decodable.");
-                    }
-                }
-
-                if (validviewstate == true) {
+                if (haystack.isValidViewState()) {
+                    String viewstatexml = haystack.getViewStateXml();
                     if (log.isDebugEnabled())
                         log.debug("Raising a ViewState informational alert");
 
@@ -206,7 +165,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
                     // if the ViewState is not protected by a MAC, alert it as a High, cos we
                     // can mess with the parameters for sure..
-                    if (macless) {
+                    if (haystack.isViewStateNotProtectedByMAC()) {
                         Alert alertmacless =
                                 new Alert(
                                         getPluginId(),
@@ -353,6 +312,36 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                 + data.originalData);
         }
         return base64Patterns;
+    }
+
+    private List<Base64Data> tryToTransformIntoViewState(List<Base64Data> base64Patterns) {
+        List<Base64Data> viewStateContents = new ArrayList<>();
+        for (Base64Data data : base64Patterns) {
+            if (log.isDebugEnabled())
+                log.debug(
+                        "The following Base64 string has a ViewState preamble: ["
+                                + data.originalData
+                                + "]");
+
+            viewStateContents.add(data.validateViewState());
+
+            if (log.isDebugEnabled()) {
+                if (data.isValidViewState()) {
+                    log.debug(
+                            "The data was successfully decoded as ViewState data of length "
+                                    + data.getViewStateXml().length()
+                                    + ": "
+                                    + data.getViewStateXml());
+                    log.debug("MAC-less??? " + data.isViewStateNotProtectedByMAC());
+                } else {
+                    log.debug(
+                            "The Base64 value ["
+                                    + data.originalData
+                                    + "] has a valid ViewState pre-amble, but is not a valid viewstate. It may be an EVENTVALIDATION value, is not yet decodable.");
+                }
+            }
+        }
+        return viewStateContents;
     }
 
 
