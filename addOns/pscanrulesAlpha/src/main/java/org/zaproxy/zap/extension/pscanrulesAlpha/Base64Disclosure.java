@@ -278,7 +278,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                         "The following Base64 string has a ViewState preamble: ["
                                                 + base64evidence
                                                 + "]");
-                            viewstatexml = viewstatedecoded.decodeAsXML(base64evidence.getBytes());
+                            viewstatexml = viewstatedecoded.decodeAsXML(Base64.decode(base64evidence.getBytes()));
                             if (log.isDebugEnabled())
                                 log.debug(
                                         "The data was successfully decoded as ViewState data of length "

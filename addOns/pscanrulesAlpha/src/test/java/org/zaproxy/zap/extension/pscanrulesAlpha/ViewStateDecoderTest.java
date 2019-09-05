@@ -24,6 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.encoder.Base64;
 
 import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 import static org.junit.Assert.assertThat;
@@ -41,7 +42,7 @@ public class ViewStateDecoderTest {
                         + "/6kXnY15AUSAwa";
 
         // When
-        String content = viewStateDecoder.decodeAsXML(viewState.getBytes());
+        String content = viewStateDecoder.decodeAsXML(Base64.decode(viewState.getBytes()));
 
         // Then
         assertThat(
@@ -92,7 +93,7 @@ public class ViewStateDecoderTest {
                 "/wEPDwUJODczNjQ5OTk0D2QWAgIDD2QWAgIFDw8WAh4EVGV4dAUWSSBMb3ZlIERvdG5ldEN1cnJ5LmNvbWRkZA==";
 
         // When
-        String content = viewStateDecoder.decodeAsXML(viewState.getBytes());
+        String content = viewStateDecoder.decodeAsXML(Base64.decode(viewState.getBytes()));
 
         // Then
         assertThat(
@@ -145,7 +146,7 @@ public class ViewStateDecoderTest {
         String viewState = "emFwCg==";
 
         // When
-        viewStateDecoder.decodeAsXML(viewState.getBytes());
+        viewStateDecoder.decodeAsXML(Base64.decode(viewState.getBytes()));
     }
 
     @Before

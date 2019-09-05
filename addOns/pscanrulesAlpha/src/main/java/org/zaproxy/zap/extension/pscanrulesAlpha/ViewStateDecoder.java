@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import org.apache.commons.codec.binary.Hex;
-import org.parosproxy.paros.extension.encoder.Base64;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -29,7 +28,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
@@ -232,22 +230,13 @@ public class ViewStateDecoder {
      * decodes a Base64 encoded byte array into a human readable String, interpreting the Base64
      * decoded data as a tree of ViewState objects.
      *
-     * @param base64encoded a byte array containing Base64 encoded ViewState data. Should not
-     *     contain superfluous characters at the end, as this breaks the "MAC" detection
      * @return a human readable, XML based representation of the ViewState data
      * @throws Exception
+     * @param decodedData
      */
-    public String decodeAsXML(byte[] base64encoded) throws Exception {
-        byte[] decodeddata = null;
-        // String viewstatebase64encoded = new String (base64encoded);
-        try {
-            decodeddata = Base64.decode(base64encoded);
-        } catch (IOException e) {
-            throw new Exception("Invalid Base64 data");
-        }
-
+    public String decodeAsXML(byte[] decodedData) throws Exception {
         // prepare to parse the base64 decoded data as ViewState data
-        ByteBuffer dataBuffer = ByteBuffer.wrap(decodeddata);
+        ByteBuffer dataBuffer = ByteBuffer.wrap(decodedData);
         byte[] preamble = new byte[2];
         dataBuffer.get(preamble);
         // why are bytes signed in Java??
@@ -264,11 +253,7 @@ public class ViewStateDecoder {
         representation.append("<encrypted>false</encrypted>\n");
 
         // decode the root object, which contains the remainder of the ViewState
-        try {
-            representation.append(decodeObjectAsXML(dataBuffer));
-        } catch (NoMoreDataException nmde) {
-            // throw new Exception ("The data does not appear to be valid ViewState Data");
-        }
+        representation.append(decodeObjectAsXML(dataBuffer));
 
         // Look at whether the ViewState is protected by a MAC
         // we can tell by looking at how many bytes remain at the end of the data, once
