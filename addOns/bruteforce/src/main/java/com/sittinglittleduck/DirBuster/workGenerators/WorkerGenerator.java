@@ -240,7 +240,7 @@ public class WorkerGenerator implements Runnable {
                             workQueue.put(new WorkUnit(currentURL, true, "GET", baseCaseObj, null));
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("DEBUG WokerGen: 1 adding dir to work list "
-                                		+ method
+                                        + method
                                         + " "
                                         + currentDir.toString());
                             }

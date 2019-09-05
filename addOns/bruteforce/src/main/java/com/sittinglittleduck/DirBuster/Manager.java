@@ -666,7 +666,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             }
 
             if(LOG.isDebugEnabled()) {
-            	LOG.info("Dir found: " + url.getFile() + " - " + statusCode);
+                LOG.info("Dir found: " + url.getFile() + " - " + statusCode);
             }
 
             // add to list of items that have already processed
@@ -697,9 +697,9 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             String rawResponce,
             BaseCase baseCaseObj) {
 
-    	if (LOG.isDebugEnabled()) {
-    		LOG.info("File found: " + url.getFile() + " - " + statusCode);
-    	}
+        if (LOG.isDebugEnabled()) {
+            LOG.info("File found: " + url.getFile() + " - " + statusCode);
+        }
 
         addParsedLink(url.getPath());
 
@@ -926,7 +926,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                     totalDirsFound--;
                 } else {
-                	LOG.error("FAILED Removed " + processWork + " from dir queue");
+                    LOG.error("FAILED Removed " + processWork + " from dir queue");
                 }
             }
         }

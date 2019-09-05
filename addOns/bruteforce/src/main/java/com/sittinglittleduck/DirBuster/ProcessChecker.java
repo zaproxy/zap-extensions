@@ -118,24 +118,24 @@ public class ProcessChecker extends TimerTask {
 
             if (Config.debug) {
                 if (average == 0 || lastTenTotal == 0 || averageLastTen == 0) {
-	        		LOG.info("Current Speed: " + current + " requests/sec\n"
-	        				+ "Average Speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec\n"
-	        				+ "Total Requests: " + currentTotal + "/" + totalToDo +"\n"
-	        				+ "Time To Finish: ~" + parseQueueLength);
+                    LOG.info("Current Speed: " + current + " requests/sec\n"
+                            + "Average Speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec\n"
+                            + "Total Requests: " + currentTotal + "/" + totalToDo +"\n"
+                            + "Time To Finish: ~" + parseQueueLength);
 
                 } else {
                     long timeLeft = (totalToDo - currentTotal) / averageLastTen;
                     String timeToCompelete = convertSecsToTime(timeLeft);
                     lastTotal = currentTotal;
                     LOG.info("Current speed: " + current + " request/sec\n"
-                    		+ "Average Speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec\n"
-                    		+ "Total Requests: " + currentTotal + "/" + totalToDo + "\n"
-                    		+ "Time To Finish: " + timeToCompelete + "\n" + parseQueueLength);
+                            + "Average Speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec\n"
+                            + "Total Requests: " + currentTotal + "/" + totalToDo + "\n"
+                            + "Time To Finish: " + timeToCompelete + "\n" + parseQueueLength);
                 }
 
                 // System.out.println("workQ: " + manager.workQueue.size());
                 if (LOG.isDebugEnabled()) {
-                	LOG.debug("dirQ: " + manager.dirQueue.size());
+                    LOG.debug("dirQ: " + manager.dirQueue.size());
                 }
                 // System.out.println("parseQ: " + manager.parseQueue.size());
                 // manager.

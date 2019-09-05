@@ -38,9 +38,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
  * @author James
  */
 public class GenBaseCase {
-	
-	/* Log object for this class */
-	private static final Logger LOG = Logger.getLogger(GenBaseCase.class.getName());
+    
+    /* Log object for this class */
+    private static final Logger LOG = Logger.getLogger(GenBaseCase.class.getName());
 
     /** Creates a new instance of GenBaseCase */
     private GenBaseCase() {}
@@ -78,7 +78,7 @@ public class GenBaseCase {
         }
 
         if (LOG.isDebugEnabled()) {
-        	LOG.debug("GenBaseCase: URL to get baseCase for: " + url);
+            LOG.debug("GenBaseCase: URL to get baseCase for: " + url);
         }
 
         BaseCase baseCase = null;
@@ -101,7 +101,7 @@ public class GenBaseCase {
         }
 
         if (LOG.isDebugEnabled()) {
-        	LOG.debug("DEBUG GenBaseCase: Getting:" + failurl);
+            LOG.debug("DEBUG GenBaseCase: Getting:" + failurl);
         }
 
         GetMethod httpget = new GetMethod(failurl.toString());
@@ -127,7 +127,7 @@ public class GenBaseCase {
         // we now need to get the content as we need a base case!
         if (failcode == 200) {
             if (LOG.isDebugEnabled()) {
-            	LOG.debug("DEBUG GenbaseCase: base case for " + failurl.toString() + " came back as 200!");
+                LOG.debug("DEBUG GenbaseCase: base case for " + failurl.toString() + " came back as 200!");
             }
 
             BufferedReader input =
@@ -201,7 +201,7 @@ public class GenBaseCase {
                 }
 
                 if (LOG.isDebugEnabled()) {
-                	LOG.debug("DEBUG GenBaseCase: base case was set to: " + baseResponce);
+                    LOG.debug("DEBUG GenBaseCase: base case was set to: " + baseResponce);
                 }
             }
         }
@@ -265,7 +265,7 @@ public class GenBaseCase {
 
         if (failcode == 200) {
             if (LOG.isDebugEnabled()) {
-            	LOG.debug("DEBUG GenBaseCase: base case for " + failurl.toString() + " came back as 200!");
+                LOG.debug("DEBUG GenBaseCase: base case for " + failurl.toString() + " came back as 200!");
             }
 
             BufferedReader input =
@@ -282,7 +282,7 @@ public class GenBaseCase {
             baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
 
             if (LOG.isDebugEnabled()) {
-            	LOG.debug("DEBUG GenBaseCase: base case was set to: " + baseResponce);
+                LOG.debug("DEBUG GenBaseCase: base case was set to: " + baseResponce);
             }
         }
 
@@ -329,7 +329,7 @@ public class GenBaseCase {
         // we now need to get the content as we need a base case!
         if (failcode == 200) {
             if (LOG.isDebugEnabled()) {
-            	LOG.debug("DEBUG GenBaseCase: base case for " + failurl.toString() + " came back as 200!");
+                LOG.debug("DEBUG GenBaseCase: base case for " + failurl.toString() + " came back as 200!");
             }
 
             BufferedReader input =

@@ -78,8 +78,8 @@ public class HTMLparse extends Thread {
                 if (!sourceAsString.equals("")) {
 
                     if (LOG.isDebugEnabled()) {
-                    	LOG.debug("DEBUG HTMLParser: Parsing text from " + work.getWork().toString());
-                    	LOG.debug("DEBUG HTMLParser: text - " + sourceAsString);
+                        LOG.debug("DEBUG HTMLParser: Parsing text from " + work.getWork().toString());
+                        LOG.debug("DEBUG HTMLParser: text - " + sourceAsString);
                     }
 
                     Vector links = new Vector(50, 10);

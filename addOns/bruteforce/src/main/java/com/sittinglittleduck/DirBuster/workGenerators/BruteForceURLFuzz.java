@@ -156,7 +156,7 @@ public class BruteForceURLFuzz implements Runnable {
                     incrementCounter(x);
                     Thread.sleep(20);
                 } catch (InterruptedException ex) {
-                	LOG.error("BruteForceURLFuzz: makeList " + ex.toString());
+                    LOG.error("BruteForceURLFuzz: makeList " + ex.toString());
                 }
             }
             /* re-initialize the index */
@@ -243,17 +243,17 @@ public class BruteForceURLFuzz implements Runnable {
 
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
-    	if (LOG.isDebugEnabled()) {
-    		LOG.debug("BruteForceURLFuzz: listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
-    	}
-    	
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("BruteForceURLFuzz: listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
+        }
+        
         double total = 0;
         for (int a = minLen; a <= maxLen; a++) {
             total = total + Math.pow(listLength, a);
         }
 
         if (LOG.isDebugEnabled()) {
-        	LOG.debug("BruteForceURLFuzz: Total for a pure brute force = " + total);	
+            LOG.debug("BruteForceURLFuzz: Total for a pure brute force = " + total);
         }
         
         manager.setTotalPass(total);

@@ -190,17 +190,17 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 Thread.sleep(3);
             }
         } catch (InterruptedException ex) {
-        	LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
+            LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
         } catch (MalformedURLException ex) {
-        	LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
+            LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
         } catch (IOException ex) {
-        	LOG.error("WorkerGeneratorURLFuzz IOException" + ex.toString());
+            LOG.error("WorkerGeneratorURLFuzz IOException" + ex.toString());
         } finally {
             try {
                 d.close();
                 manager.setURLFuzzGenFinished(true);
             } catch (IOException ex) {
-            	LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
+                LOG.error("WorkerGeneratorURLFuzz " + ex.toString());
             }
         }
     }

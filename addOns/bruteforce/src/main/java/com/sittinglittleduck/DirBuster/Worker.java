@@ -152,8 +152,8 @@ public class Worker implements Runnable {
                     } else if (code == HttpStatus.SC_NOT_FOUND
                             || code == HttpStatus.SC_BAD_REQUEST) {
                         if (LOG.isDebugEnabled()) {
-                        	LOG.debug("DEBUG Worker[" + threadId + "]: "
-                        			+ code + " for: " + url.toString());
+                            LOG.debug("DEBUG Worker[" + threadId + "]: "
+                                    + code + " for: " + url.toString());
                         }
                     } else {
                         notifyItemFound(
@@ -171,7 +171,7 @@ public class Worker implements Runnable {
                     if (m.find()) {
                         // do nothing as we have a 404
                         if (LOG.isDebugEnabled()) {
-                        	LOG.debug("DEBUG Worker[" + threadId + "]: Regex matched 404 code. (" + url.toString() + ")");
+                            LOG.debug("DEBUG Worker[" + threadId + "]: Regex matched 404 code. (" + url.toString() + ")");
                         }
 
                     } else {
@@ -274,7 +274,7 @@ public class Worker implements Runnable {
     private int makeRequest(HttpMethodBase httpMethod)
             throws HttpException, IOException, InterruptedException {
         if (LOG.isDebugEnabled()) {
-        	LOG.debug("DEBUG Worker[" + threadId + "]: " + httpMethod.getName() + " : " + url.toString());
+            LOG.debug("DEBUG Worker[" + threadId + "]: " + httpMethod.getName() + " : " + url.toString());
         }
 
         // set the custom HTTP headers
@@ -334,9 +334,9 @@ public class Worker implements Runnable {
                         work.getBaseCaseObj().getBaseCase(), work.getItemToCheck());
 
         if (m.find()) {
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("DEBUG Worker[" + threadId + "]: 404 for: " + url.toString());
-        	}
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("DEBUG Worker[" + threadId + "]: 404 for: " + url.toString());
+            }
         } else if (!response.equalsIgnoreCase(basecase)) {
             notifyItemFound(code, response, rawResponse, basecase);
         }

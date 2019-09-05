@@ -303,9 +303,9 @@ public class BruteForceWorkGenerator implements Runnable {
 
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
-    	if (LOG.isDebugEnabled()) {
-    		LOG.debug("BruteForceWorkGenerator: listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
-    	}
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("BruteForceWorkGenerator: listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
+        }
         
         double total = 0;
         for (int a = minLen; a <= maxLen; a++) {
@@ -313,7 +313,7 @@ public class BruteForceWorkGenerator implements Runnable {
         }
 
         if (LOG.isDebugEnabled()) {
-        	LOG.debug("BruteForceWorkGenerator: Total for a pure brute force = " + total);
+            LOG.debug("BruteForceWorkGenerator: Total for a pure brute force = " + total);
         }
         manager.setTotalPass(total);
     }
