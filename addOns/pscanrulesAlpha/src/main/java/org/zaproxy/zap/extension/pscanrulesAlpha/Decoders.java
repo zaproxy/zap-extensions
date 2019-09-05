@@ -1,5 +1,7 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader;
+
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,8 +9,18 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readLittleEndianBase128Number;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readNullTerminatedString;
 
 public enum Decoders {
+  NULL_TERMINATED_STRING(
+      0x0B,
+      bb -> {
+        String nullterminatedString = readNullTerminatedString(bb);
+        StringBuilder sb = new StringBuilder("<stringnullterminated>");
+        sb.append(ViewStateByteReader.escapeString(nullterminatedString));
+        sb.append("</stringnullterminated>");
+        return Optional.of(sb);
+      }),
   UNSIGNED_INT(
       0x02,
       bb -> {

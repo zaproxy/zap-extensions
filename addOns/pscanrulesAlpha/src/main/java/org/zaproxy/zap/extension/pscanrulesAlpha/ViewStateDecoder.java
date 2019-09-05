@@ -35,11 +35,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.NULL_TERMINATED_STRING;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.Decoders.UNSIGNED_INT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.CHARS_TO_ENCODE_IN_XML_PATTERN;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readBytes;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readLittleEndianBase128Number;
-import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readNullTerminatedString;
 
 /**
  * Decodes a ViewState into an XML based format.
@@ -100,17 +100,7 @@ public class ViewStateDecoder {
                 representation.append("</string>\n");
                 return representation;
             case 0x0B:
-                // NULL terminated String
-                // TODO: test this case.
-                String nullterminatedString = readNullTerminatedString(bb);
-                representation.append("<stringnullterminated>");
-                matcher = CHARS_TO_ENCODE_IN_XML_PATTERN.matcher(nullterminatedString);
-                malicious = matcher.find();
-                if (malicious) representation.append("<![CDATA[");
-                representation.append(nullterminatedString);
-                if (malicious) representation.append("]]>");
-                representation.append("</stringnullterminated>\n");
-                return representation;
+                return NULL_TERMINATED_STRING.decoder.apply(bb).orElseThrow(Exception::new);
             case 0x0F:
                 // Tuple
                 representation.append("<pair>\n");
