@@ -91,8 +91,8 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
                                     getString("soln"),
                                     getString("refs"),
                                     element.toString(),
-                                    287, // Improper Authentication
-                                    -1, // Not applicable
+                                    16, // Improper Authentication
+                                    15, // Not applicable
                                     msg);
                             parent.raiseAlert(id, alert);
                         });
