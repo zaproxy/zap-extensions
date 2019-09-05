@@ -22,7 +22,16 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import org.apache.commons.codec.binary.Hex;
 import org.parosproxy.paros.extension.encoder.Base64;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
 
@@ -38,9 +47,6 @@ import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteR
  */
 public class ViewStateDecoder {
 
-    /** how far is the current item indented? */
-    private int indentationlevel = 0;
-
     /**
      * Exception class to allow the application to throw custom "Out Of Data" type of exceptions
      *
@@ -52,18 +58,6 @@ public class ViewStateDecoder {
         private static final long serialVersionUID = 428921470671268371L;
     }
 
-
-    /**
-     * gets a StringBuffer containing the specified amount of indentation
-     *
-     * @param n the depth for the indentation
-     * @return a StringBuffer containing the specified amount of indentation
-     */
-    private StringBuffer getIndentation(int n) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < this.indentationlevel; i++) sb.append("   ");
-        return sb;
-    }
 
     /**
      * decodes a single (ViewState-specific) object from the ByteBuffer.
@@ -83,7 +77,6 @@ public class ViewStateDecoder {
             case 0x02:
                 // Unsigned integer
                 int intsize = readLittleEndianBase128Number(bb);
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<uint32>");
                 representation.append(intsize);
                 representation.append("</uint32>\n");
@@ -92,13 +85,9 @@ public class ViewStateDecoder {
                 // Container of Booleans
                 // TODO: test this case.
                 int booleancontainersize = readLittleEndianBase128Number(bb);
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<booleanarray size=\"" + booleancontainersize + "\">\n");
-                this.indentationlevel++;
                 for (int i = 0; i < booleancontainersize; i++)
                     representation.append(decodeObjectAsXML(bb));
-                this.indentationlevel--;
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("</booleanarray>\n");
                 return representation;
             case 0x05:
@@ -106,7 +95,6 @@ public class ViewStateDecoder {
                 // String
                 int stringsize = readLittleEndianBase128Number(bb);
                 String s = new String(readBytes(bb, stringsize));
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<string>");
                 matcher = CHARS_TO_ENCODE_IN_XML_PATTERN.matcher(s);
                 malicious = matcher.find();
@@ -119,7 +107,6 @@ public class ViewStateDecoder {
                 // NULL terminated String
                 // TODO: test this case.
                 String nullterminatedString = readNullTerminatedString(bb);
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<stringnullterminated>");
                 matcher = CHARS_TO_ENCODE_IN_XML_PATTERN.matcher(nullterminatedString);
                 malicious = matcher.find();
@@ -130,38 +117,27 @@ public class ViewStateDecoder {
                 return representation;
             case 0x0F:
                 // Tuple
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<pair>\n");
-                this.indentationlevel++;
                 representation.append(decodeObjectAsXML(bb));
                 representation.append(decodeObjectAsXML(bb));
-                this.indentationlevel--;
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("</pair>\n");
                 return representation;
             case 0x10:
                 // Triple
                 // TODO: test this case.
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<triple>\n");
-                this.indentationlevel++;
                 representation.append(decodeObjectAsXML(bb));
                 representation.append(decodeObjectAsXML(bb));
                 representation.append(decodeObjectAsXML(bb));
-                this.indentationlevel--;
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("</triple>\n");
                 return representation;
             case 0x15:
                 // Array of Strings
                 int stringarraysize = readLittleEndianBase128Number(bb);
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<stringarray size=\"" + stringarraysize + "\">\n");
-                this.indentationlevel++;
                 for (int j = 0; j < stringarraysize; j++) {
                     int stringlength = (int) bb.get();
                     String s2 = new String(readBytes(bb, stringlength));
-                    representation.append(getIndentation(this.indentationlevel + 1));
                     representation.append("<stringwithlength length=\"" + stringlength + "\">");
                     matcher = CHARS_TO_ENCODE_IN_XML_PATTERN.matcher(s2);
                     malicious = matcher.find();
@@ -170,20 +146,14 @@ public class ViewStateDecoder {
                     if (malicious) representation.append("]]>");
                     representation.append("</stringwithlength>\n");
                 }
-                this.indentationlevel--;
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("</stringarray>\n");
                 return representation;
             case 0x16:
                 // Container of Objects
                 int objectcontainersize = readLittleEndianBase128Number(bb);
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<objectarray size=\"" + objectcontainersize + "\">\n");
-                this.indentationlevel++;
                 for (int i = 0; i < objectcontainersize; i++)
                     representation.append(decodeObjectAsXML(bb));
-                this.indentationlevel--;
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("</objectarray>\n");
                 return representation;
             case 0x09:
@@ -193,7 +163,6 @@ public class ViewStateDecoder {
                 bb.get(rgbabytes);
                 String rgbaashexstring = Hex.encodeHexString(rgbabytes);
 
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<rgba>0x" + rgbaashexstring + "</rgba>");
                 return representation;
             case 0x1B:
@@ -202,13 +171,11 @@ public class ViewStateDecoder {
                 byte unitbytes[] = new byte[12];
                 bb.get(unitbytes);
                 String unitashexstring = Hex.encodeHexString(unitbytes);
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<unit>0x" + unitashexstring + "</unit>");
                 return representation;
             case 0x1F:
                 // String reference
                 int stringref = readLittleEndianBase128Number(bb);
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<stringreference>");
                 representation.append(stringref);
                 representation.append("</stringreference>\n");
@@ -218,14 +185,9 @@ public class ViewStateDecoder {
                 // this logic is based to some degree on https://gist.github.com/Noxwizard/6396665
                 // TODO: test this case.
                 int controlstatelength = readLittleEndianBase128Number(bb);
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<controlstate size=\"" + controlstatelength + "\">\n");
-                this.indentationlevel++;
-                // for (int i=0; i< controlstatelength; i++)
                 representation.append(decodeObjectAsXML(bb));
                 representation.append(decodeObjectAsXML(bb));
-                this.indentationlevel--;
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("</controlstate>\n");
                 return representation;
             case 0x24:
@@ -234,35 +196,29 @@ public class ViewStateDecoder {
                 byte uuidbytes[] = new byte[36];
                 bb.get(uuidbytes);
                 String uuidashexstring = Hex.encodeHexString(uuidbytes);
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<uuid>0x" + uuidashexstring + "</uuid>");
                 return representation;
             case 0x64:
                 // Empty Node
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<emptynode>");
                 representation.append("</emptynode>\n");
                 return representation;
             case 0x65:
                 // Empty String
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<emptystring>");
                 representation.append("</emptystring>\n");
                 return representation;
             case 0x66:
                 // Zero
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<zero>");
                 representation.append("</zero>\n");
                 return representation;
             case 0x67:
                 // True
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<boolean>true</boolean>\n");
                 return representation;
             case 0x68:
                 // True
-                representation.append(getIndentation(this.indentationlevel));
                 representation.append("<boolean>false</boolean>\n");
                 return representation;
             default:
@@ -299,12 +255,10 @@ public class ViewStateDecoder {
 
         StringBuffer representation = new StringBuffer("<?xml version=\"1.0\" ?>\n");
         representation.append("<viewstate>\n");
-        this.indentationlevel++;
 
         // if the viewstate were encrypted, we would not have been able to decode it at all.
         // because we don't attempt to decrypt it, because we don't have the shared secret key to do
         // so.
-        representation.append(getIndentation(this.indentationlevel));
         representation.append("<encrypted>false</encrypted>\n");
 
         // decode the root object, which contains the remainder of the ViewState
@@ -324,9 +278,7 @@ public class ViewStateDecoder {
             dataBuffer.get(dataremaininginbuffer);
             String dataremainderhexencoded = Hex.encodeHexString(dataremaininginbuffer);
 
-            representation.append(getIndentation(this.indentationlevel));
             representation.append("<hmac>true</hmac>\n");
-            representation.append(getIndentation(this.indentationlevel));
             if (bytesremainingtoberead == 16)
                 representation.append("<hmactype>HMAC-MD5</hmactype>\n");
             else if (bytesremainingtoberead == 20)
@@ -338,25 +290,34 @@ public class ViewStateDecoder {
             else if (bytesremainingtoberead == 64)
                 representation.append("<hmactype>HMAC-SHA512</hmactype>\n");
             else representation.append("<hmactype>HMAC-UNKNOWN</hmactype>\n");
-            representation.append(getIndentation(this.indentationlevel));
             representation.append("<hmaclength>" + bytesremainingtoberead + "</hmaclength>\n");
-            representation.append(getIndentation(this.indentationlevel));
             representation.append("<hmacvalue>0x" + dataremainderhexencoded + "</hmacvalue>\n");
         } else {
             // No unread bytes --> no MAC. The Viewstate can be messed with!! Yee-Ha!
-            representation.append(getIndentation(this.indentationlevel));
             // NOTE: if this pattern changes, change patternNoHMAC
             representation.append("<hmac>false</hmac>\n");
         }
-        // put in the original ViewState value, in Base64 encoded form.
-        // representation.append(getIndentation(this.indentationlevel));
-        // representation.append("<viewstatebase64encoded>"+viewstatebase64encoded+"</viewstatebase64encoded>\n");
 
-        this.indentationlevel--;
-        representation.append(getIndentation(this.indentationlevel));
         representation.append("</viewstate>\n");
 
         // my work here is done.
-        return new String(representation);
+        return format(representation.toString());
+    }
+
+    private static String format(String xml) {
+        Transformer transformer;
+        try {
+            transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "3");
+            transformer.setOutputProperty(OutputKeys.METHOD, "html");
+            Source source = new StreamSource(new StringReader(xml));
+            StreamResult result = new StreamResult(new StringWriter());
+            transformer.transform(source, result);
+            return "<?xml version=\"1.0\" ?>\n" + result.getWriter().toString();
+        } catch (TransformerException e) {
+            // Should not happen
+            return "";
+        }
     }
 }
