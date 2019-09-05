@@ -32,24 +32,24 @@ public class SubResourceIntegrityAttributeScannerTest
     @Test
     public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInLinkElement()
             throws HttpMalformedHeaderException {
-        // Given a HTML page with link element containing an integrity attribute
+        // Given
         HttpMessage msg =
                 buildMessage(
                         "<html><head><link rel=\"stylesheet\" href=\"https://site53.example.net/style.css\"\n"
                                 + "      integrity=\"sha384-+/M6kredJcxdsqkczBUjMLvqyHb1K/JThDXWsBVxMEeZHEaMKEOEct339VItX1zB\"\n"
                                 + "      crossorigin=\"anonymous\"></head><body></body></html>"); // from https://www.w3.org/TR/SRI/#use-casesexamples
 
-        // When the page is scanned
+        // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
-        // Then no alert should be raised
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInScriptElement()
             throws HttpMalformedHeaderException {
-        // Given a HTML page with link element containing an integrity attribute
+        // Given
         HttpMessage msg =
                 buildMessage(
                         "<html><head><script src=\"https://analytics-r-us.example.com/v1.0/include.js\"\n"
@@ -57,44 +57,44 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "        crossorigin=\"anonymous\"></script></head><body></body></html>"); // from
         // https://www.w3.org/TR/SRI/#use-casesexamples
 
-        // When the page is scanned
+        // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
-        // Then no alert should be raised
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void shouldRaiseAlertGivenIntegrityAttributeIsMissingForSupportedElement()
             throws HttpMalformedHeaderException {
-        // Given a HTML page with a script element containing an integrity attribute
+        // Given
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
                                 + "<script src=\"https://some.cdn.com/v1.0/include.js\"></script>"
                                 + "</head><body></body></html>");
 
-        // When the page is scanned
+        // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
-        // Then the alert "Sub resource integrity attribute missing" should be raised
+        // Then
         assertThat(alertsRaised.get(0).getPluginId(), equalTo(rule.getPluginId()));
     }
 
     @Test
     public void shouldIndicateElementWithoutIntegrityAttribute()
             throws HttpMalformedHeaderException {
-        // Given a HTML page with a script element containing an integrity attribute
+        // Given
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
                                 + "<script src=\"https://some.cdn.com/v1.0/include.js\"></script>"
                                 + "</head><body></body></html>");
 
-        // When the page is scanned
+        // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
-        // Then the element should be indicated
+        // Then
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("<script src=\"https://some.cdn.com/v1.0/include.js\"></script>"));
@@ -103,7 +103,7 @@ public class SubResourceIntegrityAttributeScannerTest
     @Test
     public void shouldNotRaiseAlertGivenElementIsNotServedByCDN()
             throws HttpMalformedHeaderException {
-        // Given a HTML page with an element served by the same (sub-)domain
+        // Given
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
@@ -111,10 +111,10 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "<link href=\"http://static.example.com/v1.0/style.css\"></script>"
                                 + "</head><body></body></html>");
 
-        // When the page is scanned
+        // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
-        // Then the alert "Sub resource integrity attribute missing" should be raised
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
