@@ -19,11 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -32,6 +27,14 @@ import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+
+import java.io.IOException;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.PATTERN_NO_HMAC;
 
 /**
  * A class to passively scan responses for Base64 encoded data, including ASP ViewState data, which
@@ -286,7 +289,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
                             // is the ViewState protected by a MAC?
                             Matcher hmaclessmatcher =
-                                    ViewStateDecoder.patternNoHMAC.matcher(viewstatexml);
+                                    PATTERN_NO_HMAC.matcher(viewstatexml);
                             macless = hmaclessmatcher.find();
 
                             if (log.isDebugEnabled()) log.debug("MAC-less??? " + macless);
@@ -452,7 +455,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
      * gets extra information associated with the alert
      *
      * @param msg
-     * @param arg0
      * @return
      */
     private String getExtraInfo(HttpMessage msg, String evidence, byte[] decodeddata) {

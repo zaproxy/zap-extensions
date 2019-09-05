@@ -19,12 +19,17 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import org.apache.commons.codec.binary.Hex;
+import org.parosproxy.paros.extension.encoder.Base64;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.apache.commons.codec.binary.Hex;
-import org.parosproxy.paros.extension.encoder.Base64;
+
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.CHARS_TO_ENCODE_IN_XML_PATTERN;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readBytes;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readLittleEndianBase128Number;
+import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader.readNullTerminatedString;
 
 /**
  * Decodes a ViewState into an XML based format.
@@ -32,16 +37,6 @@ import org.parosproxy.paros.extension.encoder.Base64;
  * @author 70pointer@gmail.com
  */
 public class ViewStateDecoder {
-
-    // private static final Pattern charsToEncodeInXMLPattern = Pattern.compile("[\\<\\>\\&]+");
-    private static final Pattern charsToEncodeInXMLPattern =
-            Pattern.compile("[<>\\&]+", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-
-    /** a pattern to use when looking at the output to check if a ViewState is protected by a MAC */
-    public static Pattern patternNoHMAC =
-            Pattern.compile(
-                    "^\\s*\\<hmac\\>false\\</hmac\\>\\s*$",
-                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /** how far is the current item indented? */
     private int indentationlevel = 0;
@@ -57,62 +52,6 @@ public class ViewStateDecoder {
         private static final long serialVersionUID = 428921470671268371L;
     }
 
-    /**
-     * read a sequence of n bytes from the ByteBuffer and return it as a byte array
-     *
-     * @param bb the ByteBuffer from which to read n bytes
-     * @param n the number of bytes to read
-     * @return a byte array containing the read data
-     */
-    private static byte[] readBytes(ByteBuffer bb, int n) {
-        byte[] bytes = new byte[n];
-        bb.get(bytes);
-        return bytes;
-    }
-
-    /**
-     * reads a NULL terminated String from the ByteBuffer
-     *
-     * @param bb the ByteBuffer containing the data to read
-     * @return a String (not including the NULL byte)
-     */
-    private static String readNullTerminatedString(ByteBuffer bb) {
-        StringBuffer sb = new StringBuffer();
-        byte b = bb.get();
-        while (b != 0x00) {
-            sb.append((char) b);
-            b = bb.get();
-        }
-        return new String(sb);
-    }
-
-    /**
-     * gets a Little Endian Base 128 number from the Byte Buffer. This is a form of variable length
-     * encoded int value.
-     *
-     * @param bb the ByteBuffer containing the data
-     * @return an integer value
-     */
-    private static int readLittleEndianBase128Number(ByteBuffer bb) {
-        int i = 0;
-
-        int tempbytesread = 0;
-        byte b = bb.get();
-        tempbytesread++;
-        // get the lower 7 bits of b into i
-        i = b & 0x7F;
-        while ((b & 0x80) > 0) {
-            // while the top bit of b is set (the "more" bit)
-            // get another byte
-            b = bb.get();
-            tempbytesread++;
-            // left shift the lower 7 bits of b onto the left of the bits of data we have already
-            // placed in i
-            // i = ((i+1) <<7) | (b& 0x7F);
-            i = ((b & 0x7F) << (7 * (tempbytesread - 1))) | i;
-        }
-        return i;
-    }
 
     /**
      * gets a StringBuffer containing the specified amount of indentation
@@ -169,7 +108,7 @@ public class ViewStateDecoder {
                 String s = new String(readBytes(bb, stringsize));
                 representation.append(getIndentation(this.indentationlevel));
                 representation.append("<string>");
-                matcher = charsToEncodeInXMLPattern.matcher(s);
+                matcher = CHARS_TO_ENCODE_IN_XML_PATTERN.matcher(s);
                 malicious = matcher.find();
                 if (malicious) representation.append("<![CDATA[");
                 representation.append(s);
@@ -182,7 +121,7 @@ public class ViewStateDecoder {
                 String nullterminatedString = readNullTerminatedString(bb);
                 representation.append(getIndentation(this.indentationlevel));
                 representation.append("<stringnullterminated>");
-                matcher = charsToEncodeInXMLPattern.matcher(nullterminatedString);
+                matcher = CHARS_TO_ENCODE_IN_XML_PATTERN.matcher(nullterminatedString);
                 malicious = matcher.find();
                 if (malicious) representation.append("<![CDATA[");
                 representation.append(nullterminatedString);
@@ -224,7 +163,7 @@ public class ViewStateDecoder {
                     String s2 = new String(readBytes(bb, stringlength));
                     representation.append(getIndentation(this.indentationlevel + 1));
                     representation.append("<stringwithlength length=\"" + stringlength + "\">");
-                    matcher = charsToEncodeInXMLPattern.matcher(s2);
+                    matcher = CHARS_TO_ENCODE_IN_XML_PATTERN.matcher(s2);
                     malicious = matcher.find();
                     if (malicious) representation.append("<![CDATA[");
                     representation.append(s2);
