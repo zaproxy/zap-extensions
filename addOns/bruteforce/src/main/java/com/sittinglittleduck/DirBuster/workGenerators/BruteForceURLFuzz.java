@@ -31,10 +31,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.log4j.Logger;
 
 /** @author James */
 public class BruteForceURLFuzz implements Runnable {
@@ -56,6 +55,9 @@ public class BruteForceURLFuzz implements Runnable {
     HttpClient httpclient;
     private String urlFuzzStart;
     private String urlFuzzEnd;
+
+    /* Logger object for the class */
+    private static final Logger LOG = Logger.getLogger(BruteForceURLFuzz.class);
 
     /** Creates a new instance of BruteForceWorkGenerator */
     public BruteForceURLFuzz(Manager manager) {
@@ -119,7 +121,7 @@ public class BruteForceURLFuzz implements Runnable {
             e.printStackTrace();
         }
 
-        System.out.println("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
+        LOG.info("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
         started = currentDir;
 
         String baseCase = null;
@@ -154,7 +156,9 @@ public class BruteForceURLFuzz implements Runnable {
                     incrementCounter(x);
                     Thread.sleep(20);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(BruteForceURLFuzz.class.getName()).log(Level.SEVERE, null, ex);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.error("makeList " + ex.toString());
+                    }
                 }
             }
             /* re-initialize the index */
@@ -241,13 +245,19 @@ public class BruteForceURLFuzz implements Runnable {
 
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
-        System.out.println("listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
+        }
+
         double total = 0;
         for (int a = minLen; a <= maxLen; a++) {
             total = total + Math.pow(listLength, a);
         }
 
-        System.out.println("Total for a pure brute force = " + total);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Total for a pure brute force = " + total);
+        }
+
         manager.setTotalPass(total);
     }
 }

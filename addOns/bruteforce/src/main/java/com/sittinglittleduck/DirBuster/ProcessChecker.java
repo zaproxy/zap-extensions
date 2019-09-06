@@ -21,6 +21,7 @@ package com.sittinglittleduck.DirBuster;
 
 import java.util.TimerTask;
 import java.util.Vector;
+import org.apache.log4j.Logger;
 
 public class ProcessChecker extends TimerTask {
 
@@ -28,6 +29,9 @@ public class ProcessChecker extends TimerTask {
     private long timeStarted;
     private long lastTotal = 0L;
     private Vector lastTen = new Vector(10, 1);
+
+    /* Logger object for the class */
+    private static final Logger LOG = Logger.getLogger(ProcessChecker.class);
 
     /** Creates a new instance of ProcessChecker */
     public interface ProcessUpdate {
@@ -112,13 +116,13 @@ public class ProcessChecker extends TimerTask {
                 parseQueueLength = String.valueOf(manager.parseQueue.size());
             }
 
-            if (Config.debug) {
+            if (LOG.isDebugEnabled()) {
                 if (average == 0 || lastTenTotal == 0 || averageLastTen == 0) {
-                    System.out.println(
-                            "Current speed: "
+                    LOG.debug(
+                            "Current Speed: "
                                     + current
                                     + " requests/sec\n"
-                                    + "Average speed: (T) "
+                                    + "Average Speed: (T) "
                                     + average
                                     + ", (C) "
                                     + averageLastTen
@@ -128,17 +132,18 @@ public class ProcessChecker extends TimerTask {
                                     + "/"
                                     + totalToDo
                                     + "\n"
-                                    + "Time To Finish: ~\n"
+                                    + "Time To Finish: ~"
                                     + parseQueueLength);
+
                 } else {
                     long timeLeft = (totalToDo - currentTotal) / averageLastTen;
                     String timeToCompelete = convertSecsToTime(timeLeft);
                     lastTotal = currentTotal;
-                    System.out.println(
+                    LOG.debug(
                             "Current speed: "
                                     + current
-                                    + " requests/sec\n"
-                                    + "Average speed: (T) "
+                                    + " request/sec\n"
+                                    + "Average Speed: (T) "
                                     + average
                                     + ", (C) "
                                     + averageLastTen
@@ -155,7 +160,9 @@ public class ProcessChecker extends TimerTask {
                 }
 
                 // System.out.println("workQ: " + manager.workQueue.size());
-                System.out.println("dirQ: " + manager.dirQueue.size());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("dirQ: " + manager.dirQueue.size());
+                }
                 // System.out.println("parseQ: " + manager.parseQueue.size());
                 // manager.
             }

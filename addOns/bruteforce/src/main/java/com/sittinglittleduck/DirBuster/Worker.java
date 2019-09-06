@@ -38,6 +38,7 @@ import org.apache.commons.httpclient.NoHttpResponseException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.log4j.Logger;
 
 /** This class process workunit and determines if the link has been found or not */
 public class Worker implements Runnable {
@@ -51,6 +52,9 @@ public class Worker implements Runnable {
     private int threadId;
     private boolean working;
     private boolean stop = false;
+
+    /* Logger object for the class */
+    private static final Logger LOG = Logger.getLogger(Worker.class);
 
     /**
      * Creates a new instance of Worker
@@ -145,9 +149,9 @@ public class Worker implements Runnable {
                         verifyResponseForValidRequests(code, response, rawResponse);
                     } else if (code == HttpStatus.SC_NOT_FOUND
                             || code == HttpStatus.SC_BAD_REQUEST) {
-                        if (Config.debug) {
-                            System.out.println(
-                                    "DEBUG Worker["
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(
+                                    "Worker["
                                             + threadId
                                             + "]: "
                                             + code
@@ -169,12 +173,13 @@ public class Worker implements Runnable {
 
                     if (m.find()) {
                         // do nothing as we have a 404
-                        if (Config.debug) {
-                            System.out.println(
-                                    "DEBUG Worker["
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(
+                                    "Worker["
                                             + threadId
-                                            + "]: Regex matched so it's a 404, "
-                                            + url.toString());
+                                            + "]: Regex matched 404 code. ("
+                                            + url.toString()
+                                            + ")");
                         }
 
                     } else {
@@ -276,14 +281,8 @@ public class Worker implements Runnable {
 
     private int makeRequest(HttpMethodBase httpMethod)
             throws HttpException, IOException, InterruptedException {
-        if (Config.debug) {
-            System.out.println(
-                    "DEBUG Worker["
-                            + threadId
-                            + "]: "
-                            + httpMethod.getName()
-                            + " : "
-                            + url.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Worker[" + threadId + "]: " + httpMethod.getName() + " : " + url.toString());
         }
 
         // set the custom HTTP headers
@@ -316,8 +315,8 @@ public class Worker implements Runnable {
          */
         int code = httpclient.executeMethod(httpMethod);
 
-        if (Config.debug) {
-            System.out.println("DEBUG Worker[" + threadId + "]: " + code + " " + url.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Worker[" + threadId + "]: " + code + " " + url.toString());
         }
         return code;
     }
@@ -327,8 +326,8 @@ public class Worker implements Runnable {
     }
 
     private void verifyResponseForValidRequests(int code, String response, String rawResponse) {
-        if (Config.debug) {
-            System.out.println("DEBUG Worker[" + threadId + "]: Base Case Check " + url.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Worker[" + threadId + "]: Base Case Check " + url.toString());
         }
 
         // TODO move this option to the Adv options
@@ -343,7 +342,9 @@ public class Worker implements Runnable {
                         work.getBaseCaseObj().getBaseCase(), work.getItemToCheck());
 
         if (m.find()) {
-            System.out.println("DEBUG Worker[" + threadId + "]: 404 for: " + url.toString());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Worker[" + threadId + "]: 404 for: " + url.toString());
+            }
         } else if (!response.equalsIgnoreCase(basecase)) {
             notifyItemFound(code, response, rawResponse, basecase);
         }
@@ -352,27 +353,15 @@ public class Worker implements Runnable {
     private void notifyItemFound(
             int code, String response, String rawResponse, String basecase, String type) {
         if (work.isDir()) {
-            if (Config.debug) {
-                System.out.println(
-                        "DEBUG Worker["
-                                + threadId
-                                + "]: Found Dir ("
-                                + type
-                                + ")"
-                                + url.toString());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Worker[" + threadId + "]: Found Dir (" + type + ")" + url.toString());
             }
             // we found a dir
             manager.foundDir(url, code, response, basecase, rawResponse, work.getBaseCaseObj());
         } else {
             // found a file
-            if (Config.debug) {
-                System.out.println(
-                        "DEBUG Worker["
-                                + threadId
-                                + "]: Found File ("
-                                + type
-                                + ")"
-                                + url.toString());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Worker[" + threadId + "]: Found File (" + type + ")" + url.toString());
             }
             manager.foundFile(url, code, response, basecase, rawResponse, work.getBaseCaseObj());
         }

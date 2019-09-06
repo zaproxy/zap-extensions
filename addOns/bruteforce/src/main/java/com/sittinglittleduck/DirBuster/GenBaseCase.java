@@ -30,6 +30,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.Logger;
 
 /**
  * Generates a base case for a dir or file rangle that is about to be scanned
@@ -37,6 +38,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
  * @author James
  */
 public class GenBaseCase {
+
+    /* Log object for this class */
+    private static final Logger LOG = Logger.getLogger(GenBaseCase.class);
 
     /** Creates a new instance of GenBaseCase */
     private GenBaseCase() {}
@@ -70,14 +74,11 @@ public class GenBaseCase {
         BaseCase tempBaseCase = manager.getBaseCase(url, isDir, fileExtention);
 
         if (tempBaseCase != null) {
-            // System.out.println("Using prestored basecase");
             return tempBaseCase;
         }
 
-        // System.out.println("DEBUG GenBaseCase: URL to get baseCase for: " + url + " (" + type +
-        // ")");
-        if (Config.debug) {
-            System.out.println("DEBUG GenBaseCase: URL to get baseCase for:" + url);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("URL to get baseCase for: " + url);
         }
 
         BaseCase baseCase = null;
@@ -99,9 +100,8 @@ public class GenBaseCase {
             }
         }
 
-        // System.out.println("DEBUG GenBaseCase: Getting :" + failurl + " (" + type + ")");
-        if (Config.debug) {
-            System.out.println("DEBUG GenBaseCase: Getting:" + failurl);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Getting:" + failurl);
         }
 
         GetMethod httpget = new GetMethod(failurl.toString());
@@ -126,11 +126,8 @@ public class GenBaseCase {
 
         // we now need to get the content as we need a base case!
         if (failcode == 200) {
-            if (Config.debug) {
-                System.out.println(
-                        "DEBUG GenBaseCase: base case for "
-                                + failurl.toString()
-                                + "came back as 200!");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Base case for " + failurl.toString() + " came back as 200!");
             }
 
             BufferedReader input =
@@ -203,8 +200,8 @@ public class GenBaseCase {
                      */
                 }
 
-                if (Config.debug) {
-                    System.out.println("DEBUG GenBaseCase: base case was set to :" + baseResponce);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Base case was set to: " + baseResponce);
                 }
             }
         }
@@ -267,11 +264,8 @@ public class GenBaseCase {
         manager.workDone();
 
         if (failcode == 200) {
-            if (Config.debug) {
-                System.out.println(
-                        "DEBUG GenBaseCase: base case for "
-                                + failurl.toString()
-                                + "came back as 200!");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Base case for " + failurl.toString() + " came back as 200!");
             }
 
             BufferedReader input =
@@ -287,8 +281,8 @@ public class GenBaseCase {
             // clean up the base case, based on the basecase URL
             baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
 
-            if (Config.debug) {
-                System.out.println("DEBUG GenBaseCase: base case was set to :" + baseResponce);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Base case was set to: " + baseResponce);
             }
         }
 
@@ -334,11 +328,8 @@ public class GenBaseCase {
 
         // we now need to get the content as we need a base case!
         if (failcode == 200) {
-            if (Config.debug) {
-                System.out.println(
-                        "DEBUG GenBaseCase: base case for "
-                                + failurl.toString()
-                                + "came back as 200!");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Base case for " + failurl.toString() + " came back as 200!");
             }
 
             BufferedReader input =
