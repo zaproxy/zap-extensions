@@ -196,9 +196,9 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 LOG.debug(ex.toString());                
             }
         } catch (MalformedURLException ex) {
-            LOG.error(ex.toString());
+            LOG.warn("Failed to create the fuzzed URL:", ex);
         } catch (IOException ex) {
-            LOG.error(ex.toString());
+            LOG.warn("Failed to create the fuzzed URL:", ex);
         } finally {
             try {
                 d.close();
