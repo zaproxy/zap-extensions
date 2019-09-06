@@ -19,6 +19,14 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import static net.htmlparser.jericho.HTMLElementName.LINK;
+import static net.htmlparser.jericho.HTMLElementName.SCRIPT;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
@@ -26,15 +34,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-
-import static net.htmlparser.jericho.HTMLElementName.LINK;
-import static net.htmlparser.jericho.HTMLElementName.SCRIPT;
 
 /** Detect missing attribute integrity in tag <script> */
 public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
@@ -52,16 +51,11 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
     // and video elements.
     private static final List<String> SUPPORTED_ELEMENTS = Arrays.asList(SCRIPT, LINK);
 
-    private static final Map<String, String> CONTENT_ATTRIBUTES;
+    private static final Map<String, String> CONTENT_ATTRIBUTES = new HashMap<String, String>();
 
     static {
-        CONTENT_ATTRIBUTES =
-                new HashMap<String, String>() {
-                    {
-                        put(SCRIPT, "src");
-                        put(LINK, "href");
-                    }
-                };
+        CONTENT_ATTRIBUTES.put(SCRIPT, "src");
+        CONTENT_ATTRIBUTES.put(LINK, "href");
     }
 
     private PassiveScanThread parent;
