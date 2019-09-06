@@ -154,11 +154,11 @@ public class WorkerGeneratorURLFuzz implements Runnable {
             }
 
             d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
-            
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
             }
-            
+
             int filesProcessed = 0;
 
             BaseCase baseCaseObj =
@@ -193,7 +193,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
             }
         } catch (InterruptedException ex) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(ex.toString());                
+                LOG.debug(ex.toString());
             }
         } catch (MalformedURLException ex) {
             LOG.warn("Failed to create the fuzzed URL:", ex);
@@ -205,7 +205,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 manager.setURLFuzzGenFinished(true);
             } catch (IOException ex) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(ex.toString());                    
+                    LOG.debug(ex.toString());
                 }
             }
         }

@@ -156,8 +156,8 @@ public class BruteForceURLFuzz implements Runnable {
                     incrementCounter(x);
                     Thread.sleep(20);
                 } catch (InterruptedException ex) {
-                    if(LOG.isDebugEnabled()) {
-                        LOG.error("makeList " + ex.toString());                        
+                    if (LOG.isDebugEnabled()) {
+                        LOG.error("makeList " + ex.toString());
                     }
                 }
             }
