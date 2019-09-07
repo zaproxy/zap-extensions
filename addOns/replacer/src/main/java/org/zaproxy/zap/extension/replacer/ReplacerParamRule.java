@@ -42,6 +42,7 @@ class ReplacerParamRule extends Enableable {
     private String description;
     private String matchString;
     private String replacement;
+    private String escapedReplacement;
     private MatchType matchType;
     private boolean matchRegex;
     private List<Integer> initiators;
@@ -84,7 +85,8 @@ class ReplacerParamRule extends Enableable {
         this.matchType = matchType;
         this.matchString = matchString;
         this.matchRegex = matchRegex;
-        this.replacement = hex(replacement);
+        this.escapedReplacement = hex(replacement);
+        this.replacement = replacement;
         this.initiators = initiators;
     }
 
@@ -151,6 +153,10 @@ class ReplacerParamRule extends Enableable {
 
     public void setReplacement(String replacement) {
         this.replacement = replacement;
+    }
+
+    public String getEscapedReplacement() {
+        return escapedReplacement;
     }
 
     public List<Integer> getInitiators() {

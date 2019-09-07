@@ -39,7 +39,7 @@ public class ReplacerParamRuleTest {
 
         // Then
         assertThat(
-                nonAsciiRegexRule.getReplacement(),
+                nonAsciiRegexRule.getEscapedReplacement(),
                 equalTo(new String(new byte[] {'a', 'b', 'c', 1, (byte) 170, 'd', 'e', 'f'})));
     }
 }

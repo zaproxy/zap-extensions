@@ -184,7 +184,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                             msg.getRequestHeader().setHeader(rule.getMatchString(), null);
                         } else {
                             msg.getRequestHeader()
-                                    .setHeader(rule.getMatchString(), rule.getReplacement());
+                                    .setHeader(rule.getMatchString(), rule.getEscapedReplacement());
                         }
                         break;
                     case REQ_HEADER_STR:
@@ -200,7 +200,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             header,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getReplacement());
+                                            rule.getEscapedReplacement());
                             try {
                                 msg.setRequestHeader(new HttpRequestHeader(header));
                             } catch (HttpMalformedHeaderException e) {
@@ -216,7 +216,12 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                         + rule.getReplacement());
                         String body = msg.getRequestBody().toString();
                         if (contains(body, rule.getMatchString(), p)) {
-                            body = replace(body, rule.getMatchString(), p, rule.getReplacement());
+                            body =
+                                    replace(
+                                            body,
+                                            rule.getMatchString(),
+                                            p,
+                                            rule.getEscapedReplacement());
                             msg.getRequestBody().setBody(body);
                             msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                         }
