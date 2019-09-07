@@ -19,12 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha.viewState;
 
-import org.junit.Test;
-
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Optional;
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.ARRAY_OF_STRING;
@@ -40,6 +34,11 @@ import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.TUPLE
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.UNIT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.UNSIGNED_INT;
 import static org.zaproxy.zap.extension.pscanrulesAlpha.viewState.Decoders.UUID;
+
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Optional;
+import org.junit.Test;
 
 public class DecodersTest {
     @Test

@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import org.junit.Test;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.network.HttpMessage;
-
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 
 public class Base64DisclosureTest extends PassiveScannerTest<Base64Disclosure> {
 

@@ -19,6 +19,17 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import static java.util.stream.Collectors.toSet;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -30,18 +41,6 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.base64.Base64CharProbability;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.base64.Base64Data;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toSet;
 
 /**
  * A class to passively scan responses for Base64 encoded data, including ASP ViewState data, which
@@ -328,21 +327,11 @@ public class Base64Disclosure extends PluginPassiveScanner {
         parent.raiseAlert(id, alert);
     }
 
-    /**
-     * sets the parent
-     *
-     * @param parent
-     */
     @Override
     public void setParent(PassiveScanThread parent) {
         this.parent = parent;
     }
 
-    /**
-     * get the id of the scanner
-     *
-     * @return
-     */
     @Override
     public int getPluginId() {
         return 10094;

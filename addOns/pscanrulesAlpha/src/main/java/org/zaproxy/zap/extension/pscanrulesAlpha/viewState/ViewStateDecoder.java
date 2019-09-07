@@ -19,8 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha.viewState;
 
-import org.apache.commons.codec.binary.Hex;
-
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -28,11 +31,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  * Decodes a ViewState into an XML based format.

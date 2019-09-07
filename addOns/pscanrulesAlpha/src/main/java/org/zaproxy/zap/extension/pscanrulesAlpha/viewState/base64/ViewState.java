@@ -19,10 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha.viewState.base64;
 
+import java.util.regex.Matcher;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateByteReader;
 import org.zaproxy.zap.extension.pscanrulesAlpha.viewState.ViewStateDecoder;
-
-import java.util.regex.Matcher;
 
 public class ViewState extends Base64Data {
 

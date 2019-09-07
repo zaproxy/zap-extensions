@@ -19,15 +19,15 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha.viewState;
 
+import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.encoder.Base64;
-
-import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
-import static org.junit.Assert.assertThat;
 
 public class ViewStateDecoderTest {
 
