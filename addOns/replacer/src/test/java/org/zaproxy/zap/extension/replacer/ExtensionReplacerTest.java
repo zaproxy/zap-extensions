@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.replacer;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
+import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_BODY_STR;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER_STR;
 
 import org.junit.Test;
@@ -30,7 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 public class ExtensionReplacerTest {
 
     @Test
-    public void shouldReplaceHexValue() throws HttpMalformedHeaderException {
+    public void shouldReplaceHexValueInRequestHeader() throws HttpMalformedHeaderException {
         // Given
         ExtensionReplacer extensionReplacer = new ExtensionReplacer();
         ReplacerParamRule nonAsciiRegexRule =
@@ -54,6 +55,34 @@ public class ExtensionReplacerTest {
         // Then
         assertThat(
                 msg.getRequestHeader().getHeader("X-CUSTOM"),
+                equalTo(new String(new byte[] {'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'})));
+    }
+
+    @Test
+    public void shouldReplaceHexValueInRequestBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule nonAsciiRegexRule =
+                new ReplacerParamRule(
+                        "",
+                        REQ_BODY_STR,
+                        "abc\\x01\\x03\\x02def",
+                        true,
+                        "abc\\x01\\x02\\x03def",
+                        null,
+                        true);
+        extensionReplacer.getParams().getRules().add(nonAsciiRegexRule);
+
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("POST / HTTP/1.1");
+        msg.setRequestBody(new byte[] {'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'});
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(
+                msg.getRequestBody().toString(),
                 equalTo(new String(new byte[] {'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'})));
     }
 }
