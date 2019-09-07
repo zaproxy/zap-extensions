@@ -19,11 +19,16 @@
  */
 package org.zaproxy.zap.extension.replacer;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.List;
+import java.util.stream.Stream;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.utils.Enableable;
 
 class ReplacerParamRule extends Enableable {
+
+    public static final String NON_ASCII = "\\\\x\\p{XDigit}{2}";
 
     public enum MatchType {
         REQ_HEADER,
@@ -79,8 +84,22 @@ class ReplacerParamRule extends Enableable {
         this.matchType = matchType;
         this.matchString = matchString;
         this.matchRegex = matchRegex;
-        this.replacement = replacement;
+        this.replacement = hex(replacement);
         this.initiators = initiators;
+    }
+
+    private static String hex(String binaryRegex) {
+        Stream<String> content =
+                Stream.of(binaryRegex.split("((?<=" + NON_ASCII + ")|(?=" + NON_ASCII + "))"));
+        return content.map(
+                        x ->
+                                x.matches(NON_ASCII)
+                                        ? new String(
+                                                new byte[] {
+                                                    (byte) Integer.parseInt(x.substring(2), 16)
+                                                })
+                                        : x)
+                .collect(joining(""));
     }
 
     public ReplacerParamRule(ReplacerParamRule token) {
