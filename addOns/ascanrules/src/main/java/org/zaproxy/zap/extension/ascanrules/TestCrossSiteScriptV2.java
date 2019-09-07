@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
+
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +48,11 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     private static final String MESSAGE_PREFIX = "ascanrules.testscrosssitescriptv2.";
 
     private static final String GENERIC_SCRIPT_ALERT = "<script>alert(1);</script>";
+    private static final String GENERIC_NULL_BYTE_SCRIPT_ALERT =
+            NULL_BYTE_CHARACTER + GENERIC_SCRIPT_ALERT;
+
+    private static final List<String> GENERIC_SCRIPT_ALERT_LIST =
+            Arrays.asList(GENERIC_SCRIPT_ALERT, GENERIC_NULL_BYTE_SCRIPT_ALERT);
     private static final List<Integer> GET_POST_TYPES =
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
@@ -110,7 +117,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             String attack,
             HtmlContext targetContext,
             int ignoreFlags) {
-        return performAttack(msg, param, attack, targetContext, ignoreFlags, false);
+        return performAttack(msg, param, attack, targetContext, ignoreFlags, false, false);
     }
 
     private List<HtmlContext> performAttack(
@@ -120,6 +127,17 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             HtmlContext targetContext,
             int ignoreFlags,
             boolean findDecoded) {
+        return performAttack(msg, param, attack, targetContext, ignoreFlags, findDecoded, false);
+    }
+
+    private List<HtmlContext> performAttack(
+            HttpMessage msg,
+            String param,
+            String attack,
+            HtmlContext targetContext,
+            int ignoreFlags,
+            boolean findDecoded,
+            boolean isNullByteSpecialHandling) {
         if (isStop()) {
             return null;
         }
@@ -144,7 +162,12 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         if (isStop()) {
             return null;
         }
-
+        if (isNullByteSpecialHandling) {
+            // Removing Null Bytes as parser tries to find the enclosing tag on attack vector (eg
+            // \0<script>alert(1);</script>) starting from first character
+            // and as null byte is not starting any tag or part of script tag so fails.
+            attack = attack.replaceFirst(NULL_BYTE_CHARACTER, "");
+        }
         HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
         if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
             // High level, so check all results are in the expected context
@@ -216,23 +239,29 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             }
             if (contexts.size() == 0) {
                 // No luck - lets just try a direct attack
-                List<HtmlContext> contexts2 =
-                        performAttack(msg, param, "'\"" + GENERIC_SCRIPT_ALERT, null, 0);
-                if (contexts2 == null) {
-                    return;
-                }
-                if (contexts2.size() > 0) {
-                    // Yep, its vulnerable
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_LOW,
-                            null,
-                            param,
-                            contexts2.get(0).getTarget(),
-                            "",
-                            contexts2.get(0).getTarget(),
-                            contexts2.get(0).getMsg());
-                    attackWorked = true;
+                for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+                    List<HtmlContext> contexts2 =
+                            performAttack(msg, param, "'\"" + scriptAlert, null, 0);
+                    if (contexts2 == null) {
+                        return;
+                    }
+                    if (contexts2.size() > 0) {
+                        // Yep, its vulnerable
+                        bingo(
+                                Alert.RISK_HIGH,
+                                Alert.CONFIDENCE_LOW,
+                                null,
+                                param,
+                                contexts2.get(0).getTarget(),
+                                "",
+                                contexts2.get(0).getTarget(),
+                                contexts2.get(0).getMsg());
+                        attackWorked = true;
+                    }
+
+                    if (attackWorked || isStop()) {
+                        break;
+                    }
                 }
             }
 
@@ -341,34 +370,40 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                     }
 
                     if (!attackWorked) {
-                        // Try a simple alert attack
-                        List<HtmlContext> contexts2 =
-                                performAttack(
-                                        msg,
+                        for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+                            // Try a simple alert attack
+                            List<HtmlContext> contexts2 =
+                                    performAttack(
+                                            msg,
+                                            param,
+                                            context.getSurroundingQuote() + ">" + scriptAlert,
+                                            context,
+                                            HtmlContext.IGNORE_TAG);
+                            if (contexts2 == null) {
+                                break;
+                            }
+                            if (contexts2.size() > 0) {
+                                // Yep, its vulnerable
+                                bingo(
+                                        Alert.RISK_HIGH,
+                                        Alert.CONFIDENCE_MEDIUM,
+                                        null,
                                         param,
-                                        context.getSurroundingQuote() + ">" + GENERIC_SCRIPT_ALERT,
-                                        context,
-                                        HtmlContext.IGNORE_TAG);
-                        if (contexts2 == null) {
-                            break;
-                        }
-                        if (contexts2.size() > 0) {
-                            // Yep, its vulnerable
-                            bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    null,
-                                    param,
-                                    contexts2.get(0).getTarget(),
-                                    "",
-                                    contexts2.get(0).getTarget(),
-                                    contexts2.get(0).getMsg());
-                            attackWorked = true;
-                        }
-                        if (!attackWorked) {
-                            log.debug(
-                                    "Failed to find vuln with simple script attack "
-                                            + msg.getRequestHeader().getURI());
+                                        contexts2.get(0).getTarget(),
+                                        "",
+                                        contexts2.get(0).getTarget(),
+                                        contexts2.get(0).getMsg());
+                                attackWorked = true;
+                            }
+                            if (!attackWorked) {
+                                log.debug(
+                                        "Failed to find vuln with simple script attack "
+                                                + msg.getRequestHeader().getURI());
+                            }
+
+                            if (attackWorked || isStop()) {
+                                break;
+                            }
                         }
                     }
                     if (!attackWorked) {
@@ -407,31 +442,38 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                     }
                 } else if (context.isHtmlComment()) {
                     // Try breaking out of the comment
-                    List<HtmlContext> contexts2 =
-                            performAttack(
-                                    msg,
+                    for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+                        List<HtmlContext> contexts2 =
+                                performAttack(
+                                        msg,
+                                        param,
+                                        "-->" + scriptAlert + "<!--",
+                                        context,
+                                        HtmlContext.IGNORE_HTML_COMMENT);
+                        if (contexts2 == null) {
+                            break;
+                        }
+                        if (contexts2.size() > 0) {
+                            // Yep, its vulnerable
+                            bingo(
+                                    Alert.RISK_HIGH,
+                                    Alert.CONFIDENCE_MEDIUM,
+                                    null,
                                     param,
-                                    "-->" + GENERIC_SCRIPT_ALERT + "<!--",
-                                    context,
-                                    HtmlContext.IGNORE_HTML_COMMENT);
-                    if (contexts2 == null) {
-                        break;
+                                    contexts2.get(0).getTarget(),
+                                    "",
+                                    contexts2.get(0).getTarget(),
+                                    contexts2.get(0).getMsg());
+                            attackWorked = true;
+                        }
+
+                        if (attackWorked || isStop()) {
+                            break;
+                        }
                     }
-                    if (contexts2.size() > 0) {
-                        // Yep, its vulnerable
-                        bingo(
-                                Alert.RISK_HIGH,
-                                Alert.CONFIDENCE_MEDIUM,
-                                null,
-                                param,
-                                contexts2.get(0).getTarget(),
-                                "",
-                                contexts2.get(0).getTarget(),
-                                contexts2.get(0).getMsg());
-                        attackWorked = true;
-                    } else {
+                    if (!attackWorked) {
                         // Maybe they're blocking script tags
-                        contexts2 =
+                        List<HtmlContext> contexts2 =
                                 performAttack(
                                         msg,
                                         param,
@@ -460,31 +502,37 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                     if ("body".equalsIgnoreCase(context.getParentTag())) {
                         // Immediately under a body tag
                         // Try a simple alert attack
-                        List<HtmlContext> contexts2 =
-                                performAttack(
-                                        msg,
-                                        param,
-                                        GENERIC_SCRIPT_ALERT,
+                        for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+                            List<HtmlContext> contexts2 =
+                                    performAttack(
+                                            msg,
+                                            param,
+                                            scriptAlert,
+                                            null,
+                                            HtmlContext.IGNORE_PARENT);
+                            if (contexts2 == null) {
+                                break;
+                            }
+                            if (contexts2.size() > 0) {
+                                // Yep, its vulnerable
+                                bingo(
+                                        Alert.RISK_HIGH,
+                                        Alert.CONFIDENCE_MEDIUM,
                                         null,
-                                        HtmlContext.IGNORE_PARENT);
-                        if (contexts2 == null) {
-                            break;
+                                        param,
+                                        contexts2.get(0).getTarget(),
+                                        "",
+                                        contexts2.get(0).getTarget(),
+                                        contexts2.get(0).getMsg());
+                                attackWorked = true;
+                            }
+                            if (attackWorked || isStop()) {
+                                break;
+                            }
                         }
-                        if (contexts2.size() > 0) {
-                            // Yep, its vulnerable
-                            bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    null,
-                                    param,
-                                    contexts2.get(0).getTarget(),
-                                    "",
-                                    contexts2.get(0).getTarget(),
-                                    contexts2.get(0).getMsg());
-                            attackWorked = true;
-                        } else {
+                        if (!attackWorked) {
                             // Maybe they're blocking script tags
-                            contexts2 =
+                            List<HtmlContext> contexts2 =
                                     performAttack(
                                             msg,
                                             param,
@@ -541,37 +589,43 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                     } else if (context.getParentTag() != null) {
                         // Its not immediately under a body tag, try to close
                         // the tag
-                        List<HtmlContext> contexts2 =
-                                performAttack(
-                                        msg,
+                        for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+                            List<HtmlContext> contexts2 =
+                                    performAttack(
+                                            msg,
+                                            param,
+                                            "</"
+                                                    + context.getParentTag()
+                                                    + ">"
+                                                    + scriptAlert
+                                                    + "<"
+                                                    + context.getParentTag()
+                                                    + ">",
+                                            context,
+                                            HtmlContext.IGNORE_IN_SCRIPT);
+                            if (contexts2 == null) {
+                                break;
+                            }
+                            if (contexts2.size() > 0) {
+                                // Yep, its vulnerable
+                                bingo(
+                                        Alert.RISK_HIGH,
+                                        Alert.CONFIDENCE_MEDIUM,
+                                        null,
                                         param,
-                                        "</"
-                                                + context.getParentTag()
-                                                + ">"
-                                                + GENERIC_SCRIPT_ALERT
-                                                + "<"
-                                                + context.getParentTag()
-                                                + ">",
-                                        context,
-                                        HtmlContext.IGNORE_IN_SCRIPT);
-                        if (contexts2 == null) {
-                            break;
+                                        contexts2.get(0).getTarget(),
+                                        "",
+                                        contexts2.get(0).getTarget(),
+                                        contexts2.get(0).getMsg());
+                                attackWorked = true;
+                            }
+                            if (attackWorked || isStop()) {
+                                break;
+                            }
                         }
-                        if (contexts2.size() > 0) {
-                            // Yep, its vulnerable
-                            bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    null,
-                                    param,
-                                    contexts2.get(0).getTarget(),
-                                    "",
-                                    contexts2.get(0).getTarget(),
-                                    contexts2.get(0).getMsg());
-                            attackWorked = true;
-                        } else if ("script".equalsIgnoreCase(context.getParentTag())) {
+                        if (!attackWorked && "script".equalsIgnoreCase(context.getParentTag())) {
                             // its in a script tag...
-                            contexts2 =
+                            List<HtmlContext> contexts2 =
                                     performAttack(
                                             msg,
                                             param,
@@ -596,7 +650,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                         contexts2.get(0).getMsg());
                                 attackWorked = true;
                             }
-                        } else {
+                        } else if (!attackWorked) {
                             // Try an img tag
                             List<HtmlContext> contextsA =
                                     performAttack(
@@ -622,69 +676,77 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                     } else {
                         // Last chance - is the payload reflected outside of any
                         // tags
-                        if (context.getMsg()
-                                .getResponseBody()
-                                .toString()
-                                .contains(context.getTarget())) {
-                            List<HtmlContext> contexts2 =
-                                    performAttack(msg, param, GENERIC_SCRIPT_ALERT, null, 0);
-                            if (contexts2 == null) {
-                                break;
-                            }
-                            for (HtmlContext ctx : contexts2) {
-                                if (ctx.getParentTag() != null) {
-                                    // Yep, its vulnerable
-                                    if (ctx.getMsg().getResponseHeader().isHtml()) {
-                                        bingo(
-                                                Alert.RISK_HIGH,
-                                                Alert.CONFIDENCE_MEDIUM,
-                                                null,
-                                                param,
-                                                ctx.getTarget(),
-                                                "",
-                                                ctx.getTarget(),
-                                                contexts2.get(0).getMsg());
-                                    } else {
-                                        HttpMessage ctx2Message = contexts2.get(0).getMsg();
-                                        if (StringUtils.containsIgnoreCase(
-                                                ctx.getMsg()
-                                                        .getResponseHeader()
-                                                        .getHeader(HttpHeader.CONTENT_TYPE),
-                                                "json")) {
-                                            bingo(
-                                                    Alert.RISK_LOW,
-                                                    Alert.CONFIDENCE_LOW,
-                                                    Constant.messages.getString(
-                                                            MESSAGE_PREFIX + "json.name"),
-                                                    Constant.messages.getString(
-                                                            MESSAGE_PREFIX + "json.desc"),
-                                                    ctx2Message
-                                                            .getRequestHeader()
-                                                            .getURI()
-                                                            .toString(),
-                                                    param,
-                                                    GENERIC_SCRIPT_ALERT,
-                                                    Constant.messages.getString(
-                                                            MESSAGE_PREFIX + "otherinfo.nothtml"),
-                                                    getSolution(),
-                                                    "",
-                                                    ctx2Message);
-                                        } else {
+                        for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
+                            if (context.getMsg()
+                                    .getResponseBody()
+                                    .toString()
+                                    .contains(context.getTarget())) {
+                                List<HtmlContext> contexts2 =
+                                        performAttack(
+                                                msg, param, scriptAlert, null, 0, false, true);
+                                if (contexts2 == null) {
+                                    break;
+                                }
+                                for (HtmlContext ctx : contexts2) {
+                                    if (ctx.getParentTag() != null) {
+                                        // Yep, its vulnerable
+                                        if (ctx.getMsg().getResponseHeader().isHtml()) {
                                             bingo(
                                                     Alert.RISK_HIGH,
-                                                    Alert.CONFIDENCE_LOW,
+                                                    Alert.CONFIDENCE_MEDIUM,
                                                     null,
                                                     param,
                                                     ctx.getTarget(),
-                                                    Constant.messages.getString(
-                                                            MESSAGE_PREFIX + "otherinfo.nothtml"),
+                                                    "",
                                                     ctx.getTarget(),
-                                                    ctx2Message);
+                                                    contexts2.get(0).getMsg());
+                                        } else {
+                                            HttpMessage ctx2Message = contexts2.get(0).getMsg();
+                                            if (StringUtils.containsIgnoreCase(
+                                                    ctx.getMsg()
+                                                            .getResponseHeader()
+                                                            .getHeader(HttpHeader.CONTENT_TYPE),
+                                                    "json")) {
+                                                bingo(
+                                                        Alert.RISK_LOW,
+                                                        Alert.CONFIDENCE_LOW,
+                                                        Constant.messages.getString(
+                                                                MESSAGE_PREFIX + "json.name"),
+                                                        Constant.messages.getString(
+                                                                MESSAGE_PREFIX + "json.desc"),
+                                                        ctx2Message
+                                                                .getRequestHeader()
+                                                                .getURI()
+                                                                .toString(),
+                                                        param,
+                                                        GENERIC_SCRIPT_ALERT,
+                                                        Constant.messages.getString(
+                                                                MESSAGE_PREFIX
+                                                                        + "otherinfo.nothtml"),
+                                                        getSolution(),
+                                                        "",
+                                                        ctx2Message);
+                                            } else {
+                                                bingo(
+                                                        Alert.RISK_HIGH,
+                                                        Alert.CONFIDENCE_LOW,
+                                                        null,
+                                                        param,
+                                                        ctx.getTarget(),
+                                                        Constant.messages.getString(
+                                                                MESSAGE_PREFIX
+                                                                        + "otherinfo.nothtml"),
+                                                        ctx.getTarget(),
+                                                        ctx2Message);
+                                            }
                                         }
+                                        attackWorked = true;
+                                        break;
                                     }
-                                    attackWorked = true;
-                                    break;
                                 }
+                            }
+                            if (attackWorked || isStop()) {
+                                break;
                             }
                         }
                     }
