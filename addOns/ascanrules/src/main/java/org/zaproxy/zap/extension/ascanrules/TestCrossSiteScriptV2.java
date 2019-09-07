@@ -163,10 +163,12 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             return null;
         }
         if (isNullByteSpecialHandling) {
-        	//Special handling for case where Attack Vector is reflected outside of html tag. 
-            //Removing Null Byte as parser tries to find the enclosing tag on attack vector (eg
-            // \0<script>alert(1);</script>) starting from first character
-            // and as null byte is not starting any tag and there is no enclosing tag for null byte so parent context is null.
+            /* Special handling for case where Attack Vector is reflected outside of html tag.
+             * Removing Null Byte as parser tries to find the enclosing tag on attack vector (eg
+             * \0<script>alert(1);</script>) starting from first character
+             * and as null byte is not starting any tag and there is no enclosing tag for null byte
+             * so parent context is null.
+             */
             attack = attack.replaceFirst(NULL_BYTE_CHARACTER, "");
         }
         HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
