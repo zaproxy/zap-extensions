@@ -834,7 +834,7 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.rule.scan();
 
-        assertThat(httpMessagesSent, hasSize(equalTo(3)));
+        assertThat(httpMessagesSent, hasSize(equalTo(4)));
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("<img src=x onerror=alert(1);>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
