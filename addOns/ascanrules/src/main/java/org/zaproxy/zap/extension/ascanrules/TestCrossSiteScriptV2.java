@@ -263,7 +263,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                     }
 
                     if (attackWorked || isStop()) {
-                        break;
+                        return;
                     }
                 }
             }
@@ -383,7 +383,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                             context,
                                             HtmlContext.IGNORE_TAG);
                             if (contexts2 == null) {
-                                break;
+                                return;
                             }
                             if (contexts2.size() > 0) {
                                 // Yep, its vulnerable
@@ -405,7 +405,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                             }
 
                             if (attackWorked || isStop()) {
-                                break;
+                                return;
                             }
                         }
                     }
@@ -454,7 +454,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                         context,
                                         HtmlContext.IGNORE_HTML_COMMENT);
                         if (contexts2 == null) {
-                            break;
+                            return;
                         }
                         if (contexts2.size() > 0) {
                             // Yep, its vulnerable
@@ -471,7 +471,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                         }
 
                         if (attackWorked || isStop()) {
-                            break;
+                            return;
                         }
                     }
                     if (!attackWorked) {
@@ -514,7 +514,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                             null,
                                             HtmlContext.IGNORE_PARENT);
                             if (contexts2 == null) {
-                                break;
+                                return;
                             }
                             if (contexts2.size() > 0) {
                                 // Yep, its vulnerable
@@ -530,7 +530,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                 attackWorked = true;
                             }
                             if (attackWorked || isStop()) {
-                                break;
+                                return;
                             }
                         }
                         if (!attackWorked) {
@@ -607,7 +607,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                             context,
                                             HtmlContext.IGNORE_IN_SCRIPT);
                             if (contexts2 == null) {
-                                break;
+                                return;
                             }
                             if (contexts2.size() > 0) {
                                 // Yep, its vulnerable
@@ -623,7 +623,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                 attackWorked = true;
                             }
                             if (attackWorked || isStop()) {
-                                break;
+                                return;
                             }
                         }
                         if (!attackWorked && "script".equalsIgnoreCase(context.getParentTag())) {
@@ -688,7 +688,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                         performAttack(
                                                 msg, param, scriptAlert, null, 0, false, true);
                                 if (contexts2 == null) {
-                                    break;
+                                    return;
                                 }
                                 for (HtmlContext ctx : contexts2) {
                                     if (ctx.getParentTag() != null) {
@@ -749,7 +749,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                 }
                             }
                             if (attackWorked || isStop()) {
-                                break;
+                                return;
                             }
                         }
                     }
