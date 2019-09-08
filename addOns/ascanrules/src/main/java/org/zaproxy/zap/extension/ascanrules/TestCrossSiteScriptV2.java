@@ -474,32 +474,31 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                             return;
                         }
                     }
-                    if (!attackWorked) {
-                        // Maybe they're blocking script tags
-                        List<HtmlContext> contexts2 =
-                                performAttack(
-                                        msg,
-                                        param,
-                                        "--><b onMouseOver=alert(1);>test</b><!--",
-                                        context,
-                                        HtmlContext.IGNORE_HTML_COMMENT);
-                        if (contexts2 == null) {
-                            break;
-                        }
-                        if (contexts2.size() > 0) {
-                            // Yep, its vulnerable
-                            bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    null,
+                    // Maybe they're blocking script tags
+                    List<HtmlContext> contexts2 =
+                            performAttack(
+                                    msg,
                                     param,
-                                    contexts2.get(0).getTarget(),
-                                    "",
-                                    contexts2.get(0).getTarget(),
-                                    contexts2.get(0).getMsg());
-                            attackWorked = true;
-                        }
+                                    "--><b onMouseOver=alert(1);>test</b><!--",
+                                    context,
+                                    HtmlContext.IGNORE_HTML_COMMENT);
+                    if (contexts2 == null) {
+                        break;
                     }
+                    if (contexts2.size() > 0) {
+                        // Yep, its vulnerable
+                        bingo(
+                                Alert.RISK_HIGH,
+                                Alert.CONFIDENCE_MEDIUM,
+                                null,
+                                param,
+                                contexts2.get(0).getTarget(),
+                                "",
+                                contexts2.get(0).getTarget(),
+                                contexts2.get(0).getMsg());
+                        attackWorked = true;
+                    }
+
                 } else {
                     // its not in a tag attribute
                     if ("body".equalsIgnoreCase(context.getParentTag())) {
@@ -533,62 +532,61 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                 return;
                             }
                         }
-                        if (!attackWorked) {
-                            // Maybe they're blocking script tags
-                            List<HtmlContext> contexts2 =
-                                    performAttack(
-                                            msg,
+                        // Maybe they're blocking script tags
+                        List<HtmlContext> contexts2 =
+                                performAttack(
+                                        msg,
+                                        param,
+                                        "<b onMouseOver=alert(1);>test</b>",
+                                        context,
+                                        HtmlContext.IGNORE_PARENT);
+                        if (contexts2 != null) {
+                            for (HtmlContext context2 : contexts2) {
+                                if ("body".equalsIgnoreCase(context2.getParentTag())
+                                        || "b".equalsIgnoreCase(context2.getParentTag())) {
+                                    // Yep, its vulnerable
+                                    bingo(
+                                            Alert.RISK_HIGH,
+                                            Alert.CONFIDENCE_MEDIUM,
+                                            null,
                                             param,
-                                            "<b onMouseOver=alert(1);>test</b>",
-                                            context,
-                                            HtmlContext.IGNORE_PARENT);
-                            if (contexts2 != null) {
-                                for (HtmlContext context2 : contexts2) {
-                                    if ("body".equalsIgnoreCase(context2.getParentTag())
-                                            || "b".equalsIgnoreCase(context2.getParentTag())) {
-                                        // Yep, its vulnerable
-                                        bingo(
-                                                Alert.RISK_HIGH,
-                                                Alert.CONFIDENCE_MEDIUM,
-                                                null,
-                                                param,
-                                                contexts2.get(0).getTarget(),
-                                                "",
-                                                contexts2.get(0).getTarget(),
-                                                contexts2.get(0).getMsg());
-                                        attackWorked = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!attackWorked) {
-                                if (GET_POST_TYPES.contains(currentParamType)) {
-                                    // Try double encoded
-                                    List<HtmlContext> contexts3 =
-                                            performAttack(
-                                                    msg,
-                                                    param,
-                                                    getURLEncode(GENERIC_SCRIPT_ALERT),
-                                                    null,
-                                                    0,
-                                                    true);
-                                    if (contexts3 != null && contexts3.size() > 0) {
-                                        attackWorked = true;
-                                        bingo(
-                                                Alert.RISK_HIGH,
-                                                Alert.CONFIDENCE_MEDIUM,
-                                                null,
-                                                param,
-                                                getURLEncode(
-                                                        getURLEncode(contexts3.get(0).getTarget())),
-                                                "",
-                                                GENERIC_SCRIPT_ALERT,
-                                                contexts3.get(0).getMsg());
-                                    }
+                                            contexts2.get(0).getTarget(),
+                                            "",
+                                            contexts2.get(0).getTarget(),
+                                            contexts2.get(0).getMsg());
+                                    attackWorked = true;
                                     break;
                                 }
                             }
                         }
+                        if (!attackWorked) {
+                            if (GET_POST_TYPES.contains(currentParamType)) {
+                                // Try double encoded
+                                List<HtmlContext> contexts3 =
+                                        performAttack(
+                                                msg,
+                                                param,
+                                                getURLEncode(GENERIC_SCRIPT_ALERT),
+                                                null,
+                                                0,
+                                                true);
+                                if (contexts3 != null && contexts3.size() > 0) {
+                                    attackWorked = true;
+                                    bingo(
+                                            Alert.RISK_HIGH,
+                                            Alert.CONFIDENCE_MEDIUM,
+                                            null,
+                                            param,
+                                            getURLEncode(
+                                                    getURLEncode(contexts3.get(0).getTarget())),
+                                            "",
+                                            GENERIC_SCRIPT_ALERT,
+                                            contexts3.get(0).getMsg());
+                                }
+                                break;
+                            }
+                        }
+
                     } else if (context.getParentTag() != null) {
                         // Its not immediately under a body tag, try to close
                         // the tag
@@ -626,7 +624,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                 return;
                             }
                         }
-                        if (!attackWorked && "script".equalsIgnoreCase(context.getParentTag())) {
+                        if ("script".equalsIgnoreCase(context.getParentTag())) {
                             // its in a script tag...
                             List<HtmlContext> contexts2 =
                                     performAttack(
@@ -653,7 +651,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                         contexts2.get(0).getMsg());
                                 attackWorked = true;
                             }
-                        } else if (!attackWorked) {
+                        } else {
                             // Try an img tag
                             List<HtmlContext> contextsA =
                                     performAttack(
