@@ -42,4 +42,60 @@ public class ReplacerParamRuleTest {
                 nonAsciiRegexRule.getEscapedReplacement(),
                 equalTo(new String(new byte[] {'a', 'b', 'c', 1, (byte) 170, 'd', 'e', 'f'})));
     }
+
+    @Test
+    public void shouldNotSubstituteHexValuesInReplacementStringGivenAntislashIsEscaped() {
+        // Given
+        String replacement = "abc\\\\x01\\\\xaadef";
+
+        // When
+        ReplacerParamRule nonAsciiRegexRule =
+                new ReplacerParamRule(
+                        "", REQ_HEADER_STR, "anyMatchString", true, replacement, null, true);
+
+        // Then
+        assertThat(nonAsciiRegexRule.getEscapedReplacement(), equalTo("abc\\x01\\xaadef"));
+    }
+
+    @Test
+    public void shouldNotSubstituteGivenHexValueIsNotHexadecimal() {
+        // Given
+        String replacement = "\\xZZ";
+
+        // When
+        ReplacerParamRule nonAsciiRegexRule =
+                new ReplacerParamRule(
+                        "", REQ_HEADER_STR, "anyMatchString", true, replacement, null, true);
+
+        // Then
+        assertThat(nonAsciiRegexRule.getEscapedReplacement(), equalTo("\\xZZ"));
+    }
+
+    @Test
+    public void shouldNotSubstituteGivenThereIsOnlyOneAntiSlash() {
+        // Given
+        String replacement = "\\";
+
+        // When
+        ReplacerParamRule nonAsciiRegexRule =
+                new ReplacerParamRule(
+                        "", REQ_HEADER_STR, "anyMatchString", true, replacement, null, true);
+
+        // Then
+        assertThat(nonAsciiRegexRule.getEscapedReplacement(), equalTo("\\"));
+    }
+
+    @Test
+    public void shouldNotSubstituteGivenThereIsOnlyBeginningOfHexValue() {
+        // Given
+        String replacement = "\\x";
+
+        // When
+        ReplacerParamRule nonAsciiRegexRule =
+                new ReplacerParamRule(
+                        "", REQ_HEADER_STR, "anyMatchString", true, replacement, null, true);
+
+        // Then
+        assertThat(nonAsciiRegexRule.getEscapedReplacement(), equalTo("\\x"));
+    }
 }
