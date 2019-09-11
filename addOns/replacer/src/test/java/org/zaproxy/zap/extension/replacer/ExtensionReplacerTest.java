@@ -19,33 +19,23 @@
  */
 package org.zaproxy.zap.extension.replacer;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
-import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_BODY_STR;
-import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER_STR;
-import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_HEADER;
-import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_HEADER_STR;
-
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_BODY_STR;
+import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER_STR;
+import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_BODY_STR;
+import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_HEADER_STR;
 
 public class ExtensionReplacerTest {
 
     @Test
     public void shouldReplaceHexValueInRequestHeader() throws HttpMalformedHeaderException {
         // Given
-        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
-        ReplacerParamRule hexByteRegexRule =
-                new ReplacerParamRule(
-                        "",
-                        REQ_HEADER_STR,
-                        "abc\\x01\\x03\\x02def",
-                        true,
-                        "abc\\x01\\x02\\x03def",
-                        null,
-                        true);
-        extensionReplacer.getParams().getRules().add(hexByteRegexRule);
+        ExtensionReplacer extensionReplacer = given_a_hex_byte_replacement_rule_for(REQ_HEADER_STR);
 
         HttpMessage msg = new HttpMessage();
         String binary = new String(new byte[] {'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'});
@@ -63,17 +53,7 @@ public class ExtensionReplacerTest {
     @Test
     public void shouldReplaceHexValueInRequestBody() throws HttpMalformedHeaderException {
         // Given
-        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
-        ReplacerParamRule hexByteRegexRule =
-                new ReplacerParamRule(
-                        "",
-                        REQ_BODY_STR,
-                        "abc\\x01\\x03\\x02def",
-                        true,
-                        "abc\\x01\\x02\\x03def",
-                        null,
-                        true);
-        extensionReplacer.getParams().getRules().add(hexByteRegexRule);
+        ExtensionReplacer extensionReplacer = given_a_hex_byte_replacement_rule_for(REQ_BODY_STR);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("POST / HTTP/1.1");
@@ -91,17 +71,7 @@ public class ExtensionReplacerTest {
     @Test
     public void shouldReplaceHexValueInResponseHeader() throws HttpMalformedHeaderException {
         // Given
-        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
-        ReplacerParamRule hexByteRegexRule =
-                new ReplacerParamRule(
-                        "",
-                        RESP_HEADER_STR,
-                        "abc\\x01\\x03\\x02def",
-                        true,
-                        "abc\\x01\\x02\\x03def",
-                        null,
-                        true);
-        extensionReplacer.getParams().getRules().add(hexByteRegexRule);
+        ExtensionReplacer extensionReplacer = given_a_hex_byte_replacement_rule_for(RESP_HEADER_STR);
 
         HttpMessage msg = new HttpMessage();
         String binary = new String(new byte[] {'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'});
@@ -115,4 +85,39 @@ public class ExtensionReplacerTest {
                 msg.getResponseHeader().getHeader("X-CUSTOM"),
                 equalTo(new String(new byte[] {'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'})));
     }
+
+    @Test
+    public void shouldReplaceHexValueInResponseBody() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer = given_a_hex_byte_replacement_rule_for(RESP_BODY_STR);
+
+        HttpMessage msg = new HttpMessage();
+        msg.setResponseHeader("HTTP/1.1 200 OK");
+        msg.setResponseBody(new byte[] {'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'});
+
+        // When
+        extensionReplacer.onHttpResponseReceive(msg, 0, null);
+
+        // Then
+        assertThat(
+                msg.getResponseBody().toString(),
+                equalTo(new String(new byte[] {'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'})));
+    }
+
+    private ExtensionReplacer given_a_hex_byte_replacement_rule_for(ReplacerParamRule.MatchType respHeaderStr) {
+        ExtensionReplacer extensionReplacer = new ExtensionReplacer();
+        ReplacerParamRule hexByteRegexRule =
+                new ReplacerParamRule(
+                        "",
+                        respHeaderStr,
+                        "abc\\x01\\x03\\x02def",
+                        true,
+                        "abc\\x01\\x02\\x03def",
+                        null,
+                        true);
+        extensionReplacer.getParams().getRules().add(hexByteRegexRule);
+        return extensionReplacer;
+    }
+
+
 }
