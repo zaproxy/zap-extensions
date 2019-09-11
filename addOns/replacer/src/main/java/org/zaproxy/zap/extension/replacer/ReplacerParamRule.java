@@ -136,7 +136,7 @@ class ReplacerParamRule extends Enableable {
         this.replacement = replacement;
     }
 
-    public String getEscapedReplacement() {
+    String getEscapedReplacement() {
         return escapedReplacement;
     }
 

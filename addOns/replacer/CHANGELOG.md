@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
- - Intercept and change non-ASCII payload (Issue 5328)
+ - Allow byte replacement using hexadecimal escapes (Issue 5328).
 
 ### Fixed
  - Fix link in API endpoint description.

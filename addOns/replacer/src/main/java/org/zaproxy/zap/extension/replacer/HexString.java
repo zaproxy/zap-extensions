@@ -19,63 +19,32 @@
  */
 package org.zaproxy.zap.extension.replacer;
 
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class HexString {
+    private static final Pattern HEX_VALUE = Pattern.compile("\\\\?\\\\x\\p{XDigit}{2}");
+    private static final String ESCAPED_ESCAPE_CHAR = "\\\\";
+
     static String compile(String binaryRegex) {
-        TransformString current = new TransformString(binaryRegex);
-        StringBuilder sb = new StringBuilder();
-        while (current.hasNext()) {
-            if (current.isEscapedCharEscaped()) {
-                sb.append(TransformString.ESCAPE_CHAR);
-                current.moveBy(2);
-            } else if (current.isValidHex()) {
-                sb.append(new String(new byte[] {current.readHex()}));
-                current.moveBy(4);
-            } else {
-                sb.append(current.currentChar());
-                current.moveBy(1);
+        Matcher matcher = HEX_VALUE.matcher(binaryRegex);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String value = matcher.group();
+            if (!value.startsWith(ESCAPED_ESCAPE_CHAR)) {
+                value = convertByte(value.substring(2));
             }
+            matcher.appendReplacement(sb, value);
         }
+        matcher.appendTail(sb);
         return sb.toString();
     }
 
-    private static class TransformString {
-        static final Pattern HEX_VALUE = Pattern.compile("^\\\\x\\p{XDigit}{2}.*");
-        static final char ESCAPE_CHAR = '\\';
-        static final String ESCAPED_ESCAPE_CHAR = "\\\\";
-
-        private final String content;
-        private int position;
-
-        private TransformString(String content) {
-            this.content = content;
-            this.position = 0;
-        }
-
-        boolean isEscapedCharEscaped() {
-            return content.substring(position).startsWith(ESCAPED_ESCAPE_CHAR);
-        }
-
-        boolean isValidHex() {
-            return HEX_VALUE.matcher(content.substring(position)).matches();
-        }
-
-        byte readHex() {
-            String value = "" + content.charAt(position + 2) + content.charAt(position + 3);
-            return (byte) Integer.parseInt(value, 16);
-        }
-
-        char currentChar() {
-            return content.charAt(position);
-        }
-
-        void moveBy(int numberOfCharsRead) {
-            position += numberOfCharsRead;
-        }
-
-        boolean hasNext() {
-            return position < content.length();
-        }
+    private static String convertByte(String value) {
+        return Matcher.quoteReplacement(
+                new String(
+                        new byte[] {(byte) Integer.parseInt(value, 16)},
+                        StandardCharsets.US_ASCII));
     }
 }

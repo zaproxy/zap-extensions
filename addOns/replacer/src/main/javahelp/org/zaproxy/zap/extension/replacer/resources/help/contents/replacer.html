@@ -54,11 +54,12 @@ The string that will be used to identify what should be replaced - see Match Typ
 <h3>Match Regex</h3>
 If set then the Match String will be treated as a regex expression.
 This option is disabled when matching actual headers.
-Non-ASCII content are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
 <h3>Replacement String</h3>
 The new string that will replace the specified selection.
-Non-ASCII content are represented with "\x00 - \xFF".
+Hexadecimal bytes are represented with "\x00 - \xFF".
+"\x00" byte can be keept with "\\x00".
 
 <h3>Enable</h3>
 If not set then the rule will not apply.
