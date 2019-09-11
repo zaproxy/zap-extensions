@@ -43,6 +43,7 @@ public interface NodeContent extends Comparable<NodeContent> {
      * Returns the host in which the content exists.
      *
      * @param thisNode The tree node of the content.
+     * @param hostNodesList The list where it should store the Host Nodes.
      * @return The host node of this content.
      */
     List<TreeNode> getHostNodes(TreeNode thisNode, List<TreeNode> hostNodesList);

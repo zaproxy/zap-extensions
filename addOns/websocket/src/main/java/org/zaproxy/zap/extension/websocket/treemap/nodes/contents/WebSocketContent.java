@@ -53,7 +53,6 @@ public abstract class WebSocketContent implements NodeContent, Comparable<NodeCo
 
     /**
      * This method is useful to be implemented when we want to sort the content in a specific depth.
-     * Should be noted that comparing two content only make sense when they are in the same depth.
      *
      * @param that The content is going to be compared with this object.
      * @return Negative values if is less than, zero then equal and positive then that object is

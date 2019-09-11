@@ -54,15 +54,15 @@ public class MessageContent extends WebSocketContent {
 
     /**
      * This function is responsible to identify if two WebSocket Messages are greater, Firstly,
-     * {@link WebSocketMessageDTO#payload} are compared lexicographically. If there are equals, the
-     * checking the direction. The outgoing messages precedes the incoming ones.
+     * {@link WebSocketMessageDTO#payload} are compared lexicographically. If they are equals, then
+     * check the direction. The outgoing messages precedes the incoming ones.
      *
      * @param that The content is going to be compared with this object.
      * @return the value 0 if messages are lexicographically equal and with the same direction; a
      *     value less than 0 if this message is lexicographically less than the message argument or
      *     this message is incoming and message argument is outgoing; and a value greater than 0 if
      *     this message is lexicographically greater than the message argument or this message is
-     *     outgoing and message argument is incoming;.
+     *     outgoing and message argument is incoming.
      */
     @Override
     public int compareTo(NodeContent that) {
