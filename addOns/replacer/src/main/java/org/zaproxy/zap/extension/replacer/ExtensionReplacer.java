@@ -296,7 +296,12 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                         + rule.getReplacement());
                         String body = msg.getResponseBody().toString();
                         if (contains(body, rule.getMatchString(), p)) {
-                            body = replace(body, rule.getMatchString(), p, rule.getEscapedReplacement());
+                            body =
+                                    replace(
+                                            body,
+                                            rule.getMatchString(),
+                                            p,
+                                            rule.getEscapedReplacement());
                             msg.getResponseBody().setBody(body);
                             msg.getResponseHeader()
                                     .setContentLength(msg.getResponseBody().length());
