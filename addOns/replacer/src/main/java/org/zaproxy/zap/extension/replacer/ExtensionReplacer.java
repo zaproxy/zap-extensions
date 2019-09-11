@@ -264,7 +264,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                             msg.getResponseHeader().setHeader(rule.getMatchString(), null);
                         } else {
                             msg.getResponseHeader()
-                                    .setHeader(rule.getMatchString(), rule.getReplacement());
+                                    .setHeader(rule.getMatchString(), rule.getEscapedReplacement());
                         }
                         break;
                     case RESP_HEADER_STR:
