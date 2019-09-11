@@ -26,12 +26,15 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.SwingWorker;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
@@ -44,8 +47,10 @@ import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 /*
- * AUTHOR: GORAN SARENKAPA - JordanGS
- * SPONSOR: RYERSON UNIVERSITY
+ * Original author: GORAN SARENKAPA - JordanGS
+ * Sponsor: RYERSON UNIVERSITY
+ *
+ * PDF Export: Adapted from Leandro Ferrari and Colm O'Flaherty's AlertExport extension.
  */
 
 public class ExportReport {
@@ -150,6 +155,50 @@ public class ExportReport {
                     case Utils.PDF:
                         view.showMessageDialog(
                                 Constant.messages.getString("exportreport.message.notice.pdf"));
+
+                        java.util.List<List<Alert>> alerts = new ArrayList<>();
+
+                        java.util.List<Alert> allAlerts = extension.getAllAlerts();
+                        // sort alerts
+                        Collections.sort(allAlerts, Collections.reverseOrder());
+                        // join same alerts
+                        for (int i = 0; i < allAlerts.size(); i++) {
+                            Alert alertAllAlerts = allAlerts.get(i);
+                            alerts.add(extension.getAlertsSelected(alertAllAlerts));
+                            for (int j = 0; j < allAlerts.size(); j++) {
+                                Alert alertToCompare = allAlerts.get(j);
+                                if (alertAllAlerts.getName().equals(alertToCompare.getName())) {
+                                    allAlerts.remove(j);
+                                    j = 0;
+                                }
+                            }
+                            i = 0;
+                        }
+
+                        // Generate report
+                        if (!alerts.isEmpty()) {
+                            ReportExportPDF reportExportPDF = new ReportExportPDF();
+                            boolean result =
+                                    reportExportPDF.exportAlert(
+                                            alerts, path + fileName + ".pdf", extension);
+                            if (result)
+                                View.getSingleton()
+                                        .showMessageDialog(
+                                                extension
+                                                        .getMessages()
+                                                        .getString(
+                                                                "alertreport.export.message.export.ok"));
+                            else
+                                View.getSingleton()
+                                        .showMessageDialog(
+                                                extension
+                                                        .getMessages()
+                                                        .getString(
+                                                                "alertreport.export.message.export.fail"));
+                        }
+                        // clear alertsDB from memory
+                        extension.clearAlertsDB();
+
                         // f_view = null;
                         break;
                     case Utils.DOC:

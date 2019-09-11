@@ -29,9 +29,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.RecordAlert;
+import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -81,6 +86,9 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     private static final int ARG_ALERT_SEVERITY_IDX = 2;
     private static final int ARG_ALERT_DETAILS_IDX = 3;
     private CommandLineArgument[] arguments = new CommandLineArgument[4];
+
+    // Used for PDF export
+    private List<Alert> alertsDB = null;
 
     private ExportReportAPI exportReportAPI;
 
@@ -621,5 +629,49 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     public List<String> getHandledExtensions() {
         // Cant handle any extensions
         return null;
+    }
+
+    /*
+     * Used for the export in PDF
+     */
+    public List<Alert> getAllAlerts() {
+        List<Alert> allAlerts = new ArrayList<>();
+
+        TableAlert tableAlert = getModel().getDb().getTableAlert();
+        Vector<Integer> v;
+        try {
+            // TODO this doesnt work, but should be used when its fixed :/
+            // v = tableAlert.getAlertListBySession(getModel().getSession().getSessionId());
+            v = tableAlert.getAlertList();
+
+            for (int i = 0; i < v.size(); i++) {
+                int alertId = v.get(i).intValue();
+                RecordAlert recAlert = tableAlert.read(alertId);
+                Alert alert = new Alert(recAlert);
+                if (!allAlerts.contains(alert)) {
+                    allAlerts.add(alert);
+                }
+            }
+        } catch (DatabaseException e) {
+            logger.error(e.getMessage(), e);
+        }
+        alertsDB = allAlerts;
+        return allAlerts;
+    }
+
+    public void clearAlertsDB() {
+        this.alertsDB = null;
+    }
+
+    public List<Alert> getAlertsSelected(Alert alertSelected) {
+        // check if read from db
+        if (alertsDB == null) alertsDB = this.getAllAlerts();
+        List<Alert> alerts = new ArrayList<>();
+        for (int i = 0; i < alertsDB.size(); i++) {
+            Alert alert = alertsDB.get(i);
+            if (alertSelected.getName().equals(alert.getName())) alerts.add(alert);
+        }
+
+        return alerts;
     }
 }
