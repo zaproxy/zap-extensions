@@ -279,7 +279,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             header,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getReplacement());
+                                            rule.getEscapedReplacement());
                             try {
                                 msg.setResponseHeader(new HttpResponseHeader(header));
                             } catch (HttpMalformedHeaderException e) {
