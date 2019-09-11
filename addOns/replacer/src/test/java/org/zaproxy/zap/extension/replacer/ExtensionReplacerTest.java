@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.replacer;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -26,20 +27,44 @@ import org.parosproxy.paros.network.HttpMessage;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_BODY_STR;
+import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER_STR;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_BODY_STR;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_HEADER_STR;
 
 public class ExtensionReplacerTest {
 
+    private static final String MATCHING_STRING_WITH_HEX_BYTE = new String(new byte[]{'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'});
+    public static final String REPLACED_STRING_WITH_BINARY_VALUE = new String(new byte[]{'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'});
+    private HttpMessage msg;
+
+  @Before
+  public void setUp() {
+      msg = new HttpMessage();
+  }
+
+    @Test
+    public void shouldReplaceHeaderByHexValueInRequest() throws HttpMalformedHeaderException {
+        // Given
+        ExtensionReplacer extensionReplacer = given_a_hex_byte_replacement_rule_for(REQ_HEADER);
+
+        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "X-CUSTOM: " + MATCHING_STRING_WITH_HEX_BYTE);
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(
+                msg.getRequestHeader().getHeader("abc\\x01\\x03\\x02def"),
+                equalTo(new String(new byte[] {'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'})));
+    }
+
     @Test
     public void shouldReplaceHexValueInRequestHeader() throws HttpMalformedHeaderException {
         // Given
         ExtensionReplacer extensionReplacer = given_a_hex_byte_replacement_rule_for(REQ_HEADER_STR);
 
-        HttpMessage msg = new HttpMessage();
-        String binary = new String(new byte[] {'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'});
-        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "X-CUSTOM: " + binary);
+        msg.setRequestHeader("GET / HTTP/1.1\r\n" + "X-CUSTOM: " + MATCHING_STRING_WITH_HEX_BYTE);
 
         // When
         extensionReplacer.onHttpRequestSend(msg, 0, null);
@@ -47,7 +72,7 @@ public class ExtensionReplacerTest {
         // Then
         assertThat(
                 msg.getRequestHeader().getHeader("X-CUSTOM"),
-                equalTo(new String(new byte[] {'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'})));
+                equalTo(REPLACED_STRING_WITH_BINARY_VALUE));
     }
 
     @Test
@@ -55,9 +80,8 @@ public class ExtensionReplacerTest {
         // Given
         ExtensionReplacer extensionReplacer = given_a_hex_byte_replacement_rule_for(REQ_BODY_STR);
 
-        HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("POST / HTTP/1.1");
-        msg.setRequestBody(new byte[] {'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'});
+        msg.setRequestBody(MATCHING_STRING_WITH_HEX_BYTE);
 
         // When
         extensionReplacer.onHttpRequestSend(msg, 0, null);
@@ -65,7 +89,7 @@ public class ExtensionReplacerTest {
         // Then
         assertThat(
                 msg.getRequestBody().toString(),
-                equalTo(new String(new byte[] {'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'})));
+                equalTo(REPLACED_STRING_WITH_BINARY_VALUE));
     }
 
     @Test
@@ -73,9 +97,7 @@ public class ExtensionReplacerTest {
         // Given
         ExtensionReplacer extensionReplacer = given_a_hex_byte_replacement_rule_for(RESP_HEADER_STR);
 
-        HttpMessage msg = new HttpMessage();
-        String binary = new String(new byte[] {'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'});
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\nX-CUSTOM: " + binary);
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\nX-CUSTOM: " + MATCHING_STRING_WITH_HEX_BYTE);
 
         // When
         extensionReplacer.onHttpResponseReceive(msg, 0, null);
@@ -91,9 +113,8 @@ public class ExtensionReplacerTest {
         // Given
         ExtensionReplacer extensionReplacer = given_a_hex_byte_replacement_rule_for(RESP_BODY_STR);
 
-        HttpMessage msg = new HttpMessage();
         msg.setResponseHeader("HTTP/1.1 200 OK");
-        msg.setResponseBody(new byte[] {'a', 'b', 'c', 1, 3, 2, 'd', 'e', 'f'});
+        msg.setResponseBody(MATCHING_STRING_WITH_HEX_BYTE);
 
         // When
         extensionReplacer.onHttpResponseReceive(msg, 0, null);
@@ -101,7 +122,7 @@ public class ExtensionReplacerTest {
         // Then
         assertThat(
                 msg.getResponseBody().toString(),
-                equalTo(new String(new byte[] {'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'})));
+                equalTo(REPLACED_STRING_WITH_BINARY_VALUE));
     }
 
     private ExtensionReplacer given_a_hex_byte_replacement_rule_for(ReplacerParamRule.MatchType respHeaderStr) {
