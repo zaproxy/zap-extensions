@@ -74,7 +74,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     private final int textareaLimit = 600;
 
     /* Relational CONSTANT for export types. */
-    private ArrayList<String> alertSeverity = new ArrayList<String>();
+    private ArrayList<String> alertRisk = new ArrayList<String>();
     private ArrayList<String> alertDetails = new ArrayList<String>();
     private ArrayList<String> alertAdditional = new ArrayList<String>();
     private FileList fileList = new FileList();
@@ -105,11 +105,11 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     @Override
     public void init() {
         // PanelAlertRisk
-        alertSeverity.clear();
-        alertSeverity.add(Constant.messages.getString("exportreport.risk.severity.high.label"));
-        alertSeverity.add(Constant.messages.getString("exportreport.risk.severity.medium.label"));
-        alertSeverity.add(Constant.messages.getString("exportreport.risk.severity.low.label"));
-        alertSeverity.add(Constant.messages.getString("exportreport.risk.severity.info.label"));
+        alertRisk.clear();
+        alertRisk.add(Constant.messages.getString("exportreport.risk.severity.info.label"));
+        alertRisk.add(Constant.messages.getString("exportreport.risk.severity.low.label"));
+        alertRisk.add(Constant.messages.getString("exportreport.risk.severity.medium.label"));
+        alertRisk.add(Constant.messages.getString("exportreport.risk.severity.high.label"));
 
         // PanelAlertDetails
         alertDetails.clear();
@@ -234,7 +234,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     }
 
     private PanelAlertRisk extensionGetCardAlertRisk() {
-        cardAlertRisk = new PanelAlertRisk(this, alertSeverity);
+        cardAlertRisk = new PanelAlertRisk(this, alertRisk);
         return cardAlertRisk;
     }
 
@@ -289,7 +289,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     }
 
     /* Alert Risk Card return data */
-    public ArrayList<String> getIncludedAlertSeverity() {
+    public ArrayList<String> getIncludedAlertRisk() {
         // for (int i = 0; i < cardAlertRisk.getSourceListModel().size(); i++) {
         // System.out.println(cardAlertRisk.getSourceListModel().get(i));
         // }
@@ -337,11 +337,11 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
             String absolutePath,
             String fileExtension,
             ArrayList<String> sourceDetails,
-            ArrayList<String> alertSeverity,
+            ArrayList<String> alertRisk,
             ArrayList<String> alertDetails) {
         ExportReport report = new ExportReport();
         return report.generateReport(
-                this, absolutePath, fileExtension, sourceDetails, alertSeverity, alertDetails);
+                this, absolutePath, fileExtension, sourceDetails, alertRisk, alertDetails);
     }
 
     public boolean canWrite(String path) {
@@ -394,7 +394,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                             Arrays.asList(
                                     (arguments[ARG_SOURCE_INFO_IDX].getArguments().get(0))
                                             .split(";")));
-            ArrayList<String> alertSeverityFlags =
+            ArrayList<String> alertRiskFlags =
                     new ArrayList<String>(
                             Arrays.asList(
                                     (arguments[ARG_ALERT_SEVERITY_IDX].getArguments().get(0))
@@ -437,13 +437,13 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                             Constant.messages.getString(
                                     "exportreport.message.console.info.status.unchecked")));
 
-            if (alertSeverityFlags.size() != alertSeverity.size()) {
+            if (alertRiskFlags.size() != alertRisk.size()) {
                 CommandLine.error(
                         Constant.messages.getString(
                                 "exportreport.message.console.error.risk.severity",
                                 Constant.messages.getString("exportreport.menu.risk.label"),
-                                alertSeverityFlags.size(),
-                                alertSeverity.size(),
+                                alertRiskFlags.size(),
+                                alertRisk.size(),
                                 Constant.messages.getString(
                                         "exportreport.risk.severity.high.label"),
                                 Constant.messages.getString(
@@ -460,7 +460,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                             Constant.messages.getString(
                                     "exportreport.message.console.info.status.valid")));
 
-            if (!validList(alertSeverityFlags)) {
+            if (!validList(alertRiskFlags)) {
                 CommandLine.info(
                         Constant.messages.getString(
                                 "exportreport.message.console.error.valid.list",
@@ -522,7 +522,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
             CommandLine.info(
                     Constant.messages.getString("exportreport.message.console.info.pass.generate"));
 
-            ArrayList<String> alertSeverityTemp = generateList(alertSeverityFlags, alertSeverity);
+            ArrayList<String> alertRiskTemp = generateList(alertRiskFlags, alertRisk);
 
             ArrayList<String> alertDetailsFull = new ArrayList<String>();
             alertDetailsFull.addAll(0, alertDetails);
@@ -534,7 +534,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                         absolutePath,
                         fileExtension,
                         sourceDetails,
-                        alertSeverityTemp,
+                        alertRiskTemp,
                         alertDetailsTemp)) {
                     CommandLine.info(
                             Constant.messages.getString(
@@ -551,8 +551,8 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
         }
     }
 
-    public ArrayList<String> getAlertSeverity() {
-        return alertSeverity;
+    public ArrayList<String> getAlertRisk() {
+        return alertRisk;
     }
 
     public ArrayList<String> getAlertDetails() {

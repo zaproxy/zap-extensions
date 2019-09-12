@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.exportreport.export;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -33,8 +32,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
-import javax.swing.text.View;
-
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -45,10 +42,12 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.extension.ViewDelegate;
 import org.zaproxy.zap.extension.exportreport.ExtensionExportReport;
-import org.parosproxy.paros.view.AbstractFrame;
+
 /** Export Alerts to a PDF report */
 public class ReportExportPDF {
 
@@ -143,37 +142,45 @@ public class ReportExportPDF {
     public boolean exportAlert(
             java.util.List<java.util.List<Alert>> alerts,
             String fileName,
-            ExtensionExportReport extensionExport) {
-        
+            ExtensionExportReport extensionExport,
+            ViewDelegate view) {
+
         boolean successfulExport;
-        
+        JProgressBar progBar = null;
+        JFrame frame = null;
+
         /*
-         * Generate progress window
+         * Generate progress window if view != null
          */
         // Open a progress window indicating it may take a few seconds to generate
-        JFrame frame = new JFrame("Exporting Report to PDF");
-        final JProgressBar progBar = new JProgressBar();
-        final JLabel labelString = new JLabel(Constant.messages.getString("exportreport.export.message.progress"));
-        
-        // setup progress bar
-        progBar.setMinimum(0);
-        progBar.setMaximum(alerts.size()*2);
-        progBar.setValue(0);
-        
-        // setup window and content
-        frame.setLayout(new FlowLayout());
-        frame.getContentPane().add(labelString);
-        frame.getContentPane().add(progBar);
-        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        frame.setSize(400, 100);
-        frame.setResizable(false);
-        frame.setVisible(true);
-        
-        try {
-            //Allow the window to open before starting the generation
-            Thread.sleep(1000);
-        } catch (InterruptedException ex) {
-            logger.debug(ex);
+        if (view != null) {
+            frame = new JFrame("Exporting Report to PDF");
+            progBar = new JProgressBar();
+            final JLabel labelString =
+                    new JLabel(Constant.messages.getString("exportreport.export.message.progress"));
+
+            // setup progress bar
+            progBar.setMinimum(0);
+            progBar.setMaximum(alerts.size());
+            progBar.setValue(0);
+
+            // setup window and content
+            frame.setLayout(new FlowLayout());
+            frame.getContentPane().add(labelString);
+            frame.getContentPane().add(progBar);
+            frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            frame.setSize(400, 100);
+            frame.setResizable(false);
+            frame.setVisible(true);
+
+            try {
+                // Allow the window to open before starting the generation
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                logger.debug(ex);
+            }
+        } else {
+            CommandLine.info(Constant.messages.getString("exportreport.export.message.progress"));
         }
 
         /*
@@ -189,31 +196,36 @@ public class ReportExportPDF {
             // add the alert content for each of the alert categories in turn
             for (int i = 0; i < alerts.size(); i++) {
                 java.util.List<Alert> alertAux = alerts.get(i);
-                progBar.setValue(2*i);
+
+                if (view != null) {
+                    progBar.setValue(i);
+                }
+
                 addContent(alertAux, extensionExport);
-                progBar.setValue(2*i+1);
             }
-            progBar.setValue(alerts.size()*2);
+            progBar.setValue(alerts.size());
             // and tidy up afterwards
             document.save(outputfile);
             document.close();
-            
+
             // return value indicating the export was successful
             successfulExport = true;
-            
+
         } catch (Exception e) {
-            logger.error("An error occurred trying to generate a Report PDF: " + e);
-            
+            logger.error("An error occurred trying to generate a Report PDF: " + e, e);
+
             // return value indicating the export failed
             successfulExport = false;
-            
+
         } finally {
             // close the progress window
-            frame.setVisible(false);
-            frame.dispose();
-            frame = null;
+            if (view != null) {
+                frame.setVisible(false);
+                frame.dispose();
+                frame = null;
+            }
         }
-        
+
         return successfulExport;
     }
 

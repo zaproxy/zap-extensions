@@ -102,7 +102,7 @@ public class ExportReport {
                                 extension.extensionGetReportDate(),
                                 extension.extensionGetReportVer(),
                                 extension.extensionGetDescription(),
-                                extension.getIncludedAlertSeverity(),
+                                extension.getIncludedAlertRisk(),
                                 extension.getIncludedAlertDetails());
             } catch (UnsupportedEncodingException e) {
                 logger.error(e.getMessage(), e);
@@ -152,12 +152,15 @@ public class ExportReport {
                         f_view = ReportExport.jsonExport(view, absolutePath, xmlGenerated);
                         deleteFile(xmlGenerated); // , "The merged XML file: ");
                         break;
-                    case Utils.PDF:
-                        java.util.List<List<Alert>> alerts = new ArrayList<>();
 
+                    case Utils.PDF:
+                        /*
+                         * Make list of all alerts, joining same alerts
+                         */
+                        java.util.List<List<Alert>> alerts = new ArrayList<>();
                         java.util.List<Alert> allAlerts = extension.getAllAlerts();
-                        // sort alerts
                         Collections.sort(allAlerts, Collections.reverseOrder());
+
                         // join same alerts
                         for (int i = 0; i < allAlerts.size(); i++) {
                             Alert alertAllAlerts = allAlerts.get(i);
@@ -172,26 +175,71 @@ public class ExportReport {
                             i = 0;
                         }
 
-                        // Generate report
+                        /*
+                         * Remove alerts that are not to be included based on risk names
+                         */
+                        ArrayList<String> selectedRisks = extension.getIncludedAlertRisk();
+                        ArrayList<String> alertRisks = extension.getAlertRisk();
+                        boolean isSelected;
+
+                        for (int i = alerts.size() - 1; i >= 0; i--) {
+                            List<Alert> alertList = alerts.get(i);
+                            isSelected = false;
+
+                            for (int j = alertList.size() - 1; j >= 0; j--) {
+                                Alert alert = alertList.get(j);
+
+                                for (int k = 0; k < selectedRisks.size(); k++) {
+                                    // If the alert risk level is in in the include list
+                                    if (alertRisks
+                                            .get(alert.getRisk())
+                                            .equals(selectedRisks.get(k))) {
+                                        isSelected = true;
+                                    }
+                                }
+
+                                // If the alert risk level is not included, remove the alert from
+                                // the list
+                                if (!isSelected) {
+                                    alertList.remove(j);
+                                }
+                            }
+
+                            // Remove any alert lists which contain no alerts
+                            if (alerts.get(i).size() == 0) {
+                                alerts.remove(i);
+                            }
+                        }
+
+                        /*
+                         * Generate Report
+                         */
                         if (!alerts.isEmpty()) {
                             ReportExportPDF reportExportPDF = new ReportExportPDF();
                             boolean result =
                                     reportExportPDF.exportAlert(
-                                            alerts, path + fileName + ".pdf", extension);
+                                            alerts, path + fileName + ".pdf", extension, view);
 
                             if (result) {
                                 view.showMessageDialog(
-                                        Constant.messages.getString("exportreport.export.message.successful"));
+                                        Constant.messages.getString(
+                                                "exportreport.export.message.successful"));
                                 f_view = new File(path + fileName + ".pdf");
                             } else {
                                 view.showMessageDialog(
-                                        Constant.messages.getString("exportreport.export.message.failed"));
+                                        Constant.messages.getString(
+                                                "exportreport.export.message.failed"));
                             }
+                        } else {
+                            view.showWarningDialog(
+                                    Constant.messages.getString(
+                                            "exportreport.export.message.export.alerts.none"));
                         }
-                        
+
                         // clear alertsDB from memory
                         extension.clearAlertsDB();
                         break;
+
                     case Utils.DOC:
                         view.showMessageDialog(
                                 Constant.messages.getString("exportreport.message.notice.doc"));
