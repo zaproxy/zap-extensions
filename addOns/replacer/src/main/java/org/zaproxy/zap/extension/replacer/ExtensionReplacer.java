@@ -19,6 +19,12 @@
  */
 package org.zaproxy.zap.extension.replacer;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.regex.Pattern;
+import javax.swing.*;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -31,13 +37,6 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.view.ZapMenuItem;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.regex.Pattern;
 
 /**
  * An add-on which provides an easy way to replace strings in requests and responses. TODO Implement
