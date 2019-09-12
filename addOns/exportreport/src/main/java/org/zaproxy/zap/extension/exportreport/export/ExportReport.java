@@ -153,9 +153,6 @@ public class ExportReport {
                         deleteFile(xmlGenerated); // , "The merged XML file: ");
                         break;
                     case Utils.PDF:
-                        view.showMessageDialog(
-                                Constant.messages.getString("exportreport.message.notice.pdf"));
-
                         java.util.List<List<Alert>> alerts = new ArrayList<>();
 
                         java.util.List<Alert> allAlerts = extension.getAllAlerts();
@@ -181,25 +178,19 @@ public class ExportReport {
                             boolean result =
                                     reportExportPDF.exportAlert(
                                             alerts, path + fileName + ".pdf", extension);
-                            if (result)
-                                View.getSingleton()
-                                        .showMessageDialog(
-                                                extension
-                                                        .getMessages()
-                                                        .getString(
-                                                                "alertreport.export.message.export.ok"));
-                            else
-                                View.getSingleton()
-                                        .showMessageDialog(
-                                                extension
-                                                        .getMessages()
-                                                        .getString(
-                                                                "alertreport.export.message.export.fail"));
+
+                            if (result) {
+                                view.showMessageDialog(
+                                        Constant.messages.getString("exportreport.export.message.successful"));
+                                f_view = new File(path + fileName + ".pdf");
+                            } else {
+                                view.showMessageDialog(
+                                        Constant.messages.getString("exportreport.export.message.failed"));
+                            }
                         }
+                        
                         // clear alertsDB from memory
                         extension.clearAlertsDB();
-
-                        // f_view = null;
                         break;
                     case Utils.DOC:
                         view.showMessageDialog(
