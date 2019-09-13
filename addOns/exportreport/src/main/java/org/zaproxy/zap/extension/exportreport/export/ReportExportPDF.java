@@ -313,9 +313,6 @@ public class ReportExportPDF {
         }
         return alerts;
     }
-    
-    
-    
 
     /**
      * adds PDF metadata to the PDF document
@@ -789,6 +786,14 @@ public class ReportExportPDF {
                 extensionExport
                         .getMessages()
                         .getString("exportreport.export.message.export.pdf.references");
+        String labelCWEID =
+                extensionExport
+                        .getMessages()
+                        .getString("exportreport.details.cweid.label");
+        String labelWASCID =
+                extensionExport
+                        .getMessages()
+                        .getString("exportreport.details.wascid.label");
 
         // detailsToInclude is used to filter out details not wanted by the user
         ArrayList<String> detailsToInclude = extensionExport.getIncludedAlertDetails();
@@ -845,6 +850,29 @@ public class ReportExportPDF {
                                 extensionExport),
                         textInsertionPoint);
         textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
+        
+        // CWE ID
+        if (detailsToInclude.contains(Constant.messages.getString("exportreport.details.cweid.label"))) {
+            textInsertionPoint = addText(alertLabelFormatting, labelCWEID, textInsertionPoint);
+            textInsertionPoint = 
+                    addText(
+                            alertTextFormatting,
+                            Integer.toString(alert.getCweId()),
+                            textInsertionPoint);
+            
+            textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
+        }
+        
+        // WASC ID
+        if (detailsToInclude.contains(Constant.messages.getString("exportreport.details.wascid.label"))) {
+            textInsertionPoint = addText(alertLabelFormatting, labelWASCID, textInsertionPoint);
+            textInsertionPoint = 
+                    addText(
+                            alertTextFormatting,
+                            Integer.toString(alert.getWascId()),
+                            textInsertionPoint);
+            textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
+        }        
 
         textInsertionPoint = addText(alertLabelFormatting, labelURLs, textInsertionPoint);
 
