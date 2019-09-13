@@ -52,8 +52,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private JComboBox<String> alertCombo;
     private JComboBox<String> newLevelCombo;
     private ZapTextField urlTextField;
-    private JCheckBox regexCheckBox;
+    private JCheckBox urlRegexCheckBox;
     private ZapTextField paramTextField;
+    private JCheckBox paramRegexCheckBox;
+    private ZapTextField attackTextField;
+    private JCheckBox attackRegexCheckBox;
+    private ZapTextField evidenceTextField;
+    private JCheckBox evidenceRegexCheckBox;
     protected Context workingContext;
     protected AlertFilter alertFilter;
 
@@ -118,8 +123,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
                         ExtensionAlertFilters.getIdForRuleName(alertName),
                         getNewLevel(),
                         getUrlTextField().getText(),
-                        getRegexCheckBox().isSelected(),
+                        getUrlRegexCheckBox().isSelected(),
                         getParamTextField().getText(),
+                        getParamRegexCheckBox().isSelected(),
+                        getAttackTextField().getText(),
+                        getAttackRegexCheckBox().isSelected(),
+                        getEvidenceTextField().getText(),
+                        getEvidenceRegexCheckBox().isSelected(),
                         this.getEnabledCheckBox().isSelected());
     }
 
@@ -130,9 +140,16 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         this.newLevelCombo.setSelectedIndex(0);
         this.urlTextField.setText("");
         this.urlTextField.discardAllEdits();
-        this.regexCheckBox.setSelected(false);
+        this.urlRegexCheckBox.setSelected(false);
         this.paramTextField.setText("");
         this.paramTextField.discardAllEdits();
+        this.paramRegexCheckBox.setSelected(false);
+        this.attackTextField.setText("");
+        this.attackTextField.discardAllEdits();
+        this.attackRegexCheckBox.setSelected(false);
+        this.evidenceTextField.setText("");
+        this.evidenceTextField.discardAllEdits();
+        this.evidenceRegexCheckBox.setSelected(false);
         this.setConfirmButtonEnabled(true);
     }
 
@@ -177,13 +194,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             fieldsPanel.add(urlLabel, LayoutHelper.getGBC(0, 2, 1, 0.5D, insets));
             fieldsPanel.add(getUrlTextField(), LayoutHelper.getGBC(1, 2, 1, 0.5D, insets));
 
-            JLabel regexLabel =
+            JLabel urlRegexLabel =
                     new JLabel(
                             Constant.messages.getString(
-                                    "alertFilters.dialog.add.field.label.regex"));
-            regexLabel.setLabelFor(getRegexCheckBox());
-            fieldsPanel.add(regexLabel, LayoutHelper.getGBC(0, 3, 1, 0.5D, insets));
-            fieldsPanel.add(getRegexCheckBox(), LayoutHelper.getGBC(1, 3, 1, 0.5D, insets));
+                                    "alertFilters.dialog.add.field.label.urlregex"));
+            urlRegexLabel.setLabelFor(getUrlRegexCheckBox());
+            fieldsPanel.add(urlRegexLabel, LayoutHelper.getGBC(0, 3, 1, 0.5D, insets));
+            fieldsPanel.add(getUrlRegexCheckBox(), LayoutHelper.getGBC(1, 3, 1, 0.5D, insets));
 
             JLabel paramLabel =
                     new JLabel(
@@ -193,15 +210,55 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             fieldsPanel.add(paramLabel, LayoutHelper.getGBC(0, 4, 1, 0.5D, insets));
             fieldsPanel.add(getParamTextField(), LayoutHelper.getGBC(1, 4, 1, 0.5D, insets));
 
+            JLabel paramRegexLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.paramregex"));
+            paramRegexLabel.setLabelFor(getParamRegexCheckBox());
+            fieldsPanel.add(paramRegexLabel, LayoutHelper.getGBC(0, 5, 1, 0.5D, insets));
+            fieldsPanel.add(getParamRegexCheckBox(), LayoutHelper.getGBC(1, 5, 1, 0.5D, insets));
+
+            JLabel attackLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.attack"));
+            attackLabel.setLabelFor(getAttackTextField());
+            fieldsPanel.add(attackLabel, LayoutHelper.getGBC(0, 6, 1, 0.5D, insets));
+            fieldsPanel.add(getAttackTextField(), LayoutHelper.getGBC(1, 6, 1, 0.5D, insets));
+
+            JLabel attackRegexLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.attackregex"));
+            attackRegexLabel.setLabelFor(getUrlRegexCheckBox());
+            fieldsPanel.add(attackRegexLabel, LayoutHelper.getGBC(0, 7, 1, 0.5D, insets));
+            fieldsPanel.add(getAttackRegexCheckBox(), LayoutHelper.getGBC(1, 7, 1, 0.5D, insets));
+
+            JLabel evidenceLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.evidence"));
+            evidenceLabel.setLabelFor(getEvidenceTextField());
+            fieldsPanel.add(evidenceLabel, LayoutHelper.getGBC(0, 8, 1, 0.5D, insets));
+            fieldsPanel.add(getEvidenceTextField(), LayoutHelper.getGBC(1, 8, 1, 0.5D, insets));
+
+            JLabel evidenceRegexLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.evidenceregex"));
+            evidenceRegexLabel.setLabelFor(getUrlRegexCheckBox());
+            fieldsPanel.add(evidenceRegexLabel, LayoutHelper.getGBC(0, 9, 1, 0.5D, insets));
+            fieldsPanel.add(getEvidenceRegexCheckBox(), LayoutHelper.getGBC(1, 9, 1, 0.5D, insets));
+
             JLabel enabledLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.enabled"));
             enabledLabel.setLabelFor(getEnabledCheckBox());
-            fieldsPanel.add(enabledLabel, LayoutHelper.getGBC(0, 5, 1, 0.5D, insets));
-            fieldsPanel.add(getEnabledCheckBox(), LayoutHelper.getGBC(1, 5, 1, 0.5D, insets));
+            fieldsPanel.add(enabledLabel, LayoutHelper.getGBC(0, 10, 1, 0.5D, insets));
+            fieldsPanel.add(getEnabledCheckBox(), LayoutHelper.getGBC(1, 10, 1, 0.5D, insets));
 
-            fieldsPanel.add(new JLabel(), LayoutHelper.getGBC(0, 10, 2, 1.0D)); // Spacer
+            fieldsPanel.add(new JLabel(), LayoutHelper.getGBC(0, 20, 2, 1.0D)); // Spacer
         }
         return fieldsPanel;
     }
@@ -222,11 +279,11 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         return urlTextField;
     }
 
-    protected JCheckBox getRegexCheckBox() {
-        if (regexCheckBox == null) {
-            regexCheckBox = new JCheckBox();
+    protected JCheckBox getUrlRegexCheckBox() {
+        if (urlRegexCheckBox == null) {
+            urlRegexCheckBox = new JCheckBox();
         }
-        return regexCheckBox;
+        return urlRegexCheckBox;
     }
 
     protected ZapTextField getParamTextField() {
@@ -234,6 +291,41 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             paramTextField = new ZapTextField();
         }
         return paramTextField;
+    }
+
+    protected JCheckBox getParamRegexCheckBox() {
+        if (paramRegexCheckBox == null) {
+            paramRegexCheckBox = new JCheckBox();
+        }
+        return paramRegexCheckBox;
+    }
+
+    protected ZapTextField getAttackTextField() {
+        if (attackTextField == null) {
+            attackTextField = new ZapTextField();
+        }
+        return attackTextField;
+    }
+
+    protected JCheckBox getAttackRegexCheckBox() {
+        if (attackRegexCheckBox == null) {
+            attackRegexCheckBox = new JCheckBox();
+        }
+        return attackRegexCheckBox;
+    }
+
+    protected ZapTextField getEvidenceTextField() {
+        if (evidenceTextField == null) {
+            evidenceTextField = new ZapTextField();
+        }
+        return evidenceTextField;
+    }
+
+    protected JCheckBox getEvidenceRegexCheckBox() {
+        if (evidenceRegexCheckBox == null) {
+            evidenceRegexCheckBox = new JCheckBox();
+        }
+        return evidenceRegexCheckBox;
     }
 
     protected JComboBox<String> getAlertCombo() {

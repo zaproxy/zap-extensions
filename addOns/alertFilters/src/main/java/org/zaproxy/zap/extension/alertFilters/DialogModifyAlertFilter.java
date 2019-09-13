@@ -52,8 +52,13 @@ public class DialogModifyAlertFilter extends DialogAddAlertFilter {
                 .setSelectedItem(ExtensionAlertFilters.getRuleNameForId(alertFilter.getRuleId()));
         getNewLevelCombo().setSelectedItem(AlertFilter.getNameForRisk(alertFilter.getNewRisk()));
         getUrlTextField().setText(alertFilter.getUrl());
-        getRegexCheckBox().setSelected(alertFilter.isRegex());
+        getUrlRegexCheckBox().setSelected(alertFilter.isUrlRegex());
         getParamTextField().setText(alertFilter.getParameter());
+        getParamRegexCheckBox().setSelected(alertFilter.isParameterRegex());
+        getAttackTextField().setText(alertFilter.getAttack());
+        getAttackRegexCheckBox().setSelected(alertFilter.isAttackRegex());
+        getEvidenceTextField().setText(alertFilter.getEvidence());
+        getEvidenceRegexCheckBox().setSelected(alertFilter.isEvidenceRegex());
 
         getEnabledCheckBox().setSelected(alertFilter.isEnabled());
 
