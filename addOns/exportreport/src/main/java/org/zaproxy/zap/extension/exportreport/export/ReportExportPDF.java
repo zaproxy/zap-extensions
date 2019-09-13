@@ -281,7 +281,6 @@ public class ReportExportPDF {
          */
         ArrayList<String> selectedRisks = extension.getIncludedAlertRisk();
         ArrayList<String> alertRisks = extension.getAlertRisk();
-        ArrayList<String> alertDetailsIncluded = extension.getIncludedAlertDetails();
         boolean isSelected;
 
         for (int i = alerts.size() - 1; i >= 0; i--) {
@@ -807,17 +806,21 @@ public class ReportExportPDF {
         textInsertionPoint =
                 addText(alertCategoryLabelFormatting, alert.getName(), textInsertionPoint);
 
-        textInsertionPoint = addText(alertLabelFormatting, labelDescription, textInsertionPoint);
-        textInsertionPoint =
-                addText(
-                        alertTextFormatting,
-                        getFieldAlertProperty(
-                                alert.getPluginId(),
-                                "description",
-                                alert.getDescription(),
-                                extensionExport),
-                        textInsertionPoint);
-        textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
+        // Not added if not selected as detail to include
+        if (detailsToInclude.contains(Constant.messages.getString("exportreport.export.message.export.pdf.description"))) {
+            textInsertionPoint = addText(alertLabelFormatting, labelDescription, textInsertionPoint);
+            textInsertionPoint =
+                    addText(
+                            alertTextFormatting,
+                            getFieldAlertProperty(
+                                    alert.getPluginId(),
+                                    "description",
+                                    alert.getDescription(),
+                                    extensionExport),
+                            textInsertionPoint);
+            textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
+        }
+        
 
         textInsertionPoint = addText(alertLabelFormatting, labelRisk, textInsertionPoint);
         textInsertionPoint =
@@ -880,7 +883,9 @@ public class ReportExportPDF {
                                 labelEvidence + ": " + alertAux.getEvidence(),
                                 textInsertionPoint);
             }
-            if (!alertAux.getOtherInfo().isEmpty()) {
+            
+            // Not added if not selected as detail to include
+            if (detailsToInclude.contains(Constant.messages.getString("exportreport.export.message.export.pdf.otherinfo")) && !alertAux.getOtherInfo().isEmpty()) {
                 textInsertionPoint =
                         addText(
                                 alertTextFormatting,
@@ -891,24 +896,26 @@ public class ReportExportPDF {
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
 
-        String solution =
-                getFieldAlertProperty(
-                        alert.getPluginId(), "solution", alert.getSolution(), extensionExport);
-        if (!solution.isEmpty()) {
-            textInsertionPoint = addText(alertLabelFormatting, labelSolution, textInsertionPoint);
-            textInsertionPoint =
-                    addText(
-                            alertTextFormatting,
-                            getFieldAlertProperty(
-                                    alert.getPluginId(),
-                                    "solution",
-                                    alert.getSolution(),
-                                    extensionExport),
-                            textInsertionPoint);
-            textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
+        if (detailsToInclude.contains(Constant.messages.getString("exportreport.export.message.export.pdf.solution"))) {
+            String solution =
+                    getFieldAlertProperty(
+                            alert.getPluginId(), "solution", alert.getSolution(), extensionExport);
+            if (!solution.isEmpty()) {
+                textInsertionPoint = addText(alertLabelFormatting, labelSolution, textInsertionPoint);
+                textInsertionPoint =
+                        addText(
+                                alertTextFormatting,
+                                getFieldAlertProperty(
+                                        alert.getPluginId(),
+                                        "solution",
+                                        alert.getSolution(),
+                                        extensionExport),
+                                textInsertionPoint);
+                textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
+            }
         }
-
-        if (!alert.getReference().isEmpty()) {
+        
+        if (detailsToInclude.contains(Constant.messages.getString("exportreport.export.message.export.pdf.references")) && !alert.getReference().isEmpty()) {
             textInsertionPoint = addText(alertLabelFormatting, labelReferences, textInsertionPoint);
             textInsertionPoint =
                     addText(alertTextFormatting, alert.getReference(), textInsertionPoint);
