@@ -27,11 +27,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -47,6 +50,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.zaproxy.zap.extension.exportreport.ExtensionExportReport;
+import org.zaproxy.zap.utils.DisplayUtils;
 
 /** Export Alerts to a PDF report */
 public class ReportExportPDF {
@@ -158,6 +162,10 @@ public class ReportExportPDF {
             progBar = new JProgressBar();
             final JLabel labelString =
                     new JLabel(Constant.messages.getString("exportreport.export.message.progress"));
+            
+            // Set window icon and position
+            frame.setIconImages(DisplayUtils.getZapIconImages());
+            frame.setLocationRelativeTo(SwingUtilities.getWindowAncestor(frame));
 
             // setup progress bar
             progBar.setMinimum(0);
@@ -228,6 +236,87 @@ public class ReportExportPDF {
 
         return successfulExport;
     }
+    
+    
+    /**
+     * Joins similar alerts to reduce output size
+     * 
+     * @param extension
+     * @return
+     */
+    public java.util.List<List<Alert>> joinSimilarAlerts(ExtensionExportReport extension){
+        // Make list of all alerts, joining same alerts
+        java.util.List<List<Alert>> alerts = new ArrayList<>();
+        java.util.List<Alert> allAlerts = extension.getAllAlerts();
+        Collections.sort(allAlerts, Collections.reverseOrder());
+
+        // join same alerts
+        for (int i = 0; i < allAlerts.size(); i++) {
+            Alert alertAllAlerts = allAlerts.get(i);
+            alerts.add(extension.getAlertsSelected(alertAllAlerts));
+            for (int j = 0; j < allAlerts.size(); j++) {
+                Alert alertToCompare = allAlerts.get(j);
+                if (alertAllAlerts.getName().equals(alertToCompare.getName())) {
+                    allAlerts.remove(j);
+                    j = 0;
+                }
+            }
+            i = 0;
+        }
+
+        return alerts;
+    }
+    
+    /**
+     * Removes all alerts which have a risk level not to be included
+     * @param extension
+     * @param alerts
+     * @return
+     */
+    public java.util.List<List<Alert>> filterAlertsByRiskLevel(ExtensionExportReport extension, List<List<Alert>> alerts){
+        /*
+         * Output list modifications:
+         *  - Remove alerts that are not to be included based on risk names
+         *  - If the alert is included, remove details that are not to be included
+         */
+        ArrayList<String> selectedRisks = extension.getIncludedAlertRisk();
+        ArrayList<String> alertRisks = extension.getAlertRisk();
+        ArrayList<String> alertDetailsIncluded = extension.getIncludedAlertDetails();
+        boolean isSelected;
+
+        for (int i = alerts.size() - 1; i >= 0; i--) {
+            List<Alert> alertList = alerts.get(i);
+            isSelected = false;
+
+            for (int j = alertList.size() - 1; j >= 0; j--) {
+                Alert alert = alertList.get(j);
+                
+                for (int k = 0; k < selectedRisks.size(); k++) {
+                    // If the alert risk level is in in the include list
+                    if (alertRisks
+                            .get(alert.getRisk())
+                            .equals(selectedRisks.get(k))) {
+                        isSelected = true;
+                    }
+                }
+
+                // If the alert risk level is not included, remove the alert from
+                // the list
+                if (!isSelected) {
+                    alertList.remove(j);
+                }
+            }
+
+            // Remove any alert lists which contain no alerts
+            if (alerts.get(i).size() == 0) {
+                alerts.remove(i);
+            }
+        }
+        return alerts;
+    }
+    
+    
+    
 
     /**
      * adds PDF metadata to the PDF document
@@ -291,7 +380,7 @@ public class ReportExportPDF {
                         smallLabelFormatting,
                         extensionExport
                                 .getMessages()
-                                .getString("alertreport.export.message.export.pdf.confidential"),
+                                .getString("exportreport.export.message.export.pdf.confidential"),
                         textInsertionPoint);
         textInsertionPoint =
                 addText(
@@ -664,44 +753,47 @@ public class ReportExportPDF {
         String labelDescription =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.description");
+                        .getString("exportreport.export.message.export.pdf.description");
         String labelRisk =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.risk");
+                        .getString("exportreport.export.message.export.pdf.risk");
         String labelReliability =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.reability");
+                        .getString("exportreport.export.message.export.pdf.reability");
         String labelURLs =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.urls");
+                        .getString("exportreport.export.message.export.pdf.urls");
         String labelParameter =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.parameters");
+                        .getString("exportreport.export.message.export.pdf.parameters");
         String labelAttack =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.attack");
+                        .getString("exportreport.export.message.export.pdf.attack");
         String labelEvidence =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.evidence");
+                        .getString("exportreport.export.message.export.pdf.evidence");
         String labelOtherInfo =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.otherinfo");
+                        .getString("exportreport.export.message.export.pdf.otherinfo");
         String labelSolution =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.solution");
+                        .getString("exportreport.export.message.export.pdf.solution");
         String labelReferences =
                 extensionExport
                         .getMessages()
-                        .getString("alertreport.export.message.export.pdf.references");
+                        .getString("exportreport.export.message.export.pdf.references");
 
+        // detailsToInclude is used to filter out details not wanted by the user
+        ArrayList<String> detailsToInclude = extensionExport.getIncludedAlertDetails();
+        
         Alert alert = alerts.get(0);
 
         page = new PDPage(pageSize);
@@ -823,4 +915,6 @@ public class ReportExportPDF {
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
     }
+    
+    
 }

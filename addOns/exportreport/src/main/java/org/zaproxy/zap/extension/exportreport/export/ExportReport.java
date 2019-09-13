@@ -154,72 +154,20 @@ public class ExportReport {
                         break;
 
                     case Utils.PDF:
-                        /*
-                         * Make list of all alerts, joining same alerts
-                         */
-                        java.util.List<List<Alert>> alerts = new ArrayList<>();
-                        java.util.List<Alert> allAlerts = extension.getAllAlerts();
-                        Collections.sort(allAlerts, Collections.reverseOrder());
-
-                        // join same alerts
-                        for (int i = 0; i < allAlerts.size(); i++) {
-                            Alert alertAllAlerts = allAlerts.get(i);
-                            alerts.add(extension.getAlertsSelected(alertAllAlerts));
-                            for (int j = 0; j < allAlerts.size(); j++) {
-                                Alert alertToCompare = allAlerts.get(j);
-                                if (alertAllAlerts.getName().equals(alertToCompare.getName())) {
-                                    allAlerts.remove(j);
-                                    j = 0;
-                                }
-                            }
-                            i = 0;
-                        }
-
-                        /*
-                         * Remove alerts that are not to be included based on risk names
-                         */
-                        ArrayList<String> selectedRisks = extension.getIncludedAlertRisk();
-                        ArrayList<String> alertRisks = extension.getAlertRisk();
-                        boolean isSelected;
-
-                        for (int i = alerts.size() - 1; i >= 0; i--) {
-                            List<Alert> alertList = alerts.get(i);
-                            isSelected = false;
-
-                            for (int j = alertList.size() - 1; j >= 0; j--) {
-                                Alert alert = alertList.get(j);
-
-                                for (int k = 0; k < selectedRisks.size(); k++) {
-                                    // If the alert risk level is in in the include list
-                                    if (alertRisks
-                                            .get(alert.getRisk())
-                                            .equals(selectedRisks.get(k))) {
-                                        isSelected = true;
-                                    }
-                                }
-
-                                // If the alert risk level is not included, remove the alert from
-                                // the list
-                                if (!isSelected) {
-                                    alertList.remove(j);
-                                }
-                            }
-
-                            // Remove any alert lists which contain no alerts
-                            if (alerts.get(i).size() == 0) {
-                                alerts.remove(i);
-                            }
-                        }
-
+                        ReportExportPDF reportExportPDF = new ReportExportPDF();
+                        
+                        // Prepare alert list
+                        List<List<Alert>> alerts = reportExportPDF.joinSimilarAlerts(extension);
+                        alerts = reportExportPDF.filterAlertsByRiskLevel(extension, alerts);
+                        
                         /*
                          * Generate Report
                          */
                         if (!alerts.isEmpty()) {
-                            ReportExportPDF reportExportPDF = new ReportExportPDF();
                             boolean result =
-                                    reportExportPDF.exportAlert(
-                                            alerts, path + fileName + ".pdf", extension, view);
-
+                                        reportExportPDF.exportAlert(
+                                                alerts, path + fileName + ".pdf", extension, view);
+                            
                             if (result) {
                                 view.showMessageDialog(
                                         Constant.messages.getString(
@@ -233,9 +181,9 @@ public class ExportReport {
                         } else {
                             view.showWarningDialog(
                                     Constant.messages.getString(
-                                            "exportreport.export.message.export.alerts.none"));
+                                            "exportreport.export.message.export.fail"));
                         }
-
+                        
                         // clear alertsDB from memory
                         extension.clearAlertsDB();
                         break;
