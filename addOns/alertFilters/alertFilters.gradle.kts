@@ -17,3 +17,7 @@ zapAddOn {
         messages.set(file("src/main/resources/org/zaproxy/zap/extension/alertFilters/resources/Messages.properties"))
     }
 }
+
+dependencies {
+    testImplementation(project(":testutils"))
+}

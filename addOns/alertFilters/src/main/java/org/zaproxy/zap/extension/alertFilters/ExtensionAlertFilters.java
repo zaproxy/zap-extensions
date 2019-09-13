@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import javax.swing.SwingUtilities;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
@@ -432,49 +431,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                                 + " filters");
                 // Its in this context
                 for (AlertFilter filter : mgr.getAlertFilters()) {
-                    if (!filter.isEnabled()) {
-                        // rule ids dont match
-                        log.debug("Filter disabled");
+                    if (!filter.appliesToAlert(alert)) {
                         continue;
                     }
-                    if (filter.getRuleId() != alert.getPluginId()) {
-                        // rule ids dont match
-                        log.debug(
-                                "Filter didnt match plugin id: "
-                                        + filter.getRuleId()
-                                        + " != "
-                                        + alert.getPluginId());
-                        continue;
-                    }
-                    if (filter.getUrl() != null && filter.getUrl().length() > 0) {
-                        if (filter.isRegex()) {
-                            Pattern p = Pattern.compile(filter.getUrl());
-                            if (!p.matcher(uri).matches()) {
-                                // URL pattern doesnt match
-                                log.debug(
-                                        "Filter didnt match URL regex: "
-                                                + filter.getUrl()
-                                                + " url: "
-                                                + uri);
-                                continue;
-                            }
-                        } else if (!filter.getUrl().equals(uri)) {
-                            // URL doesnt match
-                            log.debug("Filter didnt match URL: " + filter.getUrl());
-                            continue;
-                        }
-                    }
-                    if (filter.getParameter() != null && filter.getParameter().length() > 0) {
-                        if (!filter.getParameter().equals(alert.getParam())) {
-                            // Parameter doesnt match
-                            log.debug(
-                                    "Filter didnt match parameter: "
-                                            + filter.getParameter()
-                                            + " != "
-                                            + alert.getParam());
-                            continue;
-                        }
-                    }
+
                     Alert updAlert = alert;
                     Alert origAlert = updAlert.newInstance();
                     if (filter.getNewRisk() == -1) {

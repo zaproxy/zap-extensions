@@ -48,6 +48,26 @@ If it is not set then any specified URL must exactly match the URL of the alert.
 An optional parameter.<br>
 If specified then this rule will be applied if the parameter exactly matches the parameter of a raised alert.<br>
 
+<H3>Parameter is Regex?</H3>
+If set and a parameter is specified then the parameter will be treated as a regex expression when compared with the parameter of the alert.<br>
+If it is not set then any specified parameter must exactly match the parameter of the alert.
+
+<H3>Attack</H3>
+An optional attack.<br>
+If specified then this rule will be applied if the attack exactly matches the attack of a raised alert.<br>
+
+<H3>Attack is Regex?</H3>
+If set and a attack is specified then the attack will be treated as a regex expression when compared with the attack of the alert.<br>
+If it is not set then any specified attack must exactly match the attack of the alert.
+
+<H3>Evidence</H3>
+An optional evidence.<br>
+If specified then this rule will be applied if the evidence exactly matches the evidence of a raised alert.<br>
+
+<H3>Evidence is Regex?</H3>
+If set and a evidence is specified then the evidence will be treated as a regex expression when compared with the evidence of the alert.<br>
+If it is not set then any specified evidence must exactly match the evidence of the alert.
+
 <H3>Enabled</H3>
 If set then this rule will be applied to all alerts raise against the given context.
 
