@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class SubResourceIntegrityAttributeScannerTest
         extends PassiveScannerTest<SubResourceIntegrityAttributeScanner> {
@@ -118,6 +119,28 @@ public class SubResourceIntegrityAttributeScannerTest
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
+    @Test
+    public void shouldNotRaiseAlertGivenElementIsServedByTrustedDomain()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"https://trusted.domain.com/v1.0/include.js\"></script>"
+                                + "<link href=\"https://another.trusted.com/v1.0/include.js\"></link>"
+                                + "</head><body></body></html>");
+        rule.getConfig()
+                .setProperty(
+                        SubResourceIntegrityAttributeScanner.TRUSTED_DOMAINS_PROPERTY,
+                        "https://trusted.domain.com/.*,https://.*trusted.com/.*");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
     public HttpMessage buildMessage(String body) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
@@ -127,6 +150,8 @@ public class SubResourceIntegrityAttributeScannerTest
 
     @Override
     protected SubResourceIntegrityAttributeScanner createScanner() {
-        return new SubResourceIntegrityAttributeScanner();
+        SubResourceIntegrityAttributeScanner scanner = new SubResourceIntegrityAttributeScanner();
+        scanner.setConfig(new ZapXmlConfiguration());
+        return scanner;
     }
 }

@@ -23,10 +23,13 @@ import static net.htmlparser.jericho.HTMLElementName.LINK;
 import static net.htmlparser.jericho.HTMLElementName.SCRIPT;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
@@ -58,6 +61,10 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
         CONTENT_ATTRIBUTES.put(LINK, "href");
     }
 
+    // TODO Replace "rules.domains.trusted" with RuleConfigParam.RULE_DOMAINS_TRUSTED once
+    // available.
+    static final String TRUSTED_DOMAINS_PROPERTY = "rules.domains.trusted";
+
     private PassiveScanThread parent;
 
     @Override
@@ -67,9 +74,15 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        Collection<String> trustedDomains =
+                Stream.of(getConfig().getString(TRUSTED_DOMAINS_PROPERTY, "").split(","))
+                        .filter(s -> !s.isEmpty())
+                        .collect(Collectors.toList());
+
         List<Element> sourceElements = source.getAllElements();
         sourceElements.stream()
                 .filter(element -> SUPPORTED_ELEMENTS.contains(element.getName()))
+                .filter(excludeSafeResourceFrom(trustedDomains))
                 .filter(unsafeSubResource(msg.getRequestHeader().getHostName()))
                 .forEach(
                         element -> {
@@ -94,6 +107,13 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
                                     msg);
                             parent.raiseAlert(id, alert);
                         });
+    }
+
+    private Predicate<Element> excludeSafeResourceFrom(Collection<String> trustedDomains) {
+        return element -> {
+            String domain = element.getAttributeValue(CONTENT_ATTRIBUTES.get(element.getName()));
+            return trustedDomains.stream().noneMatch(domain::matches);
+        };
     }
 
     private static Predicate<Element> unsafeSubResource(String hostname) {
