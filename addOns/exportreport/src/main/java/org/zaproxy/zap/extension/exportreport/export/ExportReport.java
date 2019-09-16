@@ -134,7 +134,7 @@ public class ExportReport {
                         deleteFile(xmlGenerated); // , "The merged XML file: ");
                         show = true;
                         break;
-                        
+
                     case Utils.BOOTSTRAP:
                         view.showMessageDialog(
                                 Constant.messages.getString(
@@ -144,7 +144,7 @@ public class ExportReport {
                         f_view = ReportExport.transformation(view, xmlGenerated, xmlPath, mergeXSL);
                         show = true;
                         break;
-                        
+
                     case Utils.JSON:
                         view.showMessageDialog(
                                 Constant.messages.getString("exportreport.message.notice.json"));
@@ -156,17 +156,17 @@ public class ExportReport {
 
                     case Utils.PDF:
                         ReportExportPDF reportExportPDF = new ReportExportPDF();
-                        
+
                         // Prepare alert list
                         List<List<Alert>> alerts = reportExportPDF.joinSimilarAlerts(extension);
                         alerts = reportExportPDF.filterAlertsByRiskLevel(extension, alerts);
 
                         // Generate Report
-                        if (!alerts.isEmpty()) {                        
+                        if (!alerts.isEmpty()) {
                             boolean result =
-                                        reportExportPDF.exportAlert(
-                                                alerts, path + fileName + ".pdf", extension, view);
-                            
+                                    reportExportPDF.exportAlert(
+                                            alerts, path + fileName + ".pdf", extension, view);
+
                             if (result) {
                                 view.showMessageDialog(
                                         Constant.messages.getString(
@@ -183,7 +183,7 @@ public class ExportReport {
                                     Constant.messages.getString(
                                             "exportreport.export.message.failed.empty"));
                         }
-                        
+
                         // clear alertsDB from memory
                         extension.clearAlertsDB();
                         show = true;
@@ -318,17 +318,17 @@ public class ExportReport {
 
                 case Utils.PDF:
                     ReportExportPDF reportExportPDF = new ReportExportPDF();
-                    
+
                     // Prepare alert list
                     List<List<Alert>> alerts = reportExportPDF.joinSimilarAlerts(extension);
                     alerts = reportExportPDF.filterAlertsByRiskLevel(extension, alerts);
-                    
+
                     // Generate Report
                     if (!alerts.isEmpty()) {
                         boolean result =
-                                    reportExportPDF.exportAlert(
-                                            alerts, path + fileName + ".pdf", extension, null);
-                        
+                                reportExportPDF.exportAlert(
+                                        alerts, path + fileName + ".pdf", extension, null);
+
                         if (result) {
                             CommandLine.info(
                                     Constant.messages.getString(
@@ -344,11 +344,11 @@ public class ExportReport {
                                 Constant.messages.getString(
                                         "exportreport.export.message.failed.empty"));
                     }
-                    
+
                     // clear alertsDB from memory
                     extension.clearAlertsDB();
                     break;
-                    
+
                 case Utils.DOC:
                     CommandLine.error(
                             Constant.messages.getString("exportreport.message.notice.doc"));

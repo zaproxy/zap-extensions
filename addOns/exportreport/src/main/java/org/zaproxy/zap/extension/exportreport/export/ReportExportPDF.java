@@ -150,17 +150,21 @@ public class ReportExportPDF {
         boolean successfulExport;
         // Used to define gridlayout and window size
         final boolean includeHttp = includeHttpInfo(extensionExport);
-        
+
         /*
          * Generate progress window if view != null
          */
         JProgressBar progBar = null;
         JFrame frame = null;
-        
+
         // Open a progress window indicating it may take a few moments to generate
         if (view != null) {
             // Setup frame
-            frame = new JFrame(extensionExport.getMessages().getString("exportreport.export.progress.title"));
+            frame =
+                    new JFrame(
+                            extensionExport
+                                    .getMessages()
+                                    .getString("exportreport.export.progress.title"));
             frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
             if (includeHttp) {
@@ -168,19 +172,25 @@ public class ReportExportPDF {
             } else {
                 frame.setSize(400, 85);
             }
-            
+
             frame.setResizable(false);
-            
+
             // Components
             final JLabel labelString =
-                    new JLabel(extensionExport.getMessages().getString("exportreport.export.message.progress"));
+                    new JLabel(
+                            extensionExport
+                                    .getMessages()
+                                    .getString("exportreport.export.message.progress"));
             final JLabel labelStringHTTPContent =
-                    new JLabel(extensionExport.getMessages().getString("exportreport.export.message.httpmessage.warning"));
-            
+                    new JLabel(
+                            extensionExport
+                                    .getMessages()
+                                    .getString("exportreport.export.message.httpmessage.warning"));
+
             // Label Alignment
             labelString.setHorizontalAlignment(JLabel.CENTER);
             labelStringHTTPContent.setHorizontalAlignment(JLabel.CENTER);
-            
+
             // Set window icon and position
             frame.setIconImages(DisplayUtils.getZapIconImages());
             frame.setLocationRelativeTo(SwingUtilities.getWindowAncestor(frame));
@@ -193,21 +203,21 @@ public class ReportExportPDF {
 
             // setup window layout
             if (includeHttp) {
-                frame.setLayout(new GridLayout(3,1));
+                frame.setLayout(new GridLayout(3, 1));
             } else {
-                frame.setLayout(new GridLayout(2,1));
+                frame.setLayout(new GridLayout(2, 1));
             }
-            
+
             // Add Components
             frame.getContentPane().add(labelString);
-            
+
             // add the warning for http content generation if it is to be included
             if (includeHttp) {
-              frame.getContentPane().add(labelStringHTTPContent);
+                frame.getContentPane().add(labelStringHTTPContent);
             }
-            
+
             frame.getContentPane().add(progBar);
-            
+
             // Show window
             frame.setVisible(true);
 
@@ -218,11 +228,17 @@ public class ReportExportPDF {
                 logger.debug(ex);
             }
         } else {
-            CommandLine.info(extensionExport.getMessages().getString("exportreport.export.message.progress"));
-            
+            CommandLine.info(
+                    extensionExport
+                            .getMessages()
+                            .getString("exportreport.export.message.progress"));
+
             // add the warning for http content generation if it is to be included
             if (includeHttp) {
-              CommandLine.info(extensionExport.getMessages().getString("exportreport.export.message.httpmessage.warning"));
+                CommandLine.info(
+                        extensionExport
+                                .getMessages()
+                                .getString("exportreport.export.message.httpmessage.warning"));
             }
         }
 
@@ -248,11 +264,11 @@ public class ReportExportPDF {
 
                 addContent(alertAux, extensionExport);
             }
-            
+
             if (view != null) {
                 progBar.setValue(alerts.size());
             }
-            
+
             // Finalize the document
             document.save(outputfile);
             document.close();
@@ -277,32 +293,45 @@ public class ReportExportPDF {
 
         return successfulExport;
     }
-    
+
     /**
      * Determines if the HTTP information was requested to be included.
+     *
      * @param extensionExport
      * @return
      */
     private boolean includeHttpInfo(ExtensionExportReport extensionExport) {
         ArrayList<String> detailsToInclude = extensionExport.getIncludedAlertDetails();
-        
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.requestheader.label"))
-                    || detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.requestbody.label"))
-                    || detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.responseheader.label"))
-                    || detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.responsebody.label"))) {
+
+        if (detailsToInclude.contains(
+                        extensionExport
+                                .getMessages()
+                                .getString("exportreport.details.requestheader.label"))
+                || detailsToInclude.contains(
+                        extensionExport
+                                .getMessages()
+                                .getString("exportreport.details.requestbody.label"))
+                || detailsToInclude.contains(
+                        extensionExport
+                                .getMessages()
+                                .getString("exportreport.details.responseheader.label"))
+                || detailsToInclude.contains(
+                        extensionExport
+                                .getMessages()
+                                .getString("exportreport.details.responsebody.label"))) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     /**
      * Joins similar alerts to reduce output size
-     * 
+     *
      * @param extension
      * @return
      */
-    public java.util.List<List<Alert>> joinSimilarAlerts(ExtensionExportReport extension){
+    public java.util.List<List<Alert>> joinSimilarAlerts(ExtensionExportReport extension) {
         // Make list of all alerts, joining same alerts
         java.util.List<List<Alert>> alerts = new ArrayList<>();
         java.util.List<Alert> allAlerts = extension.getAllAlerts();
@@ -321,17 +350,19 @@ public class ReportExportPDF {
             }
             i = 0;
         }
-        
+
         return alerts;
     }
-    
+
     /**
      * Removes all alerts which have a risk level not to be included
+     *
      * @param extension
      * @param alerts
      * @return
      */
-    public java.util.List<List<Alert>> filterAlertsByRiskLevel(ExtensionExportReport extension, List<List<Alert>> alerts){
+    public java.util.List<List<Alert>> filterAlertsByRiskLevel(
+            ExtensionExportReport extension, List<List<Alert>> alerts) {
         /*
          * Output list modifications:
          *  - Remove alerts that are not to be included based on risk names
@@ -347,12 +378,10 @@ public class ReportExportPDF {
 
             for (int j = alertList.size() - 1; j >= 0; j--) {
                 Alert alert = alertList.get(j);
-                
+
                 for (int k = 0; k < selectedRisks.size(); k++) {
                     // If the alert risk level is in in the include list
-                    if (alertRisks
-                            .get(alert.getRisk())
-                            .equals(selectedRisks.get(k))) {
+                    if (alertRisks.get(alert.getRisk()).equals(selectedRisks.get(k))) {
                         isSelected = true;
                     }
                 }
@@ -369,7 +398,7 @@ public class ReportExportPDF {
                 alerts.remove(i);
             }
         }
-        
+
         return alerts;
     }
 
@@ -846,33 +875,23 @@ public class ReportExportPDF {
                         .getMessages()
                         .getString("exportreport.export.message.export.pdf.references");
         String labelCWEID =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.details.cweid.label");
+                extensionExport.getMessages().getString("exportreport.details.cweid.label");
         String labelWASCID =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.details.wascid.label");
+                extensionExport.getMessages().getString("exportreport.details.wascid.label");
         String labelReqHeader =
-                extensionExport
-                    .getMessages()
-                    .getString("exportreport.details.requestheader.label");
+                extensionExport.getMessages().getString("exportreport.details.requestheader.label");
         String labelRespHeader =
                 extensionExport
-                    .getMessages()
-                    .getString("exportreport.details.responseheader.label");
+                        .getMessages()
+                        .getString("exportreport.details.responseheader.label");
         String labelReqBody =
-                extensionExport
-                    .getMessages()
-                    .getString("exportreport.details.requestbody.label");
+                extensionExport.getMessages().getString("exportreport.details.requestbody.label");
         String labelRespBody =
-                extensionExport
-                    .getMessages()
-                    .getString("exportreport.details.responsebody.label");
+                extensionExport.getMessages().getString("exportreport.details.responsebody.label");
 
         // detailsToInclude is used to filter out details not wanted by the user
         ArrayList<String> detailsToInclude = extensionExport.getIncludedAlertDetails();
-        
+
         Alert alert = alerts.get(0);
 
         page = new PDPage(pageSize);
@@ -887,8 +906,12 @@ public class ReportExportPDF {
                 addText(alertCategoryLabelFormatting, alert.getName(), textInsertionPoint);
 
         // Not added if not selected as detail to include
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.export.message.export.pdf.description"))) {
-            textInsertionPoint = addText(alertLabelFormatting, labelDescription, textInsertionPoint);
+        if (detailsToInclude.contains(
+                extensionExport
+                        .getMessages()
+                        .getString("exportreport.export.message.export.pdf.description"))) {
+            textInsertionPoint =
+                    addText(alertLabelFormatting, labelDescription, textInsertionPoint);
             textInsertionPoint =
                     addText(
                             alertTextFormatting,
@@ -900,7 +923,7 @@ public class ReportExportPDF {
                             textInsertionPoint);
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
-        
+
         textInsertionPoint = addText(alertLabelFormatting, labelRisk, textInsertionPoint);
         textInsertionPoint =
                 addText(
@@ -912,8 +935,7 @@ public class ReportExportPDF {
                                 extensionExport),
                         textInsertionPoint);
         textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
-        
-        
+
         textInsertionPoint = addText(alertLabelFormatting, labelReliability, textInsertionPoint);
         textInsertionPoint =
                 addText(
@@ -925,61 +947,90 @@ public class ReportExportPDF {
                                 extensionExport),
                         textInsertionPoint);
         textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
-        
+
         // CWE ID
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.cweid.label"))) {
+        if (detailsToInclude.contains(
+                extensionExport.getMessages().getString("exportreport.details.cweid.label"))) {
             textInsertionPoint = addText(alertLabelFormatting, labelCWEID, textInsertionPoint);
-            textInsertionPoint = 
+            textInsertionPoint =
                     addText(
                             alertTextFormatting,
                             Integer.toString(alert.getCweId()),
                             textInsertionPoint);
-            
+
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
-        
+
         // WASC ID
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.wascid.label"))) {
+        if (detailsToInclude.contains(
+                extensionExport.getMessages().getString("exportreport.details.wascid.label"))) {
             textInsertionPoint = addText(alertLabelFormatting, labelWASCID, textInsertionPoint);
-            textInsertionPoint = 
+            textInsertionPoint =
                     addText(
                             alertTextFormatting,
                             Integer.toString(alert.getWascId()),
                             textInsertionPoint);
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
-        
+
         // Request Header
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.requestheader.label"))) {
+        if (detailsToInclude.contains(
+                extensionExport
+                        .getMessages()
+                        .getString("exportreport.details.requestheader.label"))) {
             textInsertionPoint = addText(alertLabelFormatting, labelReqHeader, textInsertionPoint);
-            textInsertionPoint = addText(alertTextFormatting, alert.getMessage().getRequestHeader().toString(), textInsertionPoint);
+            textInsertionPoint =
+                    addText(
+                            alertTextFormatting,
+                            alert.getMessage().getRequestHeader().toString(),
+                            textInsertionPoint);
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
-        
+
         // Request Body
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.requestbody.label"))) {
+        if (detailsToInclude.contains(
+                extensionExport
+                        .getMessages()
+                        .getString("exportreport.details.requestbody.label"))) {
             textInsertionPoint = addText(alertLabelFormatting, labelReqBody, textInsertionPoint);
-            textInsertionPoint = addText(alertTextFormatting, alert.getMessage().getRequestBody().toString(), textInsertionPoint);
+            textInsertionPoint =
+                    addText(
+                            alertTextFormatting,
+                            alert.getMessage().getRequestBody().toString(),
+                            textInsertionPoint);
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
-        
+
         // Response Header
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.responseheader.label"))) {
+        if (detailsToInclude.contains(
+                extensionExport
+                        .getMessages()
+                        .getString("exportreport.details.responseheader.label"))) {
             textInsertionPoint = addText(alertLabelFormatting, labelRespHeader, textInsertionPoint);
-            textInsertionPoint = addText(alertTextFormatting, alert.getMessage().getResponseHeader().toString(), textInsertionPoint);
+            textInsertionPoint =
+                    addText(
+                            alertTextFormatting,
+                            alert.getMessage().getResponseHeader().toString(),
+                            textInsertionPoint);
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
-        
+
         // Response Body
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.details.responsebody.label"))) {
+        if (detailsToInclude.contains(
+                extensionExport
+                        .getMessages()
+                        .getString("exportreport.details.responsebody.label"))) {
             textInsertionPoint = addText(alertLabelFormatting, labelRespBody, textInsertionPoint);
-            textInsertionPoint = addText(alertTextFormatting, alert.getMessage().getResponseBody().toString(), textInsertionPoint);
+            textInsertionPoint =
+                    addText(
+                            alertTextFormatting,
+                            alert.getMessage().getResponseBody().toString(),
+                            textInsertionPoint);
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
-        
+
         textInsertionPoint = addText(alertLabelFormatting, labelURLs, textInsertionPoint);
 
-        
         // TODO: binary data (Base64 decoded data is the only example I can find) flows onto the
         // margin..
         // can we do something about it??
@@ -987,7 +1038,7 @@ public class ReportExportPDF {
         // for each alert within this category
         for (int i = 0; i < alerts.size(); i++) {
             Alert alertAux = alerts.get(i);
-            
+
             // output the URL, and parameter information for each alert for this category
             textInsertionPoint =
                     addText(
@@ -1016,9 +1067,13 @@ public class ReportExportPDF {
                                 labelEvidence + ": " + alertAux.getEvidence(),
                                 textInsertionPoint);
             }
-            
+
             // Not added if not selected as detail to include
-            if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.export.message.export.pdf.otherinfo")) && !alertAux.getOtherInfo().isEmpty()) {
+            if (detailsToInclude.contains(
+                            extensionExport
+                                    .getMessages()
+                                    .getString("exportreport.export.message.export.pdf.otherinfo"))
+                    && !alertAux.getOtherInfo().isEmpty()) {
                 textInsertionPoint =
                         addText(
                                 alertTextFormatting,
@@ -1029,12 +1084,16 @@ public class ReportExportPDF {
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
 
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.export.message.export.pdf.solution"))) {
+        if (detailsToInclude.contains(
+                extensionExport
+                        .getMessages()
+                        .getString("exportreport.export.message.export.pdf.solution"))) {
             String solution =
                     getFieldAlertProperty(
                             alert.getPluginId(), "solution", alert.getSolution(), extensionExport);
             if (!solution.isEmpty()) {
-                textInsertionPoint = addText(alertLabelFormatting, labelSolution, textInsertionPoint);
+                textInsertionPoint =
+                        addText(alertLabelFormatting, labelSolution, textInsertionPoint);
                 textInsertionPoint =
                         addText(
                                 alertTextFormatting,
@@ -1047,14 +1106,16 @@ public class ReportExportPDF {
                 textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
             }
         }
-        
-        if (detailsToInclude.contains(extensionExport.getMessages().getString("exportreport.export.message.export.pdf.references")) && !alert.getReference().isEmpty()) {
+
+        if (detailsToInclude.contains(
+                        extensionExport
+                                .getMessages()
+                                .getString("exportreport.export.message.export.pdf.references"))
+                && !alert.getReference().isEmpty()) {
             textInsertionPoint = addText(alertLabelFormatting, labelReferences, textInsertionPoint);
             textInsertionPoint =
                     addText(alertTextFormatting, alert.getReference(), textInsertionPoint);
             textInsertionPoint = addText(alertTextFormatting, " ", textInsertionPoint);
         }
     }
-    
-    
 }
