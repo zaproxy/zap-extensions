@@ -839,37 +839,27 @@ public class ReportExportPDF {
                         .getMessages()
                         .getString("exportreport.export.message.pdf.description");
         String labelRisk =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.export.message.pdf.risk");
+                extensionExport.getMessages().getString("exportreport.export.message.pdf.risk");
         String labelReliability =
                 extensionExport
                         .getMessages()
                         .getString("exportreport.export.message.pdf.reability");
         String labelURLs =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.export.message.pdf.urls");
+                extensionExport.getMessages().getString("exportreport.export.message.pdf.urls");
         String labelParameter =
                 extensionExport
                         .getMessages()
                         .getString("exportreport.export.message.pdf.parameters");
         String labelAttack =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.export.message.pdf.attack");
+                extensionExport.getMessages().getString("exportreport.export.message.pdf.attack");
         String labelEvidence =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.export.message.pdf.evidence");
+                extensionExport.getMessages().getString("exportreport.export.message.pdf.evidence");
         String labelOtherInfo =
                 extensionExport
                         .getMessages()
                         .getString("exportreport.export.message.pdf.otherinfo");
         String labelSolution =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.export.message.pdf.solution");
+                extensionExport.getMessages().getString("exportreport.export.message.pdf.solution");
         String labelReferences =
                 extensionExport
                         .getMessages()
