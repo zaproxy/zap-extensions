@@ -26,7 +26,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.SwingWorker;
@@ -50,7 +49,7 @@ import org.zaproxy.zap.view.widgets.WritableFileChooser;
  * Original author: GORAN SARENKAPA - JordanGS
  * Sponsor: RYERSON UNIVERSITY
  *
- * PDF Export: Adapted from Leandro Ferrari and Colm O'Flaherty's AlertExport extension.
+ * PDF Export: Adapted from Leandro Ferrari and Colm O'Flaherty's AlertExport.
  */
 
 public class ExportReport {
@@ -135,6 +134,7 @@ public class ExportReport {
                         deleteFile(xmlGenerated); // , "The merged XML file: ");
                         show = true;
                         break;
+                        
                     case Utils.BOOTSTRAP:
                         view.showMessageDialog(
                                 Constant.messages.getString(
@@ -144,6 +144,7 @@ public class ExportReport {
                         f_view = ReportExport.transformation(view, xmlGenerated, xmlPath, mergeXSL);
                         show = true;
                         break;
+                        
                     case Utils.JSON:
                         view.showMessageDialog(
                                 Constant.messages.getString("exportreport.message.notice.json"));
@@ -159,11 +160,9 @@ public class ExportReport {
                         // Prepare alert list
                         List<List<Alert>> alerts = reportExportPDF.joinSimilarAlerts(extension);
                         alerts = reportExportPDF.filterAlertsByRiskLevel(extension, alerts);
-                        
-                        /*
-                         * Generate Report
-                         */
-                        if (!alerts.isEmpty()) {
+
+                        // Generate Report
+                        if (!alerts.isEmpty()) {                        
                             boolean result =
                                         reportExportPDF.exportAlert(
                                                 alerts, path + fileName + ".pdf", extension, view);
@@ -179,13 +178,15 @@ public class ExportReport {
                                                 "exportreport.export.message.failed"));
                             }
                         } else {
+                            logger.debug("Alerts is empty");
                             view.showWarningDialog(
                                     Constant.messages.getString(
-                                            "exportreport.export.message.export.fail"));
+                                            "exportreport.export.message.failed.empty"));
                         }
                         
                         // clear alertsDB from memory
                         extension.clearAlertsDB();
+                        show = true;
                         break;
 
                     case Utils.DOC:
@@ -314,10 +315,40 @@ public class ExportReport {
                     f_view = ReportExport.jsonExport(null, absolutePath, xmlGenerated);
                     deleteFile(xmlGenerated);
                     break;
+
                 case Utils.PDF:
-                    CommandLine.error(
-                            Constant.messages.getString("exportreport.message.notice.pdf"));
-                    return false;
+                    ReportExportPDF reportExportPDF = new ReportExportPDF();
+                    
+                    // Prepare alert list
+                    List<List<Alert>> alerts = reportExportPDF.joinSimilarAlerts(extension);
+                    alerts = reportExportPDF.filterAlertsByRiskLevel(extension, alerts);
+                    
+                    // Generate Report
+                    if (!alerts.isEmpty()) {
+                        boolean result =
+                                    reportExportPDF.exportAlert(
+                                            alerts, path + fileName + ".pdf", extension, null);
+                        
+                        if (result) {
+                            CommandLine.info(
+                                    Constant.messages.getString(
+                                            "exportreport.export.message.successful"));
+                            f_view = new File(path + fileName + ".pdf");
+                        } else {
+                            CommandLine.info(
+                                    Constant.messages.getString(
+                                            "exportreport.export.message.failed"));
+                        }
+                    } else {
+                        CommandLine.info(
+                                Constant.messages.getString(
+                                        "exportreport.export.message.failed.empty"));
+                    }
+                    
+                    // clear alertsDB from memory
+                    extension.clearAlertsDB();
+                    break;
+                    
                 case Utils.DOC:
                     CommandLine.error(
                             Constant.messages.getString("exportreport.message.notice.doc"));
