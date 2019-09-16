@@ -96,7 +96,7 @@ public class TestCrossSiteScriptV2UnitTest
     public void shouldReportXssInParagraphForNullBytePayloadInjection()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInParagraphForNullByteInjection/";
-
+        // Given
         this.nano.addHandler(
                 new NanoServerHandler(test) {
                     @Override
@@ -117,12 +117,13 @@ public class TestCrossSiteScriptV2UnitTest
                     }
                 });
 
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-
         this.rule.scan();
 
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
@@ -210,7 +211,7 @@ public class TestCrossSiteScriptV2UnitTest
     public void shouldReportXssInCommentForNullBytePayloadInjection()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInCommentForNullBytePayloadInjection/";
-
+        // Given
         this.nano.addHandler(
                 new NanoServerHandler(test) {
                     @Override
@@ -229,12 +230,13 @@ public class TestCrossSiteScriptV2UnitTest
                     }
                 });
 
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-
         this.rule.scan();
 
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
@@ -360,7 +362,7 @@ public class TestCrossSiteScriptV2UnitTest
     public void shouldReportXssInBodyForNullByteBasedInjectionPayload()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInBodyForNullByteBasedInjectionPayload/";
-
+        // Given
         this.nano.addHandler(
                 new NanoServerHandler(test) {
                     @Override
@@ -377,13 +379,13 @@ public class TestCrossSiteScriptV2UnitTest
                         return newFixedLengthResponse(response);
                     }
                 });
-
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
 
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
@@ -437,7 +439,7 @@ public class TestCrossSiteScriptV2UnitTest
     public void shouldReportXssInSpanContentForNullByteInjectionPayload()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInSpanContentForNullByteInjectionPayload/";
-
+        // Given
         this.nano.addHandler(
                 new NanoServerHandler(test) {
                     @Override
@@ -454,13 +456,12 @@ public class TestCrossSiteScriptV2UnitTest
                         return newFixedLengthResponse(response);
                     }
                 });
-
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
@@ -546,7 +547,7 @@ public class TestCrossSiteScriptV2UnitTest
     public void shouldReportXssOutsideOfHtmlTagsForNullByteBasedInjection()
             throws NullPointerException, IOException {
         String test = "/shouldReportXssOutsideOfHtmlTagsForNullByteBasedInjection/";
-
+        // Given
         this.nano.addHandler(
                 new NanoServerHandler(test) {
                     @Override
@@ -567,12 +568,13 @@ public class TestCrossSiteScriptV2UnitTest
                     }
                 });
 
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
 
         this.rule.scan();
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("<script>alert(1);</script>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
@@ -923,14 +925,15 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.nano.addHandler(handler);
 
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
         msg.getRequestHeader().setMethod(HttpRequestHeader.PUT);
 
         rule.setConfig(new ZapXmlConfiguration());
         this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
         this.rule.init(msg, this.parent);
-        // When
         this.rule.scan();
+
         // Then
         assertThat(httpMessagesSent, hasSize(equalTo(0)));
     }
@@ -965,13 +968,13 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.nano.addHandler(handler);
 
+        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
         msg.getRequestHeader().setMethod(HttpRequestHeader.PUT);
 
         this.rule.setConfig(new ZapXmlConfiguration());
         this.rule.setAlertThreshold(AlertThreshold.LOW);
         this.rule.init(msg, this.parent);
-        // When
         this.rule.scan();
         // Then
         assertThat(httpMessagesSent, hasSize(greaterThan(0)));
