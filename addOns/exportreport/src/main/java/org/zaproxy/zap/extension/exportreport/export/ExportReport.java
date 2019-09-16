@@ -101,7 +101,7 @@ public class ExportReport {
                                 extension.extensionGetReportDate(),
                                 extension.extensionGetReportVer(),
                                 extension.extensionGetDescription(),
-                                extension.getIncludedAlertRisk(),
+                                extension.getIncludedAlertSeverity(),
                                 extension.getIncludedAlertDetails());
             } catch (UnsupportedEncodingException e) {
                 logger.error(e.getMessage(), e);
@@ -347,6 +347,7 @@ public class ExportReport {
 
                     // clear alertsDB from memory
                     extension.clearAlertsDB();
+                    show = true;
                     break;
 
                 case Utils.DOC:

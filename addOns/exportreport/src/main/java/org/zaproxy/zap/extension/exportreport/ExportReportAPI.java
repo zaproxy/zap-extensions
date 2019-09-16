@@ -52,7 +52,7 @@ public class ExportReportAPI extends ApiImplementor {
     private static final String ACTION_PARAM_ABSOLUTE_PATH = "absolutePath";
     private static final String ACTION_PARAM_FILE_EXTENSION = "fileExtension";
     private static final String ACTION_PARAM_SOURCE_DETAILS = "sourceDetails";
-    private static final String ACTION_PARAM_ALERT_SEVERITY = "alertRisk";
+    private static final String ACTION_PARAM_ALERT_SEVERITY = "alertSeverity";
     private static final String ACTION_PARAM_ALERT_DETAILS = "alertDetails";
 
     private ExtensionExportReport extension;
@@ -126,7 +126,7 @@ public class ExportReportAPI extends ApiImplementor {
                                 Arrays.asList(
                                         (params.getString(ACTION_PARAM_SOURCE_DETAILS))
                                                 .split(";")));
-                ArrayList<String> alertRiskFlags =
+                ArrayList<String> alertSeverityFlags =
                         new ArrayList<String>(
                                 Arrays.asList(
                                         (params.getString(ACTION_PARAM_ALERT_SEVERITY))
@@ -174,13 +174,13 @@ public class ExportReportAPI extends ApiImplementor {
                                             "exportreport.message.console.info.status.unchecked")));
                 }
 
-                if (alertRiskFlags.size() != extension.getAlertRisk().size()) {
+                if (alertSeverityFlags.size() != extension.getAlertSeverity().size()) {
                     logger.error(
                             Constant.messages.getString(
                                     "exportreport.message.console.error.risk.severity",
                                     Constant.messages.getString("exportreport.menu.risk.label"),
-                                    alertRiskFlags.size(),
-                                    extension.getAlertRisk().size(),
+                                    alertSeverityFlags.size(),
+                                    extension.getAlertSeverity().size(),
                                     Constant.messages.getString(
                                             "exportreport.risk.severity.high.label"),
                                     Constant.messages.getString(
@@ -200,7 +200,7 @@ public class ExportReportAPI extends ApiImplementor {
                                             "exportreport.message.console.info.status.valid")));
                 }
 
-                if (!extension.validList(alertRiskFlags)) {
+                if (!extension.validList(alertSeverityFlags)) {
                     logger.warn(
                             Constant.messages.getString(
                                     "exportreport.message.console.error.valid.list",
@@ -276,8 +276,8 @@ public class ExportReportAPI extends ApiImplementor {
                                     "exportreport.message.console.info.pass.generate"));
                 }
 
-                ArrayList<String> alertRiskTemp =
-                        extension.generateList(alertRiskFlags, extension.getAlertRisk());
+                ArrayList<String> alertSeverityTemp =
+                        extension.generateList(alertSeverityFlags, extension.getAlertSeverity());
 
                 ArrayList<String> alertDetailsFull = new ArrayList<String>();
                 alertDetailsFull.addAll(0, extension.getAlertDetails());
@@ -291,7 +291,7 @@ public class ExportReportAPI extends ApiImplementor {
                             absolutePath,
                             fileExtension,
                             sourceDetails,
-                            alertRiskTemp,
+                            alertSeverityTemp,
                             alertDetailsTemp)) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(

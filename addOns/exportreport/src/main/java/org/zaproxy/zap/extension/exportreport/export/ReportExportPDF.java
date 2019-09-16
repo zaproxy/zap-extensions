@@ -368,8 +368,8 @@ public class ReportExportPDF {
          *  - Remove alerts that are not to be included based on risk names
          *  - If the alert is included, remove details that are not to be included
          */
-        ArrayList<String> selectedRisks = extension.getIncludedAlertRisk();
-        ArrayList<String> alertRisks = extension.getAlertRisk();
+        ArrayList<String> selectedRisks = extension.getIncludedAlertSeverity();
+        ArrayList<String> alertRisks = extension.getAlertSeverity();
         boolean isSelected;
 
         for (int i = alerts.size() - 1; i >= 0; i--) {
