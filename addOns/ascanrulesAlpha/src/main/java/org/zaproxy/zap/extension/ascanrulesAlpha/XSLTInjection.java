@@ -39,31 +39,24 @@ import org.parosproxy.paros.network.HttpMessage;
 public class XSLTInjection extends AbstractAppParamPlugin {
     private static final String MESSAGE_PREFIX = "ascanalpha.xsltinjection.";
 
-    private enum XSLTInjectionCheck {
-        ERROR,
-        VENDOR,
-        PORTSCAN,
-        COMMAND_EXEC
-    }
+    private static final String[] errorCausingPayloads = {"<"};
 
-    private static String[] errorCausingPayloads = {"<"};
-
-    private static String[] evidenceError = {
+    private static final String[] evidenceError = {
         "compilation error", "XSLT compile error", "SAXParseException"
     };
 
-    private static String[] vendorReturningPayloads = {
+    private static final String[] vendorReturningPayloads = {
         "<xsl:value-of select=\"system-property(\'xsl:vendor\')\"/>",
         "system-property(\'xsl:vendor\')/>",
         "\"/><xsl:value-of select=\"system-property(\'xsl:vendor\')\"/><!--",
         "<xsl:value-of select=\"system-property(\'xsl:vendor\')\"/><!--"
     };
 
-    private static String[] evidenceVendors = {
+    private static final String[] evidenceVendors = {
         "libxslt", "Microsoft", "Saxonica", "Apache", "Xalan", "SAXON", "Transformiix"
     };
 
-    private static String[] evidencePortScanning = {
+    private static final String[] evidencePortScanning = {
         "failed to open stream",
         "Invalid Http response",
         "Connection Refused",
@@ -71,7 +64,7 @@ public class XSLTInjection extends AbstractAppParamPlugin {
         "Can not load requested doc"
     };
 
-    private static String[] cmdExecPayloads = {
+    private static final String[] cmdExecPayloads = {
         "<xsl:variable name=\"rtobject\" select=\"runtime:getRuntime()\"/>\n"
                 + "<xsl:variable name=\"process\" select=\"runtime:exec($rtobject,'erroneous_command')\"/>\n"
                 + "<xsl:variable name=\"waiting\" select=\"process:waitFor($process)\"/>\n"
@@ -79,9 +72,26 @@ public class XSLTInjection extends AbstractAppParamPlugin {
         "<xsl:value-of select=\"php:function('exec','erroneous_command 2>&amp;1')\"/>"
     };
 
-    private static String[] evidenceCmdExec = {
+    private static final String[] evidenceCmdExec = {
         "Cannot run program", "erroneous_command: not found",
     };
+
+    private enum XSLTInjectionType {
+        ERROR(errorCausingPayloads, evidenceError, "error"),
+        VENDOR(vendorReturningPayloads, evidenceVendors, "vendor"),
+        PORTSCAN(new String[] {}, evidencePortScanning, "portscan"),
+        COMMAND_EXEC(cmdExecPayloads, evidenceCmdExec, "command");
+
+        private String[] payloads;
+        private String[] responses;
+        private String resourceIdentifier;
+
+        XSLTInjectionType(String[] payloads, String[] responses, String resourceIdentifier) {
+            this.payloads = payloads;
+            this.responses = responses;
+            this.resourceIdentifier = resourceIdentifier;
+        }
+    }
 
     private static final Logger LOG = Logger.getLogger(XSLTInjection.class);
 
@@ -90,54 +100,28 @@ public class XSLTInjection extends AbstractAppParamPlugin {
     // map setting the limits associated with each attack strength
     private static Map<AttackStrength, Integer> strengthToRequestCountMap = new HashMap<>();
 
-    // Uses maps for checks to avoid having to pass
-    // the payloads, responses and resources strings as parameters
-    private static Map<XSLTInjectionCheck, String[]> payloads = new HashMap<>();
-    private static Map<XSLTInjectionCheck, String[]> responses = new HashMap<>();
-    private static Map<XSLTInjectionCheck, String> resourceIdentifiers = new HashMap<>();
-
     static {
-        strengthToRequestCountMap.put(AttackStrength.DEFAULT, 12);
         strengthToRequestCountMap.put(AttackStrength.LOW, 6);
         strengthToRequestCountMap.put(AttackStrength.MEDIUM, 12);
         strengthToRequestCountMap.put(AttackStrength.HIGH, 24);
-        strengthToRequestCountMap.put(AttackStrength.INSANE, 500);
-
-        payloads.put(XSLTInjectionCheck.ERROR, errorCausingPayloads);
-        responses.put(XSLTInjectionCheck.ERROR, evidenceError);
-        resourceIdentifiers.put(XSLTInjectionCheck.ERROR, "error");
-
-        payloads.put(XSLTInjectionCheck.VENDOR, vendorReturningPayloads);
-        responses.put(XSLTInjectionCheck.VENDOR, evidenceVendors);
-        resourceIdentifiers.put(XSLTInjectionCheck.VENDOR, "vendor");
-
-        responses.put(XSLTInjectionCheck.PORTSCAN, evidencePortScanning);
-        resourceIdentifiers.put(XSLTInjectionCheck.PORTSCAN, "portscan");
-
-        payloads.put(XSLTInjectionCheck.COMMAND_EXEC, cmdExecPayloads);
-        responses.put(XSLTInjectionCheck.COMMAND_EXEC, evidenceCmdExec);
-        resourceIdentifiers.put(XSLTInjectionCheck.COMMAND_EXEC, "command");
     }
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        // initial check verifies if injecting certain strings causes XSLT related
-        // errors
-        if (tryInjection(msg, param, XSLTInjectionCheck.ERROR)) {
-            // verifies if we can get the vendor of the processor
-            tryInjection(msg, param, XSLTInjectionCheck.VENDOR);
+        // sets the payloads that recquire an instance to be determined
+        XSLTInjectionType.PORTSCAN.payloads = new String[] {getXslForPortScan()};
 
-            // verifies if we can get a response relating to portscan
-            payloads.put(XSLTInjectionCheck.PORTSCAN, new String[] {getXslForPortScan()});
-            tryInjection(msg, param, XSLTInjectionCheck.PORTSCAN);
-
-            // verifies if commands can be executed
-            tryInjection(msg, param, XSLTInjectionCheck.COMMAND_EXEC);
+        // goes through all checks and stops if it finds a possible
+        // injection
+        for (XSLTInjectionType check : XSLTInjectionType.values()) {
+            if (tryInjection(msg, param, check)) {
+                return;
+            }
         }
     }
 
-    private Boolean tryInjection(HttpMessage msg, String param, XSLTInjectionCheck checkType) {
-        for (String payload : payloads.get(checkType)) {
+    private Boolean tryInjection(HttpMessage msg, String param, XSLTInjectionType checkType) {
+        for (String payload : checkType.payloads) {
             try {
                 if (isStop() || requestsLimitReached()) { // stop before sending request
                     if (LOG.isDebugEnabled()) {
@@ -147,14 +131,14 @@ public class XSLTInjection extends AbstractAppParamPlugin {
                 }
                 msg = sendRequest(msg, param, payload);
 
-                for (String response : responses.get(checkType)) {
+                for (String response : checkType.responses) {
                     if (getBaseMsg().getResponseBody().toString().contains(response)) {
                         continue; // skip as the original contains the suspicious response
                     }
 
                     if (msg.getResponseBody().toString().contains(response)) {
                         // found a possible injection
-                        raiseAlert(msg, param, payload, response, checkType);
+                        raiseAlert(msg, param, payload, response, checkType.resourceIdentifier);
                         return true;
                     }
                 }
@@ -197,12 +181,14 @@ public class XSLTInjection extends AbstractAppParamPlugin {
     }
 
     private boolean requestsLimitReached() {
-        return requestsSent >= strengthToRequestCountMap.get(getAttackStrength());
+        return strengthToRequestCountMap.containsKey(getAttackStrength())
+                ? false
+                : requestsSent >= strengthToRequestCountMap.get(getAttackStrength());
     }
 
-    private String getOtherInfo(XSLTInjectionCheck checkType, String param) {
+    private String getOtherInfo(String resourceIdentifier, String param) {
         return Constant.messages.getString(
-                MESSAGE_PREFIX + resourceIdentifiers.get(checkType) + ".otherinfo", param);
+                MESSAGE_PREFIX + resourceIdentifier + ".otherinfo", param);
     }
 
     private void raiseAlert(
@@ -210,7 +196,7 @@ public class XSLTInjection extends AbstractAppParamPlugin {
             String param,
             String attack,
             String evidence,
-            XSLTInjectionCheck checkType) {
+            String resourceIdentifier) {
         bingo(
                 getRisk(),
                 Alert.CONFIDENCE_MEDIUM,
@@ -219,7 +205,7 @@ public class XSLTInjection extends AbstractAppParamPlugin {
                 msg.getRequestHeader().getURI().toString(),
                 param,
                 attack,
-                getOtherInfo(checkType, evidence),
+                getOtherInfo(resourceIdentifier, evidence),
                 getSolution(),
                 evidence,
                 getCweId(),
