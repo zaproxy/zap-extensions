@@ -66,10 +66,8 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
      * Instantiates a new dialog add alertFilter.
      *
      * @param owner the owner
-     * @param extension the extension
-     * @param context the context
      */
-    public DialogAddAlertFilter(Dialog owner, ExtensionAlertFilters extension) {
+    public DialogAddAlertFilter(Dialog owner) {
         super(owner, DIALOG_TITLE);
     }
 
@@ -77,11 +75,9 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
      * Instantiates a new dialog add alertFilter.
      *
      * @param owner the owner
-     * @param extension the extension
      * @param title the title
-     * @param context the context
      */
-    public DialogAddAlertFilter(Dialog owner, ExtensionAlertFilters extension, String title) {
+    public DialogAddAlertFilter(Dialog owner, String title) {
         super(owner, title);
     }
 
@@ -96,10 +92,6 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
     @Override
     protected void init() {
-        if (this.workingContext == null)
-            throw new IllegalStateException(
-                    "A working Context should be set before setting the 'Add Dialog' visible.");
-
         this.setConfirmButtonEnabled(true);
     }
 
@@ -119,7 +111,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         String alertName = (String) getAlertCombo().getSelectedItem();
         this.alertFilter =
                 new AlertFilter(
-                        workingContext.getIndex(),
+                        workingContext != null ? workingContext.getIndex() : -1,
                         ExtensionAlertFilters.getIdForRuleName(alertName),
                         getNewLevel(),
                         getUrlTextField().getText(),

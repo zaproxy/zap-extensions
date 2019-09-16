@@ -20,25 +20,18 @@
 package org.zaproxy.zap.extension.alertFilters;
 
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.awt.GridBagLayout;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SortOrder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
-import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
     private AlertFiltersMultipleOptionsPanel alertFilterOptionsPanel;
     private ContextAlertFilterManager contextManager;
-    private ExtensionAlertFilters extension;
     private AlertFilterTableModel alertFilterTableModel;
 
     /** The Constant serialVersionUID. */
@@ -49,7 +42,6 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
     public ContextAlertFilterPanel(ExtensionAlertFilters extension, int contextId) {
         super(contextId);
-        this.extension = extension;
         this.contextManager = extension.getContextAlertFilterManager(contextId);
         initialize();
     }
@@ -69,143 +61,13 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
                 LayoutHelper.getGBC(0, 0, 1, 1.0d, 0.0d));
 
         alertFilterTableModel = new AlertFilterTableModel();
-        alertFilterOptionsPanel =
-                new AlertFiltersMultipleOptionsPanel(
-                        this.extension, alertFilterTableModel, getContextIndex());
+        alertFilterOptionsPanel = new AlertFiltersMultipleOptionsPanel(alertFilterTableModel);
         this.add(alertFilterOptionsPanel, LayoutHelper.getGBC(0, 1, 1, 1.0d, 1.0d));
     }
 
     @Override
     public String getHelpIndex() {
         return "addon.alertFilter";
-    }
-
-    public static class AlertFiltersMultipleOptionsPanel
-            extends AbstractMultipleOptionsTablePanel<AlertFilter> {
-
-        private static final long serialVersionUID = -7216673905642941770L;
-
-        private static final String REMOVE_DIALOG_TITLE =
-                Constant.messages.getString("alertFilters.dialog.remove.title");
-        private static final String REMOVE_DIALOG_TEXT =
-                Constant.messages.getString("alertFilters.dialog.remove.text");
-
-        private static final String REMOVE_DIALOG_CONFIRM_BUTTON_LABEL =
-                Constant.messages.getString("alertFilters.dialog.remove.button.confirm");
-        private static final String REMOVE_DIALOG_CANCEL_BUTTON_LABEL =
-                Constant.messages.getString("alertFilters.dialog.remove.button.cancel");
-
-        private static final String REMOVE_DIALOG_CHECKBOX_LABEL =
-                Constant.messages.getString("alertFilters.dialog.remove.checkbox.label");
-
-        private DialogAddAlertFilter addDialog = null;
-        private DialogModifyAlertFilter modifyDialog = null;
-        private ExtensionAlertFilters extension;
-        private Context uiSharedContext;
-
-        public AlertFiltersMultipleOptionsPanel(
-                ExtensionAlertFilters extension, AlertFilterTableModel model, int contextId) {
-            super(model);
-            this.extension = extension;
-
-            Component rendererComponent;
-            if (getTable().getColumnExt(0).getHeaderRenderer()
-                    == null) { // If there isn't a header renderer then get the default renderer
-                rendererComponent =
-                        getTable()
-                                .getTableHeader()
-                                .getDefaultRenderer()
-                                .getTableCellRendererComponent(
-                                        null,
-                                        getTable().getColumnExt(0).getHeaderValue(),
-                                        false,
-                                        false,
-                                        0,
-                                        0);
-            } else { // If there is a custom renderer then get it
-                rendererComponent =
-                        getTable()
-                                .getColumnExt(0)
-                                .getHeaderRenderer()
-                                .getTableCellRendererComponent(
-                                        null,
-                                        getTable().getColumnExt(0).getHeaderValue(),
-                                        false,
-                                        false,
-                                        0,
-                                        0);
-            }
-
-            getTable().getColumnExt(0).setMaxWidth(rendererComponent.getMaximumSize().width);
-            getTable().setSortOrder(1, SortOrder.ASCENDING);
-            getTable().packAll();
-        }
-
-        @Override
-        public AlertFilter showAddDialogue() {
-            if (addDialog == null) {
-                addDialog =
-                        new DialogAddAlertFilter(
-                                View.getSingleton().getOptionsDialog(null), this.extension);
-                addDialog.pack();
-            }
-            addDialog.setWorkingContext(this.uiSharedContext);
-            addDialog.setVisible(true);
-
-            AlertFilter alertFilter = addDialog.getAlertFilter();
-            addDialog.clear();
-
-            return alertFilter;
-        }
-
-        @Override
-        public AlertFilter showModifyDialogue(AlertFilter alertFilter) {
-            if (modifyDialog == null) {
-                modifyDialog =
-                        new DialogModifyAlertFilter(
-                                View.getSingleton().getOptionsDialog(null), this.extension);
-                modifyDialog.pack();
-            }
-            modifyDialog.setWorkingContext(this.uiSharedContext);
-            modifyDialog.setAlertFilter(alertFilter);
-            modifyDialog.setVisible(true);
-
-            alertFilter = modifyDialog.getAlertFilter();
-            modifyDialog.clear();
-
-            return alertFilter;
-        }
-
-        @Override
-        public boolean showRemoveDialogue(AlertFilter e) {
-            JCheckBox removeWithoutConfirmationCheckBox =
-                    new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
-            Object[] messages = {REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox};
-            int option =
-                    JOptionPane.showOptionDialog(
-                            View.getSingleton().getMainFrame(),
-                            messages,
-                            REMOVE_DIALOG_TITLE,
-                            JOptionPane.OK_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            new String[] {
-                                REMOVE_DIALOG_CONFIRM_BUTTON_LABEL,
-                                REMOVE_DIALOG_CANCEL_BUTTON_LABEL
-                            },
-                            null);
-
-            if (option == JOptionPane.OK_OPTION) {
-                setRemoveWithoutConfirmation(removeWithoutConfirmationCheckBox.isSelected());
-                return true;
-            }
-
-            return false;
-        }
-
-        protected void setWorkingContext(Context context) {
-            this.uiSharedContext = context;
-        }
     }
 
     @Override
