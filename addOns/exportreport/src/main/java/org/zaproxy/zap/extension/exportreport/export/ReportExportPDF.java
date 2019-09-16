@@ -464,7 +464,7 @@ public class ReportExportPDF {
                         smallLabelFormatting,
                         extensionExport
                                 .getMessages()
-                                .getString("exportreport.export.message.export.pdf.confidential"),
+                                .getString("exportreport.export.message.pdf.confidential"),
                         textInsertionPoint);
         textInsertionPoint =
                 addText(
@@ -837,43 +837,43 @@ public class ReportExportPDF {
         String labelDescription =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.description");
+                        .getString("exportreport.export.message.pdf.description");
         String labelRisk =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.risk");
+                        .getString("exportreport.export.message.pdf.risk");
         String labelReliability =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.reability");
+                        .getString("exportreport.export.message.pdf.reability");
         String labelURLs =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.urls");
+                        .getString("exportreport.export.message.pdf.urls");
         String labelParameter =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.parameters");
+                        .getString("exportreport.export.message.pdf.parameters");
         String labelAttack =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.attack");
+                        .getString("exportreport.export.message.pdf.attack");
         String labelEvidence =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.evidence");
+                        .getString("exportreport.export.message.pdf.evidence");
         String labelOtherInfo =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.otherinfo");
+                        .getString("exportreport.export.message.pdf.otherinfo");
         String labelSolution =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.solution");
+                        .getString("exportreport.export.message.pdf.solution");
         String labelReferences =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.references");
+                        .getString("exportreport.export.message.pdf.references");
         String labelCWEID =
                 extensionExport.getMessages().getString("exportreport.details.cweid.label");
         String labelWASCID =
@@ -909,7 +909,7 @@ public class ReportExportPDF {
         if (detailsToInclude.contains(
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.description"))) {
+                        .getString("exportreport.export.message.pdf.description"))) {
             textInsertionPoint =
                     addText(alertLabelFormatting, labelDescription, textInsertionPoint);
             textInsertionPoint =
@@ -1072,7 +1072,7 @@ public class ReportExportPDF {
             if (detailsToInclude.contains(
                             extensionExport
                                     .getMessages()
-                                    .getString("exportreport.export.message.export.pdf.otherinfo"))
+                                    .getString("exportreport.export.message.pdf.otherinfo"))
                     && !alertAux.getOtherInfo().isEmpty()) {
                 textInsertionPoint =
                         addText(
@@ -1087,7 +1087,7 @@ public class ReportExportPDF {
         if (detailsToInclude.contains(
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.export.pdf.solution"))) {
+                        .getString("exportreport.export.message.pdf.solution"))) {
             String solution =
                     getFieldAlertProperty(
                             alert.getPluginId(), "solution", alert.getSolution(), extensionExport);
@@ -1110,7 +1110,7 @@ public class ReportExportPDF {
         if (detailsToInclude.contains(
                         extensionExport
                                 .getMessages()
-                                .getString("exportreport.export.message.export.pdf.references"))
+                                .getString("exportreport.export.message.pdf.references"))
                 && !alert.getReference().isEmpty()) {
             textInsertionPoint = addText(alertLabelFormatting, labelReferences, textInsertionPoint);
             textInsertionPoint =
