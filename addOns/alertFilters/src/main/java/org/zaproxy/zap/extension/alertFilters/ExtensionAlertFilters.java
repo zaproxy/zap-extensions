@@ -101,6 +101,9 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private static List<String> allRuleNames;
     private static ExtensionActiveScan extAscan;
 
+    private GlobalAlertFilterParam globalAlertFilterParam;
+    private OptionsGlobalAlertFilterPanel optionsGlobalAlertFilterPanel;
+
     private Logger log = Logger.getLogger(this.getClass());
 
     private OnContextsChangedListenerImpl contextsChangedListener;
@@ -112,6 +115,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     @Override
     public void init() {
         super.init();
+
+        globalAlertFilterParam = new GlobalAlertFilterParam();
 
         ZAP.getEventBus()
                 .registerConsumer(
@@ -176,6 +181,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
+        extensionHook.addOptionsParamSet(globalAlertFilterParam);
+
         extensionHook.addSessionListener(this);
         contextsChangedListener = new OnContextsChangedListenerImpl();
         Model.getSingleton().getSession().addOnContextsChangedListener(contextsChangedListener);
@@ -186,10 +193,18 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         if (getView() != null) {
             // Factory for generating Session Context alertFilters panels
             extensionHook.getHookView().addContextPanelFactory(this);
+            extensionHook.getHookView().addOptionPanel(getOptionGlobalAlertFilterPanel());
         }
 
         this.api = new AlertFilterAPI(this);
         extensionHook.addApiImplementor(api);
+    }
+
+    private OptionsGlobalAlertFilterPanel getOptionGlobalAlertFilterPanel() {
+        if (optionsGlobalAlertFilterPanel == null) {
+            optionsGlobalAlertFilterPanel = new OptionsGlobalAlertFilterPanel();
+        }
+        return optionsGlobalAlertFilterPanel;
     }
 
     @Override
@@ -418,53 +433,68 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     private void handleAlert(Alert alert) {
         String uri = alert.getUri();
-        log.debug("Alert: " + this.lastAlert + " URL: " + uri);
-        // Loop through rules and apply as necessary..
+        if (log.isDebugEnabled()) {
+            log.debug("Alert: " + this.lastAlert + " URL: " + uri);
+        }
+        // Loop through global rules and apply as necessary
+        for (AlertFilter filter : this.globalAlertFilterParam.getGlobalAlertFilters()) {
+            if (filter.appliesToAlert(alert)) {
+                updateAlert(alert, filter);
+                return;
+            }
+        }
+
+        // Loop through context rules and apply as necessary..
         for (ContextAlertFilterManager mgr : this.contextManagers.values()) {
             Context context = Model.getSingleton().getSession().getContext(mgr.getContextId());
             if (context.isInContext(uri)) {
-                log.debug(
-                        "Is in context "
-                                + context.getIndex()
-                                + " got "
-                                + mgr.getAlertFilters().size()
-                                + " filters");
+                if (log.isDebugEnabled()) {
+                    log.debug(
+                            "Is in context "
+                                    + context.getIndex()
+                                    + " got "
+                                    + mgr.getAlertFilters().size()
+                                    + " filters");
+                }
                 // Its in this context
                 for (AlertFilter filter : mgr.getAlertFilters()) {
-                    if (!filter.appliesToAlert(alert)) {
-                        continue;
+                    if (filter.appliesToAlert(alert)) {
+                        updateAlert(alert, filter);
+                        return;
                     }
-
-                    Alert updAlert = alert;
-                    Alert origAlert = updAlert.newInstance();
-                    if (filter.getNewRisk() == -1) {
-                        updAlert.setRiskConfidence(
-                                alert.getRisk(), Alert.CONFIDENCE_FALSE_POSITIVE);
-                    } else {
-                        updAlert.setRiskConfidence(filter.getNewRisk(), alert.getConfidence());
-                    }
-                    try {
-                        log.debug(
-                                "Filter matched, setting Alert with plugin id : "
-                                        + alert.getPluginId()
-                                        + " to "
-                                        + filter.getNewRisk());
-                        getExtAlert().updateAlert(updAlert);
-                        getExtAlert().updateAlertInTree(origAlert, updAlert);
-                        if (alert.getHistoryRef() != null) {
-                            alert.getHistoryRef().updateAlert(updAlert);
-                            if (alert.getHistoryRef().getSiteNode() != null) {
-                                // Needed if the same alert was raised on another href for the same
-                                // SiteNode
-                                alert.getHistoryRef().getSiteNode().updateAlert(updAlert);
-                            }
-                        }
-                    } catch (Exception e) {
-                        log.error(e.getMessage(), e);
-                    }
-                    break;
                 }
             }
+        }
+    }
+
+    private void updateAlert(Alert alert, AlertFilter filter) {
+        Alert updAlert = alert;
+        Alert origAlert = updAlert.newInstance();
+        if (filter.getNewRisk() == -1) {
+            updAlert.setRiskConfidence(alert.getRisk(), Alert.CONFIDENCE_FALSE_POSITIVE);
+        } else {
+            updAlert.setRiskConfidence(filter.getNewRisk(), alert.getConfidence());
+        }
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "Setting Alert with plugin id : "
+                                + alert.getPluginId()
+                                + " to "
+                                + filter.getNewRisk());
+            }
+            getExtAlert().updateAlert(updAlert);
+            getExtAlert().updateAlertInTree(origAlert, updAlert);
+            if (alert.getHistoryRef() != null) {
+                alert.getHistoryRef().updateAlert(updAlert);
+                if (alert.getHistoryRef().getSiteNode() != null) {
+                    // Needed if the same alert was raised on another href for the same
+                    // SiteNode
+                    alert.getHistoryRef().getSiteNode().updateAlert(updAlert);
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -515,5 +545,9 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         public void contextsChanged() {
             // Nothing to do.
         }
+    }
+
+    protected GlobalAlertFilterParam getParam() {
+        return this.globalAlertFilterParam;
     }
 }

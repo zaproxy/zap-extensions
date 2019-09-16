@@ -38,7 +38,6 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
     private AlertFiltersMultipleOptionsPanel alertFilterOptionsPanel;
     private ContextAlertFilterManager contextManager;
-    private ExtensionAlertFilters extension;
     private AlertFilterTableModel alertFilterTableModel;
 
     /** The Constant serialVersionUID. */
@@ -49,7 +48,6 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
     public ContextAlertFilterPanel(ExtensionAlertFilters extension, int contextId) {
         super(contextId);
-        this.extension = extension;
         this.contextManager = extension.getContextAlertFilterManager(contextId);
         initialize();
     }
@@ -70,8 +68,7 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
         alertFilterTableModel = new AlertFilterTableModel();
         alertFilterOptionsPanel =
-                new AlertFiltersMultipleOptionsPanel(
-                        this.extension, alertFilterTableModel, getContextIndex());
+                new AlertFiltersMultipleOptionsPanel(alertFilterTableModel, getContextIndex());
         this.add(alertFilterOptionsPanel, LayoutHelper.getGBC(0, 1, 1, 1.0d, 1.0d));
     }
 
@@ -100,13 +97,10 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
         private DialogAddAlertFilter addDialog = null;
         private DialogModifyAlertFilter modifyDialog = null;
-        private ExtensionAlertFilters extension;
         private Context uiSharedContext;
 
-        public AlertFiltersMultipleOptionsPanel(
-                ExtensionAlertFilters extension, AlertFilterTableModel model, int contextId) {
+        public AlertFiltersMultipleOptionsPanel(AlertFilterTableModel model, int contextId) {
             super(model);
-            this.extension = extension;
 
             Component rendererComponent;
             if (getTable().getColumnExt(0).getHeaderRenderer()
@@ -144,9 +138,7 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
         @Override
         public AlertFilter showAddDialogue() {
             if (addDialog == null) {
-                addDialog =
-                        new DialogAddAlertFilter(
-                                View.getSingleton().getOptionsDialog(null), this.extension);
+                addDialog = new DialogAddAlertFilter(View.getSingleton().getOptionsDialog(null));
                 addDialog.pack();
             }
             addDialog.setWorkingContext(this.uiSharedContext);
@@ -162,8 +154,7 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
         public AlertFilter showModifyDialogue(AlertFilter alertFilter) {
             if (modifyDialog == null) {
                 modifyDialog =
-                        new DialogModifyAlertFilter(
-                                View.getSingleton().getOptionsDialog(null), this.extension);
+                        new DialogModifyAlertFilter(View.getSingleton().getOptionsDialog(null));
                 modifyDialog.pack();
             }
             modifyDialog.setWorkingContext(this.uiSharedContext);

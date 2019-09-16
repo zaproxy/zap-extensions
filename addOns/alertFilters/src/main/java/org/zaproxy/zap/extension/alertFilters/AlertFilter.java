@@ -32,6 +32,7 @@ public class AlertFilter extends Enableable {
      */
     private static final String FIELD_SEPARATOR = ";";
 
+    // Use -1 for global alert filters
     private int contextId;
     private int ruleId;
     // Use -1 as false positive
@@ -353,6 +354,52 @@ public class AlertFilter extends Enableable {
                 return false;
             }
         }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((attack == null) ? 0 : attack.hashCode());
+        result = prime * result + contextId;
+        result = prime * result + ((evidence == null) ? 0 : evidence.hashCode());
+        result = prime * result + (isAttackRegex ? 1231 : 1237);
+        result = prime * result + (isEvidenceRegex ? 1231 : 1237);
+        result = prime * result + (isParameterRegex ? 1231 : 1237);
+        result = prime * result + (isUrlRegex ? 1231 : 1237);
+        result = prime * result + newRisk;
+        result = prime * result + ((parameter == null) ? 0 : parameter.hashCode());
+        result = prime * result + ruleId;
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!super.equals(obj)) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlertFilter other = (AlertFilter) obj;
+        if (attack == null) {
+            if (other.attack != null) return false;
+        } else if (!attack.equals(other.attack)) return false;
+        if (contextId != other.contextId) return false;
+        if (evidence == null) {
+            if (other.evidence != null) return false;
+        } else if (!evidence.equals(other.evidence)) return false;
+        if (isAttackRegex != other.isAttackRegex) return false;
+        if (isEvidenceRegex != other.isEvidenceRegex) return false;
+        if (isParameterRegex != other.isParameterRegex) return false;
+        if (isUrlRegex != other.isUrlRegex) return false;
+        if (newRisk != other.newRisk) return false;
+        if (parameter == null) {
+            if (other.parameter != null) return false;
+        } else if (!parameter.equals(other.parameter)) return false;
+        if (ruleId != other.ruleId) return false;
+        if (url == null) {
+            if (other.url != null) return false;
+        } else if (!url.equals(other.url)) return false;
         return true;
     }
 }
