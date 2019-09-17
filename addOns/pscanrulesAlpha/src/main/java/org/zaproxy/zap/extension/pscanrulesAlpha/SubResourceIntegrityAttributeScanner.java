@@ -19,18 +19,14 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import static net.htmlparser.jericho.HTMLElementName.LINK;
-import static net.htmlparser.jericho.HTMLElementName.SCRIPT;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -38,32 +34,10 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-/** Detect missing attribute integrity in tag <script> */
+/** Detect missing attribute integrity in supported elements */
 public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.sri-integrity.";
-
-    // From
-    // https://w3c.github.io/webappsec-subresource-integrity/#verification-of-html-document-subresources
-    // To support integrity metadata for some of these elements, a new integrity attribute is added
-    // to
-    // the list of content attributes for the link and script elements.
-    // Note: A future revision of this specification is likely to include integrity support for all
-    // possible subresources, i.e., a, audio, embed, iframe, img, link, object, script, source,
-    // track,
-    // and video elements.
-    private static final List<String> SUPPORTED_ELEMENTS = Arrays.asList(SCRIPT, LINK);
-
-    private static final Map<String, String> CONTENT_ATTRIBUTES = new HashMap<String, String>();
-
-    static {
-        CONTENT_ATTRIBUTES.put(SCRIPT, "src");
-        CONTENT_ATTRIBUTES.put(LINK, "href");
-    }
-
-    // TODO Replace "rules.domains.trusted" with RuleConfigParam.RULE_DOMAINS_TRUSTED once
-    // available.
-    static final String TRUSTED_DOMAINS_PROPERTY = "rules.domains.trusted";
 
     private PassiveScanThread parent;
 
@@ -74,15 +48,10 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        Collection<String> trustedDomains =
-                Stream.of(getConfig().getString(TRUSTED_DOMAINS_PROPERTY, "").split(","))
-                        .filter(s -> !s.isEmpty())
-                        .collect(Collectors.toList());
 
         List<Element> sourceElements = source.getAllElements();
         sourceElements.stream()
-                .filter(element -> SUPPORTED_ELEMENTS.contains(element.getName()))
-                .filter(excludeSafeResourceFrom(trustedDomains))
+                .filter(element -> SupportedElements.contains(element.getName()))
                 .filter(unsafeSubResource(msg.getRequestHeader().getHostName()))
                 .forEach(
                         element -> {
@@ -109,18 +78,12 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
                         });
     }
 
-    private Predicate<Element> excludeSafeResourceFrom(Collection<String> trustedDomains) {
+    private static Predicate<Element> unsafeSubResource(String origin) {
         return element -> {
-            String domain = element.getAttributeValue(CONTENT_ATTRIBUTES.get(element.getName()));
-            return trustedDomains.stream().noneMatch(domain::matches);
+            Optional<String> maybeHostname = SupportedElements.getHost(element);
+            return element.getAttributeValue("integrity") == null
+                    && !maybeHostname.map(hostname -> hostname.matches(origin)).orElse(false);
         };
-    }
-
-    private static Predicate<Element> unsafeSubResource(String hostname) {
-        return element ->
-                element.getAttributeValue("integrity") == null
-                        && !element.getAttributeValue(CONTENT_ATTRIBUTES.get(element.getName()))
-                                .matches("^https?://[^/]*" + hostname + "/.*");
     }
 
     @Override
@@ -133,12 +96,52 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
         return getString("name");
     }
 
-    private String getString(String param) {
+    private static String getString(String param) {
         return Constant.messages.getString(MESSAGE_PREFIX + param);
     }
 
     @Override
     public int getPluginId() {
         return 90003;
+    }
+
+    private enum SupportedElements {
+        // From
+        // https://w3c.github.io/webappsec-subresource-integrity/#verification-of-html-document-subresources
+        // To support integrity metadata for some of these elements, a new integrity attribute is
+        // added
+        // to the list of content attributes for the link and script elements.
+        // Note: A future revision of this specification is likely to include integrity support for
+        // all
+        // possible subresources, i.e., a, audio, embed, iframe, img, link, object, script, source,
+        // track, and video elements.
+
+        SCRIPT(HTMLElementName.SCRIPT, "src"),
+        LINK(HTMLElementName.LINK, "href");
+
+        final String tag;
+        final String attribute;
+
+        SupportedElements(String tag, String attribute) {
+            this.tag = tag;
+            this.attribute = attribute;
+        }
+
+        public static boolean contains(String tag) {
+            return Stream.of(values()).anyMatch(e -> tag.equals(e.tag));
+        }
+
+        public static Optional<String> getHost(Element element) {
+            String url =
+                    element.getAttributeValue(
+                            SupportedElements.valueOf(element.getName().toUpperCase()).attribute);
+            URI uri;
+            try {
+                uri = new URI(url);
+            } catch (URISyntaxException e) {
+                return Optional.empty();
+            }
+            return Optional.of(uri.getHost());
+        }
     }
 }

@@ -30,15 +30,23 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 public class SubResourceIntegrityAttributeScannerTest
         extends PassiveScannerTest<SubResourceIntegrityAttributeScanner> {
 
+    @Override
+    protected SubResourceIntegrityAttributeScanner createScanner() {
+        SubResourceIntegrityAttributeScanner scanner = new SubResourceIntegrityAttributeScanner();
+        scanner.setConfig(new ZapXmlConfiguration());
+        return scanner;
+    }
+
     @Test
     public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInLinkElement()
             throws HttpMalformedHeaderException {
         // Given
+        // From https://www.w3.org/TR/SRI/#use-casesexamples
         HttpMessage msg =
                 buildMessage(
-                        "<html><head><link rel=\"stylesheet\" href=\"https://site53.example.net/style.css\"\n"
+                        "<html><head><link href=\"https://site53.example.net/style.css\"\n"
                                 + "      integrity=\"sha384-+/M6kredJcxdsqkczBUjMLvqyHb1K/JThDXWsBVxMEeZHEaMKEOEct339VItX1zB\"\n"
-                                + "      crossorigin=\"anonymous\"></head><body></body></html>"); // from https://www.w3.org/TR/SRI/#use-casesexamples
+                                + "      ></head><body></body></html>");
 
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
@@ -51,12 +59,12 @@ public class SubResourceIntegrityAttributeScannerTest
     public void shouldNotRaiseAlertGivenIntegrityAttributeIsPresentInScriptElement()
             throws HttpMalformedHeaderException {
         // Given
+        // From https://www.w3.org/TR/SRI/#use-casesexamples
         HttpMessage msg =
                 buildMessage(
                         "<html><head><script src=\"https://analytics-r-us.example.com/v1.0/include.js\"\n"
                                 + "        integrity=\"sha384-MBO5IDfYaE6c6Aao94oZrIOiC6CGiSN2n4QUbHNPhzk5Xhm0djZLQqTpL0HzTUxk\"\n"
-                                + "        crossorigin=\"anonymous\"></script></head><body></body></html>"); // from
-        // https://www.w3.org/TR/SRI/#use-casesexamples
+                                + "        ></script></head><body></body></html>");
 
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
@@ -102,14 +110,14 @@ public class SubResourceIntegrityAttributeScannerTest
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenElementIsNotServedByCDN()
+    public void shouldNotRaiseAlertGivenElementIsServedByCurrentDomain()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
-                                + "<script src=\"https://static.example.com/v1.0/include.js\"></script>"
-                                + "<link href=\"http://static.example.com/v1.0/style.css\"></script>"
+                                + "<script src=\"https://example.com/v1.0/include.js\"></script>"
+                                + "<link href=\"http://example.com/v1.0/style.css\"></script>"
                                 + "</head><body></body></html>");
 
         // When
@@ -120,38 +128,42 @@ public class SubResourceIntegrityAttributeScannerTest
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenElementIsServedByTrustedDomain()
+    public void shouldRaiseAlertGivenElementIsServedBySubDomain()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
-                                + "<script src=\"https://trusted.domain.com/v1.0/include.js\"></script>"
-                                + "<link href=\"https://another.trusted.com/v1.0/include.js\"></link>"
+                                + "<script src=\"https://subdomain.example.com/v1.0/include.js\"></script>"
                                 + "</head><body></body></html>");
-        rule.getConfig()
-                .setProperty(
-                        SubResourceIntegrityAttributeScanner.TRUSTED_DOMAINS_PROPERTY,
-                        "https://trusted.domain.com/.*,https://.*trusted.com/.*");
 
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised.size(), equalTo(1));
     }
 
-    public HttpMessage buildMessage(String body) throws HttpMalformedHeaderException {
+    @Test
+    public void shouldIgnoreInvalidFormattedHostname() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"https://in(){}\\#~&/v1.0/include.js\"></script>"
+                                + "</head><body></body></html>");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+    }
+
+    private static HttpMessage buildMessage(String body) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
         msg.setResponseBody(body);
         return msg;
-    }
-
-    @Override
-    protected SubResourceIntegrityAttributeScanner createScanner() {
-        SubResourceIntegrityAttributeScanner scanner = new SubResourceIntegrityAttributeScanner();
-        scanner.setConfig(new ZapXmlConfiguration());
-        return scanner;
     }
 }
