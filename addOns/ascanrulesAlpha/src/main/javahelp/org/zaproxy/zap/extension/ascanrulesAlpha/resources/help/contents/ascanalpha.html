@@ -104,7 +104,6 @@ This active scanner checks for differences in response based on fuzzed User Agen
 
 <H2>XSLT Injection Scanner</H2>
 This active scanner checks for certain responses induced by injecting XSL transformations. <br/>
-When injecting tokens produces errors suggesting a vulnerability, the scanner attempts to exploit it by checking the responses to requests trying to access sensitive system information.
-
+It attempts to obtain those responses with payloads which may induce: error responses, disclosure of library/framework vendor name, remote port scanning, or command execution.
 </BODY>
 </HTML>
