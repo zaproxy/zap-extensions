@@ -33,28 +33,44 @@ public class ReplacerParamRuleTest {
         String replacement = "abc\\x01\\xaadef";
 
         // When
-        ReplacerParamRule nonAsciiRegexRule =
+        ReplacerParamRule hexValueRegexRule =
                 new ReplacerParamRule(
                         "", REQ_HEADER_STR, "anyMatchString", true, replacement, null, true);
 
         // Then
         assertThat(
-                nonAsciiRegexRule.getEscapedReplacement(),
+                hexValueRegexRule.getEscapedReplacement(),
                 equalTo(new String(new byte[] {'a', 'b', 'c', 1, (byte) 170, 'd', 'e', 'f'})));
     }
 
     @Test
-    public void shouldNotSubstituteHexValuesInReplacementStringGivenAntislashIsEscaped() {
+    public void shouldSubstituteHexValuesInReplacementStringForNonRegexMatch() {
+        // Given
+        String replacement = "abc\\x01\\xaadef";
+
+        // When
+        ReplacerParamRule hexValueRegexRule =
+                new ReplacerParamRule(
+                        "", REQ_HEADER_STR, "anyMatchString", false, replacement, null, true);
+
+        // Then
+        assertThat(
+                hexValueRegexRule.getEscapedReplacement(),
+                equalTo(new String(new byte[] {'a', 'b', 'c', 1, (byte) 170, 'd', 'e', 'f'})));
+    }
+
+    @Test
+    public void shouldNotSubstituteHexValuesInReplacementStringGivenBackslashIsEscaped() {
         // Given
         String replacement = "abc\\\\x01\\\\xaadef";
 
         // When
-        ReplacerParamRule nonAsciiRegexRule =
+        ReplacerParamRule hexValueRegexRule =
                 new ReplacerParamRule(
                         "", REQ_HEADER_STR, "anyMatchString", true, replacement, null, true);
 
         // Then
-        assertThat(nonAsciiRegexRule.getEscapedReplacement(), equalTo("abc\\x01\\xaadef"));
+        assertThat(hexValueRegexRule.getEscapedReplacement(), equalTo("abc\\x01\\xaadef"));
     }
 
     @Test
@@ -63,26 +79,26 @@ public class ReplacerParamRuleTest {
         String replacement = "\\xZZ";
 
         // When
-        ReplacerParamRule nonAsciiRegexRule =
+        ReplacerParamRule hexValueRegexRule =
                 new ReplacerParamRule(
                         "", REQ_HEADER_STR, "anyMatchString", true, replacement, null, true);
 
         // Then
-        assertThat(nonAsciiRegexRule.getEscapedReplacement(), equalTo("\\xZZ"));
+        assertThat(hexValueRegexRule.getEscapedReplacement(), equalTo("\\xZZ"));
     }
 
     @Test
-    public void shouldNotSubstituteGivenThereIsOnlyOneAntiSlash() {
+    public void shouldNotSubstituteGivenThereIsOnlyOneBackSlash() {
         // Given
         String replacement = "\\";
 
         // When
-        ReplacerParamRule nonAsciiRegexRule =
+        ReplacerParamRule hexValueRegexRule =
                 new ReplacerParamRule(
                         "", REQ_HEADER_STR, "anyMatchString", true, replacement, null, true);
 
         // Then
-        assertThat(nonAsciiRegexRule.getEscapedReplacement(), equalTo("\\"));
+        assertThat(hexValueRegexRule.getEscapedReplacement(), equalTo("\\"));
     }
 
     @Test
@@ -91,11 +107,11 @@ public class ReplacerParamRuleTest {
         String replacement = "\\x";
 
         // When
-        ReplacerParamRule nonAsciiRegexRule =
+        ReplacerParamRule hexValueRegexRule =
                 new ReplacerParamRule(
                         "", REQ_HEADER_STR, "anyMatchString", true, replacement, null, true);
 
         // Then
-        assertThat(nonAsciiRegexRule.getEscapedReplacement(), equalTo("\\x"));
+        assertThat(hexValueRegexRule.getEscapedReplacement(), equalTo("\\x"));
     }
 }
