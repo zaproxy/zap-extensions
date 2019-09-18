@@ -243,6 +243,13 @@ public class WebSocketMessageDTO implements Message {
         return map;
     }
 
+    @Override
+    public WebSocketMessageDTO clone() {
+        WebSocketMessageDTO newMessage = new WebSocketMessageDTO();
+        this.copyInto(newMessage);
+        return newMessage;
+    }
+
     // @Override
     public Map<String, String> toEventData() {
         return this.toMap(true);
