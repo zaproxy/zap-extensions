@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -36,6 +37,48 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Detect missing attribute integrity in supported elements */
 public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
+
+    private enum SupportedElements {
+        // From
+        // https://w3c.github.io/webappsec-subresource-integrity/#verification-of-html-document-subresources
+        // To support integrity metadata for some of these elements, a new integrity attribute is
+        // added
+        // to the list of content attributes for the link and script elements.
+        // Note: A future revision of this specification is likely to include integrity support for
+        // all
+        // possible subresources, i.e., a, audio, embed, iframe, img, link, object, script, source,
+        // track, and video elements.
+
+        SCRIPT(HTMLElementName.SCRIPT, "src"),
+        LINK(HTMLElementName.LINK, "href");
+
+        final String tag;
+        final String attribute;
+
+        SupportedElements(String tag, String attribute) {
+            this.tag = tag;
+            this.attribute = attribute;
+        }
+
+        public static boolean contains(String tag) {
+            return Stream.of(values()).anyMatch(e -> tag.equals(e.tag));
+        }
+
+        public static Optional<String> getHost(Element element) {
+            String url =
+                    element.getAttributeValue(
+                            SupportedElements.valueOf(element.getName().toUpperCase(Locale.ROOT))
+                                    .attribute);
+            URI uri;
+            try {
+                uri = new URI(url);
+            } catch (URISyntaxException e) {
+                return Optional.empty();
+            }
+            return Optional.of(uri.getHost());
+        }
+    }
+
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.sri-integrity.";
 
@@ -103,45 +146,5 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
     @Override
     public int getPluginId() {
         return 90003;
-    }
-
-    private enum SupportedElements {
-        // From
-        // https://w3c.github.io/webappsec-subresource-integrity/#verification-of-html-document-subresources
-        // To support integrity metadata for some of these elements, a new integrity attribute is
-        // added
-        // to the list of content attributes for the link and script elements.
-        // Note: A future revision of this specification is likely to include integrity support for
-        // all
-        // possible subresources, i.e., a, audio, embed, iframe, img, link, object, script, source,
-        // track, and video elements.
-
-        SCRIPT(HTMLElementName.SCRIPT, "src"),
-        LINK(HTMLElementName.LINK, "href");
-
-        final String tag;
-        final String attribute;
-
-        SupportedElements(String tag, String attribute) {
-            this.tag = tag;
-            this.attribute = attribute;
-        }
-
-        public static boolean contains(String tag) {
-            return Stream.of(values()).anyMatch(e -> tag.equals(e.tag));
-        }
-
-        public static Optional<String> getHost(Element element) {
-            String url =
-                    element.getAttributeValue(
-                            SupportedElements.valueOf(element.getName().toUpperCase()).attribute);
-            URI uri;
-            try {
-                uri = new URI(url);
-            } catch (URISyntaxException e) {
-                return Optional.empty();
-            }
-            return Optional.of(uri.getHost());
-        }
     }
 }
