@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -90,9 +91,7 @@ public class XSLTInjection extends AbstractAppParamPlugin {
         }
 
         private String[] getPayloads(HttpMessage msg) {
-            return this.name().equals("PORTSCAN")
-                    ? new String[] {getXslForPortScan(msg)}
-                    : payloads;
+            return this == PORTSCAN ? new String[] {getXslForPortScan(msg)} : payloads;
         }
 
         private String[] getEvidences() {
@@ -131,27 +130,31 @@ public class XSLTInjection extends AbstractAppParamPlugin {
     }
 
     private Boolean tryInjection(HttpMessage msg, String param, XSLTInjectionType checkType) {
+        Predicate<String> filterEvidence =
+                ((Predicate<String>) (getBaseMsg().getResponseBody().toString()::contains))
+                        .negate();
+
+        String[] relevantEvidence =
+                Arrays.stream(checkType.getEvidences())
+                        .filter(filterEvidence)
+                        .toArray(String[]::new);
+
         for (String payload : checkType.getPayloads(msg)) {
             try {
                 if (isStop() || requestsLimitReached()) { // stop before sending request
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Scanner " + getName() + " Stopping.");
                     }
-                    return false;
-                }
-
-                if (Arrays.stream(checkType.getEvidences())
-                        .anyMatch(getBaseMsg().getResponseBody().toString()::contains)) {
-                    continue; // skip as the original contains a suspicious response
+                    return true;
                 }
 
                 msg = sendRequest(msg, param, payload);
 
-                for (String response : checkType.getEvidences()) {
-                    if (msg.getResponseBody().toString().contains(response)) {
+                for (String evidence : relevantEvidence) {
+                    if (msg.getResponseBody().toString().contains(evidence)) {
                         // found a possible injection
                         raiseAlert(
-                                msg, param, payload, response, checkType.getResourceIdentifier());
+                                msg, param, payload, evidence, checkType.getResourceIdentifier());
                         return true;
                     }
                 }
