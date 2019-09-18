@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER_STR;
 
+import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 
 public class ReplacerParamRuleTest {
@@ -40,7 +41,10 @@ public class ReplacerParamRuleTest {
         // Then
         assertThat(
                 hexValueRegexRule.getEscapedReplacement(),
-                equalTo(new String(new byte[] {'a', 'b', 'c', 1, (byte) 170, 'd', 'e', 'f'})));
+                equalTo(
+                        new String(
+                                new byte[] {'a', 'b', 'c', 1, (byte) 170, 'd', 'e', 'f'},
+                                StandardCharsets.US_ASCII)));
     }
 
     @Test
@@ -56,7 +60,10 @@ public class ReplacerParamRuleTest {
         // Then
         assertThat(
                 hexValueRegexRule.getEscapedReplacement(),
-                equalTo(new String(new byte[] {'a', 'b', 'c', 1, (byte) 170, 'd', 'e', 'f'})));
+                equalTo(
+                        new String(
+                                new byte[] {'a', 'b', 'c', 1, (byte) 170, 'd', 'e', 'f'},
+                                StandardCharsets.US_ASCII)));
     }
 
     @Test
