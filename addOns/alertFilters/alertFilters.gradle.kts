@@ -4,7 +4,7 @@ version = "9"
 description = "Allows you to automate the changing of alert risk levels."
 
 zapAddOn {
-    addOnName.set("Context Alert Filters")
+    addOnName.set("Alert Filters")
     addOnStatus.set(AddOnStatus.BETA)
     zapVersion.set("2.7.0")
 

@@ -52,6 +52,7 @@ import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.AlertEventPublisher;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.PolicyManager;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -166,7 +167,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             // init
             getAllRuleNames();
         }
-        return nameToId.get(name);
+        if (nameToId.containsKey(name)) {
+            return nameToId.get(name);
+        }
+        return -1;
     }
 
     public static String getRuleNameForId(int ruleId) {
@@ -194,6 +198,34 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             // Factory for generating Session Context alertFilters panels
             extensionHook.getHookView().addContextPanelFactory(this);
             extensionHook.getHookView().addOptionPanel(getOptionGlobalAlertFilterPanel());
+
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuItemAlert(
+                                    Constant.messages.getString(
+                                            "alertFilters.popup.createfilter")) {
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                protected void performAction(Alert alert) {
+                                    AlertFilter af =
+                                            getOptionGlobalAlertFilterPanel()
+                                                    .showAddDialogue(new AlertFilter(-1, alert));
+                                    if (af != null) {
+                                        if (af.getContextId() >= 0) {
+                                            getContextAlertFilterManager(af.getContextId())
+                                                    .addAlertFilter(af);
+                                            Model.getSingleton()
+                                                    .getSession()
+                                                    .getContext(af.getContextId())
+                                                    .save();
+                                        } else {
+                                            getParam().addAlertFilter(af);
+                                        }
+                                    }
+                                }
+                            });
         }
 
         this.api = new AlertFilterAPI(this);
@@ -202,7 +234,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     private OptionsGlobalAlertFilterPanel getOptionGlobalAlertFilterPanel() {
         if (optionsGlobalAlertFilterPanel == null) {
-            optionsGlobalAlertFilterPanel = new OptionsGlobalAlertFilterPanel();
+            optionsGlobalAlertFilterPanel = new OptionsGlobalAlertFilterPanel(this);
         }
         return optionsGlobalAlertFilterPanel;
     }
@@ -438,7 +470,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         }
         // Loop through global rules and apply as necessary
         for (AlertFilter filter : this.globalAlertFilterParam.getGlobalAlertFilters()) {
-            if (filter.appliesToAlert(alert)) {
+            if (filter.appliesToAlert(alert, true)) {
                 updateAlert(alert, filter);
                 return;
             }
@@ -458,7 +490,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                 }
                 // Its in this context
                 for (AlertFilter filter : mgr.getAlertFilters()) {
-                    if (filter.appliesToAlert(alert)) {
+                    if (filter.appliesToAlert(alert, true)) {
                         updateAlert(alert, filter);
                         return;
                     }
@@ -472,6 +504,9 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         Alert origAlert = updAlert.newInstance();
         if (filter.getNewRisk() == -1) {
             updAlert.setRiskConfidence(alert.getRisk(), Alert.CONFIDENCE_FALSE_POSITIVE);
+        } else if (alert.getConfidence() == Alert.CONFIDENCE_FALSE_POSITIVE) {
+            // No way of knowing what the previous confidence was
+            updAlert.setRiskConfidence(filter.getNewRisk(), Alert.CONFIDENCE_MEDIUM);
         } else {
             updAlert.setRiskConfidence(filter.getNewRisk(), alert.getConfidence());
         }
@@ -549,5 +584,18 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     protected GlobalAlertFilterParam getParam() {
         return this.globalAlertFilterParam;
+    }
+
+    public int applyAlertFilter(AlertFilter af, boolean testOnly) {
+        int count = 0;
+        for (Alert alert : getExtAlert().getAllAlerts()) {
+            if (af.appliesToAlert(alert, false)) {
+                if (!testOnly) {
+                    updateAlert(alert, af);
+                }
+                count++;
+            }
+        }
+        return count;
     }
 }

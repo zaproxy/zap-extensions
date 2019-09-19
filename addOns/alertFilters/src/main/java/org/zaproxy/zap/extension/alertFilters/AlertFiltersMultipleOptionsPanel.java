@@ -46,12 +46,15 @@ public class AlertFiltersMultipleOptionsPanel
     private static final String REMOVE_DIALOG_CHECKBOX_LABEL =
             Constant.messages.getString("alertFilters.dialog.remove.checkbox.label");
 
+    private ExtensionAlertFilters extension;
     private DialogAddAlertFilter addDialog = null;
     private DialogModifyAlertFilter modifyDialog = null;
     private Context uiSharedContext;
 
-    public AlertFiltersMultipleOptionsPanel(AlertFilterTableModel model) {
+    public AlertFiltersMultipleOptionsPanel(
+            ExtensionAlertFilters extension, AlertFilterTableModel model) {
         super(model);
+        this.extension = extension;
 
         Component rendererComponent;
         if (getTable().getColumnExt(0).getHeaderRenderer()
@@ -88,33 +91,45 @@ public class AlertFiltersMultipleOptionsPanel
 
     @Override
     public AlertFilter showAddDialogue() {
+        return this.showAddDialogue(null);
+    }
+
+    public AlertFilter showAddDialogue(AlertFilter alertFilter) {
+
         if (addDialog == null) {
-            addDialog = new DialogAddAlertFilter(View.getSingleton().getOptionsDialog(null));
+            addDialog =
+                    new DialogAddAlertFilter(
+                            this.extension, View.getSingleton().getOptionsDialog(null));
             addDialog.pack();
         }
         addDialog.setWorkingContext(this.uiSharedContext);
+        addDialog.setCanChangeContext(alertFilter != null);
+        addDialog.setAlertFilter(alertFilter);
         addDialog.setVisible(true);
+        addDialog.clearFields();
 
-        AlertFilter alertFilter = addDialog.getAlertFilter();
-        addDialog.clear();
-
-        return alertFilter;
+        return addDialog.getAlertFilter();
     }
 
     @Override
     public AlertFilter showModifyDialogue(AlertFilter alertFilter) {
+        return this.showModifyDialogue(alertFilter, false);
+    }
+
+    public AlertFilter showModifyDialogue(AlertFilter alertFilter, boolean canChangeContext) {
         if (modifyDialog == null) {
-            modifyDialog = new DialogModifyAlertFilter(View.getSingleton().getOptionsDialog(null));
+            modifyDialog =
+                    new DialogModifyAlertFilter(
+                            this.extension, View.getSingleton().getOptionsDialog(null));
             modifyDialog.pack();
         }
         modifyDialog.setWorkingContext(this.uiSharedContext);
         modifyDialog.setAlertFilter(alertFilter);
+        modifyDialog.setCanChangeContext(canChangeContext);
         modifyDialog.setVisible(true);
+        modifyDialog.clearFields();
 
-        alertFilter = modifyDialog.getAlertFilter();
-        modifyDialog.clear();
-
-        return alertFilter;
+        return modifyDialog.getAlertFilter();
     }
 
     @Override

@@ -19,15 +19,24 @@
  */
 package org.zaproxy.zap.extension.alertFilters;
 
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.AbstractFormDialog;
@@ -47,7 +56,12 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private static final String CONFIRM_BUTTON_LABEL =
             Constant.messages.getString("alertFilters.dialog.add.button.confirm");
 
+    private static final String SCOPE_GLOBAL =
+            Constant.messages.getString("alertFilters.dialog.add.label.scope.global");
+
+    private ExtensionAlertFilters extension;
     private JPanel fieldsPanel;
+    private Insets insets = new Insets(4, 8, 2, 4);
     private JCheckBox enabledCheckBox;
     private JComboBox<String> alertCombo;
     private JComboBox<String> newLevelCombo;
@@ -59,16 +73,27 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private JCheckBox attackRegexCheckBox;
     private ZapTextField evidenceTextField;
     private JCheckBox evidenceRegexCheckBox;
-    protected Context workingContext;
-    protected AlertFilter alertFilter;
+    private JLabel scopeLabel;
+    private JLabel scopeFixed;
+    private JComboBox<String> scopeCombo;
+    private Component scopeComponent;
+    private boolean canChangeContext;
+    private int scopeYOffset;
+    private Context workingContext;
+    private AlertFilter alertFilter;
+    private AlertFilter updatedAlertFilter;
+    private JButton testButton;
+    private JButton applyButton;
+    private JLabel testResultsLabel;
+    private JLabel applyResultsLabel;
 
     /**
      * Instantiates a new dialog add alertFilter.
      *
      * @param owner the owner
      */
-    public DialogAddAlertFilter(Dialog owner) {
-        super(owner, DIALOG_TITLE);
+    public DialogAddAlertFilter(ExtensionAlertFilters extension, Dialog owner) {
+        this(extension, owner, DIALOG_TITLE);
     }
 
     /**
@@ -77,8 +102,9 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
      * @param owner the owner
      * @param title the title
      */
-    public DialogAddAlertFilter(Dialog owner, String title) {
+    public DialogAddAlertFilter(ExtensionAlertFilters extension, Dialog owner, String title) {
         super(owner, title);
+        this.extension = extension;
     }
 
     /**
@@ -90,43 +116,133 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         this.workingContext = context;
     }
 
+    public void setCanChangeContext(boolean canChangeContext) {
+        this.canChangeContext = canChangeContext;
+        if (scopeComponent != null) {
+            fieldsPanel.remove(scopeComponent);
+        }
+        if (canChangeContext) {
+            scopeComponent = getScopeCombo();
+            resetScopeCombo();
+        } else {
+            scopeComponent = getScopeFixed();
+        }
+        scopeLabel.setLabelFor(scopeComponent);
+        fieldsPanel.add(scopeComponent, LayoutHelper.getGBC(1, scopeYOffset, 3, 0.5D, insets));
+        this.pack();
+    }
+
     @Override
     protected void init() {
+        if (this.alertFilter != null) {
+            log.debug("Initializing add alertFilter dialog for: " + alertFilter);
+            getAlertCombo()
+                    .setSelectedItem(
+                            ExtensionAlertFilters.getRuleNameForId(alertFilter.getRuleId()));
+            getNewLevelCombo()
+                    .setSelectedItem(AlertFilter.getNameForRisk(alertFilter.getNewRisk()));
+            getUrlTextField().setText(alertFilter.getUrl());
+            getUrlRegexCheckBox().setSelected(alertFilter.isUrlRegex());
+            getParamTextField().setText(alertFilter.getParameter());
+            getParamRegexCheckBox().setSelected(alertFilter.isParameterRegex());
+            getAttackTextField().setText(alertFilter.getAttack());
+            getAttackRegexCheckBox().setSelected(alertFilter.isAttackRegex());
+            getEvidenceTextField().setText(alertFilter.getEvidence());
+            getEvidenceRegexCheckBox().setSelected(alertFilter.isEvidenceRegex());
+
+            getEnabledCheckBox().setSelected(alertFilter.isEnabled());
+            setButtonStates();
+        }
         this.setConfirmButtonEnabled(true);
     }
 
-    public void clear() {
-        this.alertFilter = null;
-        this.workingContext = null;
+    private boolean regexFieldValid(ZapTextField field, String error) {
+        try {
+            Pattern.compile(field.getText());
+        } catch (PatternSyntaxException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    error,
+                    Constant.messages.getString("alertFilters.dialog.error.title"),
+                    JOptionPane.INFORMATION_MESSAGE);
+            field.requestFocusInWindow();
+            return false;
+        }
+        return true;
     }
 
     @Override
     protected boolean validateFields() {
-        // TODO check url / regex
+        if (getAlertCombo().getSelectedItem() == null) {
+            // Will happen with custom alerts
+            JOptionPane.showMessageDialog(
+                    this,
+                    Constant.messages.getString("alertFilters.dialog.error.missing.rule"),
+                    Constant.messages.getString("alertFilters.dialog.error.title"),
+                    JOptionPane.INFORMATION_MESSAGE);
+            return false;
+        }
+
+        if (this.getUrlRegexCheckBox().isSelected()) {
+            if (!regexFieldValid(
+                    this.getUrlTextField(),
+                    Constant.messages.getString("alertFilters.dialog.error.badregex.url"))) {
+                return false;
+            }
+        }
+        if (this.getParamRegexCheckBox().isSelected()) {
+            if (!regexFieldValid(
+                    this.getParamTextField(),
+                    Constant.messages.getString("alertFilters.dialog.error.badregex.param"))) {
+                return false;
+            }
+        }
+        if (this.getAttackRegexCheckBox().isSelected()) {
+            if (!regexFieldValid(
+                    this.getAttackTextField(),
+                    Constant.messages.getString("alertFilters.dialog.error.badregex.attack"))) {
+                return false;
+            }
+        }
+        if (this.getEvidenceRegexCheckBox().isSelected()) {
+            if (!regexFieldValid(
+                    this.getEvidenceTextField(),
+                    Constant.messages.getString("alertFilters.dialog.error.badregex.evidence"))) {
+                return false;
+            }
+        }
         return true;
     }
 
     @Override
     protected void performAction() {
+        this.updatedAlertFilter = fieldsToFilter();
+    }
+
+    private AlertFilter fieldsToFilter() {
         String alertName = (String) getAlertCombo().getSelectedItem();
-        this.alertFilter =
-                new AlertFilter(
-                        workingContext != null ? workingContext.getIndex() : -1,
-                        ExtensionAlertFilters.getIdForRuleName(alertName),
-                        getNewLevel(),
-                        getUrlTextField().getText(),
-                        getUrlRegexCheckBox().isSelected(),
-                        getParamTextField().getText(),
-                        getParamRegexCheckBox().isSelected(),
-                        getAttackTextField().getText(),
-                        getAttackRegexCheckBox().isSelected(),
-                        getEvidenceTextField().getText(),
-                        getEvidenceRegexCheckBox().isSelected(),
-                        this.getEnabledCheckBox().isSelected());
+        if (canChangeContext) {
+            workingContext = this.getChosenContext();
+        }
+
+        return new AlertFilter(
+                workingContext != null ? workingContext.getIndex() : -1,
+                ExtensionAlertFilters.getIdForRuleName(alertName),
+                getNewLevel(),
+                getUrlTextField().getText(),
+                getUrlRegexCheckBox().isSelected(),
+                getParamTextField().getText(),
+                getParamRegexCheckBox().isSelected(),
+                getAttackTextField().getText(),
+                getAttackRegexCheckBox().isSelected(),
+                getEvidenceTextField().getText(),
+                getEvidenceRegexCheckBox().isSelected(),
+                this.getEnabledCheckBox().isSelected());
     }
 
     @Override
     protected void clearFields() {
+        this.alertFilter = null;
         this.enabledCheckBox.setSelected(true);
         this.alertCombo.setSelectedIndex(0);
         this.newLevelCombo.setSelectedIndex(0);
@@ -143,15 +259,25 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         this.evidenceTextField.discardAllEdits();
         this.evidenceRegexCheckBox.setSelected(false);
         this.setConfirmButtonEnabled(true);
+        this.testResultsLabel.setText(
+                Constant.messages.getString("alertFilters.dialog.filter.state.nottested"));
+        this.applyResultsLabel.setText(
+                Constant.messages.getString("alertFilters.dialog.filter.state.notapplied"));
+    }
+
+    public void setAlertFilter(AlertFilter alertFilter) {
+        this.alertFilter = alertFilter;
+        this.updatedAlertFilter = null;
+        setButtonStates();
     }
 
     /**
-     * Gets the alertFilter defined in the dialog, if any.
+     * Gets the alertFilter defined in the dialog, will be null if the dialog is cancelled.
      *
      * @return the alertFilter, if correctly built or null, otherwise
      */
     public AlertFilter getAlertFilter() {
-        return alertFilter;
+        return updatedAlertFilter;
     }
 
     @Override
@@ -160,97 +286,168 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             fieldsPanel = new JPanel();
 
             fieldsPanel.setLayout(new GridBagLayout());
+            fieldsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             fieldsPanel.setName("DialogAddAlertFilter");
-            Insets insets = new Insets(4, 8, 2, 4);
+            int y = 0;
+
+            scopeLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.scope"));
+            scopeComponent = getScopeFixed();
+            scopeLabel.setLabelFor(scopeComponent);
+            scopeYOffset = y;
+            fieldsPanel.add(scopeLabel, LayoutHelper.getGBC(0, y, 1, 0.5D, insets));
+            fieldsPanel.add(scopeComponent, LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel alertLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.alert"));
             alertLabel.setLabelFor(getAlertCombo());
-            fieldsPanel.add(alertLabel, LayoutHelper.getGBC(0, 0, 1, 0.5D, insets));
-            fieldsPanel.add(getAlertCombo(), LayoutHelper.getGBC(1, 0, 1, 0.5D, insets));
+            fieldsPanel.add(alertLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getAlertCombo(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel newLevelLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.newlevel"));
             newLevelLabel.setLabelFor(getNewLevelCombo());
-            fieldsPanel.add(newLevelLabel, LayoutHelper.getGBC(0, 1, 1, 0.5D, insets));
-            fieldsPanel.add(getNewLevelCombo(), LayoutHelper.getGBC(1, 1, 1, 0.5D, insets));
+            fieldsPanel.add(newLevelLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getNewLevelCombo(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel urlLabel =
                     new JLabel(
                             Constant.messages.getString("alertFilters.dialog.add.field.label.url"));
             urlLabel.setLabelFor(getUrlTextField());
-            fieldsPanel.add(urlLabel, LayoutHelper.getGBC(0, 2, 1, 0.5D, insets));
-            fieldsPanel.add(getUrlTextField(), LayoutHelper.getGBC(1, 2, 1, 0.5D, insets));
+            fieldsPanel.add(urlLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getUrlTextField(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel urlRegexLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.urlregex"));
             urlRegexLabel.setLabelFor(getUrlRegexCheckBox());
-            fieldsPanel.add(urlRegexLabel, LayoutHelper.getGBC(0, 3, 1, 0.5D, insets));
-            fieldsPanel.add(getUrlRegexCheckBox(), LayoutHelper.getGBC(1, 3, 1, 0.5D, insets));
+            fieldsPanel.add(urlRegexLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getUrlRegexCheckBox(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel paramLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.param"));
             paramLabel.setLabelFor(getParamTextField());
-            fieldsPanel.add(paramLabel, LayoutHelper.getGBC(0, 4, 1, 0.5D, insets));
-            fieldsPanel.add(getParamTextField(), LayoutHelper.getGBC(1, 4, 1, 0.5D, insets));
+            fieldsPanel.add(paramLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getParamTextField(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel paramRegexLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.paramregex"));
             paramRegexLabel.setLabelFor(getParamRegexCheckBox());
-            fieldsPanel.add(paramRegexLabel, LayoutHelper.getGBC(0, 5, 1, 0.5D, insets));
-            fieldsPanel.add(getParamRegexCheckBox(), LayoutHelper.getGBC(1, 5, 1, 0.5D, insets));
+            fieldsPanel.add(paramRegexLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getParamRegexCheckBox(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel attackLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.attack"));
             attackLabel.setLabelFor(getAttackTextField());
-            fieldsPanel.add(attackLabel, LayoutHelper.getGBC(0, 6, 1, 0.5D, insets));
-            fieldsPanel.add(getAttackTextField(), LayoutHelper.getGBC(1, 6, 1, 0.5D, insets));
+            fieldsPanel.add(attackLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getAttackTextField(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel attackRegexLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.attackregex"));
             attackRegexLabel.setLabelFor(getUrlRegexCheckBox());
-            fieldsPanel.add(attackRegexLabel, LayoutHelper.getGBC(0, 7, 1, 0.5D, insets));
-            fieldsPanel.add(getAttackRegexCheckBox(), LayoutHelper.getGBC(1, 7, 1, 0.5D, insets));
+            fieldsPanel.add(attackRegexLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getAttackRegexCheckBox(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel evidenceLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.evidence"));
             evidenceLabel.setLabelFor(getEvidenceTextField());
-            fieldsPanel.add(evidenceLabel, LayoutHelper.getGBC(0, 8, 1, 0.5D, insets));
-            fieldsPanel.add(getEvidenceTextField(), LayoutHelper.getGBC(1, 8, 1, 0.5D, insets));
+            fieldsPanel.add(evidenceLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getEvidenceTextField(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel evidenceRegexLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.evidenceregex"));
             evidenceRegexLabel.setLabelFor(getUrlRegexCheckBox());
-            fieldsPanel.add(evidenceRegexLabel, LayoutHelper.getGBC(0, 9, 1, 0.5D, insets));
-            fieldsPanel.add(getEvidenceRegexCheckBox(), LayoutHelper.getGBC(1, 9, 1, 0.5D, insets));
+            fieldsPanel.add(evidenceRegexLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getEvidenceRegexCheckBox(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel enabledLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.enabled"));
             enabledLabel.setLabelFor(getEnabledCheckBox());
-            fieldsPanel.add(enabledLabel, LayoutHelper.getGBC(0, 10, 1, 0.5D, insets));
-            fieldsPanel.add(getEnabledCheckBox(), LayoutHelper.getGBC(1, 10, 1, 0.5D, insets));
+            fieldsPanel.add(enabledLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(getEnabledCheckBox(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
-            fieldsPanel.add(new JLabel(), LayoutHelper.getGBC(0, 20, 2, 1.0D)); // Spacer
+            testResultsLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.filter.state.nottested"));
+            testButton =
+                    new JButton(Constant.messages.getString("alertFilters.dialog.button.test"));
+            testButton.addActionListener(
+                    new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            alertFilter = fieldsToFilter();
+                            if (validateFields()) {
+                                int count = extension.applyAlertFilter(alertFilter, true);
+                                testResultsLabel.setText(
+                                        Constant.messages.getString(
+                                                "alertFilters.dialog.filter.state.appliesto",
+                                                count));
+                            }
+                        }
+                    });
+            JLabel testFilterLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.test"));
+            testFilterLabel.setLabelFor(testButton);
+            fieldsPanel.add(testFilterLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(testButton, LayoutHelper.getGBC(1, y, 1, 0D, insets));
+            fieldsPanel.add(testResultsLabel, LayoutHelper.getGBC(2, y, 1, 1.0D, insets));
+
+            applyResultsLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.filter.state.notapplied"));
+            applyButton =
+                    new JButton(Constant.messages.getString("alertFilters.dialog.button.apply"));
+            applyButton.addActionListener(
+                    new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                            alertFilter = fieldsToFilter();
+                            if (validateFields()) {
+                                int count = extension.applyAlertFilter(alertFilter, false);
+                                applyResultsLabel.setText(
+                                        Constant.messages.getString(
+                                                "alertFilters.dialog.filter.state.appliedto",
+                                                count));
+                            }
+                        }
+                    });
+            JLabel applyFilterLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "alertFilters.dialog.add.field.label.apply"));
+            applyFilterLabel.setLabelFor(testButton);
+            fieldsPanel.add(applyFilterLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(applyButton, LayoutHelper.getGBC(1, y, 1, 0D, insets));
+            fieldsPanel.add(applyResultsLabel, LayoutHelper.getGBC(2, y, 1, 1.0D, insets));
+
+            fieldsPanel.add(new JLabel(), LayoutHelper.getGBC(0, ++y, 2, 1.0D)); // Spacer
         }
         return fieldsPanel;
     }
@@ -259,9 +456,26 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         if (enabledCheckBox == null) {
             enabledCheckBox = new JCheckBox();
             enabledCheckBox.setSelected(true);
+            enabledCheckBox.addActionListener(
+                    new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            setButtonStates();
+                        }
+                    });
         }
 
         return enabledCheckBox;
+    }
+
+    protected void setButtonStates() {
+        if (testButton != null) {
+            testButton.setEnabled(enabledCheckBox.isSelected());
+        }
+        if (applyButton != null) {
+            applyButton.setEnabled(enabledCheckBox.isSelected());
+        }
     }
 
     protected ZapTextField getUrlTextField() {
@@ -356,5 +570,47 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     @Override
     protected String getConfirmButtonLabel() {
         return CONFIRM_BUTTON_LABEL;
+    }
+
+    private JLabel getScopeFixed() {
+        if (scopeFixed == null) {
+            this.scopeFixed = new JLabel();
+        }
+        if (this.workingContext == null) {
+            this.scopeFixed.setText(SCOPE_GLOBAL);
+        } else {
+            this.scopeFixed.setText(this.workingContext.getName());
+        }
+        return scopeFixed;
+    }
+
+    private void resetScopeCombo() {
+        JComboBox<String> scopeCombo = getScopeCombo();
+        scopeCombo.removeAllItems();
+        scopeCombo.addItem(SCOPE_GLOBAL);
+        for (Context context : Model.getSingleton().getSession().getContexts()) {
+            scopeCombo.addItem(context.getName());
+        }
+    }
+
+    private JComboBox<String> getScopeCombo() {
+        if (scopeCombo == null) {
+            scopeCombo = new JComboBox<String>();
+        }
+        return scopeCombo;
+    }
+
+    private Context getChosenContext() {
+        String name = (String) this.getScopeCombo().getSelectedItem();
+
+        if (name.equals(SCOPE_GLOBAL)) {
+            return null;
+        }
+        for (Context context : Model.getSingleton().getSession().getContexts()) {
+            if (name.equals(context.getName())) {
+                return context;
+            }
+        }
+        return null;
     }
 }
