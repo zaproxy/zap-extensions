@@ -28,8 +28,8 @@ public class DialogModifyAlertFilter extends DialogAddAlertFilter {
     private static final String DIALOG_TITLE =
             Constant.messages.getString("alertFilters.dialog.modify.title");
 
-    public DialogModifyAlertFilter(Dialog owner, ExtensionAlertFilters extension) {
-        super(owner, extension, DIALOG_TITLE);
+    public DialogModifyAlertFilter(Dialog owner) {
+        super(owner, DIALOG_TITLE);
     }
 
     public void setAlertFilter(AlertFilter alertFilter) {
@@ -43,10 +43,6 @@ public class DialogModifyAlertFilter extends DialogAddAlertFilter {
 
     @Override
     protected void init() {
-        if (this.workingContext == null) {
-            throw new IllegalStateException(
-                    "A working Context should be set before setting the 'Add Dialog' visible.");
-        }
         log.debug("Initializing modify alertFilter dialog for: " + alertFilter);
         getAlertCombo()
                 .setSelectedItem(ExtensionAlertFilters.getRuleNameForId(alertFilter.getRuleId()));
