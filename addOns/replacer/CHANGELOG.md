@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+
+ - Allow byte replacement using hexadecimal escapes (Issue 5328).
+
 ### Fixed
  - Fix link in API endpoint description.
 
