@@ -30,7 +30,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
 public class CustomPayloadsMultipleOptionsTablePanel
-        extends AbstractMultipleOptionsTablePanel<CustomPayloadModel> {
+        extends AbstractMultipleOptionsTablePanel<CustomPayload> {
 
     private static final long serialVersionUID = 1L;
     private static final String REMOVE_DIALOG_TITLE =
@@ -105,8 +105,8 @@ public class CustomPayloadsMultipleOptionsTablePanel
     }
 
     @Override
-    public CustomPayloadModel showAddDialogue() {
-        CustomPayloadModel payload = new CustomPayloadModel(-1, false, "", "");
+    public CustomPayload showAddDialogue() {
+        CustomPayload payload = new CustomPayload(-1, true, "", "");
         if (showDialog(payload)) {
             tableModel.setNextIdToPayload(payload);
             return payload;
@@ -114,25 +114,25 @@ public class CustomPayloadsMultipleOptionsTablePanel
         return null;
     }
 
-    private boolean showDialog(CustomPayloadModel model) {
+    private boolean showDialog(CustomPayload payload) {
         CustomPayloadDialog dialog =
                 new CustomPayloadDialog(
                         (Window) View.getSingleton().getOptionsDialog(null),
                         "custompayloads.options.dialog.title",
-                        model);
+                        payload);
         dialog.pack();
         dialog.setVisible(true);
         return dialog.isSaved();
     }
 
     @Override
-    public CustomPayloadModel showModifyDialogue(CustomPayloadModel payload) {
+    public CustomPayload showModifyDialogue(CustomPayload payload) {
         showDialog(payload);
         return payload;
     }
 
     @Override
-    public boolean showRemoveDialogue(CustomPayloadModel payload) {
+    public boolean showRemoveDialogue(CustomPayload payload) {
         getTable().packAll();
         JCheckBox removeWithoutConfirmationCheckBox = new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
         Object[] messages = {REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox};

@@ -19,21 +19,15 @@
  */
 package org.zaproxy.zap.extension.custompayloads;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.Plugin;
-import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionCustomPayloads extends ExtensionAdaptor {
 
     private CustomPayloadsParam params;
     private CustomPayloadsOptionsPanel optionsPanel;
-    private ArrayList<CustomPayloadModel> defaultPayloads;
 
     public ExtensionCustomPayloads() {
         super();
@@ -78,33 +72,18 @@ public class ExtensionCustomPayloads extends ExtensionAdaptor {
         return optionsPanel;
     }
 
-    public CustomPayloadsParam getParam() {
+    protected CustomPayloadsParam getParam() {
         if (params == null) {
-            params = new CustomPayloadsParam(this);
+            params = new CustomPayloadsParam();
         }
         return params;
     }
 
-    public ArrayList<CustomPayloadModel> getDefaultPayloads() {
-        if (defaultPayloads == null) {
-            ArrayList<CustomPayloadModel> payloads = new ArrayList<>();
-            PluginFactory factory = new PluginFactory();
-            ZapXmlConfiguration conf = new ZapXmlConfiguration();
-            factory.loadAllPlugin(conf);
-            List<Plugin> scanners = factory.getAllPlugin();
-            for (Plugin scanner : scanners) {
-                if (scanner instanceof PluginWithConfigurablePayload) {
-                    PluginWithConfigurablePayload scannerWithConfigurablePayload =
-                            (PluginWithConfigurablePayload) scanner;
-                    payloads.addAll(scannerWithConfigurablePayload.getDefaultPayloads());
-                }
-            }
-            defaultPayloads = payloads;
-        }
-        return defaultPayloads;
+    public void addPayloadCategory(PayloadCategory payloadCategory) {
+        getParam().addPayloadCategory(payloadCategory);
     }
 
-    public List<CustomPayloadModel> getPayloadsByCategory(String category) {
-        return getParam().getPayloadsByCategory(category);
+    public void removePayloadCategory(PayloadCategory payloadCategory) {
+        getParam().removePayloadCategory(payloadCategory);
     }
 }

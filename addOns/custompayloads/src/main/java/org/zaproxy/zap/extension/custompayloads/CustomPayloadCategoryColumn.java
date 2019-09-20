@@ -20,58 +20,45 @@
 package org.zaproxy.zap.extension.custompayloads;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import org.parosproxy.paros.control.Control;
 
-public class CustomPayloadCategoryColumn extends EditableSelectColumn<CustomPayloadModel> {
-
-    private ArrayList<String> defaultCategories;
+public class CustomPayloadCategoryColumn extends EditableSelectColumn<CustomPayload> {
 
     public CustomPayloadCategoryColumn() {
         super(String.class, "custompayloads.options.dialog.category");
     }
 
     @Override
-    public void setValue(CustomPayloadModel model, Object value) {
-        model.setCategory((String) value);
+    public void setValue(CustomPayload payload, Object value) {
+        payload.setCategory((String) value);
     }
 
     @Override
-    public Object getValue(CustomPayloadModel model) {
-        return model.getCategory();
+    public Object getValue(CustomPayload payload) {
+        return payload.getCategory();
     }
 
     @Override
-    public ArrayList<Object> getSelectableValues(CustomPayloadModel model) {
-        ArrayList<String> categories = getDefaultCategories();
+    public ArrayList<Object> getSelectableValues(CustomPayload payload) {
+        Collection<String> categories = getExtension().getParam().getCategoriesNames();
 
         ArrayList<Object> categoryObjects = new ArrayList<>();
-        boolean containsCategoryFromModel = false;
+        boolean containsCategoryFromPayload = false;
         for (String category : categories) {
             categoryObjects.add(category);
-            if (category.equals(model.getCategory())) {
-                containsCategoryFromModel = true;
+            if (category.equals(payload.getCategory())) {
+                containsCategoryFromPayload = true;
             }
         }
 
-        if (!containsCategoryFromModel
-                && model.getCategory() != null
-                && !model.getCategory().isEmpty()) {
-            categoryObjects.add(model.getCategory());
+        if (!containsCategoryFromPayload
+                && payload.getCategory() != null
+                && !payload.getCategory().isEmpty()) {
+            categoryObjects.add(payload.getCategory());
         }
 
         return categoryObjects;
-    }
-
-    private ArrayList<String> getDefaultCategories() {
-        if (defaultCategories == null) {
-            defaultCategories = new ArrayList<>();
-            for (CustomPayloadModel defaultModel : getExtension().getDefaultPayloads()) {
-                if (!defaultCategories.contains(defaultModel.getCategory())) {
-                    defaultCategories.add(defaultModel.getCategory());
-                }
-            }
-        }
-        return defaultCategories;
     }
 
     private ExtensionCustomPayloads getExtension() {

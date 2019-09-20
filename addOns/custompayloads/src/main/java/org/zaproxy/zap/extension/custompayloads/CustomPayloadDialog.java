@@ -22,16 +22,16 @@ package org.zaproxy.zap.extension.custompayloads;
 import java.awt.Window;
 import org.zaproxy.zap.utils.DisplayUtils;
 
-public class CustomPayloadDialog extends AbstractColumnDialog<CustomPayloadModel> {
+public class CustomPayloadDialog extends AbstractColumnDialog<CustomPayload> {
 
     private static final long serialVersionUID = 1L;
 
-    public CustomPayloadDialog(Window owner, String title, CustomPayloadModel model) {
+    public CustomPayloadDialog(Window owner, String title, CustomPayload payload) {
         super(
                 owner,
                 title,
                 CustomPayloadColumns.createColumns(),
-                model,
+                payload,
                 DisplayUtils.getScaledDimension(400, 180));
     }
 }

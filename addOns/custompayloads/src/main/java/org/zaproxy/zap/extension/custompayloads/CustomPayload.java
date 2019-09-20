@@ -21,22 +21,22 @@ package org.zaproxy.zap.extension.custompayloads;
 
 import org.zaproxy.zap.utils.EnableableInterface;
 
-public class CustomPayloadModel implements EnableableInterface {
+public class CustomPayload implements EnableableInterface {
 
     private int id;
     private boolean enabled;
     private String category;
     private String payload;
 
-    public CustomPayloadModel(String category, String payload) {
+    public CustomPayload(String category, String payload) {
         this(true, category, payload);
     }
 
-    public CustomPayloadModel(boolean enabled, String category, String payload) {
+    public CustomPayload(boolean enabled, String category, String payload) {
         this(-1, enabled, category, payload);
     }
 
-    public CustomPayloadModel(int id, boolean enabled, String category, String payload) {
+    public CustomPayload(int id, boolean enabled, String category, String payload) {
         this.id = id;
         this.enabled = enabled;
         this.category = category;
@@ -55,6 +55,7 @@ public class CustomPayloadModel implements EnableableInterface {
         this.payload = payload;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -76,7 +77,7 @@ public class CustomPayloadModel implements EnableableInterface {
         return id;
     }
 
-    public CustomPayloadModel clone() {
-        return new CustomPayloadModel(id, enabled, category, payload);
+    public CustomPayload copy() {
+        return new CustomPayload(id, enabled, category, payload);
     }
 }

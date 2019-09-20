@@ -21,6 +21,6 @@ package org.zaproxy.zap.extension.custompayloads;
 
 import java.util.List;
 
-public interface PluginWithConfigurablePayload {
-    List<CustomPayloadModel> getDefaultPayloads();
+public interface ScanRulePayloadsProvider {
+    List<CustomPayload> getDefaultPayloads();
 }

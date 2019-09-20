@@ -24,8 +24,8 @@ import java.util.List;
 
 public final class CustomPayloadColumns {
 
-    public static List<Column<CustomPayloadModel>> createColumns() {
-        ArrayList<Column<CustomPayloadModel>> columns = new ArrayList<>();
+    public static List<Column<CustomPayload>> createColumns() {
+        ArrayList<Column<CustomPayload>> columns = new ArrayList<>();
         columns.add(createEnabledColumn());
         columns.add(createIdColumn());
         columns.add(createCategoryColumn());
@@ -33,8 +33,8 @@ public final class CustomPayloadColumns {
         return columns;
     }
 
-    public static List<Column<CustomPayloadModel>> createColumnsForOptionsTable() {
-        ArrayList<Column<CustomPayloadModel>> columns = new ArrayList<>();
+    public static List<Column<CustomPayload>> createColumnsForOptionsTable() {
+        ArrayList<Column<CustomPayload>> columns = new ArrayList<>();
         columns.add(createEnabledColumn());
         columns.add(createIdColumn());
         columns.add(createCategoryColumn().AsReadonly());
@@ -42,47 +42,47 @@ public final class CustomPayloadColumns {
         return columns;
     }
 
-    private static EditableColumn<CustomPayloadModel> createEnabledColumn() {
-        return new EditableColumn<CustomPayloadModel>(
+    private static EditableColumn<CustomPayload> createEnabledColumn() {
+        return new EditableColumn<CustomPayload>(
                 Boolean.class, "custompayloads.options.dialog.enabled") {
             @Override
-            public void setValue(CustomPayloadModel model, Object value) {
-                model.setEnabled((Boolean) value);
+            public void setValue(CustomPayload payload, Object value) {
+                payload.setEnabled((Boolean) value);
             }
 
             @Override
-            public Object getValue(CustomPayloadModel model) {
-                return model.isEnabled();
+            public Object getValue(CustomPayload payload) {
+                return payload.isEnabled();
             }
         };
     }
 
-    private static Column<CustomPayloadModel> createIdColumn() {
-        return new Column<CustomPayloadModel>(Integer.class, "custompayloads.options.dialog.id") {
+    private static Column<CustomPayload> createIdColumn() {
+        return new Column<CustomPayload>(Integer.class, "custompayloads.options.dialog.id") {
 
             @Override
-            public Object getValue(CustomPayloadModel model) {
-                return model.getId();
+            public Object getValue(CustomPayload payload) {
+                return payload.getId();
             }
         };
     }
 
-    private static EditableColumn<CustomPayloadModel> createPayloadColumn() {
-        return new EditableColumn<CustomPayloadModel>(
+    private static EditableColumn<CustomPayload> createPayloadColumn() {
+        return new EditableColumn<CustomPayload>(
                 String.class, "custompayloads.options.dialog.payload") {
             @Override
-            public void setValue(CustomPayloadModel model, Object value) {
-                model.setPayload((String) value);
+            public void setValue(CustomPayload payload, Object value) {
+                payload.setPayload((String) value);
             }
 
             @Override
-            public Object getValue(CustomPayloadModel model) {
-                return model.getPayload();
+            public Object getValue(CustomPayload payload) {
+                return payload.getPayload();
             }
         };
     }
 
-    private static EditableColumn<CustomPayloadModel> createCategoryColumn() {
+    private static EditableColumn<CustomPayload> createCategoryColumn() {
         return new CustomPayloadCategoryColumn();
     }
 }

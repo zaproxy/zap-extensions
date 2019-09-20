@@ -21,24 +21,21 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.extension.custompayloads.CustomPayloadModel;
-import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
-import org.zaproxy.zap.extension.custompayloads.PluginWithConfigurablePayload;
 
 /** @author kniepdennis@gmail.com */
-public class TestUserAgent extends AbstractAppPlugin implements PluginWithConfigurablePayload {
+public class TestUserAgent extends AbstractAppPlugin {
 
     private static final Logger log = Logger.getLogger(TestUserAgent.class);
 
@@ -61,16 +58,19 @@ public class TestUserAgent extends AbstractAppPlugin implements PluginWithConfig
     private static final String I_PHONE_3 =
             "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16";
 
-    private static final String[] USER_AGENTS = {
-        INTERNET_EXPLORER_8,
-        INTERNET_EXPLORER_7,
-        INTERNET_EXPLORER_6,
-        GOOGLE_BOT_2_1,
-        MSN_BOT_1_1,
-        YAHOO_SLURP,
-        I_PHONE_3
-    };
+    public static final List<String> USER_AGENTS =
+            Arrays.asList(
+                    INTERNET_EXPLORER_8,
+                    INTERNET_EXPLORER_7,
+                    INTERNET_EXPLORER_6,
+                    GOOGLE_BOT_2_1,
+                    MSN_BOT_1_1,
+                    YAHOO_SLURP,
+                    I_PHONE_3);
+    private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER = () -> USER_AGENTS;
     public static final String USER_AGENT_PAYLOAD_CATEGORY = "User-Agent";
+
+    private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
     private int originalResponseBodyHash;
 
@@ -82,11 +82,6 @@ public class TestUserAgent extends AbstractAppPlugin implements PluginWithConfig
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return null;
     }
 
     @Override
@@ -110,31 +105,23 @@ public class TestUserAgent extends AbstractAppPlugin implements PluginWithConfig
     }
 
     @Override
-    public void init() {}
-
-    @Override
     public void scan() {
         originalResponseBodyHash = getBaseMsg().getResponseBody().hashCode();
 
-        for (CustomPayloadModel userAgentPayload : getUserAgentPayloads()) {
+        for (String userAgentPayload : getUserAgentPayloads().get()) {
             if (isStop()) {
                 return;
             }
-            attack(userAgentPayload.getPayload());
+            attack(userAgentPayload);
         }
     }
 
-    private List<CustomPayloadModel> getUserAgentPayloads() {
-        ExtensionCustomPayloads extension =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionCustomPayloads.class);
+    public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
+        payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
+    }
 
-        if (extension != null) {
-            return extension.getPayloadsByCategory(USER_AGENT_PAYLOAD_CATEGORY);
-        }
-
-        return getDefaultPayloads();
+    private static Supplier<Iterable<String>> getUserAgentPayloads() {
+        return payloadProvider;
     }
 
     private void attack(String userAgent) {
@@ -183,14 +170,5 @@ public class TestUserAgent extends AbstractAppPlugin implements PluginWithConfig
                 userAgent,
                 "",
                 newMsg);
-    }
-
-    @Override
-    public List<CustomPayloadModel> getDefaultPayloads() {
-        List<CustomPayloadModel> payloads = new ArrayList<>();
-        for (String userAgent : USER_AGENTS) {
-            payloads.add(new CustomPayloadModel(USER_AGENT_PAYLOAD_CATEGORY, userAgent));
-        }
-        return payloads;
     }
 }

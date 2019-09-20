@@ -29,7 +29,7 @@ public class AbstractColumnTableModel<T> extends AbstractTableModel {
 
     public AbstractColumnTableModel(List<Column<T>> columns) {
         super();
-        this.tableModel = new AbstractTableModelAsAbstractColumnTableModelWrapper<T>(this, columns);
+        this.tableModel = new AbstractTableModelAsAbstractColumnTableModelWrapper<>(this, columns);
     }
 
     @Override

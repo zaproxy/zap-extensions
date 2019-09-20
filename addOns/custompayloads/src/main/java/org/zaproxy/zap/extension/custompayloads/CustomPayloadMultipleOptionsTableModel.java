@@ -19,20 +19,20 @@
  */
 package org.zaproxy.zap.extension.custompayloads;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CustomPayloadMultipleOptionsTableModel
-        extends AbstractMultipleOptionsColumnTableModel<CustomPayloadModel> {
+        extends AbstractMultipleOptionsColumnTableModel<CustomPayload> {
 
     private static final long serialVersionUID = 1L;
-    private ArrayList<CustomPayloadModel> defaultPayloads;
+    private List<CustomPayload> defaultPayloads;
     private int nextPayloadId;
 
     public CustomPayloadMultipleOptionsTableModel() {
         super(CustomPayloadColumns.createColumnsForOptionsTable());
     }
 
-    public void setDefaultPayloads(ArrayList<CustomPayloadModel> defaultPayloads) {
+    public void setDefaultPayloads(List<CustomPayload> defaultPayloads) {
         this.defaultPayloads = defaultPayloads;
     }
 
@@ -46,29 +46,31 @@ public class CustomPayloadMultipleOptionsTableModel
 
     public void resetPayloadIds() {
         nextPayloadId = 1;
-        for (CustomPayloadModel model : getElements()) {
-            setNextIdToPayload(model);
+        for (CustomPayload payload : getElements()) {
+            setNextIdToPayload(payload);
         }
-        fireTableRowsUpdated(0, getElements().size() - 1);
+        if (this.getRowCount() > 0) {
+            fireTableRowsUpdated(0, getElements().size() - 1);
+        }
     }
 
     public void resetToDefaults() {
         clear();
-        for (CustomPayloadModel defaultPayload : defaultPayloads) {
-            CustomPayloadModel newModel = defaultPayload.clone();
-            setNextIdToPayload(newModel);
-            addModel(newModel);
+        for (CustomPayload defaultPayload : defaultPayloads) {
+            CustomPayload newPayload = defaultPayload.copy();
+            setNextIdToPayload(newPayload);
+            addModel(newPayload);
         }
     }
 
-    public void setNextIdToPayload(CustomPayloadModel payload) {
+    public void setNextIdToPayload(CustomPayload payload) {
         payload.setId(nextPayloadId++);
     }
 
     public void addMissingDefaultPayloads() {
-        for (CustomPayloadModel defaultPayload : defaultPayloads) {
+        for (CustomPayload defaultPayload : defaultPayloads) {
             boolean alreadyExisting = false;
-            for (CustomPayloadModel existingPayload : getElements()) {
+            for (CustomPayload existingPayload : getElements()) {
                 if (defaultPayload.getCategory().equalsIgnoreCase(existingPayload.getCategory())
                         && defaultPayload.getPayload().equals(existingPayload.getPayload())) {
                     alreadyExisting = true;
@@ -77,9 +79,9 @@ public class CustomPayloadMultipleOptionsTableModel
             }
 
             if (!alreadyExisting) {
-                CustomPayloadModel newModel = defaultPayload.clone();
-                setNextIdToPayload(newModel);
-                addModel(newModel);
+                CustomPayload newPayload = defaultPayload.copy();
+                setNextIdToPayload(newPayload);
+                addModel(newPayload);
             }
         }
     }

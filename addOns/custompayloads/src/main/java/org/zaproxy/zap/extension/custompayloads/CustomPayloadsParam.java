@@ -20,32 +20,38 @@
 package org.zaproxy.zap.extension.custompayloads;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.parosproxy.paros.common.AbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class CustomPayloadsParam extends AbstractParam {
 
-    private static final String ASCAN_ALPHA_BASE_KEY = "acanalpha";
-    private static final String ALL_PAYLOADS_KEY = ASCAN_ALPHA_BASE_KEY + ".payload_list";
+    private static final String CUSTOM_PAYLOADS_BASE_KEY = "custompayloads";
+    private static final String ALL_CATEGORIES_KEY =
+            CUSTOM_PAYLOADS_BASE_KEY + ".categories.category";
+    private static final String CATEGORY_NAME_KEY = "[@name]";
 
     private static final String PAYLOAD_ID_KEY = "id";
     private static final String PAYLOAD_KEY = "payload";
-    private static final String PAYLOAD_CATEGORY_KEY = "category";
     private static final String PAYLOAD_ENABLED_KEY = "enabled";
 
     private static final String CONFIRM_REMOVE_PAYLOAD_KEY =
-            ASCAN_ALPHA_BASE_KEY + ".confirmRemoveToken";
-    private static final String NEXT_PAYLOAD_ID_KEY = ASCAN_ALPHA_BASE_KEY + ".nextPayloadId";
+            CUSTOM_PAYLOADS_BASE_KEY + ".confirmRemoveToken";
+    private static final String NEXT_PAYLOAD_ID_KEY = CUSTOM_PAYLOADS_BASE_KEY + ".nextPayloadId";
 
-    private ExtensionCustomPayloads extensionCustomPayloads;
-    private ArrayList<CustomPayloadModel> payloads;
+    private Map<String, PayloadCategory> payloadCategories;
     private boolean confirmRemoveToken;
     private int nextPayloadId = 1;
 
-    public CustomPayloadsParam(ExtensionCustomPayloads extensionCustomPayloads) {
-        this.extensionCustomPayloads = extensionCustomPayloads;
+    public CustomPayloadsParam() {
+        payloadCategories = new HashMap<>();
     }
 
     @Override
@@ -62,27 +68,39 @@ public class CustomPayloadsParam extends AbstractParam {
     }
 
     private void initializeWithDefaultsIfPayloadsAreEmpty() {
-        if (payloads.size() == 0) {
-            ArrayList<CustomPayloadModel> newModels = new ArrayList<>();
-            for (CustomPayloadModel defaultPayload : getDefaultPayloads()) {
-                CustomPayloadModel newModel = defaultPayload.clone();
-                newModel.setId(nextPayloadId++);
-                newModels.add(newModel);
+        for (PayloadCategory category : payloadCategories.values()) {
+            if (category.getPayloads().isEmpty()) {
+                resetDefaults(category);
             }
-            setPayloads(newModels);
-            setNextPayloadId(nextPayloadId);
         }
+        setNextPayloadId(nextPayloadId);
+    }
+
+    private void resetDefaults(PayloadCategory category) {
+        List<CustomPayload> payloads = new ArrayList<>(category.getDefaultPayloads().size());
+        for (CustomPayload defaultPayload : category.getDefaultPayloads()) {
+            CustomPayload payload = defaultPayload.copy();
+            payload.setId(nextPayloadId++);
+            payloads.add(payload);
+        }
+        category.setPayloads(payloads);
     }
 
     private void loadPayloadsFromConfig(HierarchicalConfiguration rootConfig) {
-        List<HierarchicalConfiguration> fields = rootConfig.configurationsAt(ALL_PAYLOADS_KEY);
-        payloads = new ArrayList<>(fields.size());
-        for (HierarchicalConfiguration sub : fields) {
-            int id = sub.getInt(PAYLOAD_ID_KEY);
-            boolean isEnabled = sub.getBoolean(PAYLOAD_ENABLED_KEY);
-            String category = sub.getString(PAYLOAD_CATEGORY_KEY, "");
-            String payload = sub.getString(PAYLOAD_KEY, "");
-            payloads.add(new CustomPayloadModel(id, isEnabled, category, payload));
+        List<HierarchicalConfiguration> categories =
+                rootConfig.configurationsAt(ALL_CATEGORIES_KEY);
+        payloadCategories = new HashMap<>();
+        for (HierarchicalConfiguration category : categories) {
+            List<HierarchicalConfiguration> fields = category.configurationsAt("payloads.payload");
+            String cat = category.getString(CATEGORY_NAME_KEY);
+            List<CustomPayload> payloads = new ArrayList<>();
+            for (HierarchicalConfiguration sub : fields) {
+                int id = sub.getInt(PAYLOAD_ID_KEY);
+                boolean isEnabled = sub.getBoolean(PAYLOAD_ENABLED_KEY);
+                String payload = sub.getString(PAYLOAD_KEY, "");
+                payloads.add(new CustomPayload(id, isEnabled, cat, payload));
+            }
+            payloadCategories.put(cat, new PayloadCategory(cat, Collections.emptyList(), payloads));
         }
     }
 
@@ -113,40 +131,63 @@ public class CustomPayloadsParam extends AbstractParam {
 
     private int getMaxUsedPayloadId() {
         int maxUsedPayloadId = 0;
-        for (CustomPayloadModel payload : payloads) {
-            if (maxUsedPayloadId < payload.getId()) {
-                maxUsedPayloadId = payload.getId();
+        for (PayloadCategory category : payloadCategories.values()) {
+            for (CustomPayload payload : category.getPayloads()) {
+                if (maxUsedPayloadId < payload.getId()) {
+                    maxUsedPayloadId = payload.getId();
+                }
             }
         }
         return maxUsedPayloadId;
     }
 
-    public List<CustomPayloadModel> getPayloads() {
-        ArrayList<CustomPayloadModel> clonedPayloads = new ArrayList<>();
-        for (CustomPayloadModel model : payloads) {
-            clonedPayloads.add(model.clone());
+    public List<CustomPayload> getPayloads() {
+        ArrayList<CustomPayload> clonedPayloads = new ArrayList<>();
+        for (PayloadCategory category : payloadCategories.values()) {
+            for (CustomPayload payload : category.getPayloads()) {
+                clonedPayloads.add(payload.copy());
+            }
         }
         return clonedPayloads;
     }
 
-    public void setPayloads(List<CustomPayloadModel> payloads) {
-        this.payloads = new ArrayList<>(payloads);
+    public void setPayloads(List<CustomPayload> payloads) {
+        Map<String, List<CustomPayload>> newPayloads =
+                payloads.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        CustomPayload::getCategory,
+                                        Collectors.mapping(
+                                                Function.identity(), Collectors.toList())));
+
+        payloadCategories.forEach(
+                (name, category) -> {
+                    category.setPayloads(newPayloads.getOrDefault(name, Collections.emptyList()));
+                });
         savePayloadsToConfig();
     }
 
     private void savePayloadsToConfig() {
-        ((HierarchicalConfiguration) getConfig()).clearTree(ALL_PAYLOADS_KEY);
-        for (int i = 0, size = payloads.size(); i < size; ++i) {
-            String elementBaseKey = ALL_PAYLOADS_KEY + "(" + i + ").";
-            CustomPayloadModel payload = payloads.get(i);
-            getConfig()
-                    .setProperty(elementBaseKey + PAYLOAD_ID_KEY, Integer.valueOf(payload.getId()));
-            getConfig()
-                    .setProperty(
-                            elementBaseKey + PAYLOAD_ENABLED_KEY,
-                            Boolean.valueOf(payload.isEnabled()));
-            getConfig().setProperty(elementBaseKey + PAYLOAD_CATEGORY_KEY, payload.getCategory());
-            getConfig().setProperty(elementBaseKey + PAYLOAD_KEY, payload.getPayload());
+        ((HierarchicalConfiguration) getConfig()).clearTree(ALL_CATEGORIES_KEY);
+        int catIdx = 0;
+        for (PayloadCategory category : payloadCategories.values()) {
+            String catElementBaseKey = ALL_CATEGORIES_KEY + "(" + catIdx + ")";
+            List<CustomPayload> payloads = category.getPayloads();
+            getConfig().setProperty(catElementBaseKey + CATEGORY_NAME_KEY, category.getName());
+            for (int i = 0, size = payloads.size(); i < size; ++i) {
+                String elementBaseKey =
+                        catElementBaseKey + ".payloads." + PAYLOAD_KEY + "(" + i + ").";
+                CustomPayload payload = payloads.get(i);
+                getConfig()
+                        .setProperty(
+                                elementBaseKey + PAYLOAD_ID_KEY, Integer.valueOf(payload.getId()));
+                getConfig()
+                        .setProperty(
+                                elementBaseKey + PAYLOAD_ENABLED_KEY,
+                                Boolean.valueOf(payload.isEnabled()));
+                getConfig().setProperty(elementBaseKey + PAYLOAD_KEY, payload.getPayload());
+            }
+            catIdx++;
         }
     }
 
@@ -165,17 +206,44 @@ public class CustomPayloadsParam extends AbstractParam {
         getConfig().setProperty(CONFIRM_REMOVE_PAYLOAD_KEY, Boolean.valueOf(confirmRemoveToken));
     }
 
-    public List<CustomPayloadModel> getPayloadsByCategory(String category) {
-        ArrayList<CustomPayloadModel> payloadsByCategory = new ArrayList<>();
-        for (CustomPayloadModel payload : payloads) {
-            if (payload.isEnabled() && payload.getCategory().equalsIgnoreCase(category)) {
-                payloadsByCategory.add(payload);
-            }
-        }
-        return payloadsByCategory;
+    public List<CustomPayload> getDefaultPayloads() {
+        return payloadCategories.values().stream()
+                .map(PayloadCategory::getDefaultPayloads)
+                .flatMap(payloads -> payloads.stream())
+                .collect(Collectors.toList());
     }
 
-    public ArrayList<CustomPayloadModel> getDefaultPayloads() {
-        return extensionCustomPayloads.getDefaultPayloads();
+    public Collection<String> getCategoriesNames() {
+        return Collections.unmodifiableSet(payloadCategories.keySet());
+    }
+
+    public void addPayloadCategory(PayloadCategory payloadCategory) {
+        payloadCategories.compute(
+                payloadCategory.getName(),
+                (name, category) -> {
+                    boolean setDefaults = true;
+                    if (category != null) {
+                        if (!category.getPayloads().isEmpty()) {
+                            payloadCategory.setPayloads(category.getPayloads());
+                            setDefaults = false;
+                        }
+                    }
+                    if (setDefaults) {
+                        resetDefaults(payloadCategory);
+                    }
+                    return payloadCategory;
+                });
+    }
+
+    public void removePayloadCategory(PayloadCategory payloadCategory) {
+        payloadCategories.compute(
+                payloadCategory.getName(),
+                (name, category) -> {
+                    if (category != null) {
+                        return new PayloadCategory(
+                                name, Collections.emptyList(), payloadCategory.getPayloads());
+                    }
+                    return null;
+                });
     }
 }
