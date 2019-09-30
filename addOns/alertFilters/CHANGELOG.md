@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Added support for parameter regex, attack and evidence strings and regexes (Issue 5574)
 - Added support for global alert filters (Issue 5575)
+- Added option to create alert filters from alert
+- Added options to test which alerts will apply to and to actually apply them
+- Removed the "Context" from the add-on name
 
 ## [8] - 2019-06-07
 

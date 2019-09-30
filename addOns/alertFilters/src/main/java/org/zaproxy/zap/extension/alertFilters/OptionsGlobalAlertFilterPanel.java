@@ -30,13 +30,13 @@ public class OptionsGlobalAlertFilterPanel extends AbstractParamPanel {
     private static final long serialVersionUID = 1L;
 
     private final AlertFilterTableModel alertFilterModel = new AlertFilterTableModel();
-    private final AlertFiltersMultipleOptionsPanel alertFilterOptionsPanel =
-            new AlertFiltersMultipleOptionsPanel(alertFilterModel);
+    private final AlertFiltersMultipleOptionsPanel alertFilterOptionsPanel;
 
-    public OptionsGlobalAlertFilterPanel() {
+    public OptionsGlobalAlertFilterPanel(ExtensionAlertFilters extension) {
         super();
         this.setName(Constant.messages.getString("alertFilters.global.options.title"));
         this.setLayout(new BorderLayout());
+        alertFilterOptionsPanel = new AlertFiltersMultipleOptionsPanel(extension, alertFilterModel);
         this.add(alertFilterOptionsPanel);
     }
 
@@ -59,5 +59,9 @@ public class OptionsGlobalAlertFilterPanel extends AbstractParamPanel {
     @Override
     public String getHelpIndex() {
         return "addon.globalAlertFilter";
+    }
+
+    protected AlertFilter showAddDialogue(AlertFilter alertFilter) {
+        return this.alertFilterOptionsPanel.showAddDialogue(alertFilter);
     }
 }

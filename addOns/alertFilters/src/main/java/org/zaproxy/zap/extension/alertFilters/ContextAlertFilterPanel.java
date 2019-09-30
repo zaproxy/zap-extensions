@@ -33,6 +33,7 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
     private AlertFiltersMultipleOptionsPanel alertFilterOptionsPanel;
     private ContextAlertFilterManager contextManager;
     private AlertFilterTableModel alertFilterTableModel;
+    private ExtensionAlertFilters extension;
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3920598166129639573L;
@@ -42,6 +43,7 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
     public ContextAlertFilterPanel(ExtensionAlertFilters extension, int contextId) {
         super(contextId);
+        this.extension = extension;
         this.contextManager = extension.getContextAlertFilterManager(contextId);
         initialize();
     }
@@ -61,13 +63,14 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
                 LayoutHelper.getGBC(0, 0, 1, 1.0d, 0.0d));
 
         alertFilterTableModel = new AlertFilterTableModel();
-        alertFilterOptionsPanel = new AlertFiltersMultipleOptionsPanel(alertFilterTableModel);
+        alertFilterOptionsPanel =
+                new AlertFiltersMultipleOptionsPanel(extension, alertFilterTableModel);
         this.add(alertFilterOptionsPanel, LayoutHelper.getGBC(0, 1, 1, 1.0d, 1.0d));
     }
 
     @Override
     public String getHelpIndex() {
-        return "addon.alertFilter";
+        return "addon.contextAlertFilter";
     }
 
     @Override

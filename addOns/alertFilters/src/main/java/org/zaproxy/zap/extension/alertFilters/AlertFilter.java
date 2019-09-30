@@ -23,6 +23,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Enableable;
 
 public class AlertFilter extends Enableable {
@@ -109,6 +111,7 @@ public class AlertFilter extends Enableable {
         this.url = alert.getUri();
         this.attack = alert.getAttack();
         this.evidence = alert.getEvidence();
+        this.setEnabled(true);
     }
 
     public int getContextId() {
@@ -291,6 +294,10 @@ public class AlertFilter extends Enableable {
     }
 
     public boolean appliesToAlert(Alert alert) {
+        return this.appliesToAlert(alert, false);
+    }
+
+    public boolean appliesToAlert(Alert alert, boolean ignoreContext) {
         if (!isEnabled()) {
             if (log.isDebugEnabled()) {
                 log.debug("Filter disabled");
@@ -307,6 +314,12 @@ public class AlertFilter extends Enableable {
                                 + alert.getPluginId());
             }
             return false;
+        }
+        if (!ignoreContext && this.contextId != -1) {
+            Context context = Model.getSingleton().getSession().getContext(this.contextId);
+            if (!context.isIncluded(alert.getUri()) || context.isExcluded(alert.getUri())) {
+                return false;
+            }
         }
         if (!matchesStringOrRegex("URL", getUrl(), isUrlRegex(), alert.getUri())) {
             return false;
