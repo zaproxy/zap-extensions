@@ -3,13 +3,14 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [9] - 2019-09-30
 
 - Added support for parameter regex, attack and evidence strings and regexes (Issue 5574)
 - Added support for global alert filters (Issue 5575)
 - Added option to create alert filters from alert
 - Added options to test which alerts will apply to and to actually apply them
 - Removed the "Context" from the add-on name
+- Promote Alert Filters addon to release status
 
 ## [8] - 2019-06-07
 
@@ -49,4 +50,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[9]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v8
