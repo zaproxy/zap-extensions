@@ -26,8 +26,6 @@ dependencies {
         // Not needed.
         exclude(group = "org.apache.pdfbox", module = "jempbox")
     }
-    implementation ("org.apache.odftoolkit:simple-odf:0.7-incubating")
-    implementation ("org.apache.odftoolkit:xslt-runner:1.2.1-incubating")
 }
 
 spotless {
