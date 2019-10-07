@@ -10,13 +10,6 @@ zapAddOn {
     }
 }
 
-configurations {
-    "implementation" {
-        // Not needed.
-        exclude(group = "org.apache.odftoolkit", module = "taglets")
-    }
-}
-
 dependencies {
     implementation("org.json:json:20160212")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
