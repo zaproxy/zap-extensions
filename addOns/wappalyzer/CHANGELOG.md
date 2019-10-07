@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [14] - 2019-10-02
+
+- Update apps.json and icons to align with AliasIO/Wappalyzer release 5.8.4 (plus any subsequent PRs).
+
 ## [13] - 2019-08-19
 
 - Performance improvements.
@@ -68,5 +72,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[14]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v12

@@ -102,5 +102,8 @@ The trace.axd scanner targets Microsoft based technologies: IIS, Windows, ASP, a
 <H2>User Agent Fuzzer</H2>
 This active scanner checks for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). The scanner compares the response statuscode and the hashcode of the response body with the original response.
 
+<H2>XSLT Injection Scanner</H2>
+This active scanner checks for certain responses induced by injecting XSL transformations. <br/>
+It attempts to obtain those responses with payloads which may induce: error responses, disclosure of library/framework vendor name, remote port scanning, or command execution.
 </BODY>
 </HTML>

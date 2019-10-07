@@ -41,7 +41,6 @@ zapAddOn {
 }
 
 dependencies {
-    zap("org.zaproxy:zap:2.8.0-SNAPSHOT")
     compileOnly(parent!!.childProjects.get("selenium")!!)
     implementation(files("lib/crawljax-core-3.7.jar"))
     implementation("commons-math:commons-math:1.2")

@@ -13,4 +13,6 @@ zapAddOn {
 
 dependencies {
     implementation("org.jsoup:jsoup:1.7.2")
+
+    testImplementation(project(":testutils"))
 }

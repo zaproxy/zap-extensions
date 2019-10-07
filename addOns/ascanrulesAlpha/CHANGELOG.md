@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Maintenance changes.
+- Added XSLT Injection Scanner (issue 3572).
 
 ## [25] - 2019-07-11
 

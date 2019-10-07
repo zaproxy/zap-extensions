@@ -10,6 +10,6 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://owasp.org/index.php/DirBuster")
+        url.set("https://www.owasp.org/index.php/DirBuster")
     }
 }

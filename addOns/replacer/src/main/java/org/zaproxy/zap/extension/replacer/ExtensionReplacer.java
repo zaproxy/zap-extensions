@@ -19,12 +19,12 @@
  */
 package org.zaproxy.zap.extension.replacer;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Pattern;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -184,7 +184,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                             msg.getRequestHeader().setHeader(rule.getMatchString(), null);
                         } else {
                             msg.getRequestHeader()
-                                    .setHeader(rule.getMatchString(), rule.getReplacement());
+                                    .setHeader(rule.getMatchString(), rule.getEscapedReplacement());
                         }
                         break;
                     case REQ_HEADER_STR:
@@ -200,7 +200,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             header,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getReplacement());
+                                            rule.getEscapedReplacement());
                             try {
                                 msg.setRequestHeader(new HttpRequestHeader(header));
                             } catch (HttpMalformedHeaderException e) {
@@ -216,7 +216,12 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                         + rule.getReplacement());
                         String body = msg.getRequestBody().toString();
                         if (contains(body, rule.getMatchString(), p)) {
-                            body = replace(body, rule.getMatchString(), p, rule.getReplacement());
+                            body =
+                                    replace(
+                                            body,
+                                            rule.getMatchString(),
+                                            p,
+                                            rule.getEscapedReplacement());
                             msg.getRequestBody().setBody(body);
                             msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                         }
@@ -258,7 +263,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                             msg.getResponseHeader().setHeader(rule.getMatchString(), null);
                         } else {
                             msg.getResponseHeader()
-                                    .setHeader(rule.getMatchString(), rule.getReplacement());
+                                    .setHeader(rule.getMatchString(), rule.getEscapedReplacement());
                         }
                         break;
                     case RESP_HEADER_STR:
@@ -274,7 +279,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             header,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getReplacement());
+                                            rule.getEscapedReplacement());
                             try {
                                 msg.setResponseHeader(new HttpResponseHeader(header));
                             } catch (HttpMalformedHeaderException e) {
@@ -290,7 +295,12 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                         + rule.getReplacement());
                         String body = msg.getResponseBody().toString();
                         if (contains(body, rule.getMatchString(), p)) {
-                            body = replace(body, rule.getMatchString(), p, rule.getReplacement());
+                            body =
+                                    replace(
+                                            body,
+                                            rule.getMatchString(),
+                                            p,
+                                            rule.getEscapedReplacement());
                             msg.getResponseBody().setBody(body);
                             msg.getResponseHeader()
                                     .setContentLength(msg.getResponseBody().length());

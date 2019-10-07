@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [12] - 2019-09-13
+### Changed
+- Update ChromeDriver to v77.0.3865.40.
+- Update geckodriver to v0.25.0.
+
 ## [11] - 2019-08-01
 ### Changed
 - Update ChromeDriver to v76.0.3809.68.
@@ -62,6 +67,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[12]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v9
