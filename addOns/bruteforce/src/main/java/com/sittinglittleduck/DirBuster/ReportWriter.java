@@ -24,10 +24,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 public class ReportWriter {
+
+    private static final Logger log = Logger.getLogger(ReportWriter.class);
 
     private final String fileToWriteTo;
     private final Manager manager;
@@ -156,7 +157,7 @@ public class ReportWriter {
             out.close();
 
         } catch (IOException ex) {
-            Logger.getLogger(ReportWriter.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         }
     }
 

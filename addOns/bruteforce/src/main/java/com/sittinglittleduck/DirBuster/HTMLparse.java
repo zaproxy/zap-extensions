@@ -67,7 +67,7 @@ public class HTMLparse extends Thread {
             try {
                 parseUnit = manager.parseQueue.take();
             } catch (InterruptedException ex) {
-                // ex.printStackTrace();
+                LOG.debug(ex);
                 return;
             }
             working = true;
@@ -130,16 +130,15 @@ public class HTMLparse extends Thread {
                                 }
 
                             } catch (MalformedURLException e) {
-                                // System.out.println("Man thats a bad url!");
+                                LOG.debug("Bad URL", e);
                             }
                         }
 
                         try {
-
                             Thread.sleep(100);
                         } catch (InterruptedException ex) {
+                            LOG.debug(ex);
                             return;
-                            // ex.printStackTrace();
                         }
                     } // end of for loop for elements
 
@@ -205,10 +204,10 @@ public class HTMLparse extends Thread {
                                             // queue");
                                         }
                                     } catch (MalformedURLException ex) {
-                                        ex.printStackTrace();
+                                        LOG.debug("Bad URL", ex);
                                     } catch (InterruptedException ex) {
+                                        LOG.debug(ex);
                                         return;
-                                        // ex.printStackTrace();
                                     }
                                 }
                             }
@@ -249,6 +248,7 @@ public class HTMLparse extends Thread {
 
             return foundItems;
         } catch (InterruptedException ex) {
+            LOG.debug(ex);
             return null;
         }
     }
@@ -290,12 +290,9 @@ public class HTMLparse extends Thread {
             return GenBaseCase.genBaseCase(
                     manager, manager.getFirstPartOfURL() + baseItem, isDir, fileExtention);
         } catch (MalformedURLException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (InterruptedException ex) {
-            // ex.printStackTrace();
-            return null;
+            LOG.debug("Bad URL", ex);
+        } catch (IOException | InterruptedException ex) {
+            LOG.debug(ex);
         }
 
         return null;

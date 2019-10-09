@@ -244,7 +244,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
             // url.toString(), "Start point of testing", null, null, this.recursive, null));
         } catch (MalformedURLException ex) {
-            ex.printStackTrace();
+            LOG.error("Bad URL", ex);
         }
 
         LOG.info("Starting dir/file list based brute forcing");
@@ -301,7 +301,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
             // url.toString(), "Start point of testing", null, null, this.recursive, null));
         } catch (MalformedURLException ex) {
-            ex.printStackTrace();
+            LOG.error("Bad URL", ex);
         }
 
         LOG.info("Starting dir/file pure brute forcing");
@@ -488,7 +488,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             // extToUse.clone().
             dirQueue.put(new DirToCheck(startPoint, tempext));
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.debug(e);
         }
     }
 
@@ -536,7 +536,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
     }
 
@@ -675,7 +675,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             headlessResult.addElement(
                     new HeadlessResult(url.getFile(), statusCode, HeadlessResult.DIR));
         } catch (InterruptedException e) {
-            // e.printStackTrace();
+            LOG.debug(e);
             return;
         }
     }
@@ -940,7 +940,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             dirQueue.put(new DirToCheck(dir, extToUse));
             totalDirsFound++;
         } catch (InterruptedException ex) {
-            // ex.printStackTrace();
+            LOG.debug(ex);
             return;
         }
     }
@@ -955,7 +955,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         try {
             parseQueue.put(parseWorkUnit);
         } catch (InterruptedException ex) {
-            ex.printStackTrace();
+            LOG.debug(ex);
         }
     }
 

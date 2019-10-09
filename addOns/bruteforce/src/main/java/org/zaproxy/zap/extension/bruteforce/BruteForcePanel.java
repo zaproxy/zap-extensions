@@ -65,8 +65,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(BruteForcePanel.class);
-
     /** @deprecated (2.3.0) Replaced by {@link #MESSAGE_CONTAINER_NAME}. */
     @Deprecated public static final String PANEL_NAME = "bruteforce";
 
@@ -678,7 +676,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                                 .getPath();
                 startScan(dir, false);
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
         }
     }
@@ -696,7 +694,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                                 .getPath();
                 startScan(dir, true);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e);
             }
         }
     }

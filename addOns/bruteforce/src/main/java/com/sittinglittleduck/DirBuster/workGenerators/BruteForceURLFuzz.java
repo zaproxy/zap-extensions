@@ -102,10 +102,8 @@ public class BruteForceURLFuzz implements Runnable {
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
-            } catch (MalformedURLException e) {
-                // TODO deal with error
             } catch (IOException e) {
-                // TODO deal with error
+                LOG.error(e);
             }
         }
 
@@ -118,7 +116,7 @@ public class BruteForceURLFuzz implements Runnable {
             // get any extention that need to be checked
             extToCheck = tempDirToCheck.getExts();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.debug(e);
         }
 
         LOG.info("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
@@ -134,10 +132,8 @@ public class BruteForceURLFuzz implements Runnable {
             baseCaseObj =
                     GenBaseCase.genURLFuzzBaseCase(manager, firstPart + urlFuzzStart, urlFuzzEnd);
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
 
         // baseCaseObj = new BaseCase(null, failcode, true, failurl, baseCase);
@@ -195,9 +191,9 @@ public class BruteForceURLFuzz implements Runnable {
             workQueue.put(new WorkUnit(currentURL, true, method, baseCaseObj, temp));
 
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.debug(e);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LOG.debug("Bad URL", e);
         }
     }
 

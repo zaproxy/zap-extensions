@@ -97,7 +97,7 @@ public class Worker implements Runnable {
                     } catch (InterruptedException e) {
                         return;
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOG.debug(e);
                     }
                 }
             }
@@ -256,8 +256,6 @@ public class Worker implements Runnable {
                 manager.workDone();
                 return;
             } catch (IllegalArgumentException e) {
-
-                e.printStackTrace();
                 manager.foundError(url, "IllegalArgumentException " + e.getMessage());
                 manager.workDone();
             } finally {
