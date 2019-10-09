@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2019 The ZAP Development Team
+ * Copyright 2017 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.openapi;
+package org.zaproxy.zap.extension.openapi.v1;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.zap.extension.openapi.AbstractOpenApiTest;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerException;
@@ -36,23 +39,23 @@ import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-public class OpenApiPrimitivesInBodyUnitTest extends AbstractOpenApiTest {
+public class OpenApiUnitTest extends AbstractOpenApiTest {
 
     @Test
-    public void shouldExploreBodiesWithPrimitiveValues()
+    public void shouldExplorePetStore1_2()
             throws NullPointerException, IOException, SwaggerException {
-        String test = "/OpenApi_defn_body_with_primitives/";
+        String test = "/PetStore_1_2_defn/";
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
                     @Override
-                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                    protected Response serve(IHTTPSession session) {
                         String response;
                         String uri = session.getUri();
                         if (uri.endsWith("defn.json")) {
                             response =
                                     getHtml(
-                                            "OpenApi_defn_body_with_primitives.json",
+                                            "PetStore_defn.json",
                                             new String[][] {
                                                 {"PORT", String.valueOf(nano.getListeningPort())}
                                             });
@@ -84,28 +87,17 @@ public class OpenApiPrimitivesInBodyUnitTest extends AbstractOpenApiTest {
         requestor.addListener(listener);
         requestor.run(converter.getRequestModels());
 
-        checkRequests(accessedUrls, "localhost:" + nano.getListeningPort());
+        checkPetStore2dot0Requests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
-    private void checkRequests(Map<String, String> accessedUrls, String host) {
+    private void checkPetStore2dot0Requests(Map<String, String> accessedUrls, String host) {
         // Check all of the expected URLs have been accessed and with the right data
-        assertEquals("true", accessedUrls.get("POST http://" + host + "/api/boolean"));
-        assertEquals("[true,true]", accessedUrls.get("POST http://" + host + "/api/booleans"));
-
-        assertEquals("1.2", accessedUrls.get("POST http://" + host + "/api/double"));
-        assertEquals("[1.2,1.2]", accessedUrls.get("POST http://" + host + "/api/doubles"));
-
-        assertEquals("10", accessedUrls.get("POST http://" + host + "/api/integer"));
-        assertEquals("[10,10]", accessedUrls.get("POST http://" + host + "/api/integers"));
-
-        assertEquals("10", accessedUrls.get("POST http://" + host + "/api/long"));
-        assertEquals("[10,10]", accessedUrls.get("POST http://" + host + "/api/longs"));
-
-        assertEquals("\"John Doe\"", accessedUrls.get("POST http://" + host + "/api/string"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/store/order"));
         assertEquals(
-                "[\"John Doe\",\"John Doe\"]",
-                accessedUrls.get("POST http://" + host + "/api/strings"));
-
-        assertEquals(10, accessedUrls.size());
+                "{\"id\":10,\"petId\":10,\"quantity\":10,\"status\":\"placed\",\"shipDate\":\"1970-01-01T00:00:00.001Z\"}",
+                accessedUrls.get("POST http://" + host + "/store/order"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/store/order/orderId"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/store/order/orderId"));
+        assertEquals(3, accessedUrls.size());
     }
 }
