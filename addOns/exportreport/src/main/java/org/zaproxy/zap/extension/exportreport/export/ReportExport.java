@@ -52,13 +52,18 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.extension.ViewDelegate;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.ascan.ActiveScan;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.exportreport.filechooser.Utils;
 import org.zaproxy.zap.extension.exportreport.model.AlertItem;
 import org.zaproxy.zap.extension.exportreport.model.Alerts;
@@ -100,7 +105,9 @@ final class ReportExport {
             String reportVersion,
             String reportDesc,
             ArrayList<String> alertSeverity,
-            ArrayList<String> alertDetails)
+            ArrayList<String> alertDetails,
+            int scanId,
+            boolean includePassiveAlerts)
             throws UnsupportedEncodingException, URIException {
 
         Report report = new Report();
@@ -141,11 +148,57 @@ final class ReportExport {
                 Alert.RISK_INFO,
                 Constant.messages.getString("exportreport.risk.severity.info.label"));
 
-        List<Alert> alerts =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionAlert.class)
-                        .getAllAlerts();
+        List<Alert> alerts = new ArrayList<>();
+
+        // check if scanid is valid when specified
+        ActiveScan scan = null;
+        if (scanId != -1) {
+            scan =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionActiveScan.class)
+                            .getScan(scanId);
+            scanId = scan == null ? -1 : scanId;
+        }
+
+        if (scanId == -1) {
+            alerts =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionAlert.class)
+                            .getAllAlerts();
+
+            if (!includePassiveAlerts) {
+                alerts.removeIf(a -> a.getSource() == Alert.Source.PASSIVE);
+            }
+
+        } else {
+            TableAlert tableAlert = Model.getSingleton().getDb().getTableAlert();
+            List<Integer> alertIds = scan.getAlertsIds();
+
+            for (int alertId : alertIds) {
+                try {
+                    alerts.add(new Alert(tableAlert.read(alertId)));
+
+                } catch (DatabaseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if (includePassiveAlerts) {
+                // TODO fix
+                // there doesn't seem to be a way
+                // to access only the passive alerts
+                // so we check for all alerts
+                List<Alert> passiveAlerts =
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionAlert.class)
+                                .getAllAlerts();
+                passiveAlerts.removeIf(a -> a.getSource() != Alert.Source.PASSIVE);
+                alerts.addAll(passiveAlerts);
+            }
+        }
 
         List<String> host = new ArrayList<String>();
         List<Sites> sites = new ArrayList<Sites>();

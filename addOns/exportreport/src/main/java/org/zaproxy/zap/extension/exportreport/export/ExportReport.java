@@ -102,7 +102,9 @@ public class ExportReport {
                                 extension.extensionGetReportVer(),
                                 extension.extensionGetDescription(),
                                 extension.getIncludedAlertSeverity(),
-                                extension.getIncludedAlertDetails());
+                                extension.getIncludedAlertDetails(),
+                                -1,
+                                true);
             } catch (UnsupportedEncodingException e) {
                 logger.error(e.getMessage(), e);
                 view.showWarningDialog(
@@ -238,7 +240,9 @@ public class ExportReport {
             String ext,
             ArrayList<String> sourceDetailsList,
             ArrayList<String> alertSeverityList,
-            ArrayList<String> alertDetailsList) {
+            ArrayList<String> alertDetailsList,
+            int scanId,
+            boolean includePassiveAlerts) {
 
         File f = new File(absolutePath);
         String file = f.getName();
@@ -270,7 +274,9 @@ public class ExportReport {
                             extensionGetReportVer,
                             getDescription,
                             alertSeverityList,
-                            alertDetailsList);
+                            alertDetailsList,
+                            scanId,
+                            includePassiveAlerts);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);
             CommandLine.error(Constant.messages.getString("exportreport.message.error.dump"));

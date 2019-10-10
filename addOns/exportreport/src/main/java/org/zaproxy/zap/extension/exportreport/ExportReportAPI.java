@@ -54,6 +54,8 @@ public class ExportReportAPI extends ApiImplementor {
     private static final String ACTION_PARAM_SOURCE_DETAILS = "sourceDetails";
     private static final String ACTION_PARAM_ALERT_SEVERITY = "alertSeverity";
     private static final String ACTION_PARAM_ALERT_DETAILS = "alertDetails";
+    private static final String ACTION_PARAM_SCAN_ID = "scanId";
+    private static final String ACTION_PARAM_INCLUDE_PASSIVE_ALERTS = "includePassiveAlerts";
 
     private ExtensionExportReport extension;
 
@@ -70,7 +72,8 @@ public class ExportReportAPI extends ApiImplementor {
                             ACTION_PARAM_SOURCE_DETAILS,
                             ACTION_PARAM_ALERT_SEVERITY,
                             ACTION_PARAM_ALERT_DETAILS
-                        }));
+                        },
+                        new String[] {ACTION_PARAM_SCAN_ID, ACTION_PARAM_INCLUDE_PASSIVE_ALERTS}));
         this.addApiView(new ApiView(VIEW_FORMATS));
     }
 
@@ -276,6 +279,11 @@ public class ExportReportAPI extends ApiImplementor {
                                     "exportreport.message.console.info.pass.generate"));
                 }
 
+                int scanId = this.getParam(params, ACTION_PARAM_SCAN_ID, -1);
+
+                boolean includePassiveAlerts =
+                        getParam(params, ACTION_PARAM_INCLUDE_PASSIVE_ALERTS, true);
+
                 ArrayList<String> alertSeverityTemp =
                         extension.generateList(alertSeverityFlags, extension.getAlertSeverity());
 
@@ -292,7 +300,9 @@ public class ExportReportAPI extends ApiImplementor {
                             fileExtension,
                             sourceDetails,
                             alertSeverityTemp,
-                            alertDetailsTemp)) {
+                            alertDetailsTemp,
+                            scanId,
+                            includePassiveAlerts)) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(
                                     Constant.messages.getString(
