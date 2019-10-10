@@ -830,9 +830,7 @@ public class ReportExportPDF {
             throws IOException {
 
         String labelDescription =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.details.description.label");
+                extensionExport.getMessages().getString("exportreport.details.description.label");
         String labelRisk =
                 extensionExport.getMessages().getString("exportreport.export.message.pdf.risk");
         String labelReliability =
@@ -856,9 +854,7 @@ public class ReportExportPDF {
         String labelSolution =
                 extensionExport.getMessages().getString("exportreport.details.solution.label");
         String labelReferences =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.details.reference.label");
+                extensionExport.getMessages().getString("exportreport.details.reference.label");
         String labelCWEID =
                 extensionExport.getMessages().getString("exportreport.details.cweid.label");
         String labelWASCID =
