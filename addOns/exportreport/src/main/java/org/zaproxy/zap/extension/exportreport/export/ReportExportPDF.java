@@ -370,25 +370,14 @@ public class ReportExportPDF {
          */
         ArrayList<String> selectedRisks = extension.getIncludedAlertSeverity();
         ArrayList<String> alertRisks = extension.getAlertSeverity();
-        boolean isSelected;
 
         for (int i = alerts.size() - 1; i >= 0; i--) {
             List<Alert> alertList = alerts.get(i);
-            isSelected = false;
 
             for (int j = alertList.size() - 1; j >= 0; j--) {
                 Alert alert = alertList.get(j);
 
-                for (int k = 0; k < selectedRisks.size(); k++) {
-                    // If the alert risk level is in in the include list
-                    if (alertRisks.get(alert.getRisk()).equals(selectedRisks.get(k))) {
-                        isSelected = true;
-                    }
-                }
-
-                // If the alert risk level is not included, remove the alert from
-                // the list
-                if (!isSelected) {
+                if (!selectedRisks.contains(alertRisks.get(alert.getRisk()))) {
                     alertList.remove(j);
                 }
             }
@@ -434,8 +423,10 @@ public class ReportExportPDF {
                         page.findMediaBox().getLowerLeftX() + marginPoints,
                         page.findMediaBox().getUpperRightY() - marginPoints);
 
+        /*
+         * TODO: Removed for the time being to adapt class to ExportReport (to be reimplemented).
+         */
         // draw the logo at 40% size.
-        // Removed for the time being to adapt class to ExportReport
         // textInsertionPoint = addImage(extensionExport.getParams().getLogoFileName(), 40f,
         // textInsertionPoint);
 
@@ -458,6 +449,10 @@ public class ReportExportPDF {
         for (int i = 0; i < 15; i++) {
             textInsertionPoint = addText(textFormatting, " ", textInsertionPoint);
         }
+
+        /*
+         * TODO: Reimplement the confidentiality message support. This was previously set through the options of alertReport
+         */
         /*
         textInsertionPoint =
                 addText(
@@ -785,10 +780,10 @@ public class ReportExportPDF {
             ExtensionExportReport extensionExport) {
         if (key.contains("risk") || key.contains("reliability")) {
             return getMessage(
-                    extensionExport, "alertreport.export.pluginid." + key, contentDefault);
+                    extensionExport, "exportreport.export.pluginid." + key, contentDefault);
         }
         StringBuilder sbKey = new StringBuilder(50);
-        sbKey.append("alertreport.export.pluginid.");
+        sbKey.append("exportreport.export.pluginid.");
         sbKey.append(pluginId);
         sbKey.append('.');
         sbKey.append(key);
@@ -837,7 +832,7 @@ public class ReportExportPDF {
         String labelDescription =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.pdf.description");
+                        .getString("exportreport.details.description.label");
         String labelRisk =
                 extensionExport.getMessages().getString("exportreport.export.message.pdf.risk");
         String labelReliability =
@@ -859,11 +854,11 @@ public class ReportExportPDF {
                         .getMessages()
                         .getString("exportreport.export.message.pdf.otherinfo");
         String labelSolution =
-                extensionExport.getMessages().getString("exportreport.export.message.pdf.solution");
+                extensionExport.getMessages().getString("exportreport.details.solution.label");
         String labelReferences =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.pdf.references");
+                        .getString("exportreport.details.reference.label");
         String labelCWEID =
                 extensionExport.getMessages().getString("exportreport.details.cweid.label");
         String labelWASCID =
@@ -899,7 +894,7 @@ public class ReportExportPDF {
         if (detailsToInclude.contains(
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.pdf.description"))) {
+                        .getString("exportreport.details.description.label"))) {
             textInsertionPoint =
                     addText(alertLabelFormatting, labelDescription, textInsertionPoint);
             textInsertionPoint =
@@ -1075,9 +1070,7 @@ public class ReportExportPDF {
         }
 
         if (detailsToInclude.contains(
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.export.message.pdf.solution"))) {
+                extensionExport.getMessages().getString("exportreport.details.solution.label"))) {
             String solution =
                     getFieldAlertProperty(
                             alert.getPluginId(), "solution", alert.getSolution(), extensionExport);
@@ -1100,7 +1093,7 @@ public class ReportExportPDF {
         if (detailsToInclude.contains(
                         extensionExport
                                 .getMessages()
-                                .getString("exportreport.export.message.pdf.references"))
+                                .getString("exportreport.details.reference.label"))
                 && !alert.getReference().isEmpty()) {
             textInsertionPoint = addText(alertLabelFormatting, labelReferences, textInsertionPoint);
             textInsertionPoint =

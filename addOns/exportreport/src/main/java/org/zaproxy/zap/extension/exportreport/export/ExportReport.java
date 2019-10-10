@@ -344,7 +344,7 @@ public class ExportReport {
                                 Constant.messages.getString(
                                         "exportreport.export.message.failed.empty"));
                     }
-                    
+
                     show = true;
                     break;
 
@@ -356,7 +356,7 @@ public class ExportReport {
                     break;
             }
         } finally {
-        	// clear alertsDB from memory
+            // clear alertsDB from memory
             extension.clearAlertsDB();
             deleteFile(xmlPath);
         }
