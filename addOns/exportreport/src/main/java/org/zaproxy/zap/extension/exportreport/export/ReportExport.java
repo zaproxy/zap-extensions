@@ -158,7 +158,11 @@ final class ReportExport {
                             .getExtensionLoader()
                             .getExtension(ExtensionActiveScan.class)
                             .getScan(scanId);
-            scanId = scan == null ? -1 : scanId;
+
+            if (scan == null) {
+            	logger.warn(Constant.messages.getString("exportreport.message.warning.invalidscanid"));
+            	scanId = -1;
+            }
         }
 
         if (scanId == -1) {
@@ -181,12 +185,11 @@ final class ReportExport {
                     alerts.add(new Alert(tableAlert.read(alertId)));
 
                 } catch (DatabaseException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
+                    logger.error("exportreport.message.error.exception");
                 }
             }
             if (includePassiveAlerts) {
-                // TODO fix
                 // there doesn't seem to be a way
                 // to access only the passive alerts
                 // so we check for all alerts
