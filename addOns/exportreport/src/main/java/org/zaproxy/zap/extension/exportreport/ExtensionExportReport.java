@@ -77,8 +77,6 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     private ArrayList<String> alertSeverity = new ArrayList<String>();
     private ArrayList<String> alertDetails = new ArrayList<String>();
     private ArrayList<String> alertAdditional = new ArrayList<String>();
-    private int scanId = -1;
-    private boolean includePassiveAlerts = true;
     private FileList fileList = new FileList();
     private int maxList = 0;
     public static final int SOURCE_COUNT = 8;

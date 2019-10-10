@@ -160,8 +160,9 @@ final class ReportExport {
                             .getScan(scanId);
 
             if (scan == null) {
-            	logger.warn(Constant.messages.getString("exportreport.message.warning.invalidscanid"));
-            	scanId = -1;
+                logger.warn(
+                        Constant.messages.getString("exportreport.message.warning.invalidscanid"));
+                scanId = -1;
             }
         }
 
