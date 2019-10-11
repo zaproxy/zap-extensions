@@ -113,10 +113,8 @@ public class BruteForceWorkGenerator implements Runnable {
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
-            } catch (MalformedURLException e) {
-                // TODO deal with error
             } catch (IOException e) {
-                // TODO deal with error
+                LOG.error(e);
             }
         }
 
@@ -131,7 +129,7 @@ public class BruteForceWorkGenerator implements Runnable {
                 // get any extention that need to be checked
                 extToCheck = tempDirToCheck.getExts();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.debug(e);
             }
 
             started = currentDir;
@@ -148,10 +146,8 @@ public class BruteForceWorkGenerator implements Runnable {
                     baseCaseObj =
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
 
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error(e);
                 }
 
                 // baseCaseObj = new BaseCase(null, failcode, true, failurl, baseCase);
@@ -186,10 +182,8 @@ public class BruteForceWorkGenerator implements Runnable {
                                     GenBaseCase.genBaseCase(
                                             manager, firstPart + currentDir, false, fileExtention);
 
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            LOG.error(e);
                         }
 
                         // call function to generate the brute force
@@ -253,9 +247,9 @@ public class BruteForceWorkGenerator implements Runnable {
                 workQueue.put(new WorkUnit(currentURL, false, method, baseCaseObj, temp));
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.debug(e);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LOG.debug("Bad URL", e);
         }
     }
 

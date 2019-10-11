@@ -108,9 +108,9 @@ public class WorkerGenerator implements Runnable {
 
             manager.setTotalPass(passTotal);
         } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+            LOG.error(String.format("File '%s' not found!", inputFile), ex);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOG.error(ex);
         }
         // -------------------------------------------------
 
@@ -152,10 +152,8 @@ public class WorkerGenerator implements Runnable {
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
-            } catch (MalformedURLException e) {
-                // TODO deal with error
             } catch (IOException e) {
-                // TODO deal with error
+                LOG.error(e);
             }
         }
 
@@ -185,7 +183,7 @@ public class WorkerGenerator implements Runnable {
 
                 manager.setCurrentlyProcessing(currentDir);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.debug(e);
             }
             started = currentDir;
 
@@ -199,10 +197,8 @@ public class WorkerGenerator implements Runnable {
 
                     baseCaseObj =
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error(e);
                 }
 
                 // end of dir fail case
@@ -246,9 +242,9 @@ public class WorkerGenerator implements Runnable {
                                                 + currentDir.toString());
                             }
                         } catch (MalformedURLException ex) {
-                            ex.printStackTrace();
+                            LOG.debug("Bad URL", ex);
                         } catch (InterruptedException ex) {
-                            ex.printStackTrace();
+                            LOG.debug(ex);
                         }
                     } // end of dealing with first item
                     int dirsProcessed = 0;
@@ -299,7 +295,7 @@ public class WorkerGenerator implements Runnable {
                                 // e.printStackTrace();
                                 // do nothing if it's malformed, I dont care about them!
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                LOG.debug(e);
                             }
 
                             // if there is a call to stop the work gen then stop!
@@ -310,9 +306,9 @@ public class WorkerGenerator implements Runnable {
                         }
                     } // end of while
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    LOG.error(String.format("File '%s' not found!", inputFile), e);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error(e);
                 }
             }
 
@@ -341,10 +337,8 @@ public class WorkerGenerator implements Runnable {
                             baseCaseObj =
                                     GenBaseCase.genBaseCase(
                                             manager, firstPart + currentDir, false, fileExtention);
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            LOG.error(e);
                         }
 
                         // if the manager has sent the stop command then exit
@@ -406,7 +400,7 @@ public class WorkerGenerator implements Runnable {
                                         // e.printStackTrace();
                                         // again do nothing as I dont care
                                     } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                                        LOG.debug(e);
                                     }
 
                                     if (stopMe) {
@@ -417,9 +411,9 @@ public class WorkerGenerator implements Runnable {
                             } // end of while
                             // }
                         } catch (FileNotFoundException e) {
-                            e.printStackTrace();
+                            LOG.error(String.format("File '%s' not found!", inputFile), e);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            LOG.error(e);
                         }
                     }
                 } // end of file ext loop
@@ -430,7 +424,7 @@ public class WorkerGenerator implements Runnable {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                LOG.debug(ex);
             }
         } // end of main while
         // System.out.println("Gen FINISHED!");

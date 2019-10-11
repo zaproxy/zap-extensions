@@ -122,9 +122,9 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 }
                 manager.setTotalPass(passTotal);
             } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
+                LOG.error(String.format("File '%s' not found!", inputFile), ex);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                LOG.error(ex);
             }
 
             if (manager.getAuto()) {
@@ -149,7 +149,9 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                         manager.setAuto(false);
                     }
                 } catch (MalformedURLException e) {
+                    LOG.debug("Malformed URL", e);
                 } catch (IOException e) {
+                    LOG.debug(e);
                 }
             }
 
