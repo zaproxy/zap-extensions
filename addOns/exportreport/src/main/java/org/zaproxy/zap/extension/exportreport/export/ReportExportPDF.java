@@ -832,25 +832,21 @@ public class ReportExportPDF {
         String labelDescription =
                 extensionExport.getMessages().getString("exportreport.details.description.label");
         String labelRisk =
-                extensionExport.getMessages().getString("exportreport.export.message.pdf.risk");
+                extensionExport.getMessages().getString("exportreport.details.risk.label");
         String labelReliability =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.export.message.pdf.reability");
+                extensionExport.getMessages().getString("exportreport.details.confidence.label");
         String labelURLs =
-                extensionExport.getMessages().getString("exportreport.export.message.pdf.urls");
+                extensionExport.getMessages().getString("exportreport.details.urls.label");
         String labelParameter =
-                extensionExport
-                        .getMessages()
-                        .getString("exportreport.export.message.pdf.parameters");
+                extensionExport.getMessages().getString("exportreport.details.parameters.label");
         String labelAttack =
-                extensionExport.getMessages().getString("exportreport.export.message.pdf.attack");
+                extensionExport.getMessages().getString("exportreport.details.attack.label");
         String labelEvidence =
-                extensionExport.getMessages().getString("exportreport.export.message.pdf.evidence");
+                extensionExport.getMessages().getString("exportreport.details.evidence.label");
         String labelOtherInfo =
                 extensionExport
                         .getMessages()
-                        .getString("exportreport.export.message.pdf.otherinfo");
+                        .getString("exportreport.details.otherinformation.label");
         String labelSolution =
                 extensionExport.getMessages().getString("exportreport.details.solution.label");
         String labelReferences =
@@ -1053,7 +1049,7 @@ public class ReportExportPDF {
             if (detailsToInclude.contains(
                             extensionExport
                                     .getMessages()
-                                    .getString("exportreport.export.message.pdf.otherinfo"))
+                                    .getString("exportreport.details.otherinfo.label"))
                     && !alertAux.getOtherInfo().isEmpty()) {
                 textInsertionPoint =
                         addText(
