@@ -312,17 +312,11 @@ public class BruteForce extends Thread implements BruteForceListenner {
                             HistoryReference.TYPE_BRUTE_FORCE,
                             msg);
 
-            tableModel.addHistoryReference(ref);
-
             SwingUtilities.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            // Add to the sites tree
-                            SiteNode sn =
-                                    Model.getSingleton().getSession().getSiteTree().addPath(ref);
-                            sn.addCustomIcon(ExtensionBruteForce.HAMMER_ICON_RESOURCE, true);
-                        }
+                    () -> {
+                        tableModel.addHistoryReference(ref);
+                        SiteNode sn = Model.getSingleton().getSession().getSiteTree().addPath(ref);
+                        sn.addCustomIcon(ExtensionBruteForce.HAMMER_ICON_RESOURCE, true);
                     });
 
         } catch (Exception e) {
