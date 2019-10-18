@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+CSP Helper
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>CSP Helper</H1>
+This add-on generates a Content Security Policy (CSP) Header for sites and allows you to test it without making any changes to the site.
+<p>
+In order to use it:
+<ol>
+<li>Add the site you want to generate CSP for to ZAP, for example by proxying your browser through ZAP or by using one of the ZAP Spiders</li>
+<li>Locate the site in the Sites tree, right click it and select 'Enable for CSP Helper'</li> 
+<li>Explore the site as thoroughly as possible</li>
+</ol>
+When you enable the CSP Helper for a site ZAP will generate and inject a CSP header into the HTML returned to your browser.<br>
+It will update the CSP header to permit the minimum set of functionality that will let your site continue to function correctly.<br>
+It also injects a CSP violation report URL which will cause any CSP violations to be sent to ZAP. 
+If you use this add-on with a release after 2.5.0 (which includes the weekly releases) then ZAP will be able to analyse these reports.
+A restriction in ZAP releases up to and including 2.5.0 prevents this from working.  
+It updates the CSP header based on:
+<ul>
+<li>Parsing each of the requests from the site</li>
+<li>Analysing requests to other sites that include a Referer header from the target site</li>
+<li>Analysing any CSP reports generated (post 2.5.0)</li>
+</ul
+
+</BODY>
+</HTML>
