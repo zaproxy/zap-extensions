@@ -37,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.exportreport.ExtensionExportReport;
 import org.zaproxy.zap.extension.exportreport.filechooser.FileList;
 import org.zaproxy.zap.extension.exportreport.filechooser.ReportFileView;
@@ -103,7 +104,7 @@ public class ExportReport {
                                 extension.extensionGetDescription(),
                                 extension.getIncludedAlertSeverity(),
                                 extension.getIncludedAlertDetails(),
-                                -1,
+                                null,
                                 true);
             } catch (UnsupportedEncodingException e) {
                 logger.error(e.getMessage(), e);
@@ -241,7 +242,7 @@ public class ExportReport {
             ArrayList<String> sourceDetailsList,
             ArrayList<String> alertSeverityList,
             ArrayList<String> alertDetailsList,
-            int scanId,
+            ActiveScan scan,
             boolean includePassiveAlerts) {
 
         File f = new File(absolutePath);
@@ -275,7 +276,7 @@ public class ExportReport {
                             getDescription,
                             alertSeverityList,
                             alertDetailsList,
-                            scanId,
+                            scan,
                             includePassiveAlerts);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);

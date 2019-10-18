@@ -24,6 +24,7 @@ import java.util.Arrays;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -32,6 +33,8 @@ import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiView;
+import org.zaproxy.zap.extension.ascan.ActiveScan;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.exportreport.filechooser.FileList;
 import org.zaproxy.zap.extension.exportreport.filechooser.FileType;
 
@@ -281,6 +284,30 @@ public class ExportReportAPI extends ApiImplementor {
 
                 int scanId = this.getParam(params, ACTION_PARAM_SCAN_ID, -1);
 
+                // check if scanid is valid when specified
+                ActiveScan scan = null;
+
+                if (scanId != -1) {
+                    ExtensionActiveScan extension =
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionActiveScan.class);
+
+                    if (extension == null) {
+                        throw new IllegalArgumentException(
+                                Constant.messages.getString(
+                                        "exportreport.message.error.exception.extension"));
+                    }
+
+                    scan = extension.getScan(scanId);
+
+                    if (scan == null) {
+                        throw new IllegalStateException(
+                                Constant.messages.getString(
+                                        "exportreport.message.error.exception.invalidscanid"));
+                    }
+                }
+
                 boolean includePassiveAlerts =
                         getParam(params, ACTION_PARAM_INCLUDE_PASSIVE_ALERTS, true);
 
@@ -301,7 +328,7 @@ public class ExportReportAPI extends ApiImplementor {
                             sourceDetails,
                             alertSeverityTemp,
                             alertDetailsTemp,
-                            scanId,
+                            scan,
                             includePassiveAlerts)) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(

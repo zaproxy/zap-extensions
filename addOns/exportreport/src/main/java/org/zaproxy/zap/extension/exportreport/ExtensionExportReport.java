@@ -41,6 +41,7 @@ import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.exportreport.export.ExportReport;
 import org.zaproxy.zap.extension.exportreport.filechooser.FileList;
 import org.zaproxy.zap.extension.exportreport.filechooser.Utils;
@@ -85,10 +86,10 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     private static final int ARG_SOURCE_INFO_IDX = 1;
     private static final int ARG_ALERT_SEVERITY_IDX = 2;
     private static final int ARG_ALERT_DETAILS_IDX = 3;
-    private static final int ARG_SCAN_ID_IDX = 4;
-    private static final int ARG_INCLUDE_PASSIVE_ALERTS_IDX = 5;
+    private static final int ARG_INCLUDE_PASSIVE_ALERTS_IDX = 4;
+    // private static final int ARG_SCAN_ID_IDX = 5;
 
-    private CommandLineArgument[] arguments = new CommandLineArgument[6];
+    private CommandLineArgument[] arguments = new CommandLineArgument[5];
 
     // Used for PDF export
     private List<Alert> alertsDB = null;
@@ -342,7 +343,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
             ArrayList<String> sourceDetails,
             ArrayList<String> alertSeverity,
             ArrayList<String> alertDetails,
-            int scanId,
+            ActiveScan scan,
             boolean includePassiveAlerts) {
         ExportReport report = new ExportReport();
         return report.generateReport(
@@ -352,7 +353,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                 sourceDetails,
                 alertSeverity,
                 alertDetails,
-                scanId,
+                scan,
                 includePassiveAlerts);
     }
 
@@ -541,8 +542,8 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
             alertDetailsFull.addAll(alertDetails.size(), alertAdditional);
             ArrayList<String> alertDetailsTemp = generateList(alertDetailsFlags, alertDetailsFull);
 
+            /*
             int scanId = -1;
-            boolean includePassiveAlerts = true;
             if (arguments[ARG_SCAN_ID_IDX].isEnabled()) {
                 String scanIdStr = arguments[ARG_SCAN_ID_IDX].getArguments().get(0);
                 try {
@@ -551,7 +552,9 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                     scanId = -1;
                 }
             }
+            */
 
+            boolean includePassiveAlerts = true;
             if (arguments[ARG_INCLUDE_PASSIVE_ALERTS_IDX].isEnabled()) {
                 String includePassiveAlertsStr =
                         arguments[ARG_INCLUDE_PASSIVE_ALERTS_IDX].getArguments().get(0);
@@ -567,7 +570,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                         sourceDetails,
                         alertSeverityTemp,
                         alertDetailsTemp,
-                        scanId,
+                        null,
                         includePassiveAlerts)) {
                     CommandLine.info(
                             Constant.messages.getString(
@@ -640,6 +643,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                         null,
                         "",
                         Constant.messages.getString("exportreport.cmdline.details.help"));
+        /*
         arguments[ARG_SCAN_ID_IDX] =
                 new CommandLineArgument(
                         "-scan_id",
@@ -647,6 +651,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                         null,
                         "",
                         Constant.messages.getString("exportreport.cmdline.scanid.help"));
+        */
         arguments[ARG_INCLUDE_PASSIVE_ALERTS_IDX] =
                 new CommandLineArgument(
                         "-include_passive_alerts",

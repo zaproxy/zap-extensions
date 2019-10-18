@@ -63,7 +63,6 @@ import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
-import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.exportreport.filechooser.Utils;
 import org.zaproxy.zap.extension.exportreport.model.AlertItem;
 import org.zaproxy.zap.extension.exportreport.model.Alerts;
@@ -106,7 +105,7 @@ final class ReportExport {
             String reportDesc,
             ArrayList<String> alertSeverity,
             ArrayList<String> alertDetails,
-            int scanId,
+            ActiveScan scan,
             boolean includePassiveAlerts)
             throws UnsupportedEncodingException, URIException {
 
@@ -150,23 +149,7 @@ final class ReportExport {
 
         List<Alert> alerts = new ArrayList<>();
 
-        // check if scanid is valid when specified
-        ActiveScan scan = null;
-        if (scanId != -1) {
-            scan =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionActiveScan.class)
-                            .getScan(scanId);
-
-            if (scan == null) {
-                logger.warn(
-                        Constant.messages.getString("exportreport.message.warning.invalidscanid"));
-                scanId = -1;
-            }
-        }
-
-        if (scanId == -1) {
+        if (scan == null) {
             alerts =
                     Control.getSingleton()
                             .getExtensionLoader()
