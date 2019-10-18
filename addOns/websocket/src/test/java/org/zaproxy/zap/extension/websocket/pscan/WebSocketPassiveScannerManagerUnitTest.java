@@ -130,8 +130,6 @@ public class WebSocketPassiveScannerManagerUnitTest extends WebSocketTestUtils {
     public void shouldDisableScanner() {
         // Given
         WebSocketPassiveScanner scanner1 = mock(WebSocketPassiveScanner.class);
-        when(scanner1.getName()).thenReturn("WsScanner-1");
-        when(scanner1.getId()).thenReturn(1);
 
         // When
         wsPscanManager.setAllEnable(true);

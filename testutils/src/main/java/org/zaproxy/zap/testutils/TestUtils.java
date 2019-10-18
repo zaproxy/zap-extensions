@@ -20,10 +20,12 @@
 package org.zaproxy.zap.testutils;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyVararg;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,9 +61,8 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -155,9 +156,8 @@ public abstract class TestUtils {
         File langDir = new File(Constant.getZapInstall(), "lang");
         ClassLoaderUtil.addFile(langDir.getAbsolutePath());
 
-        ExtensionLoader extLoader = Mockito.mock(ExtensionLoader.class);
-        Control control = Mockito.mock(Control.class);
-        Mockito.when(control.getExtensionLoader()).thenReturn(extLoader);
+        Control control = mock(Control.class, withSettings().lenient());
+        when(control.getExtensionLoader()).thenReturn(mock(ExtensionLoader.class));
 
         // Init all the things
         Constant.getInstance();
@@ -493,7 +493,7 @@ public abstract class TestUtils {
      * @param extension the target extension to mock the messages
      */
     protected static void mockMessages(final Extension extension) {
-        I18N i18n = Mockito.mock(I18N.class);
+        I18N i18n = mock(I18N.class, withSettings().lenient());
         Constant.messages = i18n;
 
         given(i18n.getLocal()).willReturn(Locale.getDefault());
@@ -515,7 +515,7 @@ public abstract class TestUtils {
                             }
                         });
 
-        when(i18n.getString(anyString(), anyVararg()))
+        when(i18n.getString(anyString(), any()))
                 .thenAnswer(
                         new Answer<String>() {
 
