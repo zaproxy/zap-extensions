@@ -21,24 +21,31 @@ package org.zaproxy.zap.extension.fuzz;
 
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.RecordHistory;
+import org.parosproxy.paros.db.TableHistory;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzer;
+import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerHandler;
 
 public class FuzzAPI extends ApiImplementor {
     private static final String PREFIX = "fuzz";
-
+    private HttpFuzzerHandler httpFuzzerHandler;
     private ExtensionFuzz extension;
 
-    private static final String ACTION_HELLO_WORLD = "helloWorld";
+    private static final String ACTION_SIMPLE_HTTP_FUZZER = "simpleHTTPFuzzer";
 
     private static final Logger LOGGER = Logger.getLogger(FuzzAPI.class);
 
-    public FuzzAPI(ExtensionFuzz extension) {
-        this.extension = extension;
-        this.addApiAction(new ApiAction(ACTION_HELLO_WORLD));
+    public FuzzAPI(ExtensionFuzz ext) {
+        this.extension = ext;
+        this.addApiAction(new ApiAction(ACTION_SIMPLE_HTTP_FUZZER, new String[] {"id"}));
     }
 
     @Override
@@ -48,9 +55,21 @@ public class FuzzAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
+
         switch (name) {
-            case ACTION_HELLO_WORLD:
-                LOGGER.debug("hello world called");
+            case ACTION_SIMPLE_HTTP_FUZZER:
+                TableHistory tableHistory = Model.getSingleton().getDb().getTableHistory();
+                RecordHistory recordHistory =
+                        getRecordHistory(tableHistory, getParam(params, "id", -1));
+
+                HttpFuzzerHandler httpFuzzerHandler = new HttpFuzzerHandler();
+                HttpFuzzer fuzzer =
+                        httpFuzzerHandler.showFuzzerDialog(
+                                recordHistory.getHttpMessage(),
+                                extension.getDefaultFuzzerOptions());
+
+                //                extension.runFuzzer(httpFuzzerHandler, fuzzer);
+                //                extension.getFuzzerStarter();
                 break;
 
             default:
@@ -58,5 +77,19 @@ public class FuzzAPI extends ApiImplementor {
         }
 
         return ApiResponseElement.OK;
+    }
+
+    private RecordHistory getRecordHistory(TableHistory tableHistory, Integer id)
+            throws ApiException {
+        RecordHistory recordHistory;
+        try {
+            recordHistory = tableHistory.read(id);
+        } catch (HttpMalformedHeaderException | DatabaseException e) {
+            throw new ApiException(ApiException.Type.INTERNAL_ERROR, e);
+        }
+        if (recordHistory == null) {
+            throw new ApiException(ApiException.Type.DOES_NOT_EXIST, Integer.toString(id));
+        }
+        return recordHistory;
     }
 }
