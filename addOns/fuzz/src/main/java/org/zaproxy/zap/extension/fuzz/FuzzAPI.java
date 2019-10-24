@@ -22,8 +22,7 @@ package org.zaproxy.zap.extension.fuzz;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.SortedSet;
+import java.util.*;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.db.DatabaseException;
@@ -37,14 +36,16 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzer;
-import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerHandler;
+import org.zaproxy.zap.extension.fuzz.httpfuzzer.*;
 import org.zaproxy.zap.extension.fuzz.messagelocations.*;
-import org.zaproxy.zap.extension.fuzz.payloads.Payload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
+import org.zaproxy.zap.extension.fuzz.payloads.generator.DefaultStringPayloadGenerator;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.HttpMessageLocation;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.model.TextHttpMessageLocation;
+import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 public class FuzzAPI extends ApiImplementor {
     private static final String PREFIX = "fuzz";
@@ -74,17 +75,29 @@ public class FuzzAPI extends ApiImplementor {
                 RecordHistory recordHistory =
                         getRecordHistory(tableHistory, getParam(params, "id", -1));
 
-                HttpFuzzerHandler httpFuzzerHandler = new HttpFuzzerHandler();
+                httpFuzzerHandler = new HttpFuzzerHandler();
 
-                createFuzzLocations(
-                        recordHistory.getHttpMessage(),
-                        HttpMessageLocation.Location.REQUEST_HEADER,
-                        26,
-                        29,
-                        "/home/dennis/zaproxy-proj/temp_payloads.txt");
-                //HttpFuzzer httpFuzzer = new HttpFuzzer("Some name", extension.getDefaultFuzzerOptions(), recordHistory.getHttpMessage(), "", "", "");
-                //                extension.runFuzzer(httpFuzzerHandler, fuzzer);
-                //                extension.getFuzzerStarter();
+                List<PayloadGeneratorMessageLocation<?>> fuzzLocations =
+                        createFuzzLocations(
+                                recordHistory.getHttpMessage(),
+                                HttpMessageLocation.Location.REQUEST_BODY,
+                                9,
+                                14,
+                                "/home/dennis/zaproxy-proj/temp_payloads.txt");
+                List<HttpFuzzerMessageProcessor> messageProcessors =
+                        Collections.<HttpFuzzerMessageProcessor>emptyList();
+                HttpFuzzerOptions httpFuzzerOptions =
+                        getOptions(extension.getDefaultFuzzerOptions());
+
+                HttpFuzzer httpFuzzer =
+                        createFuzzer(
+                                "some name",
+                                recordHistory.getHttpMessage(),
+                                fuzzLocations,
+                                httpFuzzerOptions,
+                                messageProcessors);
+                System.out.println("Starting fuzzer");
+                extension.runFuzzer(httpFuzzerHandler, httpFuzzer);
                 break;
 
             default:
@@ -108,73 +121,134 @@ public class FuzzAPI extends ApiImplementor {
         return recordHistory;
     }
 
-    private List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>> createFuzzLocations(
+    private List<PayloadGeneratorMessageLocation<?>> createFuzzLocations(
             HttpMessage httpMessage,
             HttpMessageLocation.Location location,
             int start,
             int end,
             String payloadPath) {
-        MessageLocation messageLocation = null;
         TextHttpMessageLocation textHttpMessageLocation =
                 createTextHttpMessageLocationObjects(start, end, location);
-        List<MessageLocationReplacementGenerator<HttpMessage, MessageLocationReplacement<HttpMessage>>> fuzzLocations;
+        List<String> allLines = new ArrayList<>();
         try {
-            List<String> allLines = Files.readAllLines(Paths.get(payloadPath));
+            allLines = Files.readAllLines(Paths.get(payloadPath));
             for (String line : allLines) {
-
+                System.out.println(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+
+        List<PayloadGeneratorMessageLocation<?>> fuzzLocations =
+                createPayloadGeneratorMessageLocationList(
+                        textHttpMessageLocation, httpMessage, allLines);
+
+        return fuzzLocations;
     }
 
-    private MessageLocationReplacementGenerator<Payload, MessageLocationReplacement<Payload>> createMessageLocatoin;
+    private List<PayloadGeneratorMessageLocation<?>> createPayloadGeneratorMessageLocationList(
+            HttpMessageLocation messageLocation, HttpMessage message, List<String> payloads) {
+        List<PayloadGeneratorMessageLocation<?>> payloadGeneratorMessageLocationList =
+                new ArrayList<>();
+        DefaultStringPayloadGenerator payloadGenerator;
+        payloadGenerator = new DefaultStringPayloadGenerator(payloads);
+        ResettableAutoCloseableIterator<DefaultPayload> resettableAutoCloseableIterator =
+                payloadGenerator.iterator();
+        PayloadGeneratorMessageLocation<?> payloadGeneratorMessageLocation =
+                new PayloadGeneratorMessageLocation<>(
+                        messageLocation, payloads.size(), resettableAutoCloseableIterator);
+        payloadGeneratorMessageLocationList.add(payloadGeneratorMessageLocation);
+        return payloadGeneratorMessageLocationList;
+    }
+
     private TextHttpMessageLocation createTextHttpMessageLocationObjects(
             int start, int end, HttpMessageLocation.Location location) {
-        TextHttpMessageLocation textHttpMessageLocation =
-                new TextHttpMessageLocation() {
-                    @Override
-                    public int getStart() {
-                        return start;
-                    }
+        return new TextHttpMessageLocation() {
+            @Override
+            public int getStart() {
+                return start;
+            }
 
-                    @Override
-                    public int getEnd() {
-                        return end;
-                    }
+            @Override
+            public int getEnd() {
+                return end;
+            }
 
-                    @Override
-                    public Location getLocation() {
-                        return location;
-                    }
+            @Override
+            public Location getLocation() {
+                return location;
+            }
 
-                    @Override
-                    public Class<? extends Message> getTargetMessageClass() {
-                        return null;
-                    }
-                    // There is no need for these but can be fixed
-                    // All of the functions below no need probably
-                    @Override
-                    public String getDescription() {
-                        return null;
-                    }
+            @Override
+            public Class<? extends Message> getTargetMessageClass() {
+                return null;
+            }
+            // There is no need for these but can be fixed
+            // All of the functions below no need probably
+            @Override
+            public String getDescription() {
+                return null;
+            }
 
-                    @Override
-                    public String getValue() {
-                        return null;
-                    }
+            @Override
+            public String getValue() {
+                return null;
+            }
 
-                    @Override
-                    public boolean overlaps(MessageLocation otherLocation) {
-                        return false;
-                    }
+            @Override
+            public boolean overlaps(MessageLocation otherLocation) {
+                return false;
+            }
 
-                    @Override
-                    public int compareTo(MessageLocation messageLocation) {
-                        return 0;
-                    }
-                };
-        return textHttpMessageLocation;
+            @Override
+            public int compareTo(MessageLocation messageLocation) {
+                return 0;
+            }
+        };
+    }
+
+    private HttpFuzzer createFuzzer(
+            String name,
+            HttpMessage message,
+            List<PayloadGeneratorMessageLocation<?>> fuzzLocations,
+            HttpFuzzerOptions options,
+            List<HttpFuzzerMessageProcessor> processors) {
+        if (fuzzLocations.isEmpty()) {
+            return null;
+        }
+
+        MessageLocationReplacer<HttpMessage> replacer =
+                MessageLocationReplacers.getInstance()
+                        .getMLR(HttpMessage.class, TextHttpMessageLocation.class);
+
+        replacer.init(message);
+
+        MultipleMessageLocationsReplacer<HttpMessage> multipleMessageLocationsReplacer;
+        if (MessageLocationsReplacementStrategy.DEPTH_FIRST
+                == options.getPayloadsReplacementStrategy()) {
+            multipleMessageLocationsReplacer = new MultipleMessageLocationsDepthFirstReplacer<>();
+        } else {
+            multipleMessageLocationsReplacer = new MultipleMessageLocationsBreadthFirstReplacer<>();
+        }
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators =
+                new TreeSet<>();
+
+        for (PayloadGeneratorMessageLocation<?> fuzzLocation : fuzzLocations) {
+            messageLocationReplacementGenerators.add(fuzzLocation);
+        }
+        multipleMessageLocationsReplacer.init(replacer, messageLocationReplacementGenerators);
+
+        return new HttpFuzzer(
+                name,
+                options,
+                message,
+                (List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>)
+                        (ArrayList) fuzzLocations,
+                multipleMessageLocationsReplacer,
+                processors);
+    }
+
+    public HttpFuzzerOptions getOptions(FuzzerOptions baseOptions) {
+        return new HttpFuzzerOptions(baseOptions, false, false, 100, false);
     }
 }
