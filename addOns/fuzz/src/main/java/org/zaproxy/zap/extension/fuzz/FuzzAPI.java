@@ -54,11 +54,21 @@ public class FuzzAPI extends ApiImplementor {
 
     private static final String ACTION_SIMPLE_HTTP_FUZZER = "simpleHTTPFuzzer";
 
+    private static final String PARAM_MESSAGE_ID = "messageId";
+    private static final String PARAM_LOCATION = "location";
+    private static final String PARAM_PAYLOAD = "payload";
+    private static final String PARAM_FUZZ_HEADER = "fuzzHeader";
+
     private static final Logger LOGGER = Logger.getLogger(FuzzAPI.class);
 
     public FuzzAPI(ExtensionFuzz ext) {
         this.extension = ext;
-        this.addApiAction(new ApiAction(ACTION_SIMPLE_HTTP_FUZZER, new String[] {"id"}));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_SIMPLE_HTTP_FUZZER,
+                        new String[] {
+                            PARAM_MESSAGE_ID, PARAM_LOCATION, PARAM_PAYLOAD, PARAM_FUZZ_HEADER
+                        }));
     }
 
     @Override
@@ -73,17 +83,29 @@ public class FuzzAPI extends ApiImplementor {
             case ACTION_SIMPLE_HTTP_FUZZER:
                 TableHistory tableHistory = Model.getSingleton().getDb().getTableHistory();
                 RecordHistory recordHistory =
-                        getRecordHistory(tableHistory, getParam(params, "id", -1));
+                        getRecordHistory(tableHistory, getParam(params, PARAM_MESSAGE_ID, -1));
 
                 httpFuzzerHandler = new HttpFuzzerHandler();
+
+                String location = getParam(params, PARAM_LOCATION, "");
+                int locationStart = Integer.parseInt(location.split(":")[0]);
+                int locationEnd = Integer.parseInt(location.split(":")[1]);
+
+                String payloadPath = getParam(params, PARAM_PAYLOAD, "");
+
+                Boolean fuzzHeader = getParam(params, PARAM_FUZZ_HEADER, true);
+                HttpMessageLocation.Location httpLocation =
+                        fuzzHeader
+                                ? HttpMessageLocation.Location.REQUEST_HEADER
+                                : HttpMessageLocation.Location.REQUEST_BODY;
 
                 List<PayloadGeneratorMessageLocation<?>> fuzzLocations =
                         createFuzzLocations(
                                 recordHistory.getHttpMessage(),
-                                HttpMessageLocation.Location.REQUEST_BODY,
-                                9,
-                                14,
-                                "/home/dennis/zaproxy-proj/temp_payloads.txt");
+                                httpLocation,
+                                locationStart,
+                                locationEnd,
+                                payloadPath);
                 List<HttpFuzzerMessageProcessor> messageProcessors =
                         Collections.<HttpFuzzerMessageProcessor>emptyList();
                 HttpFuzzerOptions httpFuzzerOptions =
