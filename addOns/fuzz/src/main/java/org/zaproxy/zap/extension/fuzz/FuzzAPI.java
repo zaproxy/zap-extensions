@@ -60,18 +60,19 @@ public class FuzzAPI extends ApiImplementor {
     private static final String PARAM_LOCATION = "location";
     private static final String PARAM_PAYLOAD = "payload";
     private static final String PARAM_FUZZ_HEADER = "fuzzHeader";
+    private static final String PARAM_FUZZER_ID = "fuzzerId";
 
     private static final Logger LOGGER = Logger.getLogger(FuzzAPI.class);
 
     /* Default values for Http Fuzzer */
     private HttpFuzzerHandler httpFuzzerHandler;
-
     private static final String ACTION_TEST = "test";
     private static final String ACTION_SIMPLE_HTTP_FUZZER = "simpleHttpFuzzer";
     private static final String ACTION_SET_HTTP_FUZZ_OPTIONS = "setHttpFuzzerOptions";
     private static final String ACTION_RESET_DEFAULT_HTTP_FUZZ_OPTIONS =
             "resetHttpFuzzOptionsToDefault";
     private static final String ACTION_MULTIPLE_PAYLOAD_FUZZER = "multiplePayloadFuzzerOptions";
+    private static final String VIEW_GET_FUZZER_STATUS = "fuzzerStatus";
 
     public FuzzAPI(ExtensionFuzz ext) {
         this.extension = ext;
@@ -82,11 +83,26 @@ public class FuzzAPI extends ApiImplementor {
                             PARAM_MESSAGE_ID, PARAM_LOCATION, PARAM_PAYLOAD, PARAM_FUZZ_HEADER
                         }));
         this.addApiAction(new ApiAction(ACTION_TEST, new String[] {}));
+        this.addApiView(new ApiView(VIEW_GET_FUZZER_STATUS, new String[] {}));
     }
 
     @Override
     public String getPrefix() {
         return PREFIX;
+    }
+
+    @Override
+    public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
+        ApiResponse result = null;
+        switch (name) {
+            case VIEW_GET_FUZZER_STATUS:
+                System.out.println("at least printing something");
+                System.out.println(
+                        Arrays.toString(extension.getFuzzers(HttpFuzzer.class).toArray()));
+                return new ApiResponseElement("some response");
+            default:
+                throw new ApiException(ApiException.Type.BAD_VIEW);
+        }
     }
 
     @Override
@@ -98,6 +114,8 @@ public class FuzzAPI extends ApiImplementor {
                                 "/home/dennis/zaproxy-proj/zap-extensions/sample_fuzz_location_message.json");
                 System.out.println(p.first.getRequestBody().toString());
                 System.out.println(p.first.getRequestHeader().toString());
+                List<PayloadGeneratorMessageLocation<?>> fuzzLocationsAdvancedFuzzer =
+                        new ArrayList<>();
                 for (int i = 0; i < p.second.size(); i++) {
                     System.out.println(
                             p.second.get(i).getStart()
@@ -105,8 +123,29 @@ public class FuzzAPI extends ApiImplementor {
                                     + p.second.get(i).getEnd()
                                     + " "
                                     + p.second.get(i).getLocation());
+                    // Using the same payload for all locations
+                    fuzzLocationsAdvancedFuzzer.addAll(
+                            createFuzzLocations(
+                                    p.first,
+                                    p.second.get(i).getLocation(),
+                                    p.second.get(i).getStart(),
+                                    p.second.get(i).getEnd(),
+                                    "/home/dennis/zaproxy-proj/zap-extensions/sample_payload.txt"));
                 }
-
+                List<HttpFuzzerMessageProcessor> messageProcessors =
+                        Collections.<HttpFuzzerMessageProcessor>emptyList();
+                HttpFuzzerOptions httpFuzzerOptions =
+                        getOptions(extension.getDefaultFuzzerOptions());
+                HttpFuzzerHandler httpFuzzerHandler = new HttpFuzzerHandler();
+                HttpFuzzer httpFuzzer =
+                        createFuzzer(
+                                "some name",
+                                p.first,
+                                fuzzLocationsAdvancedFuzzer,
+                                httpFuzzerOptions,
+                                messageProcessors);
+                System.out.println("Starting fuzzer");
+                extension.runFuzzer(httpFuzzerHandler, httpFuzzer);
                 break;
             case ACTION_SIMPLE_HTTP_FUZZER:
                 TableHistory tableHistory = Model.getSingleton().getDb().getTableHistory();
@@ -134,27 +173,20 @@ public class FuzzAPI extends ApiImplementor {
                                 locationStart,
                                 locationEnd,
                                 payloadPath);
-                List<HttpFuzzerMessageProcessor> messageProcessors =
-                        Collections.<HttpFuzzerMessageProcessor>emptyList();
-                HttpFuzzerOptions httpFuzzerOptions =
-                        getOptions(extension.getDefaultFuzzerOptions());
 
-                HttpFuzzer httpFuzzer =
+                HttpFuzzer httpFuzzerSimple =
                         createFuzzer(
                                 "some name",
                                 recordHistory.getHttpMessage(),
                                 fuzzLocations,
-                                httpFuzzerOptions,
-                                messageProcessors);
+                                getOptions(extension.getDefaultFuzzerOptions()),
+                                Collections.<HttpFuzzerMessageProcessor>emptyList());
                 System.out.println("Starting fuzzer");
-                extension.runFuzzer(httpFuzzerHandler, httpFuzzer);
-
+                extension.runFuzzer(httpFuzzerHandler, httpFuzzerSimple);
                 break;
-
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
         }
-
         return ApiResponseElement.OK;
     }
 
