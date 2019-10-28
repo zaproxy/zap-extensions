@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 public class DirBusterManager extends Manager {
 
     private BruteForceListenner listenner;
-    private int done = 0;
     private int total = 100;
     private boolean finished = false;
     private static Logger log = Logger.getLogger(DirBusterManager.class);
@@ -81,14 +80,6 @@ public class DirBusterManager extends Manager {
 
     public boolean hasFinished() {
         return finished;
-    }
-
-    @Override
-    public int getTotalDone() {
-        if (this.areWorkersAlive()) {
-            done = super.getTotalDone();
-        }
-        return done;
     }
 
     public int getTotal() {
