@@ -55,7 +55,6 @@ public class FuzzAPI extends ApiImplementor {
     private static final String SECTION_SIGN = "§";
     private static final String ESCAPE_CHARACTER = "\\";
     private ExtensionFuzz extension;
-
     private static final String PARAM_MESSAGE_ID = "messageId";
     private static final String PARAM_LOCATION = "location";
     private static final String PARAM_PAYLOAD = "payload";
@@ -83,7 +82,7 @@ public class FuzzAPI extends ApiImplementor {
                             PARAM_MESSAGE_ID, PARAM_LOCATION, PARAM_PAYLOAD, PARAM_FUZZ_HEADER
                         }));
         this.addApiAction(new ApiAction(ACTION_TEST, new String[] {}));
-        this.addApiView(new ApiView(VIEW_GET_FUZZER_STATUS, new String[] {}));
+        this.addApiView(new ApiView(VIEW_GET_FUZZER_STATUS, new String[] {PARAM_FUZZER_ID}));
     }
 
     @Override
@@ -96,10 +95,25 @@ public class FuzzAPI extends ApiImplementor {
         ApiResponse result = null;
         switch (name) {
             case VIEW_GET_FUZZER_STATUS:
-                System.out.println("at least printing something");
-                System.out.println(
-                        Arrays.toString(extension.getFuzzers(HttpFuzzer.class).toArray()));
-                return new ApiResponseElement("some response");
+                int fuzzerId = getParam(params, PARAM_FUZZER_ID, -1);
+                List<HttpFuzzer> fuzzersList = extension.getFuzzers(HttpFuzzer.class);
+                HttpFuzzer fuzzer = null;
+                for (HttpFuzzer f : fuzzersList) {
+                    if (f.getScanId() == fuzzerId) {
+                        fuzzer = f;
+                        break;
+                    }
+                }
+                if (fuzzer != null) {
+                    int progress = 0;
+                    if (fuzzer.isStopped()) {
+                        progress = 100;
+                    } else {
+                        progress = fuzzer.getProgress();
+                    }
+                    return new ApiResponseElement("progress", Integer.toString(progress));
+                }
+                return ApiResponseElement.FAIL;
             default:
                 throw new ApiException(ApiException.Type.BAD_VIEW);
         }
@@ -146,7 +160,7 @@ public class FuzzAPI extends ApiImplementor {
                                 messageProcessors);
                 System.out.println("Starting fuzzer");
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzer);
-                break;
+                return new ApiResponseElement("fuzzerId", Integer.toString(httpFuzzer.getScanId()));
             case ACTION_SIMPLE_HTTP_FUZZER:
                 TableHistory tableHistory = Model.getSingleton().getDb().getTableHistory();
                 RecordHistory recordHistory =
@@ -183,11 +197,11 @@ public class FuzzAPI extends ApiImplementor {
                                 Collections.<HttpFuzzerMessageProcessor>emptyList());
                 System.out.println("Starting fuzzer");
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerSimple);
-                break;
+                return new ApiResponseElement(
+                        "fuzzerId", Integer.toString(httpFuzzerSimple.getScanId()));
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
         }
-        return ApiResponseElement.OK;
     }
 
     private RecordHistory getRecordHistory(TableHistory tableHistory, Integer id)
