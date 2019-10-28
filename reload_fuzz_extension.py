@@ -25,3 +25,5 @@ print(zap.autoupdate.install_local_addon("/home/dennis/zaproxy-proj/zap-extensio
 
 #give time to install
 time.sleep(2)
+
+zap.fuzz.test()
