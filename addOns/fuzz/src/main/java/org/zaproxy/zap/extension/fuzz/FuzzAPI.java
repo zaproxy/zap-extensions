@@ -56,8 +56,6 @@ public class FuzzAPI extends ApiImplementor {
     private static final String ESCAPE_CHARACTER = "\\";
     private ExtensionFuzz extension;
 
-    private static final String ACTION_SIMPLE_HTTP_FUZZER = "simpleHTTPFuzzer";
-
     private static final String PARAM_MESSAGE_ID = "messageId";
     private static final String PARAM_LOCATION = "location";
     private static final String PARAM_PAYLOAD = "payload";
@@ -83,7 +81,6 @@ public class FuzzAPI extends ApiImplementor {
                         new String[] {
                             PARAM_MESSAGE_ID, PARAM_LOCATION, PARAM_PAYLOAD, PARAM_FUZZ_HEADER
                         }));
-        this.addApiAction(new ApiAction(ACTION_SIMPLE_HTTP_FUZZER, new String[] {"id"}));
         this.addApiAction(new ApiAction(ACTION_TEST, new String[] {}));
     }
 
