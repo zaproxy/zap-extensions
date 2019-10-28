@@ -23,6 +23,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import org.apache.commons.io.IOUtils;
@@ -99,6 +101,8 @@ public class FuzzAPI extends ApiImplementor {
                 System.out.println("at least printing something");
                 System.out.println(
                         Arrays.toString(extension.getFuzzers(HttpFuzzer.class).toArray()));
+                ApiResponseList apiResponseList = new ApiResponseList("somename");
+
                 return new ApiResponseElement("some response");
             default:
                 throw new ApiException(ApiException.Type.BAD_VIEW);
@@ -126,14 +130,13 @@ public class FuzzAPI extends ApiImplementor {
                     // Using the same payload for all locations
                     fuzzLocationsAdvancedFuzzer.addAll(
                             createFuzzLocations(
-                                    p.first,
                                     p.second.get(i).getLocation(),
                                     p.second.get(i).getStart(),
                                     p.second.get(i).getEnd(),
                                     "/home/dennis/zaproxy-proj/zap-extensions/sample_payload.txt"));
                 }
                 List<HttpFuzzerMessageProcessor> messageProcessors =
-                        Collections.<HttpFuzzerMessageProcessor>emptyList();
+                        Collections.emptyList();
                 HttpFuzzerOptions httpFuzzerOptions =
                         getOptions(extension.getDefaultFuzzerOptions());
                 HttpFuzzerHandler httpFuzzerHandler = new HttpFuzzerHandler();
@@ -160,7 +163,7 @@ public class FuzzAPI extends ApiImplementor {
 
                 String payloadPath = getParam(params, PARAM_PAYLOAD, "");
 
-                Boolean fuzzHeader = getParam(params, PARAM_FUZZ_HEADER, true);
+                boolean fuzzHeader = getParam(params, PARAM_FUZZ_HEADER, true);
                 HttpMessageLocation.Location httpLocation =
                         fuzzHeader
                                 ? HttpMessageLocation.Location.REQUEST_HEADER
@@ -168,7 +171,6 @@ public class FuzzAPI extends ApiImplementor {
 
                 List<PayloadGeneratorMessageLocation<?>> fuzzLocations =
                         createFuzzLocations(
-                                recordHistory.getHttpMessage(),
                                 httpLocation,
                                 locationStart,
                                 locationEnd,
@@ -180,7 +182,7 @@ public class FuzzAPI extends ApiImplementor {
                                 recordHistory.getHttpMessage(),
                                 fuzzLocations,
                                 getOptions(extension.getDefaultFuzzerOptions()),
-                                Collections.<HttpFuzzerMessageProcessor>emptyList());
+                                Collections.emptyList());
                 System.out.println("Starting fuzzer");
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerSimple);
                 break;
@@ -205,13 +207,12 @@ public class FuzzAPI extends ApiImplementor {
     }
 
     private List<PayloadGeneratorMessageLocation<?>> createFuzzLocations(
-            HttpMessage httpMessage,
             HttpMessageLocation.Location location,
             int start,
             int end,
             String payloadPath) {
         TextHttpMessageLocation textHttpMessageLocation =
-                createTextHttpMessageLocationObjects(start, end, location);
+                createTextHttpMessageLocationObject(start, end, location);
         List<String> allLines = new ArrayList<>();
         try {
             allLines = Files.readAllLines(Paths.get(payloadPath));
@@ -219,15 +220,12 @@ public class FuzzAPI extends ApiImplementor {
             e.printStackTrace();
         }
 
-        List<PayloadGeneratorMessageLocation<?>> fuzzLocations =
-                createPayloadGeneratorMessageLocationList(
-                        textHttpMessageLocation, httpMessage, allLines);
-
-        return fuzzLocations;
+        return createPayloadGeneratorMessageLocationList(
+                textHttpMessageLocation, allLines);
     }
 
     private List<PayloadGeneratorMessageLocation<?>> createPayloadGeneratorMessageLocationList(
-            HttpMessageLocation messageLocation, HttpMessage message, List<String> payloads) {
+            HttpMessageLocation messageLocation, List<String> payloads) {
         List<PayloadGeneratorMessageLocation<?>> payloadGeneratorMessageLocationList =
                 new ArrayList<>();
         DefaultStringPayloadGenerator payloadGenerator;
@@ -241,7 +239,7 @@ public class FuzzAPI extends ApiImplementor {
         return payloadGeneratorMessageLocationList;
     }
 
-    private TextHttpMessageLocation createTextHttpMessageLocationObjects(
+    private TextHttpMessageLocation createTextHttpMessageLocationObject(
             int start, int end, HttpMessageLocation.Location location) {
         return new TextHttpMessageLocation() {
             @Override
@@ -310,12 +308,9 @@ public class FuzzAPI extends ApiImplementor {
         } else {
             multipleMessageLocationsReplacer = new MultipleMessageLocationsBreadthFirstReplacer<>();
         }
-        SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators =
-                new TreeSet<>();
 
-        for (PayloadGeneratorMessageLocation<?> fuzzLocation : fuzzLocations) {
-            messageLocationReplacementGenerators.add(fuzzLocation);
-        }
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators =
+                new TreeSet<>(fuzzLocations);
         multipleMessageLocationsReplacer.init(replacer, messageLocationReplacementGenerators);
 
         return new HttpFuzzer(
@@ -328,11 +323,11 @@ public class FuzzAPI extends ApiImplementor {
                 processors);
     }
 
-    public HttpFuzzerOptions getOptions(FuzzerOptions baseOptions) {
+    private HttpFuzzerOptions getOptions(FuzzerOptions baseOptions) {
         return new HttpFuzzerOptions(baseOptions, false, false, 100, false);
     }
 
-    public Pair<HttpMessage, List<TextHttpMessageLocation>>
+    private Pair<HttpMessage, List<TextHttpMessageLocation>>
             generateHttpMessageLocationsFromHttpMessageJsonInput(String jsonPath)
                     throws IllegalFormatException {
         List<TextHttpMessageLocation> textHttpMessageLocationList = new ArrayList<>();
@@ -345,6 +340,7 @@ public class FuzzAPI extends ApiImplementor {
         }
         String jsonTxt = null;
         try {
+            assert is != null;
             jsonTxt = IOUtils.toString(is);
         } catch (IOException e) {
             e.printStackTrace();
@@ -363,14 +359,14 @@ public class FuzzAPI extends ApiImplementor {
         }
         for (int i = 0; i < headerFuzzLocations.size(); i += 2) {
             textHttpMessageLocationList.add(
-                    createTextHttpMessageLocationObjects(
+                    createTextHttpMessageLocationObject(
                             headerFuzzLocations.get(i),
                             headerFuzzLocations.get(i + 1),
                             TextHttpMessageLocation.Location.REQUEST_HEADER));
         }
         for (int i = 0; i < bodyFuzzLocations.size(); i += 2) {
             textHttpMessageLocationList.add(
-                    createTextHttpMessageLocationObjects(
+                    createTextHttpMessageLocationObject(
                             bodyFuzzLocations.get(i),
                             bodyFuzzLocations.get(i + 1),
                             TextHttpMessageLocation.Location.REQUEST_BODY));
@@ -413,5 +409,14 @@ public class FuzzAPI extends ApiImplementor {
     // TODO implement this
     private boolean notEscaped(String string, int i) {
         return true;
+    }
+    private List<PayloadGeneratorMessageLocation<?>> createFuzzLocationsFromJsonInput(JSONObject fuzzLocationsObject){
+        List<PayloadGeneratorMessageLocation<?>> payloadGeneratorMessageLocationList = new ArrayList<>();
+        JSONArray fuzzLocationsJsonArray = fuzzLocationsObject.getJSONArray("fuzzLocations");
+        for(int i = 0; i < fuzzLocationsJsonArray.size(); i++){
+            JSONObject fuzzLocation = fuzzLocationsJsonArray.getJSONObject(i);
+            TextHttpMessageLocation.Location location = fuzzLocation.get("location").equals("body") ? HttpMessageLocation.Location.REQUEST_BODY : HttpMessageLocation.Location.REQUEST_HEADER;
+        }
+        return null;
     }
 }
