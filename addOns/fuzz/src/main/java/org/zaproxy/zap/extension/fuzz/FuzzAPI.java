@@ -23,7 +23,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -143,14 +142,12 @@ public class FuzzAPI extends ApiImplementor {
                     // Using the same payload for all locations
                     fuzzLocationsAdvancedFuzzer.addAll(
                             createFuzzLocations(
-                                    p.first,
                                     p.second.get(i).getLocation(),
                                     p.second.get(i).getStart(),
                                     p.second.get(i).getEnd(),
                                     "/home/dennis/zaproxy-proj/zap-extensions/sample_payload.txt"));
                 }
-                List<HttpFuzzerMessageProcessor> messageProcessors =
-                        Collections.emptyList();
+                List<HttpFuzzerMessageProcessor> messageProcessors = Collections.emptyList();
                 HttpFuzzerOptions httpFuzzerOptions =
                         getOptions(extension.getDefaultFuzzerOptions());
                 HttpFuzzerHandler httpFuzzerHandler = new HttpFuzzerHandler();
@@ -184,11 +181,7 @@ public class FuzzAPI extends ApiImplementor {
                                 : HttpMessageLocation.Location.REQUEST_BODY;
 
                 List<PayloadGeneratorMessageLocation<?>> fuzzLocations =
-                        createFuzzLocations(
-                                httpLocation,
-                                locationStart,
-                                locationEnd,
-                                payloadPath);
+                        createFuzzLocations(httpLocation, locationStart, locationEnd, payloadPath);
 
                 HttpFuzzer httpFuzzerSimple =
                         createFuzzer(
@@ -221,10 +214,7 @@ public class FuzzAPI extends ApiImplementor {
     }
 
     private List<PayloadGeneratorMessageLocation<?>> createFuzzLocations(
-            HttpMessageLocation.Location location,
-            int start,
-            int end,
-            String payloadPath) {
+            HttpMessageLocation.Location location, int start, int end, String payloadPath) {
         TextHttpMessageLocation textHttpMessageLocation =
                 createTextHttpMessageLocationObject(start, end, location);
         List<String> allLines = new ArrayList<>();
@@ -234,8 +224,7 @@ public class FuzzAPI extends ApiImplementor {
             e.printStackTrace();
         }
 
-        return createPayloadGeneratorMessageLocationList(
-                textHttpMessageLocation, allLines);
+        return createPayloadGeneratorMessageLocationList(textHttpMessageLocation, allLines);
     }
 
     private List<PayloadGeneratorMessageLocation<?>> createPayloadGeneratorMessageLocationList(
@@ -424,12 +413,18 @@ public class FuzzAPI extends ApiImplementor {
     private boolean notEscaped(String string, int i) {
         return true;
     }
-    private List<PayloadGeneratorMessageLocation<?>> createFuzzLocationsFromJsonInput(JSONObject fuzzLocationsObject){
-        List<PayloadGeneratorMessageLocation<?>> payloadGeneratorMessageLocationList = new ArrayList<>();
+
+    private List<PayloadGeneratorMessageLocation<?>> createFuzzLocationsFromJsonInput(
+            JSONObject fuzzLocationsObject) {
+        List<PayloadGeneratorMessageLocation<?>> payloadGeneratorMessageLocationList =
+                new ArrayList<>();
         JSONArray fuzzLocationsJsonArray = fuzzLocationsObject.getJSONArray("fuzzLocations");
-        for(int i = 0; i < fuzzLocationsJsonArray.size(); i++){
+        for (int i = 0; i < fuzzLocationsJsonArray.size(); i++) {
             JSONObject fuzzLocation = fuzzLocationsJsonArray.getJSONObject(i);
-            TextHttpMessageLocation.Location location = fuzzLocation.get("location").equals("body") ? HttpMessageLocation.Location.REQUEST_BODY : HttpMessageLocation.Location.REQUEST_HEADER;
+            TextHttpMessageLocation.Location location =
+                    fuzzLocation.get("location").equals("body")
+                            ? HttpMessageLocation.Location.REQUEST_BODY
+                            : HttpMessageLocation.Location.REQUEST_HEADER;
         }
         return null;
     }
