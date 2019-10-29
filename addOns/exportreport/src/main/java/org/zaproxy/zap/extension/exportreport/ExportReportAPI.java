@@ -295,18 +295,14 @@ public class ExportReportAPI extends ApiImplementor {
 
                     if (extension == null) {
                         throw new ApiException(
-                        		ApiException.Type.BAD_STATE,
-                                Constant.messages.getString(
-                                        "exportreport.message.error.exception.extension"));
+                                ApiException.Type.BAD_STATE, "Active scan extenstion not enabled");
                     }
 
                     scan = extension.getScan(scanId);
 
                     if (scan == null) {
                         throw new ApiException(
-                        		ApiException.Type.ILLEGAL_PARAMETER,
-                                Constant.messages.getString(
-                                        "exportreport.message.error.exception.invalidscanid", scanId));
+                                ApiException.Type.ILLEGAL_PARAMETER, ACTION_PARAM_SCAN_ID);
                     }
                 }
 
