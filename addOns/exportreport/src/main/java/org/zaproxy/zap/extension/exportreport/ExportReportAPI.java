@@ -295,7 +295,7 @@ public class ExportReportAPI extends ApiImplementor {
 
                     if (extension == null) {
                         throw new ApiException(
-                                ApiException.Type.BAD_STATE, "Active scan extenstion not enabled");
+                                ApiException.Type.BAD_STATE, "Active scan extension not enabled");
                     }
 
                     scan = extension.getScan(scanId);
