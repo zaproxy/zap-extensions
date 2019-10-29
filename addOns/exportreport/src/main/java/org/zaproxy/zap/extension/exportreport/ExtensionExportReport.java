@@ -543,6 +543,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
             ArrayList<String> alertDetailsTemp = generateList(alertDetailsFlags, alertDetailsFull);
 
             /*
+             * TODO: Issue 2920 : Add scanId option to cmdline tool
             int scanId = -1;
             if (arguments[ARG_SCAN_ID_IDX].isEnabled()) {
                 String scanIdStr = arguments[ARG_SCAN_ID_IDX].getArguments().get(0);
@@ -644,6 +645,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
                         "",
                         Constant.messages.getString("exportreport.cmdline.details.help"));
         /*
+         * TODO: Issue 2920 : Add scanId option to cmdline tool
         arguments[ARG_SCAN_ID_IDX] =
                 new CommandLineArgument(
                         "-scan_id",

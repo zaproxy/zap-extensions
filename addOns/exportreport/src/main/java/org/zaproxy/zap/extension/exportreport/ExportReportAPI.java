@@ -294,7 +294,8 @@ public class ExportReportAPI extends ApiImplementor {
                                     .getExtension(ExtensionActiveScan.class);
 
                     if (extension == null) {
-                        throw new IllegalArgumentException(
+                        throw new ApiException(
+                        		ApiException.Type.BAD_STATE,
                                 Constant.messages.getString(
                                         "exportreport.message.error.exception.extension"));
                     }
@@ -302,9 +303,10 @@ public class ExportReportAPI extends ApiImplementor {
                     scan = extension.getScan(scanId);
 
                     if (scan == null) {
-                        throw new IllegalStateException(
+                        throw new ApiException(
+                        		ApiException.Type.ILLEGAL_PARAMETER,
                                 Constant.messages.getString(
-                                        "exportreport.message.error.exception.invalidscanid"));
+                                        "exportreport.message.error.exception.invalidscanid", scanId));
                     }
                 }
 
