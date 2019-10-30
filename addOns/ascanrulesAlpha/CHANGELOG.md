@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add dependency on Custom Payloads add-on. The payloads of the Test User Agent scanner are now customizable.
 - Added XSLT Injection Scanner (issue 3572).
 
+### Changed
+- Update minimum ZAP version to 2.8.0.
+
 ## [25] - 2019-07-11
 
 ### Fixed
