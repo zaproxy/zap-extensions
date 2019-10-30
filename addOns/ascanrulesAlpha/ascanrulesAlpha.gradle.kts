@@ -16,7 +16,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("custompayloads") {
-                            version.set("1.*")
+                            version.set("0.9.*")
                         }
                     }
                 }
