@@ -192,6 +192,16 @@ public class FuzzAPI extends ApiImplementor {
                                 fuzzLocationsTest,
                                 getOptions(extension.getDefaultFuzzerOptions()),
                                 Collections.emptyList());
+                List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>
+                        tmpFuzzLocations =
+                                (List<
+                                                MessageLocationReplacementGenerator<
+                                                        ?, MessageLocationReplacement<?>>>)
+                                        (ArrayList) fuzzLocationsTest;
+                System.out.println("size is " + tmpFuzzLocations.size());
+                System.out.println(
+                        "second replacer contains "
+                                + tmpFuzzLocations.get(1).getNumberOfReplacements());
                 System.out.println("Starting fuzzer");
                 httpFuzzerHandler = new HttpFuzzerHandler();
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerTest);
