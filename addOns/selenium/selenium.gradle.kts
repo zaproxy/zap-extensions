@@ -20,7 +20,9 @@ zapAddOn {
 }
 
 dependencies {
-    api("org.seleniumhq.selenium:selenium-server:3.7.1")
+    api("org.seleniumhq.selenium:selenium-server:3.141.59")
+    api("org.seleniumhq.selenium:htmlunit-driver:2.36.0")
+    api("com.codeborne:phantomjsdriver:1.4.4")
 
     testImplementation(project(":testutils"))
 }
