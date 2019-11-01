@@ -47,7 +47,7 @@ public class ExtensionAdvancedEncoder extends ExtensionAdaptor {
     public static final String NAME = "ExtensionAdvancedEncoder";
     public static final int EXTENSION_ORDER = 87;
     public static final ImageIcon ICON;
-    private static final Logger LOGGER = Logger.getLogger(AdvancedEncodeDecodeDialog.class);
+    private static final Logger LOGGER = Logger.getLogger(ExtensionAdvancedEncoder.class);
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
     static {
@@ -57,6 +57,7 @@ public class ExtensionAdvancedEncoder extends ExtensionAdaptor {
         ICON = createIcon("advancedencoder.png");
     }
 
+    private static ScriptType advEncodeScriptType = null;
     private ExtensionScript extensionScript = null;
     private AdvancedEncodeDecodeDialog encodeDecodeDialog = null;
     private PopupAdvancedEncoderMenu popupEncodeMenu = null;
@@ -90,6 +91,18 @@ public class ExtensionAdvancedEncoder extends ExtensionAdaptor {
         return extensionScript.getScripts(ExtensionAdvancedEncoder.SCRIPT_TYPE_ENCODE_DECODE);
     }
 
+    private ScriptType getAdvancedEncoderScriptType() {
+        if (advEncodeScriptType == null) {
+            advEncodeScriptType =
+                    new ScriptType(
+                            SCRIPT_TYPE_ENCODE_DECODE,
+                            "advancedencoder.scripts.type.encodedecode",
+                            createIcon("script-advanced-encoder.png"),
+                            true);
+        }
+        return advEncodeScriptType;
+    }
+
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
@@ -102,12 +115,7 @@ public class ExtensionAdvancedEncoder extends ExtensionAdaptor {
 
         ExtensionScript extScript = getExtensionScript();
         if (extScript != null) {
-            extScript.registerScriptType(
-                    new ScriptType(
-                            SCRIPT_TYPE_ENCODE_DECODE,
-                            "advancedencoder.scripts.type.encodedecode",
-                            createIcon("script-advanced-encoder.png"),
-                            true));
+            extScript.registerScriptType(getAdvancedEncoderScriptType());
         }
     }
 
@@ -179,6 +187,10 @@ public class ExtensionAdvancedEncoder extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
+        ExtensionScript extScript = getExtensionScript();
+        if (extScript != null) {
+            extScript.removeScripType(getAdvancedEncoderScriptType());
+        }
     }
 
     @Override

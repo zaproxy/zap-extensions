@@ -387,7 +387,7 @@ public class AdvancedEncodeDecodeDialog extends AbstractFrame implements WindowL
 
             final GridBagConstraints gbcScrollPanel = new GridBagConstraints();
             gbcScrollPanel.gridx = 0;
-            gbcScrollPanel.gridy = 2;
+            gbcScrollPanel.gridy = 1;
             gbcScrollPanel.insets = new java.awt.Insets(1, 1, 1, 1);
             gbcScrollPanel.anchor = GridBagConstraints.NORTHWEST;
             gbcScrollPanel.fill = GridBagConstraints.BOTH;
@@ -418,13 +418,13 @@ public class AdvancedEncodeDecodeDialog extends AbstractFrame implements WindowL
 
             final GridBagConstraints gbcToolbar = new GridBagConstraints();
             gbcToolbar.gridx = 0;
-            gbcToolbar.gridy = 1;
+            gbcToolbar.gridy = 2;
             gbcToolbar.insets = new java.awt.Insets(1, 1, 1, 1);
             gbcToolbar.anchor = GridBagConstraints.NORTHWEST;
             gbcToolbar.fill = GridBagConstraints.BOTH;
 
-            jPanel.add(getPanelToolbar(), gbcToolbar);
             jPanel.add(scrollPanelWithInputField, gbcScrollPanel);
+            jPanel.add(getPanelToolbar(), gbcToolbar);
             jPanel.add(getTabbedPane(), gbcTabPanel);
         }
         return jPanel;
