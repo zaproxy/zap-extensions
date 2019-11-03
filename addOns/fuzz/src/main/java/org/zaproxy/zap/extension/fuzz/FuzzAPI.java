@@ -55,7 +55,7 @@ public class FuzzAPI extends ApiImplementor {
     /* Api NAME */
     private static final String PREFIX = "fuzz";
     private static final String SECTION_SIGN = "§";
-    //TODO add escape feature to the section sign
+    // TODO add escape feature to the section sign
     private static final String ESCAPE_CHARACTER = "\\";
     private ExtensionFuzz extension;
 
@@ -70,7 +70,7 @@ public class FuzzAPI extends ApiImplementor {
     private static final String PARAM_RETRIES = "retriesOnIOError";
     private static final String PARAM_DELAY = "delayInMs";
     private static final String PARAM_THREADS = "concurrentScanningThreads";
-    //TODO add logs
+    // TODO add logs
     private static final Logger LOGGER = Logger.getLogger(FuzzAPI.class);
 
     /* Default values for Http Fuzzer */
@@ -83,13 +83,18 @@ public class FuzzAPI extends ApiImplementor {
     private static final String ACTION_MULTIPLE_PAYLOAD_FUZZER = "multiplePayloadFuzzerOptions";
     private static final String VIEW_FUZZER_PROGRESS = "fuzzerProgress";
     private static final String VIEW_GET_MESSAGES_SENT = "getMessagesSentCount";
-    //TODO implement this
+    // TODO implement this
     private static final String VIEW_GET_ALL_SENT_MESSAGES = "getAllSentMessages";
     private static final String VIEW_GET_RESULTS = "getResults";
     private static final String ACTION_START_SCAN = "startScan";
     private static final String ACTION_STOP_SCAN = "stopScan";
     private static final String ACTION_PAUSE_SCAN = "pauseScan";
     private static final String ACTION_RESUME_SCAN = "resumeScan";
+
+    /** Provided only for API client generator usage. */
+    public FuzzAPI() {
+        this(null);
+    }
 
     public FuzzAPI(ExtensionFuzz ext) {
         this.extension = ext;
@@ -170,8 +175,7 @@ public class FuzzAPI extends ApiImplementor {
                                 fuzzer.getMessagesModel().getHeaders().get(j),
                                 fuzzer.getMessagesModel().getValueAt(i, j).toString());
                     }
-                    apiResponseList.addItem(
-                            new ApiResponseSet<>(Integer.toString(i), hashMap));
+                    apiResponseList.addItem(new ApiResponseSet<>(Integer.toString(i), hashMap));
                 }
                 return apiResponseList;
             default:
@@ -473,8 +477,8 @@ public class FuzzAPI extends ApiImplementor {
         return new HttpFuzzerOptions(baseOptions, false, false, 100, false);
     }
 
-    //TODO try and implement this Start using this
-    //Testing required
+    // TODO try and implement this Start using this
+    // Testing required
     private Pair<HttpMessage, List<TextHttpMessageLocation>>
             generateHttpMessageLocationsFromHttpMessageJsonInput(String jsonPath)
                     throws IllegalFormatException {
@@ -636,14 +640,14 @@ public class FuzzAPI extends ApiImplementor {
                             }
                             if ((k == fileFuzzerLocationSplit.length - 1)) {
                                 if (fuzzerPayloadSourceList != null) {
-                                    for (FuzzerPayloadSource fuzzerPayloadSource : fuzzerPayloadSourceList) {
+                                    for (FuzzerPayloadSource fuzzerPayloadSource :
+                                            fuzzerPayloadSourceList) {
                                         if (fuzzerPayloadSource
                                                 .toString()
                                                 .equals(fileFuzzerLocationSplit[k])) {
 
                                             StringPayloadGenerator payloadGen =
-                                                    fuzzerPayloadSource
-                                                            .getPayloadGenerator();
+                                                    fuzzerPayloadSource.getPayloadGenerator();
                                             payloadGeneratorList.add(payloadGen);
                                             break;
                                         }

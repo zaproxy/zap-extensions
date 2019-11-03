@@ -17,6 +17,10 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.fuzz.FuzzAPI")
+    }
 }
 
 dependencies {
