@@ -179,30 +179,27 @@ public class FuzzAPI extends ApiImplementor {
                 List<PayloadGeneratorMessageLocation<?>> fuzzLocationsTest =
                         createFuzzLocationsFromJsonInput(fuzzLocationsObject);
 
-
                 TableHistory tableHistoryTest = Model.getSingleton().getDb().getTableHistory();
                 RecordHistory recordHistoryTest = getRecordHistory(tableHistoryTest, 7);
                 List<HttpFuzzerMessageProcessor> processors = new ArrayList<>();
                 processors.add(RequestContentLengthUpdaterProcessor.getInstance());
                 resetHttpFuzzerOptions();
-                System.out.println(
-                        extension.getDefaultFuzzerOptions().getMaxErrorsAllowed());
-                extension.getDefaultFuzzerOptions().getMaxErrorsAllowed();
+                extension
+                        .getFuzzOptions()
+                        .setDefaultPayloadReplacementStrategy(
+                                MessageLocationsReplacementStrategy.BREADTH_FIRST);
                 HttpFuzzer httpFuzzerTest =
                         createFuzzer(
-                                "some name",
                                 recordHistoryTest.getHttpMessage(),
                                 fuzzLocationsTest,
                                 httpFuzzerOptions,
                                 processors);
-
                 List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>
                         tmpFuzzLocations =
                                 (List<
                                                 MessageLocationReplacementGenerator<
                                                         ?, MessageLocationReplacement<?>>>)
                                         (ArrayList) fuzzLocationsTest;
-
 
                 httpFuzzerHandler = new HttpFuzzerHandler();
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerTest);
@@ -232,7 +229,6 @@ public class FuzzAPI extends ApiImplementor {
 
                 HttpFuzzer httpFuzzerSimple =
                         createFuzzer(
-                                "some name",
                                 recordHistory.getHttpMessage(),
                                 fuzzLocations,
                                 getOptions(extension.getDefaultFuzzerOptions()),
@@ -321,13 +317,13 @@ public class FuzzAPI extends ApiImplementor {
 
             @Override
             public Class<? extends Message> getTargetMessageClass() {
-                return null;
+                return HttpMessage.class;
             }
             // There is no need for these but can be fixed
             // All of the functions below no need probably
             @Override
             public String getDescription() {
-                return null;
+                return new String(start + ":" + end);
             }
 
             @Override
@@ -337,18 +333,17 @@ public class FuzzAPI extends ApiImplementor {
 
             @Override
             public boolean overlaps(MessageLocation otherLocation) {
-                return false;
+                return ((new String(start + ":" + end)).equals(otherLocation.getValue()));
             }
 
             @Override
             public int compareTo(MessageLocation messageLocation) {
-                return 0;
+                return (messageLocation.getValue().compareTo((new String(start + ":" + end))));
             }
         };
     }
 
     private HttpFuzzer createFuzzer(
-            String name,
             HttpMessage message,
             List<PayloadGeneratorMessageLocation<?>> fuzzLocations,
             HttpFuzzerOptions options,
@@ -370,13 +365,16 @@ public class FuzzAPI extends ApiImplementor {
         } else {
             multipleMessageLocationsReplacer = new MultipleMessageLocationsBreadthFirstReplacer<>();
         }
-
         SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators =
-                new TreeSet<>(fuzzLocations);
+                new TreeSet<>();
+        for (PayloadGeneratorMessageLocation<?> fuzzLocation : fuzzLocations) {
+            System.out.println("adding a location");
+            messageLocationReplacementGenerators.add(fuzzLocation);
+        }
+        System.out.println("Size 1: " + messageLocationReplacementGenerators.size());
         multipleMessageLocationsReplacer.init(replacer, messageLocationReplacementGenerators);
-
         return new HttpFuzzer(
-                name,
+                "some name",
                 options,
                 message,
                 (List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>)
