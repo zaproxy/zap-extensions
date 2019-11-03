@@ -55,6 +55,7 @@ public class FuzzAPI extends ApiImplementor {
     /* Api NAME */
     private static final String PREFIX = "fuzz";
     private static final String SECTION_SIGN = "§";
+    //TODO add escape feature to the section sign
     private static final String ESCAPE_CHARACTER = "\\";
     private ExtensionFuzz extension;
 
@@ -69,14 +70,12 @@ public class FuzzAPI extends ApiImplementor {
     private static final String PARAM_RETRIES = "retriesOnIOError";
     private static final String PARAM_DELAY = "delayInMs";
     private static final String PARAM_THREADS = "concurrentScanningThreads";
-
+    //TODO add logs
     private static final Logger LOGGER = Logger.getLogger(FuzzAPI.class);
 
     /* Default values for Http Fuzzer */
     private HttpFuzzerOptions httpFuzzerOptions;
-    private static FuzzOptions fuzzOptions;
     private HttpFuzzerHandler httpFuzzerHandler;
-    private static final String ACTION_TEST = "test";
     private static final String ACTION_SIMPLE_HTTP_FUZZER = "simpleHttpFuzzer";
     private static final String ACTION_SET_HTTP_FUZZ_OPTIONS = "setHttpFuzzerOptions";
     private static final String ACTION_RESET_DEFAULT_HTTP_FUZZ_OPTIONS =
@@ -84,6 +83,7 @@ public class FuzzAPI extends ApiImplementor {
     private static final String ACTION_MULTIPLE_PAYLOAD_FUZZER = "multiplePayloadFuzzerOptions";
     private static final String VIEW_FUZZER_PROGRESS = "fuzzerProgress";
     private static final String VIEW_GET_MESSAGES_SENT = "getMessagesSentCount";
+    //TODO implement this
     private static final String VIEW_GET_ALL_SENT_MESSAGES = "getAllSentMessages";
     private static final String VIEW_GET_RESULTS = "getResults";
     private static final String ACTION_START_SCAN = "startScan";
@@ -171,7 +171,7 @@ public class FuzzAPI extends ApiImplementor {
                                 fuzzer.getMessagesModel().getValueAt(i, j).toString());
                     }
                     apiResponseList.addItem(
-                            new ApiResponseSet<String>(Integer.toString(i), hashMap));
+                            new ApiResponseSet<>(Integer.toString(i), hashMap));
                 }
                 return apiResponseList;
             default:
@@ -194,7 +194,7 @@ public class FuzzAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        HttpFuzzer httpFuzzer = null;
+        HttpFuzzer httpFuzzer;
         switch (name) {
             case ACTION_MULTIPLE_PAYLOAD_FUZZER:
                 JSONObject fuzzLocationsObject =
@@ -227,6 +227,7 @@ public class FuzzAPI extends ApiImplementor {
 
                 httpFuzzerHandler = new HttpFuzzerHandler();
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerTest);
+                assert httpFuzzerTest != null;
                 return new ApiResponseElement(
                         "fuzzerId", Integer.toString(httpFuzzerTest.getScanId()));
             case ACTION_SIMPLE_HTTP_FUZZER:
@@ -261,6 +262,7 @@ public class FuzzAPI extends ApiImplementor {
                                 getOptions(extension.getDefaultFuzzerOptions()),
                                 Collections.emptyList());
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerSimple);
+                assert httpFuzzerSimple != null;
                 return new ApiResponseElement(
                         "fuzzerId", Integer.toString(httpFuzzerSimple.getScanId()));
             case ACTION_RESET_DEFAULT_HTTP_FUZZ_OPTIONS:
@@ -351,9 +353,7 @@ public class FuzzAPI extends ApiImplementor {
             HttpMessageLocation.Location location, int start, int end, List<String> payloads) {
         StringPayloadGenerator payloadGenerator;
         payloadGenerator = new DefaultStringPayloadGenerator(payloads);
-        List<PayloadGeneratorMessageLocation<?>> payloadGeneratorMessageLocationList =
-                getPayloadGeneratorMessageLocationList(location, start, end, payloadGenerator);
-        return payloadGeneratorMessageLocationList;
+        return getPayloadGeneratorMessageLocationList(location, start, end, payloadGenerator);
     }
 
     private List<PayloadGeneratorMessageLocation<?>> getPayloadGeneratorMessageLocationList(
@@ -402,22 +402,22 @@ public class FuzzAPI extends ApiImplementor {
             // All of the functions below no need probably
             @Override
             public String getDescription() {
-                return new String(start + ":" + end);
+                return (start + ":" + end);
             }
 
             @Override
             public String getValue() {
-                return new String(start + ":" + end);
+                return (start + ":" + end);
             }
 
             @Override
             public boolean overlaps(MessageLocation otherLocation) {
-                return ((new String(start + ":" + end)).equals(otherLocation.getValue()));
+                return (((start + ":" + end)).equals(otherLocation.getValue()));
             }
 
             @Override
             public int compareTo(MessageLocation messageLocation) {
-                return (messageLocation.getValue().compareTo((new String(start + ":" + end))));
+                return (messageLocation.getValue().compareTo(((start + ":" + end))));
             }
         };
     }
@@ -445,10 +445,7 @@ public class FuzzAPI extends ApiImplementor {
             multipleMessageLocationsReplacer = new MultipleMessageLocationsBreadthFirstReplacer<>();
         }
         SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators =
-                new TreeSet<>();
-        for (PayloadGeneratorMessageLocation<?> fuzzLocation : fuzzLocations) {
-            messageLocationReplacementGenerators.add(fuzzLocation);
-        }
+                new TreeSet<>(fuzzLocations);
         multipleMessageLocationsReplacer.init(replacer, messageLocationReplacementGenerators);
         return new HttpFuzzer(
                 "some name",
@@ -476,6 +473,8 @@ public class FuzzAPI extends ApiImplementor {
         return new HttpFuzzerOptions(baseOptions, false, false, 100, false);
     }
 
+    //TODO try and implement this Start using this
+    //Testing required
     private Pair<HttpMessage, List<TextHttpMessageLocation>>
             generateHttpMessageLocationsFromHttpMessageJsonInput(String jsonPath)
                     throws IllegalFormatException {
@@ -557,6 +556,7 @@ public class FuzzAPI extends ApiImplementor {
         }
         return characterList;
     }
+
     // Check if the signum character was escaped
     // TODO implement this
     private boolean notEscaped(String string, int i) {
@@ -578,8 +578,6 @@ public class FuzzAPI extends ApiImplementor {
             int start = fuzzLocationObject.getInt("start");
             int end = fuzzLocationObject.getInt("end");
             JSONArray payloadsArray = fuzzLocationObject.getJSONArray("payloads");
-            TextHttpMessageLocation textHttpMessageLocation =
-                    createTextHttpMessageLocationObject(start, end, location);
             // Current payloads can be of 3 types
             for (int j = 0; j < payloadsArray.size(); j++) {
                 JSONObject payloadObject = payloadsArray.getJSONObject(j);
@@ -638,15 +636,13 @@ public class FuzzAPI extends ApiImplementor {
                             }
                             if ((k == fileFuzzerLocationSplit.length - 1)) {
                                 if (fuzzerPayloadSourceList != null) {
-                                    for (int l = 0; l < fuzzerPayloadSourceList.size(); l++) {
-                                        if (fuzzerPayloadSourceList
-                                                .get(l)
+                                    for (FuzzerPayloadSource fuzzerPayloadSource : fuzzerPayloadSourceList) {
+                                        if (fuzzerPayloadSource
                                                 .toString()
                                                 .equals(fileFuzzerLocationSplit[k])) {
 
                                             StringPayloadGenerator payloadGen =
-                                                    fuzzerPayloadSourceList
-                                                            .get(l)
+                                                    fuzzerPayloadSource
                                                             .getPayloadGenerator();
                                             payloadGeneratorList.add(payloadGen);
                                             break;
