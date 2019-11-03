@@ -38,6 +38,7 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzer;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerHandler;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessor;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerOptions;
+import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.RequestContentLengthUpdaterProcessor;
 import org.zaproxy.zap.extension.fuzz.messagelocations.*;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
@@ -65,6 +66,7 @@ public class FuzzAPI extends ApiImplementor {
     private static final Logger LOGGER = Logger.getLogger(FuzzAPI.class);
 
     /* Default values for Http Fuzzer */
+    private static HttpFuzzerOptions httpFuzzerOptions;
     private HttpFuzzerHandler httpFuzzerHandler;
     private static final String ACTION_TEST = "test";
     private static final String ACTION_SIMPLE_HTTP_FUZZER = "simpleHttpFuzzer";
@@ -84,11 +86,16 @@ public class FuzzAPI extends ApiImplementor {
                         }));
         this.addApiAction(new ApiAction(ACTION_TEST, new String[] {}));
         this.addApiView(new ApiView(VIEW_GET_FUZZER_STATUS, new String[] {PARAM_FUZZER_ID}));
+        httpFuzzerOptions = getOptions(extension.getDefaultFuzzerOptions());
     }
 
     @Override
     public String getPrefix() {
         return PREFIX;
+    }
+
+    private void resetHttpFuzzerOptions() {
+        httpFuzzerOptions = getOptions(extension.getDefaultFuzzerOptions());
     }
 
     @Override
@@ -165,44 +172,38 @@ public class FuzzAPI extends ApiImplementor {
                 //                extension.runFuzzer(httpFuzzerHandler, httpFuzzer);
                 //                return new ApiResponseElement("fuzzerId",
                 // Integer.toString(httpFuzzer.getScanId()));
-                System.out.println("here");
-                System.out.println(
-                        extension
-                                .getFuzzersDir()
-                                .getCategories()
-                                .get(3)
-                                .getSubCategories()
-                                .get(0)
-                                .getFuzzerPayloadSources());
+
                 JSONObject fuzzLocationsObject =
                         getJsonObjectFromJsonFilePath(
                                 "/home/dennis/zaproxy-proj/zap-extensions/sample_fuzz_locations.json");
                 List<PayloadGeneratorMessageLocation<?>> fuzzLocationsTest =
                         createFuzzLocationsFromJsonInput(fuzzLocationsObject);
-                for (int i = 0; i < fuzzLocationsTest.size(); i++) {
-                    System.out.println(fuzzLocationsTest.get(i).getNumberOfReplacements());
-                }
+
+
                 TableHistory tableHistoryTest = Model.getSingleton().getDb().getTableHistory();
                 RecordHistory recordHistoryTest = getRecordHistory(tableHistoryTest, 7);
-
+                List<HttpFuzzerMessageProcessor> processors = new ArrayList<>();
+                processors.add(RequestContentLengthUpdaterProcessor.getInstance());
+                resetHttpFuzzerOptions();
+                System.out.println(
+                        extension.getDefaultFuzzerOptions().getMaxErrorsAllowed());
+                extension.getDefaultFuzzerOptions().getMaxErrorsAllowed();
                 HttpFuzzer httpFuzzerTest =
                         createFuzzer(
                                 "some name",
                                 recordHistoryTest.getHttpMessage(),
                                 fuzzLocationsTest,
-                                getOptions(extension.getDefaultFuzzerOptions()),
-                                Collections.emptyList());
+                                httpFuzzerOptions,
+                                processors);
+
                 List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>
                         tmpFuzzLocations =
                                 (List<
                                                 MessageLocationReplacementGenerator<
                                                         ?, MessageLocationReplacement<?>>>)
                                         (ArrayList) fuzzLocationsTest;
-                System.out.println("size is " + tmpFuzzLocations.size());
-                System.out.println(
-                        "second replacer contains "
-                                + tmpFuzzLocations.get(1).getNumberOfReplacements());
-                System.out.println("Starting fuzzer");
+
+
                 httpFuzzerHandler = new HttpFuzzerHandler();
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerTest);
                 return new ApiResponseElement(
@@ -236,7 +237,6 @@ public class FuzzAPI extends ApiImplementor {
                                 fuzzLocations,
                                 getOptions(extension.getDefaultFuzzerOptions()),
                                 Collections.emptyList());
-                System.out.println("Starting fuzzer");
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerSimple);
                 return new ApiResponseElement(
                         "fuzzerId", Integer.toString(httpFuzzerSimple.getScanId()));
@@ -332,7 +332,7 @@ public class FuzzAPI extends ApiImplementor {
 
             @Override
             public String getValue() {
-                return null;
+                return new String(start + ":" + end);
             }
 
             @Override
@@ -460,7 +460,6 @@ public class FuzzAPI extends ApiImplementor {
     }
 
     private List<Integer> findCharactersInsideString(String string) {
-        System.out.println(string);
         List<Integer> characterList = new ArrayList<>();
         for (int i = 0; i < string.length(); i++) {
             if (string.charAt(i) == FuzzAPI.SECTION_SIGN.charAt(0)) {
@@ -532,7 +531,6 @@ public class FuzzAPI extends ApiImplementor {
                         List<FuzzerPayloadSource> fuzzerPayloadSourceList =
                                 null; // If there is an error list not initialised
                         for (int k = 0; k < fileFuzzerLocationSplit.length; k++) {
-                            System.out.println("current categories: " + fileFuzzerCategories);
                             for (int l = 0; l < fileFuzzerCategories.size(); l++) {
                                 if (fileFuzzerCategories
                                                 .get(l)
@@ -558,11 +556,6 @@ public class FuzzAPI extends ApiImplementor {
                                                 .get(l)
                                                 .toString()
                                                 .equals(fileFuzzerLocationSplit[k])) {
-                                            System.out.println(
-                                                    "Fuzzer payload source: "
-                                                            + fuzzerPayloadSourceList
-                                                                    .get(l)
-                                                                    .toString());
 
                                             StringPayloadGenerator payloadGen =
                                                     fuzzerPayloadSourceList
