@@ -92,7 +92,13 @@ import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorD
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScannerManager;
 import org.zaproxy.zap.extension.websocket.pscan.scripts.ScriptsWebSocketPassiveScanner;
+import org.zaproxy.zap.extension.websocket.treemap.TreeMap;
 import org.zaproxy.zap.extension.websocket.treemap.WebSocketTreeMap;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.factories.SimpleNodeFactory;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketSimpleNodeNamer;
+import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketMapPanel;
+import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketTreeMapHelperUI;
+import org.zaproxy.zap.extension.websocket.treemap.ui.WebSocketTreeMapModel;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.OptionsWebSocketPanel;
@@ -236,7 +242,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
     private ExtensionScript extensionScript = null;
 
-    private WebSocketTreeMap webSocketTreeMap = null;
+    private TreeMap treeMap = null;
+
+    private WebSocketTreeMapModel webSocketTreeMapModel = null;
 
     public ExtensionWebSocket() {
         super(NAME);
@@ -336,6 +344,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         }
 
         if (getView() != null) {
+
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
             ExtensionHookView hookView = extensionHook.getHookView();
             ExtensionHookMenu hookMenu = extensionHook.getHookMenu();
@@ -350,6 +359,18 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             ExtensionHelp.enableHelpKey(wsPanel, "websocket.tab");
 
             hookView.addStatusPanel(getWebSocketPanel());
+
+            // Setup WebSocket Tree Map
+            WebSocketTreeMap webSocketTreeMap =
+                    new WebSocketTreeMap(new SimpleNodeFactory(new WebSocketSimpleNodeNamer()));
+
+            this.treeMap = getWebSocketTreeMapModel(webSocketTreeMap);
+
+            addAllChannelObserver(treeMap.getWebSocketObserver());
+
+            // WebSocket Tree Map Panel
+            hookView.addSelectPanel(
+                    getWebSocketMapPanel(getWebSocketTreeMapModel(webSocketTreeMap)));
 
             // setup Options Panel
             hookView.addOptionPanel(getOptionsPanel());
@@ -459,9 +480,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             webSocketPassiveScannerManager.setAllEnable(true);
             webSocketPassiveScannerManager.startThread();
         }
-
-        //        webSocketTreeMap = new WebSocketTreeMap(new WebSocketSimpleNodeNamer());
-        //        addAllChannelObserver(webSocketTreeMap);
     }
 
     @Override
@@ -1224,6 +1242,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         }
     }
 
+    private WebSocketTreeMapModel getWebSocketTreeMapModel(WebSocketTreeMap webSocketTreeMap) {
+        if (webSocketTreeMapModel == null) {
+            this.webSocketTreeMapModel = new WebSocketTreeMapModel(webSocketTreeMap);
+        }
+        return this.webSocketTreeMapModel;
+    }
+
     /*
      * ************************************************************************
      * GUI specific code follows here now. It is accessed only by methods hook()
@@ -1249,6 +1274,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
     /** Resends custom WebSocket messages. */
     private ManualWebSocketSendEditorDialog resenderDialog;
+
+    private WebSocketMapPanel webSocketMapPanel = null;
 
     private WebSocketPanel getWebSocketPanel() {
         if (panel == null) {
@@ -1350,6 +1377,14 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
         manager.removeResponseDefaultViewSelectorFactory(
                 WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
+    }
+
+    private WebSocketMapPanel getWebSocketMapPanel(WebSocketTreeMapModel webSocketTreeMapModel) {
+        if (webSocketMapPanel == null) {
+            webSocketMapPanel =
+                    new WebSocketMapPanel(webSocketTreeMapModel, new WebSocketTreeMapHelperUI());
+        }
+        return webSocketMapPanel;
     }
 
     /**
