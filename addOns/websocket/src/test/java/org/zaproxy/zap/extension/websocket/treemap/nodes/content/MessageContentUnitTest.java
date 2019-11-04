@@ -41,13 +41,14 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderCont
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.MessageContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.RootContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketSimpleNodeNamer;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeAbstract;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 
 public class MessageContentUnitTest extends WebSocketAddonTestUtils {
 
     private WebSocketSimpleNodeNamer namer;
     private static URI defaultHostName;
-    TreeNode root;
+    WebSocketNodeAbstract root;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -154,15 +155,16 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
         URI hostUri1 = new URI("https", null, defaultHostName.toString(), -1, "/first");
         WebSocketChannelDTO channel =
                 getWebSocketChannelDTO(1, defaultHostName.toString(), hostUri1.toString());
-        TreeNode hostNode = new WebSocketNode(root, new HostFolderContent(namer, channel));
+        WebSocketNodeAbstract hostNode =
+                new WebSocketNode(root, new HostFolderContent(namer, channel));
 
-        TreeNode messageNode =
+        WebSocketNodeAbstract messageNode =
                 new WebSocketNode(
                         hostNode,
                         new MessageContent(namer, getTextOutgoingMessage(channel, "Test", 1)));
 
         // When
-        List<TreeNode> actualHostList = messageNode.getHostNodes(new ArrayList<>());
+        List<WebSocketNodeInterface> actualHostList = messageNode.getHostNodes(new ArrayList<>());
 
         // Then
         assertEquals(1, actualHostList.size());
@@ -173,7 +175,7 @@ public class MessageContentUnitTest extends WebSocketAddonTestUtils {
     public void shouldGetMessagesPerHost()
             throws URIException, DatabaseException, HttpMalformedHeaderException {
         String[] hosts = {"hostname_1", "hostname_2"};
-        ArrayList<TreeNode> hostNodes = new ArrayList<>();
+        ArrayList<WebSocketNodeAbstract> hostNodes = new ArrayList<>();
 
         // Given
         for (int i = 0; i < 5; i++) {

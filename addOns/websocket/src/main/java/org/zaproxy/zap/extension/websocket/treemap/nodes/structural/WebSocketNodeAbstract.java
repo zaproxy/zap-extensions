@@ -30,25 +30,28 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.WebSocketNode;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.NodeContent;
 
-public abstract class TreeNode implements Comparable<TreeNode> {
+public abstract class WebSocketNodeAbstract implements WebSocketNodeInterface {
 
     protected NodeContent content;
-    private TreeNode parent;
-    private List<TreeNode> children;
+    private WebSocketNodeInterface parent;
+    private List<WebSocketNodeInterface> children;
+    private int index;
 
-    protected TreeNode(TreeNode parent, NodeContent content) {
+    protected WebSocketNodeAbstract(WebSocketNodeInterface parent, NodeContent content) {
         this.parent = parent;
         this.content = content;
         if (parent != null) {
-            this.parent.addChild(this);
+            this.index = this.parent.addChild(this);
         }
     }
 
-    protected TreeNode(TreeNode parent, int position, NodeContent content) {
+    protected WebSocketNodeAbstract(
+            WebSocketNodeInterface parent, int position, NodeContent content) {
         this.parent = parent;
         this.content = content;
         if (parent != null) {
             this.parent.addChild(position, this);
+            index = position;
         }
     }
 
@@ -60,11 +63,11 @@ public abstract class TreeNode implements Comparable<TreeNode> {
         return (parent == null);
     }
 
-    public TreeNode getParent() {
+    public WebSocketNodeInterface getParent() {
         return parent;
     }
 
-    public TreeNode getChildAt(int pos) {
+    public WebSocketNodeInterface getChildAt(int pos) {
         if (isLeaf() || pos > getChildren().size()) {
             return null;
         }
@@ -78,7 +81,7 @@ public abstract class TreeNode implements Comparable<TreeNode> {
         return true;
     }
 
-    public List<TreeNode> getChildren() {
+    public List<WebSocketNodeInterface> getChildren() {
         if (children == null) {
             children = new ArrayList<>();
         }
@@ -92,20 +95,28 @@ public abstract class TreeNode implements Comparable<TreeNode> {
      *
      * @param newChild is going to be added.
      */
-    private void addChild(TreeNode newChild) {
+    public int addChild(WebSocketNodeInterface newChild) {
+        int index;
         if (isLeaf()) {
-            addChild(0, newChild);
-            return;
+            index = 0;
+        } else {
+            index = Collections.binarySearch(getChildren(), newChild);
+            if (index < 0) {
+                index = Math.abs(index) - 1;
+            }
         }
-
-        int position = Collections.binarySearch(getChildren(), newChild);
-        if (position < 0) {
-            addChild(Math.abs(position) - 1, newChild);
-        }
+        addChild(index, newChild);
+        return index;
     }
 
-    private void addChild(int at, TreeNode child) {
-        getChildren().add(at, child);
+    @Override
+    public void addChild(int index, WebSocketNodeInterface child) {
+        getChildren().add(index, child);
+    }
+
+    @Override
+    public int getIndex() {
+        return index;
     }
 
     public int getPosition(NodeContent nodeContent) {
@@ -117,22 +128,23 @@ public abstract class TreeNode implements Comparable<TreeNode> {
         return getString(new StringBuilder(), this, 0).toString();
     }
 
-    private StringBuilder getString(StringBuilder stringBuilder, TreeNode root, int depth) {
+    public StringBuilder getString(
+            StringBuilder stringBuilder, WebSocketNodeInterface root, int depth) {
 
         for (int i = 0; i < depth; i++) {
             stringBuilder.append("\t");
         }
         stringBuilder.append(root.getName()).append("\n");
 
-        for (TreeNode treeNode : root.getChildren()) {
-            root.getString(stringBuilder, treeNode, depth + 1);
+        for (WebSocketNodeInterface webSocketNode : root.getChildren()) {
+            root.getString(stringBuilder, webSocketNode, depth + 1);
         }
         return stringBuilder;
     }
 
     @Override
-    public int compareTo(TreeNode treeNode) {
-        return this.getContent().compareTo(treeNode.getContent());
+    public int compareTo(WebSocketNodeInterface webSocketNode) {
+        return this.getContent().compareTo(webSocketNode.getContent());
     }
 
     @Override
@@ -144,15 +156,16 @@ public abstract class TreeNode implements Comparable<TreeNode> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TreeNode that = (TreeNode) o;
+        WebSocketNodeAbstract that = (WebSocketNodeAbstract) o;
         if (!this.parent.equals(that.parent)) return false;
         if (!that.hasContent()) return false;
         if (!that.getContent().equals(content)) return false;
         return true;
     }
 
-    public <T> TreeNode getChildrenWhen(Function<TreeNode, T> function, T when) {
-        for (TreeNode child : this.getChildren()) {
+    public <T> WebSocketNodeInterface getChildrenWhen(
+            Function<WebSocketNodeInterface, T> function, T when) {
+        for (WebSocketNodeInterface child : this.getChildren()) {
             if (function.apply(child).equals(when)) {
                 return child;
             }
@@ -164,52 +177,56 @@ public abstract class TreeNode implements Comparable<TreeNode> {
      * If this is a leaf then perform the function. If not, it transmits the request to this node's
      * children. The result of the function is stored at the list.
      *
+     * @param <T> type that the function returns and list stores.
      * @param root this node.
      * @param function the leaf is going to be performed.
      * @param list is going to store the result of the function.
-     * @param <T> type that the function returns and list stores.
      * @return list with results of the leaf nodes.
      */
     public <T> List<T> iterateOverLeaf(
-            TreeNode root, Function<TreeNode, T> function, List<T> list) {
+            WebSocketNodeInterface root,
+            Function<WebSocketNodeInterface, T> function,
+            List<T> list) {
         if (root.isLeaf()) {
             if (function.apply(root) != null) {
                 list.add(function.apply(root));
             }
         } else {
-            for (TreeNode child : root.getChildren()) {
+            for (WebSocketNodeInterface child : root.getChildren()) {
                 list = iterateOverLeaf(child, function, list);
             }
         }
         return list;
     }
     /**
-     * This is like {@link TreeNode#iterateOverLeaf(TreeNode, Function, List)} but it is used when
-     * the function returns a batch of results.
+     * This is like {@link WebSocketNodeInterface#iterateOverLeaf(WebSocketNodeInterface, Function,
+     * List)} but it is used when the function returns a batch of results.
      *
+     * @param <T> that the function returns.
+     * @param <C> that the list stores
      * @param root this node.
      * @param function is going to be performed.
      * @param list where the result are stored.
-     * @param <T> that the function returns.
-     * @param <C> that the list stores
      * @return list with results of the leaf nodes.
      */
     public <T extends Collection<C>, C> List<C> iterateOverLeafToAddAll(
-            TreeNode root, Function<TreeNode, T> function, List<C> list) {
+            WebSocketNodeInterface root,
+            Function<WebSocketNodeInterface, T> function,
+            List<C> list) {
         if (root.isLeaf()) {
             if (function.apply(root) != null) {
                 list.addAll(function.apply(root));
             }
         } else {
-            for (TreeNode child : root.getChildren()) {
+            for (WebSocketNodeInterface child : root.getChildren()) {
                 list = iterateOverLeafToAddAll(child, function, list);
             }
         }
         return list;
     }
 
-    public void applyToChildren(Consumer<TreeNode> consumer) {
-        for (TreeNode child : this.getChildren()) {
+    public void applyToChildren(Consumer<WebSocketNodeInterface> consumer) {
+        for (WebSocketNodeInterface child : this.getChildren()) {
             consumer.accept(child);
         }
     }
@@ -218,14 +235,15 @@ public abstract class TreeNode implements Comparable<TreeNode> {
 
     public abstract String getName();
 
-    public abstract TreeNode updateContent(NodeContent content);
+    public abstract WebSocketNodeInterface updateContent(NodeContent content);
 
     public abstract WebSocketMessageDTO getMessage();
 
     public abstract String getHost();
 
-    public abstract List<TreeNode> getHostNodes(List<TreeNode> hostNodesList);
+    public abstract List<WebSocketNodeInterface> getHostNodes(
+            List<WebSocketNodeInterface> hostNodesList);
 
-    public abstract HashMap<TreeNode, List<WebSocketMessageDTO>> getMessagesPerHost(
-            HashMap<TreeNode, List<WebSocketMessageDTO>> messageMap);
+    public abstract HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> getMessagesPerHost(
+            HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> messageMap);
 }

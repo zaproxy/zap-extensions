@@ -39,7 +39,7 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderCont
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.MessageContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.RootContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketSimpleNodeNamer;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeAbstract;
 
 public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
 
@@ -133,7 +133,7 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
     @Test
     public void shouldGetAllHostNodes() throws DatabaseException, HttpMalformedHeaderException {
         // Given
-        ArrayList<TreeNode> expectedHostNodes = new ArrayList<>();
+        ArrayList<WebSocketNodeAbstract> expectedHostNodes = new ArrayList<>();
         WebSocketChannelDTO channel;
         for (int i = 0; i < 5; i++) {
             channel = getWebSocketChannelDTO(i, "hostname_" + i);

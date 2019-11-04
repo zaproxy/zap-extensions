@@ -23,8 +23,10 @@ import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.WebSocketContent;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.WebSocketNodeWrapper;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.NodeContent;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeAbstract;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 
 public interface NodeFactory {
 
@@ -32,26 +34,33 @@ public interface NodeFactory {
      * Adds WebSocket Message to the Tree Structure or updates the existing one.
      *
      * @param message is going to be inserted in the structure.
-     * @return the {@link TreeNode<WebSocketContent>} with the appropriate message content.
+     * @return the {@link WebSocketNodeAbstract <WebSocketContent>} with the appropriate message
+     *     content.
      */
-    TreeNode getMessageTreeNode(WebSocketMessageDTO message);
+    WebSocketNodeWrapper getMessageTreeNode(WebSocketMessageDTO message);
+
+    WebSocketNodeInterface createMessageNode(
+            WebSocketNodeInterface parent, int position, NodeContent nodeContent);
 
     /**
      * Adds the Host to the Tree Structure or just returns the existing one.
      *
      * @param channel is going to be inserted in the structure.
-     * @return the {@link
-     *     TreeNode<org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderContent>}
-     *     either the created one or the existing one.
+     * @return the {@link WebSocketNodeAbstract
+     *     <org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderContent>} either
+     *     the created one or the existing one.
      * @throws DatabaseException if can't get Handshake {@link
      *     org.parosproxy.paros.network.HttpMessage} from the {@link
      *     org.parosproxy.paros.model.HistoryReference}.
      * @throws HttpMalformedHeaderException if the Handshake {@link
      *     org.parosproxy.paros.network.HttpMessage} is Malformed
      */
-    TreeNode getHostTreeNode(WebSocketChannelDTO channel)
+    WebSocketNodeWrapper getHostTreeNode(WebSocketChannelDTO channel)
             throws DatabaseException, HttpMalformedHeaderException;
 
+    WebSocketNodeInterface createHostNode(
+            WebSocketNodeInterface parent, int position, NodeContent nodeContent);
+
     /** @return the Root of Tree Structure */
-    TreeNode getRoot();
+    WebSocketNodeInterface getRoot();
 }

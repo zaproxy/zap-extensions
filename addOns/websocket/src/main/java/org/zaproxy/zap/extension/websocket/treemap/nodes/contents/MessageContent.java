@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketNodeNamer;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 
 /**
@@ -99,16 +99,18 @@ public class MessageContent extends WebSocketContent {
     }
 
     @Override
-    public List<TreeNode> getHostNodes(TreeNode thisNode, List<TreeNode> hostNodesList) {
+    public List<WebSocketNodeInterface> getHostNodes(
+            WebSocketNodeInterface thisNode, List<WebSocketNodeInterface> hostNodesList) {
         if (thisNode.isRoot() || !thisNode.hasContent()) return null;
 
         return thisNode.getParent().getHostNodes(hostNodesList);
     }
 
     @Override
-    public HashMap<TreeNode, List<WebSocketMessageDTO>> getMessagesPerHost(
-            TreeNode thisNode, HashMap<TreeNode, List<WebSocketMessageDTO>> messageMap) {
-        TreeNode hostNode = getTheHostNode(thisNode);
+    public HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> getMessagesPerHost(
+            WebSocketNodeInterface thisNode,
+            HashMap<WebSocketNodeInterface, List<WebSocketMessageDTO>> messageMap) {
+        WebSocketNodeInterface hostNode = getTheHostNode(thisNode);
         if (hostNode == null || getMessage() == null) return messageMap;
 
         messageMap.computeIfAbsent(hostNode, k -> new ArrayList<>()).add(getMessage());

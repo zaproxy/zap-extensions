@@ -29,7 +29,7 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderCont
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.MessageContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.RootContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketNodeNamer;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 
 /**
  * This Factory constructs nodes and arrange them as following:
@@ -57,7 +57,7 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 public class SimpleNodeFactory implements NodeFactory {
 
     private WebSocketNodeNamer namer;
-    private WebSocketNode root;
+    private WebSocketNodeInterface root;
     private MessageContent messageContentPrototype = null;
     private HostFolderContent hostContentPrototype = null;
 
@@ -67,7 +67,7 @@ public class SimpleNodeFactory implements NodeFactory {
     }
 
     @Override
-    public WebSocketNode getRoot() {
+    public WebSocketNodeInterface getRoot() {
         if (root == null) {
             root = new WebSocketNode(null, new RootContent(namer));
         }
@@ -75,36 +75,72 @@ public class SimpleNodeFactory implements NodeFactory {
     }
 
     @Override
-    public TreeNode getMessageTreeNode(WebSocketMessageDTO message) {
+    public WebSocketNodeWrapper getMessageTreeNode(WebSocketMessageDTO message) {
 
-        TreeNode hostNode = null;
+        WebSocketNodeInterface hostNode = null;
         try {
             hostNode =
                     root.getChildrenWhen(
-                            TreeNode::getHost, NodesUtilities.getHostName(message.channel));
+                            WebSocketNodeInterface::getHost,
+                            NodesUtilities.getHostName(message.channel));
         } catch (Exception ignored) {
         }
         if (hostNode == null) return null;
+
+        WebSocketNodeWrapper result;
 
         MessageContent content = getMessageContentPrototype(message);
 
         int pos = hostNode.getPosition(content);
 
-        return (pos < 0)
-                ? new WebSocketNode(hostNode, Math.abs(pos) - 1, new MessageContent(content))
-                : hostNode.getChildAt(pos).updateContent(content);
+        if (pos < 0) {
+            result =
+                    new WebSocketNodeWrapper(
+                            this.createMessageNode(
+                                    hostNode, Math.abs(pos) - 1, new MessageContent(content)),
+                            WebSocketNodeWrapper.State.INSERTED);
+        } else {
+            return new WebSocketNodeWrapper(
+                    hostNode.getChildAt(pos).updateContent(content),
+                    WebSocketNodeWrapper.State.CHANGED);
+        }
+
+        return result;
     }
 
     @Override
-    public TreeNode getHostTreeNode(WebSocketChannelDTO channel)
+    public WebSocketNodeInterface createMessageNode(
+            WebSocketNodeInterface parent, int position, NodeContent nodeContent) {
+        return new WebSocketNode(parent, position, nodeContent);
+    }
+
+    @Override
+    public WebSocketNodeWrapper getHostTreeNode(WebSocketChannelDTO channel)
             throws DatabaseException, HttpMalformedHeaderException {
 
         HostFolderContent content = getHostContentPrototype(channel);
 
+        WebSocketNodeWrapper result;
         int pos = root.getPosition(content);
-        return (pos < 0)
-                ? new WebSocketNode(root, Math.abs(pos) - 1, new HostFolderContent(content))
-                : root.getChildAt(pos);
+
+        if (pos < 0) {
+            result =
+                    new WebSocketNodeWrapper(
+                            this.createHostNode(
+                                    root, Math.abs(pos) - 1, new HostFolderContent(content)),
+                            WebSocketNodeWrapper.State.INSERTED);
+        } else {
+            result =
+                    new WebSocketNodeWrapper(
+                            root.getChildAt(pos), WebSocketNodeWrapper.State.UNCHANGED);
+        }
+        return result;
+    }
+
+    @Override
+    public WebSocketNodeInterface createHostNode(
+            WebSocketNodeInterface parent, int position, NodeContent nodeContent) {
+        return new WebSocketNode(parent, position, nodeContent);
     }
 
     private HostFolderContent getHostContentPrototype(WebSocketChannelDTO channel)
