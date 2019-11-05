@@ -369,13 +369,6 @@ public class FuzzAPI extends ApiImplementor {
                 .equals(
                         Constant.messages
                                 .getString(
-                                        "fuzz.options.label.payloadReplacementStrategy.depthFirst")
-                                .toLowerCase())) {
-            messageLocationsReplacementStrategy = MessageLocationsReplacementStrategy.DEPTH_FIRST;
-        } else if (strategy.toLowerCase()
-                .equals(
-                        Constant.messages
-                                .getString(
                                         "fuzz.options.label.payloadReplacementStrategy.breadthFirst")
                                 .toLowerCase())) {
             messageLocationsReplacementStrategy = MessageLocationsReplacementStrategy.BREADTH_FIRST;
@@ -541,7 +534,7 @@ public class FuzzAPI extends ApiImplementor {
     private String createFuzzerName(HttpMessage message) {
         String uri = message.getRequestHeader().getURI().toString();
         if (uri.length() > 30) {
-            uri = uri.substring(0, 14) + ".." + uri.substring(uri.length() - 15, uri.length());
+            uri = uri.substring(0, 14) + ".." + uri.substring(uri.length() - 15);
         }
         return Constant.messages.getString("fuzz.httpfuzzer.fuzzerNamePrefix", uri);
     }
@@ -743,6 +736,8 @@ public class FuzzAPI extends ApiImplementor {
                         List<FuzzerPayloadSource> fuzzerPayloadSourceList =
                                 null; // If there is an error list not initialised
                         for (int k = 0; k < fileFuzzerLocationSplit.length; k++) {
+                            //The following is a recursive for loop to get to the final payload page
+                            //Reading the string fileFuzzerPath
                             for (int l = 0; l < fileFuzzerCategories.size(); l++) {
                                 if (fileFuzzerCategories
                                                 .get(l)
