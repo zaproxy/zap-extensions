@@ -28,6 +28,7 @@ import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordHistory;
 import org.parosproxy.paros.db.TableHistory;
@@ -51,18 +52,50 @@ import org.zaproxy.zap.model.TextHttpMessageLocation;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
+/**
+ *
+ *
+ * <h1>FuzzAPI ApiImplementation for Fuzz</h1>
+ *
+ * <p>The FuzzAPI class implements the ApiImplementor to be used as an API gateway for fuzz, it
+ * contains methods to get inputs from the users to run the fuzzer, check status, change options or
+ * processors, and to get results.
+ *
+ * <p>
+ *
+ * <p>The main fuzzer multiplePayloadFuzzer takes in a JSONObject which is specified according to
+ * the json schema in zap-api-docs, the schema is version controlled
+ *
+ * <p>
+ *
+ * <p>SimpleHttpFuzzer takes few simple arguments and starts the fuzz at 1 particular location.
+ *
+ * @author Dennis Goyal <a href=https://github.com/davy320>profile</a>
+ * @author Marius Haberstock
+ * @see ExtensionFuzz
+ * @see MessageLocationReplacement
+ * @see PayloadGenerator
+ * @version 1.0
+ * @since 2019-11-4
+ */
 public class FuzzAPI extends ApiImplementor {
     /* Api NAME */
     private static final String PREFIX = "fuzz";
+    // TODO to be implemented maybe in a future release
     private static final String SECTION_SIGN = "§";
     // TODO add escape feature to the section sign
     private static final String ESCAPE_CHARACTER = "\\";
+    private static final String MESSAGE_LOCATION_HEADER = "header";
+    private static final String MESSAGE_LOCATION_BODY = "body";
+    private static final String FUZZ_LOCATION_SEPARATOR = ":";
+
     private ExtensionFuzz extension;
 
+    // Only the parameters that are used for user inputs
     private static final String PARAM_MESSAGE_ID = "messageId";
     private static final String PARAM_PAYLOAD_PATH = "payloadPath";
     private static final String PARAM_FUZZ_LOCATION = "fuzzLocation";
-    private static final String PARAM_JSON_LOCATION = "jsonFuzzLocationsFileLocation";
+    private static final String PARAM_JSON_LOCATION = "jsonFuzzLocationsFilePath";
     private static final String PARAM_FUZZ_REQUEST_LOCATION = "requestLocation";
     private static final String PARAM_FUZZER_ID = "fuzzerId";
     private static final String PARAM_MAX_ERRORS_ALLOWED = "maxErrors";
@@ -75,15 +108,17 @@ public class FuzzAPI extends ApiImplementor {
 
     /* Default values for Http Fuzzer */
     private HttpFuzzerOptions httpFuzzerOptions;
+    /* Default httpFuzzerMessageProcessors if not input by the user */
+    private List<HttpFuzzerMessageProcessor> httpFuzzerMessageProcessors;
     private HttpFuzzerHandler httpFuzzerHandler;
     private static final String ACTION_SIMPLE_HTTP_FUZZER = "simpleHttpFuzzer";
     private static final String ACTION_SET_HTTP_FUZZ_OPTIONS = "setHttpFuzzerOptions";
     private static final String ACTION_RESET_DEFAULT_HTTP_FUZZ_OPTIONS =
             "resetHttpFuzzOptionsToDefault";
-    private static final String ACTION_MULTIPLE_PAYLOAD_FUZZER = "multiplePayloadFuzzerOptions";
+    private static final String ACTION_MULTIPLE_PAYLOAD_FUZZER = "multiplePayloadFuzzer";
     private static final String VIEW_FUZZER_PROGRESS = "fuzzerProgress";
     private static final String VIEW_GET_MESSAGES_SENT = "getMessagesSentCount";
-    // TODO implement this
+    // TODO implement this, get a list of all the messages that were sent
     private static final String VIEW_GET_ALL_SENT_MESSAGES = "getAllSentMessages";
     private static final String VIEW_GET_RESULTS = "getResults";
     private static final String ACTION_START_SCAN = "startScan";
@@ -96,7 +131,10 @@ public class FuzzAPI extends ApiImplementor {
         this(null);
     }
 
+    /* constructor to be used to receive ACTIONS, VIEW requests from the user.*/
     public FuzzAPI(ExtensionFuzz ext) {
+
+        httpFuzzerMessageProcessors = new ArrayList<>();
         this.extension = ext;
         this.addApiAction(
                 new ApiAction(
@@ -140,34 +178,43 @@ public class FuzzAPI extends ApiImplementor {
         return PREFIX;
     }
 
+    /** resets the api "only" fuzzerOptionsToDefault */
     private void resetHttpFuzzerOptions() {
         httpFuzzerOptions = getOptions(extension.getDefaultFuzzerOptions());
     }
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-        HttpFuzzer fuzzer = null;
+        HttpFuzzer fuzzer;
         ApiResponse result = null;
         switch (name) {
             case VIEW_GET_MESSAGES_SENT:
                 fuzzer = getFuzzer(params);
                 if (fuzzer == null) {
-                    return new ApiResponseElement("failed");
+                    return new ApiResponseElement(
+                            Constant.messages.getString("fuzz.api.response.failure.getfuzzer"));
                 }
                 return new ApiResponseElement(
-                        "messages sent", String.valueOf(fuzzer.getMessagesSentCount()));
+                        Constant.messages.getString("fuzz.httpfuzzer.results.toolbar.messagesSent"),
+                        String.valueOf(fuzzer.getMessagesSentCount()));
             case VIEW_FUZZER_PROGRESS:
                 fuzzer = getFuzzer(params);
                 if (fuzzer == null) {
-                    return new ApiResponseElement("failed");
+                    return new ApiResponseElement(
+                            Constant.messages.getString("fuzz.api.response.failure.getfuzzer"));
                 }
-                return new ApiResponseElement("progress", String.valueOf(fuzzer.getProgress()));
+                return new ApiResponseElement(
+                        Constant.messages.getString("fuzz.toolbar.progress.label"),
+                        String.valueOf(fuzzer.getProgress()));
             case VIEW_GET_RESULTS:
                 fuzzer = getFuzzer(params);
                 if (fuzzer == null) {
-                    return new ApiResponseElement("failed");
+                    return new ApiResponseElement(
+                            Constant.messages.getString("fuzz.api.response.failure.getfuzzer"));
                 }
-                ApiResponseList apiResponseList = new ApiResponseList("Fuzz Results");
+                ApiResponseList apiResponseList =
+                        new ApiResponseList(
+                                Constant.messages.getString("fuzz.httpfuzzer.searcher.name"));
                 for (int i = 0; i < fuzzer.getMessagesModel().getRowCount(); i++) {
                     HashMap<String, String> hashMap = new HashMap<>();
                     for (int j = 0; j < fuzzer.getMessagesModel().getHeaders().size(); j++) {
@@ -183,6 +230,13 @@ public class FuzzAPI extends ApiImplementor {
         }
     }
 
+    /**
+     * Retrievs the httpFuzzer only if it exists or has been registered in fuzzers controller.
+     *
+     * @param params This contains the input params object from the call of handleApi
+     * @return fuzzer this returns the HttpFuzzer registered in the FuzzersController with the
+     *     specified id.
+     */
     private HttpFuzzer getFuzzer(JSONObject params) {
         int fuzzerId = getParam(params, PARAM_FUZZER_ID, -1);
         List<HttpFuzzer> fuzzersList = extension.getFuzzers(HttpFuzzer.class);
@@ -200,7 +254,7 @@ public class FuzzAPI extends ApiImplementor {
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         HttpFuzzer httpFuzzer;
         switch (name) {
-            case ACTION_MULTIPLE_PAYLOAD_FUZZER:
+            case ACTION_MULTIPLE_PAYLOAD_FUZZER: // This one needs a valid JSON schema input to work
                 JSONObject fuzzLocationsObject =
                         getJsonObjectFromJsonFilePath(getParam(params, PARAM_JSON_LOCATION, null));
                 List<PayloadGeneratorMessageLocation<?>> fuzzLocationsTest =
@@ -211,47 +265,38 @@ public class FuzzAPI extends ApiImplementor {
                         getRecordHistory(tableHistoryTest, getParam(params, PARAM_MESSAGE_ID, -1));
                 List<HttpFuzzerMessageProcessor> processors = new ArrayList<>();
                 processors.add(RequestContentLengthUpdaterProcessor.getInstance());
-                resetHttpFuzzerOptions();
-                extension
-                        .getFuzzOptions()
-                        .setDefaultPayloadReplacementStrategy(
-                                MessageLocationsReplacementStrategy.BREADTH_FIRST);
                 HttpFuzzer httpFuzzerTest =
                         createFuzzer(
                                 recordHistoryTest.getHttpMessage(),
                                 fuzzLocationsTest,
-                                httpFuzzerOptions,
+                                getOptions(extension.getDefaultFuzzerOptions()),
                                 processors);
-                List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>
-                        tmpFuzzLocations =
-                                (List<
-                                                MessageLocationReplacementGenerator<
-                                                        ?, MessageLocationReplacement<?>>>)
-                                        (ArrayList) fuzzLocationsTest;
-
+                // creating a new fuzzer handler for every new fuzzer request
                 httpFuzzerHandler = new HttpFuzzerHandler();
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerTest);
                 assert httpFuzzerTest != null;
                 return new ApiResponseElement(
-                        "fuzzerId", Integer.toString(httpFuzzerTest.getScanId()));
+                        Constant.messages.getString("fuzz.api.response.fuzzerid"),
+                        Integer.toString(httpFuzzerTest.getScanId()));
             case ACTION_SIMPLE_HTTP_FUZZER:
                 TableHistory tableHistory = Model.getSingleton().getDb().getTableHistory();
                 RecordHistory recordHistory =
                         getRecordHistory(tableHistory, getParam(params, PARAM_MESSAGE_ID, -1));
 
                 httpFuzzerHandler = new HttpFuzzerHandler();
-
+                // Locations are separated by : for e.g. 8:12 (location is the character locations)
                 String fuzzLocation = getParam(params, PARAM_FUZZ_LOCATION, "");
-                int locationStart = Integer.parseInt(fuzzLocation.split(":")[0]);
-                int locationEnd = Integer.parseInt(fuzzLocation.split(":")[1]);
+                int locationStart =
+                        Integer.parseInt(fuzzLocation.split(FUZZ_LOCATION_SEPARATOR)[0]);
+                int locationEnd = Integer.parseInt(fuzzLocation.split(FUZZ_LOCATION_SEPARATOR)[1]);
 
-                String payloadPath = getParam(params, PARAM_PAYLOAD_PATH, "");
+                String payloadPath = getParam(params, PARAM_PAYLOAD_PATH, null);
 
                 String fuzzHeader = getParam(params, PARAM_FUZZ_REQUEST_LOCATION, null);
                 HttpMessageLocation.Location httpLocation;
-                if (fuzzHeader.toLowerCase().equals("body")) {
+                if (fuzzHeader.toLowerCase().equals(MESSAGE_LOCATION_BODY)) {
                     httpLocation = HttpMessageLocation.Location.REQUEST_BODY;
-                } else if (fuzzHeader.toLowerCase().equals("header")) {
+                } else if (fuzzHeader.toLowerCase().equals(MESSAGE_LOCATION_HEADER)) {
                     httpLocation = HttpMessageLocation.Location.REQUEST_HEADER;
                 } else {
                     return ApiResponseElement.FAIL;
@@ -259,16 +304,18 @@ public class FuzzAPI extends ApiImplementor {
                 List<PayloadGeneratorMessageLocation<?>> fuzzLocations =
                         createFuzzLocations(httpLocation, locationStart, locationEnd, payloadPath);
 
+                httpFuzzerMessageProcessors.add(RequestContentLengthUpdaterProcessor.getInstance());
                 HttpFuzzer httpFuzzerSimple =
                         createFuzzer(
                                 recordHistory.getHttpMessage(),
                                 fuzzLocations,
                                 getOptions(extension.getDefaultFuzzerOptions()),
-                                Collections.emptyList());
+                                httpFuzzerMessageProcessors);
                 extension.runFuzzer(httpFuzzerHandler, httpFuzzerSimple);
                 assert httpFuzzerSimple != null;
                 return new ApiResponseElement(
-                        "fuzzerId", Integer.toString(httpFuzzerSimple.getScanId()));
+                        "fuzz.api.response.fuzzerid",
+                        Integer.toString(httpFuzzerSimple.getScanId()));
             case ACTION_RESET_DEFAULT_HTTP_FUZZ_OPTIONS:
                 resetHttpFuzzerOptions();
                 return ApiResponseElement.OK;
@@ -301,9 +348,17 @@ public class FuzzAPI extends ApiImplementor {
         }
     }
 
+    /**
+     * This method is not supposed to change the default fuzzer options just to keep a track of what
+     * was setup by the user so that when creating a fuzzer these fuzz options can be sent over to
+     * the fuzzer
+     *
+     * @params these params are the same in fuzz options tab
+     * @return void sets up the fuzz options in the default object where it is stored
+     */
     private void setHttpFuzzerOptions(
             int maxErrorsAllowed, String strategy, int retriesIOError, int delayInMs, int threads) {
-        FuzzOptions fuzzOptions = (FuzzOptions) extension.getFuzzOptions().clone();
+        FuzzOptions fuzzOptions = new FuzzOptions();
         if (maxErrorsAllowed != -1) {
             fuzzOptions.setDefaultMaxErrorsAllowed(maxErrorsAllowed);
         }
@@ -316,10 +371,20 @@ public class FuzzAPI extends ApiImplementor {
         if (threads != -1) {
             fuzzOptions.setDefaultThreadsPerFuzzer(threads);
         }
-        if (strategy.toLowerCase().equals(("Depth First").toLowerCase())) {
+        if (strategy.toLowerCase()
+                .equals(
+                        Constant.messages
+                                .getString(
+                                        "fuzz.options.label.payloadReplacementStrategy.depthFirst")
+                                .toLowerCase())) {
             fuzzOptions.setDefaultPayloadReplacementStrategy(
                     MessageLocationsReplacementStrategy.DEPTH_FIRST);
-        } else if (strategy.toLowerCase().equals(("breadth First").toLowerCase())) {
+        } else if (strategy.toLowerCase()
+                .equals(
+                        Constant.messages
+                                .getString(
+                                        "fuzz.options.label.payloadReplacementStrategy.breadthFirst")
+                                .toLowerCase())) {
             fuzzOptions.setDefaultPayloadReplacementStrategy(
                     MessageLocationsReplacementStrategy.BREADTH_FIRST);
         }
@@ -406,26 +471,34 @@ public class FuzzAPI extends ApiImplementor {
             // All of the functions below no need probably
             @Override
             public String getDescription() {
-                return (start + ":" + end);
+                return (start + FUZZ_LOCATION_SEPARATOR + end);
             }
 
             @Override
             public String getValue() {
-                return (start + ":" + end);
+                return (start + FUZZ_LOCATION_SEPARATOR + end);
             }
 
             @Override
             public boolean overlaps(MessageLocation otherLocation) {
-                return (((start + ":" + end)).equals(otherLocation.getValue()));
+                return (((start + FUZZ_LOCATION_SEPARATOR + end)).equals(otherLocation.getValue()));
             }
 
             @Override
             public int compareTo(MessageLocation messageLocation) {
-                return (messageLocation.getValue().compareTo(((start + ":" + end))));
+                return (messageLocation
+                        .getValue()
+                        .compareTo(((start + FUZZ_LOCATION_SEPARATOR + end))));
             }
         };
     }
 
+    /**
+     * Method copied from HttpFuzzerHandler
+     *
+     * @see HttpFuzzerHandler /* Used to create the fuzzer
+     */
+    /* Didn't want to change fuzzerHandler to public so reusing it */
     private HttpFuzzer createFuzzer(
             HttpMessage message,
             List<PayloadGeneratorMessageLocation<?>> fuzzLocations,
@@ -452,13 +525,26 @@ public class FuzzAPI extends ApiImplementor {
                 new TreeSet<>(fuzzLocations);
         multipleMessageLocationsReplacer.init(replacer, messageLocationReplacementGenerators);
         return new HttpFuzzer(
-                "some name",
+                createFuzzerName(message),
                 options,
                 message,
                 (List<MessageLocationReplacementGenerator<?, MessageLocationReplacement<?>>>)
                         (ArrayList) fuzzLocations,
                 multipleMessageLocationsReplacer,
                 processors);
+    }
+
+    /**
+     * Method copied from HttpFuzzerHandler
+     *
+     * @see HttpFuzzerHandler Used to shrink the name of the fuzzer
+     */
+    private String createFuzzerName(HttpMessage message) {
+        String uri = message.getRequestHeader().getURI().toString();
+        if (uri.length() > 30) {
+            uri = uri.substring(0, 14) + ".." + uri.substring(uri.length() - 15, uri.length());
+        }
+        return Constant.messages.getString("fuzz.httpfuzzer.fuzzerNamePrefix", uri);
     }
 
     private HttpFuzzerOptions getOptions(FuzzerOptions baseOptions) {
@@ -512,6 +598,14 @@ public class FuzzAPI extends ApiImplementor {
         return new Pair<>(httpMessage, textHttpMessageLocationList);
     }
 
+    /**
+     * Tries to create a net.sf.jsonobject from the local file path If found create the object and
+     * return back
+     *
+     * @param jsonPath this is the local path in the environment which contains a valid net.sf json
+     *     object
+     * @return net sf Jsonobject
+     */
     private JSONObject getJsonObjectFromJsonFilePath(String jsonPath) {
         File initialFile = new File(jsonPath);
         InputStream is = null;
@@ -520,6 +614,7 @@ public class FuzzAPI extends ApiImplementor {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
         String jsonTxt = null;
         try {
             assert is != null;
@@ -527,10 +622,15 @@ public class FuzzAPI extends ApiImplementor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return (JSONObject) JSONSerializer.toJSON(jsonTxt);
     }
 
+    /**
+     * This message is not being used right now maybe implementation for a future release //TODO
+     *
+     * @param messageObject
+     * @return
+     */
     private HttpMessage createHttpMessageFromJsonMessageObject(JSONObject messageObject) {
         HttpMessage message = null;
         String requestHeader =
@@ -567,36 +667,57 @@ public class FuzzAPI extends ApiImplementor {
         return true;
     }
 
+    /** Parameters to be used for inputing fuzzLocationJsonInput */
+    private static final String jsonInputFuzzLocationsKey = "fuzzLocations";
+
+    private static final String jsonInputFuzzLocationKey = "requestLocation";
+    private static final String jsonInputFuzzLocationStartKey = "start";
+    private static final String jsonInputFuzzLocationEndKey = "end";
+    private static final String jsonInputPayloadsKey = "payloads";
+    private static final String jsonInputPayloadTypeKey = "payloadType";
+    private static final String jsonInputPayloadPathKey = "filePath";
+    private static final String jsonInputPayloadContentsKey = "stringContents";
+    private static final String jsonInputFileFuzzerLocationKey = "fileFuzzerLocation";
+
+    private static final String jsonInputPayloadTypeFileValue = "file";
+    private static final String jsonInputPayloadTypeFileFuzzerValue = "fileFuzzer";
+    private static final String jsonInputPayloadTypeStringsValue = "strings";
+
+    /**
+     * This methods reads the Json file which contains the fuzzLocations and the different payloads
+     * types and locations
+     *
+     * @param fuzzLocationsObject
+     * @return
+     */
     private List<PayloadGeneratorMessageLocation<?>> createFuzzLocationsFromJsonInput(
             JSONObject fuzzLocationsObject) {
         List<PayloadGeneratorMessageLocation<?>> payloadGeneratorMessageLocationList =
                 new ArrayList<>();
-        JSONArray fuzzLocationsJsonArray = fuzzLocationsObject.getJSONArray("fuzzLocations");
+        JSONArray fuzzLocationsJsonArray =
+                fuzzLocationsObject.getJSONArray(jsonInputFuzzLocationsKey);
         for (int i = 0; i < fuzzLocationsJsonArray.size(); i++) {
             List<PayloadGenerator<DefaultPayload>> payloadGeneratorList = new ArrayList<>();
             JSONObject fuzzLocationObject = fuzzLocationsJsonArray.getJSONObject(i);
             TextHttpMessageLocation.Location location =
-                    fuzzLocationObject.get("location").equals("body")
+                    fuzzLocationObject.get(jsonInputFuzzLocationKey).equals(MESSAGE_LOCATION_BODY)
                             ? HttpMessageLocation.Location.REQUEST_BODY
                             : HttpMessageLocation.Location.REQUEST_HEADER;
-            int start = fuzzLocationObject.getInt("start");
-            int end = fuzzLocationObject.getInt("end");
-            JSONArray payloadsArray = fuzzLocationObject.getJSONArray("payloads");
+            int start = fuzzLocationObject.getInt(jsonInputFuzzLocationStartKey);
+            int end = fuzzLocationObject.getInt(jsonInputFuzzLocationEndKey);
+            JSONArray payloadsArray = fuzzLocationObject.getJSONArray(jsonInputPayloadsKey);
             // Current payloads can be of 3 types
             for (int j = 0; j < payloadsArray.size(); j++) {
                 JSONObject payloadObject = payloadsArray.getJSONObject(j);
-                String type = payloadObject.get("type").toString();
-                if ("file".equals(type)) {
-                    Path path = Paths.get(payloadObject.getString("path"));
+                String type = payloadObject.get(jsonInputPayloadTypeKey).toString();
+                if (jsonInputPayloadTypeFileValue.equals(type)) {
+                    Path path = Paths.get(payloadObject.getString(jsonInputPayloadPathKey));
                     FileStringPayloadGenerator fileStringPayloadGenerator =
                             new FileStringPayloadGenerator(path);
                     payloadGeneratorList.add(fileStringPayloadGenerator);
-                    //                    payloadGeneratorList.add(
-                    //                            createFuzzLocations(
-                    //                                    location, start, end,
-                    // payloadObject.getString("path")));
-                } else if ("strings".equals(type)) {
-                    JSONArray stringContents = payloadObject.getJSONArray("contents");
+                } else if (jsonInputPayloadTypeStringsValue.equals(type)) {
+                    JSONArray stringContents =
+                            payloadObject.getJSONArray(jsonInputPayloadContentsKey);
                     List<String> payloads = new ArrayList<>();
                     for (int k = 0; k < stringContents.size(); k++) {
                         payloads.add(stringContents.getString(k));
@@ -604,11 +725,9 @@ public class FuzzAPI extends ApiImplementor {
                     DefaultStringPayloadGenerator defaultStringPayloadGenerator =
                             new DefaultStringPayloadGenerator(payloads);
                     payloadGeneratorList.add(defaultStringPayloadGenerator);
-                    //                    payloadGeneratorMessageLocationList.addAll(
-                    //                            createPayloadGeneratorMessageLocationList(
-                    //                                    location, start, end, payloads));
-                } else if ("file fuzzer".equals(type)) {
-                    String fileFuzzerLocation = payloadObject.get("location").toString();
+                } else if (jsonInputPayloadTypeFileFuzzerValue.equals(type)) {
+                    String fileFuzzerLocation =
+                            payloadObject.get(jsonInputFileFuzzerLocationKey).toString();
                     String[] fileFuzzerLocationSplit = fileFuzzerLocation.split("/");
                     if (fileFuzzerLocationSplit.length == 0) {
                         throw new IllegalStateException(
@@ -659,11 +778,10 @@ public class FuzzAPI extends ApiImplementor {
                             }
                         }
                     }
-                    //                    payloadGeneratorMessageLocationList.addAll(c)
                 } else {
                     throw new IllegalStateException(
                             "Invalid Json Input payload type doesn't exist: "
-                                    + payloadObject.get("type"));
+                                    + payloadObject.get(jsonInputPayloadTypeKey));
                 }
             }
             FuzzerPayloadGenerator fuzzerPayloadGenerator =
