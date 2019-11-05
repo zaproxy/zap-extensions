@@ -676,7 +676,7 @@ public class FuzzAPI extends ApiImplementor {
     private static final String jsonInputPayloadsKey = "payloads";
     private static final String jsonInputPayloadTypeKey = "payloadType";
     private static final String jsonInputPayloadPathKey = "filePath";
-    private static final String jsonInputPayloadContentsKey = "stringContents";
+    private static final String jsonInputPayloadContentsKey = "contents";
     private static final String jsonInputFileFuzzerLocationKey = "fileFuzzerLocation";
 
     private static final String jsonInputPayloadTypeFileValue = "file";
