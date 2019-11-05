@@ -70,7 +70,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  *
  * <p>SimpleHttpFuzzer takes few simple arguments and starts the fuzz at 1 particular location.
  *
- * @author Dennis Goyal <a href=https://github.com/davy320>profile</a>
+ * @author Dennis Goyal <a href=https://github.com/davy320>profile</a> (Feel free to contact me)
  * @author Marius Haberstock
  * @see ExtensionFuzz
  * @see MessageLocationReplacement
@@ -677,7 +677,7 @@ public class FuzzAPI extends ApiImplementor {
     private static final String jsonInputPayloadTypeKey = "payloadType";
     private static final String jsonInputPayloadPathKey = "filePath";
     private static final String jsonInputPayloadContentsKey = "contents";
-    private static final String jsonInputFileFuzzerLocationKey = "fileFuzzerLocation";
+    private static final String jsonInputFileFuzzerLocationKey = "fileFuzzerPath";
 
     private static final String jsonInputPayloadTypeFileValue = "file";
     private static final String jsonInputPayloadTypeFileFuzzerValue = "fileFuzzer";
@@ -686,16 +686,21 @@ public class FuzzAPI extends ApiImplementor {
     /**
      * This methods reads the Json file which contains the fuzzLocations and the different payloads
      * types and locations
-     *
-     * @param fuzzLocationsObject
-     * @return
+     * It follows a particular schema which can be obtained from the repository at
+     * @link <a href="https://github.com/zaproxy/zap-api-docs">API DOCS<a/>
+     * @param fuzzLocationsObject This is the json object from the file that was uploaded
+     * @return List of all the fuzzLocations and their pre-generated payloads
+     * @version 1.0
      */
     private List<PayloadGeneratorMessageLocation<?>> createFuzzLocationsFromJsonInput(
             JSONObject fuzzLocationsObject) {
+        //Add multiple fuzz locations including their multiple payloads to this list!
         List<PayloadGeneratorMessageLocation<?>> payloadGeneratorMessageLocationList =
                 new ArrayList<>();
+        //Get the json object
         JSONArray fuzzLocationsJsonArray =
                 fuzzLocationsObject.getJSONArray(jsonInputFuzzLocationsKey);
+        //Look for all the fuzz Locations
         for (int i = 0; i < fuzzLocationsJsonArray.size(); i++) {
             List<PayloadGenerator<DefaultPayload>> payloadGeneratorList = new ArrayList<>();
             JSONObject fuzzLocationObject = fuzzLocationsJsonArray.getJSONObject(i);
@@ -706,15 +711,18 @@ public class FuzzAPI extends ApiImplementor {
             int start = fuzzLocationObject.getInt(jsonInputFuzzLocationStartKey);
             int end = fuzzLocationObject.getInt(jsonInputFuzzLocationEndKey);
             JSONArray payloadsArray = fuzzLocationObject.getJSONArray(jsonInputPayloadsKey);
+            //Location found now look for payloads
             // Current payloads can be of 3 types
             for (int j = 0; j < payloadsArray.size(); j++) {
                 JSONObject payloadObject = payloadsArray.getJSONObject(j);
                 String type = payloadObject.get(jsonInputPayloadTypeKey).toString();
+                //If payload is of type File
                 if (jsonInputPayloadTypeFileValue.equals(type)) {
                     Path path = Paths.get(payloadObject.getString(jsonInputPayloadPathKey));
                     FileStringPayloadGenerator fileStringPayloadGenerator =
                             new FileStringPayloadGenerator(path);
                     payloadGeneratorList.add(fileStringPayloadGenerator);
+                //If payload is of type Strings
                 } else if (jsonInputPayloadTypeStringsValue.equals(type)) {
                     JSONArray stringContents =
                             payloadObject.getJSONArray(jsonInputPayloadContentsKey);
@@ -725,6 +733,7 @@ public class FuzzAPI extends ApiImplementor {
                     DefaultStringPayloadGenerator defaultStringPayloadGenerator =
                             new DefaultStringPayloadGenerator(payloads);
                     payloadGeneratorList.add(defaultStringPayloadGenerator);
+                //If payload is of type File Fuzzer
                 } else if (jsonInputPayloadTypeFileFuzzerValue.equals(type)) {
                     String fileFuzzerLocation =
                             payloadObject.get(jsonInputFileFuzzerLocationKey).toString();
