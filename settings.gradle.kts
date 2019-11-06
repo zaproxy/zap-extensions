@@ -24,6 +24,7 @@ var addOns = listOf(
     "cmss",
     "codedx",
     "coreLang",
+    "custompayloads",
     "customreport",
     "diff",
     "directorylistv1",

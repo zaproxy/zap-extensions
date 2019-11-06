@@ -21,6 +21,9 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -55,15 +58,19 @@ public class TestUserAgent extends AbstractAppPlugin {
     private static final String I_PHONE_3 =
             "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16";
 
-    private static final String[] USER_AGENTS = {
-        INTERNET_EXPLORER_8,
-        INTERNET_EXPLORER_7,
-        INTERNET_EXPLORER_6,
-        GOOGLE_BOT_2_1,
-        MSN_BOT_1_1,
-        YAHOO_SLURP,
-        I_PHONE_3
-    };
+    public static final List<String> USER_AGENTS =
+            Arrays.asList(
+                    INTERNET_EXPLORER_8,
+                    INTERNET_EXPLORER_7,
+                    INTERNET_EXPLORER_6,
+                    GOOGLE_BOT_2_1,
+                    MSN_BOT_1_1,
+                    YAHOO_SLURP,
+                    I_PHONE_3);
+    private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER = () -> USER_AGENTS;
+    public static final String USER_AGENT_PAYLOAD_CATEGORY = "User-Agent";
+
+    private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
     private int originalResponseBodyHash;
 
@@ -101,12 +108,20 @@ public class TestUserAgent extends AbstractAppPlugin {
     public void scan() {
         originalResponseBodyHash = getBaseMsg().getResponseBody().hashCode();
 
-        for (String userAgent : USER_AGENTS) {
+        for (String userAgentPayload : getUserAgentPayloads().get()) {
             if (isStop()) {
                 return;
             }
-            attack(userAgent);
+            attack(userAgentPayload);
         }
+    }
+
+    public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
+        payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
+    }
+
+    private static Supplier<Iterable<String>> getUserAgentPayloads() {
+        return payloadProvider;
     }
 
     private void attack(String userAgent) {

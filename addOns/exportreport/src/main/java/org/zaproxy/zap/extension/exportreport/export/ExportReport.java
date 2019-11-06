@@ -37,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.exportreport.ExtensionExportReport;
 import org.zaproxy.zap.extension.exportreport.filechooser.FileList;
 import org.zaproxy.zap.extension.exportreport.filechooser.ReportFileView;
@@ -102,7 +103,9 @@ public class ExportReport {
                                 extension.extensionGetReportVer(),
                                 extension.extensionGetDescription(),
                                 extension.getIncludedAlertSeverity(),
-                                extension.getIncludedAlertDetails());
+                                extension.getIncludedAlertDetails(),
+                                null,
+                                true);
             } catch (UnsupportedEncodingException e) {
                 logger.error(e.getMessage(), e);
                 view.showWarningDialog(
@@ -238,7 +241,9 @@ public class ExportReport {
             String ext,
             ArrayList<String> sourceDetailsList,
             ArrayList<String> alertSeverityList,
-            ArrayList<String> alertDetailsList) {
+            ArrayList<String> alertDetailsList,
+            ActiveScan scan,
+            boolean includePassiveAlerts) {
 
         File f = new File(absolutePath);
         String file = f.getName();
@@ -270,7 +275,9 @@ public class ExportReport {
                             extensionGetReportVer,
                             getDescription,
                             alertSeverityList,
-                            alertDetailsList);
+                            alertDetailsList,
+                            scan,
+                            includePassiveAlerts);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);
             CommandLine.error(Constant.messages.getString("exportreport.message.error.dump"));

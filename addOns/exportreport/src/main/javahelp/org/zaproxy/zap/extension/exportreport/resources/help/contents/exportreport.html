@@ -327,6 +327,84 @@
                 </UL>
             </LI>
             <LI><HR></LI>
+<!-- TODO: Issue 2920 : Add scanId option to cmdline tool
+            <LI><B>-scan_id (optional)</B>:
+                <UL style="list-style: none;">
+
+                    <LI>
+                        <H4>Description:</H4>
+                        <UL>
+                            <LI>Specifies the id of the scan that will be used to generate the report</LI>
+                        </UL>
+                    <LI>
+                    <LI>
+                        <H4>Input format:</H4>
+                        <UL>
+                            <LI>Only accepts integers, defaults to all scans if not respected</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Input restriction:</H4>
+                        <UL>
+                            <LI>Only accepts a valid existing scan id</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Example:</H4>
+                        <UL>
+                            <LI>-scan_id "4"</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Explanation:</H4>
+                        <UL>
+                            <LI>In the above example, only alerts raised during the scan with id '4' will be included in the report.</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Validation:</H4>
+                        <UL>
+                            <LI>Content is validated to be a valid scan id.</LI>
+                        </UL>
+                    </LI>
+                    <LI><BR></LI>
+                </UL>
+            </LI>
+            
+            <LI><HR></LI>
+-->
+
+            <LI><B>-include_passive_alerts (optional)</B>:
+                <UL style="list-style: none;">
+
+                    <LI>
+                        <H4>Description:</H4>
+                        <UL>
+                            <LI>Specifies whether or not to include passive alerts in the report</LI>
+                        </UL>
+                    <LI>
+                    <LI>
+                        <H4>Input format:</H4>
+                        <UL>
+                            <LI>Only accepts boolean values, defaults to true if not respected</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Example:</H4>
+                        <UL>
+                            <LI>-include_passive_alerts "false"</LI>
+                        </UL>
+                    </LI>
+                    <LI>
+                        <H4>Explanation:</H4>
+                        <UL>
+                            <LI>In the above example, no passive alerts will be included in the report.</LI>
+                        </UL>
+                    </LI>
+                    <LI><BR></LI>
+                </UL>
+            </LI>
+            <LI><HR></LI>
         </UL>
 
         <UL style="list-style: none;">

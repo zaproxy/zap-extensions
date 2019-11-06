@@ -5,8 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-- Maintenance changes.
+
+## [26] - 2019-10-31
+
+### Added
+- Add dependency on Custom Payloads add-on. The payloads of the Test User Agent scanner are now customizable.
 - Added XSLT Injection Scanner (issue 3572).
+
+### Changed
+- Update minimum ZAP version to 2.8.0.
 
 ## [25] - 2019-07-11
 
@@ -151,5 +158,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v24
