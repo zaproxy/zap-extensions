@@ -25,6 +25,8 @@ import java.awt.event.ActionListener;
 import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableRemove;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableSet;
 import org.mozilla.zest.core.v1.ZestActionIntercept;
 import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
@@ -148,6 +150,8 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
         createPopupAddActionMenu(parent, child, stmt, new ZestActionPrint(text));
         createPopupAddActionMenu(parent, child, stmt, new ZestActionFail(text));
         createPopupAddActionMenu(parent, child, stmt, new ZestActionSleep());
+        createPopupAddActionMenu(parent, child, stmt, new ZestActionGlobalVariableSet());
+        createPopupAddActionMenu(parent, child, stmt, new ZestActionGlobalVariableRemove());
     }
 
     private void createPopupAddActionMenu(

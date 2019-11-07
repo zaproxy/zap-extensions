@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 ### Added
+- Allow to set, remove, and get global variables (Issue 3512), using the context menus:
+  - `Add Zest Action` > `Action - Global Variable - Set`
+  - `Add Zest Action` > `Action - Global Variable - Remove`
+  - `Add Zest Assignment` > `Assign variable to Global Variable`
 - Allow to start browsers (e.g. Chrome, Firefox) headless, enabled by default (Related to Issue 3866).
 - Add new assignment which can filter the parsed DOM by element or attributes and select the content
 of an element or the value of an attribute.
