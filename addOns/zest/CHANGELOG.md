@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Send sequence messages with ZAP so that they make use of ZAP features e.g. authentication, HTTP
+Sender scripts. (Issue 5590)
 
 ## [29] - 2019-06-07
 
