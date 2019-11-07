@@ -24,8 +24,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
@@ -98,9 +96,6 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         this.setStopOnAssertFail(false);
         this.setStopOnTestFail(false);
 
-        HttpClient httpClient = new HttpClient();
-        httpClient.getParams().setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true);
-        this.setHttpClient(httpClient);
         // Always proxy via ZAP
         this.setProxy(
                 Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),

@@ -5,9 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- Allow to start browsers (e.g. Chrome, Firefox) headless, enabled by default (Related to Issue 3866).
+
 ### Changed
+- Update Zest library to 0.14.0 (Issue 4797). Refer to its [CHANGELOG](https://github.com/mozilla/zest/blob/0.14.0/CHANGELOG.md#changelog) for full set of changes.
 - Send sequence messages with ZAP so that they make use of ZAP features e.g. authentication, HTTP
 Sender scripts. (Issue 5590)
+- Set timestamp from/to Zest requests.
+
+### Fixed
+- Send PUT request with its body (Issue 4337).
+- Launch browsers with capability `acceptInsecureCerts` set to true (Issue 4870).
+- Proxy localhost with Chrome 72+ and Firefox 67+.
 
 ## [29] - 2019-06-07
 

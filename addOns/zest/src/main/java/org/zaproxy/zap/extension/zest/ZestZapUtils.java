@@ -781,6 +781,7 @@ public class ZestZapUtils {
             return null;
         }
         HttpMessage msg = new HttpMessage(new URI(request.getUrl().toString(), false));
+        msg.setTimeSentMillis(request.getTimestamp());
         if (request.getHeaders() != null) {
             try {
                 msg.setRequestHeader(
@@ -826,6 +827,7 @@ public class ZestZapUtils {
             throws MalformedURLException, HttpMalformedHeaderException, SQLException {
         if (replaceTokens) {
             ZestRequest req = new ZestRequest();
+            req.setTimestamp(msg.getTimeSentMillis());
             req.setMethod(msg.getRequestHeader().getMethod());
             if (msg.getRequestHeader().getURI() != null) {
                 req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
@@ -852,6 +854,7 @@ public class ZestZapUtils {
 
         } else {
             ZestRequest req = new ZestRequest();
+            req.setTimestamp(msg.getTimeSentMillis());
             req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
             req.setMethod(msg.getRequestHeader().getMethod());
             if (incAllHeaders) {
