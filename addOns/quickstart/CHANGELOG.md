@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Maintenance changes.
 - Link to newer Getting Started Guide.
+- Improve permissions and space handling when saving.
 
 ## [26] - 2019-06-07
 

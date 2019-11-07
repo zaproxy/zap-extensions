@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+- Improve permissions and space handling when saving.
 
 ## [13] - 2019-07-15
 
