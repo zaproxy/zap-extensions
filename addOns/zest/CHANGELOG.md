@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Allow to start browsers (e.g. Chrome, Firefox) headless, enabled by default (Related to Issue 3866).
+- Add new assignment which can filter the parsed DOM by element or attributes and select the content
+of an element or the value of an attribute.
 
 ### Changed
 - Update Zest library to 0.14.0 (Issue 4797). Refer to its [CHANGELOG](https://github.com/mozilla/zest/blob/0.14.0/CHANGELOG.md#changelog) for full set of changes.

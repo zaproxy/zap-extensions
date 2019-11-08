@@ -42,6 +42,7 @@ import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignCalc;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
+import org.mozilla.zest.core.v1.ZestAssignFromElement;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignReplace;
@@ -481,6 +482,90 @@ public class ZestZapUtils {
                                 zsa.getOperandB());
             } else {
                 return indexStr + Constant.messages.getString("zest.element.assign.calc.title");
+            }
+        } else if (za instanceof ZestAssignFromElement) {
+            ZestAssignFromElement zsa = (ZestAssignFromElement) za;
+            if (incParams) {
+
+                StringBuilder sb = new StringBuilder();
+                if (!zsa.isFilteredByElementName() && !zsa.isFilteredByAttribute()) {
+                    sb.append(
+                            Constant.messages.getString(
+                                    "zest.element.assign.fromElement.elements"));
+                    sb.append("()");
+                }
+
+                if (zsa.isFilteredByElementName() || zsa.isFilteredByAttribute()) {
+                    sb.append(Constant.messages.getString("zest.element.assign.fromElement.where"));
+                    sb.append('(');
+                }
+
+                if (zsa.isFilteredByElementName()) {
+                    sb.append(
+                            Constant.messages.getString("zest.element.assign.fromElement.element"));
+                    sb.append(" == '");
+                    sb.append(zsa.getElementNameFilter());
+                    sb.append('\'');
+                }
+
+                if (zsa.isFilteredByElementName() && zsa.isFilteredByAttribute()) {
+                    sb.append(" && ");
+                }
+
+                if (zsa.isFilteredByAttribute()) {
+                    sb.append(
+                            Constant.messages.getString(
+                                    "zest.element.assign.fromElement.attributes"));
+                    sb.append("['");
+                    sb.append(zsa.getAttributeNameFilter());
+                    sb.append("'] ");
+                    sb.append(Constant.messages.getString("zest.element.assign.fromElement.match"));
+                    sb.append(" '");
+                    sb.append(zsa.getAttributeValueFilter());
+                    sb.append('\'');
+                }
+
+                if (zsa.isFilteredByElementName() || zsa.isFilteredByAttribute()) {
+                    sb.append(')');
+                }
+
+                if (zsa.areFilteredElementsReversed()) {
+                    sb.append('.');
+                    sb.append(
+                            Constant.messages.getString("zest.element.assign.fromElement.reverse"));
+                    sb.append("()");
+                }
+
+                sb.append('[');
+                sb.append(zsa.getElementIndex());
+                sb.append(']');
+
+                if (zsa.isReturningElement()) {
+                    sb.append('.');
+                    sb.append(
+                            Constant.messages.getString(
+                                    "zest.element.assign.fromElement.selectcontent"));
+                    sb.append("()");
+                }
+
+                if (zsa.isReturningAttribute()) {
+                    sb.append('.');
+                    sb.append(
+                            Constant.messages.getString(
+                                    "zest.element.assign.fromElement.selectattribute"));
+                    sb.append("('");
+                    sb.append(zsa.getReturnedAttributeName());
+                    sb.append("')");
+                }
+
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.assign.fromElement",
+                                zsa.getVariableName(),
+                                sb.toString());
+            } else {
+                return indexStr
+                        + Constant.messages.getString("zest.element.assign.fromElement.title");
             }
 
         } else if (za instanceof ZestActionScan) {
