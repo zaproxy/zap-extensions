@@ -26,6 +26,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableRemove;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableSet;
 import org.mozilla.zest.core.v1.ZestActionIntercept;
 import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
@@ -98,6 +100,16 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                     new ImageIcon(
                             ZestTreeCellRenderer.class.getResource(
                                     "/org/zaproxy/zap/extension/zest/resources/icons/printer.png")));
+    private static final ImageIcon ACTION_GLOBAL_VAR_SET_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/globe-plus.png")));
+    private static final ImageIcon ACTION_GLOBAL_VAR_REMOVE_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/globe-minus.png")));
     private static final ImageIcon ASSIGNMENT_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -330,6 +342,10 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         setIcon(ACTION_SCAN_ICON);
                     } else if (za instanceof ZestActionSleep) {
                         setIcon(ACTION_SLEEP_ICON);
+                    } else if (za instanceof ZestActionGlobalVariableSet) {
+                        setIcon(ACTION_GLOBAL_VAR_SET_ICON);
+                    } else if (za instanceof ZestActionGlobalVariableRemove) {
+                        setIcon(ACTION_GLOBAL_VAR_REMOVE_ICON);
                     } else if (za instanceof ZestAssignment) {
                         setIcon(ASSIGNMENT_ICON);
                     } else if (za instanceof ZestComment) {

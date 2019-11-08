@@ -59,6 +59,7 @@ import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.ruleconfig.ExtensionRuleConfig;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.extension.script.ScriptUI;
+import org.zaproxy.zap.extension.script.ScriptVars;
 
 public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
@@ -529,6 +530,16 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         } else {
             super.setVariable(name, value);
         }
+    }
+
+    @Override
+    public String getGlobalVariable(String name) {
+        return ScriptVars.getGlobalVar(name);
+    }
+
+    @Override
+    public void setGlobalVariable(String name, String value) {
+        ScriptVars.setGlobalVar(name, value);
     }
 
     @Override

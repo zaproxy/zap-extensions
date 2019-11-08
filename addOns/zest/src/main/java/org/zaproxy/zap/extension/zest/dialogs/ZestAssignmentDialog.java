@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestAssignCalc;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignFromElement;
+import org.mozilla.zest.core.v1.ZestAssignGlobalVariable;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignReplace;
@@ -86,6 +87,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
             "zest.dialog.assign.label.filteredElementsSelectorAttributeName";
     private static final String FROM_ELEMENT_SELECTOR_CONTENT = "Content";
     private static final String FROM_ELEMENT_SELECTOR_ATTRIBUTE = "Attribute";
+    private static final String FIELD_GLOBAL_VAR = "zest.dialog.assign.label.globalvar";
 
     private static final long serialVersionUID = 1L;
 
@@ -259,6 +261,10 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
                     this.getField(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_INDEX));
             ZestZapUtils.setMainPopupMenu(
                     this.getField(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME));
+        } else if (assign instanceof ZestAssignGlobalVariable) {
+            ZestAssignGlobalVariable za = (ZestAssignGlobalVariable) assign;
+            addTextField(FIELD_VARIABLE, assign.getVariableName());
+            addTextField(FIELD_GLOBAL_VAR, za.getGlobalVariableName());
         }
 
         this.addPadding();
@@ -408,6 +414,9 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
                                 FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME);
                 za.selectAttributeValue(attributeName);
             }
+        } else if (assign instanceof ZestAssignGlobalVariable) {
+            ZestAssignGlobalVariable za = (ZestAssignGlobalVariable) assign;
+            za.setGlobalVariableName(getStringValue(FIELD_GLOBAL_VAR));
         }
 
         if (add) {
@@ -526,6 +535,10 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
                             FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME)) {
                 return Constant.messages.getString(
                         "zest.dialog.assign.error.filteredElementsSelectorAttributeNameEmpty");
+            }
+        } else if (assign instanceof ZestAssignGlobalVariable) {
+            if (isEmptyField(FIELD_GLOBAL_VAR)) {
+                return Constant.messages.getString("zest.dialog.assign.error.globalvar");
             }
         }
         return null;

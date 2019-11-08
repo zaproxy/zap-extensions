@@ -34,6 +34,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableRemove;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableSet;
 import org.mozilla.zest.core.v1.ZestActionIntercept;
 import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
@@ -43,6 +45,7 @@ import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignCalc;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignFromElement;
+import org.mozilla.zest.core.v1.ZestAssignGlobalVariable;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignReplace;
@@ -568,6 +571,16 @@ public class ZestZapUtils {
                         + Constant.messages.getString("zest.element.assign.fromElement.title");
             }
 
+        } else if (za instanceof ZestAssignGlobalVariable) {
+            ZestAssignGlobalVariable zagv = (ZestAssignGlobalVariable) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.assign.globalvar",
+                                zagv.getVariableName(),
+                                zagv.getGlobalVariableName());
+            }
+            return indexStr + Constant.messages.getString("zest.element.assign.globalvar.title");
         } else if (za instanceof ZestActionScan) {
             ZestActionScan zsa = (ZestActionScan) za;
             if (incParams) {
@@ -617,6 +630,30 @@ public class ZestZapUtils {
             } else {
                 return indexStr + Constant.messages.getString("zest.element.action.sleep.title");
             }
+        } else if (za instanceof ZestActionGlobalVariableSet) {
+            ZestActionGlobalVariableSet zagvs = (ZestActionGlobalVariableSet) za;
+            if (incParams) {
+                String value = zagvs.getValue();
+                if (value.length() > 10) {
+                    value = value.substring(0, 10) + "...";
+                }
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.action.globalvarset",
+                                zagvs.getGlobalVariableName(),
+                                value);
+            }
+            return indexStr + Constant.messages.getString("zest.element.action.globalvarset.title");
+        } else if (za instanceof ZestActionGlobalVariableRemove) {
+            ZestActionGlobalVariableRemove zagvr = (ZestActionGlobalVariableRemove) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.action.globalvarremove",
+                                zagvr.getGlobalVariableName());
+            }
+            return indexStr
+                    + Constant.messages.getString("zest.element.action.globalvarremove.title");
         } else if (za instanceof ZestComment) {
             ZestComment zsa = (ZestComment) za;
             if (incParams) {
