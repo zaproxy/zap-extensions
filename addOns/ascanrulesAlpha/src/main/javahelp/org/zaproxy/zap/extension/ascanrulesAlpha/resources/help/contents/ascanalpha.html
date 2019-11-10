@@ -50,6 +50,21 @@ If the GET response is the same as the original POST response then an alert is r
 represent a security weakness unto itself it may indicate that other attacks or weaknesses can be expanded or simplified.
 (Such as a POST based Cross-Site Scripting (XSS) attack being changed to GET.)
 
+<H2>Hidden File Finder</H2>
+This scan rule checks for various web accessible files which may leak administrative, configuration, or credential information.
+The built-in set of payloads are based on <a href="https://github.com/hannob/snallygaster">Snallygaster</a> by Hanno Böck.
+Such payloads are verified by checking response code, and content. If the response code is 200 (Ok) then additional content checks are performed to increase alert confidence.
+If the response code is 401 (Unauthorized) or 403 (Forbidden) then an alert is raised with lower confidence.
+<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own hidden file paths (payloads) in the Custom Payloads options panel. 
+For custom payloads only the response status code is checked. If there is a requirement to include a content check then it is also possible to add payloads to 
+the <code>json/hidden_files.json</code> file in ZAP's user directory.
+<p>
+TODO:
+<ul>
+  <li>Implement support for checking byte arrays in responses.</li>
+  <li>Implement support for "not" conditions in content checks.</li>
+</ul>
+
 <H2>HTTP Only Site</H2>
 This active scanner checks whether an HTTP site is served under HTTPS.
 
