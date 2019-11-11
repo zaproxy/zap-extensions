@@ -87,7 +87,7 @@ public class WebSocketBreakDialogEdit extends WebSocketBreakDialog {
                                 View.getSingleton()
                                         .showWarningDialog(
                                                 Constant.messages.getString(
-                                                        "filter.replacedialog.invalidpattern"));
+                                                        "websocket.invalidpattern"));
                                 wsUiHelper.getPatternTextField().grabFocus();
                                 return;
                             }
