@@ -81,7 +81,7 @@ public class ClientBreakDialogAdd extends ClientBreakDialog {
                                 View.getSingleton()
                                         .showWarningDialog(
                                                 Constant.messages.getString(
-                                                        "filter.replacedialog.invalidpattern"));
+                                                        "plugnhack.invalidpattern"));
                                 return;
                             }
                         }
