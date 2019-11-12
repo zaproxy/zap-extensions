@@ -287,9 +287,12 @@ public class FuzzAPI extends ApiImplementor {
             case ACTION_MULTIPLE_PAYLOAD_FUZZER: // This one needs a valid JSON schema input to work
                 JSONObject fuzzLocationsObject =
                         getJsonObjectFromJsonFilePath(getParam(params, PARAM_JSON_LOCATION, null));
+                if (fuzzLocationsObject == null) {
+                    return new ApiResponseElement(
+                            "Error", "Invalid JSON or the path doesn't exist");
+                }
                 List<PayloadGeneratorMessageLocation<?>> fuzzLocationsTest =
                         createFuzzLocationsFromJsonInput(fuzzLocationsObject);
-
                 TableHistory tableHistoryTest = Model.getSingleton().getDb().getTableHistory();
                 RecordHistory recordHistoryTest =
                         getRecordHistory(tableHistoryTest, getParam(params, PARAM_MESSAGE_ID, -1));
@@ -312,14 +315,18 @@ public class FuzzAPI extends ApiImplementor {
                 TableHistory tableHistory = Model.getSingleton().getDb().getTableHistory();
                 RecordHistory recordHistory =
                         getRecordHistory(tableHistory, getParam(params, PARAM_MESSAGE_ID, -1));
-
+                assert (recordHistory.getHttpMessage() != null);
                 httpFuzzerHandler = new HttpFuzzerHandler();
                 // Locations are separated by : for e.g. 8:12 (location is the character locations)
                 String fuzzLocation = getParam(params, PARAM_FUZZ_LOCATION, "");
-                int locationStart =
-                        Integer.parseInt(fuzzLocation.split(FUZZ_LOCATION_SEPARATOR)[0]);
-                int locationEnd = Integer.parseInt(fuzzLocation.split(FUZZ_LOCATION_SEPARATOR)[1]);
-
+                int locationStart, locationEnd;
+                try {
+                    locationStart =
+                            Integer.parseInt(fuzzLocation.split(FUZZ_LOCATION_SEPARATOR)[0]);
+                    locationEnd = Integer.parseInt(fuzzLocation.split(FUZZ_LOCATION_SEPARATOR)[1]);
+                } catch (IllegalArgumentException e) {
+                    return new ApiResponseElement("Illegal fuzzLocation input: " + fuzzLocation);
+                }
                 String payloadPath = getParam(params, PARAM_PAYLOAD_PATH, null);
 
                 String fuzzHeader = getParam(params, PARAM_FUZZ_REQUEST_LOCATION, null);
@@ -329,11 +336,18 @@ public class FuzzAPI extends ApiImplementor {
                 } else if (fuzzHeader.toLowerCase().equals(MESSAGE_LOCATION_HEADER)) {
                     httpLocation = HttpMessageLocation.Location.REQUEST_HEADER;
                 } else {
-                    return ApiResponseElement.FAIL;
+                    return new ApiResponseElement(
+                            "Invalid request Location: "
+                                    + fuzzHeader
+                                    + " only \"body\" or \"header\" allowed");
                 }
                 List<PayloadGeneratorMessageLocation<?>> fuzzLocations =
                         createFuzzLocations(httpLocation, locationStart, locationEnd, payloadPath);
-
+                if (fuzzLocations == null) {
+                    LOGGER.debug("Failed to load fuzz locations");
+                    return new ApiResponseElement(
+                            "Error", "Failed to load fuzzLocations and payloads");
+                }
                 httpFuzzerMessageProcessors.add(RequestContentLengthUpdaterProcessor.getInstance());
                 HttpFuzzer httpFuzzerSimple =
                         createFuzzer(
@@ -420,9 +434,11 @@ public class FuzzAPI extends ApiImplementor {
         try {
             recordHistory = tableHistory.read(id);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
+            LOGGER.debug("Invalid http Message or Data error", e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR, e);
         }
         if (recordHistory == null) {
+            LOGGER.debug("Message " + id + " doesn't exist in History.");
             throw new ApiException(ApiException.Type.DOES_NOT_EXIST, Integer.toString(id));
         }
         return recordHistory;
@@ -436,8 +452,8 @@ public class FuzzAPI extends ApiImplementor {
             allLines = Files.readAllLines(Paths.get(payloadPath));
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-
         return createPayloadGeneratorMessageLocationList(location, start, end, allLines);
     }
 
@@ -631,11 +647,11 @@ public class FuzzAPI extends ApiImplementor {
             is = new FileInputStream(initialFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            return null;
         }
 
         String jsonTxt = null;
         try {
-            assert is != null;
             jsonTxt = IOUtils.toString(is);
         } catch (IOException e) {
             e.printStackTrace();
@@ -759,7 +775,7 @@ public class FuzzAPI extends ApiImplementor {
                     String[] fileFuzzerLocationSplit = fileFuzzerLocation.split("/");
                     if (fileFuzzerLocationSplit.length == 0) {
                         throw new IllegalStateException(
-                                "Invalid Json Input Inbuilt File Fuzzer type doesn't exist: "
+                                "Invalid Json Input inbuilt File Fuzzer type doesn't exist: "
                                         + fileFuzzerLocation);
                     } else {
                         List<FuzzerPayloadCategory> fileFuzzerCategories =
