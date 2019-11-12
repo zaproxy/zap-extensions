@@ -41,6 +41,7 @@ import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.exportreport.export.ExportReport;
 import org.zaproxy.zap.extension.exportreport.filechooser.FileList;
 import org.zaproxy.zap.extension.exportreport.filechooser.Utils;
@@ -85,7 +86,10 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
     private static final int ARG_SOURCE_INFO_IDX = 1;
     private static final int ARG_ALERT_SEVERITY_IDX = 2;
     private static final int ARG_ALERT_DETAILS_IDX = 3;
-    private CommandLineArgument[] arguments = new CommandLineArgument[4];
+    private static final int ARG_INCLUDE_PASSIVE_ALERTS_IDX = 4;
+    // private static final int ARG_SCAN_ID_IDX = 5;
+
+    private CommandLineArgument[] arguments = new CommandLineArgument[5];
 
     // Used for PDF export
     private List<Alert> alertsDB = null;
@@ -338,10 +342,19 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
             String fileExtension,
             ArrayList<String> sourceDetails,
             ArrayList<String> alertSeverity,
-            ArrayList<String> alertDetails) {
+            ArrayList<String> alertDetails,
+            ActiveScan scan,
+            boolean includePassiveAlerts) {
         ExportReport report = new ExportReport();
         return report.generateReport(
-                this, absolutePath, fileExtension, sourceDetails, alertSeverity, alertDetails);
+                this,
+                absolutePath,
+                fileExtension,
+                sourceDetails,
+                alertSeverity,
+                alertDetails,
+                scan,
+                includePassiveAlerts);
     }
 
     public boolean canWrite(String path) {
@@ -529,13 +542,37 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
             alertDetailsFull.addAll(alertDetails.size(), alertAdditional);
             ArrayList<String> alertDetailsTemp = generateList(alertDetailsFlags, alertDetailsFull);
 
+            /*
+             * TODO: Issue 2920 : Add scanId option to cmdline tool
+            int scanId = -1;
+            if (arguments[ARG_SCAN_ID_IDX].isEnabled()) {
+                String scanIdStr = arguments[ARG_SCAN_ID_IDX].getArguments().get(0);
+                try {
+                    scanId = Integer.parseInt(scanIdStr);
+                } catch (NumberFormatException e) {
+                    scanId = -1;
+                }
+            }
+            */
+
+            boolean includePassiveAlerts = true;
+            if (arguments[ARG_INCLUDE_PASSIVE_ALERTS_IDX].isEnabled()) {
+                String includePassiveAlertsStr =
+                        arguments[ARG_INCLUDE_PASSIVE_ALERTS_IDX].getArguments().get(0);
+                // defaults to true for invalid input
+                includePassiveAlerts =
+                        includePassiveAlertsStr.equalsIgnoreCase("false") ? false : true;
+            }
+
             try {
                 if (generateReport(
                         absolutePath,
                         fileExtension,
                         sourceDetails,
                         alertSeverityTemp,
-                        alertDetailsTemp)) {
+                        alertDetailsTemp,
+                        null,
+                        includePassiveAlerts)) {
                     CommandLine.info(
                             Constant.messages.getString(
                                     "exportreport.message.console.info.pass.path", absolutePath));
@@ -579,34 +616,51 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
 
     private CommandLineArgument[] getCommandLineArguments() {
         // String name, int numOfArguments, String pattern, String errorMessage, String helpMessage
-        arguments[0] =
+        arguments[ARG_EXPORT_REPORT_IDX] =
                 new CommandLineArgument(
                         "-export_report",
                         1,
                         null,
                         "",
                         Constant.messages.getString("exportreport.cmdline.export.help"));
-        arguments[1] =
+        arguments[ARG_SOURCE_INFO_IDX] =
                 new CommandLineArgument(
                         "-source_info",
                         1,
                         null,
                         "",
                         Constant.messages.getString("exportreport.cmdline.source.help"));
-        arguments[2] =
+        arguments[ARG_ALERT_SEVERITY_IDX] =
                 new CommandLineArgument(
                         "-alert_severity",
                         1,
                         null,
                         "",
                         Constant.messages.getString("exportreport.cmdline.risk.help"));
-        arguments[3] =
+        arguments[ARG_ALERT_DETAILS_IDX] =
                 new CommandLineArgument(
                         "-alert_details",
                         1,
                         null,
                         "",
                         Constant.messages.getString("exportreport.cmdline.details.help"));
+        /*
+         * TODO: Issue 2920 : Add scanId option to cmdline tool
+        arguments[ARG_SCAN_ID_IDX] =
+                new CommandLineArgument(
+                        "-scan_id",
+                        1,
+                        null,
+                        "",
+                        Constant.messages.getString("exportreport.cmdline.scanid.help"));
+        */
+        arguments[ARG_INCLUDE_PASSIVE_ALERTS_IDX] =
+                new CommandLineArgument(
+                        "-include_passive_alerts",
+                        1,
+                        null,
+                        "",
+                        Constant.messages.getString("exportreport.cmdline.passivealerts.help"));
         return arguments;
     }
 
