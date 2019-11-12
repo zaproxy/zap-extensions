@@ -24,8 +24,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
@@ -61,6 +59,7 @@ import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.ruleconfig.ExtensionRuleConfig;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.extension.script.ScriptUI;
+import org.zaproxy.zap.extension.script.ScriptVars;
 
 public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
@@ -98,9 +97,6 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         this.setStopOnAssertFail(false);
         this.setStopOnTestFail(false);
 
-        HttpClient httpClient = new HttpClient();
-        httpClient.getParams().setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true);
-        this.setHttpClient(httpClient);
         // Always proxy via ZAP
         this.setProxy(
                 Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
@@ -534,6 +530,16 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         } else {
             super.setVariable(name, value);
         }
+    }
+
+    @Override
+    public String getGlobalVariable(String name) {
+        return ScriptVars.getGlobalVar(name);
+    }
+
+    @Override
+    public void setGlobalVariable(String name, String value) {
+        ScriptVars.setGlobalVar(name, value);
     }
 
     @Override

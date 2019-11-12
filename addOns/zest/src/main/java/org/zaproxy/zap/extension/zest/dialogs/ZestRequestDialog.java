@@ -32,7 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.httpclient.Cookie;
+import org.mozilla.zest.core.v1.ZestCookie;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestVariables;
@@ -119,7 +119,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 
         this.removeAllFields();
         this.getCookieModel().clear();
-        for (Cookie cookie : this.request.getCookies()) {
+        for (ZestCookie cookie : this.request.getCookies()) {
             this.getCookieModel()
                     .add(cookie.getDomain(), cookie.getName(), cookie.getValue(), cookie.getPath());
         }

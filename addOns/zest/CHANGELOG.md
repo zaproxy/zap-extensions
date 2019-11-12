@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- Allow to set, remove, and get global variables (Issue 3512), using the context menus:
+  - `Add Zest Action` > `Action - Global Variable - Set`
+  - `Add Zest Action` > `Action - Global Variable - Remove`
+  - `Add Zest Assignment` > `Assign variable to Global Variable`
+- Allow to start browsers (e.g. Chrome, Firefox) headless, enabled by default (Related to Issue 3866).
+- Add new assignment which can filter the parsed DOM by element or attributes and select the content
+of an element or the value of an attribute.
+
+### Changed
+- Update Zest library to 0.14.0 (Issue 4797). Refer to its [CHANGELOG](https://github.com/mozilla/zest/blob/0.14.0/CHANGELOG.md#changelog) for full set of changes.
+- Send sequence messages with ZAP so that they make use of ZAP features e.g. authentication, HTTP
+Sender scripts. (Issue 5590)
+- Set timestamp from/to Zest requests.
+
+### Fixed
+- Send PUT request with its body (Issue 4337).
+- Launch browsers with capability `acceptInsecureCerts` set to true (Issue 4870).
+- Proxy localhost with Chrome 72+ and Firefox 67+.
 
 ## [29] - 2019-06-07
 

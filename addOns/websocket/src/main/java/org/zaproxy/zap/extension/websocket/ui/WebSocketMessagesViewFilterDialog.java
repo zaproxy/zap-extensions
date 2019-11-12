@@ -202,7 +202,7 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
                                 View.getSingleton()
                                         .showWarningDialog(
                                                 Constant.messages.getString(
-                                                        "filter.replacedialog.invalidpattern"));
+                                                        "websocket.invalidpattern"));
                                 wsUiHelper.getPatternTextField().requestFocusInWindow();
                                 return;
                             }
