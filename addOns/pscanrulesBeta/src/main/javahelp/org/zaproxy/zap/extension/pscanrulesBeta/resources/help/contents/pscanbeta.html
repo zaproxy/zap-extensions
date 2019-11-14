@@ -43,7 +43,10 @@ A timestamp was disclosed by the application/web server.
 
 <H2>Username Hash Found</H2>
 If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
-Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact.
+<p><strong>Note:</strong> If the Custom Payloads addon is installed you can add your own Username strings (payloads) in the Custom Payloads options panel. 
+They will also be hashed and searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the 
+amount of time needed to passively scan. (The default payloads are "Admin" and "admin".)<br>
+<p>Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact.
 
 <H2>X-AspNet-Version Response Header Scanner</H2>
 This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
