@@ -21,7 +21,6 @@ package org.zaproxy.zap.testutils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mockito;
@@ -173,11 +172,6 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
     }
 
     protected abstract T createScanner();
-
-    @Override
-    public String getHtml(String name, Map<String, String> params) {
-        return super.getHtml(getClass().getSimpleName() + "/" + name, params);
-    }
 
     /**
      * Gets the recommended maximum number of messages that a scanner can send per parameter for the
