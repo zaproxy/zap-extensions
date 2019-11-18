@@ -20,10 +20,12 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -48,6 +50,16 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
     private PassiveScanThread parent = null;
     private static final Logger LOGGER = Logger.getLogger(UsernameIdorScanner.class);
 
+    private static final String ADMIN = "Admin";
+    private static final String ADMIN_2 = "admin";
+
+    public static final List<String> DEFAULT_USERNAMES = Arrays.asList(ADMIN, ADMIN_2);
+    private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
+            () -> DEFAULT_USERNAMES;
+    public static final String USERNAME_IDOR_PAYLOAD_CATEGORY = "Username-Idor";
+
+    private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
+
     private List<User> testUsers = null;
 
     private ExtensionUserManagement extUserMgmt;
@@ -58,15 +70,20 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
     }
 
     private List<User> getUsers() {
+        List<User> usersList = new ArrayList<>();
+
+        for (String payload : getUsernameIdorPayloads().get()) {
+            usersList.add(new User(-1, payload));
+        }
+
         if (testUsers != null) {
+            testUsers.addAll(usersList);
             return testUsers;
         }
 
         if (getExtensionUserManagement() == null) {
             return Collections.emptyList();
         }
-
-        List<User> usersList = new ArrayList<>();
 
         for (Context context : Model.getSingleton().getSession().getContexts()) {
             usersList.addAll(extUserMgmt.getContextUserAuthManager(context.getIndex()).getUsers());
@@ -176,6 +193,14 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
             return matcher.group();
         }
         return null;
+    }
+
+    public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
+        payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
+    }
+
+    private static Supplier<Iterable<String>> getUsernameIdorPayloads() {
+        return payloadProvider;
     }
 
     // The following methods support unit testing

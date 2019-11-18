@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Before;
@@ -36,6 +38,10 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
     private static final String GUEST_MD5 = "084e0343a0486ff05530df6c705c8bb4";
     private static final String GUEST_SHA1 =
             "84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec";
+    // Hash in lower case for "admin" without quotes
+    private static final String ADMIN_MD5 = "21232f297a57a5a743894a0e4a801fc3";
+    // Hash in lower case for "foobar" without quotes
+    private static final String FOOBAR_MD2 = "3af4bb69e03489fc4ceebe50151d3e1a";
 
     @Before
     public void before() throws URIException {
@@ -47,6 +53,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
 
         msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
+        UsernameIdorScanner.setPayloadProvider(null);
     }
 
     @Override
@@ -132,5 +139,31 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getEvidence(), GUEST_MD5);
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseHasHashOfDefaultPayload() {
+        // Given
+        msg.getResponseHeader().setHeader("X-Test-Thing", ADMIN_MD5);
+        msg.setResponseBody("Some text <h1>Some Title Element</h1>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(alertsRaised.size(), 1);
+        assertEquals(alertsRaised.get(0).getEvidence(), ADMIN_MD5);
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseHasHashOfCustomPayload() {
+        // Given
+        msg.getResponseHeader().setHeader("X-Test-Thing", FOOBAR_MD2);
+        msg.setResponseBody("Some text <h1>Some Title Element</h1>");
+        List<String> testUsers = Arrays.asList("foobar");
+        UsernameIdorScanner.setPayloadProvider(() -> testUsers);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(alertsRaised.size(), 1);
+        assertEquals(alertsRaised.get(0).getEvidence(), FOOBAR_MD2);
     }
 }
