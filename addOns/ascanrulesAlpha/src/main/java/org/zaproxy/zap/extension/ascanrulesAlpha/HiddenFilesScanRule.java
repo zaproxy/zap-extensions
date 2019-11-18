@@ -330,7 +330,16 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         return payloadProvider;
     }
 
-    private static class HiddenFile {
+    /**
+     * For UnitTest purposes. Must be executed after {@link #init()}
+     *
+     * @param payload the {@code HiddenFile} payload to be added.
+     */
+    static void addTestPayload(HiddenFile payload) {
+        hfList.add(payload);
+    }
+
+    static class HiddenFile {
         private final String path;
         private final List<String> content;
         private final List<String> links;
