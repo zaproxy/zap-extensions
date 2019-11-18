@@ -48,10 +48,9 @@ import org.parosproxy.paros.network.HttpStatusCode;
  * <p>Initial payload set adapted from snallygaster (by Hanno Böck):
  * https://github.com/hannob/snallygaster
  *
- * <p>TODO:<br>
- * - Implement support for checking byte arrays in responses (could use HexString handling similar
- * to Replacer).<br>
- * - Implement support for "not" conditions in content checks.
+ * <p><strong>Note:</strong> Binary matching assumes:<br>
+ * - Start position 0 (ex: checking magic numbers) [startsWith, not contains]<br>
+ * - Response is ASCII compatible (which should include UTF-8 and ISO-8859-1)
  *
  * @author kingthorin+owaspzap@gmail.com
  */
@@ -80,7 +79,13 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         hfList = readFromJsonFile();
         for (String payload : getHiddenFilePayloads().get()) {
             hfList.add(
-                    new HiddenFile(payload, Collections.emptyList(), Collections.emptyList(), ""));
+                    new HiddenFile(
+                            payload,
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            "",
+                            Collections.emptyList(),
+                            ""));
         }
     }
 
@@ -101,23 +106,15 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
             }
             int statusCode = testMsg.getResponseHeader().getStatusCode();
             if (statusCode == HttpStatusCode.OK) {
-                boolean matches = false;
-                List<String> contentStrings = file.getContent();
-                if (!contentStrings.isEmpty()) {
-                    for (String contentStr : contentStrings) {
-                        if (contentStr != null && !contentStr.isEmpty()) {
-                            matches = testMsg.getResponseBody().toString().contains(contentStr);
-                            if (!matches) {
-                                // If one of the content checks fails no need to loop further
-                                break;
-                            }
-                        }
-                    }
-                }
+                String responseBody = testMsg.getResponseBody().toString();
                 // If all the content checks matched then confidence is high
+                boolean matches =
+                        doesNotMatch(responseBody, file.getNotContent())
+                                && doesMatch(responseBody, file.getContent())
+                                && doesBinaryMatch(responseBody, file.getBinary());
                 raiseAlert(
                         testMsg,
-                        matches ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM,
+                        matches ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_LOW,
                         getRisk(),
                         file);
             } else if (statusCode == HttpStatusCode.UNAUTHORIZED
@@ -269,9 +266,11 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                 HiddenFile hiddenFile =
                         new HiddenFile(
                                 hiddenFileObject.getString("path"),
-                                getList(hiddenFileObject.getJSONArray("content")),
-                                getList(hiddenFileObject.getJSONArray("links")),
-                                hiddenFileObject.getString("type"));
+                                getOptionalList(hiddenFileObject, "content"),
+                                getOptionalList(hiddenFileObject, "not_content"),
+                                getOptionalString(hiddenFileObject, "binary"),
+                                getOptionalList(hiddenFileObject, "links"),
+                                getOptionalString(hiddenFileObject, "type"));
                 hiddenFiles.add(hiddenFile);
 
                 if (LOG.isDebugEnabled()) {
@@ -295,7 +294,29 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         }
     }
 
-    private static List<String> getList(JSONArray jsonArray) {
+    private static String getOptionalString(JSONObject jsonObj, String key) {
+        if (!jsonObj.has(key)) {
+            return "";
+        }
+        try {
+            return jsonObj.getString(key);
+        } catch (JSONException jEx) {
+            LOG.warn("Unable to parse JSON (" + key + ").", jEx);
+            return "";
+        }
+    }
+
+    private static List<String> getOptionalList(JSONObject jsonObj, String key) {
+        if (!jsonObj.has(key)) {
+            return Collections.emptyList();
+        }
+        JSONArray jsonArray;
+        try {
+            jsonArray = jsonObj.getJSONArray(key);
+        } catch (JSONException jEx) {
+            LOG.warn("Unable to parse JSON (" + key + ").", jEx);
+            return Collections.emptyList();
+        }
         List<String> newList = new ArrayList<>();
         for (int x = 0; x < jsonArray.size(); x++) {
             newList.add(jsonArray.getString(x));
@@ -322,6 +343,30 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         return "";
     }
 
+    private static boolean doesMatch(String responseBody, List<String> testStrings) {
+        if (testStrings.isEmpty()) {
+            return true;
+        }
+        for (String testStr : testStrings) {
+            if (!responseBody.contains(testStr)) {
+                // If one of the content checks fails no need to loop further
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean doesNotMatch(String responseBody, List<String> notContentStrings) {
+        if (notContentStrings.isEmpty()) {
+            return true;
+        }
+        return !doesMatch(responseBody, notContentStrings);
+    }
+
+    private static boolean doesBinaryMatch(String responseBody, String binary) {
+        return responseBody.startsWith(HexString.compile(binary));
+    }
+
     public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
         payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
     }
@@ -342,13 +387,23 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     static class HiddenFile {
         private final String path;
         private final List<String> content;
+        private final List<String> not_content;
+        private final String binary;
         private final List<String> links;
         private final String type;
 
-        public HiddenFile(String path, List<String> content, List<String> links, String type) {
+        public HiddenFile(
+                String path,
+                List<String> content,
+                List<String> not_content,
+                String binary,
+                List<String> links,
+                String type) {
             super();
             this.path = path;
             this.content = content;
+            this.not_content = not_content;
+            this.binary = binary;
             this.links = links;
             this.type = type;
         }
@@ -359,6 +414,14 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
         public List<String> getContent() {
             return content;
+        }
+
+        public List<String> getNotContent() {
+            return not_content;
+        }
+
+        public String getBinary() {
+            return binary;
         }
 
         public List<String> getLinks() {

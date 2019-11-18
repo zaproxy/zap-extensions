@@ -59,11 +59,30 @@ If the response code is 401 (Unauthorized) or 403 (Forbidden) then an alert is r
 For custom payloads only the response status code is checked. If there is a requirement to include a content check then it is also possible to add payloads to 
 the <code>json/hidden_files.json</code> file in ZAP's user directory.
 <p>
-TODO:
-<ul>
-  <li>Implement support for checking byte arrays in responses.</li>
-  <li>Implement support for "not" conditions in content checks.</li>
-</ul>
+The following describes the fields of the JSON entries. The only field that is required is path.
+<pre><code>
+{
+  "path":"some/path/without/leading/slash.ext",
+  "content":["content you want to find in responses"],
+  "not_content":["content you do not want the response to have"],
+  "binary":"\\x01\\x00",
+  "links":["https:\\example.com\relevant\reference.html],
+  "type":"short_identifier",
+  "source":"attribution_not_used_by_output_or_checks"
+}
+</code></pre>
+
+<p>
+The following is an example JSON entry:
+<pre><code>
+{
+  "path":"CVS/root",
+  "content":[":"],
+  "not_content":["<"],
+  "type":"cvs_dir",
+  "source":"snallygaster"
+}
+</code></pre>
 
 <H2>HTTP Only Site</H2>
 This active scanner checks whether an HTTP site is served under HTTPS.
