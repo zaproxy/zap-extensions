@@ -5,8 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [20] - 2019-11-19
+
+### Changed
 - Tweak Information Disclosure - Suspicious Comments scanner to ignore whitespace before/after suspicious comments terms in the suspicious-comments.txt config file.
 - Only scan for Servlet Parameter Pollution at LOW threshold (part of Issue 4454).
+- Username IDOR scan rule now supports use of the Custom Payload addon.
 
 ## [19] - 2019-06-07
 
@@ -106,4 +111,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[20]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v19

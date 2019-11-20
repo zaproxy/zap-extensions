@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha.payloader;
+package org.zaproxy.zap.extension.pscanrulesBeta.payloader;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,18 +29,16 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.zap.extension.ascanrulesAlpha.HiddenFilesScanRule;
-import org.zaproxy.zap.extension.ascanrulesAlpha.TestUserAgent;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
+import org.zaproxy.zap.extension.pscanrulesBeta.UsernameIdorScanner;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionPayloader";
     private static final List<Class<? extends Extension>> DEPENDENCIES;
     private static ExtensionCustomPayloads ecp;
-    private PayloadCategory uaCategory;
-    private PayloadCategory hfCategory;
+    private PayloadCategory idorCategory;
 
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
@@ -60,17 +58,12 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                 Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionCustomPayloads.class);
-        uaCategory =
+        idorCategory =
                 new PayloadCategory(
-                        TestUserAgent.USER_AGENT_PAYLOAD_CATEGORY, TestUserAgent.USER_AGENTS);
-        ecp.addPayloadCategory(uaCategory);
-        TestUserAgent.setPayloadProvider(() -> uaCategory.getPayloadsIterator());
-        hfCategory =
-                new PayloadCategory(
-                        HiddenFilesScanRule.HIDDEN_FILE_PAYLOAD_CATEGORY,
-                        HiddenFilesScanRule.HIDDEN_FILES);
-        ecp.addPayloadCategory(hfCategory);
-        HiddenFilesScanRule.setPayloadProvider(() -> hfCategory.getPayloadsIterator());
+                        UsernameIdorScanner.USERNAME_IDOR_PAYLOAD_CATEGORY,
+                        UsernameIdorScanner.DEFAULT_USERNAMES);
+        ecp.addPayloadCategory(idorCategory);
+        UsernameIdorScanner.setPayloadProvider(() -> idorCategory.getPayloadsIterator());
     }
 
     @Override
@@ -80,10 +73,8 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        TestUserAgent.setPayloadProvider(null);
-        ecp.removePayloadCategory(uaCategory);
-        HiddenFilesScanRule.setPayloadProvider(null);
-        ecp.removePayloadCategory(hfCategory);
+        UsernameIdorScanner.setPayloadProvider(null);
+        ecp.removePayloadCategory(idorCategory);
     }
 
     @Override
@@ -107,11 +98,11 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("ascanalpha.payloader.desc");
+        return Constant.messages.getString("pscanbeta.payloader.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("ascanalpha.payloader.name");
+        return Constant.messages.getString("pscanbeta.payloader.name");
     }
 }
