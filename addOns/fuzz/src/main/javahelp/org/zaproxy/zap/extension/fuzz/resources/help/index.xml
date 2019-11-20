@@ -12,4 +12,5 @@
     <indexitem text="Fuzzer Payload Processors Dialog" target="addon.fuzzer.processors"/>
     <indexitem text="Fuzzer Options" target="addon.fuzzer.options"/>
     <indexitem text="Fuzzer Tab" target="addon.fuzzer.tab"/>
+    <indexitem text="Fuzzer API" target="addon.fuzzer.api"/>
 </index>
