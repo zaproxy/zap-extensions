@@ -4,9 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
-## 12  - 2019-11-7
-- Added fuzzAPI v1.0
+- Added initial API
 
 ## [11] - 2019-06-07
 

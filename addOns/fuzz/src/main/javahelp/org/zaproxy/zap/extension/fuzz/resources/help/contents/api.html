@@ -1,28 +1,29 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML>
+<HTML lang="en-US">
 <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <TITLE>
         Fuzzing API
     </TITLE>
 </HEAD>
+<BODY>
 <H1>Fuzzing API</H1>
 <p>
     The API has been designed to be used by people with a range of security experience, for
-    example “simpleHttpFuzzer” is a basic fuzzer fuzzes one “Fuzz location”, extracting payloads
+    example “simpleHttpFuzzer” is a basic fuzzer which fuzzes one “Fuzz location”, extracting payloads
     from one file, and returns the fuzzerId.
 </p>
 <h3>Homepage</h3>
-<p><a href="https://github.com/zaproxy">https://github.com/zaproxy</a><br>
+<p><a href="https://www.zaproxy.org/">https://www.zaproxy.org/</a><br><br>
     Documentation can be found at:<br>
-    <a href="https://github.com/zaproxy/zap-api-docs/fuzz">https://github.com/zaproxy/zap-api-docs/fuzz</a>
+    <a href="https://www.zaproxy.org/docs/api/#zap-api-fuzz">https://www.zaproxy.org/docs/api/#zap-api-fuzz</a>
     <br>
 </p>
 <h3>Message Processors</h3>
 <p>
-    The default processor enabled by default for all requests is “Request Content-Length Updater”
+    The requisite processor enabled by default for all requests is “Request Content-Length Updater”
     which updates the content-length field according to the attack payload. Option to add more
-    processors will be added in future releases.
+    or change the processors will be added in future releases.
 </p>
 <h3>Fuzzer Options</h3>
 <p>
@@ -39,7 +40,7 @@
 Note: options changed after the fuzzer has been initialised will remain same for that fuzzer.
 <h3>Simple Http Fuzzer</h3>
 <p>The simpleHttpFuzzer fuzzes one fuzz location, with inputs</p>
-<table style="width:100%" border="1px solid black" border-collapse="collapse">
+<table border="1px solid black" border-collapse="collapse">
     <tr>
         <th>Parameter</th>
         <th>Type</th>
@@ -71,31 +72,31 @@ Note: options changed after the fuzzer has been initialised will remain same for
 The parameter fuzzLocation is the start and end number of the character which is replaced
 by the payload.<br>
 For example:
-<p style="font-family:'Courier 10 Pitch',cursive">POST /cgi-bin/process.cgi HTTP/1.1
-    <br>User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
-    <br>Host: www.example.com
-    <br>Content-Type: application/x-www-form-urlencoded
-    <br>Content-Length: length
-    <br>Accept-Language: en-us
-    <br>Accept-Encoding: gzip, deflate
-    <br>Connection: Keep-Alive
-    <br>licenseID=string&amp;content=string&amp;/paramsXML=string
-</p>
+<pre style="font-family: 'Courier new',serif">
+    POST /cgi-bin/process.cgi HTTP/1.1
+    User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
+    Host: www.example.com
+    Content-Type: application/x-www-form-urlencoded
+    Content-Length: length
+    Accept-Language: en-us
+    Accept-Encoding: gzip, deflate
+    Connection: Keep-Alive<br> <!-- Two new lines after HEADER standard -->
+    licenseID=string&amp;content=string&amp;/paramsXML=string
+</pre>
 <p>In this HTTP POST request, the top and bottom are header and body respectively.
     <br><br>To fuzz the value of licenseID in the body the value of string needs to be replaced.
 </p>
-    <img src="images/simple_http_fuzzer_example.png" alt="Simple Http Fuzzer Example" width="300">
 <p>
-    <br><br>The messageId is the History Id of the message, requestLocation is body and fuzzLocation is
+    The messageId is the History Id of the message, requestLocation is body and fuzzLocation is
     what characters should be replaced, payloadPath is the path of the file containing the payloads.
 </p>
 <h3>Multiple Payload Fuzzer</h3>
-<p>The multiple payload fuzzer as per name fuzzes multiple fuzz Locations with multiple payload
-    types. It takes input as the message Id and a certain Json file with a schematic to make the
+<p>The multiple payload fuzzer as per the name fuzzes multiple fuzz Locations with multiple payload
+    types. It takes input as the message Id and a certain JSON file with a schematic to make the
     fuzzer run.
 </p>
 
-<table style="width:100%" border="1px solid black" border-collapse="collapse">
+<table border="1px solid black" border-collapse="collapse">
     <tr>
         <th>Parameter</th>
         <th>Type</th>
@@ -113,61 +114,37 @@ For example:
     </tr>
 </table>
 <br>
-To fuzz Example 1.1 in the same way the json file should look like this:
+To fuzz Example 1.1 in the same way the JSON file should look like this:
 <br>
-<div class="FireFox usehover WACEditing EditMode EditingSurfaceBody" spellcheck="false" style="overflow: hidden; visibility: visible; direction: ltr;" contenteditable="false">
-    <div class="OutlineElement Ltr  BCX2 SCXW166475849" style="direction: ltr;">
-        <p class="Paragraph SCXW166475849 BCX2" style="font-weight: normal; font-style: normal; vertical-align: baseline; background-color: rgb(255, 255, 255); color: windowtext; text-align: left; margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; text-indent: 0px;"><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">{</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"title"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">:&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"Fuzz locations and payloads to be fuzzed"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"version"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">:&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 255); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">1.0</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"schema"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">:&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"https://github.com/</span><span class="SpellingError SCXW166475849 BCX2" style="background-color: inherit;">zaproxy</span><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">/zap-</span><span class="SpellingError SCXW166475849 BCX2" style="background-color: inherit;">api</span><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">-docs/fuzz"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,</span></span><span class="EOP SCXW166475849 BCX2" data-ccp-props="{&quot;201341983&quot;:0,&quot;335559739&quot;:0,&quot;335559740&quot;:240,&quot;469777462&quot;:[916,1832,2748,3664,4580,5496,6412,7328,8244,9160,10076,10992,11908,12824,13740,14656],&quot;469777927&quot;:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],&quot;469777928&quot;:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;">&nbsp;</span></p>
-    </div>
-    <div class="OutlineElement Ltr  BCX2 SCXW166475849" style="direction: ltr;">
-        <p class="Paragraph SCXW166475849 BCX2" style="font-weight: normal; font-style: normal; vertical-align: baseline; background-color: rgb(255, 255, 255); color: windowtext; text-align: left; margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; text-indent: 0px;"><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"fuzzLocations"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">: [</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; {</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"requestLocation"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">:&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"body"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"start"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">:&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 255); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">10</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"end"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">:&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 255); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">16</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"payloads"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">: [</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; {</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"payloadType"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">:&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"strings"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"contents"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">: [</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 128); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">\n</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">asdf"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"okya"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"someString"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">]</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; },</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; {</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"payloadType"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">:&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"fileFuzzer"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">,</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(102, 14, 122); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"fileFuzzerPath"</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">:&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">"jbrofuzz/Alphabets/Alpha Numeric"</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 128, 0); font-weight: bold; font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">}</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; &nbsp; ]</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; &nbsp; }</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">&nbsp; ]</span></span><span class="LineBreakBlob BlobObject DragDrop SCXW166475849 BCX2" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;"><span class="SCXW166475849 BCX2">&nbsp;</span>
-        <br class="SCXW166475849 BCX2">
-      </span><span class="TextRun SCXW166475849 BCX2" data-contrast="none" style="color: rgb(0, 0, 0); font-size: 10pt; font-family: Consolas, Consolas_MSFontService, monospace; line-height: 16px;" lang="EN-AU"><span class="NormalTextRun SCXW166475849 BCX2" style="background-color: inherit;">}</span></span><span class="EOP SCXW166475849 BCX2" data-ccp-props="{&quot;201341983&quot;:0,&quot;335559739&quot;:0,&quot;335559740&quot;:240,&quot;469777462&quot;:[916,1832,2748,3664,4580,5496,6412,7328,8244,9160,10076,10992,11908,12824,13740,14656],&quot;469777927&quot;:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],&quot;469777928&quot;:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}" style="font-size: 10pt; line-height: 16px; font-family: Consolas, Consolas_MSFontService, monospace;">&nbsp;</span></p>
-    </div>
-</div>
+<pre style="font-family: 'Courier new',serif">
 
+{
+  "title": "Fuzz locations and payloads to be fuzzed",
+  "version": 1.0,
+  "schema": "https://www.zaproxy.org/docs/api/#zap-api-fuzz",
+  "fuzzLocations": [
+    {
+      "requestLocation": "body",
+      "start": 10,
+      "end": 16,
+      "payloads": [
+        {
+          "payloadType": "strings",
+          "contents": ["\nasdf", "okya", "someString"]
+        },
+        {
+          "payloadType": "fileFuzzer",
+          "fileFuzzerPath": "jbrofuzz/Alphabets/Alpha Numeric"
+        }
+      ]
+    }
+  ]
+}
+
+</pre>
 <p>This way the fuzzer accepts multiple fuzz locations and multiple payload types.</p>
-<p>More of these examplesand the JSON schema can be found at zap-api-docs:&nbsp;</p>
-<p><a href="https://github.com/zaproxy/zap-api-docs/fuzz">https://github.com/zaproxy/zap-api-docs/fuzz</a>/</p>
-<p>The JSON schema is version controlled and the json should be updated according to the version of the fuzzer being used.</p>
+<p>More of these examples and the JSON schema can be found at zap-api-docs:</p>
+<p><a href="https://www.zaproxy.org/docs/api/#zap-api-fuzz">https://www.zaproxy.org/docs/api/#zap-api-fuzz</a>/</p>
 
 </BODY>
 </HTML>
