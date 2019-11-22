@@ -323,8 +323,8 @@ public class FuzzAPI extends ApiImplementor {
                 httpFuzzerHandler = new HttpFuzzerHandler();
 
                 // Locations are separated by : for e.g. 8:12 (location is the character locations)
-                int locationStart = getMessageLocationFromParam(params).get(0);
-                int locationEnd = getMessageLocationFromParam(params).get(1);
+                int locationStart = getMessageLocationFromParam(params)[0];
+                int locationEnd = getMessageLocationFromParam(params)[1];
 
                 String payloadPath = getParam(params, PARAM_PAYLOAD_PATH, "");
 
@@ -395,7 +395,7 @@ public class FuzzAPI extends ApiImplementor {
      * @param params - This is the JSONObject containing all the params
      * @return - returns an ArrayList for e.g. [8, 12]
      */
-    private ArrayList<Integer> getMessageLocationFromParam(JSONObject params) throws ApiException {
+    private Integer[] getMessageLocationFromParam(JSONObject params) throws ApiException {
         String fuzzLocation = getParam(params, PARAM_FUZZ_LOCATION, "");
         int locationStart;
         int locationEnd;
@@ -406,12 +406,8 @@ public class FuzzAPI extends ApiImplementor {
             LOGGER.error("Couldn't create integer start and end from: " + fuzzLocation, e);
             throw new ApiException(ApiException.Type.BAD_FORMAT, e);
         }
-
         if (locationStart > locationEnd) locationStart = locationEnd = 0;
-        ArrayList<Integer> locations = new ArrayList<>();
-        locations.add(locationStart);
-        locations.add(locationEnd);
-        return locations;
+        return (new Integer[] {locationStart, locationEnd});
     }
 
     private RecordHistory getRecordHistory(JSONObject params) throws ApiException {
