@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added Hidden Files Finder (issue 4585) largely based on Snallygaster by Hanno Böck, also supports use of the Custom Payloads addon.
 
+### Changed
+- Elmah scan rule updated to include a response content check, and vary alert confidence values accordingly.
+
 ## [26] - 2019-10-31
 
 ### Added

@@ -169,17 +169,22 @@ public class ElmahScanner extends AbstractHostPlugin {
         }
         int statusCode = newRequest.getResponseHeader().getStatusCode();
         if (statusCode == HttpStatusCode.OK) {
-            raiseAlert(newRequest, getRisk(), "");
+            boolean hasContent = newRequest.getResponseBody().toString().contains("Error Log for");
+            raiseAlert(
+                    newRequest,
+                    getRisk(),
+                    hasContent ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM,
+                    "");
         } else if (statusCode == HttpStatusCode.UNAUTHORIZED
                 || statusCode == HttpStatusCode.FORBIDDEN) {
-            raiseAlert(newRequest, Alert.RISK_INFO, getOtherInfo());
+            raiseAlert(newRequest, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getOtherInfo());
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int risk, String otherInfo) {
+    private void raiseAlert(HttpMessage msg, int risk, int confidence, String otherInfo) {
         bingo(
                 risk, // Risk
-                Alert.CONFIDENCE_HIGH, // Confidence
+                confidence, // Confidence
                 getName(), // Name
                 getDescription(), // Description
                 msg.getRequestHeader().getURI().toString(), // URI
