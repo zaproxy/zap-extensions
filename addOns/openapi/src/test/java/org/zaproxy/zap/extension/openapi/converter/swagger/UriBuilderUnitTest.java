@@ -633,6 +633,74 @@ public class UriBuilderUnitTest {
     }
 
     @Test
+    public void shouldBuildAfterMergeRelativePathWithNoPath() {
+        PARSE_METHODS.forEach(
+                method -> {
+                    // Given
+                    UriBuilder uriBuilder = UriBuilder.parse("relativePath");
+                    UriBuilder otherUrlBuilder = method.parse("http://example.com");
+                    // When
+                    String url = uriBuilder.merge(otherUrlBuilder).build();
+                    // Then
+                    assertThat(
+                            "Parsed with: " + method,
+                            url,
+                            is(equalTo("http://example.com/relativePath")));
+                });
+    }
+
+    @Test
+    public void shouldBuildAfterMergeRelativePathWithEmptyPath() {
+        PARSE_METHODS.forEach(
+                method -> {
+                    // Given
+                    UriBuilder uriBuilder = UriBuilder.parse("relativePath");
+                    UriBuilder otherUrlBuilder = method.parse("http://example.com/");
+                    // When
+                    String url = uriBuilder.merge(otherUrlBuilder).build();
+                    // Then
+                    assertThat(
+                            "Parsed with: " + method,
+                            url,
+                            is(equalTo("http://example.com/relativePath")));
+                });
+    }
+
+    @Test
+    public void shouldBuildAfterMergeAbsolutePathWithNoPath() {
+        PARSE_METHODS.forEach(
+                method -> {
+                    // Given
+                    UriBuilder uriBuilder = UriBuilder.parse("/absolutePath");
+                    UriBuilder otherUrlBuilder = method.parse("http://example.com");
+                    // When
+                    String url = uriBuilder.merge(otherUrlBuilder).build();
+                    // Then
+                    assertThat(
+                            "Parsed with: " + method,
+                            url,
+                            is(equalTo("http://example.com/absolutePath")));
+                });
+    }
+
+    @Test
+    public void shouldBuildAfterMergeAbsolutePathWithEmptyPath() {
+        PARSE_METHODS.forEach(
+                method -> {
+                    // Given
+                    UriBuilder uriBuilder = UriBuilder.parse("/absolutePath");
+                    UriBuilder otherUrlBuilder = method.parse("http://example.com/");
+                    // When
+                    String url = uriBuilder.merge(otherUrlBuilder).build();
+                    // Then
+                    assertThat(
+                            "Parsed with: " + method,
+                            url,
+                            is(equalTo("http://example.com/absolutePath")));
+                });
+    }
+
+    @Test
     public void shouldBuildRemovingSlashAtTheEnd() {
         PARSE_METHODS.forEach(
                 method -> {
