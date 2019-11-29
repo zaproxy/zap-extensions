@@ -25,7 +25,8 @@ import java.net.URISyntaxException;
 /** A simple URI builder, from strings containing (optionally) scheme, authority, and path. */
 public class UriBuilder {
 
-    private static final String PATH_SEPARATOR = "/";
+    private static final char PATH_SEPARATOR_CHAR = '/';
+    private static final String PATH_SEPARATOR = String.valueOf(PATH_SEPARATOR_CHAR);
     private static final String AUTHORITY_SEPARATOR = "//";
     private static final String SCHEME_SEPARATOR = ":" + AUTHORITY_SEPARATOR;
     private static final int NOT_FOUND = -1;
@@ -116,7 +117,7 @@ public class UriBuilder {
             return 0;
         }
 
-        int idxPath = originalUri.indexOf(PATH_SEPARATOR, idxScheme);
+        int idxPath = originalUri.indexOf(PATH_SEPARATOR_CHAR, idxScheme);
         if (idxPath != NOT_FOUND) {
             path = originalUri.substring(idxPath);
             return idxPath;
@@ -204,7 +205,7 @@ public class UriBuilder {
             path =
                     other.path.endsWith(PATH_SEPARATOR)
                             ? other.path + path
-                            : other.path + PATH_SEPARATOR + path;
+                            : other.path + PATH_SEPARATOR_CHAR + path;
             appendPath = false;
         } else {
             path = nonNullOf(path, other.path);
@@ -242,6 +243,9 @@ public class UriBuilder {
         StringBuilder strBuilder =
                 new StringBuilder().append(scheme).append(SCHEME_SEPARATOR).append(authority);
         if (path != null) {
+            if (!path.endsWith(PATH_SEPARATOR)) {
+                strBuilder.append(PATH_SEPARATOR_CHAR);
+            }
             strBuilder.append(path);
         }
 
