@@ -160,6 +160,17 @@ public class UriBuilder {
     }
 
     /**
+     * Sets the path to the given value, if not already set.
+     *
+     * @param value the path to default to.
+     * @return {@code this}, for chaining.
+     */
+    UriBuilder withDefaultPath(String value) {
+        path = nonNullOf(path, value);
+        return this;
+    }
+
+    /**
      * Tells whether or not this builder is empty.
      *
      * <p>A builder is empty when it has no scheme, authority, and path.
@@ -197,6 +208,7 @@ public class UriBuilder {
      *
      * @param other other builder to merge.
      * @return {@code this}, for chaining.
+     * @throws NullPointerException if {@code other} is {@code null}.
      */
     UriBuilder merge(UriBuilder other) {
         scheme = nonNullOf(scheme, other.scheme);
