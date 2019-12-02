@@ -241,7 +241,7 @@ public class UriBuilderUnitTest {
                     // Given
                     String value = "http://example.com";
                     // When
-                    UriBuilder uriBuilder = method.method.apply(value);
+                    UriBuilder uriBuilder = method.parse(value);
                     // Then
                     assertUriComponents(
                             method,
@@ -285,6 +285,23 @@ public class UriBuilderUnitTest {
                             is(equalTo("http")),
                             is(equalTo("example.com")),
                             is(equalTo("/path")));
+                });
+    }
+
+    @Test
+    public void shouldThrowNullPointerIfMergingToNull() {
+        PARSE_METHODS.forEach(
+                method -> {
+                    try {
+                        // Given
+                        UriBuilder uriBuilder = method.parse("");
+                        // When
+                        uriBuilder.merge(null);
+                        fail("Expected NullPointerException");
+                    } catch (NullPointerException e) {
+                        // Then
+                        assertThat("Parsed with: " + method, e, is(not(nullValue())));
+                    }
                 });
     }
 
@@ -528,6 +545,33 @@ public class UriBuilderUnitTest {
                             is(equalTo("https")),
                             is(equalTo("other.example.com")),
                             is(equalTo("/otherpath/")));
+                });
+    }
+
+    @Test
+    public void shouldSetDefaulPathIfNotAlreadySet() {
+        PARSE_METHODS.forEach(
+                method -> {
+                    // Given
+                    UriBuilder uriBuilder = method.parse("http://example.com");
+                    // When
+                    uriBuilder.withDefaultPath("path");
+                    // Then
+                    assertThat("Parsed with: " + method, uriBuilder.getPath(), is(equalTo("path")));
+                });
+    }
+
+    @Test
+    public void shouldNotSetDefaulPathIfAlreadySet() {
+        PARSE_METHODS.forEach(
+                method -> {
+                    // Given
+                    UriBuilder uriBuilder = method.parse("http://example.com/path");
+                    // When
+                    uriBuilder.withDefaultPath("otherpath");
+                    // Then
+                    assertThat(
+                            "Parsed with: " + method, uriBuilder.getPath(), is(equalTo("/path")));
                 });
     }
 
