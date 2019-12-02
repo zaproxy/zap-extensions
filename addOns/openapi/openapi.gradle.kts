@@ -1,5 +1,5 @@
 version = "14"
-description = "Imports and spiders Open API definitions."
+description = "Imports and spiders OpenAPI definitions."
 
 zapAddOn {
     addOnName.set("OpenAPI Support")
