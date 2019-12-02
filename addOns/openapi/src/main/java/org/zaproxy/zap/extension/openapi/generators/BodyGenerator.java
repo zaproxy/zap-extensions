@@ -19,25 +19,25 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import java.util.ArrayList;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ComposedSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 
 public class BodyGenerator {
 
     private Generators generators;
-    private ModelGenerator modelGenerator;
     private DataGenerator dataGenerator;
     private static final Logger LOG = Logger.getLogger(BodyGenerator.class);
 
     public BodyGenerator(Generators generators) {
         this.generators = generators;
-        this.modelGenerator = generators.getModelGenerator();
         this.dataGenerator = generators.getDataGenerator();
     }
 
@@ -55,7 +55,6 @@ public class BodyGenerator {
     private static final Map<Element, String> SYNTAX =
             Collections.unmodifiableMap(
                     new HashMap<Element, String>() {
-
                         {
                             put(Element.OBJECT_BEGIN, "{");
                             put(Element.OBJECT_END, "}");
@@ -67,26 +66,77 @@ public class BodyGenerator {
                         }
                     });
 
-    public String generate(String name, boolean isArray, List<String> refs) {
+    public String generate(Schema<?> schema) {
+        boolean isArray = schema instanceof ArraySchema;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Generate body for object " + name);
+            LOG.debug("Generate body for object " + schema.getName());
         }
-        String jsonStr = generateJsonObjectString(name, refs);
+
         if (isArray) {
-            jsonStr = createJsonArrayWith(jsonStr);
+            return generateFromArraySchema((ArraySchema) schema);
         }
-        return jsonStr;
+
+        @SuppressWarnings("rawtypes")
+        Map<String, Schema> properties = schema.getProperties();
+        if (properties != null) {
+            return generateFromObjectSchema(properties);
+        } else if (schema.getAdditionalProperties() instanceof Schema) {
+            return generate((Schema<?>) schema.getAdditionalProperties());
+        }
+
+        if (schema instanceof ComposedSchema) {
+            return generateJsonPrimitiveValue(resolveComposedSchema((ComposedSchema) schema));
+        }
+        if (schema.getNot() != null) {
+            resolveNotSchema(schema);
+        }
+
+        // primitive type, or schema without properties
+        if (schema.getType() == null || schema.getType().equals("object")) {
+            schema.setType("string");
+        }
+
+        return generateJsonPrimitiveValue(schema);
     }
 
-    public String generate(Property property, boolean isArray) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Generate body for primitive type " + property.getType());
+    private String generateFromArraySchema(ArraySchema schema) {
+        StringBuilder json = new StringBuilder();
+        json.append(generate(schema.getItems()));
+        return createJsonArrayWith(json.toString());
+    }
+
+    @SuppressWarnings("rawtypes")
+    private String generateFromObjectSchema(Map<String, Schema> properties) {
+        StringBuilder json = new StringBuilder();
+        boolean isFirst = true;
+        json.append(SYNTAX.get(Element.OBJECT_BEGIN));
+        for (Map.Entry<String, Schema> property : properties.entrySet()) {
+            if (isFirst) {
+                isFirst = false;
+            } else {
+                json.append(SYNTAX.get(Element.OUTER_SEPARATOR));
+            }
+            json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
+            json.append(property.getKey());
+            json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
+            json.append(SYNTAX.get(Element.INNER_SEPARATOR));
+            String value;
+            if (dataGenerator.isSupported(property.getValue().getType())) {
+                value = dataGenerator.generateBodyValue(property.getKey(), property.getValue());
+            } else {
+
+                value =
+                        generators
+                                .getValueGenerator()
+                                .getValue(
+                                        property.getKey(),
+                                        property.getValue().getType(),
+                                        generate(property.getValue()));
+            }
+            json.append(value);
         }
-        String jsonStr = generateJsonPrimitiveValue(property);
-        if (isArray) {
-            jsonStr = createJsonArrayWith(jsonStr);
-        }
-        return jsonStr;
+        json.append(SYNTAX.get(Element.OBJECT_END));
+        return json.toString();
     }
 
     private static String createJsonArrayWith(String jsonStr) {
@@ -97,56 +147,65 @@ public class BodyGenerator {
                 + SYNTAX.get(Element.ARRAY_END);
     }
 
-    private String generateJsonPrimitiveValue(Property property) {
-        return dataGenerator.generateBodyValue("", property, new ArrayList<>());
+    private String generateJsonPrimitiveValue(Schema<?> schema) {
+        return dataGenerator.generateBodyValue("", schema);
     }
 
-    private String generateJsonObjectString(String name, List<String> refs) {
-        StringBuilder json = new StringBuilder();
-        json.append(SYNTAX.get(Element.OBJECT_BEGIN));
-        boolean isFirst = true;
-        Map<String, Property> map = modelGenerator.getProperty(name);
-        if (map != null) {
-            for (Map.Entry<String, Property> property : map.entrySet()) {
-                if (isFirst) {
-                    isFirst = false;
-                } else {
-                    json.append(SYNTAX.get(Element.OUTER_SEPARATOR));
-                }
-                json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
-                json.append(property.getKey());
-                json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
-                json.append(SYNTAX.get(Element.INNER_SEPARATOR));
-                String value;
-                if (dataGenerator.isSupported(property.getValue().getType())) {
-                    value =
-                            dataGenerator.generateBodyValue(
-                                    property.getKey(), property.getValue(), refs);
-                } else {
-                    if (property.getValue() instanceof RefProperty) {
-                        value =
-                                generate(
-                                        ((RefProperty) property.getValue()).getSimpleRef(),
-                                        false,
-                                        refs);
-                    } else {
-                        value =
-                                generators
-                                        .getValueGenerator()
-                                        .getValue(
-                                                property.getKey(),
-                                                property.getValue().getType(),
-                                                generate(
-                                                        property.getValue().getName(),
-                                                        false,
-                                                        refs));
-                    }
-                }
+    private static Schema<?> resolveComposedSchema(ComposedSchema schema) {
 
-                json.append(value);
-            }
+        if (schema.getOneOf() != null) {
+            return schema.getOneOf().get(0);
+        } else if (schema.getAnyOf() != null) {
+            return schema.getAnyOf().get(0);
         }
-        json.append(SYNTAX.get(Element.OBJECT_END));
-        return json.toString();
+        // Should not be reached, allOf schema is resolved by the parser
+        LOG.error("Unknown composed schema type: " + schema);
+        return null;
+    }
+
+    private static void resolveNotSchema(Schema<?> schema) {
+        if (schema.getNot().getType().equals("string")) {
+            schema.setType("integer");
+        } else {
+            schema.setType("string");
+        }
+    }
+
+    @SuppressWarnings("serial")
+    private static final Map<Element, String> FORMSYNTAX =
+            Collections.unmodifiableMap(
+                    new HashMap<Element, String>() {
+                        {
+                            put(Element.INNER_SEPARATOR, "=");
+                            put(Element.OUTER_SEPARATOR, "&");
+                        }
+                    });
+
+    @SuppressWarnings("rawtypes")
+    public String generateForm(Schema<?> schema) {
+        Map<String, Schema> properties = schema.getProperties();
+        if (properties != null) {
+            StringBuilder formData = new StringBuilder();
+            for (Map.Entry<String, Schema> property : properties.entrySet()) {
+                formData.append(urlEncode(property.getKey()));
+                formData.append(FORMSYNTAX.get(Element.INNER_SEPARATOR));
+                formData.append(
+                        urlEncode(
+                                dataGenerator.generateValue(
+                                        property.getKey(), property.getValue(), true)));
+                formData.append(FORMSYNTAX.get(Element.OUTER_SEPARATOR));
+            }
+            return formData.substring(0, formData.length() - 1);
+        }
+        return "";
+    }
+
+    private static String urlEncode(String string) {
+        try {
+            return URLEncoder.encode(string, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException ignore) {
+            // Shouldn't happen, standard charset.
+            return "";
+        }
     }
 }

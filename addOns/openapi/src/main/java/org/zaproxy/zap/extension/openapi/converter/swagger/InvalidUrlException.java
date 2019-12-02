@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2017 The ZAP Development Team
+ * Copyright 2019 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.openapi.network;
+package org.zaproxy.zap.extension.openapi.converter.swagger;
 
-public class FormDataItem {
+import java.util.Objects;
 
-    private String value;
-    private boolean isFile;
+/** Indicates that a URL is invalid. */
+public class InvalidUrlException extends RuntimeException {
 
-    public String getValue() {
-        return value;
+    public static final long serialVersionUID = 1;
+
+    private final String url;
+
+    InvalidUrlException(String url, String message) {
+        this(url, message, null);
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    InvalidUrlException(String url, String message, Throwable cause) {
+        super(message, cause);
+        this.url = Objects.requireNonNull(url);
     }
 
-    public boolean getIsFile() {
-        return isFile;
-    }
-
-    public void setIsFile(boolean isFile) {
-        this.isFile = isFile;
+    /**
+     * Gets the URL that caused the exception.
+     *
+     * @return the URL, never {@code null}.
+     */
+    public String getUrl() {
+        return url;
     }
 }

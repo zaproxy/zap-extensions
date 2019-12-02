@@ -19,8 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import io.swagger.models.properties.ArrayProperty;
-import java.util.List;
+import io.swagger.v3.oas.models.media.ArraySchema;
 
 public class ArrayGenerator {
 
@@ -41,11 +40,7 @@ public class ArrayGenerator {
     }
 
     public String generate(
-            String name,
-            ArrayProperty property,
-            String collectionType,
-            boolean isPath,
-            List<String> refs) {
+            String name, ArraySchema property, String collectionType, boolean isPath) {
 
         if (property == null) {
             return "";
@@ -55,14 +50,13 @@ public class ArrayGenerator {
         }
         String valueType = property.getItems().getType();
         if (dataGenerator.isArray(valueType)) {
-            if (property.getItems() instanceof ArrayProperty) {
-                return generate(
-                        name, (ArrayProperty) property.getItems(), collectionType, isPath, refs);
+            if (property.getItems() instanceof ArraySchema) {
+                return generate(name, (ArraySchema) property.getItems(), collectionType, isPath);
             } else {
                 return "";
             }
         }
-        String value = dataGenerator.generateValue(name, property.getItems(), isPath, refs);
+        String value = dataGenerator.generateValue(name, property.getItems(), isPath);
         return ARRAY_BEGIN + value + ARRAY_END;
     }
 }

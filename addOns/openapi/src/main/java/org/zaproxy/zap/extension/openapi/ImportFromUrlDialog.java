@@ -23,6 +23,7 @@ import javax.swing.JFrame;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.openapi.converter.swagger.InvalidUrlException;
 
 public class ImportFromUrlDialog extends ImportFromAbstractDialog {
 
@@ -63,7 +64,12 @@ public class ImportFromUrlDialog extends ImportFromAbstractDialog {
             return false;
         }
 
-        caller.importOpenApiDefinition(uri, getTargetField().getText(), true);
+        try {
+            caller.importOpenApiDefinition(uri, getTargetField().getText(), true);
+        } catch (InvalidUrlException e) {
+            showWarningInvalidUrl(e.getUrl());
+            return false;
+        }
 
         return true;
     }

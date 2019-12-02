@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Support OpenAPI v3.0 (Issue 4549).
 
 ### Changed
 - Do not consume spider resource if not parsed as OpenAPI definition.

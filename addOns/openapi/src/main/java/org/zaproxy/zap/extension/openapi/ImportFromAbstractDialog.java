@@ -28,10 +28,10 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
-import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.openapi.converter.swagger.UriBuilder;
 
 abstract class ImportFromAbstractDialog extends AbstractDialog {
 
@@ -95,11 +95,11 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
         add(fieldTarget, constraints);
 
         constraints.gridwidth = 1;
+        constraints.gridx = 2;
         constraints.gridy = 2;
         constraints.anchor = GridBagConstraints.CENTER;
         add(buttonCancel, constraints);
-        constraints.gridx = 2;
-        constraints.gridy = 2;
+        constraints.gridx = 3;
         constraints.anchor = GridBagConstraints.CENTER;
         add(buttonImport, constraints);
 
@@ -109,16 +109,13 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
     }
 
     private boolean validateTargetUrl() {
-        String target = fieldTarget.getText();
-        if (target.isEmpty()) {
-            return true;
-        }
-
         try {
-            new URI("http://" + target, true);
-        } catch (Exception e) {
+            UriBuilder.parseLenient(fieldTarget.getText());
+        } catch (IllegalArgumentException e) {
             showWarningDialog(
-                    Constant.messages.getString(MESSAGE_PREFIX + "badoverride", e.getMessage()));
+                    Constant.messages.getString(
+                            "openapi.swaggerconverter.targeturl.errorsyntax",
+                            fieldTarget.getText()));
             fieldTarget.requestFocusInWindow();
             return false;
         }
