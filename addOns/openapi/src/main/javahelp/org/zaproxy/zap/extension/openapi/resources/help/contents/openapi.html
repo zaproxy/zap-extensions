@@ -3,20 +3,20 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Open API Specification Support
+OpenAPI Specification Support
 </TITLE>
 </HEAD>
 <BODY BGCOLOR="#ffffff">
-<H1>Open API Specification Support</H1>
+<H1>OpenAPI Specification Support</H1>
 This add-on allows you to spider and import OpenAPI (Swagger) definitions (versions 1.2 and 2.0).
 <br><br>
-The add-on will automatically detect any Open API definitions and spider them as long as they are in scope.
+The add-on will automatically detect any OpenAPI definitions and spider them as long as they are in scope.
 
 <H2>UI</H2>
 2 menu items are added to the Import menu:
 <ul>
-<li>Import an Open API definition from the local file system</li>
-<li>Import an Open API definition from a URL</li>
+<li>Import an OpenAPI definition from the local file system</li>
+<li>Import an OpenAPI definition from a URL</li>
 </ul>
 The URL Import dialog supports an optional additional field that allows you to override the Host (and port) in the
 definition with an alternative one that you supply.<br>
@@ -34,14 +34,14 @@ The definitions will be imported synchronously and any warnings will be returned
 <H2>Command Line</H2>
 The following Command Line options are added:
 <ul>
-<li>-openapifile &lt;filename&gt;  : Import an Open API definition from the specified file name</li>
-<li>-openapiurl &lt;url&gt;  : Import an Open API definition from the specified URL</li>
+<li>-openapifile &lt;filename&gt;  : Imports an OpenAPI definition from the specified file name</li>
+<li>-openapiurl &lt;url&gt;  : Imports an OpenAPI definition from the specified URL</li>
 </ul>
 
 The definitions will be imported synchronously and any warnings will be displayed on the command line.
 
 <H2>User Specified Values</H2>
-Default values are used when importing Open API definitions.<br>
+Default values are used when importing OpenAPI definitions.<br>
 These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
 In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values, 
 e.g. <pre>{ "id": 0, "name": "Freda" }</pre>

@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Open API Specification Support" image="openapi-icon" target="openapi"/>
+			<tocitem text="OpenAPI Specification Support" image="openapi-icon" target="openapi"/>
 		</tocitem>
 	</tocitem>
 </toc>
