@@ -20,11 +20,13 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.pscanrulesAlpha.domains.TrustedDomains;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class SubResourceIntegrityAttributeScannerTest
@@ -52,7 +54,7 @@ public class SubResourceIntegrityAttributeScannerTest
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
@@ -70,7 +72,7 @@ public class SubResourceIntegrityAttributeScannerTest
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
@@ -110,13 +112,32 @@ public class SubResourceIntegrityAttributeScannerTest
     }
 
     @Test
+    public void shouldNotIndicateElementGivenElementIsServedByTrustedDomains()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"https://some.cdn.com/v1.0/include.js\"></script>"
+                                + "</head><body></body></html>");
+        rule.getConfig()
+                .setProperty(TrustedDomains.TRUSTED_DOMAINS_PROPERTY, "https://some.cdn.com/.*");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
     public void shouldNotRaiseAlertGivenElementIsServedByCurrentDomain()
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg =
                 buildMessage(
                         "<html><head>"
-                                + "<script src=\"https://example.com/v1.0/include.js\"></script>"
+                                + "<script src=\"http://example.com/v1.0/include.js\"></script>"
                                 + "<link href=\"http://example.com/v1.0/style.css\"></script>"
                                 + "</head><body></body></html>");
 
@@ -124,7 +145,45 @@ public class SubResourceIntegrityAttributeScannerTest
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldRaiseAnAlertGivenSchemeIsDifferentFromOrigin()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"https://example.com/v1.0/include.js\"></script>"
+                                + "</head><body></body></html>");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("<script src=\"https://example.com/v1.0/include.js\"></script>"));
+    }
+
+    @Test
+    public void shouldRaiseAnAlertGivenPortIsDifferentFromOrigin()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"http://example.com:3310/v1.0/include.js\"></script>"
+                                + "</head><body></body></html>");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("<script src=\"http://example.com:3310/v1.0/include.js\"></script>"));
     }
 
     @Test
@@ -141,7 +200,7 @@ public class SubResourceIntegrityAttributeScannerTest
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
     }
 
     @Test
@@ -157,7 +216,7 @@ public class SubResourceIntegrityAttributeScannerTest
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
     }
 
     private static HttpMessage buildMessage(String body) throws HttpMalformedHeaderException {

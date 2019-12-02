@@ -13,6 +13,17 @@ The following alpha quality passive scan rules are included in this add-on:
 This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
 For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
+<H2>General Configuration</H2>
+
+<H3>Trusted Domains</H3>
+You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
+Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
+Following rules supports <b>Trusted Domains</b> :
+<ul>
+ <li>Reverse Tabnabbing</li>
+ <li>Sub Resource Integrity Attribute Missing</li>
+</ul>
+
 <H2>Base64 Disclosure</H2>
 <ul>
  <li><b>ASP.NET ViewState Disclosure: </b>An ASP.NET ViewState was disclosed by the application/web server</li>
@@ -139,8 +150,7 @@ This scanner detect content that has been served from a shared cache.
 This checks to see if any links use a target attribute without using both of the "noopener" and "noreferrer" keywords in the "rel" attribute, as this will allow target pages to take over the page that opens them.<br>
 By default this rule will ignore all links that are in the same context as the page. At the LOW threshold it will only ignore links that are on the same host.<br>
 At HIGH threshold it will only report links that use the "_blank" target.<br>
-You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
-Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
+This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
 
 <H2>Source Code Disclosure</H2>
 Application Source Code was disclosed by the web server
@@ -166,6 +176,7 @@ Redirects to HTTPS URLs on the same domain will only be reported at Low threshol
 <H2>Sub Resource Integrity Attribute Missing</H2>
 This scanner checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
 It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
+This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
 
 <H2>User Controllable Charset</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.

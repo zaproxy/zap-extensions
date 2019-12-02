@@ -34,6 +34,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.pscanrulesAlpha.domains.TrustedDomains;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -123,7 +124,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         rule.getConfig()
                 .setProperty(
-                        LinkTargetScanner.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
+                        TrustedDomains.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
         // When
         msg.setResponseBody(
                 "<html><a href=\"https://www.example2.com/page1\" target=\"_blank\">link</a></html>");
@@ -141,7 +142,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         rule.getConfig()
                 .setProperty(
-                        LinkTargetScanner.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
+                        TrustedDomains.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
         // When
         msg.setResponseBody(
                 "<html><a href=\"https://www.example3.com/page1\" target=\"_blank\">link</a></html>");
@@ -446,7 +447,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        rule.getConfig().setProperty(LinkTargetScanner.TRUSTED_DOMAINS_PROPERTY, "[");
+        rule.getConfig().setProperty(TrustedDomains.TRUSTED_DOMAINS_PROPERTY, "[");
         // When
         msg.setResponseBody(
                 "<html><a href=\"https://www.example2.com/page1\" target=\"_blank\">link</a></html>");

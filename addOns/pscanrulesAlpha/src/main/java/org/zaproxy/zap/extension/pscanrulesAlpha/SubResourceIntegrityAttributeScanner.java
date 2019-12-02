@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -29,11 +27,15 @@ import java.util.stream.Stream;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscanrulesAlpha.domains.SameOriginPolicyTrust;
+import org.zaproxy.zap.extension.pscanrulesAlpha.domains.TrustedDomains;
 
 /** Detect missing attribute integrity in supported elements */
 public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
@@ -64,18 +66,16 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
             return Stream.of(values()).anyMatch(e -> tag.equals(e.tag));
         }
 
-        public static Optional<String> getHost(Element element) {
+        public static Optional<org.apache.commons.httpclient.URI> getHost(Element element) {
             String url =
                     element.getAttributeValue(
                             SupportedElements.valueOf(element.getName().toUpperCase(Locale.ROOT))
                                     .attribute);
-            URI uri;
             try {
-                uri = new URI(url);
-            } catch (URISyntaxException e) {
+                return Optional.of(new org.apache.commons.httpclient.URI(url, false));
+            } catch (URIException e) {
                 return Optional.empty();
             }
-            return Optional.of(uri.getHost());
         }
     }
 
@@ -83,6 +83,7 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanalpha.sri-integrity.";
 
     private PassiveScanThread parent;
+    private final TrustedDomains trustedDomains = new TrustedDomains();
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -91,11 +92,13 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        trustedDomains.update(getConfig().getString(TrustedDomains.TRUSTED_DOMAINS_PROPERTY, ""));
+        trustedDomains.add(new SameOriginPolicyTrust(msg.getRequestHeader().getURI()));
 
         List<Element> sourceElements = source.getAllElements();
         sourceElements.stream()
                 .filter(element -> SupportedElements.contains(element.getName()))
-                .filter(unsafeSubResource(msg.getRequestHeader().getHostName()))
+                .filter(isNotTrusted(trustedDomains))
                 .forEach(
                         element -> {
                             Alert alert =
@@ -121,11 +124,13 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
                         });
     }
 
-    private static Predicate<Element> unsafeSubResource(String origin) {
+    private static Predicate<Element> isNotTrusted(TrustedDomains trustedDomains) {
         return element -> {
-            Optional<String> maybeHostname = SupportedElements.getHost(element);
+            Optional<URI> maybeResourceUri = SupportedElements.getHost(element);
             return element.getAttributeValue("integrity") == null
-                    && !maybeHostname.map(hostname -> hostname.matches(origin)).orElse(false);
+                    && !maybeResourceUri
+                            .map(resourceUri -> trustedDomains.isIncluded(resourceUri.toString()))
+                            .orElse(false);
         };
     }
 

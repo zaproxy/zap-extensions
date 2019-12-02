@@ -26,7 +26,6 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -35,13 +34,11 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscanrulesAlpha.domains.TrustedDomains;
 import org.zaproxy.zap.model.Context;
 
 public class LinkTargetScanner extends PluginPassiveScanner {
 
-    // TODO Replace "rules.domains.trusted" with RuleConfigParam.RULE_DOMAINS_TRUSTED once
-    // available.
-    public static final String TRUSTED_DOMAINS_PROPERTY = "rules.domains.trusted";
     private static final String MESSAGE_PREFIX = "pscanalpha.linktarget.";
 
     private static final String REL_ATTRIBUTE = "rel";
@@ -49,14 +46,10 @@ public class LinkTargetScanner extends PluginPassiveScanner {
     private static final String _BLANK = "_blank";
     private static final String NOOPENER = "noopener";
     private static final String NOREFERRER = "noreferrer";
-
-    private String trustedConfig = "";
-    private List<String> trustedDomainRegexes = new ArrayList<String>();
+    private final TrustedDomains trustedDomains = new TrustedDomains();
 
     private PassiveScanThread parent = null;
     private Model model = null;
-
-    private static final Logger LOG = Logger.getLogger(PluginPassiveScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -113,74 +106,48 @@ public class LinkTargetScanner extends PluginPassiveScanner {
         } catch (URIException e) {
             // Ignore
         }
-        if (otherDomain) {
-            // check the trusted domains
-            for (String regex : this.trustedDomainRegexes) {
-                try {
-                    if (link.matches(regex)) {
-                        return false;
-                    }
-                } catch (Exception e) {
-                    LOG.warn("Invalid regex in rule " + TRUSTED_DOMAINS_PROPERTY + ": " + regex, e);
-                }
-            }
-        }
-        return otherDomain;
+        return otherDomain && !trustedDomains.isIncluded(link);
     }
 
-    private void checkIgnoreList() {
-        String trustedConf = getConfig().getString(TRUSTED_DOMAINS_PROPERTY, "");
-        if (!trustedConf.equals(this.trustedConfig)) {
-            // Its changed
-            trustedDomainRegexes.clear();
-            this.trustedConfig = trustedConf;
-            for (String regex : trustedConf.split(",")) {
-                String regexTrim = regex.trim();
-                if (regexTrim.length() > 0) {
-                    trustedDomainRegexes.add(regexTrim);
-                }
-            }
-        }
-    }
-
-    private boolean checkElement(Element link, HttpMessage msg, int id) {
+    private boolean checkElement(Element link) {
         // get target, check if its _blank
         String target = link.getAttributeValue(TARGET_ATTRIBUTE);
-        if (target != null) {
-            if (AlertThreshold.HIGH.equals(this.getAlertThreshold())
-                    && !_BLANK.equalsIgnoreCase(target)) {
-                // Only report _blank link targets at a high threshold
-                return false;
-            }
-            // Not looking good,
-            String relAtt = link.getAttributeValue(REL_ATTRIBUTE);
-            if (relAtt != null) {
-                relAtt = relAtt.toLowerCase();
-                if (relAtt.contains(NOOPENER) && relAtt.contains(NOREFERRER)) {
-                    // Its ok
-                    return false;
-                }
-            }
-            // Its bad
-            Alert alert =
-                    new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
-            alert.setDetail(
-                    getDescription(),
-                    msg.getRequestHeader().getURI().toString(),
-                    "", // Param
-                    "", // Attack
-                    "", // Other info
-                    getSolution(),
-                    getReference(),
-                    link.toString(), // Evidence
-                    0, // CWE Id
-                    0, // WASC Id
-                    msg);
-
-            parent.raiseAlert(id, alert);
-            return true;
+        if (target == null) {
+            return false;
         }
-        return false;
+        if (AlertThreshold.HIGH.equals(this.getAlertThreshold())
+                && !_BLANK.equalsIgnoreCase(target)) {
+            // Only report _blank link targets at a high threshold
+            return false;
+        }
+        // Not looking good,
+        String relAtt = link.getAttributeValue(REL_ATTRIBUTE);
+        if (relAtt != null) {
+            relAtt = relAtt.toLowerCase();
+            // Its ok
+            return !relAtt.contains(NOOPENER) || !relAtt.contains(NOREFERRER);
+        }
+        return true;
+    }
+
+    private void raiseAlert(Element link, HttpMessage msg, int id) {
+        // Its bad
+        Alert alert =
+                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
+        alert.setDetail(
+                getDescription(),
+                msg.getRequestHeader().getURI().toString(),
+                "", // Param
+                "", // Attack
+                "", // Other info
+                getSolution(),
+                getReference(),
+                link.toString(), // Evidence
+                0, // CWE Id
+                0, // WASC Id
+                msg);
+
+        parent.raiseAlert(id, alert);
     }
 
     @Override
@@ -190,7 +157,7 @@ public class LinkTargetScanner extends PluginPassiveScanner {
             return;
         }
         // Check to see if the configs have changed
-        checkIgnoreList();
+        trustedDomains.update(getConfig().getString(TrustedDomains.TRUSTED_DOMAINS_PROPERTY, ""));
 
         String host = msg.getRequestHeader().getHostName();
         List<Context> contextList =
@@ -198,18 +165,14 @@ public class LinkTargetScanner extends PluginPassiveScanner {
                         .getSession()
                         .getContextsForUrl(msg.getRequestHeader().getURI().toString());
 
-        for (Element link : source.getAllElements(HTMLElementName.A)) {
-            if (this.isLinkFromOtherDomain(host, link.getAttributeValue("href"), contextList)) {
-                if (this.checkElement(link, msg, id)) {
-                    return;
-                }
-            }
-        }
-        for (Element link : source.getAllElements(HTMLElementName.AREA)) {
-            if (this.isLinkFromOtherDomain(host, link.getAttributeValue("href"), contextList)) {
-                if (this.checkElement(link, msg, id)) {
-                    return;
-                }
+        List<Element> elements = new ArrayList<>(source.getAllElements(HTMLElementName.A));
+        elements.addAll(source.getAllElements(HTMLElementName.AREA));
+        // TODO Replace it with filter/findFirst?
+        for (Element link : elements) {
+            if (isLinkFromOtherDomain(host, link.getAttributeValue("href"), contextList)
+                    && checkElement(link)) {
+                raiseAlert(link, msg, id);
+                return;
             }
         }
     }
