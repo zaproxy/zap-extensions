@@ -230,7 +230,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
                 && (selectedEngine == null || selectedEngine.isSupportsMissingTemplates())) {
             // Only give an empty choice if theres more than one (and the engine does not require
             // template)
-            list.add("");
+            list.add(0, "");
         }
         return list;
     }
