@@ -691,7 +691,11 @@ public class ScriptsListPanel extends AbstractPanel {
                     && node.getParent().getParent().isRoot()
                     && node.getType() != null) {
                 // This is a 'type' node, display help (if any)
-                extension.displayType(node.getType());
+                if (node.isTemplate()) {
+                    extension.displayTemplateType(node.getType());
+                } else {
+                    extension.displayType(node.getType());
+                }
                 break;
             }
             // Keep going up until we find something
