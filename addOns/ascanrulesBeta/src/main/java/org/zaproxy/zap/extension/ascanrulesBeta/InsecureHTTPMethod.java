@@ -39,7 +39,6 @@ import org.apache.commons.httpclient.ProxyClient;
 import org.apache.commons.httpclient.ProxyClient.ConnectResponse;
 import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -407,15 +406,28 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         // this cannot currently be done using the existing HttpSender class, so
         // do it natively using HttpClient,
         // in as simple as possible a manner.
-        Socket socket = null;
-        OutputStream os = null;
-        InputStream is = null;
         ByteArrayOutputStream bos = null;
+        ProxyClient client = new ProxyClient();
+        ConnectResponse connectResponse = null;
+        client.getHostConfiguration().setProxy(connecthost, connectport);
+        client.getHostConfiguration().setHost(thirdpartyHost, thirdpartyPort);
         try {
-            ProxyClient client = new ProxyClient();
-            client.getHostConfiguration().setProxy(connecthost, connectport);
-            client.getHostConfiguration().setHost(thirdpartyHost, thirdpartyPort);
-            ConnectResponse connectResponse = client.connect();
+            connectResponse = client.connect();
+        } catch (IOException ex) {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "Could not establish a client connection to a third party using the CONNECT HTTP method",
+                        ex);
+            }
+            return;
+        }
+
+        Socket socket = connectResponse.getSocket();
+        if (socket == null) {
+            return;
+        }
+        try (OutputStream os = socket.getOutputStream();
+                InputStream is = socket.getInputStream()) {
 
             StatusLine statusLine = connectResponse.getConnectMethod().getStatusLine();
 
@@ -423,8 +435,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 
             int statusCode = statusLine.getStatusCode();
 
-            socket = connectResponse.getSocket();
-            if (socket != null && statusCode == HttpStatus.SC_OK) {
+            if (statusCode == HttpStatus.SC_OK) {
                 // we have a socket and a 200 status.
                 // Could still be a false positive though, if the server ignored
                 // the method,
@@ -435,13 +446,11 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                 if (log.isDebugEnabled())
                     log.debug("Raw Socket established, in theory to " + thirdpartyHost);
 
-                os = socket.getOutputStream();
-                is = socket.getInputStream();
-
                 PrintWriter pw = new PrintWriter(os, false);
                 pw.write("GET http://" + thirdpartyHost + ":" + thirdpartyPort + "/ HTTP/1.1\n");
                 pw.write("Host: " + thirdpartyHost + "\n\n");
                 pw.flush();
+                pw.close();
 
                 // read the response via a 4k buffer
                 bos = new ByteArrayOutputStream();
@@ -497,9 +506,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                         e);
             }
         } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(os);
-            IOUtils.closeQuietly(socket);
+            socket.close();
         }
     }
 

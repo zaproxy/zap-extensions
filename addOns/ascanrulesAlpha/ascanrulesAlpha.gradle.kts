@@ -26,7 +26,6 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("org.jsoup:jsoup:1.7.2")
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
     testImplementation(parent!!.childProjects.get("custompayloads")!!)

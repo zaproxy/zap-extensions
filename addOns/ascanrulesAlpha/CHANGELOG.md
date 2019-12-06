@@ -8,8 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added Hidden Files Finder (issue 4585) largely based on Snallygaster by Hanno Böck, also supports use of the Custom Payloads addon.
 
-### Changed
-- Elmah scan rule updated to include a response content check, and vary alert confidence values accordingly.
+### Removed
+- The following scan rules were removed in being promoted from Alpha to Beta:
+  - Apache Range Header DoS
+  - Cookie Slack Detector
+  - ELMAH Information Leak
+  - GET for POST
+  - .htaccess Information Leak
+  - HTTP Only Site
+  - Httpoxy - Proxy Header Misuse
+  - HTTPS Content Available via HTTP
+  - Proxy Disclosure
+  - Relative Path Confusion
+  - Source Code Disclosure - File Inclusion
+  - Source Code Disclosure - Git
+  - SQL Injection - MsSQL
+  - SQL Injection - SQLite
+  - Trace.axd Information Leak
+  - User Agent Fuzzer
 
 ## [26] - 2019-10-31
 
