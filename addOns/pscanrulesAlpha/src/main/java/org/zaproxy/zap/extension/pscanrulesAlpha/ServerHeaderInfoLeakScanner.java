@@ -66,7 +66,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
             for (String serverDirective : serverOption) {
                 boolean matched = VERSION_PATTERN.matcher(serverDirective).matches();
                 if (matched) { // See if there's any version info.
-                    // While an alpha string might be the server type (Apache, Netscape, IIS, etc)
+                    // While an alpha string might be the server type (Apache, Netscape, IIS, etc.)
                     // that's much less of a head-start than actual version details.
                     raiseAlert(
                             Alert.RISK_LOW,

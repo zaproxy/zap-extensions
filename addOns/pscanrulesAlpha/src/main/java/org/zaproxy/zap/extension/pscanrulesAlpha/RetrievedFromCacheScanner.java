@@ -63,7 +63,7 @@ public class RetrievedFromCacheScanner extends PluginPassiveScanner {
 
             // X-Cache: HIT
             // X-Cache: HIT from cache.kolich.local					<-- was the data actually served from the
-            // cache (subject to no-cache, expiry, etc)?
+            // cache (subject to no-cache, expiry, etc.)?
             //															(if X-Cache: HIT, it implies X-Cache-Lookup: HIT)
             //															(and if X-Cache-Lookup: MISS, it implies X-Cache: MISS)
             // X-Cache-Lookup: HIT from cache.kolich.local:80		<-- was the data *available* in the
