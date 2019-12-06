@@ -24,7 +24,7 @@ import java.net.URL;
 
 /** Used to store information about a base case. */
 public class BaseCase {
-    // The URL for which the base applies to, eg if we are testing within /wibble/, then this will
+    // The URL for which the base applies to, e.g. if we are testing within /wibble/, then this will
     // be set to /wibble/
     private URL baseCaseURL;
 
