@@ -473,7 +473,8 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
                                         + " with MAX-FORWARDS: "
                                         + Integer.toString(maxForwards));
 
-                    // if we're on the right iteration (Max-Forwards=0, i.e. first proxy, and a HTTPS
+                    // if we're on the right iteration (Max-Forwards=0, i.e. first proxy, and a
+                    // HTTPS
                     // request, then
                     // then prepare to try an additional HTTP request..
                     boolean tryHttp =

@@ -978,7 +978,8 @@ public class SessionFixation extends AbstractAppPlugin {
                         isPseudoUrlParameter = true;
                         // was not removed because it was a pseudo Url parameter, not a real url
                         // parameter.. (so it would not be in the url params)
-                        // in this case, we will need to "rewrite" (i.e. hack) the URL path to remove
+                        // in this case, we will need to "rewrite" (i.e. hack) the URL path to
+                        // remove
                         // the pseudo url parameter portion
                         // ie, we need to remove the ";jsessionid=<sessionid>" bit from the path
                         // (assuming the current field is named 'jsessionid')
