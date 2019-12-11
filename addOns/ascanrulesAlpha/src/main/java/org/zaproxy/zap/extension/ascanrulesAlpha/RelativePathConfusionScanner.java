@@ -293,7 +293,7 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
                 }
 
                 // 3: check if there are any resources that are loaded using relative URLs in the
-                // response. (images, CSS, etc)
+                // response. (images, CSS, etc.)
                 boolean relativeReferenceFound = false;
                 String relativeReferenceEvidence = "";
 

@@ -365,7 +365,7 @@ public class CacheableScanner extends PluginPassiveScanner {
             }
 
             // at this point, we *know* that the response is storable.
-            // so check if the content is retrievable from the cache (ie "cacheable")
+            // so check if the content is retrievable from the cache (i.e. "cacheable")
             /*
              *   When presented with a request, a cache MUST NOT reuse a stored
              *   response, unless:

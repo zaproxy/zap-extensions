@@ -463,7 +463,7 @@ public class SessionFixation extends AbstractAppPlugin {
 
                         // call bingo with some extra info, indicating that the alert is
                         // not specific to Session Fixation, but has its own title and description
-                        // (etc)
+                        // (etc.)
                         // the alert here is "Session id sent insecurely", or words to that effect.
                         bingo(
                                 risk,
@@ -526,7 +526,7 @@ public class SessionFixation extends AbstractAppPlugin {
 
                         // call bingo with some extra info, indicating that the alert is
                         // not specific to Session Fixation, but has its own title and description
-                        // (etc)
+                        // (etc.)
                         // the alert here is "Session id accessible in Javascript", or words to that
                         // effect.
                         bingo(
@@ -718,7 +718,7 @@ public class SessionFixation extends AbstractAppPlugin {
 
                         // call bingo with some extra info, indicating that the alert is
                         // not specific to Session Fixation, but has its own title and description
-                        // (etc)
+                        // (etc.)
                         // the alert here is "Session Id Expiry Time is excessive", or words to that
                         // effect.
                         bingo(
@@ -978,7 +978,8 @@ public class SessionFixation extends AbstractAppPlugin {
                         isPseudoUrlParameter = true;
                         // was not removed because it was a pseudo Url parameter, not a real url
                         // parameter.. (so it would not be in the url params)
-                        // in this case, we will need to "rewrite" (ie hack) the URL path to remove
+                        // in this case, we will need to "rewrite" (i.e. hack) the URL path to
+                        // remove
                         // the pseudo url parameter portion
                         // ie, we need to remove the ";jsessionid=<sessionid>" bit from the path
                         // (assuming the current field is named 'jsessionid')
@@ -1061,7 +1062,7 @@ public class SessionFixation extends AbstractAppPlugin {
                         // it is not a session field, or
                         // it is a session field, but a session is only issued on authentication,
                         // and this is not an authentication url
-                        // the app doesn't do sessions (etc)
+                        // the app doesn't do sessions (etc.)
                         // either way, the parameter/url combo is not vulnerable, so continue with
                         // the next parameter
                         if (this.debugEnabled)
@@ -1147,7 +1148,7 @@ public class SessionFixation extends AbstractAppPlugin {
 
                             // call bingo with some extra info, indicating that the alert is
                             // not specific to Session Fixation, but has its own title and
-                            // description (etc)
+                            // description (etc.)
                             // the alert here is "Session id exposed in url", or words to that
                             // effect.
                             bingo(
@@ -1544,7 +1545,7 @@ public class SessionFixation extends AbstractAppPlugin {
         String[] urlBreakdown =
                 url.split(
                         "\\?"); // do this to get rid of parameters.. we just want the path (but we
-        // can live with the scheme, host, port, etc)
+        // can live with the scheme, host, port, etc.)
 
         String[] pseudoUrlParamNames = urlBreakdown[0].split(";");
         // start with the bit *after* the first ";", ie, start with i = 1

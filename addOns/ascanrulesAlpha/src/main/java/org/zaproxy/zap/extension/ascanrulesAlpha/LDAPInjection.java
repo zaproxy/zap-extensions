@@ -144,7 +144,7 @@ public class LDAPInjection extends AbstractAppParamPlugin {
             log.debug("Initialising");
         }
         // set up the match threshold percentages based on the alert threshold.
-        // allow for the use of common libraries (etc) in both pass/fail cases by skewing towards
+        // allow for the use of common libraries (etc.) in both pass/fail cases by skewing towards
         // the upper end of the range.
         switch (this.getAlertThreshold()) {
             case HIGH:

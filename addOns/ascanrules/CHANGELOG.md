@@ -46,7 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Issue 1365: Additional Path Traversal detection.
 - Correct alert's evidence/attack of Parameter Tampering (Issue 3524).
-- Fix Path Traversal false positives when etc is a substring (Issue 3735).
+- Fix Path Traversal false positives when `etc` is a substring (Issue 3735).
 - Code changes for Java 9 (Issue 2602).
 - TestSQLInjection Modifications to improve handling of injected math expressions and reflected params (Issue 3139).
 

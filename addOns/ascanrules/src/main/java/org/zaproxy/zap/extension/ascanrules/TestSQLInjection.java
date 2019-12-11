@@ -1329,7 +1329,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
             // check 2a: boolean based logic, where the original query returned *no* data. Here we
             // append " OR 1=1" in an attempt to extract *more* data
             // and then verify the results by attempting to reproduce the original results by
-            // appending an " AND 1=2" condition (ie "open up first, then restrict to verify")
+            // appending an " AND 1=2" condition (i.e. "open up first, then restrict to verify")
             // this differs from the previous logic based check since the previous check assumes
             // that the original query produced data, and tries first to restrict that data
             // (ie, it uses "restrict first, open up to verify" ).

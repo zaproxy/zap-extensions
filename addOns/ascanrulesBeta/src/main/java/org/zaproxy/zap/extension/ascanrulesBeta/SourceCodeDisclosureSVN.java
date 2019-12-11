@@ -87,7 +87,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
     private static final Pattern PATTERN_HTML =
             Pattern.compile(
                     "<html"); // helps eliminate some common false positives in the case of 403s,
-    // 302s, etc
+    // 302s, etc.
 
     /** returns the plugin id */
     @Override
@@ -305,7 +305,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
             return false;
         }
 
-        // Look for SVN < 1.7 metadata (ie internal SVN format < 29) containing source code
+        // Look for SVN < 1.7 metadata (i.e. internal SVN format < 29) containing source code
         // These versions all store the pristine copies in the the same format (insofar as the logic
         // here is concerned, at least)
         try {
@@ -729,7 +729,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                     }
 
                     break; // out of the while loop
-                } // non 404, 300, etc for "wc.db", for SVN >= 1.7
+                } // non 404, 300, etc. for "wc.db", for SVN >= 1.7
                 // set up the parent directory name
                 pathminusfilename =
                         pathminusfilename.substring(

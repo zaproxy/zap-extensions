@@ -11,7 +11,7 @@ The following alpha quality active scan rules are included in this add-on:
 
 <H2>.htaccess Information Leak</H2>
 Checks for web accessible .htaccess files which may leak sensitive information 
-(such as usernames, error handling, redirects, directory listing settings, etc).
+(such as usernames, error handling, redirects, directory listing settings, etc.).
 
 <H2>An example active scan rule which loads data from a file</H2>
 This implements an example active scan rule that loads strings from a file that the user can edit.<br>
@@ -37,7 +37,7 @@ The ELMAH scanner targets Microsoft based technologies: IIS, Windows, ASP, and M
 
 <H2>.env Information Leak</H2>
 Checks for web accessible .env files which may leak sensitive information 
-(such as usernames, passwords, API or APP keys, etc).
+(such as usernames, passwords, API or APP keys, etc.).
 
 <H2>Example Active Scanner: Denial of Service</H2>
 This implements a very simple example active scan rule.<br>
@@ -118,7 +118,7 @@ Attempts to detect and fingerprint proxy server(s). This information helps a pot
 
 <H2>Relative Path Confusion</H2>
 Tests if the web server is configured to serve responses to ambiguous URLs in a manner that is likely to lead to confusion about the correct "relative path" for the URL. 
-If resources (CSS, images, etc) are references in the response using relative, rather than absolute URLs. In an attack, if the web browser parses the "cross-content" response in a permissive manner, or can be tricked into 
+If resources (CSS, images, etc.) are references in the response using relative, rather than absolute URLs. In an attack, if the web browser parses the "cross-content" response in a permissive manner, or can be tricked into 
 permissively parsing the "cross-content" response, using techniques such as framing, then the web browser may be fooled into interpreting HTML as CSS (or other content types), leading to an XSS vulnerability.
 
 <H2>Source Code Disclosure - File Inclusion</H2>

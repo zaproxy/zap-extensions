@@ -50,7 +50,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
         "",
         "/",
         "../",
-        "webapps/" // in the case of servlet containers like Tomcat, JBoss (etc), sometimes the
+        "webapps/" // in the case of servlet containers like Tomcat, JBoss (etc.), sometimes the
         // working directory is the application server folder
     };
 
@@ -133,7 +133,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
     private static final Pattern PATTERN_HTML =
             Pattern.compile(
                     "<html"); // helps eliminate some common false positives in the case of 403s,
-    // 302s, etc
+    // 302s, etc.
 
     /** returns the plugin id */
     @Override
