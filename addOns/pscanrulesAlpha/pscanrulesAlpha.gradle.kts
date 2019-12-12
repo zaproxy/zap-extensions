@@ -11,7 +11,5 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.2")
-
     testImplementation(project(":testutils"))
 }

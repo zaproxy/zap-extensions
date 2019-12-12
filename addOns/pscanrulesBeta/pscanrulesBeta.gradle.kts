@@ -10,26 +10,11 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        extensions {
-            register("org.zaproxy.zap.extension.pscanrulesBeta.payloader.ExtensionPayloader") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.zap.extension.pscanrulesBeta.payloader"))
-                }
-                dependencies {
-                    addOns {
-                        register("custompayloads") {
-                            version.set("0.9.*")
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("custompayloads")!!)
+    implementation("com.google.re2j:re2j:1.2")
 
-    testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
 }

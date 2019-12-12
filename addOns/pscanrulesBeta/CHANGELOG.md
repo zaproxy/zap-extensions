@@ -5,6 +5,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- The following scan rules were added being promoted from Alpha to Beta:
+  - Big Redirect Detected (Potential Sensitive Information Leak)
+  - Content Security Policy (CSP) Header Not Set
+  - Cookie Poisoning
+  - Directory Browsing
+  - Hash Disclosure
+  - Heartbleed OpenSSL Vulnerability (Indicative)
+  - HTTP Server Response Header Scanner
+  - HTTP to HTTPS Insecure Transition in Form Post
+  - HTTPS to HTTP Insecure Transition in Form Post
+  - Open Redirect
+  - PII Scanner
+  - Retrieved from Cache
+  - Reverse Tabnabbing
+  - Strict-Transport-Security Header Scanner
+  - User Controllable Charset
+  - User Controllable HTML Element Attribute (Potential XSS)
+  - User Controllable JavaScript Event (XSS)
+  - X-Backend-Server Header Information Leak
+  - X-ChromeLogger-Data (XCOLD) Header Information Leak
+
+### Removed
+- The following scan rules were removed in being promoted Beta to Release:
+  - Cookie Without SameSite Attribute
+  - Cross Domain Misconfiguration
+  - Information Disclosure: In URL
+  - Information Disclosure: Referrer
+  - Information Disclosure: Suspicious Comments
+  - Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+  - Timestamp Disclosure
+  - Username Hash Found
+  - X-AspNet-Version Response Header Scanner
+  - X-Debug-Token Information Leak
 
 ## [20] - 2019-11-19
 

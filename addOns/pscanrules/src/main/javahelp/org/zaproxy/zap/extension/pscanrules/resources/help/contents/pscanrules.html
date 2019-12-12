@@ -55,6 +55,9 @@ Cookies can be scoped by domain or path. This check is only concerned with domai
 Looks for cookies set during HTTPS sessions, raises an alert for those that are set but do not include the secure flag.
 A cookie set with the secure flag will not be sent during a plain HTTP session.
 
+<H2>Cookie Without SameSite Attribute</H2>
+This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
+
 <H2>Cross Domain Script Inclusion</H2>
 Validates whether or not scripts are included from domains other than the domain hosting the content. 
 By looking at the "src" attributes of "script" tags in HTML responses.<br>
@@ -63,6 +66,10 @@ Allowed Cross-Domain scripts:
 <li>Any script with a non-empty "integrity" attribute is ignored - the integrity value is not checked as this will be checked by the browser</li>
 <li>At MEDIUM and HIGH thresholds if a script URL falls within a context that also includes the URL of the base message no alerts will be raised.</li>
 </ul> 
+
+<H2>Cross Domain Misconfiguration</H2>
+Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
+The current implementation looks at excessively permissive CORS headers.
 
 <H2>CSP Scanner</H2>
 
@@ -91,6 +98,18 @@ Access to such details may provide a malicious individual with means by which to
 They may also leak data not specifically meant for end user consumption.<br>
 Note: Javascript responses are only assessed at LOW threshold.
 
+<H2>Information Disclosure: In URL</H2>
+Attempts to identify the existence of sensitive details within the visited URIs themselves 
+(this may include parameters, document names, directory names, etc.).
+
+<H2>Information Disclosure: Referrer</H2>
+Identifies the existence of sensitive details within the the Referrer header field of HTTP requests
+(this may include parameters, document names, directory names, etc.).
+
+<H2>Information Disclosure: Suspicious Comments</H2>
+Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
+further attack or exposure of unintended data.
+
 <H2>Insecure Authentication</H2>
 HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
 
@@ -112,11 +131,24 @@ such as vp09.02.51.10.01.09.16, where the latter 4 octets appear to be a RFC 191
 After review an analyst can mark such alerts as False Positives in ZAP. For handling during 
 repeated scans the "Context Alert Filters" add-on could be leveraged.
 
+<H2>Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)</H2>
+This checks response headers for the presence of X-Powered-By details.
+
 <H2>Session Id in URL Rewrite</H2>
 This scanner checks for the existence of session token type parameters being rewritten to the URL. 
 To help reduce false positives the scanner checks the length of the token value,  if the value of the parameter 
 is not greater than 8 characters in length then the parameter is ignored 
 (i.e.: survey?sId=5 would not be flagged as vulnerable).
+
+<H2>Timestamp Disclosure</H2>
+A timestamp was disclosed by the application/web server.
+
+<H2>Username Hash Found</H2>
+If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
+<p><strong>Note:</strong> If the Custom Payloads addon is installed you can add your own Username strings (payloads) in the Custom Payloads options panel. 
+They will also be hashed and searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the 
+amount of time needed to passively scan. (The default payloads are "Admin" and "admin".)<br>
+<p>Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact.
 
 <H2>VIEWSTATE</H2>
 Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 
@@ -146,6 +178,13 @@ The following conditions may result in an alert:
 </ul>
 By default no alerts will be raised in the response includes a Content-Security-Policy 'frame-ancestors' element as this take precedence over the X-Frame-Options header.
 However at LOW threshold the above issues will still be reported but at a LOW risk. 
+
+<H2>X-AspNet-Version Response Header Scanner</H2>
+This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
+
+<H2>X-Debug-Token Information Leak</H2>
+This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
+Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
 
 </BODY>
 </HTML>
