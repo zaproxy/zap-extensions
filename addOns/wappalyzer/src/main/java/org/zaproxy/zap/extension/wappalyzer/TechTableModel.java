@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
@@ -40,7 +39,6 @@ public class TechTableModel extends AbstractTableModel {
     public TechTableModel() {
         super();
         columnNames = new Vector<>();
-        columnNames.add(Constant.messages.getString("wappalyzer.table.header.icon"));
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.name"));
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.version"));
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.category"));
@@ -79,21 +77,18 @@ public class TechTableModel extends AbstractTableModel {
         ApplicationMatch app = apps.get(row);
         switch (col) {
             case 0:
-                obj = app.getApplication().getIcon();
+                obj = app.getApplication();
                 break;
             case 1:
-                obj = app.getApplication().getName();
-                break;
-            case 2:
                 obj = app.getVersion();
                 break;
-            case 3:
+            case 2:
                 obj = categoriesToString(app.getApplication().getCategories());
                 break;
-            case 4:
+            case 3:
                 obj = app.getApplication().getWebsite();
                 break;
-            case 5:
+            case 4:
                 obj = listToString(app.getApplication().getImplies());
                 break;
                 // case 5: obj = app.getConfidence(); break;
@@ -184,7 +179,7 @@ public class TechTableModel extends AbstractTableModel {
     public Class<? extends Object> getColumnClass(int c) {
         switch (c) {
             case 0:
-                return ImageIcon.class;
+                return Application.class;
             case 1:
                 return String.class;
             case 2:
@@ -192,8 +187,6 @@ public class TechTableModel extends AbstractTableModel {
             case 3:
                 return String.class;
             case 4:
-                return String.class;
-            case 5:
                 return String.class;
         }
         return null;
