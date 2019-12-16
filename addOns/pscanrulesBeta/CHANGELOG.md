@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [21] - 2019-12-16
 
 ### Added
 - The following scan rules were added being promoted from Alpha to Beta:
@@ -145,5 +145,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[21]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v19

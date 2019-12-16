@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [27] - 2019-12-16
 
 ### Added
 - Added Hidden Files Finder (issue 4585) largely based on Snallygaster by Hanno Böck, also supports use of the Custom Payloads addon.
@@ -179,6 +179,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[27]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v24
