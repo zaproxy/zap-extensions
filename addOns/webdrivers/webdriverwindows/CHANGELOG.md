@@ -3,8 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
-
+## [15] - 2019-12-16
+### Fixed
+- Bundle correct geckodriver binary for respective architecture (Issue 5763).
 
 ## [14] - 2019-12-12
 ### Changed
@@ -79,6 +80,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v12
