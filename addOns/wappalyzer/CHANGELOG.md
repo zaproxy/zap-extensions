@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- Export button.
+
+### Changed
+- Allow multi-select of rows to facilitate copy/paste, only show context menu if a single row is selected.
 
 ## [14] - 2019-10-02
 
