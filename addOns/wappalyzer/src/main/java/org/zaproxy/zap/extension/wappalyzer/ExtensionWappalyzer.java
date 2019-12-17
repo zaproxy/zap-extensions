@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
@@ -81,11 +82,12 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     private WappalyzerPassiveScanner passiveScanner;
+    private WappalyzerAPI api;
 
     /**
-     * TODO Implementaion Version handling Confidence handling Add API calls - need to test for
-     * daemon mode (esp revisits) Issues Handle load session - store tech in db? Sites pull down not
-     * populated if no tech found - is this actually a problem? One pattern still fails to compile
+     * TODO Implementaion Version handling Confidence handling - need to test for daemon mode (esp
+     * revisits) Issues Handle load session - store tech in db? Sites pull down not populated if no
+     * tech found - is this actually a problem? One pattern still fails to compile
      */
     public ExtensionWappalyzer() {
         super(NAME);
@@ -120,6 +122,9 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             extensionHook.getHookView().addStatusPanel(getTechPanel());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuEvidence());
         }
+
+        this.api = new WappalyzerAPI(this);
+        extensionHook.addApiImplementor(this.api);
 
         ExtensionPassiveScan extPScan =
                 Control.getSingleton()
@@ -224,6 +229,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             return this.getTechPanel().getCurrentSite();
         }
         return null;
+    }
+
+    public Set<String> getSites() {
+        return Collections.unmodifiableSet(siteTechMap.keySet());
     }
 
     private ExtensionSearch getExtensionSearch() {
