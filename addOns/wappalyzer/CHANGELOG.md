@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Export button.
+- API with three views:
+  - listSites: Lists the sites that there are application (technology) details for [similar to the host:port drop down menu in the GUI].
+  - listAll: Lists all sites and their associated applications (technologies).
+  - listSite: Lists all the applications (technologies) for a given site [host:port] identifier.
 
 ### Changed
 - Allow multi-select of rows to facilitate copy/paste, only show context menu if a single row is selected.
