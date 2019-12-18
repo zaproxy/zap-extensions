@@ -5,7 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [25] - 2019-12-16
+
+### Changed
 - Content Security Policy scan rule: Update to Salvation 2.7.0, add handling for script-src-elem, script-src-attr, style-src-elem, and style-src-attr (Issue 5459).
+- Minimum ZAP version is now 2.8.0.
+
+### Added
+- The following scan rules were added, promoted from Beta to Release:
+  - Cookie Without SameSite Attribute
+  - Cross Domain Misconfiguration
+  - Information Disclosure: In URL
+  - Information Disclosure: Referrer
+  - Information Disclosure: Suspicious Comments
+  - Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+  - Timestamp Disclosure
+  - Username Hash Found
+  - X-AspNet-Version Response Header Scanner
+  - X-Debug-Token Information Leak
 
 ## [24] - 2019-06-07
 
@@ -130,4 +148,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[25]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v24

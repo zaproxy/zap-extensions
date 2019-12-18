@@ -194,7 +194,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                             break;
                             // 0% probability threshold (all structurally valid Base64 data is
                             // considered, regardless of how improbable  it is given character
-                            // frequencies, etc)
+                            // frequencies, etc.)
                         default:
                     }
 

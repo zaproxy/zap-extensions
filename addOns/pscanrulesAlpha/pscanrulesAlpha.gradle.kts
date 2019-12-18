@@ -1,4 +1,4 @@
-version = "26"
+version = "27"
 description = "The alpha quality Passive Scanner rules"
 
 zapAddOn {
@@ -11,7 +11,5 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.2")
-
     testImplementation(project(":testutils"))
 }

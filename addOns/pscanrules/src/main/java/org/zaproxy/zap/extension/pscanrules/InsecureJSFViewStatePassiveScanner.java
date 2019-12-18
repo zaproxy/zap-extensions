@@ -53,7 +53,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * David Byrne described it as this:
  * Regarding detection on JSF (Apache MyFaces & Sun Mojarra), they are Java object streams, so the format
  * is fairly predictable. The simplest way is probably to just check the value for plain text strings.
- * If it's unencrypted, there should be some Java class names, etc in there. There are a few different
+ * If it's unencrypted, there should be some Java class names, etc. in there. There are a few different
  * encodings that can be used though. All of the JSF view state's I've seen are base64 encoded,
  * although I don't think they have to be. After decoding the base64, some may be compressed
  * with the gzip algorithm (which is the default).

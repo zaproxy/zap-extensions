@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [27] - 2019-12-16
+
+### Added
+- Added Hidden Files Finder (issue 4585) largely based on Snallygaster by Hanno Böck, also supports use of the Custom Payloads addon.
+
+### Removed
+- The following scan rules were removed in being promoted from Alpha to Beta:
+  - Apache Range Header DoS
+  - Cookie Slack Detector
+  - ELMAH Information Leak
+  - GET for POST
+  - .htaccess Information Leak
+  - HTTP Only Site
+  - Httpoxy - Proxy Header Misuse
+  - HTTPS Content Available via HTTP
+  - Proxy Disclosure
+  - Relative Path Confusion
+  - Source Code Disclosure - File Inclusion
+  - Source Code Disclosure - Git
+  - SQL Injection - MsSQL
+  - SQL Injection - SQLite
+  - Trace.axd Information Leak
+  - User Agent Fuzzer
+
 ## [26] - 2019-10-31
 
 ### Added
@@ -158,6 +182,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[27]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v24

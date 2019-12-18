@@ -24,7 +24,7 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 dependencies {
-    implementation("io.github.bonigarcia:webdrivermanager:3.3.0")
+    implementation("io.github.bonigarcia:webdrivermanager:3.7.1")
     implementation("com.diffplug.spotless:spotless-plugin-gradle:3.20.0")
 }
 

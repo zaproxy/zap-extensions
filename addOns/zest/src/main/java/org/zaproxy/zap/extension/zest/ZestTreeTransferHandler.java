@@ -73,7 +73,7 @@ public class ZestTreeTransferHandler extends TransferHandler {
             // dragZew.getElement().getClass().getCanonicalName());
             return false;
         } else if (dragZew.getShadowLevel() > 0) {
-            // Only allow the non shadow nodes to be dragged (ie not THEN and ELSE)
+            // Only allow the non shadow nodes to be dragged (i.e. not THEN and ELSE)
             return false;
         }
 

@@ -1386,7 +1386,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         }
         if (node.getNextSibling() != null
                 && ZestZapUtils.getShadowLevel((ScriptNode) node.getNextSibling()) > 0) {
-            // The next nodes are shadow ones, eg a then or an else node - need
+            // The next nodes are shadow ones, e.g. a then or an else node - need
             // to check
             // these too
             while (ZestZapUtils.getShadowLevel((ScriptNode) node.getNextSibling()) > 0) {

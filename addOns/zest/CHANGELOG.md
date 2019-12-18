@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [30] - 2019-12-06
+
 ### Added
 - Allow to set, remove, and get global variables (Issue 3512), using the context menus:
   - `Add Zest Action` > `Action - Global Variable - Set`
@@ -211,4 +214,5 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[30]: https://github.com/zaproxy/zap-extensions/releases/zest-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/zest-v29

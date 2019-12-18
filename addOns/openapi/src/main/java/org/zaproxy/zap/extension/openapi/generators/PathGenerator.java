@@ -19,10 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import io.swagger.models.Scheme;
-import io.swagger.models.parameters.AbstractSerializableParameter;
-import io.swagger.models.parameters.Parameter;
-import java.util.ArrayList;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 
 public class PathGenerator {
@@ -33,49 +30,26 @@ public class PathGenerator {
         this.dataGenerator = dataGenerator;
     }
 
-    /**
-     * Gets the URL to access an endpoint.
-     *
-     * @param scheme the scheme, for example, {@code https}.
-     * @param host the host ({@code hostname[:port]}).
-     * @param basePath the base path (for example, {@code /PetStore}) or {@code null} if none.
-     * @param endpoint the path of the endpoint (for example, {@code /pet}), must not be null.
-     * @return the URL to access the endpoint.
-     */
-    public String getBasicURL(Scheme scheme, String host, String basePath, String endpoint) {
-        String url = scheme.toString().toLowerCase() + "://" + host;
-        if (basePath != null && basePath.length() > 1) {
-            url += basePath;
-        }
-        url += endpoint;
-        return url;
-    }
-
     public String generateFullPath(OperationModel operationModel) {
         String queryString = "?";
-        for (Parameter parameter : operationModel.getOperation().getParameters()) {
-            if (parameter == null) {
-                continue;
+        if (operationModel.getOperation().getParameters() != null)
+            for (Parameter parameter : operationModel.getOperation().getParameters()) {
+                if (parameter == null) {
+                    continue;
+                }
+                String parameterType = parameter.getIn();
+                if ("query".equals(parameterType)) {
+                    String value = dataGenerator.generate(parameter.getName(), parameter);
+                    queryString += parameter.getName() + "=" + value + "&";
+                } else if ("path".equals(parameterType)) {
+                    String value = dataGenerator.generate(parameter.getName(), parameter);
+                    String newPath =
+                            operationModel
+                                    .getPath()
+                                    .replace("{" + parameter.getName() + "}", value);
+                    operationModel.setPath(newPath);
+                }
             }
-            String parameterType = parameter.getIn();
-            if ("query".equals(parameterType)) {
-                String value =
-                        dataGenerator.generate(
-                                parameter.getName(),
-                                ((AbstractSerializableParameter<?>) parameter),
-                                new ArrayList<String>());
-                queryString += parameter.getName() + "=" + value + "&";
-            } else if ("path".equals(parameterType)) {
-                String value =
-                        dataGenerator.generate(
-                                parameter.getName(),
-                                ((AbstractSerializableParameter<?>) parameter),
-                                new ArrayList<String>());
-                String newPath =
-                        operationModel.getPath().replace("{" + parameter.getName() + "}", value);
-                operationModel.setPath(newPath);
-            }
-        }
         return operationModel.getPath() + queryString.substring(0, queryString.length() - 1);
     }
 }

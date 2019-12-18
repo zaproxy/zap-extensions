@@ -29,16 +29,16 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.zap.extension.ascanrulesAlpha.TestUserAgent;
+import org.zaproxy.zap.extension.ascanrulesAlpha.HiddenFilesScanRule;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionPayloader";
+    public static final String NAME = "ExtensionPayloaderAscanRulesAlpha";
     private static final List<Class<? extends Extension>> DEPENDENCIES;
     private static ExtensionCustomPayloads ecp;
-    private PayloadCategory category;
+    private PayloadCategory hfCategory;
 
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
@@ -58,11 +58,12 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                 Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionCustomPayloads.class);
-        category =
+        hfCategory =
                 new PayloadCategory(
-                        TestUserAgent.USER_AGENT_PAYLOAD_CATEGORY, TestUserAgent.USER_AGENTS);
-        ecp.addPayloadCategory(category);
-        TestUserAgent.setPayloadProvider(() -> category.getPayloadsIterator());
+                        HiddenFilesScanRule.HIDDEN_FILE_PAYLOAD_CATEGORY,
+                        HiddenFilesScanRule.HIDDEN_FILES);
+        ecp.addPayloadCategory(hfCategory);
+        HiddenFilesScanRule.setPayloadProvider(() -> hfCategory.getPayloadsIterator());
     }
 
     @Override
@@ -72,8 +73,8 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        TestUserAgent.setPayloadProvider(null);
-        ecp.removePayloadCategory(category);
+        HiddenFilesScanRule.setPayloadProvider(null);
+        ecp.removePayloadCategory(hfCategory);
     }
 
     @Override

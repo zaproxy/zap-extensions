@@ -145,4 +145,9 @@ public class Application {
     public void setIcon(ImageIcon icon) {
         this.icon = icon;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

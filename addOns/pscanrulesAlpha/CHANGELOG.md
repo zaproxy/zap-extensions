@@ -5,10 +5,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [26] - 2019-12-16
+
+### Added
 - Add Java Serialized Object (JSO) Scanner.
+- Add Sub Resource Integrity Attribute Missing Scanner.
+
+### Changed
 - Fixed false positive when redirect destination is the same domain (Issue 5289).
 - CSP Missing and Feature Policy scan rule: Ignore missing headers on redirects unless Low threshold used.
-- Add Sub Resource Integrity Attribute Missing Scanner.
+
+### Removed
+- The following scan rules were removed in being promoted to Beta:
+  - Big Redirect Detected (Potential Sensitive Information Leak)
+  - Content Security Policy (CSP) Header Not Set
+  - Cookie Poisoning
+  - Directory Browsing
+  - Hash Disclosure
+  - Heartbleed OpenSSL Vulnerability (Indicative)
+  - HTTP Server Response Header Scanner
+  - HTTP to HTTPS Insecure Transition in Form Post
+  - HTTPS to HTTP Insecure Transition in Form Post
+  - Open Redirect
+  - PII Scanner
+  - Retrieved from Cache
+  - Reverse Tabnabbing
+  - Strict-Transport-Security Header Scanner
+  - User Controllable Charset
+  - User Controllable HTML Element Attribute (Potential XSS)
+  - User Controllable JavaScript Event (XSS)
+  - X-Backend-Server Header Information Leak
+  - X-ChromeLogger-Data (XCOLD) Header Information Leak
 
 ## [25] - 2019-07-11
 
@@ -186,5 +214,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v24

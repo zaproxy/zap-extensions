@@ -1,5 +1,5 @@
 /*
-Targeted scripts can only be invoked by you, the user, eg via a right-click option on the Sites or History tabs
+Targeted scripts can only be invoked by you, the user, e.g. via a right-click option on the Sites or History tabs
 */
 import org.parosproxy.paros.network.HttpMessage
 

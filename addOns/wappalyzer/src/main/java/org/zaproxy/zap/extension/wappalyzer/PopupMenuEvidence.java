@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import javax.swing.JMenuItem;
+import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
@@ -46,7 +47,9 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
     public boolean isEnableForComponent(Component invoker) {
         clearSubMenus();
 
-        if (invoker.getName() != null && invoker.getName().equals(TechPanel.PANEL_NAME)) {
+        if (invoker.getName() != null
+                && invoker.getName().equals(TechPanel.PANEL_NAME)
+                && ((JXTable) invoker).getSelectedRows().length < 2) {
             Application app = extension.getSelectedApp();
             if (app != null) {
                 for (AppPattern p : app.getUrl()) {

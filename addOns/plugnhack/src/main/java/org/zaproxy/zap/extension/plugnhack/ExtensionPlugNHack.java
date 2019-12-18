@@ -684,7 +684,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     }
 
     /*
-     * Called when the specified oracle is invoked in the client, eg as a result on an XSS
+     * Called when the specified oracle is invoked in the client, e.g. as a result on an XSS
      */
     public void oracleInvoked(int id) {
         logger.debug("Oracle invoked for " + id);
