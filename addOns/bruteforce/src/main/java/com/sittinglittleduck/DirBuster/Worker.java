@@ -414,12 +414,12 @@ public class Worker implements Runnable {
     }
 
     /** Method to call to pause the thread */
-    public void pause() {
+    public synchronized void pause() {
         pleaseWait = true;
     }
 
     /** Method to call to unpause the thread */
-    public void unPause() {
+    public synchronized void unPause() {
         pleaseWait = false;
     }
 
@@ -428,12 +428,12 @@ public class Worker implements Runnable {
      *
      * @return boolean value about if the thread is working
      */
-    public boolean isWorking() {
+    public synchronized boolean isWorking() {
         return working;
     }
 
     /** Method to call to stop the thread */
-    public void stopThread() {
+    public synchronized void stopThread() {
         this.stop = true;
     }
 }

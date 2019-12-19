@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 public class DirBusterManager extends Manager {
 
     private BruteForceListenner listenner;
-    private int total = 100;
+    private int total = 0;
     private boolean finished = false;
     private static Logger log = Logger.getLogger(DirBusterManager.class);
 
@@ -73,7 +73,7 @@ public class DirBusterManager extends Manager {
     }
 
     @Override
-    public void youAreFinished() {
+    public synchronized void youAreFinished() {
         super.youAreFinished();
         finished = true;
     }
@@ -99,7 +99,7 @@ public class DirBusterManager extends Manager {
         return total;
     }
 
-    private long getTotalToDo() {
+    private synchronized long getTotalToDo() {
         int totalDirs = 1;
 
         if (this.isRecursive() && this.getDoDirs()) {
