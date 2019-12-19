@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Update patterns and icons as of AliasIO/wappalyzer@98814a0 (release 5.8.5+).
+- Support for CPE information (as a table column in the GUI, and element in the new API output [as applicable]).
+
 ### Added
 - Export button.
 - API with three views:

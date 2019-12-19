@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.ImageIcon;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
@@ -107,6 +108,7 @@ public class WappalyzerJsonParser {
                 app.setScript(this.jsonToPatternList("SCRIPT", appData.get("script")));
                 app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
                 app.setImplies(this.jsonToStringList(appData.get("implies")));
+                app.setCpe(this.jsonElementToString(appData, "cpe"));
 
                 URL icon =
                         ExtensionWappalyzer.class.getResource(
@@ -123,6 +125,14 @@ public class WappalyzerJsonParser {
         }
 
         return result;
+    }
+
+    private String jsonElementToString(JSONObject appData, String element) {
+        try {
+            return appData.getString(element);
+        } catch (JSONException jEx) {
+            return "";
+        }
     }
 
     private List<String> jsonToStringList(Object json) {

@@ -44,6 +44,7 @@ public class TechTableModel extends AbstractTableModel {
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.category"));
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.website"));
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.implies"));
+        columnNames.add(Constant.messages.getString("wappalyzer.table.header.cpe"));
         // Dont currently support confidence
         // columnNames.add(Constant.messages.getString("wappalyzer.table.header.confidence"));
 
@@ -91,6 +92,8 @@ public class TechTableModel extends AbstractTableModel {
             case 4:
                 obj = listToString(app.getApplication().getImplies());
                 break;
+            case 5:
+                obj = app.getApplication().getCpe();
                 // case 5: obj = app.getConfidence(); break;
         }
         return obj;
@@ -187,6 +190,8 @@ public class TechTableModel extends AbstractTableModel {
             case 3:
                 return String.class;
             case 4:
+                return String.class;
+            case 5:
                 return String.class;
         }
         return null;
