@@ -83,18 +83,12 @@ public class DirBusterManager extends Manager {
     }
 
     public int getTotal() {
-        if (this.areWorkersAlive()) {
-            long bigTotal = this.getTotalToDo();
-            if (bigTotal > Integer.MAX_VALUE) {
-                total = Integer.MAX_VALUE;
-            } else if (bigTotal > total) {
-                // More work - ignore if less than before - this happens if its stopped early
-                total = (int) bigTotal;
-            }
-            if (total == 0) {
-                // Havt started yet
-                total = 100;
-            }
+        long bigTotal = this.getTotalToDo();
+        if (bigTotal > Integer.MAX_VALUE) {
+            total = Integer.MAX_VALUE;
+        } else if (bigTotal > total) {
+            // More work - ignore if less than before - this happens if its stopped early
+            total = (int) bigTotal;
         }
         return total;
     }
