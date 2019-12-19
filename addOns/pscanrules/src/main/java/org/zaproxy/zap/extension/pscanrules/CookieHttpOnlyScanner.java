@@ -73,6 +73,9 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
         while (iterator.hasNext()) {
             String headerValue = (String) iterator.next();
             if (!CookieUtils.hasAttribute(headerValue, HTTP_ONLY_COOKIE_ATTRIBUTE)) {
+                if (CookieUtils.isExpired(headerValue)) {
+                    continue;
+                }
                 if (!ignoreList.contains(CookieUtils.getCookieName(headerValue))) {
                     this.raiseAlert(msg, id, headerValue);
                 }

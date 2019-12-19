@@ -64,6 +64,9 @@ public class CookieSameSiteScanner extends PluginPassiveScanner {
             return;
         }
         for (String cookie : cookies) {
+            if (CookieUtils.isExpired(cookie)) {
+                continue;
+            }
             String sameSiteVal =
                     SetCookieUtils.getAttributeValue(cookie, SAME_SITE_COOKIE_ATTRIBUTE);
             if (sameSiteVal == null) {

@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- "Cookie HttpOnly", "Cookie Secure Flag", and "Cookie Without SameSite Attribute" scan rules no longer alert on expired (deleted) cookies (Issue 5295).
 
 ## [25] - 2019-12-16
 

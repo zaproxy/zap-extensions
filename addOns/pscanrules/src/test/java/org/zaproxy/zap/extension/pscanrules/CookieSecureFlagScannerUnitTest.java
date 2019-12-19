@@ -23,6 +23,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.parosproxy.paros.model.Model;
@@ -170,6 +173,130 @@ public class CookieSecureFlagScannerUnitTest extends PassiveScannerTest<CookieSe
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=123; Path=/;\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+    }
+
+    @Test
+    public void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
+        // Given - value empty and epoch start date
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        // When
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=\"\"; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; HttpOnly\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldNotAlertOnDeleteHyphenatedDate() throws HttpMalformedHeaderException {
+        // Given - value empty and epoch start date
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        // When
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=\"\"; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/; HttpOnly\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldAlertWhenFutureExpiry() throws HttpMalformedHeaderException {
+        // Given - value empty and epoch start date
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        // When
+        msg.setResponseBody("<html></html>");
+
+        DateTimeFormatter df =
+                DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
+                        .withZone(ZoneOffset.UTC);
+        LocalDateTime dateTime = LocalDateTime.now().plusYears(1);
+        String expiry = dateTime.format(df);
+
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=\"\"; expires="
+                        + expiry
+                        + "; Path=/; HttpOnly\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+    }
+
+    @Test
+    public void shouldAlertWhenFutureExpiryHyphenatedDate() throws HttpMalformedHeaderException {
+        // Given - value empty and epoch start date
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        // When
+        msg.setResponseBody("<html></html>");
+
+        DateTimeFormatter df =
+                DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz")
+                        .withZone(ZoneOffset.UTC);
+        LocalDateTime dateTime = LocalDateTime.now().plusYears(1);
+        String expiry = dateTime.format(df);
+
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=\"\"; expires="
+                        + expiry
+                        + "; Path=/; HttpOnly\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+    }
+
+    @Test
+    public void secondCookieNoSecureAttributeFirstExpired() throws HttpMalformedHeaderException {
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: hasatt=test123; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/; secure\r\n"
                         + "Set-Cookie: test=123; Path=/;\r\n"
                         + "Content-Type: text/html;charset=ISO-8859-1\r\n"
                         + "Content-Length: "

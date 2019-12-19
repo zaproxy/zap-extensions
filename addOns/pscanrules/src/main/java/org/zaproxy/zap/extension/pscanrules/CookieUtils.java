@@ -19,10 +19,15 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
@@ -30,6 +35,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 class CookieUtils {
 
     private static final int NOT_FOUND = -1;
+    private static final Logger LOGGER = Logger.getLogger(CookieUtils.class);
 
     private CookieUtils() {
         // Utility class.
@@ -186,5 +192,41 @@ class CookieUtils {
             }
         }
         return ignoreList;
+    }
+
+    /**
+     * Returns {@code true} if the cookie's "expire" value was set in the past, {@code false}
+     * otherwise (including if no "expires" value is set at all.).
+     *
+     * @param headerValue the value of the header
+     * @return {@code true} if the "expires" value is in the past, {@code false} otherwise.
+     */
+    public static boolean isExpired(String headerValue) {
+        String expiry = CookieUtils.getAttributeValue(headerValue, "expires");
+
+        if (expiry == null) {
+            return false;
+        }
+
+        DateTimeFormatter df =
+                DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ROOT);
+        LocalDateTime dateTime = null;
+        try {
+            dateTime = LocalDateTime.parse(expiry, df);
+        } catch (DateTimeParseException dtpe) {
+            DateTimeFormatter dfHyphen =
+                    DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz", Locale.ROOT);
+            try {
+                dateTime = LocalDateTime.parse(expiry, dfHyphen);
+            } catch (DateTimeParseException dtpEx) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Couldn't parse LocalDateTime from: " + headerValue, dtpEx);
+                }
+            }
+        }
+        if (dateTime != null && dateTime.isBefore(LocalDateTime.now())) {
+            return true;
+        }
+        return false;
     }
 }
