@@ -503,10 +503,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             processedLinks.clear();
 
             task = new ProcessChecker(this);
-            timer.scheduleAtFixedRate(task, 1000L, 1000L);
+            timer.scheduleAtFixedRate(task, 0L, 1000L);
 
             task2 = new ProcessEnd(this);
-            timer.scheduleAtFixedRate(task2, 30000L, 30000L);
+            timer.scheduleAtFixedRate(task2, 0L, 10000L);
 
             // start the pure brute force thread
             if (pureBrute) {
