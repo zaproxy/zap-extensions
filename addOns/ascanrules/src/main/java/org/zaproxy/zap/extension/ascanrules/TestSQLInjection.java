@@ -811,11 +811,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                         // value is 1
                         // set the parameter value to a string value like "3-2", if the original
                         // parameter value was "1"
-                        int paramPlusTwo = addWithOverflowCheck(paramAsInt, 2);
+                        int paramPlusTwo = Math.addExact(paramAsInt, 2);
                         String modifiedParamValueForAdd = String.valueOf(paramPlusTwo) + "-2";
                         // set the parameter value to a string value like "4-2", if the original
                         // parameter value was "1"
-                        int paramPlusThree = addWithOverflowCheck(paramAsInt, 3);
+                        int paramPlusThree = Math.addExact(paramAsInt, 3);
                         String modifiedParamValueConfirmForAdd =
                                 String.valueOf(paramPlusThree) + "-2";
                         // Do the attack for ADD variant
@@ -836,11 +836,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                                 && countExpressionBasedRequests < doExpressionMaxRequests) {
                             // set the parameter value to a string value like "2/2", if the original
                             // parameter value was "1"
-                            int paramMultTwo = multiplyWithOverflowCheck(paramAsInt, 2);
+                            int paramMultTwo = Math.multiplyExact(paramAsInt, 2);
                             String modifiedParamValueForMult = String.valueOf(paramMultTwo) + "/2";
                             // set the parameter value to a string value like "4/2", if the original
                             // parameter value was "1"
-                            int paramMultFour = multiplyWithOverflowCheck(paramAsInt, 4);
+                            int paramMultFour = Math.multiplyExact(paramAsInt, 4);
                             String modifiedParamValueConfirmForMult =
                                     String.valueOf(paramMultFour) + "/2";
                             // Do the attack for MULT variant
@@ -1939,12 +1939,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
         String modifiedExpressionOutputStripped =
                 stripOffOriginalAndAttackParam(
                         modifiedExpressionOutputUnstripped, originalParam, modifiedParamValue);
-        String normalBodyOutput = mResBodyNormalStripped;
+        String normalBodyOutputStripped = stripOff(mResBodyNormalStripped, modifiedParamValue);
 
         if (!sqlInjectionFoundForUrl && countExpressionBasedRequests < doExpressionMaxRequests) {
             // if the results of the modified request match the original query, we may be onto
             // something.
-            if (modifiedExpressionOutputStripped.compareTo(normalBodyOutput) == 0) {
+
+            if (modifiedExpressionOutputStripped.compareTo(normalBodyOutputStripped) == 0) {
                 if (this.debugEnabled) {
                     log.debug(
                             "Check 4, STRIPPED html output for modified expression parameter ["
@@ -1983,7 +1984,10 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                                 originalParam,
                                 modifiedParamValueConfirm);
 
-                if (confirmExpressionOutputStripped.compareTo(normalBodyOutput) != 0) {
+                normalBodyOutputStripped =
+                        stripOff(mResBodyNormalStripped, modifiedParamValueConfirm);
+
+                if (confirmExpressionOutputStripped.compareTo(normalBodyOutputStripped) != 0) {
                     // the confirm query did not return the same results.  This means that arbitrary
                     // queries are not all producing the same page output.
                     // this means the fact we earier reproduced the original page output with a
@@ -2079,42 +2083,6 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
             return msg;
         }
         return result;
-    }
-
-    // TODO:replace addWithOverflowCheck method with Math.addExact when targeting JAVA 8
-    /**
-     * add two numbers with Arithmetic Overflow check
-     *
-     * @param firstNumber
-     * @param secondNumber
-     * @return
-     */
-    private static int addWithOverflowCheck(int firstNumber, int secondNumber) {
-        long result = ((long) firstNumber) + ((long) secondNumber);
-        if (result > Integer.MAX_VALUE) {
-            throw new ArithmeticException("Overflow occurred");
-        } else if (result < Integer.MIN_VALUE) {
-            throw new ArithmeticException("Underflow occurred");
-        }
-        return (int) result;
-    }
-
-    // TODO:replace multiplyWithOverflowCheck method with Math.multiplyExact when targeting JAVA 8
-    /**
-     * multiply two numbers with Arithmetic Overflow check
-     *
-     * @param firstNumber
-     * @param secondNumber
-     * @return
-     */
-    private static int multiplyWithOverflowCheck(int firstNumber, int secondNumber) {
-        long result = ((long) firstNumber) * ((long) secondNumber);
-        if (result > Integer.MAX_VALUE) {
-            throw new ArithmeticException("Overflow occurred");
-        } else if (result < Integer.MIN_VALUE) {
-            throw new ArithmeticException("Underflow occurred");
-        }
-        return (int) result;
     }
 
     @Override
