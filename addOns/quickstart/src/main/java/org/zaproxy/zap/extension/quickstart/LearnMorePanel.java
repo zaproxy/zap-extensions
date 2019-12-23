@@ -49,6 +49,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
             "https://github.com/zaproxy/zaproxy/releases/download/v2.8.0/ZAPGettingStartedGuide-2.8.pdf";
     private static final String USER_GROUP_LINK = "https://groups.google.com/group/zaproxy-users";
     private static final String USER_GUIDE_LINK = "https://github.com/zaproxy/zap-core-help/wiki";
+    private static final String ZAP_IN_TEN_LINK = "https://www.alldaydevops.com/zap-in-ten";
 
     private JPanel contentPanel;
     private JLabel lowerPadding;
@@ -192,6 +193,11 @@ public class LearnMorePanel extends QuickStartSubPanel {
                             1,
                             1.0D,
                             DisplayUtils.getScaledInsets(5, 5, 5, 5))); // Spacer
+
+            contentPanel.add(
+                    getOnlineLink("quickstart.link.zapinten", ZAP_IN_TEN_LINK),
+                    LayoutHelper.getGBC(
+                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
             if (!isGuideAvailable) {
                 // Link to the online version instead
