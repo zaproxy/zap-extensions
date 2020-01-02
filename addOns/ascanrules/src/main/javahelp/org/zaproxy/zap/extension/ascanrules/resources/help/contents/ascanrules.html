@@ -14,6 +14,8 @@ The following release quality active scan rules are included in this add-on:
 
 Looks for indicators of buffer overflows in compiled code.  It does this by putting out large strings of input text and look for code crash
 and abnormal session closure.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/BufferOverflow.java">BufferOverflow.java</a>
 
 <H2>Code Injection</H2>
 
@@ -22,6 +24,8 @@ see if those values have been evaluated by the server. First, requests are const
 to print a token. In the event of a match between the token and the content of the response body, the scanner raises an alert and returns immediately.
 If there aren't any matches, the scanner will construct requests with several injected ASP strings that instruct the server to write the product
 of two randomly generated integers in the response. If the body of the response matches the product, an alert is raised.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CodeInjectionPlugin.java">CodeInjectionPlugin.java</a>
 
 <H2>Command Injection</H2>
 
@@ -34,10 +38,8 @@ and receiving the response against a heuristic time-delay lower limit. If the el
 and the scanner returns immediately.
 <br>
 Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
-
-<H2>Client Browser Cache</H2>
-
-This rule checks the headers of secure pages and reports an alert if they allow a browser to cache the page.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionPlugin.java">CommandInjectionPlugin.java</a>
 
 <H2>Cross Site Scripting (reflected)</H2>
 
@@ -47,6 +49,8 @@ including tag attributes, URL attributes, attributes in tags which support src a
 Note: <br>
 This rule only scans HTTP PUT requests at LOW threshold.<br>
 If an XSS injection is located in a JSON response a LOW risk and LOW confidence alert is raised.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestCrossSiteScriptV2.java">TestCrossSiteScriptV2.java</a>
 
 <H2>Cross Site Scripting (persistent)</H2>
 
@@ -56,28 +60,38 @@ target locations in other pages.<br>
 Note: <br>
 This rule only scans HTTP PUT requests at LOW threshold.<br>
 If an XSS injection is located in a JSON response a LOW risk and LOW confidence alert is raised.<br>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestPersistentXSSPrime.java">TestPersistentXSSPrime.java</a>, 
+<a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestPersistentXSSSpider.java">TestPersistentXSSSpider.java</a>, 
+<a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestPersistentXSSAttack.java">TestPersistentXSSAttack.java</a>
 
 <H2>CRLF Injection</H2>
 
 This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. If the response contains an identical Set-Cookie header,
 an alert is raised and the scanner returns immediately.
-
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestInjectionCRLF.java">TestInjectionCRLF.java</a>
 
 <H2>Directory Browsing</H2>
 
 This rule checks to see if a request will provide access to a directory listing by examining the response body for patterns used with Apache, IIS
 and other web server software.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestDirectoryBrowsing.java">TestDirectoryBrowsing.java</a>
 
 <H2>External Redirect</H2>
 
 This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
 whether or not a redirect occurred and of what type. The cause of redirect is searched for in the "Location" and "Refresh" header fields, as well as by HTML meta tags
 and Javascript in the body of the response. An alert is raised including the redirection type and the scanner returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestExternalRedirect.java">TestExternalRedirect.java</a>
 
 <H2>Format String Error</H2>
 Looks for indicators of format string handling errors in compiled code.  It does this by putting out strings of input text based upon characters
 compiled C code anticipates to produce formatted output and look for code crash and abnormal session closures.
-
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/FormatString.java">FormatString.java</a>
 
 <H2>Parameter Tampering</H2>
 
@@ -85,6 +99,8 @@ This rule submits requests with parameter values known to cause errors to be dis
 a server error status code, then compared with a normal HTTP response to make sure it does not raise an alert if the bad parameter has no effect on output. Finally, the content
 of the reponse body is compared against various patterns that may be found in Java servlet, Microsoft VBScript, OLE DB, JET, PHP and Tomcat errors. If a match is found, an alert is raised and
 the scanner returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestParameterTamper.java">TestParameterTamper.java</a>
 
 <H2>Path Traversal</H2>
 
@@ -93,21 +109,29 @@ and local file targets for Windows and *NIX systems as well as Java servlets. If
 current target file an alert is raised and the scanner returns immediately. If none of the common local file targets succeed, path traversal is 
 attempted using the filename in the URL. As long as submitting an arbitrary filename does not return an OK status code but the real filename does, an alert is raised
 and the scanner returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestPathTraversal.java">TestPathTraversal.java</a>
 
 <H2>Remote File Include</H2>
 
 This rule submits a series of requests with external URLs as parameter values and looks for a match between the the response body and the title of the page
 hosted at those URLs. If there is a match between the expected string and the response body, and the header returned a status code of 200, an alert is raised and the scanner
 returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestRemoteFileInclude.java">TestRemoteFileInclude.java</a>
 
 <H2>Server Side Include</H2>
 
 This rule checks to see what OS the server is running on, then sends requests with a corresponding HTML SSI directive as a parameter value. If the response body matches
 a pattern indicating the SSI was successful, an alert is raised and the scanner returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestServerSideInclude.java">TestServerSideInclude.java</a>
 
 <H2>Source Code Disclosure - /WEB-INF</H2>
 Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.<br>
 <strong>Note:</strong> Currently not supported on Java 9 and above.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SourceCodeDisclosureWEBINF.java">SourceCodeDisclosureWEBINF.java</a>
 
 <H2>SQL Injection</H2>
 
@@ -116,6 +140,8 @@ by attacking url parameters and form parameters with fragments of valid and inva
 boolean based, Union based, and stacked query SQL Injection techniques. <br>
 This scanner may be able to fingerprint the RDBMS if the application throws a known RDBMS specific SQL error message. <br>
 This scanner does not exploit any RDBMS specific techniques, and so is the best SQL injection scanner to use as a starting point. 
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TestSQLInjection.java">TestSQLInjection.java</a>
 
 </BODY>
 </HTML>
