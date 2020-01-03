@@ -13,19 +13,27 @@ The following alpha quality active scan rules are included in this add-on:
 This implements an example active scan rule that loads strings from a file that the user can edit.<br>
 For more details see: 
 <a href="http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html">Hacking ZAP Part 4: Active Scan Rules.</a>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanner.java">ExampleFileActiveScanner.java</a>
 
 <H2>Cloud Metadata Attack</H2>
 Attempts to abuse a misconfigured NGINX server in order to access the instance metadata maintained by cloud service providers such as AWS, GCP and Azure.<br>
 All of these providers provide metadata via an internal unroutable IP address '169.254.169.254' - this can be exposed by incorrectly configured NGINX servers and accessed by using this IP address in the Host header field.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CloudMetadataScanner.java">CloudMetadataScanner.java</a>
 
 <H2>.env Information Leak</H2>
 Checks for web accessible .env files which may leak sensitive information 
 (such as usernames, passwords, API or APP keys, etc.).
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/EnvFileScanner.java">EnvFileScanner.java</a>
 
 <H2>Example Active Scanner: Denial of Service</H2>
 This implements a very simple example active scan rule.<br>
 For more details see: 
 <a href="http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html">Hacking ZAP Part 4: Active Scan Rules.</a>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanner.java">ExampleSimpleActiveScanner.java</a>
 
 <H2>Hidden File Finder</H2>
 This scan rule checks for various web accessible files which may leak administrative, configuration, or credential information.
@@ -66,12 +74,18 @@ The following is an example JSON entry:
   "source":"snallygaster"
 }
 </code></pre>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/HiddenFilesScanRule.java">HiddenFilesScanRule.java</a>
 
 <H2>LDAP Injection</H2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LDAPInjection.java">LDAPInjection.java</a>
 
 <H2>XSLT Injection Scanner</H2>
 This active scanner checks for certain responses induced by injecting XSL transformations. <br/>
 It attempts to obtain those responses with payloads which may induce: error responses, disclosure of library/framework vendor name, remote port scanning, or command execution.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/XSLTInjection.java">XSLTInjection.java</a>
 </BODY>
 </HTML>
