@@ -19,7 +19,6 @@ zapAddOn {
 
 dependencies {
     testImplementation(project(":testutils"))
-    testImplementation("org.simpleframework:simple:5.0.2")
 }
 
 spotless {
