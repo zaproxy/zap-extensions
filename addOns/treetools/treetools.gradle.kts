@@ -10,5 +10,10 @@ zapAddOn {
 
     manifest {
         author.set("Carl Sampson")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }

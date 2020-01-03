@@ -7,5 +7,10 @@ zapAddOn {
 
     manifest {
         author.set("Surikato")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }

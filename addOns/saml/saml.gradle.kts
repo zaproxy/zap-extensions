@@ -2,11 +2,16 @@ version = "9"
 description = "Detect, Show, Edit, Fuzz SAML requests"
 
 zapAddOn {
-    addOnName.set("SAML Extension")
+    addOnName.set("SAML Support")
     zapVersion.set("2.5.0")
 
     manifest {
         author.set("ZAP Dev Team")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

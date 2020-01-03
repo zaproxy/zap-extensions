@@ -7,5 +7,10 @@ zapAddOn {
 
     manifest {
         author.set("thatsn0tmysite")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
