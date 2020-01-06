@@ -7,6 +7,11 @@ zapAddOn {
 
     manifest {
         author.set("Colm O'Flaherty")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

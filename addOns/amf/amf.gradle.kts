@@ -6,11 +6,16 @@ repositories {
 }
 
 zapAddOn {
-    addOnName.set("AMF")
+    addOnName.set("AMF Support")
     zapVersion.set("2.7.0")
 
     manifest {
         author.set("ZAP Dev Team")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

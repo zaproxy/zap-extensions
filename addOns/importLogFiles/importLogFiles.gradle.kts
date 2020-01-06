@@ -8,6 +8,11 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://github.com/zaproxy/zaproxy/wiki/MozillaMentorship_ImportingModSecurityLogs")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 
     apiClientGen {

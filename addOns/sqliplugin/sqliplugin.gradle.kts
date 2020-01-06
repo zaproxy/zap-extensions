@@ -10,6 +10,11 @@ zapAddOn {
 
     manifest {
         author.set("Andrea Pompili (Yhawke)")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

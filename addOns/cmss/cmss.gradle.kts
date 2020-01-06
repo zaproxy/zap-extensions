@@ -7,6 +7,11 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 
