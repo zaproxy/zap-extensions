@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
+import org.zaproxy.zap.sharedutils.AbstractAppFilePlugin;
 
 /**
  * Active scan rule which checks whether or not trace.axd is exposed.

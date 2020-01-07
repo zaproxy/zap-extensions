@@ -30,6 +30,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.CookieUtils;
 
 public class CookieSecureFlagScanner extends PluginPassiveScanner {
 
