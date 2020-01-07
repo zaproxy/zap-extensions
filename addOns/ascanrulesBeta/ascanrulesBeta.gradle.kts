@@ -32,6 +32,7 @@ dependencies {
 
     implementation("com.googlecode.java-diff-utils:diffutils:1.2.1")
     implementation("org.jsoup:jsoup:1.7.2")
+    implementation(project(":sharedutils"))
 
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))

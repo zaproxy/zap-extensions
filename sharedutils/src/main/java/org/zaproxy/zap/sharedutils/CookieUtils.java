@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrules;
+package org.zaproxy.zap.sharedutils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,7 +32,7 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
 /** Utility class to extract/parse/check Set-Cookie header values. */
-class CookieUtils {
+public class CookieUtils {
 
     private static final int NOT_FOUND = -1;
     private static final Logger LOGGER = Logger.getLogger(CookieUtils.class);

@@ -29,6 +29,7 @@ zapAddOn {
 
 dependencies {
     implementation("com.shapesecurity:salvation:2.7.0")
+    implementation(project(":sharedutils"))
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
     testImplementation(parent!!.childProjects.get("custompayloads")!!)

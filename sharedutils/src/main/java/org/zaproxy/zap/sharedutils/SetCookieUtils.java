@@ -17,17 +17,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrules;
+package org.zaproxy.zap.sharedutils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Utility class to extract/parse/check Set-Cookie header values. This is a copy of the file of the
- * same name in the master branch with some additional methods - these should be merged into the
- * master version if/when the scan rules that use these methods are promoted to release.
- */
-class SetCookieUtils {
+/** Utility class to extract/parse/check Set-Cookie header values. */
+public class SetCookieUtils {
 
     private static final int NOT_FOUND = -1;
 

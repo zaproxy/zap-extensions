@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import org.zaproxy.zap.sharedutils.AbstractAppFilePlugin;
+
 public class EnvFileScanner extends AbstractAppFilePlugin {
 
     private static final String MESSAGE_PREFIX = "ascanalpha.envfilescanner.";
