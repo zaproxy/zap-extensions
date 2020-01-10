@@ -11,7 +11,7 @@ eclipse {
     }
 }
 
-version = "30"
+version = "31"
 description = "A graphical security scripting language, ZAPs macro language on steroids"
 
 zapAddOn {
@@ -34,8 +34,13 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("selenium")!!)
-    implementation("com.google.code.gson:gson:2.2.2")
-    implementation(files("lib/mozilla-zest-0.13.jar"))
+    implementation("org.mozilla:zest:0.14.0") {
+        // Provided by Selenium add-on.
+        exclude(group = "org.seleniumhq.selenium")
+        exclude(group = "com.codeborne", module = "phantomjsdriver")
+        // Provided by ZAP.
+        exclude(group = "net.htmlparser.jericho", module = "jericho-html")
+    }
     implementation("org.owasp.jbrofuzz:jbrofuzz-core:2.5.1") {
         // Only "jbrofuzz-core" is needed.
         setTransitive(false)

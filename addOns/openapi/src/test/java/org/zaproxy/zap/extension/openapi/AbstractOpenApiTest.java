@@ -19,15 +19,13 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import org.junit.After;
 import org.junit.Before;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /**
  * Base class for OpenAPI tests.
  *
- * <p>It's responsible for {@link #startServer() starting} and {@link #stopServer() stopping} the
- * HTTP test server and {@link #setUpZap() set up ZAP} for each test method.
+ * <p>It's responsible for {@link #setUpZap() setup ZAP} for each test method.
  */
 public abstract class AbstractOpenApiTest extends TestUtils {
 
@@ -37,13 +35,7 @@ public abstract class AbstractOpenApiTest extends TestUtils {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setup() throws Exception {
         setUpZap();
-        startServer();
-    }
-
-    @After
-    public void teardown() throws Exception {
-        stopServer();
     }
 }

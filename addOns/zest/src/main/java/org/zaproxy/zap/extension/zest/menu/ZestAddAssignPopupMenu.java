@@ -24,6 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.mozilla.zest.core.v1.ZestAssignCalc;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
+import org.mozilla.zest.core.v1.ZestAssignFromElement;
+import org.mozilla.zest.core.v1.ZestAssignGlobalVariable;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignReplace;
@@ -130,6 +132,8 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
         createPopupAddActionMenu(
                 parent, child, req, new ZestAssignReplace(null, text, null, false, false));
         createPopupAddActionMenu(parent, child, req, new ZestAssignCalc());
+        createPopupAddActionMenu(parent, child, req, new ZestAssignFromElement());
+        createPopupAddActionMenu(parent, child, req, new ZestAssignGlobalVariable());
     }
 
     private void createPopupAddActionMenu(

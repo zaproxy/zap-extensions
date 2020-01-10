@@ -5,6 +5,7 @@
 /buildSrc/build
 /addOns/**/build
 /testutils/build
+/sharedutils/build
 
 # IDEA
 # ----
@@ -20,6 +21,7 @@
 /out
 /addOns/**/out
 /testutils/out
+/sharedutils/out
 
 # Eclipse
 # -------
@@ -30,6 +32,7 @@
 /buildSrc/bin
 /addOns/**/bin
 /testutils/bin
+/sharedutils/bin
 
 # NetBeans
 # --------

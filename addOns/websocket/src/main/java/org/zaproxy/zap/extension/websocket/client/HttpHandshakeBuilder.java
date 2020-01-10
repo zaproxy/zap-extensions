@@ -45,7 +45,7 @@ public class HttpHandshakeBuilder {
 
     /**
      * Craft a Http Handshake request which request to upgrade protocol. The handshake request
-     * contains the basic headers (Host, Sec-WebSocket-key, Connection, Upgrade, etc).
+     * contains the basic headers (Host, Sec-WebSocket-key, Connection, Upgrade, etc.).
      *
      * @param hostUri where the handshake will be send
      * @throws HttpMalformedHeaderException

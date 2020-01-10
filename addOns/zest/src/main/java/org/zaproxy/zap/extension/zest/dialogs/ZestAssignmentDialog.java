@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestAssignCalc;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
+import org.mozilla.zest.core.v1.ZestAssignFromElement;
+import org.mozilla.zest.core.v1.ZestAssignGlobalVariable;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignReplace;
@@ -65,6 +67,27 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
     private static final String FIELD_STRING = "zest.dialog.assign.label.string";
     private static final String FIELD_STRING_PREFIX = "zest.dialog.assign.label.strprefix";
     private static final String FIELD_STRING_POSTFIX = "zest.dialog.assign.label.strpostfix";
+    private static final String FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT =
+            "zest.dialog.assign.label.filterByElement";
+    private static final String FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT_NAME =
+            "zest.dialog.assign.label.filterByElementName";
+    private static final String FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE =
+            "zest.dialog.assign.label.filterByAttribute";
+    private static final String FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_NAME =
+            "zest.dialog.assign.label.filterByAttributeName";
+    private static final String FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_VALUE =
+            "zest.dialog.assign.label.filterByAttributeValue";
+    private static final String FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_REVERSED =
+            "zest.dialog.assign.label.filteredElementsReversed";
+    private static final String FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_INDEX =
+            "zest.dialog.assign.label.filteredElementsIndex";
+    private static final String FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR =
+            "zest.dialog.assign.label.filteredElementsSelector";
+    private static final String FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME =
+            "zest.dialog.assign.label.filteredElementsSelectorAttributeName";
+    private static final String FROM_ELEMENT_SELECTOR_CONTENT = "Content";
+    private static final String FROM_ELEMENT_SELECTOR_ATTRIBUTE = "Attribute";
+    private static final String FIELD_GLOBAL_VAR = "zest.dialog.assign.label.globalvar";
 
     private static final long serialVersionUID = 1L;
 
@@ -181,9 +204,92 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
                     ZestZapUtils.calcOperationToLabel(za.getOperation()));
 
             ZestZapUtils.setMainPopupMenu(this.getField(FIELD_STRING));
+
+        } else if (assign instanceof ZestAssignFromElement) {
+            ZestAssignFromElement za = (ZestAssignFromElement) assign;
+            this.setSize(new Dimension(600, 450));
+            this.addTextField(FIELD_VARIABLE, assign.getVariableName());
+
+            this.addCheckBoxField(
+                    FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT, za.isFilteredByElementName());
+            this.addTextField(FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT_NAME, za.getElementNameFilter());
+            this.addFieldListenerToSetEnabledOnCheckedChanged(
+                    FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT,
+                    new String[] {FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT_NAME});
+
+            this.addCheckBoxField(
+                    FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE, za.isFilteredByAttribute());
+            this.addTextField(
+                    FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_NAME, za.getAttributeNameFilter());
+            this.addTextField(
+                    FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_VALUE, za.getAttributeValueFilter());
+            this.addFieldListenerToSetEnabledOnCheckedChanged(
+                    FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE,
+                    new String[] {
+                        FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_NAME,
+                        FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_VALUE
+                    });
+
+            this.addCheckBoxField(
+                    FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_REVERSED,
+                    za.areFilteredElementsReversed());
+            this.addNumberField(
+                    FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_INDEX,
+                    0,
+                    Integer.MAX_VALUE,
+                    za.getElementIndex());
+
+            this.addComboField(
+                    FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR,
+                    new String[] {FROM_ELEMENT_SELECTOR_CONTENT, FROM_ELEMENT_SELECTOR_ATTRIBUTE},
+                    za.isReturningAttribute()
+                            ? FROM_ELEMENT_SELECTOR_ATTRIBUTE
+                            : FROM_ELEMENT_SELECTOR_CONTENT);
+            this.addTextField(
+                    FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME,
+                    za.getReturnedAttributeName());
+            initElementsSelector();
+            this.addFieldListener(
+                    FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR, e -> initElementsSelector());
+
+            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT_NAME));
+            ZestZapUtils.setMainPopupMenu(
+                    this.getField(FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_NAME));
+            ZestZapUtils.setMainPopupMenu(
+                    this.getField(FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_VALUE));
+            ZestZapUtils.setMainPopupMenu(
+                    this.getField(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_INDEX));
+            ZestZapUtils.setMainPopupMenu(
+                    this.getField(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME));
+        } else if (assign instanceof ZestAssignGlobalVariable) {
+            ZestAssignGlobalVariable za = (ZestAssignGlobalVariable) assign;
+            addTextField(FIELD_VARIABLE, assign.getVariableName());
+            addTextField(FIELD_GLOBAL_VAR, za.getGlobalVariableName());
         }
 
         this.addPadding();
+    }
+
+    private void initElementsSelector() {
+        String value = this.getStringValue(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR);
+        getField(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME)
+                .setEnabled(value == FROM_ELEMENT_SELECTOR_ATTRIBUTE);
+    }
+
+    private void addFieldListenerToSetEnabledOnCheckedChanged(
+            String checkBoxName, String[] fieldNames) {
+        final String localCheckBoxName = checkBoxName;
+        final String[] localFieldNames = fieldNames;
+        setEnabledOnCheckedChanged(localCheckBoxName, localFieldNames);
+        this.addFieldListener(
+                checkBoxName, e -> setEnabledOnCheckedChanged(localCheckBoxName, localFieldNames));
+    }
+
+    private void setEnabledOnCheckedChanged(String checkBoxName, String[] fieldNames) {
+        Boolean checked = getBoolValue(checkBoxName);
+        for (String fieldName : fieldNames) {
+            getField(fieldName).setEnabled(checked);
+        }
     }
 
     private List<String> getVariableNames(boolean editable) {
@@ -278,6 +384,39 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
             za.setOperandB(this.getStringValue(FIELD_OPERAND_B));
             za.setOperation(
                     ZestZapUtils.labelToCalcOperation(this.getStringValue(FIELD_OPERATION)));
+        } else if (assign instanceof ZestAssignFromElement) {
+            ZestAssignFromElement za = (ZestAssignFromElement) assign;
+            za.removeFilter();
+
+            if (this.getBoolValue(FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT)) {
+                String elementFilter = getStringValue(FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT_NAME);
+                za.whereElementIs(elementFilter);
+            }
+
+            if (this.getBoolValue(FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE)) {
+                String attributeFilterName =
+                        getStringValue(FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_NAME);
+                String attributeFilterValue =
+                        getStringValue(FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_VALUE);
+                za.whereAttributeIs(attributeFilterName, attributeFilterValue);
+            }
+
+            boolean reverse = this.getBoolValue(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_REVERSED);
+            int index = this.getIntValue(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_INDEX);
+            za.atIndex(index, reverse);
+
+            String value = this.getStringValue(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR);
+            if (value == FROM_ELEMENT_SELECTOR_CONTENT) {
+                za.selectContent();
+            } else if (value == FROM_ELEMENT_SELECTOR_ATTRIBUTE) {
+                String attributeName =
+                        getStringValue(
+                                FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME);
+                za.selectAttributeValue(attributeName);
+            }
+        } else if (assign instanceof ZestAssignGlobalVariable) {
+            ZestAssignGlobalVariable za = (ZestAssignGlobalVariable) assign;
+            za.setGlobalVariableName(getStringValue(FIELD_GLOBAL_VAR));
         }
 
         if (add) {
@@ -358,6 +497,48 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
             }
             if (this.isEmptyField(FIELD_OPERAND_B)) {
                 return Constant.messages.getString("zest.dialog.assign.error.operand");
+            }
+        } else if (assign instanceof ZestAssignFromElement) {
+            if (this.getBoolValue(FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT)
+                    && this.isEmptyField(FIELD_FROM_ELEMENT_FILTER_BY_ELEMENT_NAME)) {
+                return Constant.messages.getString("zest.dialog.assign.error.filterByElementEmpty");
+            }
+
+            if (this.getBoolValue(FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE)
+                    && (this.isEmptyField(FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_NAME)
+                            || this.isEmptyField(FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_VALUE))) {
+                return Constant.messages.getString(
+                        "zest.dialog.assign.error.filterByAttributeEmpty");
+            }
+
+            try {
+                Pattern.compile(this.getStringValue(FIELD_FROM_ELEMENT_FILTER_BY_ATTRIBUTE_VALUE));
+            } catch (Exception e) {
+                return Constant.messages.getString(
+                        "zest.dialog.assign.error.filterByAttributeValueRegexInvalid");
+            }
+
+            if (this.isEmptyField(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_INDEX)
+                    || this.getIntValue(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_INDEX) < 0) {
+                return Constant.messages.getString(
+                        "zest.dialog.assign.error.filteredElementsIndexInvalid");
+            }
+
+            if (this.isEmptyField(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR)) {
+                return Constant.messages.getString(
+                        "zest.dialog.assign.error.filteredElementsSelectorEmpty");
+            }
+
+            String value = this.getStringValue(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR);
+            if (value == FROM_ELEMENT_SELECTOR_ATTRIBUTE
+                    && this.isEmptyField(
+                            FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME)) {
+                return Constant.messages.getString(
+                        "zest.dialog.assign.error.filteredElementsSelectorAttributeNameEmpty");
+            }
+        } else if (assign instanceof ZestAssignGlobalVariable) {
+            if (isEmptyField(FIELD_GLOBAL_VAR)) {
+                return Constant.messages.getString("zest.dialog.assign.error.globalvar");
             }
         }
         return null;

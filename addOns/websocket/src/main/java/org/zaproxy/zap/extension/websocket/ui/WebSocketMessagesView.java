@@ -30,7 +30,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.view.View;
@@ -65,7 +64,9 @@ public class WebSocketMessagesView implements Runnable {
     public void setModel(WebSocketMessagesViewModel model) {
         this.model = model;
         view.setModel(model);
-        view.setRowSorter(new TableRowSorter<>(model));
+        // XXX Don't allow sorting for now, does not work properly:
+        // https://github.com/zaproxy/zaproxy/issues/1661
+        // view.setRowSorter(new TableRowSorter<>(model));
     }
 
     /**
@@ -100,6 +101,11 @@ public class WebSocketMessagesView implements Runnable {
             new TableColumnManager(view);
 
             view.revalidate();
+
+            // XXX Don't allow sorting for now, does not work properly:
+            // https://github.com/zaproxy/zaproxy/issues/1661
+            view.setRowSorter(null);
+            view.setSortable(false);
         }
         return view;
     }

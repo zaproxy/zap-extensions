@@ -46,6 +46,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.AbstractFrame;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 public class BeanShellConsoleFrame extends AbstractFrame {
 
@@ -247,7 +248,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                                 }
 
                             } else {
-                                JFileChooser fc = new JFileChooser(scriptsDir);
+                                JFileChooser fc = new WritableFileChooser(new File(scriptsDir));
                                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                                 int result = fc.showSaveDialog(getBeanShellPanel());
 
@@ -282,7 +283,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            JFileChooser fc = new JFileChooser(scriptsDir);
+                            JFileChooser fc = new WritableFileChooser(new File(scriptsDir));
                             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                             int result = fc.showSaveDialog(getBeanShellPanel());
                             if (result == JFileChooser.APPROVE_OPTION) {

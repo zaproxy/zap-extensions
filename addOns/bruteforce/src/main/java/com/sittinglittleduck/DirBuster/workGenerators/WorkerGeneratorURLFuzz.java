@@ -39,10 +39,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.log4j.Logger;
 
 /** Produces the work to be done, when we are reading from a list */
 public class WorkerGeneratorURLFuzz implements Runnable {
@@ -66,6 +65,9 @@ public class WorkerGeneratorURLFuzz implements Runnable {
 
     private String urlFuzzStart;
     private String urlFuzzEnd;
+
+    /* Logger object for the class */
+    private static final Logger LOG = Logger.getLogger(WorkerGeneratorURLFuzz.class);
 
     /**
      * Creates a new instance of WorkerGenerator
@@ -120,9 +122,9 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 }
                 manager.setTotalPass(passTotal);
             } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
+                LOG.error(String.format("File '%s' not found!", inputFile), ex);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                LOG.error(ex);
             }
 
             if (manager.getAuto()) {
@@ -136,25 +138,29 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                     }
                     httphead.setFollowRedirects(Config.followRedirects);
                     int responceCode = httpclient.executeMethod(httphead);
-                    if (Config.debug) {
-                        System.out.println(
-                                "DEBUG WokerGen: responce code for head check = " + responceCode);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Response code for head check = " + responceCode);
                     }
                     if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
-                        if (Config.debug) {
-                            System.out.println(
-                                    "DEBUG WokerGen: Changing to GET only HEAD test returned 501(method no implmented) or a 400");
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(
+                                    "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                         }
                         manager.setAuto(false);
                     }
                 } catch (MalformedURLException e) {
+                    LOG.debug("Malformed URL", e);
                 } catch (IOException e) {
+                    LOG.debug(e);
                 }
             }
 
             d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
-            System.out.println(
-                    "Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
+            }
+
             int filesProcessed = 0;
 
             BaseCase baseCaseObj =
@@ -188,18 +194,21 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 Thread.sleep(3);
             }
         } catch (InterruptedException ex) {
-            Logger.getLogger(WorkerGeneratorURLFuzz.class.getName()).log(Level.SEVERE, null, ex);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(ex.toString());
+            }
         } catch (MalformedURLException ex) {
-            Logger.getLogger(WorkerGeneratorURLFuzz.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.warn("Failed to create the fuzzed URL:", ex);
         } catch (IOException ex) {
-            Logger.getLogger(WorkerGeneratorURLFuzz.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.warn("Failed to create the fuzzed URL:", ex);
         } finally {
             try {
                 d.close();
                 manager.setURLFuzzGenFinished(true);
             } catch (IOException ex) {
-                Logger.getLogger(WorkerGeneratorURLFuzz.class.getName())
-                        .log(Level.SEVERE, null, ex);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(ex.toString());
+                }
             }
         }
     }

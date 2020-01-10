@@ -19,13 +19,12 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import io.swagger.models.parameters.AbstractSerializableParameter;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.DateProperty;
-import io.swagger.models.properties.DateTimeProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -60,11 +59,13 @@ public class DataGenerator {
         return TYPES.get(type) != null;
     }
 
-    public String generate(
-            String name, AbstractSerializableParameter<?> parameter, List<String> refs) {
-        String defaultValue =
-                generateDefaultValue(parameter.getEnum(), parameter.getDefaultValue());
-        return generateParam(name, defaultValue, parameter, refs);
+    public String generate(String name, Parameter parameter) {
+        List<String> enumValues = null;
+        if (parameter.getSchema() instanceof StringSchema) {
+            enumValues = ((StringSchema) (parameter.getSchema())).getEnum();
+        }
+        String defaultValue = generateDefaultValue(enumValues, parameter.getSchema().getDefault());
+        return generateParam(name, defaultValue, parameter);
     }
 
     private static String generateDefaultValue(List<String> anEnum, Object defaultValue) {
@@ -80,98 +81,73 @@ public class DataGenerator {
         return "";
     }
 
-    private String generateParam(
-            String name,
-            String example,
-            AbstractSerializableParameter<?> parameter,
-            List<String> refs) {
+    private String generateParam(String name, String example, Parameter parameter) {
 
         if (example != null && !example.isEmpty()) {
             return example;
         }
-        if (isArray(parameter.getType())) {
-            return generateArrayValue(name, parameter, refs);
+        if (isArray(parameter.getSchema().getType())) {
+            return generateArrayValue(name, parameter);
         }
 
-        if (parameter.getItems() != null) {
-            return generateValue(name, parameter.getItems(), isPath(parameter.getIn()), refs);
+        if (parameter.getSchema() instanceof ArraySchema) {
+            Schema<?> items = ((ArraySchema) (parameter.getSchema())).getItems();
+            if (items != null) {
+                return generateValue(name, items, isPath(parameter.getIn()));
+            }
         }
 
-        return getExampleValue(isPath(parameter.getIn()), parameter.getType(), parameter.getName());
+        return getExampleValue(
+                isPath(parameter.getIn()), parameter.getSchema().getType(), parameter.getName());
     }
 
-    private String generateArrayValue(
-            String name, AbstractSerializableParameter<?> parameter, List<String> refs) {
+    private String generateArrayValue(String name, Parameter parameter) {
         boolean isPath = isPath(parameter.getIn());
-        if (!(parameter.getItems() instanceof ArrayProperty)) {
-            return generateValue(name, parameter.getItems(), isPath, refs);
+        if (!(parameter.getSchema() instanceof ArraySchema
+                && ((ArraySchema) parameter.getSchema()).getItems() instanceof ArraySchema)) {
+            return generateValue(name, ((ArraySchema) parameter.getSchema()).getItems(), isPath);
         }
         return generators
                 .getArrayGenerator()
                 .generate(
                         name,
-                        (ArrayProperty) parameter.getItems(),
-                        parameter.getCollectionFormat(),
-                        isPath,
-                        refs);
+                        ((ArraySchema) ((ArraySchema) parameter.getSchema()).getItems()),
+                        "",
+                        isPath);
     }
 
-    public String generateBodyValue(String name, Property property, List<String> refs) {
+    public String generateBodyValue(String name, Schema<?> property) {
         if (isArray(property.getType())) {
             return generators
                     .getArrayGenerator()
-                    .generate(name, (ArrayProperty) property, "csv", false, refs);
+                    .generate(name, (ArraySchema) property, "csv", false);
         }
-        return generateValue(name, property, false, refs);
+        return generateValue(name, property, false);
     }
 
-    public String generateValue(String name, Property items, boolean isPath, List<String> refs) {
+    public String generateValue(String name, Schema<?> schema, boolean isPath) {
         String value = "";
-        if (isEnumValue(items)) {
-            value = getEnumValue(items);
+        if (isEnumValue(schema)) {
+            value = getEnumValue(schema);
         }
-        if (isDateTime(items)) {
+        if (isDateTime(schema)) {
             value = "1970-01-01T00:00:00.001Z";
         }
-        if (isDate(items)) {
+        if (isDate(schema)) {
             value = "1970-01-01";
         }
 
-        value = generators.getValueGenerator().getValue(name, items.getType(), value);
+        value = generators.getValueGenerator().getValue(name, schema.getType(), value);
 
         if (value.isEmpty()) {
-            if ("ref".equals(items.getType())) {
-                if (items instanceof RefProperty) {
-                    RefProperty rp = (RefProperty) items;
-                    // You'd hope there was a cleaner way to do this, but I havnt found it yet :/
-                    if (rp.get$ref().startsWith("#/definitions/")) {
-                        String defn = rp.get$ref().substring(14);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Dereferencing definition: " + defn);
-                        }
-                        if (refs.contains(defn)) {
-                            // Likely to be a loop
-                            StringBuilder sb = new StringBuilder();
-                            sb.append("Apparent loop in the OpenAPI definition: ");
-                            for (String ref : refs) {
-                                sb.append(" / ");
-                                sb.append(ref);
-                            }
-                            this.generators.addErrorMessage(sb.toString());
-                            return "";
-                        } else {
-                            refs.add(defn);
-                            return this.generators.getBodyGenerator().generate(defn, false, refs);
-                        }
-                    }
-                }
-            }
-            value = getExampleValue(isPath, items.getType(), name);
-
+            value = getExampleValue(isPath, schema.getType(), name);
         } else {
-            if (!isPath && "string".equalsIgnoreCase(items.getType())) {
+            if (!isPath && "string".equalsIgnoreCase(schema.getType())) {
                 value = "\"" + value + "\"";
             }
+        }
+        if (value == null || value.isEmpty()) {
+            value = generators.getBodyGenerator().generate(schema);
         }
         return value;
     }
@@ -201,19 +177,19 @@ public class DataGenerator {
         return TYPES.get(type);
     }
 
-    public boolean isEnumValue(Property items) {
-        if (items instanceof StringProperty) {
-            if (((StringProperty) items).getEnum() != null) {
+    public boolean isEnumValue(Schema<?> schema) {
+        if (schema instanceof StringSchema) {
+            if (((StringSchema) schema).getEnum() != null) {
                 return true;
             }
         }
         return false;
     }
 
-    public String getEnumValue(Property items) {
+    public String getEnumValue(Schema<?> schema) {
         String value = "";
-        if (isEnumValue(items)) {
-            value = ((StringProperty) items).getEnum().get(0);
+        if (isEnumValue(schema)) {
+            value = ((StringSchema) schema).getEnum().get(0);
         }
         return value;
     }
@@ -226,11 +202,11 @@ public class DataGenerator {
         return "array".equals(type);
     }
 
-    public boolean isDateTime(Property property) {
-        return property instanceof DateTimeProperty;
+    public boolean isDateTime(Schema<?> schema) {
+        return schema instanceof DateTimeSchema;
     }
 
-    public boolean isDate(Property property) {
-        return property instanceof DateProperty;
+    public boolean isDate(Schema<?> schema) {
+        return schema instanceof DateSchema;
     }
 }

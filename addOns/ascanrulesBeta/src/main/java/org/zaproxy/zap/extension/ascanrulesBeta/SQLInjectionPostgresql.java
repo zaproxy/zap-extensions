@@ -48,7 +48,7 @@ import org.zaproxy.zap.model.TechSet;
  * <p>Important Notes for the POSTGRES database (and useful in the code): - takes -- style comments
  * - allows stacked queries via JDBC driver or in PHP??? - Constants in select must be in single
  * quotes, not doubles (like Hypersonic). - supports UDFs (very interesting!!) - 5 (by default)
- * second delay select statement (not taking into account casting, etc): SELECT pg_sleep(5) -
+ * second delay select statement (not taking into account casting, etc.): SELECT pg_sleep(5) -
  * metadata select statement: TODO
  *
  * @author 70pointer
@@ -81,7 +81,7 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
         SQL_ERROR_TO_DBMS.put("org.postgresql", "PostgreSQL");
         // Note: only Postgresql mappings here.
         // TODO: is this all?? we need more error messages for Postgresql for different languages.
-        // PHP, ASP, JSP(JDBC), etc
+        // PHP, ASP, JSP(JDBC), etc.
     }
 
     /**

@@ -1,4 +1,5 @@
 import java.nio.charset.StandardCharsets
+import java.util.Locale
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.apigen.ApiClientGenExtension
@@ -93,6 +94,26 @@ subprojects {
                 setFrom(apiGenClasspath)
                 from(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
+        }
+    }
+}
+
+tasks.register("reportMissingHelp") {
+    description = "Reports the add-ons that do not have help pages."
+    doLast {
+        val addOns = mutableListOf<AddOnPluginExtension>()
+        subprojects.forEach {
+            it.plugins.withType(AddOnPlugin::class) {
+                if (!File(it.projectDir, "src/main/javahelp").exists()) {
+                    addOns.add(it.zapAddOn)
+                }
+            }
+        }
+        if (addOns.isEmpty()) {
+            println("All add-ons have help.")
+        } else {
+            println("The following add-ons do not have help:")
+            addOns.forEach { println("${it.addOnId.get()} (${it.addOnStatus.get().toString().toLowerCase(Locale.ROOT)})") }
         }
     }
 }

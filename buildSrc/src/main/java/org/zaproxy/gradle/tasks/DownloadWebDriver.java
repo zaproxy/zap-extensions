@@ -21,6 +21,7 @@ package org.zaproxy.gradle.tasks;
 
 import io.github.bonigarcia.wdm.Architecture;
 import io.github.bonigarcia.wdm.DriverManagerType;
+import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.OperatingSystem;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Locale;
+import java.util.Optional;
 import javax.inject.Inject;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.RegularFileProperty;
@@ -144,7 +146,7 @@ public class DownloadWebDriver extends DefaultTask {
 
         @Override
         public void run() {
-            WebDriverManager wdm = WebDriverManager.getInstance(browser);
+            WebDriverManager wdm = getInstance(browser);
             wdm.forceCache()
                     .avoidPreferences()
                     .avoidExport()
@@ -166,6 +168,48 @@ public class DownloadWebDriver extends DefaultTask {
                                 + " to "
                                 + outputFile,
                         e);
+            }
+        }
+
+        private static WebDriverManager getInstance(DriverManagerType browser) {
+            switch (browser) {
+                case CHROME:
+                    return WebDriverManager.chromedriver();
+                case FIREFOX:
+                    return new FirefoxDriverManagerCustom();
+                default:
+                    throw new UnsupportedOperationException(
+                            "Only Chrome and Firefox are currently supported.");
+            }
+        }
+
+        private static class FirefoxDriverManagerCustom extends FirefoxDriverManager {
+
+            FirefoxDriverManagerCustom() {
+                instanceMap.put(DriverManagerType.FIREFOX, this);
+            }
+
+            @Override
+            protected Optional<String> getDriverFromCache(
+                    String driverVersion, Architecture arch, String os) {
+                Optional<String> driver = super.getDriverFromCache(driverVersion, arch, os);
+                if (isRequestedArch(driver, os, arch)) {
+                    return driver;
+                }
+                return Optional.empty();
+            }
+
+            private static boolean isRequestedArch(
+                    Optional<String> driver, String os, Architecture arch) {
+                // macOS has only one geckodriver binary.
+                if ("MAC".equals(os)) {
+                    return true;
+                }
+
+                return driver.isPresent()
+                        && driver.get()
+                                .toLowerCase()
+                                .contains(os.toLowerCase() + arch.toString().toLowerCase());
             }
         }
     }

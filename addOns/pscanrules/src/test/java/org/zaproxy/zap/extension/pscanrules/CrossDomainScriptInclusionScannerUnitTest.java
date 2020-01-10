@@ -19,15 +19,16 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -35,8 +36,19 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Context;
 
+/** Unit test for {@link CrossDomainScriptInclusionScanner}. */
 public class CrossDomainScriptInclusionScannerUnitTest
         extends PassiveScannerTest<CrossDomainScriptInclusionScanner> {
+
+    @Mock Model model;
+    @Mock Session session;
+
+    @Before
+    public void setup() {
+        when(session.getContextsForUrl(anyString())).thenReturn(Collections.emptyList());
+        when(model.getSession()).thenReturn(session);
+        rule.setModel(model);
+    }
 
     @Override
     protected CrossDomainScriptInclusionScanner createScanner() {
@@ -89,12 +101,6 @@ public class CrossDomainScriptInclusionScannerUnitTest
 
     @Test
     public void crossDomainScript() throws HttpMalformedHeaderException {
-        // Mock the model and session
-        Model model = Mockito.mock(Model.class);
-        Session session = Mockito.mock(Session.class);
-        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
-        when(model.getSession()).thenReturn(session);
-        rule.setModel(model);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -124,12 +130,6 @@ public class CrossDomainScriptInclusionScannerUnitTest
 
     @Test
     public void crossDomainScriptWithIntegrity() throws HttpMalformedHeaderException {
-        // Mock the model and session
-        Model model = Mockito.mock(Model.class);
-        Session session = Mockito.mock(Session.class);
-        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
-        when(model.getSession()).thenReturn(session);
-        rule.setModel(model);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -155,12 +155,6 @@ public class CrossDomainScriptInclusionScannerUnitTest
 
     @Test
     public void crossDomainScriptWithNullIntegrity() throws HttpMalformedHeaderException {
-        // Mock the model and session
-        Model model = Mockito.mock(Model.class);
-        Session session = Mockito.mock(Session.class);
-        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
-        when(model.getSession()).thenReturn(session);
-        rule.setModel(model);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -190,16 +184,10 @@ public class CrossDomainScriptInclusionScannerUnitTest
 
     @Test
     public void crossDomainScriptNotInContext() throws HttpMalformedHeaderException {
-        // Mock the model and session
-        Model model = Mockito.mock(Model.class);
-        Session session = Mockito.mock(Session.class);
+        // Given
         Context context = new Context(session, -1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
-        List<Context> contexts = new ArrayList<Context>();
-        contexts.add(context);
-        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
-        when(model.getSession()).thenReturn(session);
-        rule.setModel(model);
+        when(session.getContextsForUrl(anyString())).thenReturn(asList(context));
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -258,17 +246,11 @@ public class CrossDomainScriptInclusionScannerUnitTest
 
     @Test
     public void crossDomainScriptInContextHigh() throws HttpMalformedHeaderException {
-        // Mock the model and session
-        Model model = Mockito.mock(Model.class);
-        Session session = Mockito.mock(Session.class);
+        // Given
         Context context = new Context(session, -1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
         context.addIncludeInContextRegex("https://www.otherDomain.com/.*");
-        List<Context> contexts = new ArrayList<Context>();
-        contexts.add(context);
-        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
-        when(model.getSession()).thenReturn(session);
-        rule.setModel(model);
+        when(session.getContextsForUrl(anyString())).thenReturn(asList(context));
 
         rule.setAlertThreshold(AlertThreshold.HIGH);
 
@@ -296,17 +278,11 @@ public class CrossDomainScriptInclusionScannerUnitTest
 
     @Test
     public void crossDomainScriptInContextMed() throws HttpMalformedHeaderException {
-        // Mock the model and session
-        Model model = Mockito.mock(Model.class);
-        Session session = Mockito.mock(Session.class);
+        // Given
         Context context = new Context(session, -1);
         context.addIncludeInContextRegex("https://www.example.com/.*");
         context.addIncludeInContextRegex("https://www.otherDomain.com/.*");
-        List<Context> contexts = new ArrayList<Context>();
-        contexts.add(context);
-        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
-        when(model.getSession()).thenReturn(session);
-        rule.setModel(model);
+        when(session.getContextsForUrl(anyString())).thenReturn(asList(context));
 
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
 
@@ -334,18 +310,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
 
     @Test
     public void crossDomainScriptInContextLow() throws HttpMalformedHeaderException {
-        // Mock the model and session
-        Model model = Mockito.mock(Model.class);
-        Session session = Mockito.mock(Session.class);
-        Context context = new Context(session, -1);
-        context.addIncludeInContextRegex("https://www.example.com/.*");
-        context.addIncludeInContextRegex("https://www.otherDomain.com/.*");
-        List<Context> contexts = new ArrayList<Context>();
-        contexts.add(context);
-        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
-        when(model.getSession()).thenReturn(session);
-        rule.setModel(model);
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
 
         HttpMessage msg = new HttpMessage();

@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+- Remove tips related to Filter functionality, it no longer exists.
+- Updated for move from irc.mozilla.org to freenode
 
 ## [6] - 2019-06-07
 

@@ -46,6 +46,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
 
     private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle";
     private static final String FIELD_BROWSER_TYPE = "zest.dialog.client.label.browserType";
+    private static final String FIELD_HEADLESS = "zest.dialog.client.label.headless";
     private static final String FIELD_URL = "zest.dialog.client.label.url";
 
     private static String BROWSER_TYPE_PREFIX = "zest.dialog.client.browserType.label.";
@@ -116,6 +117,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
                 FIELD_BROWSER_TYPE,
                 getBrowserTypes(),
                 Constant.messages.getString(BROWSER_TYPE_PREFIX + browserType));
+        this.addCheckBoxField(0, FIELD_HEADLESS, client.isHeadless());
         this.addTextField(0, FIELD_URL, client.getUrl());
         this.addPadding(0);
 
@@ -318,6 +320,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
     public void save() {
         client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
         client.setBrowserType(this.getSelectedBrowserType());
+        client.setHeadless(this.getBoolValue(FIELD_HEADLESS));
         client.setUrl(this.getStringValue(FIELD_URL));
         client.setCapabilities(this.getCapabilityString());
 

@@ -71,6 +71,20 @@ org.zaproxy.zap.extension.script.ScriptVars.setScriptVar("ScriptName", "var.name
 org.zaproxy.zap.extension.script.ScriptVars.getScriptVar("ScriptName", "var.name")<br/>
 </code>
 
+<H2>Custom Global/Script Variables</H2>
+Newer versions of ZAP (after 2.8.0) allow to set custom global/script variables, which can be of any type not
+just strings, for example, lists, maps.<br/>
+In JavaScript they are accessed/set as follows:<br/><br/>
+<code>
+var ScriptVars = Java.type("org.zaproxy.zap.extension.script.ScriptVars")
+
+ScriptVars.setScriptCustomVar(this.context, "var.name", {x: 1, y: 3})
+print(ScriptVars.getScriptCustomVar(this.context, "var.name").y) // Prints 3
+
+ScriptVars.setGlobalCustomVar("var.name", ["A", "B", "C", "D"])
+print(ScriptVars.getGlobalCustomVar("var.name")[2]) // Prints C
+</code>
+
 <H2>See also</H2>
 <table>
 <tr>

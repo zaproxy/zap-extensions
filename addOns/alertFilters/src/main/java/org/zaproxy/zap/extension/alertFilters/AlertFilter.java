@@ -23,6 +23,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Enableable;
 
 public class AlertFilter extends Enableable {
@@ -32,13 +34,19 @@ public class AlertFilter extends Enableable {
      */
     private static final String FIELD_SEPARATOR = ";";
 
+    // Use -1 for global alert filters
     private int contextId;
     private int ruleId;
     // Use -1 as false positive
     private int newRisk;
     private String parameter;
+    private boolean isParameterRegex;
     private String url;
-    private boolean regex;
+    private boolean isUrlRegex;
+    private String attack;
+    private boolean isAttackRegex;
+    private String evidence;
+    private boolean isEvidenceRegex;
 
     private static final Logger log = Logger.getLogger(AlertFilter.class);
 
@@ -49,17 +57,61 @@ public class AlertFilter extends Enableable {
             int ruleId,
             int newRisk,
             String url,
-            boolean regex,
+            boolean isUrlRegex,
             String parameter,
+            boolean enabled) {
+        this(
+                contextId,
+                ruleId,
+                newRisk,
+                url,
+                isUrlRegex,
+                parameter,
+                false,
+                null,
+                false,
+                null,
+                false,
+                enabled);
+    }
+
+    public AlertFilter(
+            int contextId,
+            int ruleId,
+            int newRisk,
+            String url,
+            boolean isUrlRegex,
+            String parameter,
+            boolean isParameterRegex,
+            String attack,
+            boolean isAttackRegex,
+            String evidence,
+            boolean isEvidenceRegex,
             boolean enabled) {
         super();
         this.contextId = contextId;
         this.ruleId = ruleId;
         this.newRisk = newRisk;
         this.parameter = parameter;
+        this.isParameterRegex = isParameterRegex;
         this.url = url;
-        this.regex = regex;
+        this.isUrlRegex = isUrlRegex;
+        this.attack = attack;
+        this.isAttackRegex = isAttackRegex;
+        this.evidence = evidence;
+        this.isEvidenceRegex = isEvidenceRegex;
         this.setEnabled(enabled);
+    }
+
+    public AlertFilter(int contextId, Alert alert) {
+        super();
+        this.contextId = contextId;
+        this.ruleId = alert.getPluginId();
+        this.parameter = alert.getParam();
+        this.url = alert.getUri();
+        this.attack = alert.getAttack();
+        this.evidence = alert.getEvidence();
+        this.setEnabled(true);
     }
 
     public int getContextId() {
@@ -115,6 +167,14 @@ public class AlertFilter extends Enableable {
         this.parameter = parameter;
     }
 
+    public boolean isParameterRegex() {
+        return isParameterRegex;
+    }
+
+    public void setParameterRegex(boolean isParameterRegex) {
+        this.isParameterRegex = isParameterRegex;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -123,12 +183,44 @@ public class AlertFilter extends Enableable {
         this.url = url;
     }
 
-    public boolean isRegex() {
-        return regex;
+    public boolean isUrlRegex() {
+        return isUrlRegex;
     }
 
-    public void setRegex(boolean regex) {
-        this.regex = regex;
+    public void setUrlRegex(boolean isUrlRegex) {
+        this.isUrlRegex = isUrlRegex;
+    }
+
+    public String getAttack() {
+        return attack;
+    }
+
+    public void setAttack(String attack) {
+        this.attack = attack;
+    }
+
+    public boolean isAttackRegex() {
+        return isAttackRegex;
+    }
+
+    public void setAttackRegex(boolean isAttackRegex) {
+        this.isAttackRegex = isAttackRegex;
+    }
+
+    public String getEvidence() {
+        return evidence;
+    }
+
+    public void setEvidence(String evidence) {
+        this.evidence = evidence;
+    }
+
+    public boolean isEvidenceRegex() {
+        return isEvidenceRegex;
+    }
+
+    public void setEvidenceRegex(boolean isEvidenceRegex) {
+        this.isEvidenceRegex = isEvidenceRegex;
     }
 
     /**
@@ -146,11 +238,22 @@ public class AlertFilter extends Enableable {
             out.append(Base64.encodeBase64String(alertFilter.url.getBytes()));
         }
         out.append(FIELD_SEPARATOR);
-        out.append(alertFilter.isRegex()).append(FIELD_SEPARATOR);
+        out.append(alertFilter.isUrlRegex()).append(FIELD_SEPARATOR);
         if (alertFilter.parameter != null) {
             out.append(Base64.encodeBase64String(alertFilter.parameter.getBytes()));
         }
         out.append(FIELD_SEPARATOR);
+        out.append(alertFilter.isParameterRegex()).append(FIELD_SEPARATOR);
+        if (alertFilter.attack != null) {
+            out.append(Base64.encodeBase64String(alertFilter.attack.getBytes()));
+        }
+        out.append(FIELD_SEPARATOR);
+        out.append(alertFilter.isAttackRegex()).append(FIELD_SEPARATOR);
+        if (alertFilter.evidence != null) {
+            out.append(Base64.encodeBase64String(alertFilter.evidence.getBytes()));
+        }
+        out.append(FIELD_SEPARATOR);
+        out.append(alertFilter.isEvidenceRegex()).append(FIELD_SEPARATOR);
         // log.debug("Encoded AlertFilter: " + out.toString());
         return out.toString();
     }
@@ -172,13 +275,144 @@ public class AlertFilter extends Enableable {
             alertFilter.setRuleId(Integer.parseInt(pieces[1]));
             alertFilter.setNewRisk(Integer.parseInt(pieces[2]));
             alertFilter.setUrl(new String(Base64.decodeBase64(pieces[3])));
-            alertFilter.setRegex(Boolean.parseBoolean(pieces[4]));
+            alertFilter.setUrlRegex(Boolean.parseBoolean(pieces[4]));
             alertFilter.setParameter(new String(Base64.decodeBase64(pieces[5])));
+            if (pieces.length > 6) {
+                // Older versions will not have included these fields
+                alertFilter.setParameterRegex(Boolean.parseBoolean(pieces[6]));
+                alertFilter.setAttack(new String(Base64.decodeBase64(pieces[7])));
+                alertFilter.setAttackRegex(Boolean.parseBoolean(pieces[8]));
+                alertFilter.setEvidence(new String(Base64.decodeBase64(pieces[9])));
+                alertFilter.setEvidenceRegex(Boolean.parseBoolean(pieces[10]));
+            }
         } catch (Exception ex) {
             log.error("An error occured while decoding alertFilter from: " + encodedString, ex);
             return null;
         }
         // log.debug("Decoded alertFilter: " + alertFilter);
         return alertFilter;
+    }
+
+    public boolean appliesToAlert(Alert alert) {
+        return this.appliesToAlert(alert, false);
+    }
+
+    public boolean appliesToAlert(Alert alert, boolean ignoreContext) {
+        if (!isEnabled()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Filter disabled");
+            }
+            return false;
+        }
+        if (getRuleId() != alert.getPluginId()) {
+            // rule ids dont match
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "Filter didnt match plugin id: "
+                                + getRuleId()
+                                + " != "
+                                + alert.getPluginId());
+            }
+            return false;
+        }
+        if (!ignoreContext && this.contextId != -1) {
+            Context context = Model.getSingleton().getSession().getContext(this.contextId);
+            if (!context.isIncluded(alert.getUri()) || context.isExcluded(alert.getUri())) {
+                return false;
+            }
+        }
+        if (!matchesStringOrRegex("URL", getUrl(), isUrlRegex(), alert.getUri())) {
+            return false;
+        }
+        if (!matchesStringOrRegex(
+                "Parameter", getParameter(), isParameterRegex(), alert.getParam())) {
+            return false;
+        }
+        if (!matchesStringOrRegex("Attack", getAttack(), isAttackRegex(), alert.getAttack())) {
+            return false;
+        }
+        if (!matchesStringOrRegex(
+                "Evidence", getEvidence(), isEvidenceRegex(), alert.getEvidence())) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean matchesStringOrRegex(
+            String paramName, String paramValue, boolean isRegex, String targetValue) {
+        if (paramValue != null && paramValue.length() > 0) {
+            if (isRegex) {
+                if (!targetValue.matches(paramValue)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(
+                                "Filter didnt match "
+                                        + paramName
+                                        + " regex: "
+                                        + paramValue
+                                        + " : "
+                                        + targetValue);
+                    }
+                    return false;
+                }
+            } else if (!paramValue.equals(targetValue)) {
+                if (log.isDebugEnabled()) {
+                    log.debug(
+                            "Filter didnt match "
+                                    + paramName
+                                    + " : "
+                                    + paramValue
+                                    + " : "
+                                    + targetValue);
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((attack == null) ? 0 : attack.hashCode());
+        result = prime * result + contextId;
+        result = prime * result + ((evidence == null) ? 0 : evidence.hashCode());
+        result = prime * result + (isAttackRegex ? 1231 : 1237);
+        result = prime * result + (isEvidenceRegex ? 1231 : 1237);
+        result = prime * result + (isParameterRegex ? 1231 : 1237);
+        result = prime * result + (isUrlRegex ? 1231 : 1237);
+        result = prime * result + newRisk;
+        result = prime * result + ((parameter == null) ? 0 : parameter.hashCode());
+        result = prime * result + ruleId;
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!super.equals(obj)) return false;
+        if (getClass() != obj.getClass()) return false;
+        AlertFilter other = (AlertFilter) obj;
+        if (attack == null) {
+            if (other.attack != null) return false;
+        } else if (!attack.equals(other.attack)) return false;
+        if (contextId != other.contextId) return false;
+        if (evidence == null) {
+            if (other.evidence != null) return false;
+        } else if (!evidence.equals(other.evidence)) return false;
+        if (isAttackRegex != other.isAttackRegex) return false;
+        if (isEvidenceRegex != other.isEvidenceRegex) return false;
+        if (isParameterRegex != other.isParameterRegex) return false;
+        if (isUrlRegex != other.isUrlRegex) return false;
+        if (newRisk != other.newRisk) return false;
+        if (parameter == null) {
+            if (other.parameter != null) return false;
+        } else if (!parameter.equals(other.parameter)) return false;
+        if (ruleId != other.ruleId) return false;
+        if (url == null) {
+            if (other.url != null) return false;
+        } else if (!url.equals(other.url)) return false;
+        return true;
     }
 }

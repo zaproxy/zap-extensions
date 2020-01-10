@@ -34,6 +34,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableRemove;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableSet;
 import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
@@ -59,6 +61,8 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
     private static final String FIELD_SCRIPT = "zest.dialog.action.label.script";
     private static final String FIELD_VARIABLE = "zest.dialog.action.label.variable";
     private static final String FIELD_PARAMS = "zest.dialog.action.label.params";
+    private static final String FIELD_GLOBAL_VAR = "zest.dialog.action.label.globalvar";
+    private static final String FIELD_GLOBAL_VAR_VALUE = "zest.dialog.action.label.globalvar.value";
 
     private static final String PRIORITY_PREFIX = "zest.dialog.action.priority.";
 
@@ -164,6 +168,14 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
             buttons.add(getRemoveButton());
 
             this.addTableField(FIELD_PARAMS, this.getParamsTable(), buttons);
+        } else if (action instanceof ZestActionGlobalVariableSet) {
+            ZestActionGlobalVariableSet za = (ZestActionGlobalVariableSet) action;
+            addTextField(FIELD_GLOBAL_VAR, za.getGlobalVariableName());
+            addMultilineField(FIELD_GLOBAL_VAR_VALUE, za.getValue());
+            ZestZapUtils.setMainPopupMenu(getField(FIELD_GLOBAL_VAR_VALUE));
+        } else if (action instanceof ZestActionGlobalVariableRemove) {
+            ZestActionGlobalVariableRemove za = (ZestActionGlobalVariableRemove) action;
+            addTextField(FIELD_GLOBAL_VAR, za.getGlobalVariableName());
         }
         this.addPadding();
     }
@@ -388,6 +400,13 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
                     this.extension.getExtScript().getScript(this.getStringValue(FIELD_SCRIPT));
 
             za.setScript(sc.getFile().getAbsolutePath());
+        } else if (action instanceof ZestActionGlobalVariableSet) {
+            ZestActionGlobalVariableSet za = (ZestActionGlobalVariableSet) action;
+            za.setGlobalVariableName(getStringValue(FIELD_GLOBAL_VAR));
+            za.setValue(getStringValue(FIELD_GLOBAL_VAR_VALUE));
+        } else if (action instanceof ZestActionGlobalVariableRemove) {
+            ZestActionGlobalVariableRemove za = (ZestActionGlobalVariableRemove) action;
+            za.setGlobalVariableName(getStringValue(FIELD_GLOBAL_VAR));
         }
 
         if (add) {
@@ -404,7 +423,13 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 
     @Override
     public String validateFields() {
-        // Nothing to do
+        if (action instanceof ZestActionGlobalVariableSet
+                || action instanceof ZestActionGlobalVariableRemove) {
+            if (isEmptyField(FIELD_GLOBAL_VAR)) {
+                return Constant.messages.getString("zest.dialog.action.error.globalvar");
+            }
+        }
+
         // TODO check script chosen + variable name exists
         return null;
     }

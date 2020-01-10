@@ -107,6 +107,7 @@ public class WappalyzerJsonParser {
                 app.setScript(this.jsonToPatternList("SCRIPT", appData.get("script")));
                 app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
                 app.setImplies(this.jsonToStringList(appData.get("implies")));
+                app.setCpe(appData.optString("cpe"));
 
                 URL icon =
                         ExtensionWappalyzer.class.getResource(
@@ -215,7 +216,7 @@ public class WappalyzerJsonParser {
             try {
                 if (values[i].startsWith(FIELD_CONFIDENCE)) {
                     ap.setConfidence(
-                            Integer.parseInt(values[i].substring(FIELD_CONFIDENCE.length())));
+                            parseConfidence(values[i].substring(FIELD_CONFIDENCE.length())));
                 } else if (values[i].startsWith(FIELD_VERSION)) {
                     ap.setVersion(values[i].substring(FIELD_VERSION.length()));
                 } else {
@@ -233,5 +234,12 @@ public class WappalyzerJsonParser {
         }
         ap.setPattern(pattern);
         return ap;
+    }
+
+    private int parseConfidence(String confidence) {
+        if (confidence.contains(".")) {
+            return (int) Double.parseDouble(confidence) * 100;
+        }
+        return Integer.parseInt(confidence);
     }
 }

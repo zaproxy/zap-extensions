@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import io.swagger.models.Scheme;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
@@ -47,12 +46,10 @@ public class OpenApiSpider extends SpiderParser {
     @Override
     public boolean parseResource(HttpMessage message, Source source, int depth) {
         try {
-            Scheme defaultScheme =
-                    Scheme.forValue(message.getRequestHeader().getURI().getScheme().toLowerCase());
             Converter converter =
                     new SwaggerConverter(
-                            defaultScheme,
-                            message.getRequestHeader().getURI().getAuthority(),
+                            null,
+                            message.getRequestHeader().getURI().toString(),
                             message.getResponseBody().toString(),
                             this.getValueGenerator());
             requestor.run(converter.getRequestModels());

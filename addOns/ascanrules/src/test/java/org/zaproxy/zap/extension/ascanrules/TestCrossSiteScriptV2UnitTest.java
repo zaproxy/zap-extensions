@@ -34,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
+import java.nio.file.Path;
 import java.util.TreeSet;
 import org.junit.Test;
 import org.parosproxy.paros.Constant;
@@ -1190,5 +1191,10 @@ public class TestCrossSiteScriptV2UnitTest
                 equalTo("%253Cscript%253Ealert%25281%2529%253B%253C%252Fscript%253E"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Override
+    protected Path getResourcePath(String resourcePath) {
+        return super.getResourcePath("testcrosssitescriptv2/" + resourcePath);
     }
 }

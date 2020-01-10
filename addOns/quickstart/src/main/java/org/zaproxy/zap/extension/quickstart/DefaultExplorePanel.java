@@ -52,6 +52,7 @@ import org.zaproxy.zap.extension.dynssl.DynSSLParam;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 public class DefaultExplorePanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
@@ -144,7 +145,8 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
                         @Override
                         public void actionPerformed(ActionEvent arg0) {
                             final JFileChooser fc =
-                                    new JFileChooser(System.getProperty("user.home"));
+                                    new WritableFileChooser(
+                                            new File(System.getProperty("user.home")));
                             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                             fc.setMultiSelectionEnabled(false);
                             fc.setSelectedFile(new File(OWASP_ZAP_ROOT_CA_FILENAME));

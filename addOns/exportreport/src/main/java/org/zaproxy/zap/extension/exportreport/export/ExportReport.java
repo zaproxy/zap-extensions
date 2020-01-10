@@ -26,15 +26,18 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.SwingWorker;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.exportreport.ExtensionExportReport;
 import org.zaproxy.zap.extension.exportreport.filechooser.FileList;
 import org.zaproxy.zap.extension.exportreport.filechooser.ReportFileView;
@@ -44,8 +47,10 @@ import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 /*
- * AUTHOR: GORAN SARENKAPA - JordanGS
- * SPONSOR: RYERSON UNIVERSITY
+ * Original author: GORAN SARENKAPA - JordanGS
+ * Sponsor: RYERSON UNIVERSITY
+ *
+ * PDF Export: Adapted from Leandro Ferrari and Colm O'Flaherty's AlertExport.
  */
 
 public class ExportReport {
@@ -98,7 +103,9 @@ public class ExportReport {
                                 extension.extensionGetReportVer(),
                                 extension.extensionGetDescription(),
                                 extension.getIncludedAlertSeverity(),
-                                extension.getIncludedAlertDetails());
+                                extension.getIncludedAlertDetails(),
+                                null,
+                                true);
             } catch (UnsupportedEncodingException e) {
                 logger.error(e.getMessage(), e);
                 view.showWarningDialog(
@@ -130,6 +137,7 @@ public class ExportReport {
                         deleteFile(xmlGenerated); // , "The merged XML file: ");
                         show = true;
                         break;
+
                     case Utils.BOOTSTRAP:
                         view.showMessageDialog(
                                 Constant.messages.getString(
@@ -139,6 +147,7 @@ public class ExportReport {
                         f_view = ReportExport.transformation(view, xmlGenerated, xmlPath, mergeXSL);
                         show = true;
                         break;
+
                     case Utils.JSON:
                         view.showMessageDialog(
                                 Constant.messages.getString("exportreport.message.notice.json"));
@@ -147,11 +156,40 @@ public class ExportReport {
                         f_view = ReportExport.jsonExport(view, absolutePath, xmlGenerated);
                         deleteFile(xmlGenerated); // , "The merged XML file: ");
                         break;
+
                     case Utils.PDF:
-                        view.showMessageDialog(
-                                Constant.messages.getString("exportreport.message.notice.pdf"));
-                        // f_view = null;
+                        ReportExportPDF reportExportPDF = new ReportExportPDF();
+
+                        // Prepare alert list
+                        List<List<Alert>> alerts = reportExportPDF.joinSimilarAlerts(extension);
+                        alerts = reportExportPDF.filterAlertsByRiskLevel(extension, alerts);
+
+                        // Generate Report
+                        if (!alerts.isEmpty()) {
+                            boolean result =
+                                    reportExportPDF.exportAlert(
+                                            alerts, path + fileName + ".pdf", extension, view);
+
+                            if (result) {
+                                view.showMessageDialog(
+                                        Constant.messages.getString(
+                                                "exportreport.export.message.successful"));
+                                f_view = new File(path + fileName + ".pdf");
+                            } else {
+                                view.showMessageDialog(
+                                        Constant.messages.getString(
+                                                "exportreport.export.message.failed"));
+                            }
+                        } else {
+                            logger.debug("Alerts is empty");
+                            view.showWarningDialog(
+                                    Constant.messages.getString(
+                                            "exportreport.export.message.failed.empty"));
+                        }
+
+                        show = true;
                         break;
+
                     case Utils.DOC:
                         view.showMessageDialog(
                                 Constant.messages.getString("exportreport.message.notice.doc"));
@@ -161,6 +199,8 @@ public class ExportReport {
                         break;
                 }
             } finally {
+                // clear alertsDB from memory
+                extension.clearAlertsDB();
                 deleteFile(xmlPath);
             }
 
@@ -201,7 +241,9 @@ public class ExportReport {
             String ext,
             ArrayList<String> sourceDetailsList,
             ArrayList<String> alertSeverityList,
-            ArrayList<String> alertDetailsList) {
+            ArrayList<String> alertDetailsList,
+            ActiveScan scan,
+            boolean includePassiveAlerts) {
 
         File f = new File(absolutePath);
         String file = f.getName();
@@ -233,7 +275,9 @@ public class ExportReport {
                             extensionGetReportVer,
                             getDescription,
                             alertSeverityList,
-                            alertDetailsList);
+                            alertDetailsList,
+                            scan,
+                            includePassiveAlerts);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);
             CommandLine.error(Constant.messages.getString("exportreport.message.error.dump"));
@@ -278,10 +322,39 @@ public class ExportReport {
                     f_view = ReportExport.jsonExport(null, absolutePath, xmlGenerated);
                     deleteFile(xmlGenerated);
                     break;
+
                 case Utils.PDF:
-                    CommandLine.error(
-                            Constant.messages.getString("exportreport.message.notice.pdf"));
-                    return false;
+                    ReportExportPDF reportExportPDF = new ReportExportPDF();
+
+                    // Prepare alert list
+                    List<List<Alert>> alerts = reportExportPDF.joinSimilarAlerts(extension);
+                    alerts = reportExportPDF.filterAlertsByRiskLevel(extension, alerts);
+
+                    // Generate Report
+                    if (!alerts.isEmpty()) {
+                        boolean result =
+                                reportExportPDF.exportAlert(
+                                        alerts, path + fileName + ".pdf", extension, null);
+
+                        if (result) {
+                            CommandLine.info(
+                                    Constant.messages.getString(
+                                            "exportreport.export.message.successful"));
+                            f_view = new File(path + fileName + ".pdf");
+                        } else {
+                            CommandLine.info(
+                                    Constant.messages.getString(
+                                            "exportreport.export.message.failed"));
+                        }
+                    } else {
+                        CommandLine.info(
+                                Constant.messages.getString(
+                                        "exportreport.export.message.failed.empty"));
+                    }
+
+                    show = true;
+                    break;
+
                 case Utils.DOC:
                     CommandLine.error(
                             Constant.messages.getString("exportreport.message.notice.doc"));
@@ -290,6 +363,8 @@ public class ExportReport {
                     break;
             }
         } finally {
+            // clear alertsDB from memory
+            extension.clearAlertsDB();
             deleteFile(xmlPath);
         }
 

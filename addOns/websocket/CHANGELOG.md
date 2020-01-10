@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Maintenance changes.
+- Disable table sort in WebSockets panel, not working properly (Issue 1661).
 
 ## [20] - 2019-07-23
 

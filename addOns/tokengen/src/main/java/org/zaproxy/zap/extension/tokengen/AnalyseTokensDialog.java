@@ -43,6 +43,7 @@ import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyserListenner {
 
@@ -221,7 +222,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
     private void saveAnalysis() {
         JFileChooser chooser =
-                new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
+                new WritableFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
         File file = null;
         int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
         if (rc == JFileChooser.APPROVE_OPTION) {
@@ -230,9 +231,6 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
                 if (file == null) {
                     return;
                 }
-                Model.getSingleton()
-                        .getOptionsParam()
-                        .setUserDirectory(chooser.getCurrentDirectory());
 
                 try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
                     out.write(getErrorsArea().getText());

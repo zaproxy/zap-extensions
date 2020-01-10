@@ -2,7 +2,7 @@ version = "3"
 description = "Alert reports using BIRT report API"
 
 zapAddOn {
-    addOnName.set("birtreports")
+    addOnName.set("BIRT Reports")
     zapVersion.set("2.5.0")
 
     manifest {
@@ -10,6 +10,11 @@ zapAddOn {
         // Don't search the add-on classes (for now), the Extensions do not work properly:
         // https://github.com/zaproxy/zaproxy/issues/2235
         classpath.setFrom(files())
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

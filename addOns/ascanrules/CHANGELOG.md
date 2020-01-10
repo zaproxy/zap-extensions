@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Improved PowerShell injection control patterns to reduce false positives.
 - Maintenance changes.
-- Command Injection, Test Path Traversal, Test CrossSite ScriptV2, and Remote File Include rules are updated to include payloads for Null Byte Injection (Issue 3877).
+- Added links to the code in the help.
+- Issue 5271: Fix SQLi false positive (and potential false negative) when response bodies contain injection strings.
 
 ## [33] - 2019-06-07
 
@@ -47,7 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Issue 1365: Additional Path Traversal detection.
 - Correct alert's evidence/attack of Parameter Tampering (Issue 3524).
-- Fix Path Traversal false positives when etc is a substring (Issue 3735).
+- Fix Path Traversal false positives when `etc` is a substring (Issue 3735).
 - Code changes for Java 9 (Issue 2602).
 - TestSQLInjection Modifications to improve handling of injected math expressions and reflected params (Issue 3139).
 

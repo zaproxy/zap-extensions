@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+- Completed PDF Output support (Issue 5535)
+- Added option to specify active scan id in API.
+- Added option to specify inclusion of passive alerts in API and command line.
 
 ## [6] - 2019-06-24
 

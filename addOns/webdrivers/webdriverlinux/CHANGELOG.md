@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [15] - 2019-12-16
+### Fixed
+- Bundle correct geckodriver binary for respective architecture (Issue 5763).
+
+## [14] - 2019-12-12
+### Changed
+- Update ChromeDriver to v79.0.3945.36.
+
+## [13] - 2019-10-23
+### Changed
+- Update ChromeDriver to v78.0.3904.70.
+- Update geckodriver to v0.26.0.
+
+## [12] - 2019-09-13
+### Changed
+- Update ChromeDriver to v77.0.3865.40.
+- Update geckodriver to v0.25.0.
+
 ## [11] - 2019-08-01
 ### Changed
 - Update ChromeDriver to v76.0.3809.68.
@@ -62,6 +80,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v15
+[14]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v14
+[13]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v13
+[12]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v9

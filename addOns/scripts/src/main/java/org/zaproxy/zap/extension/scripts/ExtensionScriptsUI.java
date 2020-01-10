@@ -620,6 +620,9 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                 uninstallExtenderScript(script);
             }
         }
+        if (View.isInitialised()) {
+            this.getConsolePanel().removeScript(script);
+        }
     }
 
     @Override

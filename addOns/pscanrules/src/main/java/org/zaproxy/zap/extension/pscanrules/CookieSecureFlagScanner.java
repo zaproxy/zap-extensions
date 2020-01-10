@@ -30,6 +30,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.CookieUtils;
 
 public class CookieSecureFlagScanner extends PluginPassiveScanner {
 
@@ -78,6 +79,9 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
         while (iterator.hasNext()) {
             String headerValue = (String) iterator.next();
             if (!CookieUtils.hasAttribute(headerValue, SECURE_COOKIE_ATTRIBUTE)) {
+                if (CookieUtils.isExpired(headerValue)) {
+                    continue;
+                }
                 if (!ignoreList.contains(CookieUtils.getCookieName(headerValue))) {
                     this.raiseAlert(msg, id, headerValue);
                 }

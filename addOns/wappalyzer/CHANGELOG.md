@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [15] - 2019-12-20
+
+### Changed
+- Update patterns and icons as of AliasIO/wappalyzer@98814a0 (release 5.8.5+).
+- Support for CPE information (as a table column in the GUI, and element in the new API output [as applicable]).
+- Allow multi-select of rows to facilitate copy/paste, only show context menu if a single row is selected.
+
+### Added
+- Export button.
+- API with three views:
+  - listSites: Lists the sites that there are application (technology) details for [similar to the host:port drop down menu in the GUI].
+  - listAll: Lists all sites and their associated applications (technologies).
+  - listSite: Lists all the applications (technologies) for a given site [host:port] identifier.
+
+## [14] - 2019-10-02
+
+- Update apps.json and icons to align with AliasIO/Wappalyzer release 5.8.4 (plus any subsequent PRs).
+
 ## [13] - 2019-08-19
 
 - Performance improvements.
@@ -68,5 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v15
+[14]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v12

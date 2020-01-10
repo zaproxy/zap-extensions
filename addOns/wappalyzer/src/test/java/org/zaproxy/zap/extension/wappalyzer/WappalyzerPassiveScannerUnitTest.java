@@ -24,13 +24,12 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -133,11 +132,9 @@ public class WappalyzerPassiveScannerUnitTest
 
     private HttpMessage makeHttpMessage() throws HttpMalformedHeaderException {
         HttpMessage httpMessage = new HttpMessage();
-        SiteNode siteNode = Mockito.mock(SiteNode.class);
-        given(siteNode.getPastHistoryReference()).willReturn(new Vector<>());
 
-        HistoryReference ref = Mockito.mock(HistoryReference.class);
-        given(ref.getSiteNode()).willReturn(siteNode);
+        HistoryReference ref = mock(HistoryReference.class);
+        given(ref.getSiteNode()).willReturn(mock(SiteNode.class));
 
         httpMessage.setHistoryRef(ref);
 

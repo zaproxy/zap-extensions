@@ -1,7 +1,7 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
 version = "4"
-description = """Lists of directory names to be used with "Forced Browse" add-on."""
+description = "Lists of directory names to be used with Forced Browse or Fuzzer add-on."
 
 zapAddOn {
     addOnName.set("Directory List v2.3")
@@ -10,6 +10,11 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://owasp.org/index.php/DirBuster")
+        url.set("https://www.owasp.org/index.php/DirBuster")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }

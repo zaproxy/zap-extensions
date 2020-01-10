@@ -26,25 +26,18 @@ public class Generators {
 
     private ValueGenerator valueGenerator;
     private ArrayGenerator arrayGenerator;
-    private ModelGenerator modelGenerator;
+
     private BodyGenerator bodyGenerator;
     private DataGenerator dataGenerator;
-    private FormGenerator formGenerator;
     private PathGenerator pathGenerator;
     private List<String> errorMessages = new ArrayList<String>();
 
     public Generators(org.zaproxy.zap.model.ValueGenerator valueGenerator) {
         this.valueGenerator = new ValueGenerator(valueGenerator);
-        this.modelGenerator = new ModelGenerator();
         this.dataGenerator = new DataGenerator(this);
         this.bodyGenerator = new BodyGenerator(this);
         this.arrayGenerator = new ArrayGenerator(this.dataGenerator);
-        this.formGenerator = new FormGenerator(this.dataGenerator);
         this.pathGenerator = new PathGenerator(this.dataGenerator);
-    }
-
-    public ModelGenerator getModelGenerator() {
-        return modelGenerator;
     }
 
     public ArrayGenerator getArrayGenerator() {
@@ -57,10 +50,6 @@ public class Generators {
 
     public DataGenerator getDataGenerator() {
         return dataGenerator;
-    }
-
-    public FormGenerator getFormGenerator() {
-        return formGenerator;
     }
 
     public PathGenerator getPathGenerator() {

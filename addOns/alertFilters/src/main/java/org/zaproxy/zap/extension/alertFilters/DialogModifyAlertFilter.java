@@ -28,35 +28,16 @@ public class DialogModifyAlertFilter extends DialogAddAlertFilter {
     private static final String DIALOG_TITLE =
             Constant.messages.getString("alertFilters.dialog.modify.title");
 
-    public DialogModifyAlertFilter(Dialog owner, ExtensionAlertFilters extension) {
-        super(owner, extension, DIALOG_TITLE);
+    public DialogModifyAlertFilter(ExtensionAlertFilters extension, Dialog owner) {
+        super(extension, owner, DIALOG_TITLE);
     }
 
     public void setAlertFilter(AlertFilter alertFilter) {
-        this.alertFilter = alertFilter;
+        super.setAlertFilter(alertFilter);
     }
 
     @Override
     protected String getConfirmButtonLabel() {
         return Constant.messages.getString("alertFilters.dialog.modify.button.confirm");
-    }
-
-    @Override
-    protected void init() {
-        if (this.workingContext == null) {
-            throw new IllegalStateException(
-                    "A working Context should be set before setting the 'Add Dialog' visible.");
-        }
-        log.debug("Initializing modify alertFilter dialog for: " + alertFilter);
-        getAlertCombo()
-                .setSelectedItem(ExtensionAlertFilters.getRuleNameForId(alertFilter.getRuleId()));
-        getNewLevelCombo().setSelectedItem(AlertFilter.getNameForRisk(alertFilter.getNewRisk()));
-        getUrlTextField().setText(alertFilter.getUrl());
-        getRegexCheckBox().setSelected(alertFilter.isRegex());
-        getParamTextField().setText(alertFilter.getParameter());
-
-        getEnabledCheckBox().setSelected(alertFilter.isEnabled());
-
-        this.setConfirmButtonEnabled(true);
     }
 }

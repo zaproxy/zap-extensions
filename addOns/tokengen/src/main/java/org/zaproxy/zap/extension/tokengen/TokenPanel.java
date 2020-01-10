@@ -49,6 +49,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
+import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 public class TokenPanel extends AbstractPanel {
 
@@ -441,7 +442,7 @@ public class TokenPanel extends AbstractPanel {
 
     private void saveTokens() {
         JFileChooser chooser =
-                new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
+                new WritableFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
         File file = null;
         int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
         if (rc == JFileChooser.APPROVE_OPTION) {
@@ -450,9 +451,6 @@ public class TokenPanel extends AbstractPanel {
                 if (file == null) {
                     return;
                 }
-                Model.getSingleton()
-                        .getOptionsParam()
-                        .setUserDirectory(chooser.getCurrentDirectory());
 
                 CharacterFrequencyMap cfm = new CharacterFrequencyMap();
 

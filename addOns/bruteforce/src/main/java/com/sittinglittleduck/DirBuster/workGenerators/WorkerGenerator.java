@@ -40,6 +40,7 @@ import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.log4j.Logger;
 
 /** Produces the work to be done, when we are reading from a list */
 public class WorkerGenerator implements Runnable {
@@ -55,6 +56,9 @@ public class WorkerGenerator implements Runnable {
     private boolean stopMe = false;
     private boolean skipCurrent = false;
     HttpClient httpclient;
+
+    /* Logger Object for the class */
+    private static final Logger LOG = Logger.getLogger(WorkerGenerator.class);
 
     /**
      * Creates a new instance of WorkerGenerator
@@ -104,9 +108,9 @@ public class WorkerGenerator implements Runnable {
 
             manager.setTotalPass(passTotal);
         } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+            LOG.error(String.format("File '%s' not found!", inputFile), ex);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOG.error(ex);
         }
         // -------------------------------------------------
 
@@ -134,25 +138,22 @@ public class WorkerGenerator implements Runnable {
                 httphead.setFollowRedirects(Config.followRedirects);
                 int responceCode = httpclient.executeMethod(httphead);
 
-                if (Config.debug) {
-                    System.out.println(
-                            "DEBUG WokerGen: responce code for head check = " + responceCode);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Response code for head check = " + responceCode);
                 }
 
                 // if the responce code is method not implemented or if the head requests return
                 // 400!
                 if (responceCode == 501 || responceCode == 400 || responceCode == 405) {
-                    if (Config.debug) {
-                        System.out.println(
-                                "DEBUG WokerGen: Changing to GET only HEAD test returned 501(method no implmented) or a 400");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(
+                                "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                     }
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
-            } catch (MalformedURLException e) {
-                // TODO deal with error
             } catch (IOException e) {
-                // TODO deal with error
+                LOG.error(e);
             }
         }
 
@@ -182,7 +183,7 @@ public class WorkerGenerator implements Runnable {
 
                 manager.setCurrentlyProcessing(currentDir);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.debug(e);
             }
             started = currentDir;
 
@@ -196,10 +197,8 @@ public class WorkerGenerator implements Runnable {
 
                     baseCaseObj =
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error(e);
                 }
 
                 // end of dir fail case
@@ -214,8 +213,8 @@ public class WorkerGenerator implements Runnable {
                             new BufferedReader(
                                     new InputStreamReader(new FileInputStream(inputFile)));
 
-                    if (Config.debug) {
-                        System.out.println("DEBUG WokerGen: Generating dir list for " + firstPart);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Generating dir list for " + firstPart);
                     }
 
                     URL currentURL;
@@ -235,17 +234,17 @@ public class WorkerGenerator implements Runnable {
                             // System.out.println("first part = " + firstPart);
                             // System.out.println("current dir = " + currentDir);
                             workQueue.put(new WorkUnit(currentURL, true, "GET", baseCaseObj, null));
-                            if (Config.debug) {
-                                System.out.println(
-                                        "DEBUG WokerGen: 1 adding dir to work list "
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug(
+                                        "1 adding dir to work list "
                                                 + method
                                                 + " "
                                                 + currentDir.toString());
                             }
                         } catch (MalformedURLException ex) {
-                            ex.printStackTrace();
+                            LOG.debug("Bad URL", ex);
                         } catch (InterruptedException ex) {
-                            ex.printStackTrace();
+                            LOG.debug(ex);
                         }
                     } // end of dealing with first item
                     int dirsProcessed = 0;
@@ -284,9 +283,9 @@ public class WorkerGenerator implements Runnable {
                                 workQueue.put(
                                         new WorkUnit(currentURL, true, method, baseCaseObj, line));
                                 // System.out.println("Gen finshed adding to queue");
-                                if (Config.debug) {
-                                    System.out.println(
-                                            "DEBUG WokerGen: 2 adding dir to work list "
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug(
+                                            "2 adding dir to work list "
                                                     + method
                                                     + " "
                                                     + currentURL.toString());
@@ -296,7 +295,7 @@ public class WorkerGenerator implements Runnable {
                                 // e.printStackTrace();
                                 // do nothing if it's malformed, I dont care about them!
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                LOG.debug(e);
                             }
 
                             // if there is a call to stop the work gen then stop!
@@ -307,9 +306,9 @@ public class WorkerGenerator implements Runnable {
                         }
                     } // end of while
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    LOG.error(String.format("File '%s' not found!", inputFile), e);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error(e);
                 }
             }
 
@@ -338,10 +337,8 @@ public class WorkerGenerator implements Runnable {
                             baseCaseObj =
                                     GenBaseCase.genBaseCase(
                                             manager, firstPart + currentDir, false, fileExtention);
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            LOG.error(e);
                         }
 
                         // if the manager has sent the stop command then exit
@@ -392,9 +389,9 @@ public class WorkerGenerator implements Runnable {
                                                         method,
                                                         baseCaseObj,
                                                         line));
-                                        if (Config.debug) {
-                                            System.out.println(
-                                                    "DEBUG WokerGen: adding file to work list "
+                                        if (LOG.isDebugEnabled()) {
+                                            LOG.debug(
+                                                    "adding file to work list "
                                                             + method
                                                             + " "
                                                             + currentURL.toString());
@@ -403,7 +400,7 @@ public class WorkerGenerator implements Runnable {
                                         // e.printStackTrace();
                                         // again do nothing as I dont care
                                     } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                                        LOG.debug(e);
                                     }
 
                                     if (stopMe) {
@@ -414,9 +411,9 @@ public class WorkerGenerator implements Runnable {
                             } // end of while
                             // }
                         } catch (FileNotFoundException e) {
-                            e.printStackTrace();
+                            LOG.error(String.format("File '%s' not found!", inputFile), e);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            LOG.error(e);
                         }
                     }
                 } // end of file ext loop
@@ -427,7 +424,7 @@ public class WorkerGenerator implements Runnable {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                LOG.debug(ex);
             }
         } // end of main while
         // System.out.println("Gen FINISHED!");

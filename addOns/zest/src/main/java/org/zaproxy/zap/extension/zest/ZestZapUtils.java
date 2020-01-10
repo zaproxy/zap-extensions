@@ -34,6 +34,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableRemove;
+import org.mozilla.zest.core.v1.ZestActionGlobalVariableSet;
 import org.mozilla.zest.core.v1.ZestActionIntercept;
 import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
@@ -42,6 +44,8 @@ import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignCalc;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
+import org.mozilla.zest.core.v1.ZestAssignFromElement;
+import org.mozilla.zest.core.v1.ZestAssignGlobalVariable;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignReplace;
@@ -482,7 +486,101 @@ public class ZestZapUtils {
             } else {
                 return indexStr + Constant.messages.getString("zest.element.assign.calc.title");
             }
+        } else if (za instanceof ZestAssignFromElement) {
+            ZestAssignFromElement zsa = (ZestAssignFromElement) za;
+            if (incParams) {
 
+                StringBuilder sb = new StringBuilder();
+                if (!zsa.isFilteredByElementName() && !zsa.isFilteredByAttribute()) {
+                    sb.append(
+                            Constant.messages.getString(
+                                    "zest.element.assign.fromElement.elements"));
+                    sb.append("()");
+                }
+
+                if (zsa.isFilteredByElementName() || zsa.isFilteredByAttribute()) {
+                    sb.append(Constant.messages.getString("zest.element.assign.fromElement.where"));
+                    sb.append('(');
+                }
+
+                if (zsa.isFilteredByElementName()) {
+                    sb.append(
+                            Constant.messages.getString("zest.element.assign.fromElement.element"));
+                    sb.append(" == '");
+                    sb.append(zsa.getElementNameFilter());
+                    sb.append('\'');
+                }
+
+                if (zsa.isFilteredByElementName() && zsa.isFilteredByAttribute()) {
+                    sb.append(" && ");
+                }
+
+                if (zsa.isFilteredByAttribute()) {
+                    sb.append(
+                            Constant.messages.getString(
+                                    "zest.element.assign.fromElement.attributes"));
+                    sb.append("['");
+                    sb.append(zsa.getAttributeNameFilter());
+                    sb.append("'] ");
+                    sb.append(Constant.messages.getString("zest.element.assign.fromElement.match"));
+                    sb.append(" '");
+                    sb.append(zsa.getAttributeValueFilter());
+                    sb.append('\'');
+                }
+
+                if (zsa.isFilteredByElementName() || zsa.isFilteredByAttribute()) {
+                    sb.append(')');
+                }
+
+                if (zsa.areFilteredElementsReversed()) {
+                    sb.append('.');
+                    sb.append(
+                            Constant.messages.getString("zest.element.assign.fromElement.reverse"));
+                    sb.append("()");
+                }
+
+                sb.append('[');
+                sb.append(zsa.getElementIndex());
+                sb.append(']');
+
+                if (zsa.isReturningElement()) {
+                    sb.append('.');
+                    sb.append(
+                            Constant.messages.getString(
+                                    "zest.element.assign.fromElement.selectcontent"));
+                    sb.append("()");
+                }
+
+                if (zsa.isReturningAttribute()) {
+                    sb.append('.');
+                    sb.append(
+                            Constant.messages.getString(
+                                    "zest.element.assign.fromElement.selectattribute"));
+                    sb.append("('");
+                    sb.append(zsa.getReturnedAttributeName());
+                    sb.append("')");
+                }
+
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.assign.fromElement",
+                                zsa.getVariableName(),
+                                sb.toString());
+            } else {
+                return indexStr
+                        + Constant.messages.getString("zest.element.assign.fromElement.title");
+            }
+
+        } else if (za instanceof ZestAssignGlobalVariable) {
+            ZestAssignGlobalVariable zagv = (ZestAssignGlobalVariable) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.assign.globalvar",
+                                zagv.getVariableName(),
+                                zagv.getGlobalVariableName());
+            }
+            return indexStr + Constant.messages.getString("zest.element.assign.globalvar.title");
         } else if (za instanceof ZestActionScan) {
             ZestActionScan zsa = (ZestActionScan) za;
             if (incParams) {
@@ -532,6 +630,30 @@ public class ZestZapUtils {
             } else {
                 return indexStr + Constant.messages.getString("zest.element.action.sleep.title");
             }
+        } else if (za instanceof ZestActionGlobalVariableSet) {
+            ZestActionGlobalVariableSet zagvs = (ZestActionGlobalVariableSet) za;
+            if (incParams) {
+                String value = zagvs.getValue();
+                if (value.length() > 10) {
+                    value = value.substring(0, 10) + "...";
+                }
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.action.globalvarset",
+                                zagvs.getGlobalVariableName(),
+                                value);
+            }
+            return indexStr + Constant.messages.getString("zest.element.action.globalvarset.title");
+        } else if (za instanceof ZestActionGlobalVariableRemove) {
+            ZestActionGlobalVariableRemove zagvr = (ZestActionGlobalVariableRemove) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.action.globalvarremove",
+                                zagvr.getGlobalVariableName());
+            }
+            return indexStr
+                    + Constant.messages.getString("zest.element.action.globalvarremove.title");
         } else if (za instanceof ZestComment) {
             ZestComment zsa = (ZestComment) za;
             if (incParams) {
@@ -781,6 +903,7 @@ public class ZestZapUtils {
             return null;
         }
         HttpMessage msg = new HttpMessage(new URI(request.getUrl().toString(), false));
+        msg.setTimeSentMillis(request.getTimestamp());
         if (request.getHeaders() != null) {
             try {
                 msg.setRequestHeader(
@@ -826,6 +949,7 @@ public class ZestZapUtils {
             throws MalformedURLException, HttpMalformedHeaderException, SQLException {
         if (replaceTokens) {
             ZestRequest req = new ZestRequest();
+            req.setTimestamp(msg.getTimeSentMillis());
             req.setMethod(msg.getRequestHeader().getMethod());
             if (msg.getRequestHeader().getURI() != null) {
                 req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
@@ -852,6 +976,7 @@ public class ZestZapUtils {
 
         } else {
             ZestRequest req = new ZestRequest();
+            req.setTimestamp(msg.getTimeSentMillis());
             req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
             req.setMethod(msg.getRequestHeader().getMethod());
             if (incAllHeaders) {
