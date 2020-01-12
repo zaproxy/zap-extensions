@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -64,6 +65,11 @@ public class WebSocketMapPanel extends AbstractPanel {
 
     private JTree treeMap = null;
 
+    private WebSocketTreeMapMessagesView messagesView;
+
+    private HttpPanel requestPanel;
+    private HttpPanel responsePanel;
+
     private static final Logger LOGGER = Logger.getLogger(WebSocketMapPanel.class);
 
     /** Constructor which initialize the Panel */
@@ -73,6 +79,7 @@ public class WebSocketMapPanel extends AbstractPanel {
         this.treeMapModel = treeMapModel;
         this.helperUI = helperUI;
 
+        messagesView = new WebSocketTreeMapMessagesView(treeMapModel);
         initialize();
     }
 
@@ -127,8 +134,7 @@ public class WebSocketMapPanel extends AbstractPanel {
             // ZAP: Add custom tree cell renderer.
             TreeCellRenderer renderer = new WebSocketTreeCellRenderer(helperUI);
             treeMap.setCellRenderer(renderer);
-
-            //            treeMapModel.addTreeModelListener(treeMap);
+            treeMap.addTreeSelectionListener(messagesView.getWebSocketTreeMapListener());
         }
         return treeMap;
     }
@@ -150,5 +156,12 @@ public class WebSocketMapPanel extends AbstractPanel {
             // ZAP: Log exceptions
             LOGGER.warn(e.getMessage(), e);
         }
+    }
+
+    public void setDisplayPanel(HttpPanel requestPanel, HttpPanel responsePanel) {
+        this.requestPanel = requestPanel;
+        this.responsePanel = responsePanel;
+
+        messagesView.setDisplayPanel(requestPanel, responsePanel);
     }
 }
