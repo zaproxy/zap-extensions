@@ -52,10 +52,13 @@ public class WebSocketTreeCellRenderer extends DefaultTreeCellRenderer {
                             "/resource/icon/fugue/plug-disconnect.png"));
 
     private WebSocketTreeMapHelperUI helperUI;
+    private WebSocketMapPanel webSocketMapPanel;
     private JPanel panel;
 
-    public WebSocketTreeCellRenderer(WebSocketTreeMapHelperUI helper) {
+    public WebSocketTreeCellRenderer(
+            WebSocketTreeMapHelperUI helper, WebSocketMapPanel webSocketMapPanel) {
         this.helperUI = helper;
+        this.webSocketMapPanel = webSocketMapPanel;
         panel = helperUI.getTreeMapCellPanel();
         panel.setOpaque(false);
     }
@@ -85,8 +88,13 @@ public class WebSocketTreeCellRenderer extends DefaultTreeCellRenderer {
                 OverlayIcon overlayIcon;
 
                 if (node.getParent().isRoot()) { // Host Folder Node
-                    // TODO: Add node.isConnected() in order to add the appropriate icon
-                    overlayIcon = new OverlayIcon(FOLDER_CONNECTED_CHANNEL_ICON);
+                    if (node.getContent().getChannel().isConnected()) {
+                        overlayIcon = new OverlayIcon(FOLDER_CONNECTED_CHANNEL_ICON);
+                    } else {
+                        overlayIcon = new OverlayIcon(FOLDER_DISCONNECTED_CHANNEL_ICON);
+                    }
+                    setWebSocketMapPanelIcon(node.getParent());
+
                 } else { // Leaf node
                     if (node.getContent() != null && node.getContent().getMessage() != null) {
                         if (node.getContent().getMessage().isOutgoing) {
@@ -107,6 +115,16 @@ public class WebSocketTreeCellRenderer extends DefaultTreeCellRenderer {
             return panel;
         }
         return this;
+    }
+
+    private void setWebSocketMapPanelIcon(WebSocketNodeInterface rootNode) {
+        for (WebSocketNodeInterface hostNode : rootNode.getChildren()) {
+            if (hostNode.getContent().getChannel().isConnected()) {
+                webSocketMapPanel.setAnyChannelConnected(true);
+                return;
+            }
+        }
+        webSocketMapPanel.setAnyChannelConnected(false);
     }
 
     public JPanel getPanel() {

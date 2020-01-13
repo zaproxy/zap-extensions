@@ -132,7 +132,8 @@ public class SimpleNodeFactory implements NodeFactory {
         } else {
             result =
                     new WebSocketNodeWrapper(
-                            root.getChildAt(pos), WebSocketNodeWrapper.State.UNCHANGED);
+                            root.getChildAt(pos).updateContent(content),
+                            WebSocketNodeWrapper.State.CHANGED);
         }
         return result;
     }

@@ -62,6 +62,8 @@ public class WebSocketTreeMapModel extends WebSocketTreeModelAbstract implements
 
         if (nodeWrapper.getState() == WebSocketNodeWrapper.State.INSERTED) {
             fireTreeNodesInserted(getTreeModelEvent(nodeWrapper.getNode()));
+        } else if (nodeWrapper.getState() == WebSocketNodeWrapper.State.CHANGED) {
+            fireTreeNodesChanged(getTreeModelEvent(nodeWrapper.getNode()));
         }
 
         return nodeWrapper;
@@ -146,7 +148,7 @@ public class WebSocketTreeMapModel extends WebSocketTreeModelAbstract implements
 
         @Override
         public void onStateChange(WebSocketProxy.State state, WebSocketProxy proxy) {
-            if (state == WebSocketProxy.State.CONNECTING) {
+            if (state == WebSocketProxy.State.OPEN || state == WebSocketProxy.State.CLOSED) {
                 addConnection(proxy);
             }
         }

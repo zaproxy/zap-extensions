@@ -125,7 +125,7 @@ public class WebSocketTreeMap implements TreeMap, WebSocketObserver {
 
     @Override
     public void onStateChange(WebSocketProxy.State state, WebSocketProxy proxy) {
-        if (state == WebSocketProxy.State.CONNECTING) {
+        if (state == WebSocketProxy.State.OPEN || state == WebSocketProxy.State.CLOSED) {
             addConnection(proxy);
         }
     }

@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.websocket.treemap.nodes.contents;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketNodeNamer;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNodeInterface;
@@ -50,6 +51,11 @@ public class MessageContent extends WebSocketContent {
     @Override
     public WebSocketMessageDTO getMessage() {
         return webSocketMessage;
+    }
+
+    @Override
+    public WebSocketChannelDTO getChannel() {
+        return webSocketMessage.channel;
     }
 
     /**

@@ -19,11 +19,13 @@
  */
 package org.zaproxy.zap.extension.websocket.treemap.ui;
 
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.ImageIcon;
+import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -72,6 +74,8 @@ public class WebSocketMapPanel extends AbstractPanel {
 
     private static final Logger LOGGER = Logger.getLogger(WebSocketMapPanel.class);
 
+    private boolean isAnyChannelConnected = false;
+
     /** Constructor which initialize the Panel */
     public WebSocketMapPanel(
             WebSocketTreeMapModel treeMapModel, WebSocketTreeMapHelperUI helperUI) {
@@ -107,6 +111,34 @@ public class WebSocketMapPanel extends AbstractPanel {
         //        getTreeSite().addTreeSelectionListener();
     }
 
+    void setAnyChannelConnected(boolean anyChannelConnected) {
+        if (this.isAnyChannelConnected != anyChannelConnected) {
+            this.isAnyChannelConnected = anyChannelConnected;
+            if (isAnyChannelConnected) {
+                updateIcon(CONNECTED_ICON);
+            } else {
+                updateIcon(DISCONNECTED_ICON);
+            }
+        }
+    }
+
+    /**
+     * Updates icon of this tab.
+     *
+     * @param icon
+     */
+    private synchronized void updateIcon(ImageIcon icon) {
+        setIcon(icon);
+
+        // workaround to update icon of tab
+        Component c = getParent();
+        if (c instanceof JTabbedPane) {
+            JTabbedPane tab = (JTabbedPane) c;
+            int index = tab.indexOfComponent(this);
+            tab.setIconAt(index, icon);
+        }
+    }
+
     /**
      * This method initializes treeSite
      *
@@ -132,7 +164,7 @@ public class WebSocketMapPanel extends AbstractPanel {
             }
 
             // ZAP: Add custom tree cell renderer.
-            TreeCellRenderer renderer = new WebSocketTreeCellRenderer(helperUI);
+            TreeCellRenderer renderer = new WebSocketTreeCellRenderer(helperUI, this);
             treeMap.setCellRenderer(renderer);
             treeMap.addTreeSelectionListener(messagesView.getWebSocketTreeMapListener());
         }

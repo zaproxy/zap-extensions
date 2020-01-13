@@ -38,23 +38,34 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.WebSocketNod
 public class HostFolderContent extends WebSocketContent {
 
     private String host;
+    private WebSocketChannelDTO channel;
 
     public HostFolderContent(WebSocketNodeNamer namer, WebSocketChannelDTO channel)
             throws DatabaseException, HttpMalformedHeaderException {
+        this.channel = new WebSocketChannelDTO();
         this.host = NodesUtilities.getHostName(channel);
         this.name = namer.getName(this);
+        channel.copyInto(this.channel);
     }
 
     public HostFolderContent(HostFolderContent that) {
+        this.channel = new WebSocketChannelDTO();
         this.host = that.getHost();
         this.name = that.getName();
+        that.channel.copyInto(this.getChannel());
     }
 
     public HostFolderContent replaceValues(WebSocketNodeNamer namer, WebSocketChannelDTO channel)
             throws DatabaseException, HttpMalformedHeaderException {
         this.host = NodesUtilities.getHostName(channel);
         this.name = namer.getName(this);
+        channel.copyInto(this.channel);
         return this;
+    }
+
+    @Override
+    public WebSocketChannelDTO getChannel() {
+        return channel;
     }
 
     @Override
@@ -102,5 +113,12 @@ public class HostFolderContent extends WebSocketContent {
     @Override
     public int hashCode() {
         return Objects.hashCode(host);
+    }
+
+    @Override
+    public NodeContent update(NodeContent nodeContent) {
+        this.channel = new WebSocketChannelDTO();
+        nodeContent.getChannel().copyInto(this.channel);
+        return this;
     }
 }
