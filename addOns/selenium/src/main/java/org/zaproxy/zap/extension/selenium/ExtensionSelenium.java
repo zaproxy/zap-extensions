@@ -723,6 +723,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 ChromeOptions chromeOptions = new ChromeOptions();
                 setCommonOptions(chromeOptions, proxyAddress, proxyPort);
                 chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
+                chromeOptions.addArguments("--ignore-certificate-errors");
                 chromeOptions.setHeadless(browser == Browser.CHROME_HEADLESS);
                 return new ChromeDriver(chromeOptions);
             case FIREFOX:
