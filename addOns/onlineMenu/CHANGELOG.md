@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Maintenance changes.
+- Updated to point to the new ZAP website
 
 ## 6 - 2017-11-27
 
