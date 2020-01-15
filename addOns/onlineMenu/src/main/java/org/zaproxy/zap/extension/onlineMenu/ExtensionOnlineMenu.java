@@ -37,12 +37,11 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class ExtensionOnlineMenu extends ExtensionAdaptor {
 
-    public static final String ZAP_HOMEPAGE = "https://www.owasp.org/index.php/ZAP";
-    public static final String ZAP_EXTENSIONS_PAGE = "https://github.com/zaproxy/zap-extensions";
-    public static final String ZAP_DOWNLOADS_PAGE =
-            "https://github.com/zaproxy/zaproxy/wiki/Downloads";
+    public static final String ZAP_HOMEPAGE = "https://www.zaproxy.org/";
+    public static final String ZAP_EXTENSIONS_PAGE = "https://www.zaproxy.org/addons/";
+    public static final String ZAP_DOWNLOADS_PAGE = "https://www.zaproxy.org/download/";
     public static final String ZAP_WIKI_PAGE = "https://github.com/zaproxy/zaproxy/wiki";
-    public static final String ZAP_FAQ_PAGE = "https://github.com/zaproxy/zaproxy/wiki/FAQtoplevel";
+    public static final String ZAP_FAQ_PAGE = "https://www.zaproxy.org/faq/";
     public static final String ZAP_NEWSLETTERS_PAGE =
             "https://github.com/zaproxy/zaproxy/wiki/Newsletters";
     public static final String ZAP_USER_GROUP_PAGE =
