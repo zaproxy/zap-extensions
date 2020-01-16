@@ -1,8 +1,11 @@
+import org.zaproxy.gradle.addon.AddOnStatus
+
 version = "15"
 description = "Imports and spiders OpenAPI definitions."
 
 zapAddOn {
     addOnName.set("OpenAPI Support")
+    addOnStatus.set(AddOnStatus.BETA)
     zapVersion.set("2.8.0")
 
     manifest {

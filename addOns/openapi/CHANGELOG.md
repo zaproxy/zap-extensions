@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add info and repo URLs.
 
+### Changed
+- Promote addon to Beta.
+
 ## [14] - 2019-12-02
 ### Added
 - Support OpenAPI v3.0 (Issue 4549).
