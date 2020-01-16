@@ -15,7 +15,7 @@ zapAddOn {
     manifest {
         semVer.set("2.0.1")
         author.set("ZAP Dev Team")
-        url.set("https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/fuzzer/")
     }
 }
 

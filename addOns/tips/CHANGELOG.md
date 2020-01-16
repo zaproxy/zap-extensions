@@ -4,9 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Add info and repo URLs.
 
-- Remove tips related to Filter functionality, it no longer exists.
+### Changed
 - Updated for move from irc.mozilla.org to freenode
+
+### Removed
+- Remove tips related to Filter functionality, it no longer exists.
 
 ## [6] - 2019-06-07
 

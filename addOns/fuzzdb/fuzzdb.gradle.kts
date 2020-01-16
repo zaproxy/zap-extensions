@@ -21,7 +21,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://github.com/fuzzdb-project/fuzzdb/")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/fuzzdb-files/")
 
         helpSet {
             baseName.set("help%LC%.helpset")

@@ -4,7 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+###
+- Add repo URL.
 
+### Changed
 - Maintenance changes.
 - Updated to point to the new ZAP website
 

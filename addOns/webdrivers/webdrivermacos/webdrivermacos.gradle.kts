@@ -13,6 +13,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/macos-webdrivers/")
         helpSet {
             baseName.set("org.zaproxy.zap.extension.webdrivermacos.resources.help%LC%.helpset")
             localeToken.set("%LC%")

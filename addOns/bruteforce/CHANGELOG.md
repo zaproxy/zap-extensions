@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
 - Now targets ZAP 2.8.0.
 - Fix un-handled exception when base request doesn't end in a slash (Issue 5435).
 - Split up the functionality from the desktop UI and provide external access (Issue 2848)
@@ -12,8 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Log exceptions instead of printing to stderr (Issue 5564).
 - Address UI hang.
 
-## Added
+### Added
 - Table export button.
+- Add info and repo URLs.
 
 ## [8] - 2019-06-07
 

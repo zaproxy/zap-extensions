@@ -16,7 +16,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("http://www.mavitunasecurity.com/blog/svn-digger-better-lists-for-forced-browsing/")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/svn-digger-files/")
         files.from(svndiggerDir)
 
         helpSet {

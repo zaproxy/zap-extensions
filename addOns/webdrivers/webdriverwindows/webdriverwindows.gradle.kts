@@ -13,6 +13,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/windows-webdrivers/")
         helpSet {
             baseName.set("org.zaproxy.zap.extension.webdriverwindows.resources.help%LC%.helpset")
             localeToken.set("%LC%")

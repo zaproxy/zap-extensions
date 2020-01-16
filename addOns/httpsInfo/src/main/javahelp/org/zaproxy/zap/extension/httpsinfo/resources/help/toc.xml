@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="HTTPS Info Add-on" image="httpsinfo.icon" target="httpsinfo" />
+			<tocitem text="HTTPS Info" image="httpsinfo.icon" target="httpsinfo" />
 		</tocitem>
 	</tocitem>
 </toc>

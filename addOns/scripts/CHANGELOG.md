@@ -4,12 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Add repo URL.
 
 ### Changed
 - Update minimum ZAP version to 2.8.0.
 - Update help to mention custom script/global variables (Issue 3402).
 - Move empty template entry to the top, for consistency with other fields in New Script dialogue.
 - Save cursor position when switching between scripts.
+- Change info URL to link to the site.
 
 ### Fixed
 - Fix links in script templates.

@@ -7,6 +7,6 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Core Team")
-        url.set("https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAuthstatsAuthStats")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/authentication-statistics/")
     }
 }

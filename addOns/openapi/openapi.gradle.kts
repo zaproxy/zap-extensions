@@ -7,6 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Core Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak and Marcin Spiewak")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/openapi-support/")
     }
 
     apiClientGen {

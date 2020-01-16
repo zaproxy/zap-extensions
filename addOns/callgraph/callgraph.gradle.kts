@@ -7,6 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("Colm O'Flaherty")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/call-graph/")
 
         helpSet {
             baseName.set("help%LC%.helpset")
