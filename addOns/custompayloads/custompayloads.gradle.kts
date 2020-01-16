@@ -7,5 +7,6 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Core Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/custom-payloads/")
     }
 }

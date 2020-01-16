@@ -4,8 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
 - Added links to the code in the help.
+- Add info and repo URLs.
+
+### Fixed
 - Fixed NullPointerException in Sub Resource Integrity Attribute Missing scan rule (Issue 5789).
 
 ## [26] - 2019-12-16

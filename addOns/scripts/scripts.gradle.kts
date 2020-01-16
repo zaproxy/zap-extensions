@@ -10,7 +10,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://github.com/zaproxy/zaproxy/wiki/ScriptConsole")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/script-console/")
     }
 }
 

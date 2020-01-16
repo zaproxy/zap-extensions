@@ -7,7 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("Code Dx, Inc.")
-        url.set("https://www.codedx.com/")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/code-dx/")
     }
 }
 

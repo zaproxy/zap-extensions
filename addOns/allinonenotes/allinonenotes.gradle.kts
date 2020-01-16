@@ -7,5 +7,6 @@ zapAddOn {
 
     manifest {
         author.set("David Vassallo")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/all-in-one-notes/")
     }
 }

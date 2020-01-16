@@ -10,6 +10,7 @@ zapAddOn {
 
     manifest {
         author.set("Andrea Pompili (Yhawke)")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/advanced-sqlinjection-scanner/")
 
         helpSet {
             baseName.set("help%LC%.helpset")

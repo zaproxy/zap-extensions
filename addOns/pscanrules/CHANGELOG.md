@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Added links to the code in the help.
+- Add info and repo URLs.
 
 ## [25] - 2019-12-16
 

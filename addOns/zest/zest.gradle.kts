@@ -21,7 +21,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/zest/")
         dependencies {
             addOns {
                 register("selenium") {

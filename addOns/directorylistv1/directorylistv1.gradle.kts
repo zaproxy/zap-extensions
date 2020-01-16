@@ -10,7 +10,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://www.owasp.org/index.php/DirBuster")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/directory-list-v1.0/")
 
         helpSet {
             baseName.set("help%LC%.helpset")

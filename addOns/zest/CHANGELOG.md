@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Add info and repo URLs.
 
 ### Changed
 - Update Zest library to 0.14.1 to restore proxying capability, in the previous version the proxy settings were ignored.
