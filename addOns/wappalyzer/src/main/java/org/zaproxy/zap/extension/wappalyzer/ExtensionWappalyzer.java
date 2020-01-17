@@ -323,4 +323,12 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public void sessionScopeChanged(Session arg0) {
         // Ignore
     }
+
+    @Override
+    public void postInstall() {
+        super.postInstall();
+        if (getView() != null) {
+            getTechPanel().setTabFocus();
+        }
+    }
 }
