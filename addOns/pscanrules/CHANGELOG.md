@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [26] - 2020-01-17
 
 ### Changed
 - "Cookie HttpOnly", "Cookie Secure Flag", and "Cookie Without SameSite Attribute" scan rules no longer alert on expired (deleted) cookies (Issue 5295).
@@ -154,5 +154,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v24
