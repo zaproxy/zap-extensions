@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add info and repo URLs.
 
+### Changed
+- The panel is now shown when the add-on is installed.
+
 ## [15] - 2019-12-20
 
 ### Changed
