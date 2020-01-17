@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [15] - 2020-01-17
 ### Added
 - Add info and repo URLs.
 
@@ -77,6 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v12
