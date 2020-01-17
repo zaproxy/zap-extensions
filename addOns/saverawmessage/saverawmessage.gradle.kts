@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "5"
+version = "6"
 description = "Allows to save content of HTTP messages as binary"
 
 zapAddOn {

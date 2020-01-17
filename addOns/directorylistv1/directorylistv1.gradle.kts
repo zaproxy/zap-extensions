@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "4"
+version = "5"
 description = "List of directory names to be used with Forced Browse or Fuzzer add-on."
 
 zapAddOn {

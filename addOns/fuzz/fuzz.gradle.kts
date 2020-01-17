@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "12"
+version = "13"
 description = "Advanced fuzzer for manual testing"
 
 tasks.withType<JavaCompile> {
