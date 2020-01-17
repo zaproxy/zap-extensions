@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "8"
+version = "9"
 description = "Easy way to replace strings in requests and responses."
 
 zapAddOn {

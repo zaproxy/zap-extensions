@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "7"
+version = "8"
 description = "ZAP Online menu items"
 
 zapAddOn {
