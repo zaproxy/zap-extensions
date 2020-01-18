@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - The panel is now shown when the add-on is installed.
+- The site "names" are now normalized based on scheme and authority (including port if non-standard or specifically included). This represents a breaking change for any API code that is using listSite with host:port "names".
 
 ## [15] - 2019-12-20
 

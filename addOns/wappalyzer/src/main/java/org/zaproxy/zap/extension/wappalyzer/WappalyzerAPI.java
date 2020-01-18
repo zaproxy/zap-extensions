@@ -75,9 +75,6 @@ public class WappalyzerAPI extends ApiImplementor {
     }
 
     private void validateSite(String site) throws ApiException {
-        if (site.isEmpty() || !site.contains(":")) {
-            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_SITE);
-        }
         if (!extension.getSites().contains(site)) {
             throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_SITE);
         }
