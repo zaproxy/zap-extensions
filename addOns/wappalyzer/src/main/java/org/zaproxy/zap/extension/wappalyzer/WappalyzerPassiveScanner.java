@@ -72,10 +72,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
             this.currentApp = app;
             checkAppMatches(msg, source);
             if (appMatch != null) {
-                String site =
-                        msg.getRequestHeader().getHostName()
-                                + ":"
-                                + msg.getRequestHeader().getHostPort();
+                String site = ExtensionWappalyzer.normalizeSite(msg.getRequestHeader().getURI());
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Adding " + app.getName() + " to " + site);
                 }

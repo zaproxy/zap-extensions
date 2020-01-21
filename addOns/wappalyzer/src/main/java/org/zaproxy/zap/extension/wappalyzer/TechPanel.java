@@ -40,11 +40,9 @@ import org.jdesktop.swingx.renderer.MappedValue;
 import org.jdesktop.swingx.renderer.StringValues;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
-import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.utils.TableExportButton;
-import org.zaproxy.zap.view.ScanPanel;
 
 public class TechPanel extends AbstractPanel {
 
@@ -291,7 +289,6 @@ public class TechPanel extends AbstractPanel {
     }
 
     public void addSite(String site) {
-        site = ScanPanel.cleanSiteName(site, true);
         if (siteModel.getIndexOf(site) < 0) {
             siteModel.addElement(site);
             if (siteModel.getSize() == 2 && currentSite == null) {
@@ -302,19 +299,12 @@ public class TechPanel extends AbstractPanel {
         }
     }
 
-    private void siteSelected(String site) {
-        site = ScanPanel.cleanSiteName(site, true);
+    void siteSelected(String site) {
         if (!site.equals(currentSite)) {
             siteModel.setSelectedItem(site);
             techModel = extension.getTechModelForSite(site);
             this.getTechTable().setModel(techModel);
             currentSite = site;
-        }
-    }
-
-    public void nodeSelected(SiteNode node) {
-        if (node != null) {
-            siteSelected(ScanPanel.cleanSiteName(node, true));
         }
     }
 
