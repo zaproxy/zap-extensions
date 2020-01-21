@@ -9,6 +9,11 @@ zapAddOn {
         author.set("Goran Sarenkapa - JordanGS")
         url.set("https://www.zaproxy.org/docs/desktop/addons/export-report/")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.exportreport.ExportReportAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/exportreport/resources/Messages.properties"))
+    }
 }
 
 dependencies {

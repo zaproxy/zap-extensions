@@ -9,4 +9,9 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/revisit/")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.revisit.RevisitAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/revisit/resources/Messages.properties"))
+    }
 }
