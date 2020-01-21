@@ -25,7 +25,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -65,7 +64,7 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
                 && !isRequestedURLSameDomainAsHTTPReferrer(
                         msg.getRequestHeader().getHostName(),
                         msg.getRequestHeader().getHeader(HttpHeader.REFERER))) {
-            Vector<String> referrer = msg.getRequestHeader().getHeaders(HttpHeader.REFERER);
+            List<String> referrer = msg.getRequestHeader().getHeaderValues(HttpHeader.REFERER);
             String evidence;
             for (String referrerValue : referrer) {
                 if ((evidence = doesURLContainsSensitiveInformation(referrerValue)) != null) {

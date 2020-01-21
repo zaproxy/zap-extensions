@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -69,10 +69,10 @@ public class CacheControlScanner extends PluginPassiveScanner {
                 }
             }
 
-            Vector<String> cacheControlVect =
-                    msg.getResponseHeader().getHeaders(HttpHeader.CACHE_CONTROL);
+            List<String> cacheControlList =
+                    msg.getResponseHeader().getHeaderValues(HttpHeader.CACHE_CONTROL);
             String cacheControlHeaders =
-                    (cacheControlVect != null) ? cacheControlVect.toString().toLowerCase() : "";
+                    (!cacheControlList.isEmpty()) ? cacheControlList.toString().toLowerCase() : "";
 
             if (cacheControlHeaders.isEmpty()
                     || // No Cache-Control header at all
@@ -82,8 +82,8 @@ public class CacheControlScanner extends PluginPassiveScanner {
                 this.raiseAlert(msg, id, HttpHeader.CACHE_CONTROL, cacheControlHeaders);
             }
 
-            Vector<String> pragma = msg.getResponseHeader().getHeaders(HttpHeader.PRAGMA);
-            if (pragma != null) {
+            List<String> pragma = msg.getResponseHeader().getHeaderValues(HttpHeader.PRAGMA);
+            if (!pragma.isEmpty()) {
                 for (String pragmaDirective : pragma) {
                     if (pragmaDirective.toLowerCase().indexOf("no-cache") < 0) {
                         this.raiseAlert(msg, id, HttpHeader.PRAGMA, pragmaDirective);

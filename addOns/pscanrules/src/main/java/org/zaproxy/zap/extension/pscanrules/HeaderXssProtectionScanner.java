@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -64,10 +64,10 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
             }
         }
         boolean headerPresent = false;
-        Vector<String> xssHeaderProtection =
-                msg.getResponseHeader().getHeaders(HttpHeader.X_XSS_PROTECTION);
+        List<String> xssHeaderProtection =
+                msg.getResponseHeader().getHeaderValues(HttpHeader.X_XSS_PROTECTION);
         boolean possibleXSSCarrier = msg.getResponseBody().length() > 0;
-        if (xssHeaderProtection != null) {
+        if (!xssHeaderProtection.isEmpty()) {
             headerPresent = true;
             if (possibleXSSCarrier) {
                 for (String xssHeaderProtectionParam : xssHeaderProtection) {

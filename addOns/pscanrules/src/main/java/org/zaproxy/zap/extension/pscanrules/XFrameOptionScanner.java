@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
-import java.util.Vector;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -76,8 +75,8 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
             }
             // CSP takes precedence
             includedInCsp = false;
-            Vector<String> csp = msg.getResponseHeader().getHeaders("Content-Security-Policy");
-            if (csp != null && csp.toString().contains("frame-ancestors")) {
+            List<String> csp = msg.getResponseHeader().getHeaderValues("Content-Security-Policy");
+            if (!csp.isEmpty() && csp.toString().contains("frame-ancestors")) {
                 // We could do more parsing here, but that will be non trivial
                 includedInCsp = true;
             }
@@ -87,9 +86,9 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
                 return;
             }
 
-            Vector<String> xFrameOption =
-                    msg.getResponseHeader().getHeaders(HttpHeader.X_FRAME_OPTION);
-            if (xFrameOption != null) {
+            List<String> xFrameOption =
+                    msg.getResponseHeader().getHeaderValues(HttpHeader.X_FRAME_OPTION);
+            if (!xFrameOption.isEmpty()) {
                 for (String xFrameOptionParam : xFrameOption) {
                     if (xFrameOptionParam.toLowerCase().indexOf("deny") < 0
                             && xFrameOptionParam.toLowerCase().indexOf("sameorigin") < 0
