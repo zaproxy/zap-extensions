@@ -19,8 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -62,9 +62,9 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
                             || HttpStatusCode.isRedirection(responseStatus))) {
                 return;
             }
-            Vector<String> xContentTypeOptions =
-                    msg.getResponseHeader().getHeaders(HttpHeader.X_CONTENT_TYPE_OPTIONS);
-            if (xContentTypeOptions == null) {
+            List<String> xContentTypeOptions =
+                    msg.getResponseHeader().getHeaderValues(HttpHeader.X_CONTENT_TYPE_OPTIONS);
+            if (xContentTypeOptions.isEmpty()) {
                 this.raiseAlert(msg, id, "");
             } else {
                 for (String xContentTypeOptionsDirective : xContentTypeOptions) {

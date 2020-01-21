@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -45,9 +45,9 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getResponseBody().length() > 0) {
-            Vector<String> contentType =
-                    msg.getResponseHeader().getHeaders(HttpHeader.CONTENT_TYPE);
-            if (contentType != null) {
+            List<String> contentType =
+                    msg.getResponseHeader().getHeaderValues(HttpHeader.CONTENT_TYPE);
+            if (!contentType.isEmpty()) {
                 for (String contentTypeDirective : contentType) {
                     if (contentTypeDirective.isEmpty()) {
                         this.raiseAlert(msg, id, contentTypeDirective, false);

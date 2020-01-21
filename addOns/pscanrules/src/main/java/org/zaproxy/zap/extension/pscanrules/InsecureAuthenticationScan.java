@@ -21,8 +21,8 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -83,8 +83,8 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
             return;
         }
 
-        Vector<String> headers = msg.getRequestHeader().getHeaders(HttpHeader.AUTHORIZATION);
-        if (headers != null) {
+        List<String> headers = msg.getRequestHeader().getHeaderValues(HttpHeader.AUTHORIZATION);
+        if (!headers.isEmpty()) {
             for (Iterator<String> i = headers.iterator(); i.hasNext(); ) {
                 String authHeaderValue = i.next();
                 String authMechanism = null;
@@ -290,9 +290,9 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
             // If SSL is used then the use of 'weak' authentication methods isnt really an issue
             return;
         }
-        Vector<String> authHeaders =
-                msg.getResponseHeader().getHeaders(HttpHeader.WWW_AUTHENTICATE);
-        if (authHeaders != null) {
+        List<String> authHeaders =
+                msg.getResponseHeader().getHeaderValues(HttpHeader.WWW_AUTHENTICATE);
+        if (!authHeaders.isEmpty()) {
             for (String auth : authHeaders) {
                 if (auth.toLowerCase().indexOf("basic") > -1
                         || auth.toLowerCase().indexOf("digest") > -1) {

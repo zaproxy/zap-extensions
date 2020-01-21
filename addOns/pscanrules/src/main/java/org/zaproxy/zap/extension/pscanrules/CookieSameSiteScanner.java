@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -60,9 +60,9 @@ public class CookieSameSiteScanner extends PluginPassiveScanner {
     }
 
     private void checkCookies(HttpMessage msg, int id, String cookieHeader) {
-        Vector<String> cookies = msg.getResponseHeader().getHeaders(cookieHeader);
+        List<String> cookies = msg.getResponseHeader().getHeaderValues(cookieHeader);
 
-        if (cookies == null) {
+        if (cookies.isEmpty()) {
             return;
         }
         for (String cookie : cookies) {
