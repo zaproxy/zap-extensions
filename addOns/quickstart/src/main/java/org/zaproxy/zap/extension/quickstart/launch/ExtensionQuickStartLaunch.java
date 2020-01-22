@@ -35,6 +35,8 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.OptionsChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.AddOnInstallationStatusListener;
@@ -45,7 +47,7 @@ import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.utils.DisplayUtils;
 
 public class ExtensionQuickStartLaunch extends ExtensionAdaptor
-        implements AddOnInstallationStatusListener {
+        implements AddOnInstallationStatusListener, OptionsChangedListener {
 
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
 
@@ -101,6 +103,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         this.api = new QuickStartLaunchAPI(this);
         extensionHook.addApiImplementor(api);
         extensionHook.addAddOnInstallationStatusListener(this);
+        extensionHook.addOptionsChangedListener(this);
 
         if (getView() != null) {
             extensionHook.getHookView().addMainToolBarComponent(getLaunchToolbarButton());
@@ -140,11 +143,21 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         if (View.isInitialised()) {
             setToolbarButtonIcon(
                     this.getExtQuickStart().getQuickStartParam().getLaunchDefaultBrowser());
+            if (this.launchPanel != null) {
+                this.launchPanel.optionsChanged();
+            }
         }
 
         if (!this.getExtQuickStart().getQuickStartParam().isLaunchZapStartPage()) {
             // Dont request the online version if the user has opted out
             return;
+        }
+    }
+
+    @Override
+    public void optionsChanged(OptionsParam optionsParam) {
+        if (this.launchPanel != null) {
+            this.launchPanel.optionsChanged();
         }
     }
 
