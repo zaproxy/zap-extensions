@@ -43,6 +43,11 @@ public class WappalyzerAPI extends ApiImplementor {
 
     private ExtensionWappalyzer extension = null;
 
+    /** Provided only for API client generator usage. */
+    public WappalyzerAPI() {
+        this(null);
+    }
+
     public WappalyzerAPI(ExtensionWappalyzer ext) {
         this.extension = ext;
         this.addApiView(new ApiView(VIEW_LIST_SITES));

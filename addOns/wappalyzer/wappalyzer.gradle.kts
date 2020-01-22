@@ -9,6 +9,11 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/technology-detection/")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.wappalyzer.WappalyzerAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/Messages.properties"))
+    }
 }
 
 dependencies {

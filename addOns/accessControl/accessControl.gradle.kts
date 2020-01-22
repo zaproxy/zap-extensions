@@ -9,4 +9,9 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/access-control-testing/")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.accessControl.AccessControlAPI")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/accessControl/resources/Messages.properties"))
+    }
 }
