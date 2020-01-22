@@ -91,6 +91,20 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
         }
     }
 
+    public boolean isInScopeOnly() {
+        try {
+            Method methodGetHudParam = getExtHudClass().getMethod("getHudParam");
+            Object hudParam = methodGetHudParam.invoke(ExtensionQuickStartHud.getExtHud());
+            if (hudParam != null) {
+                Method methodIsInScopeOnly = hudParam.getClass().getMethod("isInScopeOnly");
+                return (boolean) methodIsInScopeOnly.invoke(hudParam);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
     @Override
     public boolean canUnload() {
         return true;

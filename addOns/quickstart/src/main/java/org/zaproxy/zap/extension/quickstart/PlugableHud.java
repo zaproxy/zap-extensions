@@ -28,4 +28,6 @@ public interface PlugableHud {
     void setHudEnabledForDesktop(boolean enabled);
 
     public List<String> getSupportedBrowserIds();
+
+    public boolean isInScopeOnly();
 }
