@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Minimum ZAP version is now 2.9.0. (Various scan rules adjusted to address core deprecations.)
 - 'Username Hash Found' scan rule now uses updated core functionality to retrieve configured users.
+- Tweak help for 'Cookie HttpOnly' scan rule.
 
 ## [26] - 2020-01-17
 
