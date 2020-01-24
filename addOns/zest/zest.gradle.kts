@@ -34,7 +34,7 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("selenium")!!)
-    implementation("org.mozilla:zest:0.14.1") {
+    implementation("org.mozilla:zest:0.14.2") {
         // Provided by Selenium add-on.
         exclude(group = "org.seleniumhq.selenium")
         exclude(group = "com.codeborne", module = "phantomjsdriver")
