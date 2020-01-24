@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [16] - 2020-01-24
 ### Added
 - Add info and repo URLs.
 - SVG icon support.
@@ -93,6 +93,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[16]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v13
