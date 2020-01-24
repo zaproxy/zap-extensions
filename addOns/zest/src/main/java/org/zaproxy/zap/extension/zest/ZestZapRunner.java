@@ -87,7 +87,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     /** */
     public ZestZapRunner(ExtensionZest extension, ZestScriptWrapper wrapper) {
-        super();
+        super(Default.TIMEOUT_IN_SECONDS, true);
         log.debug("Constructor");
         this.extension = extension;
         this.wrapper = wrapper;
