@@ -1,4 +1,4 @@
-version = "16"
+version = "17"
 description = "Technology detection using Wappalyzer: wappalyzer.com"
 
 zapAddOn {
