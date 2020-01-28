@@ -14,6 +14,10 @@ The following release quality passive scan rules are included in this add-on:
 Check server responses for HTTP 500 - Internal Server Error type responses or those that contain a known error string.<br>
 At HIGH Threshold don’t alert on HTTP 500 (but do for other error patterns).<br>
 For Internal Server Error (HTTP 500) the Alert is set to Low risk and in other case it is set to Medium risk.
+
+<p><strong>Note:</strong> If the Custom Payloads addon is installed you can add your own Application Error strings (payloads) in the Custom Payloads options panel. 
+They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the 
+amount of time needed to passively scan.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ApplicationErrorScanner.java">ApplicationErrorScanner.java</a>
  

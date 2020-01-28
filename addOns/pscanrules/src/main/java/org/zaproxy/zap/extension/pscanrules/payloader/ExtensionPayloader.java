@@ -29,6 +29,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
+import org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanner;
 import org.zaproxy.zap.extension.pscanrules.UsernameIdorScanner;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
@@ -37,6 +38,7 @@ public class ExtensionPayloader extends ExtensionAdaptor {
     private static final List<Class<? extends Extension>> DEPENDENCIES;
     private static ExtensionCustomPayloads ecp;
     private PayloadCategory idorCategory;
+    private PayloadCategory errorCategory;
 
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
@@ -62,6 +64,13 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         UsernameIdorScanner.DEFAULT_USERNAMES);
         ecp.addPayloadCategory(idorCategory);
         UsernameIdorScanner.setPayloadProvider(() -> idorCategory.getPayloadsIterator());
+
+        errorCategory =
+                new PayloadCategory(
+                        ApplicationErrorScanner.ERRORS_PAYLOAD_CATEGORY,
+                        ApplicationErrorScanner.DEFAULT_ERRORS);
+        ecp.addPayloadCategory(errorCategory);
+        ApplicationErrorScanner.setPayloadProvider(() -> errorCategory.getPayloadsIterator());
     }
 
     @Override

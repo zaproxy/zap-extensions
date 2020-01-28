@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -44,6 +47,12 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
     // Name of the file related to pattern's definition list
     private static final String APP_ERRORS_FILE =
             "/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml";
+
+    public static final List<String> DEFAULT_ERRORS = Collections.emptyList();
+    private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER = () -> DEFAULT_ERRORS;
+    public static final String ERRORS_PAYLOAD_CATEGORY = "Application-Errors";
+
+    private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
     // Inner Content Matcher component with pattern definitions
     private static final ContentMatcher matcher =
@@ -140,7 +149,14 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
             raiseAlert(msg, id, msg.getResponseHeader().getPrimeHeader(), Alert.RISK_LOW);
 
         } else if (status != HttpStatusCode.NOT_FOUND) {
-            String evidence = matcher.findInContent(msg.getResponseBody().toString());
+            String body = msg.getResponseBody().toString();
+            for (String payload : getCustomPayloads().get()) {
+                if (body.contains(payload)) {
+                    raiseAlert(msg, id, payload, getRisk());
+                    return;
+                }
+            }
+            String evidence = matcher.findInContent(body);
             if (evidence != null) {
                 // We found it!
                 // There exists a positive match of an
@@ -170,5 +186,13 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
                 msg);
 
         parent.raiseAlert(id, alert);
+    }
+
+    static Supplier<Iterable<String>> getCustomPayloads() {
+        return payloadProvider;
+    }
+
+    public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
+        payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
     }
 }
