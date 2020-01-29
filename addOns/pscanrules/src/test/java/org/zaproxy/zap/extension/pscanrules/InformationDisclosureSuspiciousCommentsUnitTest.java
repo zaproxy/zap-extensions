@@ -31,6 +31,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -95,6 +96,7 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
+        assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
     }
 
     @Test
@@ -152,6 +154,7 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
+        assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
     }
 
     @Test
