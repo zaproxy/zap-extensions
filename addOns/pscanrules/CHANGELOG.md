@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Migrate an input file from Beta to Release that were missed during previous promotions.
   - This addresses errors such as `[ZAP-PassiveScanner] ERROR org.zaproxy.zap.extension.pscanrules.InformationDisclosureInURL  - No such file: .... /xml/URL-information-disclosure-messages.txt`
 
+### Fixed
+- Fix typo in the help page.
+
 ## [26] - 2020-01-17
 
 ### Changed
