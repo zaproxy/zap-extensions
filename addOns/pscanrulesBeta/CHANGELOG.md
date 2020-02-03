@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added links to the code in the help.
 - Add info and repo URLs.
 
+### Changed
+- 'PII Disclosure scanner' alerts and help entry renamed 'PII Disclosure' for clarity and proper title caps.
+- 'PII Disclosure' added further false positive handling with regard to exponential numbers such as 2.4670000000000001E-2 or 2.4670000000000001E2.
+
 ## [21] - 2019-12-16
 
 ### Added

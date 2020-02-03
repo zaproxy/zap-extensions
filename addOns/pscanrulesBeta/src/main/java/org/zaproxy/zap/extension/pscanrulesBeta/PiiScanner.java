@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -88,13 +89,13 @@ public class PiiScanner extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         String responseBody = msg.getResponseBody().toString();
-        List<String> candidates = getNumberSequences(responseBody);
-        for (String candidate : candidates) {
+        List<Candidate> candidates = getNumberSequences(responseBody);
+        for (Candidate candidate : candidates) {
             for (CreditCard cc : CreditCard.values()) {
-                Matcher matcher = cc.matcher(candidate);
+                Matcher matcher = cc.matcher(candidate.getCandidate());
                 while (matcher.find()) {
                     String evidence = matcher.group();
-                    if (validateLuhnChecksum(evidence)) {
+                    if (validateLuhnChecksum(evidence) && !isSci(candidate.getContainingString())) {
                         raiseAlert(msg, id, evidence, cc.name);
                     }
                 }
@@ -118,6 +119,21 @@ public class PiiScanner extends PluginPassiveScanner {
         return (sum % 10) == 0;
     }
 
+    private static boolean isSci(String containingString) {
+        if (!StringUtils.containsIgnoreCase(containingString, "e")) {
+            return false;
+        }
+
+        // Maybe there's still something that isn't Float like, remove it
+        containingString = containingString.replaceAll("[^0-9eE-]+", "");
+        try {
+            Float.parseFloat(containingString);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
     private void raiseAlert(HttpMessage msg, int id, String evidence, String cardType) {
         Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName());
         alert.setDetail(
@@ -136,18 +152,28 @@ public class PiiScanner extends PluginPassiveScanner {
         parent.raiseAlert(id, alert);
     }
 
-    private static List<String> getNumberSequences(String inputString) {
+    private static List<Candidate> getNumberSequences(String inputString) {
         return getNumberSequences(inputString, 3);
     }
 
-    private static List<String> getNumberSequences(String inputString, int minSequence) {
+    private static List<Candidate> getNumberSequences(String inputString, int minSequence) {
         String regexString = String.format("(?:\\d{%d,}[\\s]*)+", minSequence);
         // Use RE2/J to avoid StackOverflowError when the response has many numbers.
         com.google.re2j.Matcher matcher =
                 com.google.re2j.Pattern.compile(regexString).matcher(inputString);
-        List<String> result = new ArrayList<>();
+        List<Candidate> result = new ArrayList<>();
         while (matcher.find()) {
-            result.add(matcher.group().replaceAll("\\s+", ""));
+            int proposedEnd = matcher.end() + 3;
+            result.add(
+                    new Candidate(
+                            matcher.group().replaceAll("\\s+", ""),
+                            inputString
+                                    .substring(
+                                            matcher.start(),
+                                            inputString.length() > proposedEnd
+                                                    ? matcher.end() + 3
+                                                    : inputString.length())
+                                    .replaceAll("\\s+", "")));
         }
         return result;
     }
@@ -160,5 +186,23 @@ public class PiiScanner extends PluginPassiveScanner {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
+
+    private static class Candidate {
+        private final String candidate;
+        private final String containingString;
+
+        Candidate(String candidate, String containingString) {
+            this.candidate = candidate;
+            this.containingString = containingString;
+        }
+
+        public String getCandidate() {
+            return candidate;
+        }
+
+        public String getContainingString() {
+            return containingString;
+        }
     }
 }
