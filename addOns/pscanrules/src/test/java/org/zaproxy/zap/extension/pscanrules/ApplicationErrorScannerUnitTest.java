@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.parosproxy.paros.network.HttpStatusCode.*;
 
+import java.util.Arrays;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -161,6 +162,61 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setRequestHeader(REQUEST_HEADER);
         msg.setResponseHeader(createResponseHeader(OK));
         msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert result = alertsRaised.get(0);
+        assertThat(result.getEvidence(), equalTo(expectedEvidence));
+        validateAlert(result);
+    }
+
+    @Test
+    public void shouldRaiseAlertForResponseCodeOkAndCustomPayloadDetected()
+            throws HttpMalformedHeaderException {
+        // Given
+        String expectedEvidence = "customPayloadString";
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(OK));
+        msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
+        ApplicationErrorScanner.setPayloadProvider(() -> Arrays.asList(expectedEvidence));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert result = alertsRaised.get(0);
+        assertThat(result.getEvidence(), equalTo(expectedEvidence));
+        validateAlert(result);
+    }
+
+    @Test
+    public void shouldNotRaiseAlertForResponseCodeOkAndCustomPayloadNotDetected()
+            throws HttpMalformedHeaderException {
+        // Given
+        String expectedEvidence = "customPayloadString";
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(OK));
+        msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
+        ApplicationErrorScanner.setPayloadProvider(() -> Arrays.asList("notDetectedString"));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldRaiseAlertForResponseCodeOkAndFilePayloadDetected()
+            throws HttpMalformedHeaderException {
+        // Given
+        // String from standard XML file
+        String expectedEvidence = "Microsoft OLE DB Provider for ODBC Drivers";
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(OK));
+        msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
+        ApplicationErrorScanner.setPayloadProvider(() -> Arrays.asList(expectedEvidence));
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then
