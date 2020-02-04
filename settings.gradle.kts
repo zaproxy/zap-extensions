@@ -47,6 +47,7 @@ var addOns = listOf(
     "jruby",
     "jsonview",
     "jython",
+    "mongodb",
     "onlineMenu",
     "openapi",
     "plugnhack",
