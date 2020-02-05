@@ -20,26 +20,19 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Before;
 import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 public class TimestampDisclosureScannerUnitTest
         extends PassiveScannerTest<TimestampDisclosureScanner> {
-    private HttpMessage msg;
-
-    @Before
-    public void before() throws URIException {
-        HttpRequestHeader requestHeader = new HttpRequestHeader();
-        requestHeader.setURI(new URI("http://example.com", false));
-
-        msg = new HttpMessage();
-        msg.setRequestHeader(requestHeader);
-    }
 
     @Override
     protected TimestampDisclosureScanner createScanner() {
@@ -49,6 +42,7 @@ public class TimestampDisclosureScannerUnitTest
     @Test
     public void shouldNotRaiseAlertOnSTSHeader() throws Exception {
         // Given
+        HttpMessage msg = createMessage("");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
@@ -56,6 +50,274 @@ public class TimestampDisclosureScannerUnitTest
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldRaiseAlertOnValidCurrentTimestamp() throws Exception {
+        // Given
+        String now =
+                String.valueOf(System.currentTimeMillis()).substring(0, 10); // 10 Digit precision
+        HttpMessage msg = createMessage(now);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(now));
+    }
+
+    @Test
+    public void shouldRaiseAlertOnValidCurrentTimestampAtHighThreshold() throws Exception {
+        // Given
+        String now =
+                String.valueOf(System.currentTimeMillis()).substring(0, 10); // 10 Digit precision
+        HttpMessage msg = createMessage(now);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(now));
+    }
+
+    @Test
+    public void shouldRaiseAlertOnTimeStampWhenWithinPastYear() throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+    }
+
+    @Test
+    public void shouldRaiseAlertOnTimeStampWhenWithinPastYearAtHighThreshold() throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+    }
+
+    @Test
+    public void shouldRaiseAlertOnTimeStampWhenWithinNextYear() throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().plusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+    }
+
+    @Test
+    public void shouldRaiseAlertOnTimeStampWhenWithinNextYearAtHighThreshold() throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().plusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+    }
+
+    @Test
+    public void shouldRaiseAlertOnTimeStampWhenThreeYearsAgo() throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusYears(3).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertOnTimeStampWhenThreeYearsAgoAtHighThreshold() throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusYears(3).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldRaiseAlertOnTimeStampWhenThreeYearsFromNow() throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().plusYears(3).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertOnTimeStampWhenThreeYearsFromNowAtHighThreshold()
+            throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().plusYears(3).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldRaiseAlertOnTimeStampWhenFarInThePast() throws Exception {
+        // Given
+        String strTestDate = String.valueOf(33333333);
+        HttpMessage msg = createMessage(strTestDate);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertOnTimeStampWhenFarInThePastAtHighThreshold() throws Exception {
+        // Given
+        String strTestDate = String.valueOf(33333333);
+        HttpMessage msg = createMessage(strTestDate);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldRaiseAlertOnTimeStampWhenFarInTheFuture() throws Exception {
+        // Given
+        String strTestDate = String.valueOf(2147483647);
+        HttpMessage msg = createMessage(strTestDate);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertOnTimeStampWhenFarInTheFutureAtHighThreshold() throws Exception {
+        // Given
+        String strTestDate = String.valueOf(2147483647);
+        HttpMessage msg = createMessage(strTestDate);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldRaiseTwoAlertsWhenOneOfTwoTimeStampWithinNextYear() throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().plusMonths(6).toInstant();
+        Instant testDate2 = ZonedDateTime.now().plusMonths(18).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        String strTestDate2 = String.valueOf(testDate2.getEpochSecond());
+        HttpMessage msg = createMessage("");
+        String body = "{\"date\":" + strTestDate + ",\"endDate\":\"" + strTestDate2 + "\"}";
+        msg.setResponseBody(body);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(2, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertTrue(alertsRaised.get(1).getEvidence().equals(strTestDate2));
+    }
+
+    @Test
+    public void shouldRaiseOneAlertWhenOneOfTwoTimeStampWithinNextYearAtHighThreshold()
+            throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().plusMonths(6).toInstant();
+        Instant testDate2 = ZonedDateTime.now().plusMonths(18).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        String strTestDate2 = String.valueOf(testDate2.getEpochSecond());
+        HttpMessage msg = createMessage("");
+        String body = "{\"date\":" + strTestDate + ",\"endDate:\"" + strTestDate2 + "\"}";
+        msg.setResponseBody(body);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+    }
+
+    @Test
+    public void shouldRaiseTwoAlertsWhenOneOfTwoTimeStampWithinPastYear() throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusMonths(18).toInstant();
+        Instant testDate2 = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        String strTestDate2 = String.valueOf(testDate2.getEpochSecond());
+        HttpMessage msg = createMessage("");
+        String body = "{\"date\":" + strTestDate + ",\"endDate\":\"" + strTestDate2 + "\"}";
+        msg.setResponseBody(body);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(2, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
+        assertTrue(alertsRaised.get(1).getEvidence().equals(strTestDate2));
+    }
+
+    @Test
+    public void shouldRaiseOneAlertWhenOneOfTwoTimeStampWithinPastYearAtHighThreshold()
+            throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusMonths(18).toInstant();
+        Instant testDate2 = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        String strTestDate2 = String.valueOf(testDate2.getEpochSecond());
+        HttpMessage msg = createMessage("");
+        String body = "{\"date\":" + strTestDate + ",\"endDate:\"" + strTestDate2 + "\"}";
+        msg.setResponseBody(body);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate2));
+    }
+
+    private static HttpMessage createMessage(String timestamp) throws URIException {
+        HttpRequestHeader requestHeader = new HttpRequestHeader();
+        requestHeader.setURI(new URI("http://example.com", false));
+
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(requestHeader);
+
+        String body = "{\"date\":" + timestamp + "}";
+        msg.setResponseBody(body);
+        return msg;
     }
 }
