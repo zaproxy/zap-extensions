@@ -19,10 +19,17 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import net.htmlparser.jericho.Source;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -44,9 +51,15 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.applicationerrorscanner.";
 
+    private static final Logger LOGGER = Logger.getLogger(ApplicationErrorScanner.class);
+
     // Name of the file related to pattern's definition list
-    private static final String APP_ERRORS_FILE =
-            "/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml";
+    private String APP_ERRORS_FILE =
+            Constant.getZapHome()
+                    + File.separator
+                    + "xml"
+                    + File.separator
+                    + "application_errors.xml";
 
     public static final List<String> DEFAULT_ERRORS = Collections.emptyList();
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER = () -> DEFAULT_ERRORS;
@@ -55,11 +68,30 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
     // Inner Content Matcher component with pattern definitions
-    private static final ContentMatcher matcher =
-            ContentMatcher.getInstance(
-                    ApplicationErrorScanner.class.getResourceAsStream(APP_ERRORS_FILE));
+    private ContentMatcher matcher = null;
     // Inner Thread Parent variable
     private PassiveScanThread parent = null;
+
+    private ContentMatcher getContentMatcher() {
+        if (matcher == null) {
+            Path path = Paths.get(APP_ERRORS_FILE);
+            try (InputStream is = Files.newInputStream(path)) {
+                matcher = ContentMatcher.getInstance(is);
+            } catch (IOException | IllegalArgumentException e) {
+                LOGGER.warn(
+                        "Unable to read "
+                                + getName()
+                                + " input file: "
+                                + APP_ERRORS_FILE
+                                + ". Falling back to ZAP archive.");
+                matcher =
+                        ContentMatcher.getInstance(
+                                ApplicationErrorScanner.class.getResourceAsStream(
+                                        "/xml/application_errors.xml"));
+            }
+        }
+        return matcher;
+    }
 
     /**
      * Get this plugin id
@@ -156,7 +188,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
                     return;
                 }
             }
-            String evidence = matcher.findInContent(body);
+            String evidence = getContentMatcher().findInContent(body);
             if (evidence != null) {
                 // We found it!
                 // There exists a positive match of an
