@@ -56,43 +56,6 @@ The presence of such banners may facilitate more targeted attacks against known 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/InPageBannerInfoLeakScanner.java">InPageBannerInfoLeakScanner.java</a>
 
-<H2>Insecure Component</H2>
-Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
-A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable. 
-Currently, the following server side products are supported:<br>
-Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
-Apache web server<br>
-mod_auth_radius Apache module<br>
-mod_fcgid Apache module<br>
-mod_imap Apache module<br>
-mod_jk Apache module<br>
-mod_perl Apache module<br>
-mod_python Apache module<br>
-mod_ssl Apache module<br>
-OpenSSL Apache module<br>
-Perl Apache module<br>
-Python Apache module<br>
-IBM HTTP Server<br>
-JBoss application server<br>
-Jetty web server / application server<br>
-LiteSpeed web server<br>
-Lighttpd web server<br>
-Microsoft IIS web server<br>
-Netscape Enterprise web server<br>
-Nginx web server<br>
-OpenCMS<br>
-Oracle Application Server<br>
-Oracle Web Cache<br>
-PHP<br>
-Phusion_Passenger<br>
-Squid proxy server<br>
-Sun One web server<br>
-Sun Java System Web Server<br>
-TornadoServer web server<br>
-WordPress<br>
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/InsecureComponentScanner.java">InsecureComponentScanner.java</a>
-
 <H2>Java Serialization Object</H2>
 Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
 Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
