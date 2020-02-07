@@ -184,7 +184,8 @@ is not greater than 8 characters in length then the parameter is ignored
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/TestInfoSessionIdURL.java">TestInfoSessionIdURL.java</a>
 
 <H2>Timestamp Disclosure</H2>
-A timestamp was disclosed by the application/web server.
+A timestamp was disclosed by the application/web server.<br>
+At HIGH threshold this rule does not alert on potential timestamps that are not within a range of plus or minus one year.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/TimestampDisclosureScanner.java">TimestampDisclosureScanner.java</a>
 
