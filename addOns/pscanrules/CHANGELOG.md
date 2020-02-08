@@ -14,7 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - This addresses errors such as `[ZAP-PassiveScanner] ERROR org.zaproxy.zap.extension.pscanrules.InformationDisclosureInURL  - No such file: .... /xml/URL-information-disclosure-messages.txt`
 - 'Application Error' scan rule now supports custom payloads when used in conjunction with the Custom Payloads addon.
 - Timestamp Disclosure scan rule now only considers potential timestamps within plus or minus one year when used at High threshold (Issue 5837).
--  'Application Error' scan rule's patterns file `application_errors.xml` is now copied to ZAP's home directory, which means it is editable by the user. As well as being more consistent with other similar input files.
+- 'Application Error' scan rule's patterns file `application_errors.xml` is now copied to ZAP's home directory, which means it is editable by the user. As well as being more consistent with other similar input files.
+- 'Information Disclosure - Sensitive Information in URL' correct evidence field for some alerts, and enhance other info details (Issue 5832).
 
 ### Removed
 - 'Header XSS Protection' was deprecated and removed (Issue 5849).
