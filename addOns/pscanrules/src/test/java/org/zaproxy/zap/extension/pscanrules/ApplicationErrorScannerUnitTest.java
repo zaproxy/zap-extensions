@@ -24,8 +24,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.parosproxy.paros.network.HttpStatusCode.*;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import org.junit.Test;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -39,6 +44,24 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
     @Override
     protected ApplicationErrorScanner createScanner() {
         return new ApplicationErrorScanner();
+    }
+
+    @Override
+    public void setUpZap() throws Exception {
+        super.setUpZap();
+
+        Path xmlDir = Files.createDirectories(Paths.get(Constant.getZapHome(), "xml"));
+        Path testFile = xmlDir.resolve("application_errors.xml");
+        String content =
+                "<?xml version=\"1.0\" standalone=\"no\"?>\n"
+                        + "<!-- \n"
+                        + "UnitTest File\n"
+                        + "-->\n"
+                        + "<Patterns>\n"
+                        + "  <Pattern type=\"string\">Microsoft OLE DB Provider for ODBC Drivers</Pattern>\n"
+                        + "  <Pattern type=\"regex\">(?i)Line\\s\\d+:\\sIncorrect\\ssyntax\\snear\\s'[^']*'</Pattern>\n"
+                        + "</Patterns>";
+        Files.write(testFile, content.getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
