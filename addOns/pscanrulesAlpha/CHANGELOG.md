@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Fixed NullPointerException in Sub Resource Integrity Attribute Missing scan rule (Issue 5789).
 - Minor spacing issue in help content.
+- Base64 Disclosure do not keep looping after identifying a disclosure (Issue 5856).
 
 ### Removed
 - 'Insecure Component' was deprecated and removed (Issue 5788).
