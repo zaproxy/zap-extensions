@@ -332,7 +332,9 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                 13, // Information Leakage
                                 msg);
                         parent.raiseAlert(id, alert);
-                        // do NOT break at this point.. we need to find *all* the issues
+                        if (!macless) {
+                            return;
+                        }
 
                         // if the ViewState is not protected by a MAC, alert it as a High, cos we
                         // can mess with the parameters for sure..
@@ -362,7 +364,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                     13, // Information Leakage
                                     msg);
                             parent.raiseAlert(id, alertmacless);
-                            // do NOT break at this point.. we need to find *all* the issues
+                            return;
                         }
                         // TODO: if the ViewState contains sensitive data, alert it (particularly if
                         // running over HTTP)
@@ -392,8 +394,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                     13, // Information Leakage
                                     msg);
                             parent.raiseAlert(id, alert);
-                            // do NOT break at this point.. we need to find *all* the potential
-                            // Base64 encoded data in the response..
+                            return;
                         }
                     }
                 }
