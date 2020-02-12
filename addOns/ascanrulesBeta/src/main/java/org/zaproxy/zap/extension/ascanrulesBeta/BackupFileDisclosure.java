@@ -300,10 +300,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return Constant.messages.getString("ascanbeta.backupfiledisclosure.desc");
     }
 
     @Override
@@ -321,17 +318,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return Constant.messages.getString("ascanbeta.backupfiledisclosure.refs");
     }
 
     @Override
@@ -420,7 +407,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 
     @Override
     public int getCweId() {
-        return 425; // Direct Request ('Forced Browsing')
+        return 530; // CWE-530: Exposure of Backup File to an Unauthorized Control Sphere
     }
 
     @Override
@@ -760,7 +747,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
                             Alert.RISK_MEDIUM,
                             Alert.CONFIDENCE_MEDIUM,
                             Constant.messages.getString("ascanbeta.backupfiledisclosure.name"),
-                            Constant.messages.getString("ascanbeta.backupfiledisclosure.desc"),
+                            getDescription(),
                             requestmsg
                                     .getRequestHeader()
                                     .getURI()
@@ -776,6 +763,9 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
                                     "ascanbeta.backupfiledisclosure.evidence",
                                     originalURI,
                                     candidateBackupFileURI.getURI()),
+                            getReference(),
+                            getCweId(),
+                            getWascId(),
                             requestmsg // originalMessage
                             );
                 }
@@ -820,7 +810,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
                             Alert.RISK_MEDIUM,
                             Alert.CONFIDENCE_MEDIUM,
                             Constant.messages.getString("ascanbeta.backupfiledisclosure.name"),
-                            Constant.messages.getString("ascanbeta.backupfiledisclosure.desc"),
+                            getDescription(),
                             requestmsg
                                     .getRequestHeader()
                                     .getURI()
@@ -836,6 +826,9 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
                                     "ascanbeta.backupfiledisclosure.evidence",
                                     originalURI,
                                     candidateBackupFileURI.getURI()),
+                            getReference(),
+                            getCweId(),
+                            getWascId(),
                             requestmsg // originalMessage
                             );
                 }
