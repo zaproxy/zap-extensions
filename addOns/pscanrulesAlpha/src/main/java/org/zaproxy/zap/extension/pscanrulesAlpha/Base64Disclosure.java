@@ -28,6 +28,7 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -332,7 +333,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                 13, // Information Leakage
                                 msg);
                         parent.raiseAlert(id, alert);
-                        if (!macless) {
+                        if (!macless && !AlertThreshold.LOW.equals(getAlertThreshold())) {
                             return;
                         }
 
@@ -364,7 +365,9 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                     13, // Information Leakage
                                     msg);
                             parent.raiseAlert(id, alertmacless);
-                            return;
+                            if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
+                                return;
+                            }
                         }
                         // TODO: if the ViewState contains sensitive data, alert it (particularly if
                         // running over HTTP)
@@ -394,7 +397,9 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                     13, // Information Leakage
                                     msg);
                             parent.raiseAlert(id, alert);
-                            return;
+                            if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
+                                return;
+                            }
                         }
                     }
                 }
