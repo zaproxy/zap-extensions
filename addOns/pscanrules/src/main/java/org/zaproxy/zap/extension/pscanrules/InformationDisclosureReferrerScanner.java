@@ -37,6 +37,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.PiiUtils;
 
 public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
@@ -214,7 +215,10 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
     private String doesContainCreditCard(String creditCard) {
         Matcher matcher = creditCardPattern.matcher(creditCard);
         if (matcher.find()) {
-            return matcher.group();
+            String candidate = matcher.group();
+            if (PiiUtils.isValidLuhn(candidate)) {
+                return candidate;
+            }
         }
         return null;
     }

@@ -189,7 +189,6 @@ public class InformationDisclosureReferrerScannerUnitTest
 
         // Given
         String sensitiveParamName = "passWord";
-        String sensitiveValue = "whatsup";
         String testReferer = "http://example.org/?passWord=whatsup&hl=en";
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
