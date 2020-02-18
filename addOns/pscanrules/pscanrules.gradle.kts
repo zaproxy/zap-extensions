@@ -29,13 +29,13 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.shapesecurity:salvation:2.7.0")
+    implementation("com.shapesecurity:salvation:2.7.1")
     implementation(project(":sharedutils"))
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.commons:commons-lang3:3.7")
+    testImplementation("org.apache.commons:commons-lang3:3.9")
 }
 
 spotless {
