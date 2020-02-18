@@ -30,13 +30,13 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.PiiUtils;
 
 /**
  * A scanner to passively scan for the presence of PII in response Currently only credit card
  * numbers
  *
- * @author Michael Kruglos (@michaelkruglos) TODO Extract credit card code when moved to beta(?) to
- *     also be used by InformationDisclosureReferrerScanner
+ * @author Michael Kruglos (@michaelkruglos)
  */
 public class PiiScanner extends PluginPassiveScanner {
 
@@ -95,7 +95,7 @@ public class PiiScanner extends PluginPassiveScanner {
                 Matcher matcher = cc.matcher(candidate.getCandidate());
                 while (matcher.find()) {
                     String evidence = matcher.group();
-                    if (validateLuhnChecksum(evidence) && !isSci(candidate.getContainingString())) {
+                    if (PiiUtils.isValidLuhn(evidence) && !isSci(candidate.getContainingString())) {
                         raiseAlert(msg, id, evidence, cc.name);
                     }
                 }
@@ -103,22 +103,14 @@ public class PiiScanner extends PluginPassiveScanner {
         }
     }
 
-    private static boolean validateLuhnChecksum(String evidence) {
-        int sum = 0;
-        int parity = evidence.length() % 2;
-        for (int index = 0; index < evidence.length(); index++) {
-            int digit = Integer.parseInt(evidence.substring(index, index + 1));
-            if ((index % 2) == parity) {
-                digit *= 2;
-                if (digit > 9) {
-                    digit -= 9;
-                }
-            }
-            sum += digit;
-        }
-        return (sum % 10) == 0;
-    }
-
+    /**
+     * Checks whether a particular {@code String} input appears to be a valid number in scientific
+     * (exponent) notation. Ex: 2.14111111111111111e-2, 8.46786664623715E-47, 3.14111111111117293e5
+     *
+     * @param containingString the value to be checked.
+     * @return {@code true} if the value successfully parses as a {@code Float}, {@code false}
+     *     otherwise.
+     */
     private static boolean isSci(String containingString) {
         if (!StringUtils.containsIgnoreCase(containingString, "e")) {
             return false;
