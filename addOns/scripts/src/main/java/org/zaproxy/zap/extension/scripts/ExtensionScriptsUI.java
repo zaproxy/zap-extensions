@@ -485,6 +485,10 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     }
 
     public void displayType(ScriptType type) {
+        displayTypeImpl(type, false);
+    }
+
+    private void displayTypeImpl(ScriptType type, boolean template) {
         if (!View.isInitialised()) {
             return;
         }
@@ -492,12 +496,21 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         this.saveChanges();
 
         this.getConsolePanel().clearScript();
-        this.getConsolePanel().getOutputPanel().clear();
+        OutputPanel outputPanel = getConsolePanel().getOutputPanel();
+        outputPanel.clear();
+
+        if (template) {
+            outputPanel.append(Constant.messages.getString("scripts.template.desc"));
+        }
 
         if (Constant.messages.containsKey(type.getI18nKey() + ".desc")) {
-            setOutput(Constant.messages.getString(type.getI18nKey() + ".desc"));
+            outputPanel.append(Constant.messages.getString(type.getI18nKey() + ".desc"));
             this.getConsolePanel().setTabFocus();
         }
+    }
+
+    void displayTemplateType(ScriptType type) {
+        displayTypeImpl(type, true);
     }
 
     @Override

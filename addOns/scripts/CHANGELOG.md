@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Move empty template entry to the top, for consistency with other fields in New Script dialogue.
 - Save cursor position when switching between scripts.
 - Change info URL to link to the site.
+- Provide information on how to create scripts from templates (Issue 5746).
 
 ### Fixed
 - Fix links in script templates.
