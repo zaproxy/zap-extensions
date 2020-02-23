@@ -48,6 +48,12 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     private static final String MESSAGE_PREFIX = "ascanrules.testscrosssitescriptv2.";
 
     private static final String GENERIC_SCRIPT_ALERT = "<script>alert(1);</script>";
+
+    /**
+     * Null byte injection payload. C/C++ languages treat Null byte or \0 as special character which
+     * marks end of the String so if validators are written in C/C++ then validators might not check
+     * bytes after null byte and hence can be bypassed.
+     */
     private static final String GENERIC_NULL_BYTE_SCRIPT_ALERT =
             NULL_BYTE_CHARACTER + GENERIC_SCRIPT_ALERT;
 

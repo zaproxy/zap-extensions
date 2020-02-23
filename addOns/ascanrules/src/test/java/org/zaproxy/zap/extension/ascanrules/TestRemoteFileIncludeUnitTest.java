@@ -42,7 +42,7 @@ public class TestRemoteFileIncludeUnitTest
     }
 
     @Test
-    public void shouldRaiseAlertIfResponseHasPasswdFileContentAndPayloadIsNullByteBased()
+    public void shouldRaiseAlertIfResponseHasRemoteFileContentAndPayloadIsNullByteBased()
             throws HttpMalformedHeaderException {
         // Given
         NullByteVulnerableServerHandler vulnServerHandler =
