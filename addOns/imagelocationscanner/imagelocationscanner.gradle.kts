@@ -3,10 +3,6 @@ import org.zaproxy.gradle.addon.AddOnStatus
 version = "3"
 description = "Image Location and Privacy Passive Scanner"
 
-tasks.withType<JavaCompile> {
-    options.compilerArgs = options.compilerArgs - "-Werror"
-}
-
 zapAddOn {
     addOnName.set("Image Location and Privacy Scanner")
     addOnStatus.set(AddOnStatus.BETA)
