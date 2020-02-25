@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Statistik Otentikasi
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Statistik Otentikasi</h1>
+Pengaya ini merekam otentikasi terkait statistik untuk semua konteks yang berada dalam ruang lingkup.<br>
+Statistik direkam pada setiap basis situs dan menutupi:
+<table>
+<tr><td>stats.auth.<i>komponen</i>.state.nothtml</td><td>Respons Non HTML (yang tidak mungkin memiliki indikator masuk/keluar)</td></tr>
+<tr><td>stats.auth.<i>komponen</i>.state.notsuccess</td><td>Respons HTML tidak berhasil (yang tidak mungkin memiliki indikator masuk/keluar)</td></tr>
+<tr><td>stats.auth.<i>komponen</i>.state.noindicator</td><td>Tidak ada indikator masuk/keluar yang telah ditetapkan</td></tr>
+<tr><td>stats.auth.<i>komponen</i>.state.loggedinandout</td><td>Kedua masuk dan keluar indikator hadir</td></tr>
+<tr><td>stats.auth.<i>komponen</i>.state.loggedin</td><td>Hanya indikator masuk yang tersedia</td></tr>
+<tr><td>stats.auth.<i>komponen</i>.state.loggedout</td><td>Hanya indikator keluar yang tersedia</td></tr>
+<tr><td>stats.auth.<i>komponen</i>.state.unknown</td><td>Tidak ada indikator masuk atau keluar yang diajukan</td></tr>
+</table>
+Komeponen bisa:
+<table>
+<tr><td>ascan</td><td>Pemindai Aktif</td></tr>
+<tr><td>auth</td><td>Otentikasi</td></tr>
+<tr><td>fuzz</td><td>Fuzzer</td></tr>
+<tr><td>manual</td><td>Permintaan manual</td></tr>
+<tr><td>Proxy</td><td>Permintaan proxy</td></tr>
+<tr><td>laba-laba</td><td>Laba-laba</td></tr>
+<tr><td><i>id</i></td><td>Integer pengenal dari komponen lain yang tidak tercantum di atas</td></tr>
+</table>
+<p>
+statistik bisa diakses melalui API ZAP.
+</p>
+<p>
+
+Ikon untuk add-on ini berasal dari
+<a href="https://github.com/yusukekamiyamane/fugue-icons">Ikon Fugue</a> 
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/chart.png">chart.png</a> dan
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/lock-small.png">locl-small.png</a>
+
+</body>
+</html>

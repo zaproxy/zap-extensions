@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="html5connectivity" url="contents/images/html5_connectivity_16x16.png" />
+	
+    <mapID target="websocket.introduction" url="contents/introduction.html" />
+    <mapID target="websocket.tab" url="contents/tab.html" />
+ 	<mapID target="websocket.options" url="contents/options.html" />
+ 	<mapID target="websocket.sessionProperties" url="contents/sessionProperties.html" />
+ 	<mapID target="websocket.script" url="contents/script.html" />
+  <mapID target="websocket.pscanrules" url="contents/pscanrules.html" />
+ 	<mapID target="websocket.api" url="contents/api.html" />
+ 	<mapID target="websocket.about" url="contents/about.html" />
+</map>

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Aturan pindai aktif - alfa
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Active Scan Aturan - alpha</h1>
+Berikut alpha kualitas active scan aturan termasuk dalam hal ini add-on:
+
+<h2>Apache Range Header DoS (CVE-2011-3192)</h2>
+Tes untuk melihat apakah server tersebut rentan Apache Range Header Denial of Service masalah, dengan meminta sebelas (11) 
+berbeda byte berkisar. Sebelas rentang adalah salah satu lebih dari diterima oleh server ditambal/tetap.
+
+<h2>Detektor slack cookie</h2>
+Pengujian cookies untuk mendeteksi jika beberapa tidak memiliki efek pada ukuran respons saat dihilangkan, terutama cookie yang berisi nama "sidang" atau "identitas pengguna"
+
+<h2>Pemindai ELMAH</h2>
+Pengujian untuk melihat apakah modul log dan modul Pelacakan salah (Elmah.axd) Modul HTTP tersedia. Walaupun modul ini sangat berguna untuk para pengembang dan pemangku kepentingan lainnya ini juga dapat bocor sejumlah besar informasi yang seorang analis keamanan atau individu berbahaya mungkin akan tertarik dalam.<br><br> Pemindai ELMAH berbasis Microsoft Technology: IIS, Windows, ASP, dan MSSQL.
+
+<h2>Contoh File Yang Aktif Scanner</h2>
+Ini mengimplementasikan contoh active scan aturan yang memuat string dari file yang pengguna dapat mengedit.<br>
+Untuk lebih jelasnya lihat: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+
+<h2>Contoh Sederhana Aktif Scanner</h2>
+Ini mengimplementasikan sebuah contoh yang sangat sederhana active scan aturan.<br>
+Untuk lebih jelasnya lihat: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+
+<h2>Ekspresi Bahasa Injeksi</h2>
+Software konstruksi semua atau bagian dari sebuah expression language (EL) pernyataan dalam Java Server Page (JSP) menggunakan eksternal yang dipengaruhi masukan dari hulu komponen, tetapi tidak menetralisir atau salah menetralkan unsur-unsur khusus yang bisa mengubah dimaksudkan EL pernyataan sebelum dieksekusi. Dalam versi tertentu dari Spring 3.0.5 dan sebelumnya, ada kerentanan (CVE-2011-2730) dalam bahasa ekspresi akan dievaluasi dua kali, yang secara efektif terkena aplikasi untuk EL injeksi. Namun, bahkan untuk versi yang lebih baru, kelemahan ini masih mungkin tergantung pada konfigurasi.
+
+<h2>untuk MENDAPATKAN POSTING Scanner</h2>
+Scanner ini membutuhkan waktu <code>application/x-www-form-urlencoded</code> POSTING permintaan, perubahan parameter dari POSTING untuk MENDAPATKAN dan resubmits permintaan. 
+Jika MENDAPATKAN respon yang sama seperti aslinya POSTING respon maka alarm akan berbunyi. Sementara ini tidak selalu mewakili kelemahan keamanan kepada dirinya sendiri mungkin mengindikasikan bahwa serangan atau kelemahan lain dapat diperluas atau disederhanakan.
+(Seperti POS berdasarkan Cross-Site Scripting (XSS) serangan yang berubah.)
+
+<h2>HTTP Satunya Situs</h2>
+Ini aktif scanner memeriksa apakah sebuah situs HTTP disajikan di bawah HTTPS.
+
+<h2>Httpoxy</h2>
+Pemindai aktif ini memeriksa apakah sebuah situs menggunakan header HTTP Proxy yang ditentukan dalam permintaan.<br>
+Ini membuat proxy HTTP yang mendengarkan semua antarmuka pada port bebas yang ditetapkan secara acak.
+Kemudian mengirimkan serangkaian permintaan ke server target dengan header HTTP Proxy yang disetel ke masing-masing yang tersedia
+Alamat IP dan port yang didengarkannya.
+Jika permintaan diterima di port baru maka server sangat mungkin rentan.<br>
+<b>PENTING</b> - komputer yang dijalankan ZAP harus menerima permintaan masuk pada port yang sewenang-wenang -
+Jika firewall mencegah koneksi masuk maka aturan ini tidak akan berhasil. 
+
+<h2>HTTPS sebagai pemindai HTTP</h2>
+Pemindai aktif ini mencoba mengakses konten yang awalnya diakses melalui HTTPS (SSL/TLS) melalui HTTP.
+
+<h2>Injeksi LDAP</h2>
+Injeksi LDAP dimungkinkan. Hal ini memungkinkan bagi penyerang untuk melewati kontrol otentikasi, serta untuk melihat dan memodifikasi data semaunya dalam direktori LDAP.
+
+<h2>SQL Injection - MsSQL</h2>
+Ini aktif scanner upaya untuk menyuntikkan MsSQL spesifik tidur perintah ke nilai parameter dan analisis respon server waktu untuk melihat apakah tidur secara efektif dijalankan pada server (yang menunjukkan sukses SQL injection attack).
+
+<h2>Pengungkapan sumber kode - Inklusi Berkas</h2>
+Menggunakan teknik penyisipan berkas lokal untuk memindai berkas yang berisi kode sumber pada server web.
+
+<h2>Pengungkapan Kode Sumber - Git</h2>
+Menggunakan teknik repositori kode sumber Git untuk memindai file yang berisi kode sumber pada server web.
+
+<h2>Pemindai jejak.axd</h2>
+Pengujian untuk melihat apakah jejak penonton (jejak.axd) tersedia. Meskipun komponen ini mudah bagi pengembang dan
+pemangku kepentingan lainnya dapat membocorkan sejumlah besar informasi yang analis keamanan atau individu jahat
+mungkin tertarik.<br><br>
+Pemindai jejak.axd menargetkan teknologi berbasis microsoft: IIS, windows, ASP, dan MSSQL.
+
+<h2>Agen Pengguna Fuzzer</h2>
+Pemindai aktif ini memeriksa perbedaan respons berdasarkan Agen Pengguna yang fuzzed (eg. situs ponsel, akses sebagai Mesin Pencari Crawler). Pemindai membandingkan kode status tanggapan dan kode campuran dari tanggapan tubu dengan tanggapan asli.
+
+</body>
+</html>

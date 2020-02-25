@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Menggantikan
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Menggantikan</h1>
+Cara mudah untuk mengganti string dalam permintaan dan tanggapan.
+<p>
+Hal ini dapat diakses melalui Opsi dan secara default ini dapat diakses secara cepat melalui '&lt;ctrl&gt; R' hotkey.
+<p>
+Yang Replacer Pilihan panel memungkinkan anda untuk menentukan banyak aturan pengganti yang anda butuhkan.<br>
+Setiap aturan yang ditentukan oleh bidang-bidang berikut:
+<h3>Deskripsi</h3>
+Deskripsi yang memungkinkan anda untuk mengidentifikasi aturan.
+
+<h3>Jenis Pencocokan</h3>
+Mungkin salah satu dari:
+
+<h4>Header Permintaan (akan menambahkan jika tidak hadir)</h4>
+Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai nama header. 
+Jika header hadir maka nilainya akan diganti dengan teks pengganti. 
+Jika penggantian teks kosong maka header akan dihapus (jika ada).
+Jika header tidak hadir dan penggantian teks tidak kosong maka header akan ditambahkan.
+
+<h4>Request Header String</h4>
+Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
+Jika hadir di header permintaan maka akan diganti dengan teks pengganti.
+
+<h4>Permintaan Tubuh String</h4>
+Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
+Jika hal ini hadir dalam permintaan tubuh maka akan diganti dengan teks pengganti.
+
+<h4>Response Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+Jika header hadir maka nilainya akan diganti dengan teks pengganti. 
+Jika penggantian teks kosong maka header akan dihapus (jika ada).
+Jika header tidak hadir dan penggantian teks tidak kosong maka header akan ditambahkan.
+
+<h4>Respon Header String</h4>
+Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
+Jika hadir di respon header maka akan diganti dengan teks pengganti.
+
+<h4>Respon Tubuh String</h4>
+Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
+Jika hal ini hadir dalam respon tubuh maka akan diganti dengan teks pengganti.
+
+<h3>Pertandingan String</h3>
+String yang akan digunakan untuk mengidentifikasi apa yang harus diganti - melihat Jenis Pencocokan untuk rincian.
+
+<h3>Pertandingan Regex</h3>
+Jika diatur kemudian Mencocokkan String akan diperlakukan sebagai regex ekspresi.
+Opsi ini dinonaktifkan ketika pencocokan header.
+
+<h3>String Pengganti</h3>
+String baru yang akan menggantikan ditentukan pilihan.
+
+<h3>Aktifkan</h3>
+Jika tidak diatur maka aturan tersebut tidak akan berlaku.
+
+<h3>Maju</h3>
+Jika diatur kemudian tab tambahan akan menunjukkan yang memungkinkan anda untuk menentukan yang 'penggagas' aturan harus berlaku untuk.
+Masing-masing ZAP komponen yang dapat mengirim dan menerima pesan terpisah inisiator, sehingga ini akan memberikan anda sangat baik biji-bijian
+kontrol atas persis ketika aturan harus diterapkan.
+
+<p>
+Jika anda membutuhkan lebih mengontrol kapan dan bagaimana teks harus diganti maka anda dapat menggunakan ZAP Script Konsol yang
+memberi anda kontrol penuh atas ZAP pesan.
+
+</body>
+</html>

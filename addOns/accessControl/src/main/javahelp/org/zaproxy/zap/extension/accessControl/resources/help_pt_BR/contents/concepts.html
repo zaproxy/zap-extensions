@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Testes de controle de acesso
+    </title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Testes de controle de acesso</h1>
+
+<p>
+    Este complemento permite aos usuários comparar quais partes de um aplicativo da web estão disponíveis para alguns usuários, fazer testes de controle de acesso e identificar possíveis problemas de controle de acesso. Ele permite a configuração das regras de acesso e conduz um ataque destinado a ajudar a identificar partes de um aplicativo da web que são acessíveis por clientes não autorizados.
+</p>
+
+<p>
+    Existem dois conceitos principais relacionados com este complemento que precisam ser explicados: as <b>Regras de Acesso</b> e o <b>procedimento de teste</b>.
+</p>
+
+<h3>Regras de acesso</h3>
+
+<p>
+    A fim de identificar possíveis problemas de controle de acesso, o ZAP precisa saber quais partes do aplicativo da web podem ser acessadas e por qual o usuário. No ZAP, o nome para estas regras é o seguinte: <i>Regras de acesso</i> e geralmente elas têm o seguinte significado: "<i>A página xis deve/não deve ser acessada pelo usuário Xis</i>".
+</p>
+
+<p>As regras são configuradas para um contexto e, para cada usuário desse contexto, cada Site/nó (página web) será associado a um dos seguintes valores:</p>
+<ul>
+    <li><b>Permitido</b> - o recurso <b>pode</b> ser acessado pelo usuário ao qual se refere a regra</li>
+    <li><b>Negado</b> - o recurso <b>não deve</b> ser acessado pelo usuário ao qual se refere a regra</li>
+    <li><b>Desconhecido</b> - não há <b>nenhuma informação</b> sobre se o recurso deve ou não deve ser acessível para o usuário ao qual se refere a regra
+    </li>
+</ul>
+
+<p>
+    Para simplificar o processo de definição das regras de acesso, o ZAP faz uso da estrutura baseada em árvore de URLs.
+    Ao analisar as regras, um algoritmo de inferência é usado para detectar as regras de correspondência para cada nó baseado no seu pai na URL, quando não há regras específicas definidas. Isto significa que, ao configurar as regras de acesso, apenas uma regra precisa ser definida explicitamente para uma subárvore inteira, enquanto para os outros nós as regras são inferidas. Mais detalhes sobre isso podem ser encontrados na página de ajuda das <a href="contextOptions.html">Opções de contexto</a> do controle de acesso.</td>
+</p>
+
+<h3>Procedimento de teste</h3>
+
+<p> No geral, para realizar plenamente testes de controle de acesso para um aplicativo da web, as seguintes etapas devem ser seguidas:</p>
+<ul>
+    <li>o testador define o conjunto de usuários e como eles se autenticam;
+    </li>
+    <li>o testador define como ZAP pode identificar solicitações não-autorizadas (através do painel de autorização nas propriedades da sessão);
+    </li>
+    <li>o aplicativo da web é explorado manualmente ou através do spider;</li>
+    <li>o testador define as regras de acesso para cada um dos usuários associados ao contexto, basicamente deixando ZAP conheça quais partes do aplicativo da web devem ser acessadas e seus usuários;
+    </li>
+    <li>um 'ataque' é executado pelo ZAP, tentando acessar cada URL do web-app do ponto de vista de cada usuário;
+    </li>
+    <li>na aba de Status correspondente, os resultados são exibidos, mostrando quais páginas foram acessadas com êxito por quais usuários e marcando os casos onde as regras de acesso não foram seguidas.
+    </li>
+</ul>
+
+<h2>Leia também</h2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="tab.html">Guia de testes de controle de acesso</a></td>
+        <td>para obter uma descrição da guia de status utilizada pelo complemento</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="contextOptions.html">Opções de contexto de controle de acesso</a></td>
+        <td>para saber mais sobre as opções de contexto relacionadas</td>
+    </tr>
+</table>
+
+</body>
+</html>

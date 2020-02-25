@@ -1,0 +1,50 @@
+{
+  "about": "This is a Zest script. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "zestVersion": "0.3",
+  "title": "HttpSender Template Script.zst",
+  "description": "",
+  "prefix": "",
+  "type": "Targeted",
+  "parameters": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {
+      "zap.initiator": ""
+    },    "elementType": "ZestVariables"
+  },
+  "statements": [
+    {
+      "comment": "HttpSender scripts are called for every request and response made through or by ZAP.\nIf the response.url parameter is empty then the script has been called for a response, otherwise it will have been called for a request.\nThe zap.initiator parameter defined the initiator - see ZAP documentation for more details.",
+      "index": 1,
+      "elementType": "ZestComment"
+    },
+    {
+      "rootExpression": {
+        "length": 0,
+        "approx": 0,
+        "variableName": "response.url",
+        "not": false,
+        "elementType": "ZestExpressionLength"
+      },
+      "ifStatements": [
+        {
+          "comment": "Called for the request.\nSet request.header to an empty string to drop the request.",
+          "index": 3,
+          "elementType": "ZestComment"
+        }
+      ],
+      "elseStatements": [
+        {
+          "comment": "Called for the response.\nSet request.header to an empty string to drop the response.",
+          "index": 6,
+          "elementType": "ZestComment"
+        }
+      ],
+      "index": 2,
+      "elementType": "ZestConditional"
+    }
+  ],
+  "authentication": [],
+  "index": 0,
+  "elementType": "ZestScript"
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Tab Paksa Jelajah</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Forced Browse tab</h1>
+
+	Paksa tab Browsing yang memungkinkan anda untuk melakukan
+	<a href="concepts.html">Penjalajahan paksa</a> pindai pada setiap situs yang telah
+diakses.
+	<br>
+	<br> Situs yang dapat dipilih melalui toolbar atau
+	<i>Situs tab</i>.
+	<br> Setiap situs yang telah yang saat ini sedang dipindai ditandai dengan bold pada toolbar Situs pulldown kontrol.
+	<br> Toolbar menyediakan sebuah set tombol-tombol yang memungkinkan anda untuk start, stop, pause dan resume scan.
+	<br> Sebuah progress bar menunjukkan seberapa jauh scan dari situs yang dipilih telah berkembang.
+	<br> 'Nilai memindai' saat ini menunjukkan berapa banyak pemindaian yang aktif saat ini - melayang di atas nilai ini akan menampilkan daftar situs yang di pindai dalam popup.
+
+	<h2>Klik kanan menu</h2>
+	Klik kanan pada salah satu baris atau lebih akan memunculkan menu yang akan memungkinkan anda untuk:
+
+	<h3>Keluarkan dari</h3>
+	Ini menu memiliki submenu berikut:
+
+	<h4>Proksi</h4>
+	Ini akan mengecualikan node yang dipilih dari proxy. Mereka masih akan proksi melalui ZAP
+tapi tidak akan ditampilkan di setiap tab.
+	<br /> Hal ini dapat digunakan untuk mengabaikan URL yang anda tahu adalah tidak relevan untuk sistem anda yang sedang diuji.
+	<br /> Node dapat dimasukkan lagi melalui
+	<i>Properti Sesi</i> dialog
+
+	<h4>Pemindai</h4>
+	Hal ini akan mencegah catatan yang dipilih dari aktif dipindai.
+	<br /> Node dapat dimasukkan lagi melalui
+	<i>Properti Sesi</i> dialog
+
+	<h4>Laba-laba</h4>
+	Hal ini akan mencegah simpul yang dipilih agar tidak dijelajahi.
+	<br /> Node dapat dimasukkan lagi melalui
+	<i>Properti Sesi</i> dialog
+
+	<h3>Salin</h3>
+	Hal ini akan menyalin URL terpilih ke clipboard.
+
+	<h3>Kirim ulang...</h3>
+	Hal ini akan memunculkan
+	<i>Kirim ulang dialog</i> yang memungkinkan anda untuk mengirim ulang permintaan tersebut setelah membuat setiap perubahan yang anda inginkan.
+
+	<h3>Peringatan Baru...</h3>
+	Hal ini akan memunculkan
+	<i>Tambah dialog Peringatan</i> yang memungkinkan anda untuk secara manual rekor baru
+	<i>waspada</i> melawan terhadap permintaan ini.
+
+	<h3>Tampilan dalam Browser</h3>
+	Ini akan membuka URL yang dipilih node di browser default anda.
+
+	<h3>Hasilkan formulir tes anti CSRF</h3>
+	Ini akan membuka sebuah URL yang akan memberikan anda formulir yang dihasilkan selama pengujian untuk masalah CSRF.
+	<br> Hal itu hanya akan diaktifkan untuk POSTING permintaan, jika API diaktifkan dan jika Java
+mendukung pembukaan URL di browser pada platform anda.
+
+	<h2>Lihat juga</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Pilihan Terpaksa Menjelajahi layar</a></td>
+			<td>untuk rincian dipaksa browse konfigurasi</td>
+		</tr>
+	</table>
+
+</body>
+</html>

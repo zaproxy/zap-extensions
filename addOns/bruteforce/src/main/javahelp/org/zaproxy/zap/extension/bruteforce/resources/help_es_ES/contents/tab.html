@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>pestaña de Navegación Predefinida</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Pestaña de Navegación Forzada</h1>
+
+	La Pestaña de Navegación Forzada le permite realizar un escaneo de
+	<a href="concepts.html">Navegación Forzada</a> en cualquiera de los sitios que han sido accesados.
+	<br>
+	<br> Los sitios se pueden seleccionar a través de la barra de herramientas o la
+	<i>pestaña Sitios</i>.
+	<br> Cualquier sitio que ha sido, o está siendo escaneado aparecen en negritas en el menú de control desplegable de la barra de herramienta de Sitios.
+	<br> La barra de herramientas proporciona un conjunto de botones que le permiten iniciar, detener, pausar y reanudar el escaneo.
+	<br> Una barra de progreso muestra de progreso del escaneo del sitio seleccionado.
+	<br> El valor de "escaneos actuales" muestra cuántos escaneos están activos actualmente. Pasar el cursor sobre el valor mostrará una lista de los sitios que están siendo escaneados en un objeto emergente.
+
+	<h2>Menú de botón derecho</h2>
+	Hacer clic derecho en una o más filas abrirá un menú que le permitirá:
+
+	<h3>Excluir de</h3>
+	Este menú tiene los siguientes submenús:
+
+	<h4>Proxy</h4>
+	Esto excluirá los nodos seleccionados desde el proxy. Estos todavía serán redirigidos con proxy a través de ZAP pero no serán mostrados en ninguna de las pestañas.
+	<br /> Esto solo puede ser utilizado para ignorar URLs que sepas que no son relevantes para el sistema que estás probando actualmente.
+	<br /> Los nodos pueden ser incluidos a través del cuadro de dialogo
+	<i>Propiedades de la Sesión</i> .
+
+	<h4>Escáner</h4>
+	Esto evitará que los nodos seleccionados sean escaneados activamente.
+	<br /> Los nodos pueden ser incluidos a través del cuadro de dialogo
+	<i>Propiedades de la Sesión</i> .
+
+	<h4>Spider(Araña)</h4>
+	Esto evitará que los nodos seleccionados sean rastreados.
+	<br /> Los nodos pueden ser incluidos a través del cuadro de dialogo
+	<i>Propiedades de la Sesión</i> .
+
+	<h3>Copiar</h3>
+	Esto copiará las URLs seleccionadas al portapapeles.
+
+	<h3>Reenviar...</h3>
+	Esto hará que aparezca el cuadro de dialogo 
+	<i>Reenviar</i> que le permite reenviar el pedido después de hacerle los cambios que desee.
+
+	<h3>Nueva alerta...</h3>
+	Esto hará que aparezca el cuadro de dialogo 
+	<i>Añadir Alerta,</i> el que le permitirá agregar una nueva
+	<i>alerta</i> de forma automática en la petición.
+
+	<h3>Ver en el navegador</h3>
+	La dirección URL del nodo seleccionado se abrirá en el navegador por defecto.
+
+	<h3>Generar FORM de prueba anti CSRF</h3>
+	Esto abrirá una URL que le presentará un formulario generado para detectar problemas CSRF.
+	<br> Esto solo estará habilitado para solicitudes post, si la API está habilitada y si Java soporta el abrir URLs en un navegador en tu plataforma.
+
+	<h2>Vease también</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Opciones de la pantalla de navegación forzada</a></td>
+			<td>para obtener detalles acerca de la configuración de navegación forzada</td>
+		</tr>
+	</table>
+
+</body>
+</html>

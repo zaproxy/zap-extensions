@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Fuzzer对话框
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Fuzzer对话框</h1>
+这允许您选择要使用的fuzzers <a href="concepts.html">模糊化 </a> 一个请求。 
+
+<h3>模糊位置选项卡</h3>
+配置模糊:<br/>
+<ul>
+<li>在模糊位置选项卡中突出显示您想要模糊的字符串</li>
+<li>单击"添加..."按钮以启动<a href="payloads.html">有效负载对话框</a></li>
+<li>添加您想使用的有效负载</li>
+<li>单击"处理器..."按钮以启动<a href="locations.html">位置处理器对话框</a>(如果需要)</li>
+<li>点击"启动Fuzzer"按钮开始模糊</li>
+<li>结果将在<a href="tab.html">Fuzzer选项卡</a>中列出，选择它们以查看完整的请求和响应。</li>
+</ul>
+您还可以使用"搜索选项卡"在模糊结果中搜索字符串。
+
+<h3>Options tab</h3>
+此选项卡允许你配置发生模糊时使用的选项。
+
+<h3>消息处理器选项卡</h3>
+消息处理器可以访问和更改被模糊的信息，控制模糊处理并与ZAP UI进行交互。<br>
+可用的消息处理器取决于被模糊的消息的类型，此附件包括 <a href="httpmessageprocessors.html">默认HTTP消息处理器</a>.
+
+<p>
+附件还可以定义附加的有效负载生成器，
+
+
+<h2>通过访问</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>请求选项卡</td><td>"模糊..."右键单击菜单项</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>站点和历史记录选项卡</td><td>攻击>模糊... 菜单项</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>工具菜单 </td><td>攻击>模糊... 菜单项</td></tr>
+</table>
+
+<h2>另请参阅</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer概念</a></td></tr>
+</table>
+
+</body>
+</html>

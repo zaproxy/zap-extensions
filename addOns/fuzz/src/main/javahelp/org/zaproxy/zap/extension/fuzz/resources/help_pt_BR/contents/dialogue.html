@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Caixa de diálogo do difusor
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Diálogo do difusor/fuzzer</h1>
+Isso permite que você selecione os fuzzers quando usar <a href="concepts.html">fuzzing </a> num pedido/request. 
+
+<h3>Aba de localização do Fuzzing</h3>
+Para configurar a difusão/fuzzing:<br/>
+<ul>
+<li>Destacar uma string que você deseje usar em fuzzing na aba Fuzz Locations</li>
+<li>Clique no botão 'Adicionar...' para iniciar o <a href="payloads.html">diálogo de cargas</a></li>
+<li>Adicionar as cargas que você deseja usar</li>
+<li>Clique sobre o botão 'processadores...' para abrir a <a href="locations.html">caixa de diálogo localização processadores</a> (se necessário)</li>
+<li>Clique no botão 'Iniciar fuzzer' para iniciar a difusão</li>
+<li>Os resultados serão listados em seguida na <a href="tab.html">aba difusor.</a> Selecione-os para ver as solicitações e respostas.</li>
+</ul>
+Você também pode pesquisar seqüências de caracteres nos resultados de difusão usando a guia' Pesquisar'.
+
+<h3>Aba de Opções</h3>
+Essa guia permite que você configure as opções para serem usadas na difusão/fuzzing.
+
+<h3>Aba de Processadores de mensagem</h3>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
+The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
+
+<p>
+Add-ons can also define additional payload generators.
+
+
+<h2>Accessed via</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
+</table>
+
+<h2>See also</h2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+</table>
+
+</body>
+</html>

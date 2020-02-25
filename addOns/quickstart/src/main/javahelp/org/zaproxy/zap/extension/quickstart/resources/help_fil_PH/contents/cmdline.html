@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Linya ng Kautusan</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Linya ng Kautusan</h1>
+	Ang add-on ng Mabilis na Pagsisimula ay aumusuporta sa sumusunod na mga opsyon ng llinya ng kautusan:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickurl</td>
+			<td>Nagtutukoy sa URL ng target na aplikasyon na aatakehin.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickout</td>
+			<td>Nagtutukoy sa file na susulatan ng XML na ulat. Kung hindi naitakda sa mga mode na 'inline' at daemon ang ulat ay sinusulat sa default output stream.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickprogress</td>
+			<td>Nagpapakita sa mga bar ng progreso ng ascii, kung sinimulan sa -cmd flag.</td>
+		</tr>
+	</table>
+
+	<br>
+	<p>Mga Halimbawa:
+	<ul>
+		<li>Simulan ang ZAP sa mode na 'inline' na may mga bar ng progreso ng ascii, atakehin anh target na aplikasyon http://example.com/ and isulat ang ulat sa default na output stream: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		</li>
+		<li>Simulan ang ZAP na may UI, atakehin ang target na aplikasyon http://example.com at i+save ang ulat sa isang file: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		</li>
+	</ul>
+
+	<h2>Tingnan din</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="quickstart.html">Mabilis na Pagsisimula</a></td>
+			<td>ang pansimula sa Mabilis na Pagsisimula</td>
+		</tr>
+	</table>
+
+</body>
+</html>

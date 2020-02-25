@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Pagpipilian sa AJAX Spider iskren</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Mga pagpipilian sa AJAX Spider iskren</h1>
+
+	Ang iskren na ito ay nagpapahintulot sayo para maisaayos ang
+	<a href="concepts.html">AJAX Spider</a> mga pagpipilian. Ang AJAX Spider ay isang add-on para sa crawler ang tawag dito ay crawljax. Ang add-on sets up ay isang lokal proxy sa ZAP para makapagsalita sa crawljax.
+	Ang AJAX Spider ay nag papahintulot sa iyo na isulat ang crawl web aplikasyon sa AJAX para masmapalalim pa kesa sa native spider. Gamitin ang AJAX Spider Kung meron kang mga web aplikasyon isulat sa AJAX. Maaari mo lamang gamitin Ang native spider para makumpleto ang coverage ng aplikasyon web (e.g., to cover HTML comments). 
+    <br/>
+    <br/>
+    <h2>Ipaliwanag ang pagpipilian sa konpigurasyon</h2>
+    <br/>
+	<table border ="2">
+		<tr>
+			<th colspan = "3"><br>Mga pagpipilian sa konpigurasyon</th>
+		</tr>
+		<tr>
+			<th>Field</th>
+			<th>Mga detalye</th>
+			<th>Default</th>
+		</tr>
+		<tr>
+			<td>Browser</td>
+			<td>Ang AJAX spider ay umaasa sa panglabas na browser para ma krawl ang targeted site. Pwede mong matukoy ang anumang gusto mung gamiten. para sa ibapang detalye sa mga supported browser pumunta sa "Selenium" add-on pangtulong na pahina.</td>
+			<td align="center">Firefox</td>
+		</tr>
+		<tr>
+			<td>Bilang ng mga windows sa browser upang buksan</td>
+			<td>Maaari mong I-configure ang bilang ng mga window para magamit sa AJAX Spider. Pag masmaraming windows, masmabilis ang magiging proseso.</td>
+			<td align = "center">1</td>
+		</tr>
+		<tr>
+			<td>Pinakamataas na lalim ng crawl</td>
+			<td>Ang pinakamataas na lalim ng crawler ay hindi maabot. Zero ibig sabihin walang hangan ang lalim nito.</td>
+			<td align = "center">10</td>
+		</tr>
+		<tr>
+		    <td>Ang pinakamataas na estado ng crawl</td>
+			<td>Ang pinakamataas na estado ng crawler ay crawl. Zero ibigsabihin walang kataposan ang estado ng crawl. </td>
+			<td align = "center"> 0 (walangkatapusan)</td>
+		</tr>
+		<tr>
+			<td>Pinakamataas na durasyon</td>
+			<td>Ang pinakamataas na oras ng crawler ay pinapahintulutan tumakbo. Zero ibigsabihin walanghangan ang pagtakbo ng oras.</td>
+			<td align = "center">60 minuto</td>
+		</tr>
+		<tr>
+			<td>Paghihintay ng oras sa kaganapan</td>
+			<td>Matapos maghintay ng oras ang panig ng kliyente Ang kaganapan ay inalis na.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Naghihintay ng oras sa Reload</td>
+			<td>Naghihintay ng oras matapos maloadan ang URL.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>I-klick ang mga elemento minsan</td>
+			<td>Kapag pinagana, ang crawler susubukan nitong makipag-ugnayan sa bawat elemento (e.g., by clicking) isang beses lamang.  Kung hindi ito naiset, ang crawler ay susubukan ito maikliek ng maraming beses. Unsetting itong opsiyon ay magiging masmahigpit ngunit magiging mas matagal.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Gumamit ng mga random na halaga sa mga form field</td>
+			<td>Kung pinagana, isinget ang halaga ng random sa mga form ng field. Kung hindi, ito ay gagamit ng walang laman na halaga.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Pindutin lamang ang mga default na elemento</td>
+			<td>Kapag pinagana, lamang ang mga elemento "a", "button" at "input" pweding mag-klik sa crawl. Kung Sana, ang mga ito ay gamit sa ilalim ng table para matukoy Kung anung mga elemento ang gagamitin para mapindot.  Para sa mas malalim na pagsusuri, huwag paganahin ito at isaayos ang mga napipindot na elemento sa table.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Pumili ng mga elemento na pipindutin sa crawl (table)</td>
+			<td>Ang listahan ng mga elemento sa crawl. Itong table lamang ang nag aaplay sa "napindot na mga elementong na default lamang" ito ay Hindi pinagana. Gamitin "ang lahat ng hindi pinagana" para sa higit pang pag papalalim ng pagsusiri, bagaman maaari itong bumagal ng matagal.</td>
+			<td align = "center">Lahat ng pinagana</td>
+		</tr>
+		
+	</table>
+	
+	<h2>Tignan din</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
+			<td>para sa isang pang kalahatan ideya ng AJAX Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="tab.html">AJAX Spider tab</a></td>
+			<td>para sa kabuoan ng AJAX Spider Tab</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="scandialog.html">AJAX Spider diyalugo</a></td>
+			<td>para sa kabuoan diyalogo ng AJAX Spider</td>
+		</tr>
+	</table>
+
+</body>
+</html>

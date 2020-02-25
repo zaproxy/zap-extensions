@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+Pasif Tarama Kuralları - Alfa
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Pasif Tarama Kuralları - Alfa</h1>
+Aşağıdaki alfa nitelikli pasif tarama kuralları bu eklentiye dahil edilmiştir:
+
+<h2>ASP.NET ViewState Açıklama</h2>
+Bir ASP.NET ViewState, uygulama/web sunucusu tarafından açıklanmıştır
+
+<h2>ASP.NET ViewState Bütünlüğü</h2>
+Uygulama, kötü niyetli bir istemci tarafından tahrif edilebilir ASP.NET ViewState bütünlüğünü korumak için Mesaj Doğrulama Kodu (MAC) kullanmaz
+
+<h2>Base64 Açıklama</h2>
+Base64 kodlanmış veri, uygulama/web sunucusu tarafından açıklanmıştır
+
+<h2>Eksik İçerik Güvenlik Politikası Başlığı</h2>
+Bu, HTML cevap başlıklarını bir İçerik Güvenlik Politikası başlığı varlığı için kontrol eder.<br>
+Varsayılan olarak bu kural "İçerik-Güvenlik-Politikası" başlığının varlığını kontrol eder, ve Düşük eşikte "X-İçerik-Güvenlik-Politikası" ve "X-WebKit-CSP" başlıklarını da kontrol eder.
+<p>
+Eğer bir cevap üzerinde "Content-Security-Policy-Report-Only" başlığı bulunursa, bir UYARI alarmı ortaya çıkar. Bu, aktif olarak işlenen veya geliştirilen veya sadece kısmen biri uygulanmış zorlama girişimini temsil edebilir.
+
+<h2>Çerez Zehirlenmesi</h2>
+Bu kontrol, çerez parametrelerinin nerede kontrol edildiğini belirlemek için sorgu dizesi parametrelerinde ve POST verilerinde bulunan kullanıcı tarafından sağlanan girdilere bakar. Bu çerez zehirleme saldırısı olarak adlandırılır, ve bir saldırgan çerezleri çeşitli yollarla yönlendirdiğinde istismar edilebilir hale gelir. Bazı durumlarda istismar edilebilir hale gelmez, ancak URL parametrelerinin çerez değerlerini ayarlamasına izin vermek genellikle hata olarak kabul edilir.
+
+<h2>SameSite Özniteliği Olmayan Çerez</h2>
+Bu, SameSite özniteliği olmayan veya bu öznitelik için geçerli bir değeri olmayan çerezleri bildirir.
+
+<h2>Alanlar Arası Yanlış Yapılandırma</h2>
+Örneğin, web tarayıcısında Aynı Kökenli Politikasını rahatlatan Alanlar Arası Yanlış Yapılandırma için yanıtları pasif olarak tarayın.<br>
+Mevcut uygulama, aşırı serbest CORS başlıklarına bakıyor.
+
+<h2>Dizin Tarama</h2>
+Dizin Taramasının mümkün olduğunu gösteren imzalar için yanıtları pasif olarak tarayın.
+
+<h2>Örnek Pasif Dosya Tarayıcısı</h2>
+Bu, kullanıcının düzenlemesine olanak tanıyan bir dosyadan dizeleri yükleyen bir örnek pasif tarama kuralı uygular.<br>
+Daha fazla detay için: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Basit Pasif Tarayıcı Örneği</h2>
+Bu, çok basit bir örnek pasif tarama kuralı uygular.<br>
+Daha fazla detay için: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Hash ortaya çıkarma</h2>
+Web sunucusu tarafından açıklanan karma parolaları pasif olarak tarar. <br>
+MD4, MD5 ve SHA* gibi bazen karma parolaları içermek dışında başka amaçlarla kullanılan bazı formatlar da dahil olmak üzere çeşitli formatlar dahil edilmiştir. 
+
+<h2>HeartBleed</h2>
+Sunucunun kritik HeartBleed OpenSSL güvenlik açığına karşı savunmasız olduğunu gösteren HTTP başlık cevapları için pasif olarak tarar. 
+
+<h2>HTTP'den HTTPS'e Post Formunda Güvensiz Geçiş</h2>
+Bu kontrol, HTTPS formlarını sunan güvensiz HTTP sayfalarına bakar. Sorun, güvensiz bir HTTP sayfası kolayca MITM ile kolayca ele geçirilebilir ve güvenli HTTPS formu değiştirilebilir veya sahtekarlık yapılabilir.
+
+<h2>HTTPS'den HTTP'ye Post Formunda Güvensiz Geçiş</h2>
+Bu kontrol, güvensiz HTTP formlarını sunan güvenli HTTPS sayfalarını tanımlar. Sorun, veriler form üzerinden yüklendiğinde güvenli sayfanın güvensiz bir sayfaya geçiş yapmasıdır. Kullanıcı, güvenli bir sayfada olmadığı halde verileri güvenli bir sayfaya gönderdiklerini düşünebilir.
+
+<h2>Güvensiz Bileşen</h2>
+Sunucu cevap başlıklarını ve daha sonra çeşitli CVE'lere karşı savunmasız olduğu bilinen ürün sürümlerinin bir listesine karşı çapraz referans edilmiş ürün sürümleri için body üretici içeriğini pasif olarak tarar. 
+Savunmasız olduğu belirtilen her ürün için sıralanan CVE'lerin ve CVSS önem derecesine göre çıktı üretilir. 
+Şu anda, aşağıdaki sunucu tarafı ürünler desteklenmektedir:<br>
+Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
+Apache web server<br>
+mod_auth_radius Apache module<br>
+mod_fcgid Apache module<br>
+mod_imap Apache module<br>
+mod_jk Apache module<br>
+mod_perl Apache module<br>
+mod_python Apache module<br>
+mod_ssl Apache module<br>
+OpenSSL Apache module<br>
+Perl Apache module<br>
+Python Apache module<br>
+IBM HTTP Server<br>
+JBoss application server<br>
+Jetty web server / application server<br>
+LiteSpeed web server<br>
+Lighttpd web server<br>
+Microsoft IIS web server<br>
+Netscape Enterprise web server<br>
+Nginx web server<br>
+OpenCMS<br>
+Oracle Application Server<br>
+Oracle Web Cache<br>
+PHP<br>
+Phusion_Passenger<br>
+Squid proxy server<br>
+Sun One web server<br>
+Sun Java System Web Server<br>
+TornadoServer web server<br>
+WordPress<br>
+
+<h2>Image Location Scanner</h2>
+<p>Web sitelerinin normal güvenlik değerlendirmeleri sırasında görüntülerde GPS konumun pozlanması için pasif taramalar.  Görüntü Konumu Tarayıcısı, son kullanıcıların profile ait görüntüler gönderebileceği ve muhtemelen evlerin konumlarını belirtebilecekleri durumlarda yardımcı olur, mesela bir tanışma sitesi yada çocuk sohbet odası gibi.  Bununla alakalı resmi bir rapor http://veggiespam.com/ils/ sitesinde bulunabilir</p>
+
+<p>Not: Bu eklentinin çalışabilmesi için ZAP, bir resim almaya ve onu işlemeye uygun şekilde yapılandırılmış olmalıdır.  Bunu gerçekleştirmek için, ZAP Ayarlar paneline gidin (Araçlar &rarr; Ayarlar), Görüntüle seçin, ve "HTTP istekler/yanıtlar" işaret kutusunu etkinleştirin.  Ayrıca, ZAP görüntüleri, "Global Exclude URL" veya "Exclude from Proxy" için Oturum Özellikleri aracılığıyla filtrelenemez. </p>
+
+<h2>Yeniden Yönlendirme Aç</h2>
+Açık yönlendirmeler, OWASP 2010 Top 10'da bulunan açıklardan bir tanesidir. Bu kontrol, açık yönlendirmelerin nerede bulunabileceğini belirleme amacıyla sorgu dizesi parametrelerinde ve POST verilerinde kullanıcı tarafından sağlanmış olan girdileri inceler. Açık yönlendirmeler, bir uygulama, (ör. http://nottrusted.com) gibi kullanıcı tarafından sağlanan girdilere izin veriyorsa, bunun dışında bir yönlendirme denetlendiğinde oluşur. Bu, genellikle 301 veya 302 yönlendirmelerinin spam gönderenler veya kimlik avı saldırıları tarafından faydalanılabileceğini bulmak için oldukça doğru bir yoldur
+
+<h2>HTTP Sunucu Cevap Başlık Tarayıcısı</h2>
+Bu, sürüm ayrıntılarını içeren bir sunucu başlığı için cevap başlığını kontrol eder.
+DÜŞÜK Eşikte bir sürüm dizisinin var olup olmadığına bakmaksızın başlık alanın varlığına bağlı bir uyarı oluşturulacaktır.
+
+<h2>Kaynak Kodu Bilgilendirme</h2>
+Uygulama Kaynak Kodu, web sunucusu tarafından açıklanmıştır
+
+<h2>Sıkı Taşıma Güvenlik Başlığı Tarayıcısı</h2>
+Bu tarayıcı, bir HTTP Strict Transport Security(HSTS) başlığının varlığı için HTTPS yanıtlarını denetler ve çeşitli uygulama konuları için test eder ve eğer bulunursa uyarı verir.
+<ul>
+ <li><b>Sıkı-Taşıma-Güvenlik Başlığı Ayarlanmadı:</b> Eğer cevap HTTPS ve başlık tamamen eksik ise.</li>
+ <li><b>Sıkı-Taşıma-Güvenlik Devre Dışı: </b> Eğer cevap HTTPS ve max-age değeri sıfıra ayarlı ise, böylece site için tarayıcının HSTS bilgilerini sıfırlar.</li>
+ <li><b>Sıkı-Taşıma-Güvenliği Çoklu Başlık Kayıtları (Spec ile uyumlu değil): </b> Eğer cevap HTTPS ve cevapta birden fazla HSTS başlığı var ise.</li>
+ <li><b>Sıkı-Taşıma-Güvenliği Eksik Max-Age (Spec ile uyumlu değil): </b> Eğer cevap HTTPS, bir HSTS başlığı belirtildi fakat max-age değeri bir sayı içermez ise.</li>
+ <li><b>Sıkı-Taşıma-Güvenliği META ile Tanımlanmış (Spec ie uyumlu değil): </b> Eğer cevap gövdesi HSTS'yi tanımlamaya çalışan bir META etiketi içerir ise.</li>
+ <li><b>Düz HTTP Yanıtında Sıkı-Taşıma-Güvenliği Başlığı: </b> Eğer cevap HTTP ve HSTS başlığı mevcut ise.</li>
+ <li><b>Sıkı-Taşıma-Güvenliği Max-Age Hatalı (Spec ile uyumlu değil): </b> Eğer cevap HTTPS ve HSTS başlığı mevcut, fakat max-age yönergesinden önce tırnak işareti var ise (tırnak işaretine max-age değerinin etrafından izin verilir, fakat yönergenin kendi etrafında verilmez).</li>
+ <li><b>Sıkı-Taşıma-Güvenliği İçeriği Hatalı (Spec ile uyumlu değil): </b> Eğer cevap HTTPS ve HSTS başlığı mevcut ise, fakat bazı beklenmeyen içerikler var ise ( kıvırcık tırnak işareti gibi). Beklenti, içeriğin yazdırılabilir ASCII olmasıdır.</li>
+</ul>
+
+<h2>Zaman Damgası Bilgilendirmesi</h2>
+Tarih damgası uygulama/ ağ sunucusu tarafından ifşa edildi
+
+<h2>Kullanıcı Kontrol Edilebilir HTML Öğesi Öznitelik (Potansiyel XSS)</h2>
+Bu kontrol belirli HTML öznitelik değerlerinin nerede kontrol edileceğini belirlemek için sorgu dizeleri parametrelerinde ve POST verilerinde kullanıcı tarafından sağlanan girdilere bakar. Bu faylanabilirliği belirlemek için bir güvenlik analisti tarafından daha ayrıntılı inceleme gerektiren XSS (Çapraz-Site Betiklemesi) için hot-spot algılanmasını sağlar.
+
+<h2>Kullanıcı Kontrollü Karakter Seti</h2>
+Bu kontrol İçerik-Tipi veya meta etiket karakter kümesi tanımlamasının kullanıcı kontrol edileceğini belirlemek için sorgu dizeleri parametrelerinde ve POST verilerinde kullanıcı tarafından sağlanan girdilere bakar. Böyle bir karakter seti bildirimleri her zaman uygulama tarafından bildirilmelidir. Eğer bir saldırgan cevap karakter kümesini kontrol ederse, XSS veya diğer saldırıları gerçekleştirmek için HTML'i manipüle edebilirler.
+
+<h2>Kullanıcı Kontrollü JavaScript Olayı (XSS)</h2>
+Bu denetim, belirli HTML öznitelik değerlerinin nerede kontrol edileceğini belirlemek için sorgu dizesi parametrelerinde ve POST verilerinde kullanıcı tarafından sağlanan girdilere bakar. Bu faylanabilirliği belirlemek için bir güvenlik analisti tarafından daha ayrıntılı inceleme gerektiren XSS (çapraz-site betiklemesi) için hot-spot algılanmasını sağlar.            
+
+<h2>Kullanıcı Kontrollü Javascript Özelliği (XSS)</h2>
+Bu kontrol, belirli javascript özelliklerinde (örneğin CreateElement src) bağlantı adreslerinin nerede kontrol edilebileceğini belirlemek için sorgu dizesi parametrelerinde ve POST verilerinde kullanıcı tarafından sağlanan girdilere bakar. Bu faylanabilirliği belirlemek için bir güvenlik analisti tarafından daha ayrıntılı inceleme gerektiren XSS (çapraz-site betiklemesi) için hot-spot algılanmasını sağlar.            
+
+<h2>Kullanıcı Adı Hash'i Bulundu</h2>
+Eğer herhangi bir bağlam tanımlanmış kullanıcı içeriyorsa bu tarayıcı, bu kullanıcı adlarını temsil eden hashlenmiş değerlerin varlığı için tüm cevapları kontrol eder.
+Böyle bir değeri bulmak Güvensiz Doğrudan Nesne Referansı (IDOR) güvenlik açığını temsil ediyor olabilir. Uyarılar etkiyi doğrulamak ve değerlendirmek için daha fazla elle teste ihtiyaç olduğu için yalnızca bilgilendirme ögeleri olarak ortaya çıkar. 
+
+<h2>X-Powered-By Başlık Bilgisi Sızıntısı</h2>
+Bu, X-Powered-By detaylarının varlığı için cevap başlıklarını kontrol eder.
+
+<h2>X-Backend-Sunucu Başlık Bilgisi Sızıntısı</h2>
+Bu, X-Backend-Sunucu detaylarının varlığı için cevap başlıklarını kontrol eder.
+
+<h2>Büyük Yönlendirme</h2>
+Bu kontrol çeşitli yönlendirme türü cevaplarının boyutlarını öngörür ve eğer cevap öngörülen boyuttan büyük ise bir uyarı üretir. 
+Büyük bir yeniden yönlendirme tepkisi, yönlendirmenin gerçekleşmesine rağmen sayfanın gerçekten içerdiği (hassas bilgileri, kişisel bilgiler, vb.) gösterebilir.
+
+<h2>X-ChromeLogger-Veri Başlık Bilgisi Sızıntısı</h2>
+Bu, X-ChromeLogger-Veri veya X-ChromePhp-Veri detaylarının varlığı için cevap başlıklarını kontrol eder.
+
+<h2>X-Debug-Token Bilgi Sızıntısı</h2>
+Bu, X-Debug-Token ve X-Debug-Token-Link detaylarının varlığı için cevap başlıklarını kontrol eder.
+Symfony'nin Profilcisinin kullanımını/gösterimini belirtir. Symfony'nin Profilcisi kötü niyetli kişilere ve Güvenlik Testcilerine ilgi duyanlar için önemli miktarda bilgiye erişim imkanı sağlar.
+
+<h2>X-AspNet-Version/X-AspNetMvc-Version Başlık Bilgisi Sızıntısı</h2>
+Bu, X-AspNet-Version/X-AspNetMvc-Version detaylarının varlığı için cevap başlıklarını kontrol eder.
+
+
+</body>
+</html>

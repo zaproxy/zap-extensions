@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Uygulamalar ekranı seçenekleri</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Uygulamalar ekranı seçenekleri</h1>
+	<p>
+		Bu ekran sizin <a href="concepts.html">çağırılabilir uygulamaları</a> ayarlamanızı sağlar.<br> Varsayılan olarak hiç uygulama bulunmuyor, Kullanmak istediğiniz bütün uygulamaları eklemeniz gerek.
+	<h3>Ekran Adı</h3>
+	Bu uygulamanın ZAP'ta kullanılacak adı.
+	<br>
+
+	<h3>Tam Komut</h3>
+	Çağırmak istediğiniz uygulamanın tam yolu.
+	<br> Sadece tek bir komut belirtilebilir. Eğer tek seferde bir çok komut çalıştırmak, ya da ortam değişkenleri ayarlamak istiyorsanız, o zaman bir komut dizisi veya komut listesi dosyası oluşturmanız ve bu dosyayı ZAP'tan çağırmanız gerekiyor.
+
+	<h3>Parametreler</h3>
+	ZAP'ın komuta geçmesi gereken parametreler.
+	<br> Aşağıda bulunan etiketler parametreleri iletmek amacıyla kullanılabilir:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%url%</td>
+			<td>tam url, 'http://localhost/test?a=b'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%site%</td>
+			<td>site, 'http://localhost:8080/' </td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%host%</td>
+			<td>ana makine adı, örn. 'localhost'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%port%</td>
+			<td>port, örn. '80'</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%cookie%</td>
+			<td>(eğer varsa) istek başlığında bulunan ilk çerez alanı</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%postdata%</td>
+			<td>Gönderilen POST verileri, eğer varsa, yeni satırlarla birlikte "\n" ile değiştirilir</td>
+		</tr>
+	</table>
+	Yani bir komut bir URL'yi '-u' kullanarak kabul ettiyse, parametreleri şu şekilde belirtirsiniz: '-u %url%'
+
+	<h3>Çıkış Yakalama</h3>
+	Eğer seçili ise o halde komutu çalıştırır ve onun ürettiği çıktılar gösterilir
+	<i>Çıkış sekmesi</i>.
+	<br> Eğer çalışan script veya komutun kullanıcı arayüzü yoksa her zaman bu seçeneği kullanmalısınız.
+	<br> Bu seçeneği sorun gidermek içinde kullanabilirsiniz- eğer bir uygulama beklenildiği gibi çalışmıyorsa çalışan komutu kopyalayıp bir komut isteminde deneyin.
+
+	<h3>Not çıktısı</h3>
+	Eğer herhangi bir çıktı eklenirse
+	<i>Not</i> ilgiliye bağlı
+	<i>Geçmiş sekmesi</i> kaydet.
+	<br> Not olarak bazı düğümler
+	<i>Siteler sekmesi</i> ilişkili değil
+	<i>Geçmiş sekmesi</i> kayıtlar - bu düğümler için bu seçenek bir etkiye sahip olmayacaktır.
+
+</body>
+</html>

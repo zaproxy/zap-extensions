@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Komut Satırı</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Komut Satırı</h1>
+	Hızlı Başlangıç eklentisi aşağıdaki komut satırı seçeneklerini destekler:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickurl</td>
+			<td>Saldırı yapılacak olan hedef URL'sini belirtir.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-hızlıçıkış</td>
+			<td>XML raporu yazılacak dosya belirtilir. 'Satır içi' ve arka plan modlarında ayarlama yapılmazsa, rapor varsayılan çıktı akışına yazılır.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-hızlıilerle</td>
+			<td>-cmd bayrağı ile başlatılırsa ascii ilerleme çubuklarını göster.</td>
+		</tr>
+	</table>
+
+	<br>
+	<p>Örnekler:
+	<ul>
+		<li>ZAPI'yi 'inline' modunda ascii ilerleme çubuklarıyla başlatın, http://example.com/ hedef uygulamasına saldırın ve raporu varsayılan çıkış akışına yazın: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		</li>
+		<li>UI ile ZAP'ı başlatın, hedef uygulamaya http://example.com/ saldırın ve raporu bir dosyaya kaydedin: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		</li>
+	</ul>
+
+	<h2>Ayrıca görüntüleyin</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="quickstart.html">Hızlı Başlangıç</a></td>
+			<td>Hızlı Başlat' a giriş</td>
+		</tr>
+	</table>
+
+</body>
+</html>

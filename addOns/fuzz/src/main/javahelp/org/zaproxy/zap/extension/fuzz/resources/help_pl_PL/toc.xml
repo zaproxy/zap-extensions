@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+		<tocitem text="Add Ons" tocid="addons">
+			<tocitem text="Fuzzer" image="addon.fuzzer.icon" target="addon.fuzzer.concepts">
+				<tocitem text="Options" target="addon.fuzzer.options" />
+				<tocitem text="Dialogue" target="addon.fuzzer.dialogue" />
+				<tocitem text="HTTP Message Processors" target="addon.fuzzer.httpmessageprocessors"/>
+			    <tocitem text="Location Processors Dialog" target="addon.fuzzer.locations"/>
+    			<tocitem text="Payloads Dialog" target="addon.fuzzer.payloads"/>
+    			<tocitem text="Payload Processors Dialog" target="addon.fuzzer.processors"/>
+				<tocitem text="Tab" target="addon.fuzzer.tab" />
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

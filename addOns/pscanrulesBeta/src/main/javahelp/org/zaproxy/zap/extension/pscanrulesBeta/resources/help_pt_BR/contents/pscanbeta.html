@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Regras de varredura passiva - Beta
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Regras de varredura passiva - Beta</h1>
+As seguintes regras de verificação passiva de qualidade beta estão incluídas neste complemento:
+
+<h2>Incompatibilidade de charset</h2>
+<p>Esta verificação identifica respostas onde o Content-Type do cabeçalho HTTP declara um charset diferente do charset definido pelo corpo do HTML ou XML. Quando há essa incompatibilidade de charsets do cabeçalho HTTP e do corpo os navegadores da Web podem ser forçados a entrar num indesejável sniffing de conteúdo para determinar o conjunto de caracteres correto daquele conteúdo.</p>
+<p>O scanner lida com várias condições dependendo do limite definido para o scanner, como segue:</p>
+<ul>
+  <li>Todos os limiares:
+    <ul>
+      <li>Header Versus Meta Content-Type Charset - a declaração no cabeçalho HTTP Content-Type não combina com o que é declarado em uma tag META Content-Type.</li>
+      <li>Header Versus Meta Charset - a declaração no cabeçalho HTTP Content-Type não combina com o que é declarado em uma tag META Charset.</li>
+    </ul>
+  </li>
+  <li>Limiar Low:
+    <ul>
+      <li>Falta de Meta Content-Type Charset - a resposta não contém uma declaração META Content-Type, que pode ignorar os 'clientes' mais antigos.</li>
+      <li>Meta Charset Versus Meta Content-Type Charset - A resposta contém uma declaração META Content-Type e também uma declaração de META Charset e elas não combinam.</li>
+    </ul>
+  </li>
+</ul>
+Mais referências em:<br>
+<a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
+<a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
+
+<h2>Cookie com escopo muito amplo</h2>
+Cookies podem ter escopo de domínio ou caminho. Esta checagem só está preocupada com domínio. O escopo de domínio aplicado a um cookie determina quais domínios podem acessá-lo. Por exemplo, um cookie pode ter escopo estritamente para um subdomínio, como www.nottrusted.com ou ser vago em relação ao escopo de um domínio pai, como nottrusted.com. Neste último caso, qualquer subdomínio de nottrusted.com pode acessar o cookie. Cookies com escopos pouco definidos assim são comuns em mega-aplicações como google.com e live.com.
+
+<h2>Contramedidas CSRF</h2>
+O plugin CSRFCountermeasures identifica vulnerabilidades "potenciais" com a falta de contramedidas CSRF conhecidas nas páginas contendo formulários.<br>
+Post 2.5.0 você pode especificar uma lista de identificadores separados por vírgula no parâmetro 
+<code>rules.csrf.ignorelist</code> no painel de opções 'Configuração de regra'.
+Todos os formulários com um nome ou ID que correspondam a um desses identificadores serão ignorados em varreduras de tokens de Anti-CSRF ausentes.
+Só use esse recurso para ignorar os formulários que você sabe que são seguros, por exemplo, os de busca.
+
+
+<h2>Exposição de informações: Erros de depuração</h2>
+Este scanner passivo verifica o conteúdo das respostas de web para fragmentos de mensagens de erro de depuração conhecidos.
+Acesso a tais detalhes pode fornecer a um indivíduo mal-intencionado os meios para abusar do site.
+Pode haver também vazamento de dados não especificamente destinados a consumo do usuário final.
+
+<h2>Exposição de informações: Em URL</h2>
+Tenta identificar a existência de detalhes sensíveis dentro das URIs visitadas (isso pode incluir parâmetros, nomes de documentos, nomes de diretórios, etc.).
+
+<h2>Exposição de informações: Referrer</h2>
+Identifica a existência de detalhes sensíveis dentro do campo Referrer no cabeçalho das solicitações HTTP (isso pode incluir parâmetros, nomes de documento, nomes de diretórios, etc.).
+
+<h2>Exposição de informações: Comentários suspeitos</h2>
+Analisa o conteúdo para identificar comentários que contêm detalhes potencialmente sensíveis, o que pode conduzir a outros ataques ou exposição de outros dados.
+
+<h2>Autenticação insegura</h2>
+O método básico de autenticação ou abreviado tem sido utilizado em uma conexão insegura. As credenciais podem ser lidas e reutilizadas por alguém com acesso a rede.
+
+<h2>Viewstate JSF Inseguro</h2>
+A resposta à URL seguinte contém um valor de Viewstate que não tem proteção criptográfica.
+
+<h2>Poluição de Parâmetro de servlet</h2>
+Procura conteúdo de resposta para formulários HTML que falham na especificação de um elemento de ação. A versão 3 do Java Servlet spec pede agregação de string e elementos de dados de post da query, que podem resultar em manipulação involuntária de dados controlados pelo usuário. Isto pode impactar outras plataformas e tecnologias também.
+
+<h2>VIEWSTATE</h2>
+Tenta identificar parâmetros VIEWSTATE e analisar tais parâmetros para várias 'melhores práticas' ou medidas de proteção, tais como: 
+<ul>
+	<li>Os baseados em ASP.NET 1.0 e 1.1.</li>
+	<li>VIEWSTATE faltando assinatura.</li>
+	<li>VIEWSTATE dividido.</li>
+	<li>VIEWSTATE contendo e-mail ou endereços IP.</li>
+</ul>
+
+</body>
+</html>

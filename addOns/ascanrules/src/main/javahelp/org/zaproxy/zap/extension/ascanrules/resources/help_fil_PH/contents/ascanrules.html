@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Mga Panuntunan sa Aktibong I-scan
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Mga Panuntunan sa Aktibong Pag I-scan</h1>
+Ang mga sumusunod na pagpapakawala ng kalidad ng active scan rules ay kabilang sa mga add-on na ito:
+
+<h2>Buffer Overflow</h2>
+
+Ang tingin para sa mga indikador ng buffer umapaw sa naipon na code.  Ginagawa ito sa pamamagitan ng paglagay ng mga malalaking mga string ng input na teksto at hanapin ang pag-bagsak ng code
+at hindi pangkaraniwang pagsasara ng sesyon.
+
+<h2>Code Injection</h2>
+Ang panuntunang ito ay nagbibigay ng PHP at ASP attack strings bilang values para sa mga parameter ng URL sa kahilingan at pagsusuri ng katugunan dito 
+tingnan kung ang values na ito ay nasuri na sa pamamagitan ng server. Una, ang mga kahilingan ay itinayo at ipinadala na naglalaman ng injected PHP na mga instruksiyon upang mag-print ng token. Sa kaganapan ng pagtutugma sa pagitan ng token at ang nilalaman ng tugon ng katawan, ang scanner ay nagpapataas ng alerto at agad na nagbabalik kaagad.
+Kung walang anumang mga tugma, ang scanner ay magtatayo ng mga kahilingan na may ilang mga string ASP string na nagtuturo sa server na isulat ang produkto
+ng dalawang random na nabuong integer sa tugon. Kung ang katawan ng tugon ay tumutugma sa produkto, isang alerto ay nakataas.
+
+<h2>Command Injection</h2>
+
+Ang panuntunang ito ay nagsusumite ng * NIX at Windows OS na mga utos bilang mga halaga ng parameter ng URL upang matukoy kung ang web application ay dumadaan nang hindi naka-check
+input ng gumagamit nang direkta sa pinagbabatayan OS. Ang mga string ng iniksyon ay binubuo ng mga meta-karakter na maaaring interpreted ng OS
+bilang pagsali sa mga utos kasama ang isang payload na dapat gumawa ng output sa tugon kung ang application ay maaaring mahina. Kung ang nilalaman ng isang tugon ng katawan
+tumutugma sa kargamento, ang scanner ay nagtataas ng alerto at agad na nagbalik. Sa kaganapan na wala sa mga pagsubok na nakabatay sa error na pagtatangka
+bumalik na output sa tugon, ang scanner ay magtatangka ng isang bulag na iniksyon atake sa pamamagitan ng pagsusumite ng mga tagubilin sa pagtulog bilang ang kargamento at paghahambing ng lumipas na oras sa pagitan ng pagpapadala ng kahilingan
+at pagtanggap ng tugon laban sa isang heuristic time-delay na mas mababang limitasyon. Kung ang lumipas na oras ay mas malaki kaysa sa limitasyong ito, ang isang alerto ay nakataas na may katamtamang pagtitiwala
+at ang scanner ay agad na nagbabalik.
+<br>
+Mag-post ng 2.5.0 maaari mong baguhin ang haba ng oras na ginamit para sa bulag na atake sa pag-iniksyon sa pamamagitan ng pagbabago ng parameter na <code> rules.common.sleep</code>sa pamamagitan ng panel ng pagsasaayos ng 'Rule configuration'.
+
+<h2>Client Browser Cache</h2>
+
+Sinusuri ng panuntunang ito ang mga header ng mga secure na pahina at nag-ulat ng isang alerto kung pinapayagan nila ang isang browser na ma-cache ang pahina.
+
+<h2>Cross Site Scripting (reflected)</h2>
+
+
+Ang panuntunang ito ay nagsisimula sa pamamagitan ng pagsusumite ng isang 'ligtas' na halaga at pag-aaral ng lahat ng mga lokasyon kung saan ang halagang ito ay nangyayari sa tugon (kung mayroon man). <br>
+Pagkatapos nito ay nagsasagawa ng isang serye ng mga pag-atake na partikular na na-target sa lokasyon kung saan nangyayari ang bawat isa,
+kabilang ang mga attribute ng tag, mga katangian ng URL, mga katangian sa mga tag na sumusuporta sa mga katangian src, mga komento sa html atbp. 
+
+<h2>Cross Site Scripting (persistent)</h2>
+
+Ang panuntunang ito ay nagsisimula sa pamamagitan ng pagsusumite ng isang natatanging 'ligtas' na halaga at pagkatapos ay ang mga spider ang buong application upang mahanap ang lahat ng mga lokasyon kung saan ang halaga ay nangyayari. <br>
+Pagkatapos nito ay nagsasagawa ng isang serye ng mga pag-atake sa parehong paraan na ang 'sinasalamin' na bersyon ay ngunit sa kasong ito ay sumusuri ang lahat ng
+target na mga lokasyon sa iba pang mga pahina. 
+
+<h2>CRLF Injection</h2>
+
+Ang panuntunang ito ay nagsusumite ng iba't ibang mga espesyal na karakter ng CRLF na sinusundan ng isang na-inject na header na "Set-Cookie" bilang isang parameter sa server. Kung ang isang alerto ay nakataas at kung ang tugon ay naglalaman ng isang kaparehong header ng Set-Cookie, agad siyang nagbalik ng scanner.
+
+
+<h2>Directory Browsing</h2>
+
+Sinusuri ng panuntunan na ito upang makita kung ang isang kahilingan ay magbibigay ng access sa isang listahan ng direktoryo sa pamamagitan ng pagsusuri sa katawan ng tugon para sa mga pattern na ginamit sa Apache, IIS
+at iba pang software ng web server.
+
+<h2>External Redirect</h2>
+
+Ang panuntunang ito ay nagsusumite ng iba't ibang mga string ng redirect ng URL bilang mga halaga ng parameter sa isang kahilingan, pagkatapos ay sinuri ang mga header at katawan ng mga tugon upang matukoy
+kung naganap ang pag-redirect o kung anong uri. Hinahanap ang dahilan ng pag-redirect sa mga patlang ng header ng "Lokasyon" at "I-refresh", gayundin ng mga HTML meta tag
+at Javascript sa katawan ng tugon. Ang isang alerto ay nakataas kabilang ang uri ng pag-redirect at agad na nagbalik ang scanner.
+
+<h2>Format String Error</h2>
+Ang hitsura para sa mga tagapagpahiwatig ng mga string ng paghawak ng format ng mga error sa naipon na code.  Ginagawa nito ito sa pamamagitan ng paglagay ng mga string ng input text batay sa mga character
+pinagsama-sama C code anticipates upang makabuo ng na-format na output at hanapin ang pag-bagsak ng code at abnormal pagsasara sesyon.
+
+
+<h2>Parameter Tampering</h2>
+
+Ang panuntunang ito ay nagsusumite ng mga kahilingan na may mga halaga ng parameter na kilala upang maging sanhi ng mga error na maipakita sa user kung mahawakan nang hindi wasto. Sinuri ang mga tugon upang matiyak na bumalik sila
+isang code ng katayuan ng error sa server, pagkatapos ay inihambing sa isang normal na tugon ng HTTP upang matiyak na hindi ito magtataas ng isang alerto kung ang masamang parameter ay walang epekto sa output. Sa wakas, ang nilalaman
+ng katawan ng tugon ay inihambing laban sa iba't ibang mga pattern na maaaring matagpuan sa Java servlet, Microsoft VBScript, OLE DB, JET, PHP at Tomcat error. Kung ang isang tugma ay natagpuan, ang isang alerto ay nakataas at
+agad na nagbalik ang scanner.
+
+<h2>Path Traversal</h2>
+
+Ang tuntuning ito ay sumusubok na ma-access ang mga file at mga direktoryo sa labas ng web dokumento ugat sa pamamagitan ng pagtatayo ng iba't ibang mga kumbinasyon ng prefix ng pathname
+at lokal na mga target ng file para sa Windows at * NIX system pati na rin ang Java servlets. Kung ang katawan ng tugon ay tumutugma sa isang pattern na tumutugma sa
+Kasalukuyang target na file ang isang alerto ay nakataas at agad na nagbalik ang scanner. Kung wala sa mga karaniwang lokal na mga target na file ang magtagumpay, ang path traversal ay
+tinangkang gamitin ang filename sa URL. Hangga't ang pagsusumite ng isang di-makatwirang filename ay hindi nagbabalik ng isang OK na code ng katayuan ngunit ang tunay na filename ay, ang isang alerto ay nakataas
+at ang scanner ay agad na nagbabalik.
+
+<h2>Remote File Include</h2>
+
+Ang panuntunang ito ay nagsusumite ng serye ng mga kahilingan na may mga panlabas na URL bilang mga halaga ng parameter at hinahanap ang isang tugma sa pagitan ng katawan ng tugon at ng pamagat ng pahina
+naka-host sa mga URL na iyon. Kung mayroong isang tugma sa pagitan ng inaasahang string at ang katawan ng tugon, at ang header ay nagbalik ng isang code ng katayuan ng 200, ang isang alerto ay nakataas at ang scanner
+bumalik agad.
+
+<h2>Server Side Include</h2>
+
+
+Sinusuri ng panuntunan na ito upang makita kung anong OS ang tumatakbo sa server, pagkatapos ay nagpapadala ng mga kahilingan na may kaukulang HTML SSI na direktiba bilang parameter na halaga. Kung tumutugma ang tugon ng katawan
+Ang isang pattern na nagpapahiwatig ng SSI ay matagumpay, ang alerto ay nakataas at agad na nagbalik ang scanner.
+
+<h2>SQL Injection</h2>
+
+Ang mga scanner na ini-scan para sa mga kahinaan sa SQL Injection sa isang malayang mode ng RDBMS,
+sa pamamagitan ng pag-atake ng mga parameter ng url at mga parameter ng anyo na may mga fragment ng wasto at hindi wastong SQL syntax, gamit ang error batay,
+batay sa boolean, batay sa Union, at isinalansan ang mga query sa SQL Iniksyon na mga pamamaraan. <br>
+Ang scanner na ito ay maaaring ma-fingerprint ang RDBMS kung ang application ay magtapon ng isang kilalang RDBMS na tiyak na mensahe ng error sa SQL. <br>
+Ang scanner na ito ay hindi pagsamantalahan ang anumang mga tiyak na diskarte sa RDBMS, at sa gayon ay ang pinakamahusay na SQL iniksyon scanner na gagamitin bilang panimulang punto. 
+
+</body>
+</html>

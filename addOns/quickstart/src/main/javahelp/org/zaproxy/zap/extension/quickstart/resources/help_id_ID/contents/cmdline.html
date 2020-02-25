@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Batas Perintah</title>
+</head>
+<body bgcolor="#ffffff">
+	<h1>Baris Perintah</h1>
+	Zap mendukung pilihan garis perintah berikut ini:
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickurl</td>
+			<td>Menentukan URL dari aplikasi target yang akan diserang.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickout</td>
+			<td>Menentukan berkas untuk menulis laporan XML. Jika tidak diatur didalam mode 'inline' dan daemon, laporan ditulis ke aliran keluaran default.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickprogress</td>
+			<td>Tampilkan bar perkembangan ascii, jika dimulai dengan bendera -cmd.</td>
+		</tr>
+	</table>
+
+	<br>
+	<p>Contoh:
+	<ul>
+		<li>Mulai ZAP dalam modus 'inline' dengan bar perkembangan ascii, serang aplikasi sasaran http://example.com/
+			dan tulis laporan ke keluaran stream bawaan: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		</li>
+		<li>Mulai ZAP dengan UI, serang aplikasi sasaran http://example.com/ dan simpan
+			laporan ke berkas: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		</li>
+	</ul>
+
+	<h2>Lihat juga</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="quickstart.html">Mulai Cepat</a></td>
+			<td>the introduction to Quick Start</td>
+		</tr>
+	</table>
+
+</body>
+</html>
