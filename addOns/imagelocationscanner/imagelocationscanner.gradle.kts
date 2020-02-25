@@ -1,7 +1,11 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "2"
+version = "3"
 description = "Image Location and Privacy Passive Scanner"
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs = options.compilerArgs - "-Werror"
+}
 
 zapAddOn {
     addOnName.set("Image Location and Privacy Scanner")
@@ -15,8 +19,8 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.adobe.xmp:xmpcore:5.1.3")
-    implementation("com.drewnoakes:metadata-extractor:2.10.1")
+    implementation("com.adobe.xmp:xmpcore:6.0.6")
+    implementation("com.drewnoakes:metadata-extractor:2.13.0")
 
     testImplementation(project(":testutils"))
 }
