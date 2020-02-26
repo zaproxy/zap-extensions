@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.imagelocationscanner;
 
+import com.veggiespam.imagelocationscanner.ILS;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 
@@ -26,7 +27,7 @@ public class ExtensionImageLocationScanner extends ExtensionAdaptor {
 
     @Override
     public String getAuthor() {
-        return Constant.ZAP_TEAM;
+        return ILS.pluginAuthor;
     }
 
     @Override
