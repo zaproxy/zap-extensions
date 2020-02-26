@@ -53,6 +53,7 @@ public class ILS {
 
 	/** A bunch of static strings that are used by both ZAP and Burp plug-ins. */
 	public static final String pluginName = "Image Location and Privacy Scanner";
+
 	public static final String pluginVersion = "1.1";
 	public static final String alertTitle = "Image Exposes Location or Privacy Data";
 	public static final String alertDetailPrefix = "This image embeds a location or leaks privacy-related data: ";
