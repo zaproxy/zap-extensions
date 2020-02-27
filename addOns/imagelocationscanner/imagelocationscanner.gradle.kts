@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "3"
+version = "2"
 description = "Image Location and Privacy Passive Scanner"
 
 zapAddOn {
