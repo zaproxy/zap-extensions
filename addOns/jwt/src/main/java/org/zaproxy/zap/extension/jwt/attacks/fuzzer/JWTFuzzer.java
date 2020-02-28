@@ -53,7 +53,7 @@ public interface JWTFuzzer {
      * Raises Alert for all the JWT fuzzers.
      *
      * @param messagePrefix
-     * @param vulnerabilityPrefix
+     * @param vulnerabilityType
      * @param alertLevel
      * @param confidenceLevel
      * @param serverSideAttack
