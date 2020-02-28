@@ -19,14 +19,22 @@
  */
 package org.zaproxy.zap.extension.jwt;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.zap.extension.jwt.ui.JWTOptionsPanel;
+import org.zaproxy.zap.extension.jwt.ui.JWTSettingsUI;
+import org.zaproxy.zap.view.ZapMenuItem;
 
-/** @author KSASAN preetkaran20@gmail.com */
+/**
+ * @author KSASAN preetkaran20@gmail.com
+ * @since TODO add version
+ */
 public class JWTExtension extends ExtensionAdaptor {
 
     protected static final Logger LOGGER = Logger.getLogger(JWTExtension.class);
@@ -48,46 +56,43 @@ public class JWTExtension extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-
+        JWTI18n.init();
         try {
-            LOGGER.error("SASAN");
-            //			SAMLConfiguration conf = SAMLConfiguration.getInstance();
-            //			SamlI18n.init();
-            //			if (conf != null) {
-            //				conf.initialize();
-            //			} else {
-            //				log.error("SAML Configuration can't be loaded. Extention will not be loaded...");
-            //			}
-            //			if (getView() != null && conf != null) {
-            //				final SAMLProxyListener proxyListener = new SAMLProxyListener();
-            //				extensionHook.addProxyListener(proxyListener);
-            //
-            //				ExtensionPopupMenu samlMenu = new ExtensionPopupMenuMessageContainer(
-            //						SamlI18n.getMessage("saml.popup.mainmenu"));
-            //				ExtensionPopupMenuItem samlResendMenuItem = new SAMLResendMenuItem(
-            //						SamlI18n.getMessage("saml.popup.view_resend"));
-            //
-            //				samlMenu.add(samlResendMenuItem);
-            //				extensionHook.getHookMenu().addPopupMenuItem(samlMenu);
-            //
-            //				JMenuItem samlActiveEditorMenu = new
-            // JMenuItem(SamlI18n.getMessage("saml.toolmenu.settings"));
-            //				samlActiveEditorMenu.addActionListener(new ActionListener() {
-            //					@Override
-            //					public void actionPerformed(ActionEvent e) {
-            //						SamlExtentionSettingsUI settingUI = new SamlExtentionSettingsUI();
-            //						settingUI.setVisible(true);
-            //					}
-            //				});
-            //				extensionHook.getHookMenu().addToolsMenuItem(samlActiveEditorMenu);
-            //			}
+            extensionHook.addOptionsParamSet(getJWTConfiguration());
+            extensionHook.getHookView().addOptionPanel(new JWTOptionsPanel());
+            ZapMenuItem jwtActiveEditorMenu = new ZapMenuItem("jwt.toolmenu.settings");
+            jwtActiveEditorMenu.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            LOGGER.info("JWT Settings item");
+                            JWTSettingsUI jwtSettingsUI = new JWTSettingsUI();
+                            jwtSettingsUI.setVisible(true);
+                        }
+                    });
+            extensionHook.getHookMenu().addToolsMenuItem(jwtActiveEditorMenu);
+            LOGGER.info("JWT Extension loaded successfully");
         } catch (Exception e) {
             LOGGER.error("JWT Extension can't be loaded. Configuration not found or invalid", e);
         }
     }
 
+    private JWTConfiguration getJWTConfiguration() {
+        return JWTConfiguration.getInstance();
+    }
+
+    @Override
+    public boolean supportsDb(String type) {
+        return true;
+    }
+
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void stop() {
+        this.getJWTConfiguration().shutdownExecutorService();
     }
 }
