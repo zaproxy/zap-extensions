@@ -24,7 +24,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.parosproxy.paros.network.HttpStatusCode.*;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import org.junit.Test;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -38,6 +44,24 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
     @Override
     protected ApplicationErrorScanner createScanner() {
         return new ApplicationErrorScanner();
+    }
+
+    @Override
+    public void setUpZap() throws Exception {
+        super.setUpZap();
+
+        Path xmlDir = Files.createDirectories(Paths.get(Constant.getZapHome(), "xml"));
+        Path testFile = xmlDir.resolve("application_errors.xml");
+        String content =
+                "<?xml version=\"1.0\" standalone=\"no\"?>\n"
+                        + "<!-- \n"
+                        + "UnitTest File\n"
+                        + "-->\n"
+                        + "<Patterns>\n"
+                        + "  <Pattern type=\"string\">Microsoft OLE DB Provider for ODBC Drivers</Pattern>\n"
+                        + "  <Pattern type=\"regex\">(?i)Line\\s\\d+:\\sIncorrect\\ssyntax\\snear\\s'[^']*'</Pattern>\n"
+                        + "</Patterns>";
+        Files.write(testFile, content.getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -161,6 +185,61 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setRequestHeader(REQUEST_HEADER);
         msg.setResponseHeader(createResponseHeader(OK));
         msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert result = alertsRaised.get(0);
+        assertThat(result.getEvidence(), equalTo(expectedEvidence));
+        validateAlert(result);
+    }
+
+    @Test
+    public void shouldRaiseAlertForResponseCodeOkAndCustomPayloadDetected()
+            throws HttpMalformedHeaderException {
+        // Given
+        String expectedEvidence = "customPayloadString";
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(OK));
+        msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
+        ApplicationErrorScanner.setPayloadProvider(() -> Arrays.asList(expectedEvidence));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert result = alertsRaised.get(0);
+        assertThat(result.getEvidence(), equalTo(expectedEvidence));
+        validateAlert(result);
+    }
+
+    @Test
+    public void shouldNotRaiseAlertForResponseCodeOkAndCustomPayloadNotDetected()
+            throws HttpMalformedHeaderException {
+        // Given
+        String expectedEvidence = "customPayloadString";
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(OK));
+        msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
+        ApplicationErrorScanner.setPayloadProvider(() -> Arrays.asList("notDetectedString"));
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldRaiseAlertForResponseCodeOkAndFilePayloadDetected()
+            throws HttpMalformedHeaderException {
+        // Given
+        // String from standard XML file
+        String expectedEvidence = "Microsoft OLE DB Provider for ODBC Drivers";
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(OK));
+        msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
+        ApplicationErrorScanner.setPayloadProvider(() -> Arrays.asList(expectedEvidence));
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then

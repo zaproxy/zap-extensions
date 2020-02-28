@@ -28,6 +28,7 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -332,7 +333,9 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                 13, // Information Leakage
                                 msg);
                         parent.raiseAlert(id, alert);
-                        // do NOT break at this point.. we need to find *all* the issues
+                        if (!macless && !AlertThreshold.LOW.equals(getAlertThreshold())) {
+                            return;
+                        }
 
                         // if the ViewState is not protected by a MAC, alert it as a High, cos we
                         // can mess with the parameters for sure..
@@ -362,7 +365,9 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                     13, // Information Leakage
                                     msg);
                             parent.raiseAlert(id, alertmacless);
-                            // do NOT break at this point.. we need to find *all* the issues
+                            if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
+                                return;
+                            }
                         }
                         // TODO: if the ViewState contains sensitive data, alert it (particularly if
                         // running over HTTP)
@@ -392,8 +397,9 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                     13, // Information Leakage
                                     msg);
                             parent.raiseAlert(id, alert);
-                            // do NOT break at this point.. we need to find *all* the potential
-                            // Base64 encoded data in the response..
+                            if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
+                                return;
+                            }
                         }
                     }
                 }

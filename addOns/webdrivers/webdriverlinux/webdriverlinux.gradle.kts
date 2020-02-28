@@ -1,7 +1,7 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 import org.zaproxy.gradle.tasks.DownloadWebDriver
 
-version = "16"
+version = "18"
 description = "Linux WebDrivers for Firefox and Chrome."
 
 extra["targetOs"] = DownloadWebDriver.OS.LINUX
@@ -13,6 +13,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/linux-webdrivers/")
         helpSet {
             baseName.set("org.zaproxy.zap.extension.webdriverlinux.resources.help%LC%.helpset")
             localeToken.set("%LC%")

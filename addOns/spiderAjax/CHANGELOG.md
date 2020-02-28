@@ -5,7 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [23.1.0] - 2020-01-17
+### Added
+- Add repo URL.
+
+### Changed
  - Enable websockets ([Issue 4521](https://github.com/zaproxy/zaproxy/issues/4521))
+- Change info URL to link to the site.
 
 ## [23.0.0] - 2019-06-07
 
@@ -148,4 +155,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[23.1.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.1.0
 [23.0.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.0.0

@@ -7,10 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-    }
-
-    wikiGen {
-        wikiFilesPrefix.set("HelpAddonsHttpsinfo")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/https-info-add-on/")
     }
 }
 

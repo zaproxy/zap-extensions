@@ -62,6 +62,11 @@ public class AccessControlAPI extends ApiImplementor {
 
     private static final Logger LOGGER = Logger.getLogger(AccessControlAPI.class);
 
+    /** Provided only for API client generator usage. */
+    public AccessControlAPI() {
+        this(null);
+    }
+
     public AccessControlAPI(ExtensionAccessControl extension) {
         this.extension = extension;
         this.addApiAction(

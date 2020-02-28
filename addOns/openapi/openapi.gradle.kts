@@ -1,12 +1,16 @@
-version = "15"
+import org.zaproxy.gradle.addon.AddOnStatus
+
+version = "16"
 description = "Imports and spiders OpenAPI definitions."
 
 zapAddOn {
     addOnName.set("OpenAPI Support")
+    addOnStatus.set(AddOnStatus.BETA)
     zapVersion.set("2.8.0")
 
     manifest {
         author.set("ZAP Core Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak and Marcin Spiewak")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/openapi-support/")
     }
 
     apiClientGen {

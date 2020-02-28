@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -58,10 +57,10 @@ public class XAspNetVersionScanner extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         for (String header : xAspNetHeaders) {
-            Vector<String> found = msg.getResponseHeader().getHeaders(header);
+            List<String> found = msg.getResponseHeader().getHeaderValues(header);
 
-            if (found != null) {
-                this.raiseAlert(msg, id, found.firstElement());
+            if (!found.isEmpty()) {
+                this.raiseAlert(msg, id, found.get(0));
             }
         }
     }

@@ -7,49 +7,16 @@ import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.addon.misc.ConvertMarkdownToHtml
 import org.zaproxy.gradle.addon.misc.CreateGitHubRelease
 import org.zaproxy.gradle.addon.misc.ExtractLatestChangesFromChangelog
-import org.zaproxy.gradle.addon.wiki.WikiGenExtension
 
 plugins {
     jacoco
-    id("org.zaproxy.add-on") version "0.2.0" apply false
+    id("org.zaproxy.add-on") version "0.3.0" apply false
 }
 
 description = "Common configuration of the add-ons."
 
-val zapCoreHelpWikiDir = "$rootDir/../zap-core-help-wiki/"
-val zapExtensionsWikiDir = "$rootDir/../zap-extensions-wiki/"
-
 val parentProjects = listOf(
     "webdrivers"
-)
-
-val addOnsInZapCoreHelp = listOf(
-    "alertFilters",
-    "ascanrules",
-    "bruteforce",
-    "coreLang",
-    "diff",
-    "directorylistv1",
-    "fuzz",
-    "gettingStarted",
-    "importurls",
-    "invoke",
-    "onlineMenu",
-    "pscanrules",
-    "quickstart",
-    "replacer",
-    "reveal",
-    "saverawmessage",
-    "savexmlmessage",
-    "scripts",
-    "selenium",
-    "spiderAjax",
-    "tips",
-    "webdriverlinux",
-    "webdrivermacos",
-    "webdriverwindows",
-    "websocket",
-    "zest"
 )
 
 val jacocoToolVersion = "0.8.4"
@@ -75,18 +42,14 @@ subprojects {
         toolVersion = jacocoToolVersion
     }
 
-    val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.8.0"))
+    val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.9.0"))
 
     zapAddOn {
         releaseLink.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v@CURRENT_VERSION@" })
 
         manifest {
             changesFile.set(tasks.named<ConvertMarkdownToHtml>("generateManifestChanges").flatMap { it.html })
-        }
-
-        wikiGen {
-            wikiFilesPrefix.set("HelpAddons${zapAddOn.addOnId.get().capitalize()}")
-            wikiDir.set(project.provider { project.layout.projectDirectory.dir(if (addOnsInZapCoreHelp.contains(zapAddOn.addOnId.get())) zapCoreHelpWikiDir else zapExtensionsWikiDir) })
+            repo.set("https://github.com/zaproxy/zap-extensions/")
         }
 
         apiClientGen {
@@ -218,9 +181,6 @@ val Project.zapAddOn: AddOnPluginExtension get() =
 
 fun AddOnPluginExtension.manifest(configure: ManifestExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("manifest", configure)
-
-fun AddOnPluginExtension.wikiGen(configure: WikiGenExtension.() -> Unit): Unit =
-    (this as ExtensionAware).extensions.configure("wikiGen", configure)
 
 fun AddOnPluginExtension.apiClientGen(configure: ApiClientGenExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("apiClientGen", configure)

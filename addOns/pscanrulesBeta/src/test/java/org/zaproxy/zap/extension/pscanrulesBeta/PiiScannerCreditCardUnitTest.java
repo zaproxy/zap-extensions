@@ -75,7 +75,7 @@ public class PiiScannerCreditCardUnitTest extends PassiveScannerTest<PiiScanner>
 
         // Then
         assertThat(alertsRaised.size(), is(1));
-        assertThat(alertsRaised.get(0).getName(), equalTo("PII Scanner"));
+        assertThat(alertsRaised.get(0).getName(), equalTo("PII Disclosure"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(cardNumber.replaceAll("\\s+", "")));
     }
 }

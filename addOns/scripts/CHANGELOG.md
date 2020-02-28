@@ -5,11 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [26] - 2020-01-17
+### Added
+- Add repo URL.
+
 ### Changed
 - Update minimum ZAP version to 2.8.0.
 - Update help to mention custom script/global variables (Issue 3402).
 - Move empty template entry to the top, for consistency with other fields in New Script dialogue.
 - Save cursor position when switching between scripts.
+- Change info URL to link to the site.
+- Provide information on how to create scripts from templates (Issue 5746).
 
 ### Fixed
 - Fix links in script templates.
@@ -142,4 +149,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[26]: https://github.com/zaproxy/zap-extensions/releases/scripts-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/scripts-v25

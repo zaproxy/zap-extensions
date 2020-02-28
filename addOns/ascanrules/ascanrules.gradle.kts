@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "34"
+version = "35"
 description = "The release quality Active Scanner rules"
 
 zapAddOn {
@@ -10,6 +10,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/active-scan-rules/")
     }
 }
 

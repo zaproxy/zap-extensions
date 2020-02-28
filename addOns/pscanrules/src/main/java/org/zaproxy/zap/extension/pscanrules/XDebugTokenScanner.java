@@ -116,7 +116,7 @@ public class XDebugTokenScanner extends PluginPassiveScanner {
      * @return boolean status of existence
      */
     private boolean responseHasHeader(HttpMessage msg, String header) {
-        return null != msg.getResponseHeader().getHeaders(header);
+        return !msg.getResponseHeader().getHeaderValues(header).isEmpty();
     }
 
     /**

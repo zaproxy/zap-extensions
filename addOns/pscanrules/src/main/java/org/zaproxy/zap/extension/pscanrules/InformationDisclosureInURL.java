@@ -61,13 +61,17 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
     public void scanHttpRequestSend(HttpMessage msg, int id) {
         TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
         for (HtmlParameter urlParam : urlParams) {
-            if (doesParamNameContainsSensitiveInformation(urlParam.getName())) {
+            String match = doesParamNameContainsSensitiveInformation(urlParam.getName());
+            if (match != null) {
                 this.raiseAlert(
                         msg,
                         id,
                         urlParam.getName(),
-                        urlParam.getValue(),
-                        Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.sensitiveinfo"));
+                        urlParam.getName(),
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "otherinfo.sensitiveinfo",
+                                match,
+                                urlParam.getName()));
             }
             if (isCreditCard(urlParam.getValue())) {
                 this.raiseAlert(
@@ -139,7 +143,7 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
         return strings;
     }
 
-    private boolean doesParamNameContainsSensitiveInformation(String paramName) {
+    private String doesParamNameContainsSensitiveInformation(String paramName) {
         if (InformationDisclosureInURL.messages == null) {
             InformationDisclosureInURL.messages =
                     loadFile(
@@ -150,10 +154,10 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
         String ciParamName = paramName.toLowerCase();
         for (String msg : InformationDisclosureInURL.messages) {
             if (ciParamName.contains(msg)) {
-                return true;
+                return msg;
             }
         }
-        return false;
+        return null;
     }
 
     @Override

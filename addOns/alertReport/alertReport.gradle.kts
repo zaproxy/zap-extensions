@@ -10,7 +10,7 @@ zapAddOn {
 
     manifest {
         author.set("Talsoft SRL")
-        url.set("http://www.talsoft.com.ar")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/report-alert-generator/")
 
         helpSet {
             baseName.set("help%LC%.helpset")

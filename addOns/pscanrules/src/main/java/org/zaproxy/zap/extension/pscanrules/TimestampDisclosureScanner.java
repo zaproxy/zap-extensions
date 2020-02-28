@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,6 +34,7 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
@@ -167,6 +170,15 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 
                         if (evidence != null && evidence.length() > 0) {
                             // we found something.. potentially
+                            if (AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
+                                Instant foundInstant =
+                                        Instant.ofEpochSecond(Long.parseLong(evidence));
+                                ZonedDateTime now = ZonedDateTime.now();
+                                if (!(foundInstant.isAfter(now.minusYears(1).toInstant())
+                                        && foundInstant.isBefore(now.plusYears(1).toInstant()))) {
+                                    continue;
+                                }
+                            }
                             Alert alert =
                                     new Alert(
                                             getPluginId(),

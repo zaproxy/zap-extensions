@@ -19,8 +19,13 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,12 +35,24 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.ImageIcon;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.BridgeException;
+import org.apache.batik.bridge.DocumentLoader;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.UserAgent;
+import org.apache.batik.bridge.UserAgentAdapter;
+import org.apache.batik.ext.awt.RenderingHintsKeyExt;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.log4j.Logger;
+import org.w3c.dom.svg.SVGDocument;
 
 public class WappalyzerJsonParser {
 
     private static final String FIELD_CONFIDENCE = "confidence:";
     private static final String FIELD_VERSION = "version:";
+    private static final int SIZE = 16;
 
     private static final Logger logger = Logger.getLogger(WappalyzerJsonParser.class);
     private PatternErrorHandler patternErrorHandler;
@@ -109,11 +126,16 @@ public class WappalyzerJsonParser {
                 app.setImplies(this.jsonToStringList(appData.get("implies")));
                 app.setCpe(appData.optString("cpe"));
 
-                URL icon =
+                URL iconUrl =
                         ExtensionWappalyzer.class.getResource(
                                 ExtensionWappalyzer.RESOURCE + "/icons/" + appName + ".png");
-                if (icon != null) {
-                    app.setIcon(new ImageIcon(icon));
+                if (iconUrl != null) {
+                    app.setIcon(createPngIcon(iconUrl));
+                } else {
+                    iconUrl =
+                            ExtensionWappalyzer.class.getResource(
+                                    ExtensionWappalyzer.RESOURCE + "/icons/" + appName + ".svg");
+                    app.setIcon(createSvgIcon(iconUrl));
                 }
 
                 result.addApplication(app);
@@ -124,6 +146,67 @@ public class WappalyzerJsonParser {
         }
 
         return result;
+    }
+
+    private static Graphics2D addRenderingHints(BufferedImage image) {
+        Graphics2D g2d = image.createGraphics();
+        g2d.setRenderingHint(
+                RenderingHintsKeyExt.KEY_BUFFERED_IMAGE, new WeakReference<BufferedImage>(image));
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(
+                RenderingHints.KEY_ALPHA_INTERPOLATION,
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2d.setRenderingHint(
+                RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        return g2d;
+    }
+
+    private static ImageIcon createPngIcon(URL url) throws Exception {
+        ImageIcon appIcon = new ImageIcon(url);
+        if (appIcon.getIconHeight() > SIZE || appIcon.getIconWidth() > SIZE) {
+            BufferedImage image = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = addRenderingHints(image);
+            g2d.drawImage(appIcon.getImage(), 0, 0, SIZE, SIZE, null);
+            g2d.dispose();
+            return new ImageIcon(image);
+        }
+        return appIcon;
+    }
+
+    private static ImageIcon createSvgIcon(URL url) throws Exception {
+        if (url == null) {
+            return null;
+        }
+        String xmlParser = XMLResourceDescriptor.getXMLParserClassName();
+        SAXSVGDocumentFactory df = new SAXSVGDocumentFactory(xmlParser);
+        SVGDocument doc = null;
+        GraphicsNode svgIcon = null;
+        try {
+            doc = df.createSVGDocument(url.toString());
+        } catch (RuntimeException re) {
+            // v1 SVGs are unsupported
+            return null;
+        }
+        doc.getRootElement().setAttribute("width", String.valueOf(SIZE));
+        doc.getRootElement().setAttribute("height", String.valueOf(SIZE));
+        UserAgent userAgent = new UserAgentAdapter();
+        DocumentLoader loader = new DocumentLoader(userAgent);
+        GVTBuilder builder = new GVTBuilder();
+        try {
+            svgIcon = builder.build(new BridgeContext(userAgent, loader), doc);
+        } catch (BridgeException | StringIndexOutOfBoundsException ex) {
+            logger.debug("Failed to parse SVG. " + ex.getMessage());
+            return null;
+        }
+
+        AffineTransform transform = new AffineTransform(1, 0.0, 0.0, 1, 0, 0);
+        BufferedImage image = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = addRenderingHints(image);
+        svgIcon.setTransform(transform);
+        svgIcon.paint(g2d);
+        g2d.dispose();
+        return new ImageIcon(image);
     }
 
     private List<String> jsonToStringList(Object json) {

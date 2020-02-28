@@ -10,11 +10,14 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-beta/")
     }
 }
 
 dependencies {
     implementation("com.google.re2j:re2j:1.2")
+
+    implementation(project(":sharedutils"))
 
     testImplementation(project(":testutils"))
 }

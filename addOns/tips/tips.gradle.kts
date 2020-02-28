@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "7"
+version = "8"
 description = "Display ZAP Tips and Tricks"
 
 zapAddOn {
@@ -10,5 +10,6 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/tips-and-tricks/")
     }
 }

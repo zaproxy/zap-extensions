@@ -62,6 +62,11 @@ public class ExportReportAPI extends ApiImplementor {
 
     private ExtensionExportReport extension;
 
+    /** Provided only for API client generator usage. */
+    public ExportReportAPI() {
+        this(null);
+    }
+
     public ExportReportAPI(ExtensionExportReport extension) {
         super();
         this.extension = extension;

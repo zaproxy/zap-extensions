@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [21] - 2020-01-17
+### Added
+- Add info and repo URLs.
+
 ### Changed
 - Maintenance changes.
 - Disable table sort in WebSockets panel, not working properly (Issue 1661).
@@ -144,5 +149,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[21]: https://github.com/zaproxy/zap-extensions/releases/websocket-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/websocket-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/websocket-v19

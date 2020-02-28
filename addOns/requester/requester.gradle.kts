@@ -7,6 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("Surikato")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/requester/")
 
         helpSet {
             baseName.set("help%LC%.helpset")

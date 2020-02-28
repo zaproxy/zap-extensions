@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [12] - 2020-01-17
+### Added
+- Add repo URL.
+
+### Changed
+- Change info URL to link to the site.
+
 ## [11] - 2019-06-07
 
 - Enable the extensions for all DB types.
@@ -97,4 +104,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[12]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v11

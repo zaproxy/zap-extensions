@@ -74,6 +74,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
     private ProvidedBrowsersComboBoxModel allBrowserModel;
     private ProvidedBrowsersComboBoxModel hudBrowserModel;
     private JCheckBox hudCheckbox;
+    private JLabel hudIsInScopeOnly;
     private JLabel exploreLabel;
     private int hudOffset;
 
@@ -214,9 +215,32 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         return hudCheckbox;
     }
 
+    private JLabel getHudIsInScopeOnly() {
+        if (hudIsInScopeOnly == null) {
+            hudIsInScopeOnly = new JLabel();
+            setHudIsInScopeOnlyText();
+        }
+        return hudIsInScopeOnly;
+    }
+
+    private void setHudIsInScopeOnlyText() {
+        if (hudIsInScopeOnly != null) {
+            PlugableHud hud = getExtQuickStart().getHudProvider();
+            if (hud != null) {
+                if (hud.isInScopeOnly()) {
+                    hudIsInScopeOnly.setText(
+                            Constant.messages.getString("quickstart.label.hud.warn.scope"));
+                } else {
+                    hudIsInScopeOnly.setText("");
+                }
+            }
+        }
+    }
+
     protected void hudAddOnUninstalled() {
         getHudCheckbox().setSelected(false);
         getHudCheckbox().setEnabled(false);
+        getHudIsInScopeOnly().setText("");
     }
 
     private JButton getLaunchButton() {
@@ -255,7 +279,13 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             }
         }
 
-        this.getContentPanel().add(getHudCheckbox(), LayoutHelper.getGBC(1, hudOffset, 3, 0.25D));
+        JPanel hudPanel = new JPanel(new GridBagLayout());
+        hudPanel.setBackground(Color.WHITE);
+        hudPanel.add(getHudCheckbox(), LayoutHelper.getGBC(0, 0, 1, 0));
+        hudPanel.add(getHudIsInScopeOnly(), LayoutHelper.getGBC(1, 0, 1, 0));
+        hudPanel.add(new JLabel(), LayoutHelper.getGBC(1, 0, 2, 1.0));
+
+        this.getContentPanel().add(hudPanel, LayoutHelper.getGBC(1, hudOffset, 3, 0.25D));
 
         PlugableHud hud = getExtQuickStart().getHudProvider();
         if (hud != null) {
@@ -364,5 +394,9 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
                 new JLabel(Constant.messages.getString("quickstart.panel.launch.manual")),
                 LayoutHelper.getGBC(0, 0, 5, 1.0D, new Insets(5, 5, 5, 5)));
         return panel;
+    }
+
+    public void optionsChanged() {
+        this.setHudIsInScopeOnlyText();
     }
 }

@@ -5,9 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+
+## [34] - 2020-01-17
+### Added
+- Add info and repo URLs.
+- Add links to the code in the help.
+
+### Changed
 - Improved PowerShell injection control patterns to reduce false positives.
 - Maintenance changes.
-- Added links to the code in the help.
 - Issue 5271: Fix SQLi false positive (and potential false negative) when response bodies contain injection strings.
 
 ## [33] - 2019-06-07
@@ -193,4 +199,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[34]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v33
