@@ -123,9 +123,6 @@ public class PayloadFuzzer implements JWTFuzzer {
     /**
      * Adds Null Byte and ZAP Eye catcher after the payload to check if JWT signature is still
      * valid. if Signature is still valid then JWT validator is vulnerable to Null Byte Injection
-     *
-     * @param jwtTokenBean
-     * @param fuzzedTokens
      */
     private boolean executeNullByteFuzzedTokens() {
         if (this.serverSideAttack.getJwtActiveScanner().isStop()) {
