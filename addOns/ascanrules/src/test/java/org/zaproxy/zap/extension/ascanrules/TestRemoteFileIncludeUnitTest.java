@@ -50,13 +50,11 @@ public class TestRemoteFileIncludeUnitTest
                     protected String getContent(IHTTPSession session) {
                         String value = getFirstParamValue(session, "p");
                         if (value.contains(NULL_BYTE_CHARACTER)) {
-                            return "<html lang=en>\n"
-                                    + "  <title>Error 404 (Not Found)!!1</title>\n"
-                                    + "  <style>"
-                                    + "<a href=//www.google.com/><span id=logo aria-label=Google></span></a>\n"
-                                    + "  <p><b>404.</b> <ins>That’s an error.</ins>\n"
-                                    + "  <p>The requested URL <code>/%00</code> was not found on this server.  <ins>That’s all we know.</ins>\n";
-
+                            return "<!doctype html><html itemscope=\"\" itemtype=\"http://schema.org/WebPage\" "
+                                    + "lang=\"en-IN\"><head><meta charset=\"UTF-8\"><meta content=\"origin\" "
+                                    + "name=\"referrer\"><meta content=\"/logos/doodles/2020/sir-john-tenniels-200th-birthday-6753651837108300.5-l.png\" "
+                                    + "itemprop=\"image\"><meta content=\"origin\" name=\"referrer\"><title>Google</title> "
+                                    + "</html>";
                         } else {
                             return "<html></html>";
                         }

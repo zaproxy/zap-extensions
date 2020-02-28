@@ -42,7 +42,24 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
 
     /** the various prefixes to try, for each of the remote file targets below */
     private static final String[] REMOTE_FILE_TARGET_PREFIXES = {
-        "http://", "", "HTTP://", "https://", "HTTPS://", "HtTp://", "HtTpS://"
+        "http://",
+        "",
+        "HTTP://",
+        "https://",
+        "HTTPS://",
+        "HtTp://",
+        "HtTpS://",
+        // Null Byte payload, incase validator for the remote file inclusion is
+        // vulnerable to null byte ie say validator is written in C/C++ where Null
+        // character marks end of string then that validator will not read characters
+        // after null byte hence validation can be bypassed.
+        NULL_BYTE_CHARACTER + "http://",
+        NULL_BYTE_CHARACTER + "",
+        NULL_BYTE_CHARACTER + "HTTP://",
+        NULL_BYTE_CHARACTER + "https://",
+        NULL_BYTE_CHARACTER + "HTTPS://",
+        NULL_BYTE_CHARACTER + "HtTp://",
+        NULL_BYTE_CHARACTER + "HtTpS://",
     };
     /** the various local file targets to look for (prefixed by the prefixes above) */
     private static final String[] REMOTE_FILE_TARGETS = {
@@ -51,7 +68,6 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
         "www.google.com",
         "www.google.com/search?q=OWASP%20ZAP",
         "www.google.com:80/search?q=OWASP%20ZAP",
-        "www.google.com/" + NULL_BYTE_CHARACTER
     };
     /** the patterns to look for, associated with the equivalent remote file targets above */
     private static final Pattern[] REMOTE_FILE_PATTERNS = {
@@ -60,7 +76,6 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title.*?Google.*?/title>"),
         Pattern.compile("<title.*?Google.*?/title>"),
-        Pattern.compile("<title>Error 404 [(]Not Found[)].*</title>")
     };
     /** The number of requests we will send per parameter, based on the attack strength */
     private static final int REQ_PER_PARAM_OFF = 0;
