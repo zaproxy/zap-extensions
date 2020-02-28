@@ -147,7 +147,7 @@ public class JWTTokenBean {
                 + ", payload="
                 + payload
                 + ", signature="
-                + signature
+                + Base64.getUrlDecoder().decode(signature)
                 + "]";
     }
 }

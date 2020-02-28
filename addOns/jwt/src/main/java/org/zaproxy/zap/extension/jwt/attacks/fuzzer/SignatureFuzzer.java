@@ -151,6 +151,7 @@ public class SignatureFuzzer implements JWTFuzzer {
 
     /**
      * Payload is as per the {@link https://nvd.nist.gov/vuln/detail/CVE-2018-0114} vulnerability
+     *
      * @throws JWTException
      */
     public boolean executeCustomPrivateKeySignedFuzzToken() throws JWTException {
