@@ -86,12 +86,12 @@ public class FileStringPayloadGeneratorUIHandler
     public static class FileStringPayloadGeneratorUI
             implements PayloadGeneratorUI<DefaultPayload, FileStringPayloadGenerator> {
 
-        private final Path file;
-        private final Charset charset;
-        private final long limit;
-        private final String commentToken;
-        private final boolean ignoreTrimmedEmptyLines;
-        private final boolean ignoreFirstLine;
+        private Path file;
+        private Charset charset;
+        private long limit;
+        private String commentToken;
+        private boolean ignoreTrimmedEmptyLines;
+        private boolean ignoreFirstLine;
         private long numberOfPayloads;
 
         private boolean temporary;
@@ -671,6 +671,31 @@ public class FileStringPayloadGeneratorUIHandler
             numberOfPayloads = 0;
             getPayloadsPreviewTextArea().setText("");
             getSaveButton().setEnabled(false);
+        }
+
+        /**
+         * This method is used to populate the Panel's Fields using {@code
+         * FileStringPayloadGeneratorUI}
+         *
+         * @param fileStringPayloadGeneratorUI
+         */
+        public void populateFileStringPayloadGeneratorUIPanel(
+                FileStringPayloadGeneratorUI fileStringPayloadGeneratorUI) {
+            getFileTextField()
+                    .setText(fileStringPayloadGeneratorUI.getFile().toAbsolutePath().toString());
+            for (int i = 0; i < CHARSETS.length; i++) {
+                if (CHARSETS[i] == fileStringPayloadGeneratorUI.getCharset()) {
+                    getCharsetComboBox().setSelectedIndex(i);
+                    break;
+                }
+            }
+            getLimitNumberSpinner().setValue(fileStringPayloadGeneratorUI.getLimit());
+            getCommentTokenTextField().setText(fileStringPayloadGeneratorUI.getCommentToken());
+            getCommentTokenTextField().discardAllEdits();
+            getIgnoreEmptyLinesCheckBox()
+                    .setSelected(fileStringPayloadGeneratorUI.isIgnoreEmptyLines());
+            numberOfPayloads = fileStringPayloadGeneratorUI.getNumberOfPayloads();
+            updatePayloadsPreviewTextArea();
         }
 
         @Override

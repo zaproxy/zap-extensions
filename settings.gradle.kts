@@ -47,6 +47,7 @@ var addOns = listOf(
     "invoke",
     "jruby",
     "jsonview",
+    "jwt",
     "jython",
     "onlineMenu",
     "openapi",
