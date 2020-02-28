@@ -925,15 +925,14 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.nano.addHandler(handler);
 
-        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
         msg.getRequestHeader().setMethod(HttpRequestHeader.PUT);
 
         rule.setConfig(new ZapXmlConfiguration());
         this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
         this.rule.init(msg, this.parent);
+        // When
         this.rule.scan();
-
         // Then
         assertThat(httpMessagesSent, hasSize(equalTo(0)));
     }
@@ -968,13 +967,13 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.nano.addHandler(handler);
 
-        // When
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
         msg.getRequestHeader().setMethod(HttpRequestHeader.PUT);
 
         this.rule.setConfig(new ZapXmlConfiguration());
         this.rule.setAlertThreshold(AlertThreshold.LOW);
         this.rule.init(msg, this.parent);
+        // When
         this.rule.scan();
         // Then
         assertThat(httpMessagesSent, hasSize(greaterThan(0)));
