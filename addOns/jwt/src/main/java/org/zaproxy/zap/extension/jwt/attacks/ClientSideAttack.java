@@ -26,8 +26,8 @@ import static org.zaproxy.zap.extension.jwt.utils.JWTConstants.SAME_SITE_ATTRIBU
 import static org.zaproxy.zap.extension.jwt.utils.JWTConstants.SAME_SITE_NONE_MODE;
 import static org.zaproxy.zap.extension.jwt.utils.JWTConstants.SECURE_COOKIE_ATTRIBUTE;
 
+import java.util.List;
 import java.util.TreeSet;
-import java.util.Vector;
 import org.apache.commons.collections.iterators.IteratorChain;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -58,7 +58,7 @@ public class ClientSideAttack {
             int confidence,
             String param,
             HttpMessage msg) {
-        this.jwtActiveScanner.bingo(
+        this.jwtActiveScanner.raiseAlert(
                 risk,
                 confidence,
                 JWTI18n.getMessage(MESSAGE_PREFIX + vulnerabilityType.getMessageKey() + ".name"),
@@ -86,13 +86,13 @@ public class ClientSideAttack {
         // Check Cookie Values
         boolean paramExists = false;
         IteratorChain iterator = new IteratorChain();
-        Vector<String> cookies1 = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE);
+        List<String> cookies1 = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE);
 
         if (cookies1 != null) {
             iterator.addIterator(cookies1.iterator());
         }
 
-        Vector<String> cookies2 = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE2);
+        List<String> cookies2 = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE2);
 
         if (cookies2 != null) {
             iterator.addIterator(cookies2.iterator());

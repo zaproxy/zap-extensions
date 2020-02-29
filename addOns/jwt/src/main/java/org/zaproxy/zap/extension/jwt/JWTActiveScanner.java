@@ -173,7 +173,7 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
         return false;
     }
 
-    public void bingo(
+    public void raiseAlert(
             int risk,
             int confidence,
             String name,
@@ -184,8 +184,18 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
             String otherInfo,
             String solution,
             HttpMessage msg) {
-        super.bingo(
-                risk, confidence, name, description, uri, param, attack, otherInfo, solution, msg);
+        newAlert()
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setName(name)
+                .setDescription(description)
+                .setUri(uri)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(otherInfo)
+                .setSolution(solution)
+                .setMessage(msg)
+                .raise();
     }
 
     /**

@@ -93,7 +93,7 @@ public class BruteforceAttack {
     }
 
     private void raiseAlert(String secretKey) {
-        this.jwtActiveScanner.bingo(
+        this.jwtActiveScanner.raiseAlert(
                 Alert.RISK_HIGH,
                 Alert.CONFIDENCE_HIGH,
                 JWTI18n.getMessage(

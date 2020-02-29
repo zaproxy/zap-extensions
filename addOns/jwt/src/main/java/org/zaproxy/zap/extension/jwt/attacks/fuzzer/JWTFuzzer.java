@@ -67,7 +67,7 @@ public interface JWTFuzzer {
             ServerSideAttack serverSideAttack) {
         serverSideAttack
                 .getJwtActiveScanner()
-                .bingo(
+                .raiseAlert(
                         alertLevel,
                         confidenceLevel,
                         JWTI18n.getMessage(
