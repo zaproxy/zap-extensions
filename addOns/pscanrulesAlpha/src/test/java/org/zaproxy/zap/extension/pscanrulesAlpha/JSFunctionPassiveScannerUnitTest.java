@@ -23,13 +23,18 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.network.HttpStatusCode;
 
 public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunctionPassiveScanner> {
 
@@ -38,35 +43,65 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         return new JSFunctionPassiveScanner();
     }
 
+    @Override
+    public void setUpZap() throws Exception {
+        super.setUpZap();
+
+        Path xmlDir =
+                Files.createDirectories(
+                        Paths.get(Constant.getZapHome(), JSFunctionPassiveScanner.FUNC_LIST_DIR));
+        Path testFile = xmlDir.resolve(JSFunctionPassiveScanner.FUNC_LIST_FILE);
+        Files.write(
+                testFile, Arrays.asList("# Test File", "bypassSecurityTrustScript", "trustAsHtml"));
+    }
+
     @Test
-    public void shouldRaiseAlertGivenMatch() throws URIException {
-        // Test value in message taken from xml/js-function-list.txt
-        HttpMessage msg = createMessage("bypassSecurityTrustScript");
+    public void shouldRaiseAlertGivenMatch() throws HttpMalformedHeaderException, URIException {
+        // Given
+        String body = "Some text <script>bypassSecurityTrustScript</script>\nLine 2\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body);
         Source source = createSource(msg);
 
+        // When
         rule.scanHttpResponseReceive(msg, -1, source);
 
+        // Then
         assertThat(alertsRaised, hasSize(1));
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenNoMatch() throws URIException {
-        HttpMessage msg = createMessage("");
+    public void shouldNotRaiseAlertGivenNoMatch()
+            throws URIException, HttpMalformedHeaderException {
+        // Given
+        String body = "Some text <script>innocent script</script>\nLine 2\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body);
         Source source = createSource(msg);
 
+        // When
         rule.scanHttpResponseReceive(msg, -1, source);
 
+        // Then
         assertThat(alertsRaised, empty());
     }
 
-    private HttpMessage createMessage(String content) throws URIException {
+    private HttpMessage createHttpMessageWithRespBody(String responseBody)
+            throws HttpMalformedHeaderException, URIException {
+
         HttpRequestHeader requestHeader = new HttpRequestHeader();
-        requestHeader.setURI(new URI("http://test.com", false));
+        requestHeader.setURI(new URI("http://example.com", false));
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
-        msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_FOUND);
-        msg.setResponseBody("<html><body>" + content + "</body></html>");
+        msg.setResponseBody(responseBody);
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: "
+                        + "text/javascript;charset=ISO-8859-1"
+                        + "\r\n"
+                        + "Content-Length: "
+                        + responseBody.length()
+                        + "\r\n");
         return msg;
     }
 }

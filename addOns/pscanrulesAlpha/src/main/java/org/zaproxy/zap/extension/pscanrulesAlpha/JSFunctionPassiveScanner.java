@@ -25,7 +25,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTagType;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -39,12 +44,13 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.jsfunction.";
 
-    private static final String FUNC_LIST = "xml/js-function-list.txt";
+    public static final String FUNC_LIST_DIR = "xml";
+    public static final String FUNC_LIST_FILE = "js-function-list.txt";
     private static final Logger LOGGER = Logger.getLogger(JSFunctionPassiveScanner.class);
     private static final int PLUGIN_ID = 10110;
 
+    private static List<Pattern> patterns = null;
     private PassiveScanThread parent = null;
-    private List<String> functions = null;
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -53,14 +59,27 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (this.functions == null) {
-            this.functions = loadFunctions();
+        if (patterns == null) {
+            patterns = getPatterns();
         }
-        String content = source.toString();
-
-        for (String func : this.functions) {
-            if (content.toLowerCase().contains(func.toLowerCase())) {
-                raiseAlert(msg, id, content);
+        if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
+            StringBuilder evidence = new StringBuilder();
+            // Check the scripts
+            Element el;
+            int offset = 0;
+            while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
+                String elStr = el.toString();
+                for (Pattern pattern : patterns) {
+                    if (pattern.matcher(elStr).find()) {
+                        evidence.append(elStr);
+                        evidence.append("\n");
+                        break; // Only need to record this script once
+                    }
+                }
+                offset = el.getEnd();
+            }
+            if (evidence.length() > 0) {
+                this.raiseAlert(msg, id, evidence.toString());
             }
         }
     }
@@ -84,35 +103,44 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
         parent.raiseAlert(id, alert);
     }
 
-    private List<String> loadFunctions() {
-        List<String> strings = new ArrayList<String>();
-        BufferedReader reader = null;
-        File f = new File(Constant.getZapHome() + File.separator + FUNC_LIST);
-        if (!f.exists()) {
-            LOGGER.error("No such file: " + f.getAbsolutePath());
-            return strings;
-        }
-        try {
-            String line;
-            reader = new BufferedReader(new FileReader(f));
-            while ((line = reader.readLine()) != null) {
-                if (!line.startsWith("#") && line.length() > 0) {
-                    strings.add(line);
+    private static List<Pattern> getPatterns() {
+        if (patterns == null) {
+            patterns = new ArrayList<>();
+
+            try {
+                File f =
+                        new File(
+                                Constant.getZapHome()
+                                        + File.separator
+                                        + FUNC_LIST_DIR
+                                        + File.separator
+                                        + FUNC_LIST_FILE);
+                if (!f.exists()) {
+                    throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
                 }
-            }
-        } catch (IOException e) {
-            LOGGER.error(
-                    "Error on opening/reading example error file. Error: " + e.getMessage(), e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    LOGGER.debug("Error on closing the file reader. Error: " + e.getMessage(), e);
+                try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        line = line.trim();
+                        if (!line.startsWith("#") && line.length() > 0) {
+                            patterns.add(
+                                    Pattern.compile(
+                                            "\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+                        }
+                    }
                 }
+            } catch (IOException e) {
+                LOGGER.error(
+                        "Error on opening/reading suspicious comments file: "
+                                + File.separator
+                                + FUNC_LIST_DIR
+                                + File.separator
+                                + FUNC_LIST_FILE
+                                + " Error: "
+                                + e.getMessage());
             }
         }
-        return strings;
+        return patterns;
     }
 
     @Override
