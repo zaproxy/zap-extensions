@@ -88,14 +88,14 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
         alert.setDetail(
                 this.getDescription(),
                 msg.getRequestHeader().getURI().toString(),
-                "", // Param, not relevant for this example vulnerability
+                "", // Param, not relevant for this vulnerability
                 "", // Attack, not relevant for passive vulnerabilities
-                "",
+                "", // Other info not specified in message bundle
                 this.getSolution(),
                 this.getReference(),
-                evidence, // Evidence
+                evidence,
                 0, // CWE Id - return 0 if no relevant one
-                0, // WASC Id - Info leakage (return 0 if no relevant one)
+                0, // WASC Id - return 0 if no relevant one
                 msg);
 
         parent.raiseAlert(id, alert);
