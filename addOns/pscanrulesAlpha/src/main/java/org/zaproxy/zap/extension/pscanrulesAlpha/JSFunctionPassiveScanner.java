@@ -90,7 +90,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                 msg.getRequestHeader().getURI().toString(),
                 "", // Param, not relevant for this example vulnerability
                 "", // Attack, not relevant for passive vulnerabilities
-                this.getOtherInfo(),
+                "",
                 this.getSolution(),
                 this.getReference(),
                 evidence, // Evidence
@@ -152,10 +152,6 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     }
 
     private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
