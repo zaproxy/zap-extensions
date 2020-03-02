@@ -57,6 +57,9 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!msg.getResponseHeader().isHtml() && !msg.getResponseHeader().isJavaScript()) {
+            return;
+        }
         if (patterns == null) {
             patterns = getPatterns();
         }
@@ -94,7 +97,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                 this.getSolution(),
                 this.getReference(),
                 evidence,
-                0, // CWE Id - return 0 if no relevant one
+                749, // CWE-749: Exposed Dangerous Method or Function
                 0, // WASC Id - return 0 if no relevant one
                 msg);
 
