@@ -63,9 +63,9 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
         if (patterns == null) {
             patterns = getPatterns();
         }
-        if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
-            StringBuilder evidence = new StringBuilder();
-            // Check the scripts
+        StringBuilder evidence = new StringBuilder();
+        if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isHtml()) {
+            // Check the scripts in HTML
             Element el;
             int offset = 0;
             while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
@@ -79,15 +79,25 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                 }
                 offset = el.getEnd();
             }
-            if (evidence.length() > 0) {
-                this.raiseAlert(msg, id, evidence.toString());
+        } else if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isJavaScript()) {
+            String content = msg.getResponseBody().toString();
+            for (Pattern pattern : patterns) {
+                if (pattern.matcher(content).find()) {
+                    evidence.append(pattern.toString());
+                    evidence.append(" found in js file:");
+                    evidence.append("\n");
+                    evidence.append(content);
+                    evidence.append("\n");
+                }
             }
+        }
+        if (evidence.length() > 0) {
+            this.raiseAlert(msg, id, evidence.toString());
         }
     }
 
     private void raiseAlert(HttpMessage msg, int id, String evidence) {
-        Alert alert =
-                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
+        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_LOW, getName());
         alert.setDetail(
                 this.getDescription(),
                 msg.getRequestHeader().getURI().toString(),
