@@ -19,10 +19,10 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
-import static org.zaproxy.zap.extension.openapi.utils.Element.Json.INNER_SEPARATOR;
-import static org.zaproxy.zap.extension.openapi.utils.Element.Json.OBJECT_BEGIN;
-import static org.zaproxy.zap.extension.openapi.utils.Element.Json.OBJECT_END;
-import static org.zaproxy.zap.extension.openapi.utils.Element.OpenApi.STRING;
+import static org.zaproxy.zap.extension.openapi.generators.Element.Json.INNER_SEPARATOR;
+import static org.zaproxy.zap.extension.openapi.generators.Element.Json.OBJECT_BEGIN;
+import static org.zaproxy.zap.extension.openapi.generators.Element.Json.OBJECT_END;
+import static org.zaproxy.zap.extension.openapi.generators.Element.OpenApiType.STRING;
 
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
@@ -52,7 +52,11 @@ public class MapGenerator {
         Schema<?> schema = (Schema<?>) property.getAdditionalProperties();
         String type = types.get(schema.getType());
         String value = type != null ? type : bodyGenerator.generate(schema);
-        String defaultKey = types.get(STRING);
-        return OBJECT_BEGIN + defaultKey + INNER_SEPARATOR + value + OBJECT_END;
+        String defaultKey = types.get(STRING.type());
+        return OBJECT_BEGIN.syntax()
+                + defaultKey
+                + INNER_SEPARATOR.syntax()
+                + value
+                + OBJECT_END.syntax();
     }
 }

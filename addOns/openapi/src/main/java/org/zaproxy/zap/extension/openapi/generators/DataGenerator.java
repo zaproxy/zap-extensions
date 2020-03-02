@@ -56,13 +56,13 @@ public class DataGenerator {
                     });
 
     public boolean isSupported(Schema<?> schema) {
-        return schema instanceof IntegerSchema
-                || schema instanceof NumberSchema
-                || schema instanceof StringSchema
+        return schema instanceof ArraySchema
                 || schema instanceof BooleanSchema
-                || schema instanceof ArraySchema
                 || schema instanceof FileSchema
-                || schema instanceof MapSchema;
+                || schema instanceof IntegerSchema
+                || schema instanceof MapSchema
+                || schema instanceof NumberSchema
+                || schema instanceof StringSchema;
     }
 
     public String generate(String name, Parameter parameter) {
@@ -211,7 +211,7 @@ public class DataGenerator {
         return "array".equals(type);
     }
 
-    public boolean isArray(Schema<?> schema) {
+    private static boolean isArray(Schema<?> schema) {
         return schema instanceof ArraySchema;
     }
 
@@ -223,7 +223,7 @@ public class DataGenerator {
         return schema instanceof DateSchema;
     }
 
-    public boolean isMap(Schema<?> schema) {
+    private static boolean isMap(Schema<?> schema) {
         return schema instanceof MapSchema;
     }
 
