@@ -15,8 +15,8 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.adobe.xmp:xmpcore:5.1.3")
-    implementation("com.drewnoakes:metadata-extractor:2.10.1")
+    implementation("com.adobe.xmp:xmpcore:6.0.6")
+    implementation("com.drewnoakes:metadata-extractor:2.13.0")
 
     testImplementation(project(":testutils"))
 }
