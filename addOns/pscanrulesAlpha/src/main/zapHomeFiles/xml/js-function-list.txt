@@ -1,4 +1,5 @@
 # This file lists all dangerous JS functions being scanned for
+# Angular Functions
 bypassSecurityTrustHtml
 bypassSecurityTrustScript
 bypassSecurityTrustStyle
@@ -7,3 +8,5 @@ bypassSecurityTrustResourceUrl
 trustAsHtml
 $eval
 $evalAsync
+# Generic JS Functions
+eval
