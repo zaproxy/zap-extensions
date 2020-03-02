@@ -51,15 +51,15 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
                 Files.createDirectories(
                         Paths.get(Constant.getZapHome(), JSFunctionPassiveScanner.FUNC_LIST_DIR));
         Path testFile = xmlDir.resolve(JSFunctionPassiveScanner.FUNC_LIST_FILE);
-        Files.write(
-                testFile, Arrays.asList("# Test File", "bypassSecurityTrustScript", "trustAsHtml"));
+        Files.write(testFile, Arrays.asList("# Test File", "bypassSecurityTrustHtml", "eval"));
     }
 
     @Test
-    public void shouldRaiseAlertGivenMatch() throws HttpMalformedHeaderException, URIException {
+    public void shouldAlertGivenFunctionInJavaScriptResponse()
+            throws HttpMalformedHeaderException, URIException {
         // Given
-        String body = "Some text <script>bypassSecurityTrustScript</script>\nLine 2\n";
-        HttpMessage msg = createHttpMessageWithRespBody(body);
+        String body = "Some text <script>$eval()</script>\nLine 2\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
         Source source = createSource(msg);
 
         // When
@@ -70,11 +70,30 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
     }
 
     @Test
-    public void shouldNotRaiseAlertGivenNoMatch()
-            throws URIException, HttpMalformedHeaderException {
+    public void shouldAlertGivenFunctionInHtmlScriptElements()
+            throws HttpMalformedHeaderException, URIException {
+
         // Given
-        String body = "Some text <script>innocent script</script>\nLine 2\n";
-        HttpMessage msg = createHttpMessageWithRespBody(body);
+        String body =
+                "<h1>Some text <script>Some Html Element bypassSecurityTrustHtml()</script></h1>\n"
+                        + "<b>No script here</b>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(msg.getResponseHeader().isJavaScript());
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldNotAlertGivenNoMatch() throws URIException, HttpMalformedHeaderException {
+        // Given
+        String body = "Some text <script>innocentFunction()</script>\nLine 2\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
         Source source = createSource(msg);
 
         // When
@@ -84,7 +103,24 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         assertThat(alertsRaised, empty());
     }
 
-    private HttpMessage createHttpMessageWithRespBody(String responseBody)
+    @Test
+    public void shouldNotAlertGivenEmptyBody() throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body = "";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(msg.getResponseHeader().isJavaScript());
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised, empty());
+    }
+
+    private HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)
             throws HttpMalformedHeaderException, URIException {
 
         HttpRequestHeader requestHeader = new HttpRequestHeader();
@@ -97,7 +133,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
                         + "Content-Type: "
-                        + "text/javascript;charset=ISO-8859-1"
+                        + contentType
                         + "\r\n"
                         + "Content-Length: "
                         + responseBody.length()

@@ -80,14 +80,16 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                 offset = el.getEnd();
             }
         } else if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isJavaScript()) {
-            String content = msg.getResponseBody().toString();
-            for (Pattern pattern : patterns) {
-                if (pattern.matcher(content).find()) {
-                    evidence.append(pattern.toString());
-                    evidence.append(" found in js file:");
-                    evidence.append("\n");
-                    evidence.append(content);
-                    evidence.append("\n");
+            String[] lines = msg.getResponseBody().toString().split("\n");
+            for (String line : lines) {
+                for (Pattern pattern : patterns) {
+                    if (pattern.matcher(line).find()) {
+                        evidence.append(
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "otherinfo", pattern, line));
+                        evidence.append("\n");
+                        break; // Only need to record this line once
+                    }
                 }
             }
         }

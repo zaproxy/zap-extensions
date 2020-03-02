@@ -1,12 +1,10 @@
-# This file lists all dangerous JS functions being scanned for
-# Angular Functions
+# This file lists all dangerous JS functions being scanned for.
+# Searching is done via regex per whole word match on each line item [e.g. 'eval' will match with '$eval()'].
 bypassSecurityTrustHtml
 bypassSecurityTrustScript
 bypassSecurityTrustStyle
 bypassSecurityTrustUrl
 bypassSecurityTrustResourceUrl
 trustAsHtml
-$eval
-$evalAsync
-# Generic JS Functions
 eval
+evalAsync
