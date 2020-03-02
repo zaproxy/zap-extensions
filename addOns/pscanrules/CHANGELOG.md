@@ -27,6 +27,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - 'Header XSS Protection' was deprecated and removed (Issue 5849).
 
+### Fixed
+- Fix typo in the help page.
+
 ## [26] - 2020-01-17
 
 ### Changed

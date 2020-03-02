@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added links to the code in the help.
 - Add info and repo URLs.
 
+### Changed
+- Update ZAP blog links.
+
 ### Fixed
 - Fixed NullPointerException in Sub Resource Integrity Attribute Missing scan rule (Issue 5789).
 - Minor spacing issue in help content.
