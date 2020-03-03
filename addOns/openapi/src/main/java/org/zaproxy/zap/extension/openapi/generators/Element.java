@@ -36,7 +36,8 @@ public class Element {
             this.syntax = syntax;
         }
 
-        public String syntax() {
+        @Override
+        public String toString() {
             return syntax;
         }
     }
@@ -65,7 +66,8 @@ public class Element {
             this.syntax = syntax;
         }
 
-        public String syntax() {
+        @Override
+        public String toString() {
             return syntax;
         }
     }

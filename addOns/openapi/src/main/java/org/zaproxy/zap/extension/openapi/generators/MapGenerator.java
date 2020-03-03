@@ -53,10 +53,6 @@ public class MapGenerator {
         String type = types.get(schema.getType());
         String value = type != null ? type : bodyGenerator.generate(schema);
         String defaultKey = types.get(STRING.type());
-        return OBJECT_BEGIN.syntax()
-                + defaultKey
-                + INNER_SEPARATOR.syntax()
-                + value
-                + OBJECT_END.syntax();
+        return OBJECT_BEGIN + defaultKey + INNER_SEPARATOR + value + OBJECT_END;
     }
 }
