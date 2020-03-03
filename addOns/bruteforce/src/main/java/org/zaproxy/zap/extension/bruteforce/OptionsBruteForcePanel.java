@@ -53,6 +53,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
     private JCheckBox checkBoxRecursive = null;
     private JComboBox<ForcedBrowseFile> defaultFileList = null;
     private JButton addFileButton = null;
+    private JCheckBox checkBoxBrowseFilesWithoutExtension = null;
     private JCheckBox checkBoxBrowseFiles = null;
     private ZapTextField txtFileExtensions = null;
     private JLabel threadsLabel;
@@ -97,6 +98,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             GridBagConstraints gridBagConstraintsAddFileLable = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsAddFileButton = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsX = new GridBagConstraints();
+            GridBagConstraints gridBagConstraintsBrowseFilesWithoutExtensionCheckBox =
+                    new GridBagConstraints();
             GridBagConstraints gridBagConstraintsBrowseFilesCheckBox = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsFileExtensionsLabel = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsFileExtensionsList = new GridBagConstraints();
@@ -189,8 +192,20 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsAddFileButton.insets = new Insets(2, 2, 2, 2);
             gridBagConstraintsAddFileButton.gridwidth = 1;
 
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridx = 0;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridy = 7;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.weightx = 1.0;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.fill =
+                    GridBagConstraints.HORIZONTAL;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.ipadx = 0;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.ipady = 0;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.anchor =
+                    GridBagConstraints.NORTHWEST;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.insets = new Insets(2, 2, 2, 2);
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridwidth = 2;
+
             gridBagConstraintsBrowseFilesCheckBox.gridx = 0;
-            gridBagConstraintsBrowseFilesCheckBox.gridy = 7;
+            gridBagConstraintsBrowseFilesCheckBox.gridy = 8;
             gridBagConstraintsBrowseFilesCheckBox.weightx = 1.0;
             gridBagConstraintsBrowseFilesCheckBox.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsBrowseFilesCheckBox.ipadx = 0;
@@ -200,7 +215,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsBrowseFilesCheckBox.gridwidth = 2;
 
             gridBagConstraintsFileExtensionsLabel.gridx = 0;
-            gridBagConstraintsFileExtensionsLabel.gridy = 8;
+            gridBagConstraintsFileExtensionsLabel.gridy = 9;
             gridBagConstraintsFileExtensionsLabel.weightx = 1.0;
             gridBagConstraintsFileExtensionsLabel.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFileExtensionsLabel.ipadx = 0;
@@ -210,7 +225,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFileExtensionsLabel.gridwidth = 1;
 
             gridBagConstraintsFileExtensionsList.gridx = 1;
-            gridBagConstraintsFileExtensionsList.gridy = 8;
+            gridBagConstraintsFileExtensionsList.gridy = 9;
             gridBagConstraintsFileExtensionsList.weightx = 1.0;
             gridBagConstraintsFileExtensionsList.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFileExtensionsList.ipadx = 0;
@@ -220,7 +235,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFileExtensionsList.gridwidth = 1;
 
             gridBagConstraintsExtensionsToMissLabel.gridx = 0;
-            gridBagConstraintsExtensionsToMissLabel.gridy = 9;
+            gridBagConstraintsExtensionsToMissLabel.gridy = 10;
             gridBagConstraintsExtensionsToMissLabel.weightx = 1.0;
             gridBagConstraintsExtensionsToMissLabel.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsExtensionsToMissLabel.ipadx = 0;
@@ -230,7 +245,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsExtensionsToMissLabel.gridwidth = 1;
 
             gridBagConstraintsExtensionsToMissList.gridx = 1;
-            gridBagConstraintsExtensionsToMissList.gridy = 9;
+            gridBagConstraintsExtensionsToMissList.gridy = 10;
             gridBagConstraintsExtensionsToMissList.weightx = 1.0;
             gridBagConstraintsExtensionsToMissList.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsExtensionsToMissList.ipadx = 0;
@@ -240,7 +255,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsExtensionsToMissList.gridwidth = 1;
 
             gridBagConstraintsFailCaseStringLabel.gridx = 0;
-            gridBagConstraintsFailCaseStringLabel.gridy = 10;
+            gridBagConstraintsFailCaseStringLabel.gridy = 11;
             gridBagConstraintsFailCaseStringLabel.weightx = 1.0;
             gridBagConstraintsFailCaseStringLabel.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFailCaseStringLabel.ipadx = 0;
@@ -250,7 +265,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFailCaseStringLabel.gridwidth = 1;
 
             gridBagConstraintsFailCaseString.gridx = 1;
-            gridBagConstraintsFailCaseString.gridy = 10;
+            gridBagConstraintsFailCaseString.gridy = 11;
             gridBagConstraintsFailCaseString.weightx = 1.0;
             gridBagConstraintsFailCaseString.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFailCaseString.ipadx = 0;
@@ -260,7 +275,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFailCaseString.gridwidth = 1;
 
             gridBagConstraintsX.gridx = 0;
-            gridBagConstraintsX.gridy = 11;
+            gridBagConstraintsX.gridy = 12;
             gridBagConstraintsX.anchor = GridBagConstraints.NORTHWEST;
             gridBagConstraintsX.fill = GridBagConstraints.BOTH;
             gridBagConstraintsX.insets = new Insets(2, 2, 2, 2);
@@ -277,6 +292,9 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             panelPortScan.add(jLabelAddFile, gridBagConstraintsAddFileLable);
             panelPortScan.add(getAddFileButton(), gridBagConstraintsAddFileButton);
             panelPortScan.add(getCheckBoxBrowseFiles(), gridBagConstraintsBrowseFilesCheckBox);
+            panelPortScan.add(
+                    getcheckBoxBrowseFilesWithoutExtension(),
+                    gridBagConstraintsBrowseFilesWithoutExtensionCheckBox);
             panelPortScan.add(jLabelExtensions, gridBagConstraintsFileExtensionsLabel);
             panelPortScan.add(getTxtFileExtensions(), gridBagConstraintsFileExtensionsList);
             panelPortScan.add(jLabelExtensionsToMiss, gridBagConstraintsExtensionsToMissLabel);
@@ -339,6 +357,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             getSliderThreadsPerScan().setValue(BruteForceParam.DEFAULT_THREAD_PER_SCAN);
             getCheckBoxRecursive().setSelected(BruteForceParam.DEFAULT_RECURSIVE);
             getCheckBoxBrowseFiles().setSelected(BruteForceParam.DEFAULT_BROWSE_FILES);
+            getcheckBoxBrowseFilesWithoutExtension()
+                    .setSelected(BruteForceParam.DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION);
             getTxtFileExtensions().setEnabled(BruteForceParam.DEFAULT_BROWSE_FILES);
             getTxtExtensionsToMiss().setText(BruteForceParam.DEFAULT_EXTENSIONS_TO_MISS);
             getTxtFailCaseString().setText(BruteForceParam.DEFAULT_FAIL_CASE_STRING);
@@ -347,6 +367,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             getCheckBoxRecursive().setSelected(param.getRecursive());
             getDefaultFileList().setSelectedItem(param.getDefaultFile());
             getCheckBoxBrowseFiles().setSelected(param.isBrowseFiles());
+            getcheckBoxBrowseFilesWithoutExtension()
+                    .setSelected(param.isBrowseFilesWithoutExtension());
             getTxtFileExtensions().setEnabled(param.isBrowseFiles());
             getTxtFileExtensions().setText(param.getFileExtensions());
             getTxtExtensionsToMiss().setText(param.getExtensionsToMiss());
@@ -382,6 +404,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
                 (ForcedBrowseFile) getDefaultFileList().getSelectedItem();
         param.setDefaultFile(selectedDefaultFile);
         extension.setDefaultFile(selectedDefaultFile);
+
+        param.setBrowseFilesWithoutExtension(getcheckBoxBrowseFilesWithoutExtension().isSelected());
 
         param.setBrowseFiles(getCheckBoxBrowseFiles().isSelected());
         if (getTxtFileExtensions().getText() != null) {
@@ -505,6 +529,18 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
                     });
         }
         return addFileButton;
+    }
+
+    private JCheckBox getcheckBoxBrowseFilesWithoutExtension() {
+        if (checkBoxBrowseFilesWithoutExtension == null) {
+            checkBoxBrowseFilesWithoutExtension = new JCheckBox();
+            checkBoxBrowseFilesWithoutExtension.setText(
+                    Constant.messages.getString(
+                            MESSAGE_PREFIX + "label.browsefileswithoutextension"));
+            checkBoxBrowseFilesWithoutExtension.setSelected(
+                    BruteForceParam.DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION);
+        }
+        return checkBoxBrowseFilesWithoutExtension;
     }
 
     private JCheckBox getCheckBoxBrowseFiles() {
