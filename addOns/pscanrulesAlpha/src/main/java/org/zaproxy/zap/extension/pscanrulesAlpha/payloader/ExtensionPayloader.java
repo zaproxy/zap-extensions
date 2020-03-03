@@ -87,11 +87,11 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("pscanrules.payloader.desc");
+        return Constant.messages.getString("pscanalpha.payloader.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("pscanrules.payloader.name");
+        return Constant.messages.getString("pscanalpha.payloader.name");
     }
 }
