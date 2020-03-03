@@ -24,7 +24,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -46,6 +48,13 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     public static final String FUNC_LIST_FILE = "js-function-list.txt";
     private static final Logger LOGGER = Logger.getLogger(JSFunctionPassiveScanner.class);
     private static final int PLUGIN_ID = 10110;
+
+    public static final List<String> DEFAULT_FUNCTIONS = Collections.emptyList();;
+    private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
+            () -> DEFAULT_FUNCTIONS;
+    public static final String JS_FUNCTION_PAYLOAD_CATEGORY = "JS-Function";
+
+    private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
     private static List<Pattern> patterns = null;
     private PassiveScanThread parent = null;
@@ -132,7 +141,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                     throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
                 }
                 try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
-                    String line = null;
+                    String line;
                     while ((line = reader.readLine()) != null) {
                         line = line.trim();
                         if (!line.startsWith("#") && line.length() > 0) {
@@ -152,8 +161,19 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                                 + " Error: "
                                 + e.getMessage());
             }
+            for (String payload : getJsFunctionPayloads().get()) {
+                patterns.add(Pattern.compile("\\b" + payload + "\\b", Pattern.CASE_INSENSITIVE));
+            }
         }
         return patterns;
+    }
+
+    public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
+        payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
+    }
+
+    private static Supplier<Iterable<String>> getJsFunctionPayloads() {
+        return payloadProvider;
     }
 
     @Override
