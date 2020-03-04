@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+## [10] - 2020-03-04
+### Added
+- option and functionality to find files without extension
 
 ## [9] - 2020-01-17
 ### Changed
