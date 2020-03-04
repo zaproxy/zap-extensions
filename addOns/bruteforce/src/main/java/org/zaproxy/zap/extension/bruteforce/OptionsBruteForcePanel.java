@@ -122,8 +122,10 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             jLabelFailCaseString.setText(
                     Constant.messages.getString(MESSAGE_PREFIX + "label.failCaseString"));
 
+            int rowNumber = 2;
+
             gridBagConstraintsThreadsLable.gridx = 0;
-            gridBagConstraintsThreadsLable.gridy = 2;
+            gridBagConstraintsThreadsLable.gridy = rowNumber;
             gridBagConstraintsThreadsLable.ipadx = 0;
             gridBagConstraintsThreadsLable.ipady = 0;
             gridBagConstraintsThreadsLable.anchor = GridBagConstraints.NORTHWEST;
@@ -133,7 +135,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsThreadsLable.gridwidth = 2;
 
             gridBagConstraintsThreadsSlider.gridx = 0;
-            gridBagConstraintsThreadsSlider.gridy = 3;
+            gridBagConstraintsThreadsSlider.gridy = ++rowNumber;
             gridBagConstraintsThreadsSlider.weightx = 1.0;
             gridBagConstraintsThreadsSlider.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsThreadsSlider.ipadx = 0;
@@ -143,7 +145,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsThreadsSlider.gridwidth = 2;
 
             gridBagConstraintsRecursiveCheckBox.gridx = 0;
-            gridBagConstraintsRecursiveCheckBox.gridy = 4;
+            gridBagConstraintsRecursiveCheckBox.gridy = ++rowNumber;
             gridBagConstraintsRecursiveCheckBox.weightx = 1.0;
             gridBagConstraintsRecursiveCheckBox.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsRecursiveCheckBox.ipadx = 0;
@@ -153,7 +155,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsRecursiveCheckBox.gridwidth = 2;
 
             gridBagConstraintsDefaultFileLable.gridx = 0;
-            gridBagConstraintsDefaultFileLable.gridy = 5;
+            gridBagConstraintsDefaultFileLable.gridy = ++rowNumber;
             gridBagConstraintsDefaultFileLable.weightx = 1.0;
             gridBagConstraintsDefaultFileLable.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsDefaultFileLable.ipadx = 0;
@@ -163,7 +165,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsDefaultFileLable.gridwidth = 1;
 
             gridBagConstraintsDefaultFlieList.gridx = 1;
-            gridBagConstraintsDefaultFlieList.gridy = 5;
+            gridBagConstraintsDefaultFlieList.gridy = rowNumber;
             gridBagConstraintsDefaultFlieList.weightx = 1.0;
             gridBagConstraintsDefaultFlieList.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsDefaultFlieList.ipadx = 0;
@@ -173,7 +175,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsDefaultFlieList.gridwidth = 1;
 
             gridBagConstraintsAddFileLable.gridx = 0;
-            gridBagConstraintsAddFileLable.gridy = 6;
+            gridBagConstraintsAddFileLable.gridy = ++rowNumber;
             gridBagConstraintsAddFileLable.weightx = 1.0;
             gridBagConstraintsAddFileLable.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsAddFileLable.ipadx = 0;
@@ -183,7 +185,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsAddFileLable.gridwidth = 1;
 
             gridBagConstraintsAddFileButton.gridx = 1;
-            gridBagConstraintsAddFileButton.gridy = 6;
+            gridBagConstraintsAddFileButton.gridy = rowNumber;
             gridBagConstraintsAddFileButton.weightx = 1.0;
             gridBagConstraintsAddFileButton.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsAddFileButton.ipadx = 0;
@@ -193,7 +195,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsAddFileButton.gridwidth = 1;
 
             gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridx = 0;
-            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridy = 7;
+            gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridy = ++rowNumber;
             gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.weightx = 1.0;
             gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.fill =
                     GridBagConstraints.HORIZONTAL;
@@ -205,7 +207,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsBrowseFilesWithoutExtensionCheckBox.gridwidth = 2;
 
             gridBagConstraintsBrowseFilesCheckBox.gridx = 0;
-            gridBagConstraintsBrowseFilesCheckBox.gridy = 8;
+            gridBagConstraintsBrowseFilesCheckBox.gridy = ++rowNumber;
             gridBagConstraintsBrowseFilesCheckBox.weightx = 1.0;
             gridBagConstraintsBrowseFilesCheckBox.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsBrowseFilesCheckBox.ipadx = 0;
@@ -215,7 +217,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsBrowseFilesCheckBox.gridwidth = 2;
 
             gridBagConstraintsFileExtensionsLabel.gridx = 0;
-            gridBagConstraintsFileExtensionsLabel.gridy = 9;
+            gridBagConstraintsFileExtensionsLabel.gridy = ++rowNumber;
             gridBagConstraintsFileExtensionsLabel.weightx = 1.0;
             gridBagConstraintsFileExtensionsLabel.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFileExtensionsLabel.ipadx = 0;
@@ -225,7 +227,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFileExtensionsLabel.gridwidth = 1;
 
             gridBagConstraintsFileExtensionsList.gridx = 1;
-            gridBagConstraintsFileExtensionsList.gridy = 9;
+            gridBagConstraintsFileExtensionsList.gridy = rowNumber;
             gridBagConstraintsFileExtensionsList.weightx = 1.0;
             gridBagConstraintsFileExtensionsList.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFileExtensionsList.ipadx = 0;
@@ -235,7 +237,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFileExtensionsList.gridwidth = 1;
 
             gridBagConstraintsExtensionsToMissLabel.gridx = 0;
-            gridBagConstraintsExtensionsToMissLabel.gridy = 10;
+            gridBagConstraintsExtensionsToMissLabel.gridy = ++rowNumber;
             gridBagConstraintsExtensionsToMissLabel.weightx = 1.0;
             gridBagConstraintsExtensionsToMissLabel.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsExtensionsToMissLabel.ipadx = 0;
@@ -245,7 +247,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsExtensionsToMissLabel.gridwidth = 1;
 
             gridBagConstraintsExtensionsToMissList.gridx = 1;
-            gridBagConstraintsExtensionsToMissList.gridy = 10;
+            gridBagConstraintsExtensionsToMissList.gridy = rowNumber;
             gridBagConstraintsExtensionsToMissList.weightx = 1.0;
             gridBagConstraintsExtensionsToMissList.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsExtensionsToMissList.ipadx = 0;
@@ -255,7 +257,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsExtensionsToMissList.gridwidth = 1;
 
             gridBagConstraintsFailCaseStringLabel.gridx = 0;
-            gridBagConstraintsFailCaseStringLabel.gridy = 11;
+            gridBagConstraintsFailCaseStringLabel.gridy = ++rowNumber;
             gridBagConstraintsFailCaseStringLabel.weightx = 1.0;
             gridBagConstraintsFailCaseStringLabel.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFailCaseStringLabel.ipadx = 0;
@@ -265,7 +267,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFailCaseStringLabel.gridwidth = 1;
 
             gridBagConstraintsFailCaseString.gridx = 1;
-            gridBagConstraintsFailCaseString.gridy = 11;
+            gridBagConstraintsFailCaseString.gridy = rowNumber;
             gridBagConstraintsFailCaseString.weightx = 1.0;
             gridBagConstraintsFailCaseString.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsFailCaseString.ipadx = 0;
@@ -275,7 +277,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsFailCaseString.gridwidth = 1;
 
             gridBagConstraintsX.gridx = 0;
-            gridBagConstraintsX.gridy = 12;
+            gridBagConstraintsX.gridy = ++rowNumber;
             gridBagConstraintsX.anchor = GridBagConstraints.NORTHWEST;
             gridBagConstraintsX.fill = GridBagConstraints.BOTH;
             gridBagConstraintsX.insets = new Insets(2, 2, 2, 2);

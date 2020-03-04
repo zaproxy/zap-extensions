@@ -24,7 +24,7 @@ import com.sittinglittleduck.DirBuster.ExtToCheck;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -57,6 +57,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
     private DirBusterManager manager = null;
     private List<String> extensions = null;
     private int scanId;
+    private static final List<String> LIST_WITH_BLANK = Arrays.asList(ExtToCheck.BLANK_EXT);
 
     private boolean onlyUnderDirectory;
 
@@ -113,8 +114,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
                 extensions.add(ExtToCheck.BLANK_EXT);
             }
         } else if (bruteForceParam.isBrowseFilesWithoutExtension()) {
-            extensions = new ArrayList<>();
-            extensions.add(ExtToCheck.BLANK_EXT);
+            extensions = LIST_WITH_BLANK;
         } else {
             extensions = Collections.emptyList();
         }
