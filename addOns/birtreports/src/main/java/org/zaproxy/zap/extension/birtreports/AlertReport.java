@@ -40,7 +40,7 @@ public class AlertReport implements IAlertReport {
 
     public AlertReport() {
         SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
-        site = (SiteNode) siteMap.getRoot();
+        site = siteMap.getRoot();
     }
 
     public AlertReport getAlertsReport() {

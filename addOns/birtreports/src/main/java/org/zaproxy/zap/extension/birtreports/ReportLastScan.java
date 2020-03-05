@@ -31,6 +31,9 @@ import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,6 +45,7 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
@@ -74,9 +78,21 @@ import org.zaproxy.zap.view.ScanPanel;
 
 public class ReportLastScan {
 
+    private static final Path MAIN_BIRT_REPORTS_DIR =
+            Paths.get(Constant.getZapHome(), "birtreports");
+    static final Path REPORT_DESIGN_FILES_DIR = MAIN_BIRT_REPORTS_DIR.resolve("designfiles");
+
+    private static final Path DEFAULT_REPORT_DESIGN =
+            REPORT_DESIGN_FILES_DIR.resolve("default-report.rptdesign");
+    private static final Path SCRIPTED_REPORT_DESIGN =
+            REPORT_DESIGN_FILES_DIR.resolve("scripted-report.rptdesign");
+
+    private static final Path LOGO_FILE_PATH = REPORT_DESIGN_FILES_DIR.resolve("logo.jpg");
+    private static final Path XML_REPORT =
+            REPORT_DESIGN_FILES_DIR.resolve("xmloutput/xmloutputzap.xml");
+
     private Logger logger = Logger.getLogger(ReportLastScan.class);
     private ResourceBundle messages = null;
-    private static String fileNameLogo = "";
     private StringBuilder sbXML;
     private int totalCount = 0;
 
@@ -198,24 +214,11 @@ public class ReportLastScan {
                     Model.getSingleton()
                             .getOptionsParam()
                             .setUserDirectory(chooser.getCurrentDirectory());
-                    fileNameLogo = file.getAbsolutePath().toLowerCase();
-                    if (!fileNameLogo.endsWith(".jpg")) {
-                        file = new File(file.getAbsolutePath() + ".jpg");
-                        fileNameLogo = file.getAbsolutePath();
-                    } // select the file and close the Save dialog box
-
-                    // Save the image with the name logo.jpg
                     BufferedImage image = null;
                     try {
 
-                        image = ImageIO.read(new File(fileNameLogo));
-                        File logo = new File("resources/reportdesignfiles/logo.jpg");
-                        ImageIO.write(image, "jpg", logo);
-                        fileNameLogo =
-                                logo.getAbsolutePath()
-                                        .substring(
-                                                0,
-                                                logo.getAbsolutePath().lastIndexOf(File.separator));
+                        image = ImageIO.read(file);
+                        ImageIO.write(image, "jpg", LOGO_FILE_PATH.toFile());
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -231,7 +234,7 @@ public class ReportLastScan {
         }
     }
 
-    public File generate(String fileName, Model model, String xslFile) throws Exception {
+    private File generate(String fileName, Model model) throws Exception {
 
         StringBuilder sb = new StringBuilder(500);
         // ZAP: Dont require scan to have been run
@@ -242,13 +245,16 @@ public class ReportLastScan {
                 .append("\" generated=\"")
                 .append(ReportGenerator.getCurrentDateTimeString())
                 .append("\">\r\n");
+        // To call another function to filter xml records
         // sbXML = sb.append(getAlertXML(model.getDb(), null));
         sbXML = siteXML();
         sb.append(sbXML);
         sb.append("</OWASPZAPReport>");
-        // To call another function to filter xml records
 
-        File report = ReportGenerator.stringToHtml(sb.toString(), xslFile, fileName);
+        // Remove p HTML tags from the contents.
+        String reportContents = sb.toString().replace("&lt;p&gt;", "").replace("&lt;/p&gt;", "\n");
+
+        File report = ReportGenerator.stringToHtml(reportContents, (StreamSource) null, fileName);
 
         return report;
     }
@@ -260,7 +266,7 @@ public class ReportLastScan {
     private StringBuilder siteXML() {
         StringBuilder report = new StringBuilder();
         SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
-        SiteNode root = (SiteNode) siteMap.getRoot();
+        SiteNode root = siteMap.getRoot();
         int siteNumber = root.getChildCount();
         for (int i = 0; i < siteNumber; i++) {
             SiteNode site = (SiteNode) root.getChildAt(i);
@@ -353,7 +359,7 @@ public class ReportLastScan {
                     return;
                 }
 
-                File report = generate(file.getAbsolutePath(), model, "xml/report.xml.xsl");
+                File report = generate(file.getAbsolutePath(), model);
                 if (report == null) {
                     view.showMessageDialog(
                             Constant.messages.getString(
@@ -382,12 +388,11 @@ public class ReportLastScan {
     public void generateXmlforBirtPdf(ViewDelegate view, Model model) {
         try {
             // generate xml file
-            File birtfile = new File("resources/reportdesignfiles/xmloutput/xmloutputzap.xml");
-            File report = generate(birtfile.getAbsolutePath(), model, "xml/report.xml.xsl");
+            Files.createDirectories(XML_REPORT.getParent());
+            File report = generate(XML_REPORT.toString(), model);
             if (report == null) {
                 view.showMessageDialog(
-                        Constant.messages.getString(
-                                "report.unknown.error", new Object[] {birtfile.getAbsolutePath()}));
+                        Constant.messages.getString("report.unknown.error", XML_REPORT));
                 return;
             }
             if (sbXML.length() == 0)
@@ -400,7 +405,7 @@ public class ReportLastScan {
         }
     }
 
-    public void executeBirtScriptReport(ViewDelegate view, String reportDesign, String title) {
+    public void executeBirtScriptReport(ViewDelegate view, String title) {
         try {
 
             AlertReport report = new AlertReport();
@@ -425,9 +430,7 @@ public class ReportLastScan {
 
                         @Override
                         public String getDescription() {
-                            return Constant.messages.getString("file.format.pdf");
-                            // TODO: define message on package Messages.Properties own file
-                            // return messages.getString("file.format.pdf");
+                            return Constant.messages.getString("birtreports.file.format.pdf");
                         }
                     });
 
@@ -450,13 +453,13 @@ public class ReportLastScan {
 
                 // BIRT engine code
                 EngineConfig config = new EngineConfig();
-                // set the resource path to the folder where logo image is placed
-                config.setResourcePath(fileNameLogo);
+                config.setResourcePath(REPORT_DESIGN_FILES_DIR.toString());
                 Platform.startup(config);
 
                 ReportEngine engine = new ReportEngine(config);
 
-                IReportRunnable reportRunnable = engine.openReportDesign(reportDesign);
+                IReportRunnable reportRunnable =
+                        engine.openReportDesign(SCRIPTED_REPORT_DESIGN.toString());
                 IRunAndRenderTask runAndRender = engine.createRunAndRenderTask(reportRunnable);
 
                 // Get Current Report Title
@@ -508,7 +511,7 @@ public class ReportLastScan {
     }
     // end
 
-    public void executeBirtPdfReport(ViewDelegate view, String reportDesign, String title) {
+    public void executeBirtPdfReport(ViewDelegate view, String title) {
         try {
 
             // user chooses where to save PDF report
@@ -530,9 +533,7 @@ public class ReportLastScan {
 
                         @Override
                         public String getDescription() {
-                            return Constant.messages.getString("file.format.pdf");
-                            // TODO: define message on package Messages.Properties own file
-                            // return messages.getString("file.format.pdf");
+                            return Constant.messages.getString("birtreports.file.format.pdf");
                         }
                     });
 
@@ -555,13 +556,13 @@ public class ReportLastScan {
 
                 // BIRT engine code
                 EngineConfig config = new EngineConfig();
-                // set the resource path to the folder where logo image is placed
-                config.setResourcePath(fileNameLogo);
+                config.setResourcePath(REPORT_DESIGN_FILES_DIR.toString());
                 Platform.startup(config);
 
                 ReportEngine engine = new ReportEngine(config);
 
-                IReportRunnable reportRunnable = engine.openReportDesign(reportDesign);
+                IReportRunnable reportRunnable =
+                        engine.openReportDesign(DEFAULT_REPORT_DESIGN.toString());
                 IRunAndRenderTask runAndRender = engine.createRunAndRenderTask(reportRunnable);
 
                 // Get Current Report Title
