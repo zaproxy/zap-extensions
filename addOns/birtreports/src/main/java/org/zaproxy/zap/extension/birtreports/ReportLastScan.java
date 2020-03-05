@@ -45,6 +45,7 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
@@ -253,7 +254,7 @@ public class ReportLastScan {
         // Remove p HTML tags from the contents.
         String reportContents = sb.toString().replace("&lt;p&gt;", "").replace("&lt;/p&gt;", "\n");
 
-        File report = ReportGenerator.stringToHtml(reportContents, null, fileName);
+        File report = ReportGenerator.stringToHtml(reportContents, (StreamSource) null, fileName);
 
         return report;
     }
@@ -265,7 +266,7 @@ public class ReportLastScan {
     private StringBuilder siteXML() {
         StringBuilder report = new StringBuilder();
         SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
-        SiteNode root = (SiteNode) siteMap.getRoot();
+        SiteNode root = siteMap.getRoot();
         int siteNumber = root.getChildCount();
         for (int i = 0; i < siteNumber; i++) {
             SiteNode site = (SiteNode) root.getChildAt(i);
@@ -429,9 +430,7 @@ public class ReportLastScan {
 
                         @Override
                         public String getDescription() {
-                            return Constant.messages.getString("file.format.pdf");
-                            // TODO: define message on package Messages.Properties own file
-                            // return messages.getString("file.format.pdf");
+                            return Constant.messages.getString("birtreports.file.format.pdf");
                         }
                     });
 
@@ -534,9 +533,7 @@ public class ReportLastScan {
 
                         @Override
                         public String getDescription() {
-                            return Constant.messages.getString("file.format.pdf");
-                            // TODO: define message on package Messages.Properties own file
-                            // return messages.getString("file.format.pdf");
+                            return Constant.messages.getString("birtreports.file.format.pdf");
                         }
                     });
 
