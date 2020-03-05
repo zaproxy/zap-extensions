@@ -127,11 +127,11 @@ public class DataGenerator {
             return generators
                     .getArrayGenerator()
                     .generate(name, (ArraySchema) property, "csv", false);
-        } else if (isMap(property)) {
-            return generators.getMapGenerator().generate(TYPES, property);
-        } else {
-            return generateValue(name, property, false);
         }
+        if (isMap(property)) {
+            return generators.getMapGenerator().generate(TYPES, property);
+        }
+        return generateValue(name, property, false);
     }
 
     public String generateValue(String name, Schema<?> schema, boolean isPath) {

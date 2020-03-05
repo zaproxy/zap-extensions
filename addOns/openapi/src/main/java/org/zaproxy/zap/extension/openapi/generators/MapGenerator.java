@@ -41,7 +41,7 @@ public class MapGenerator {
     }
 
     /**
-     * @param types are the data types supported with its corresponding default values
+     * @param types the data types supported with their corresponding default values
      * @param property Can be {@link NumberSchema}, {@link IntegerSchema}, {@link StringSchema} and
      *     {@link BooleanSchema}. For any other schema type, i.g {@link ObjectSchema}, the {@link
      *     BodyGenerator#generate(Schema)} is invoked to start the value generation again.
