@@ -8,13 +8,14 @@ zapAddOn {
     manifest {
         author.set("Johanna Curiel And Rauf Butt")
         url.set("https://www.zaproxy.org/docs/desktop/addons/birt-reports/")
-        // Don't search the add-on classes (for now), the Extensions do not work properly:
-        // https://github.com/zaproxy/zaproxy/issues/2235
-        classpath.setFrom(files())
 
         helpSet {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
+        }
+
+        bundledLibs {
+            libs.from(configurations.runtimeClasspath)
         }
     }
 }

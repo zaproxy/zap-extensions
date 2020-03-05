@@ -81,9 +81,7 @@ public class BirtScriptMenu extends ExtensionAdaptor {
                             // pass the path of .rptdesign file
                             // reportgen.executeBirtPdfReport(getView(),"org/zaproxy/zap/extension/birtreports/resources/reportdesignfiles/AlertsZap_scripted.rptdesign", getMessageString("birt.report.title"));
                             reportgen.executeBirtScriptReport(
-                                    getView(),
-                                    "org/zaproxy/zap/extension/birtreports/resources/reportdesignfiles/AlertsZap_scripted.rptdesign",
-                                    getMessageString("birt.report.title"));
+                                    getView(), getMessageString("birt.report.title"));
                             /*
                             AlertReport rpt = new AlertReport();
                             rpt.getAlertsReport();

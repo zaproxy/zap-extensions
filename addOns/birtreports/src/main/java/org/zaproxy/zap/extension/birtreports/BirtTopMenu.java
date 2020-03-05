@@ -84,9 +84,7 @@ public class BirtTopMenu extends ExtensionAdaptor {
                             reportgen.generateXmlforBirtPdf(getView(), getModel());
                             // pass the path of .rptdesign file
                             reportgen.executeBirtPdfReport(
-                                    getView(),
-                                    "org/zaproxy/zap/extension/birtreports/resources/reportdesignfiles/AlertsOwaspZap.rptdesign",
-                                    getMessageString("birt.report.title"));
+                                    getView(), getMessageString("birt.report.title"));
                             // View.getSingleton().showMessageDialog(getMessageString("birt.report.title"));
                         }
                     });
