@@ -238,6 +238,69 @@ public class BodyGeneratorUnitTest {
                 request);
     }
 
+    @Test
+    public void shouldReadAdditionalMapString() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_map.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/mapString",
+                                        openAPI.getPaths().get("/v3/openapi/mapString").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        Assert.assertEquals(
+                "{\"name\":\"John Doe\",\"params\":{\"John Doe\":\"John Doe\"}}", request);
+    }
+
+    @Test
+    public void shouldReadAdditionalMapNumber() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_map.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/mapNumber",
+                                        openAPI.getPaths().get("/v3/openapi/mapNumber").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        Assert.assertEquals("{\"name\":\"John Doe\",\"params\":{\"John Doe\":1.2}}", request);
+    }
+
+    @Test
+    public void shouldReadAdditionalMapBoolean() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_map.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/mapBoolean",
+                                        openAPI.getPaths().get("/v3/openapi/mapBoolean").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        Assert.assertEquals("{\"name\":\"John Doe\",\"params\":{\"John Doe\":true}}", request);
+    }
+
+    @Test
+    public void shouldReadAdditionalMapObject() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_map.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/v3/openapi/mapObject",
+                                        openAPI.getPaths().get("/v3/openapi/mapObject").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+        Assert.assertEquals(
+                "{\"name\":\"John Doe\",\"params\":{\"John Doe\":{\"name\":\"John Doe\"}}}",
+                request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
