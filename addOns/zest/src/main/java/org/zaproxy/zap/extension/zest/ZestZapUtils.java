@@ -23,6 +23,9 @@ import java.awt.Component;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -58,6 +61,7 @@ import org.mozilla.zest.core.v1.ZestClientElementClick;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestClientElementSubmit;
 import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientScreenshot;
 import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
@@ -770,6 +774,37 @@ public class ZestZapUtils {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementSubmit.title");
             }
+        } else if (za instanceof ZestClientScreenshot) {
+            ZestClientScreenshot zcs = (ZestClientScreenshot) za;
+            if (!incParams) {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientScreenshot.title");
+            }
+
+            String varName = zcs.getVariableName();
+            String fileName = extractFileName(zcs.getFilePath());
+            if (varName == null || varName.isEmpty()) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientScreenshot.file",
+                                zcs.getWindowHandle(),
+                                fileName);
+            }
+
+            if (fileName.isEmpty()) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientScreenshot.var",
+                                zcs.getWindowHandle(),
+                                varName);
+            }
+
+            return indexStr
+                    + Constant.messages.getString(
+                            "zest.element.clientScreenshot.filevar",
+                            zcs.getWindowHandle(),
+                            fileName,
+                            varName);
         } else if (za instanceof ZestClientSwitchToFrame) {
             ZestClientSwitchToFrame zcl = (ZestClientSwitchToFrame) za;
             if (incParams) {
@@ -826,6 +861,26 @@ public class ZestZapUtils {
         return indexStr
                 + Constant.messages.getString(
                         "zest.element.unknown", za.getClass().getCanonicalName());
+    }
+
+    private static String extractFileName(String filePath) {
+        if (filePath == null || filePath.isEmpty()) {
+            return "";
+        }
+
+        Path file;
+        try {
+            file = Paths.get(filePath);
+        } catch (InvalidPathException e) {
+            log.warn("Failed to parse the file path: " + filePath, e);
+            return "";
+        }
+
+        Path fileName = file.getFileName();
+        if (fileName == null) {
+            return "";
+        }
+        return fileName.toString();
     }
 
     public static String toUiFailureString(ZestAssertion za, ZestRuntime runtime) {

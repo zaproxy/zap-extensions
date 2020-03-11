@@ -26,6 +26,7 @@ import org.mozilla.zest.core.v1.ZestClientElementClick;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestClientElementSubmit;
 import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientScreenshot;
 import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
@@ -83,6 +84,7 @@ public class ZestMenuManager {
     private ZestAddClientPopupMenu popupAddClientWindowMenu = null;
     private ZestAddClientPopupMenu popupAddClientWindowCloseMenu = null;
     private ZestAddClientPopupMenu popupAddClientWindowOpenUrlMenu = null;
+    private ZestAddClientPopupMenu popupAddClientScreenshot;
     private ZestAddClientPopupMenu popupAddClientSwitchToFrameMenu = null;
 
     private ExtensionZest extension = null;
@@ -106,6 +108,7 @@ public class ZestMenuManager {
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementClickMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementSendKeysMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementSubmitMenu());
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientScreenshot());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientSwitchToFrameMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowCloseMenu());
@@ -503,6 +506,30 @@ public class ZestMenuManager {
                     };
         }
         return popupAddClientElementSubmitMenu;
+    }
+
+    private ZestAddClientPopupMenu getPopupAddClientScreenshot() {
+        if (popupAddClientScreenshot == null) {
+            popupAddClientScreenshot =
+                    new ZestAddClientPopupMenu(
+                            this.extension, "zest.clientScreenshot.popup", true) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void showDialog(
+                                ScriptNode parent, ScriptNode child, ZestStatement request) {
+                            extension
+                                    .getDialogManager()
+                                    .showZestClientScreenshotDialog(
+                                            parent,
+                                            child,
+                                            request,
+                                            new ZestClientScreenshot(),
+                                            true);
+                        }
+                    };
+        }
+        return popupAddClientScreenshot;
     }
 
     private ZestAddClientPopupMenu getPopupAddClientSwitchToFrameMenu() {

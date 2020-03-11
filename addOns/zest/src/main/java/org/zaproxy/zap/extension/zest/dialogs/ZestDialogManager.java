@@ -38,6 +38,7 @@ import org.mozilla.zest.core.v1.ZestClientElementClick;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestClientElementSubmit;
 import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientScreenshot;
 import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
@@ -102,8 +103,7 @@ public class ZestDialogManager extends AbstractPanel {
     private ZestClientWindowCloseDialog clientWindowCloseDialog = null;
     private ZestClientWindowOpenUrlDialog clientWindowOpenUrlDialog = null;
     private ZestClientSwitchToFrameDialog clientSwitchToFrameDialog = null;
-    // TODO Work in progress
-    // private ZestClientTakeScreenshotDialog clientTakeScreenshotDialog = null;
+    private ZestClientScreenshotDialog clientScreenshotDialog;
 
     private MouseAdapter mouseListener;
     private TreeSelectionListener treeSelectionListener;
@@ -269,11 +269,13 @@ public class ZestDialogManager extends AbstractPanel {
                                                 null,
                                                 (ZestClientSwitchToFrame) obj,
                                                 false);
-                                        /* TODO Work in progress
-                                        } else if (obj instanceof ZestClientTakeScreenshot) {
-                                        	showZestClientTakeScreenshotDialog(parent, sn, null,
-                                        			(ZestClientTakeScreenshot) obj, false);
-                                        */
+                                    } else if (obj instanceof ZestClientScreenshot) {
+                                        showZestClientScreenshotDialog(
+                                                parent,
+                                                sn,
+                                                null,
+                                                (ZestClientScreenshot) obj,
+                                                false);
                                     }
                                 }
                             }
@@ -757,23 +759,25 @@ public class ZestDialogManager extends AbstractPanel {
         clientWindowOpenUrlDialog.setVisible(true);
     }
 
-    /* TODO Work in progress
-    public void showZestClientTakeScreenshotDialog(ScriptNode parent, ScriptNode child,
-    		ZestStatement req, ZestClientTakeScreenshot client, boolean add) {
-    	if (clientTakeScreenshotDialog == null) {
-    		clientTakeScreenshotDialog = new ZestClientTakeScreenshotDialog(extension, View
-    				.getSingleton().getMainFrame(), new Dimension(300, 200));
-    	} else if (clientTakeScreenshotDialog.isVisible()) {
-    		// Already being displayed, bring to the front but dont overwrite anything
-    		bringToFront(clientTakeScreenshotDialog);
-    		return;
-    	}
-    	ZestScriptWrapper script = extension.getZestTreeModel()
-    			.getScriptWrapper(parent);
-    	clientTakeScreenshotDialog.init(script, parent, child, req, client, add);
-    	clientTakeScreenshotDialog.setVisible(true);
+    public void showZestClientScreenshotDialog(
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientScreenshot client,
+            boolean add) {
+        if (clientScreenshotDialog == null) {
+            clientScreenshotDialog =
+                    new ZestClientScreenshotDialog(
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+        } else if (clientScreenshotDialog.isVisible()) {
+            // Already being displayed, bring to the front but dont overwrite anything
+            bringToFront(clientScreenshotDialog);
+            return;
+        }
+        ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+        clientScreenshotDialog.init(script, parent, child, req, client, add);
+        clientScreenshotDialog.setVisible(true);
     }
-    */
 
     public void showZestClientSwitchToFrameDialog(
             ScriptNode parent,
