@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.awt.Window;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestCookieDialog extends StandardFieldsDialog implements ZestDialog {
@@ -71,10 +70,10 @@ public class ZestCookieDialog extends StandardFieldsDialog implements ZestDialog
         this.addTextField(FIELD_PARAM_PATH, path);
         this.addPadding();
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_DOMAIN));
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_NAME));
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_VALUE));
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_PATH));
+        setFieldMainPopupMenu(FIELD_PARAM_DOMAIN);
+        setFieldMainPopupMenu(FIELD_PARAM_NAME);
+        setFieldMainPopupMenu(FIELD_PARAM_VALUE);
+        setFieldMainPopupMenu(FIELD_PARAM_PATH);
     }
 
     @Override

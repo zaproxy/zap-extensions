@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import java.awt.Component;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,7 +30,6 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -98,7 +96,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 
 public class ZestZapUtils {
@@ -1130,30 +1127,6 @@ public class ZestZapUtils {
             return ((ZestElementWrapper) node.getUserObject()).getShadowLevel();
         }
         return 0;
-    }
-
-    // TODO remove once targeting core version that allows to set the pop up menu into the fields of
-    // StandardFieldsDialog.
-    public static void setMainPopupMenu(Component component) {
-        if (component instanceof JComponent) {
-            ((JComponent) component).setComponentPopupMenu(getPopupMenu());
-        }
-    }
-
-    private static JPopupMenu getPopupMenu() {
-        if (popupMenu == null) {
-            popupMenu =
-                    new JPopupMenu() {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public void show(Component invoker, int x, int y) {
-                            View.getSingleton().getPopupMenu().show(invoker, x, y);
-                        }
-                    };
-        }
-        return popupMenu;
     }
 
     public static boolean isValidVariableName(String name) {
