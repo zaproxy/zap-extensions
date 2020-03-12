@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.requester;
 
 import java.awt.Component;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import org.parosproxy.paros.Constant;
@@ -153,14 +151,5 @@ public class ExtensionRequester extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("requester.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

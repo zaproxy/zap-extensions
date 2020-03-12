@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.cmss;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ResourceBundle;
 import javax.swing.JMenuItem;
 import org.parosproxy.paros.Constant;
@@ -92,14 +90,5 @@ public class CMSSTopMenu extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return messages.getString("ext.topmenu.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

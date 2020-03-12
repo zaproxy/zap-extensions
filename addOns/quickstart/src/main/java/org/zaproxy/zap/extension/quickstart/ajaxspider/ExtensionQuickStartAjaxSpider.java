@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart.ajaxspider;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -110,15 +108,6 @@ public class ExtensionQuickStartAjaxSpider extends ExtensionAdaptor {
     @Override
     public String getUIName() {
         return Constant.messages.getString("quickstart.ajaxspider.name");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     public ExtensionQuickStart getExtQuickStart() {
