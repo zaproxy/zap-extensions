@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.portscan;
 
 import java.awt.EventQueue;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -273,15 +271,6 @@ public class ExtensionPortScan extends ExtensionAdaptor
     @Override
     public String getDescription() {
         return Constant.messages.getString("ports.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

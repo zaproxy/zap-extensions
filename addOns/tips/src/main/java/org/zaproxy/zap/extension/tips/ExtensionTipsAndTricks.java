@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.tips;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -134,15 +132,6 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     /**

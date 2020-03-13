@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.regextester;
 
 import java.lang.ref.WeakReference;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.parosproxy.paros.Constant;
@@ -106,14 +104,5 @@ public class ExtensionRegExTester extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("regextester.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

@@ -23,7 +23,6 @@ import com.sittinglittleduck.DirBuster.BaseCase;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -535,15 +534,6 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     @Override
     public String getDescription() {
         return Constant.messages.getString("bruteforce.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

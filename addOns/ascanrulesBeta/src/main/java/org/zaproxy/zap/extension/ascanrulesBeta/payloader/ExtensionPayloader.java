@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta.payloader;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,15 +82,6 @@ public class ExtensionPayloader extends ExtensionAdaptor {
     @Override
     public String getAuthor() {
         return Constant.ZAP_TEAM;
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

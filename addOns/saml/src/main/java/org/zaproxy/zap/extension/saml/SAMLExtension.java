@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.saml;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.swing.*;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -36,15 +34,6 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuMessageContainer;
 public class SAMLExtension extends ExtensionAdaptor {
 
     protected static final Logger log = Logger.getLogger(SAMLExtension.class);
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
 
     @Override
     public String getAuthor() {

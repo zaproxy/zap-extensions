@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.accessControl;
 
 import java.awt.Dimension;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -188,15 +186,6 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     @Override
     public String getDescription() {
         return Constant.messages.getString("accessControl.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override
