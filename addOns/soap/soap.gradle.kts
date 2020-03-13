@@ -6,7 +6,7 @@ zapAddOn {
     zapVersion.set("2.8.0")
 
     manifest {
-        author.set("Alberto (albertov91) + ZAP Core team")
+        author.set("Alberto (albertov91) + ZAP Dev Team")
     }
 
     apiClientGen {
