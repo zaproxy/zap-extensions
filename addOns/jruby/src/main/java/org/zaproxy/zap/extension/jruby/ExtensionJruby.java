@@ -24,8 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import javax.script.ScriptEngineFactory;
 import javax.swing.ImageIcon;
 import org.jruby.embed.jsr223.JRubyEngineFactory;
 import org.parosproxy.paros.Constant;
@@ -62,7 +61,7 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
     }
 
     private ExtensionScript extScript = null;
-    private ScriptEngine rubyScriptEngine = null;
+    private ScriptEngineFactory scriptEngineFactory;
     private JrubyEngineWrapper engineWrapper;
 
     public ExtensionJruby() {
@@ -74,12 +73,9 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (this.getRubyScriptEngine() == null) {
-            JRubyEngineFactory factory = new JRubyEngineFactory();
-            this.rubyScriptEngine = factory.getScriptEngine();
-            engineWrapper = new JrubyEngineWrapper(this.rubyScriptEngine, getDefaultTemplates());
-            this.getExtScript().registerScriptEngineWrapper(engineWrapper);
-        }
+        this.scriptEngineFactory = new JRubyEngineFactory();
+        engineWrapper = new JrubyEngineWrapper(scriptEngineFactory, getDefaultTemplates());
+        this.getExtScript().registerScriptEngineWrapper(engineWrapper);
 
         this.getExtScript().addListener(this);
     }
@@ -116,34 +112,21 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
     public void unload() {
         super.unload();
 
-        if (rubyScriptEngine != null) {
-            String engineName = rubyScriptEngine.getFactory().getEngineName();
-            for (ScriptType type : this.getExtScript().getScriptTypes()) {
-                for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
-                    if (script.getEngineName().equals(engineName)) {
-                        if (script instanceof JrubyScriptWrapper) {
-                            ScriptNode node =
-                                    this.getExtScript().getTreeModel().getNodeForScript(script);
-                            node.setUserObject(((JrubyScriptWrapper) script).getOriginal());
-                        }
+        String engineName = scriptEngineFactory.getEngineName();
+        for (ScriptType type : this.getExtScript().getScriptTypes()) {
+            for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
+                if (script.getEngineName().equals(engineName)) {
+                    if (script instanceof JrubyScriptWrapper) {
+                        ScriptNode node =
+                                this.getExtScript().getTreeModel().getNodeForScript(script);
+                        node.setUserObject(((JrubyScriptWrapper) script).getOriginal());
                     }
                 }
             }
         }
 
+        getExtScript().removeScriptEngineWrapper(engineWrapper);
         getExtScript().removeListener(this);
-
-        if (engineWrapper != null) {
-            getExtScript().removeScriptEngineWrapper(engineWrapper);
-        }
-    }
-
-    private ScriptEngine getRubyScriptEngine() {
-        if (this.rubyScriptEngine == null) {
-            ScriptEngineManager mgr = new ScriptEngineManager();
-            this.rubyScriptEngine = mgr.getEngineByExtension("rb");
-        }
-        return this.rubyScriptEngine;
     }
 
     private ExtensionScript getExtScript() {
@@ -155,11 +138,6 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
                                     .getExtension(ExtensionScript.NAME);
         }
         return extScript;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override
@@ -185,11 +163,7 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
     @Override
     public void scriptAdded(ScriptWrapper script, boolean arg1) {
 
-        if (this.getRubyScriptEngine() != null
-                && this.getRubyScriptEngine()
-                        .getFactory()
-                        .getEngineName()
-                        .equals(script.getEngineName())) {
+        if (scriptEngineFactory.getEngineName().equals(script.getEngineName())) {
 
             // Replace the standard ScriptWrapper with a JrubyScriptWrapper as
             // JRuby seems to handle interfaces differently from other JSR223 languages
