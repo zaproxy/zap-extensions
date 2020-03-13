@@ -30,7 +30,6 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestClientScreenshotDialog extends StandardFieldsDialog implements ZestDialog {
@@ -83,7 +82,7 @@ public class ZestClientScreenshotDialog extends StandardFieldsDialog implements 
         this.addTextField(FIELD_FILE_PATH, client.getFilePath());
         this.addTextField(FIELD_VARIABLE_NAME, client.getVariableName());
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VARIABLE_NAME));
+        setFieldMainPopupMenu(FIELD_VARIABLE_NAME);
     }
 
     @Override

@@ -208,7 +208,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
                 ZestClientElementDialog.FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
         this.addTextField(ZestClientElementDialog.FIELD_ELEMENT, loop.getElement());
 
-        ZestZapUtils.setMainPopupMenu(this.getField(ZestClientElementDialog.FIELD_ELEMENT));
+        setFieldMainPopupMenu(ZestClientElementDialog.FIELD_ELEMENT);
     }
 
     private void drawLoopRegexDialog(ZestLoopRegex loop) {

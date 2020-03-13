@@ -60,7 +60,7 @@ public class ZestClientElementAssignDialog extends ZestClientElementDialog imple
             this.setTitle(
                     Constant.messages.getString("zest.dialog.clientElementAssign.edit.title"));
         }
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_ATTRIBUTE));
+        setFieldMainPopupMenu(FIELD_ATTRIBUTE);
     }
 
     @Override
