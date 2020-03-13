@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import net.htmlparser.jericho.Source;
@@ -31,7 +32,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -58,16 +58,18 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (msg.getResponseHeader().getHeader(HttpResponseHeader.SET_COOKIE) != null) {}
-
-        Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
-        params.addAll(msg.getUrlParams());
-
-        if (msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE) == null) {
+        List<String> cookies = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE);
+        if (cookies == null) {
             return;
         }
 
-        for (String cookie : msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE)) {
+        Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
+        params.addAll(msg.getUrlParams());
+        if (params.isEmpty()) {
+            return;
+        }
+
+        for (String cookie : cookies) {
             cookie = decodeCookie(cookie, msg.getResponseHeader().getCharset());
             if (cookie == null) {
                 continue;
@@ -86,9 +88,7 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
             // Common delimiters in cookies.  E.g. name=value;name2=v1|v2|v3
             String[] cookieSplit = cookie.split("[;=|]");
             for (String cookiePart : cookieSplit) {
-                if (params != null && params.size() > 0) {
-                    checkUserControllableCookieHeaderValue(msg, id, params, cookiePart, cookie);
-                }
+                checkUserControllableCookieHeaderValue(msg, id, params, cookiePart, cookie);
             }
         }
     }
