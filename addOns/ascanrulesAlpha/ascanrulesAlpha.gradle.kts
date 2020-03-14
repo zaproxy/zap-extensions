@@ -27,9 +27,8 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
-
     implementation(project(":sharedutils"))
-
+    implementation("org.json:json:20190722")
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
 }

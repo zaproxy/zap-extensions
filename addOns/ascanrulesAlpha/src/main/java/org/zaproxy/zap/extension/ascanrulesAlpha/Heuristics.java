@@ -1,4 +1,4 @@
-package org.zaproxy.zap.extension.mongodb;
+package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import org.json.JSONArray;
 import org.json.JSONException;
