@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +31,10 @@ import net.htmlparser.jericho.Source;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.extension.users.ExtensionUserManagement;
-import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
 public class UsernameIdorScanner extends PluginPassiveScanner {
@@ -62,8 +57,6 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
 
     private List<User> testUsers = null;
 
-    private ExtensionUserManagement extUserMgmt;
-
     @Override
     public void setParent(PassiveScanThread parent) {
         this.parent = parent;
@@ -81,13 +74,7 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
             return testUsers;
         }
 
-        if (getExtensionUserManagement() == null) {
-            return Collections.emptyList();
-        }
-
-        for (Context context : Model.getSingleton().getSession().getContexts()) {
-            usersList.addAll(extUserMgmt.getContextUserAuthManager(context.getIndex()).getUsers());
-        }
+        usersList.addAll(getHelper().getUsers());
         return usersList;
     }
 
@@ -203,23 +190,9 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
         return payloadProvider;
     }
 
-    // The following methods support unit testing
+    // The following method supports unit testing
     protected void setUsers(String username) {
         testUsers = new ArrayList<User>();
         this.testUsers.add(new User(testUsers.size() + 1, username));
-    }
-
-    protected ExtensionUserManagement getExtensionUserManagement() {
-        if (extUserMgmt == null) {
-            extUserMgmt =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionUserManagement.class);
-        }
-        return extUserMgmt;
-    }
-
-    protected void setExtensionUserManagement(ExtensionUserManagement extensionUserManagement) {
-        this.extUserMgmt = extensionUserManagement;
     }
 }

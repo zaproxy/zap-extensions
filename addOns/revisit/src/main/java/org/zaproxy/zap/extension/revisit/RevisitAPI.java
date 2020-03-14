@@ -51,6 +51,11 @@ public class RevisitAPI extends ApiImplementor {
 
     private ExtensionRevisit extension;
 
+    /** Provided only for API client generator usage. */
+    public RevisitAPI() {
+        this(null);
+    }
+
     public RevisitAPI(ExtensionRevisit extension) {
         super();
         this.extension = extension;

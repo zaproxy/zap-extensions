@@ -87,7 +87,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     /** */
     public ZestZapRunner(ExtensionZest extension, ZestScriptWrapper wrapper) {
-        super();
+        super(Default.TIMEOUT_IN_SECONDS, true);
         log.debug("Constructor");
         this.extension = extension;
         this.wrapper = wrapper;
@@ -210,19 +210,14 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             } else if (ZestActionFail.Priority.HIGH.name().equals(zaf.getPriority())) {
                 risk = Alert.RISK_HIGH;
             }
-            Alert alert =
-                    new Alert(FAIL_ACTION_PLUGIN_ID, risk, Alert.CONFIDENCE_MEDIUM, e.getMessage());
-
-            if (lastHref != null) {
-                alert.setHistoryRef(lastHref);
-                try {
-                    alert.setUri(lastHref.getURI().toString());
-                    alert.setMessage(lastHref.getHttpMessage());
-                } catch (Exception e1) {
-                    log.error(e1.getMessage(), e1);
-                }
-            }
-            this.alertFound(alert);
+            Alert.Builder alertBuilder =
+                    Alert.builder()
+                            .setPluginId(FAIL_ACTION_PLUGIN_ID)
+                            .setRisk(risk)
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(e.getMessage())
+                            .setHistoryRef(lastHref);
+            this.alertFound(alertBuilder.build());
         }
 
         if (View.isInitialised()) {

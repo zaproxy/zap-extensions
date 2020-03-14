@@ -64,18 +64,25 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
             return Stream.of(values()).anyMatch(e -> tag.equals(e.tag));
         }
 
-        public static Optional<String> getHost(Element element) {
+        public static Optional<String> getHost(Element element, String origin) {
             String url =
                     element.getAttributeValue(
                             SupportedElements.valueOf(element.getName().toUpperCase(Locale.ROOT))
                                     .attribute);
-            URI uri;
+            if (url == null) {
+                return Optional.of(origin);
+            }
+            URI uri = null;
+
             try {
                 uri = new URI(url);
             } catch (URISyntaxException e) {
                 return Optional.empty();
             }
-            return Optional.of(uri.getHost());
+            if (!uri.isAbsolute()) {
+                return Optional.of(origin);
+            }
+            return Optional.ofNullable(uri.getHost());
         }
     }
 
@@ -123,7 +130,7 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
 
     private static Predicate<Element> unsafeSubResource(String origin) {
         return element -> {
-            Optional<String> maybeHostname = SupportedElements.getHost(element);
+            Optional<String> maybeHostname = SupportedElements.getHost(element, origin);
             return element.getAttributeValue("integrity") == null
                     && !maybeHostname.map(hostname -> hostname.matches(origin)).orElse(false);
         };

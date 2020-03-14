@@ -6,6 +6,7 @@ zapAddOn {
     zapVersion.set("2.8.0")
 
     manifest {
-        author.set("ZAP Core Team")
+        author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/custom-payloads/")
     }
 }

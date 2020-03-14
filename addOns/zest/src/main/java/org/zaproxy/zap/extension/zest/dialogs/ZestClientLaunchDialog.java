@@ -130,7 +130,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
 
         this.addTableField(1, this.getParamsTable(), buttons);
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_URL));
+        setFieldMainPopupMenu(FIELD_URL);
     }
 
     private List<String[]> getCapabilities(ZestClientLaunch client) {

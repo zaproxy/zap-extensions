@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [5] - 2020-01-17
+### Added
+- Add help.
+- Add info and repo URLs.
 
 ## 4 - 2017-11-27
 
@@ -23,3 +27,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[5]: https://github.com/zaproxy/zap-extensions/releases/saverawmessage-v5

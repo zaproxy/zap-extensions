@@ -7,6 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/dom-xss-active-scan-rule/")
         // Don't search the add-on classes to prevent the inclusion
         // of the scanner, it's added/removed by the extension.
         classpath.setFrom(files())

@@ -43,6 +43,11 @@ public class WappalyzerAPI extends ApiImplementor {
 
     private ExtensionWappalyzer extension = null;
 
+    /** Provided only for API client generator usage. */
+    public WappalyzerAPI() {
+        this(null);
+    }
+
     public WappalyzerAPI(ExtensionWappalyzer ext) {
         this.extension = ext;
         this.addApiView(new ApiView(VIEW_LIST_SITES));
@@ -75,9 +80,6 @@ public class WappalyzerAPI extends ApiImplementor {
     }
 
     private void validateSite(String site) throws ApiException {
-        if (site.isEmpty() || !site.contains(":")) {
-            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_SITE);
-        }
         if (!extension.getSites().contains(site)) {
             throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_SITE);
         }

@@ -42,6 +42,7 @@ import org.mozilla.zest.core.v1.ZestClientElementClick;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestClientElementSubmit;
 import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientScreenshot;
 import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
@@ -198,6 +199,11 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                             ZestTreeCellRenderer.class.getResource(
                                     "/org/zaproxy/zap/extension/zest/resources/icons/ui-text-field-submit.png")));
 
+    private static final ImageIcon CLIENT_SCREENSHOT_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/camera.png")));
     private static final ImageIcon CLIENT_FRAME_SWITCH_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -382,6 +388,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         setIcon(CLIENT_ELEMENT_SUBMIT_ICON);
                     } else if (za instanceof ZestClientLaunch) {
                         setIcon(CLIENT_WINDOW_OPEN_ICON);
+                    } else if (za instanceof ZestClientScreenshot) {
+                        setIcon(CLIENT_SCREENSHOT_ICON);
                     } else if (za instanceof ZestClientSwitchToFrame) {
                         setIcon(CLIENT_FRAME_SWITCH_ICON);
                     } else if (za instanceof ZestClientWindowHandle) {

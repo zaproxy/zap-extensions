@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.jruby;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -167,15 +165,6 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
     @Override
     public String getDescription() {
         return Constant.messages.getString("jruby.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

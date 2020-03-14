@@ -26,7 +26,6 @@ import com.shapesecurity.salvation.data.Policy;
 import com.shapesecurity.salvation.data.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -93,15 +92,15 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 
         // Content-Security-Policy is supported by Chrome 25+, Firefox 23+,
         // Safari 7+, Edge but not Internet Explorer
-        Vector<String> cspOptions = msg.getResponseHeader().getHeaders(HTTP_HEADER_CSP);
-        if (cspOptions != null && !cspOptions.isEmpty()) {
+        List<String> cspOptions = msg.getResponseHeader().getHeaderValues(HTTP_HEADER_CSP);
+        if (!cspOptions.isEmpty()) {
             cspHeaderFound = true;
         }
 
         // X-Content-Security-Policy is an older header, supported by Firefox
         // 4.0+, and IE 10+ (in a limited fashion)
-        Vector<String> xcspOptions = msg.getResponseHeader().getHeaders(HTTP_HEADER_XCSP);
-        if (xcspOptions != null && !xcspOptions.isEmpty()) {
+        List<String> xcspOptions = msg.getResponseHeader().getHeaderValues(HTTP_HEADER_XCSP);
+        if (!xcspOptions.isEmpty()) {
             raiseAlert(
                     msg,
                     Constant.messages.getString(MESSAGE_PREFIX + "xcsp.name"),
@@ -113,8 +112,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
         }
 
         // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
-        Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders(HTTP_HEADER_WEBKIT_CSP);
-        if (xwkcspOptions != null && !xwkcspOptions.isEmpty()) {
+        List<String> xwkcspOptions =
+                msg.getResponseHeader().getHeaderValues(HTTP_HEADER_WEBKIT_CSP);
+        if (!xwkcspOptions.isEmpty()) {
             raiseAlert(
                     msg,
                     Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.name"),

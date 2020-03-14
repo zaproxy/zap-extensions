@@ -80,7 +80,7 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner {
      * @return boolean status of existence
      */
     private boolean isXPoweredByHeaderExist(HttpMessage msg) {
-        return null != msg.getResponseHeader().getHeaders(HEADER_NAME);
+        return !msg.getResponseHeader().getHeaderValues(HEADER_NAME).isEmpty();
     }
 
     /**

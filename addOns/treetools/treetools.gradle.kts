@@ -10,5 +10,11 @@ zapAddOn {
 
     manifest {
         author.set("Carl Sampson")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/treetools/")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }

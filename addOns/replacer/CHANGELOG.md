@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-### Added
 
+## [8] - 2020-01-17
+
+### Added
+ - Add info and repo URLs.
  - Allow byte replacement using hexadecimal escapes (Issue 5328).
 
 ### Fixed
@@ -43,3 +46,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[8]: https://github.com/zaproxy/zap-extensions/releases/replacer-v8

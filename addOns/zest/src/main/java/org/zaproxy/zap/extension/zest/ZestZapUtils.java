@@ -19,16 +19,17 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import java.awt.Component;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -58,6 +59,7 @@ import org.mozilla.zest.core.v1.ZestClientElementClick;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestClientElementSubmit;
 import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientScreenshot;
 import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
@@ -94,7 +96,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 
 public class ZestZapUtils {
@@ -770,6 +771,37 @@ public class ZestZapUtils {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementSubmit.title");
             }
+        } else if (za instanceof ZestClientScreenshot) {
+            ZestClientScreenshot zcs = (ZestClientScreenshot) za;
+            if (!incParams) {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientScreenshot.title");
+            }
+
+            String varName = zcs.getVariableName();
+            String fileName = extractFileName(zcs.getFilePath());
+            if (varName == null || varName.isEmpty()) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientScreenshot.file",
+                                zcs.getWindowHandle(),
+                                fileName);
+            }
+
+            if (fileName.isEmpty()) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientScreenshot.var",
+                                zcs.getWindowHandle(),
+                                varName);
+            }
+
+            return indexStr
+                    + Constant.messages.getString(
+                            "zest.element.clientScreenshot.filevar",
+                            zcs.getWindowHandle(),
+                            fileName,
+                            varName);
         } else if (za instanceof ZestClientSwitchToFrame) {
             ZestClientSwitchToFrame zcl = (ZestClientSwitchToFrame) za;
             if (incParams) {
@@ -826,6 +858,26 @@ public class ZestZapUtils {
         return indexStr
                 + Constant.messages.getString(
                         "zest.element.unknown", za.getClass().getCanonicalName());
+    }
+
+    private static String extractFileName(String filePath) {
+        if (filePath == null || filePath.isEmpty()) {
+            return "";
+        }
+
+        Path file;
+        try {
+            file = Paths.get(filePath);
+        } catch (InvalidPathException e) {
+            log.warn("Failed to parse the file path: " + filePath, e);
+            return "";
+        }
+
+        Path fileName = file.getFileName();
+        if (fileName == null) {
+            return "";
+        }
+        return fileName.toString();
     }
 
     public static String toUiFailureString(ZestAssertion za, ZestRuntime runtime) {
@@ -1075,30 +1127,6 @@ public class ZestZapUtils {
             return ((ZestElementWrapper) node.getUserObject()).getShadowLevel();
         }
         return 0;
-    }
-
-    // TODO remove once targeting core version that allows to set the pop up menu into the fields of
-    // StandardFieldsDialog.
-    public static void setMainPopupMenu(Component component) {
-        if (component instanceof JComponent) {
-            ((JComponent) component).setComponentPopupMenu(getPopupMenu());
-        }
-    }
-
-    private static JPopupMenu getPopupMenu() {
-        if (popupMenu == null) {
-            popupMenu =
-                    new JPopupMenu() {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public void show(Component invoker, int x, int y) {
-                            View.getSingleton().getPopupMenu().show(invoker, x, y);
-                        }
-                    };
-        }
-        return popupMenu;
     }
 
     public static boolean isValidVariableName(String name) {

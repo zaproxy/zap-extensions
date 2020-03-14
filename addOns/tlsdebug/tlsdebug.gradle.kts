@@ -7,5 +7,6 @@ zapAddOn {
 
     manifest {
         author.set("P.M.J. Roth")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/tls-debug/")
     }
 }

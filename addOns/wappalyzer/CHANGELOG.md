@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [17] - 2020-03-06
+
+### Changed
+- Update with Wappalyzer icon and pattern changes.
+
+
+## [16] - 2020-01-24
+### Added
+- Add info and repo URLs.
+- SVG icon support.
+
+### Changed
+- The panel is now shown when the add-on is installed.
+- The site "names" are now normalized based on scheme and authority (including port if non-standard or specifically included). This represents a breaking change for any API code that is using listSite with host:port "names".
+- Fixed an issue where large PNG icons weren't being resized.
+
 ## [15] - 2019-12-20
 
 ### Changed
@@ -86,6 +102,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[17]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v17
+[16]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v13

@@ -7,6 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/server-sent-events/")
     }
 }
 

@@ -45,7 +45,7 @@ import com.veggiespam.imagelocationscanner.ILS;
  * 
  * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
  * @license Apache License 2.0
- * @version 1.0
+ * @version 1.1
  * @see https://www.veggiespam.com/ils/
  */
 public class ImageLocationScanner extends PluginPassiveScanner {
@@ -127,7 +127,7 @@ public class ImageLocationScanner extends PluginPassiveScanner {
 			    		"", // Other info
 			    		getSolution(), 
 			            getReference(), 
-                        getAlertDetailPrefix()  + " " + hasGPS,	// Evidence
+                        getAlertDetailPrefix()  + "\n" + hasGPS,	// Evidence
 			            200, // CWE-200: Information Exposure
 			            13,	// WASC-13: Information Leakage
 			            msg);

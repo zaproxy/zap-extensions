@@ -6,7 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 ### Changed
+- 'CSP Scanner' rule upgrade salvation library to v2.7.1.
+- 'X-Frame-Options Header Scanner' replace now invalid MSDN reference link with MDN link on X-Frame-Options (Issue 5867).
+
+## [27] - 2020-02-11
+
+### Changed
+- Minimum ZAP version is now 2.9.0. (Various scan rules adjusted to address core deprecations.)
+- 'Username Hash Found' scan rule now uses updated core functionality to retrieve configured users.
+- Tweak help for 'Cookie HttpOnly' scan rule.
+- 'Information Disclosure: Suspicious Comments' if matched within script block or JS response raise Alert with Low confidence.
+- Migrate an input file from Beta to Release that were missed during previous promotions.
+  - This addresses errors such as `[ZAP-PassiveScanner] ERROR org.zaproxy.zap.extension.pscanrules.InformationDisclosureInURL  - No such file: .... /xml/URL-information-disclosure-messages.txt`
+- 'Application Error' scan rule now supports custom payloads when used in conjunction with the Custom Payloads addon.
+- Timestamp Disclosure scan rule now only considers potential timestamps within plus or minus one year when used at High threshold (Issue 5837).
+- 'Application Error' scan rule's patterns file `application_errors.xml` is now copied to ZAP's home directory, which means it is editable by the user. As well as being more consistent with other similar input files.
+- 'Information Disclosure - Sensitive Information in URL' correct evidence field for some alerts, and enhance other info details (Issue 5832).
+- Maintenance changes.
+
+### Removed
+- 'Header XSS Protection' was deprecated and removed (Issue 5849).
+
+### Fixed
+- Fix typo in the help page.
+
+## [26] - 2020-01-17
+
+### Changed
 - "Cookie HttpOnly", "Cookie Secure Flag", and "Cookie Without SameSite Attribute" scan rules no longer alert on expired (deleted) cookies (Issue 5295).
+
+### Added
+- Added links to the code in the help.
+- Add info and repo URLs.
 
 ## [25] - 2019-12-16
 
@@ -150,5 +181,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[27]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v27
+[26]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v24

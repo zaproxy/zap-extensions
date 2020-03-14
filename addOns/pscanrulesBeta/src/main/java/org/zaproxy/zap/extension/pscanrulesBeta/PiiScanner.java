@@ -24,18 +24,19 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.PiiUtils;
 
 /**
  * A scanner to passively scan for the presence of PII in response Currently only credit card
  * numbers
  *
- * @author Michael Kruglos (@michaelkruglos) TODO Extract credit card code when moved to beta(?) to
- *     also be used by InformationDisclosureReferrerScanner
+ * @author Michael Kruglos (@michaelkruglos)
  */
 public class PiiScanner extends PluginPassiveScanner {
 
@@ -88,13 +89,13 @@ public class PiiScanner extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         String responseBody = msg.getResponseBody().toString();
-        List<String> candidates = getNumberSequences(responseBody);
-        for (String candidate : candidates) {
+        List<Candidate> candidates = getNumberSequences(responseBody);
+        for (Candidate candidate : candidates) {
             for (CreditCard cc : CreditCard.values()) {
-                Matcher matcher = cc.matcher(candidate);
+                Matcher matcher = cc.matcher(candidate.getCandidate());
                 while (matcher.find()) {
                     String evidence = matcher.group();
-                    if (validateLuhnChecksum(evidence)) {
+                    if (PiiUtils.isValidLuhn(evidence) && !isSci(candidate.getContainingString())) {
                         raiseAlert(msg, id, evidence, cc.name);
                     }
                 }
@@ -102,20 +103,27 @@ public class PiiScanner extends PluginPassiveScanner {
         }
     }
 
-    private static boolean validateLuhnChecksum(String evidence) {
-        int sum = 0;
-        int parity = evidence.length() % 2;
-        for (int index = 0; index < evidence.length(); index++) {
-            int digit = Integer.parseInt(evidence.substring(index, index + 1));
-            if ((index % 2) == parity) {
-                digit *= 2;
-                if (digit > 9) {
-                    digit -= 9;
-                }
-            }
-            sum += digit;
+    /**
+     * Checks whether a particular {@code String} input appears to be a valid number in scientific
+     * (exponent) notation. Ex: 2.14111111111111111e-2, 8.46786664623715E-47, 3.14111111111117293e5
+     *
+     * @param containingString the value to be checked.
+     * @return {@code true} if the value successfully parses as a {@code Float}, {@code false}
+     *     otherwise.
+     */
+    private static boolean isSci(String containingString) {
+        if (!StringUtils.containsIgnoreCase(containingString, "e")) {
+            return false;
         }
-        return (sum % 10) == 0;
+
+        // Maybe there's still something that isn't Float like, remove it
+        containingString = containingString.replaceAll("[^0-9eE-]+", "");
+        try {
+            Float.parseFloat(containingString);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 
     private void raiseAlert(HttpMessage msg, int id, String evidence, String cardType) {
@@ -136,18 +144,28 @@ public class PiiScanner extends PluginPassiveScanner {
         parent.raiseAlert(id, alert);
     }
 
-    private static List<String> getNumberSequences(String inputString) {
+    private static List<Candidate> getNumberSequences(String inputString) {
         return getNumberSequences(inputString, 3);
     }
 
-    private static List<String> getNumberSequences(String inputString, int minSequence) {
+    private static List<Candidate> getNumberSequences(String inputString, int minSequence) {
         String regexString = String.format("(?:\\d{%d,}[\\s]*)+", minSequence);
         // Use RE2/J to avoid StackOverflowError when the response has many numbers.
         com.google.re2j.Matcher matcher =
                 com.google.re2j.Pattern.compile(regexString).matcher(inputString);
-        List<String> result = new ArrayList<>();
+        List<Candidate> result = new ArrayList<>();
         while (matcher.find()) {
-            result.add(matcher.group().replaceAll("\\s+", ""));
+            int proposedEnd = matcher.end() + 3;
+            result.add(
+                    new Candidate(
+                            matcher.group().replaceAll("\\s+", ""),
+                            inputString
+                                    .substring(
+                                            matcher.start(),
+                                            inputString.length() > proposedEnd
+                                                    ? matcher.end() + 3
+                                                    : inputString.length())
+                                    .replaceAll("\\s+", "")));
         }
         return result;
     }
@@ -160,5 +178,23 @@ public class PiiScanner extends PluginPassiveScanner {
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
+
+    private static class Candidate {
+        private final String candidate;
+        private final String containingString;
+
+        Candidate(String candidate, String containingString) {
+            this.candidate = candidate;
+            this.containingString = containingString;
+        }
+
+        public String getCandidate() {
+            return candidate;
+        }
+
+        public String getContainingString() {
+            return containingString;
+        }
     }
 }

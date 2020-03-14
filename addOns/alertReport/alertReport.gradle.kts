@@ -4,13 +4,18 @@ version = "15"
 description = "Allows you to generate reports for alerts you specify in pdf or odt format"
 
 zapAddOn {
-    addOnName.set("Report alert generator")
+    addOnName.set("Report Alert Generator")
     addOnStatus.set(AddOnStatus.BETA)
     zapVersion.set("2.5.0")
 
     manifest {
         author.set("Talsoft SRL")
-        url.set("http://www.talsoft.com.ar")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/report-alert-generator/")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

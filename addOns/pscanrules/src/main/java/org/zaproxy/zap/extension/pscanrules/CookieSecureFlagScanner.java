@@ -19,8 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.collections.iterators.IteratorChain;
 import org.parosproxy.paros.Constant;
@@ -30,6 +30,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.CookieUtils;
 
 public class CookieSecureFlagScanner extends PluginPassiveScanner {
 
@@ -61,15 +62,15 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
         }
 
         IteratorChain iterator = new IteratorChain();
-        Vector<String> cookies1 = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE);
+        List<String> cookies1 = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE);
 
-        if (cookies1 != null) {
+        if (!cookies1.isEmpty()) {
             iterator.addIterator(cookies1.iterator());
         }
 
-        Vector<String> cookies2 = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE2);
+        List<String> cookies2 = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE2);
 
-        if (cookies2 != null) {
+        if (!cookies2.isEmpty()) {
             iterator.addIterator(cookies2.iterator());
         }
 

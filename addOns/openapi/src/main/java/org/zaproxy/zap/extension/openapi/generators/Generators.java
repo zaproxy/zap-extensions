@@ -26,6 +26,7 @@ public class Generators {
 
     private ValueGenerator valueGenerator;
     private ArrayGenerator arrayGenerator;
+    private MapGenerator mapGenerator;
 
     private BodyGenerator bodyGenerator;
     private DataGenerator dataGenerator;
@@ -38,6 +39,7 @@ public class Generators {
         this.bodyGenerator = new BodyGenerator(this);
         this.arrayGenerator = new ArrayGenerator(this.dataGenerator);
         this.pathGenerator = new PathGenerator(this.dataGenerator);
+        this.mapGenerator = new MapGenerator(this.dataGenerator);
     }
 
     public ArrayGenerator getArrayGenerator() {
@@ -66,5 +68,9 @@ public class Generators {
 
     public ValueGenerator getValueGenerator() {
         return this.valueGenerator;
+    }
+
+    public MapGenerator getMapGenerator() {
+        return mapGenerator;
     }
 }

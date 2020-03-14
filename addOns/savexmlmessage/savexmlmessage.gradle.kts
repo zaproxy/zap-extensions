@@ -1,4 +1,4 @@
-version = "0.1.0"
+version = "0.2.0"
 description = "Allows to save content of HTTP messages as XML"
 
 zapAddOn {
@@ -7,5 +7,11 @@ zapAddOn {
 
     manifest {
         author.set("thatsn0tmysite")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/save-xml-message/")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [10] - 2020-01-17
+### Added
+- Add info and repo URLs.
+
 ## [9] - 2019-09-30
 
 - Added support for parameter regex, attack and evidence strings and regexes (Issue 5574)
@@ -53,5 +57,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[10]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v8

@@ -25,7 +25,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -38,6 +37,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.PiiUtils;
 
 public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
@@ -65,7 +65,7 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
                 && !isRequestedURLSameDomainAsHTTPReferrer(
                         msg.getRequestHeader().getHostName(),
                         msg.getRequestHeader().getHeader(HttpHeader.REFERER))) {
-            Vector<String> referrer = msg.getRequestHeader().getHeaders(HttpHeader.REFERER);
+            List<String> referrer = msg.getRequestHeader().getHeaderValues(HttpHeader.REFERER);
             String evidence;
             for (String referrerValue : referrer) {
                 if ((evidence = doesURLContainsSensitiveInformation(referrerValue)) != null) {
@@ -215,7 +215,10 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
     private String doesContainCreditCard(String creditCard) {
         Matcher matcher = creditCardPattern.matcher(creditCard);
         if (matcher.find()) {
-            return matcher.group();
+            String candidate = matcher.group();
+            if (PiiUtils.isValidLuhn(candidate)) {
+                return candidate;
+            }
         }
         return null;
     }

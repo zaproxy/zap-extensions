@@ -4,7 +4,18 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Map Structure support for OpenAPI v3.0 (Issue 5863).
 
+### Changed
+- Improve content checks when spidering for specifications (Issue 5725).
+
+## [15] - 2020-01-17
+### Added
+- Add info and repo URLs.
+
+### Changed
+- Promote addon to Beta.
 
 ## [14] - 2019-12-02
 ### Added
@@ -80,5 +91,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/openapi-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/openapi-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/openapi-v13

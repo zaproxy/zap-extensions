@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "8"
+version = "9"
 description = "Easy way to replace strings in requests and responses."
 
 zapAddOn {
@@ -10,6 +10,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/replacer/")
     }
 
     apiClientGen {

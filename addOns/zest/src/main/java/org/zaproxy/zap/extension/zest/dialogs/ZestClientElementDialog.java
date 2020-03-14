@@ -30,7 +30,6 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public abstract class ZestClientElementDialog extends StandardFieldsDialog implements ZestDialog {
@@ -90,7 +89,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
         this.addComboField(FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
         this.addTextField(FIELD_ELEMENT, client.getElement());
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_ELEMENT));
+        setFieldMainPopupMenu(FIELD_ELEMENT);
     }
 
     private List<String> getElementTypeFields() {

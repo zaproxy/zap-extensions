@@ -10,7 +10,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://developer.mozilla.org/en-US/docs/Plug-n-Hack")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/plug-n-hack/")
     }
 
     apiClientGen {

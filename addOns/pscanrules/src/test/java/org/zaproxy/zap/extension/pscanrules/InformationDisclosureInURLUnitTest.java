@@ -93,11 +93,7 @@ public class InformationDisclosureInURLUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(sensitiveParamName, alertsRaised.get(0).getParam());
-        assertEquals(sensitiveValue, alertsRaised.get(0).getEvidence());
-        assertEquals(
-                Constant.messages.getString(
-                        InformationDisclosureInURL.MESSAGE_PREFIX + "otherinfo.sensitiveinfo"),
-                alertsRaised.get(0).getOtherInfo());
+        assertEquals(sensitiveParamName, alertsRaised.get(0).getEvidence());
     }
 
     @Test

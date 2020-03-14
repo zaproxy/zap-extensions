@@ -6,7 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+
+## [15.1.0] - 2020-01-17
+### Added
+- Add info and repo URLs.
+
+### Changed
 - Update Selenium to version 3.141.59.
+- Workaround Chrome bug re ignoring cert errors
 
 ## [15.0.0] - 2019-06-07
 
@@ -84,4 +91,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.1.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.1.0
 [15.0.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.0.0

@@ -4,7 +4,22 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to create a screenshot from the browser, using the context menu `Add Zest Client` > `Screenshot`.
 
+### Changed
+- Update minimum ZAP version to 2.9.0.
+
+## [32] - 2020-01-24
+### Changed
+- Update Zest library to 0.14.2, to correctly ignore cert checks.
+
+## [31] - 2020-01-17
+### Added
+- Add info and repo URLs.
+
+### Changed
+- Update Zest library to 0.14.1 to restore proxying capability, in the previous version the proxy settings were ignored.
 
 ## [30] - 2019-12-06
 
@@ -214,5 +229,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[32]: https://github.com/zaproxy/zap-extensions/releases/zest-v32
+[31]: https://github.com/zaproxy/zap-extensions/releases/zest-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/zest-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/zest-v29
