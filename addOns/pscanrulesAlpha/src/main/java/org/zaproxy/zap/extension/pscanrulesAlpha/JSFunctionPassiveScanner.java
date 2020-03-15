@@ -23,8 +23,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -56,7 +56,8 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
 
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
-    private static List<Pattern> patterns = null;
+    private static HashSet<Pattern> defaultPatterns = null;
+    private static HashSet<Pattern> patterns = null;
     private PassiveScanThread parent = null;
 
     @Override
@@ -66,14 +67,16 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (!msg.getResponseHeader().isHtml() && !msg.getResponseHeader().isJavaScript()) {
+        if (msg.getResponseBody().length() <= 0
+                || (!msg.getResponseHeader().isHtml() && !msg.getResponseHeader().isJavaScript())) {
             return;
         }
         if (patterns == null) {
-            patterns = getPatterns();
+            createPatterns();
         }
+        loadPayload();
         StringBuilder evidence = new StringBuilder();
-        if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isHtml()) {
+        if (msg.getResponseHeader().isHtml()) {
             // Check the scripts in HTML
             Element el;
             int offset = 0;
@@ -82,23 +85,18 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                 for (Pattern pattern : patterns) {
                     if (pattern.matcher(elStr).find()) {
                         evidence.append(elStr);
-                        evidence.append("\n");
                         break; // Only need to record this script once
                     }
                 }
                 offset = el.getEnd();
             }
-        } else if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isJavaScript()) {
-            String[] lines = msg.getResponseBody().toString().split("\n");
-            for (String line : lines) {
-                for (Pattern pattern : patterns) {
-                    if (pattern.matcher(line).find()) {
-                        evidence.append(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "otherinfo", pattern, line));
-                        evidence.append("\n");
-                        break; // Only need to record this line once
-                    }
+        } else if (msg.getResponseHeader().isJavaScript()) {
+            // Raw search on response body
+            String content = msg.getResponseBody().toString();
+            for (Pattern pattern : patterns) {
+                if (pattern.matcher(content).find()) {
+                    evidence.append(pattern);
+                    break; // Only need to record one instance of vulnerability
                 }
             }
         }
@@ -125,47 +123,47 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
         parent.raiseAlert(id, alert);
     }
 
-    private static List<Pattern> getPatterns() {
-        if (patterns == null) {
-            patterns = new ArrayList<>();
-
-            try {
-                File f =
-                        new File(
-                                Constant.getZapHome()
-                                        + File.separator
-                                        + FUNC_LIST_DIR
-                                        + File.separator
-                                        + FUNC_LIST_FILE);
-                if (!f.exists()) {
-                    throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
-                }
-                try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        line = line.trim();
-                        if (!line.startsWith("#") && line.length() > 0) {
-                            patterns.add(
-                                    Pattern.compile(
-                                            "\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
-                        }
+    private static void createPatterns() {
+        patterns = new HashSet<>();
+        defaultPatterns = new HashSet<>();
+        try {
+            File f =
+                    new File(
+                            Constant.getZapHome()
+                                    + File.separator
+                                    + FUNC_LIST_DIR
+                                    + File.separator
+                                    + FUNC_LIST_FILE);
+            if (!f.exists()) {
+                throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
+            }
+            try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (!line.startsWith("#") && line.length() > 0) {
+                        defaultPatterns.add(
+                                Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
                     }
                 }
-            } catch (IOException e) {
-                LOGGER.error(
-                        "Error on opening/reading suspicious comments file: "
-                                + File.separator
-                                + FUNC_LIST_DIR
-                                + File.separator
-                                + FUNC_LIST_FILE
-                                + " Error: "
-                                + e.getMessage());
             }
-            for (String payload : getJsFunctionPayloads().get()) {
-                patterns.add(Pattern.compile("\\b" + payload + "\\b", Pattern.CASE_INSENSITIVE));
-            }
+        } catch (IOException e) {
+            LOGGER.error(
+                    "Error on opening/reading js functions file: "
+                            + File.separator
+                            + FUNC_LIST_DIR
+                            + File.separator
+                            + FUNC_LIST_FILE
+                            + " Error: "
+                            + e.getMessage());
         }
-        return patterns;
+    }
+
+    private static void loadPayload() {
+        patterns = defaultPatterns;
+        for (String line : getJsFunctionPayloads().get()) {
+            patterns.add(Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+        }
     }
 
     public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
