@@ -21,9 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -83,9 +81,6 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
                         + "<b>No script here</b>\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
-        assertTrue(msg.getResponseHeader().isText());
-        assertFalse(msg.getResponseHeader().isJavaScript());
-
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
@@ -114,9 +109,6 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         String body = "";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
-        assertTrue(msg.getResponseHeader().isText());
-        assertFalse(msg.getResponseHeader().isJavaScript());
-
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
@@ -132,6 +124,70 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
         List<String> functions = Collections.singletonList("badFunction");
         JSFunctionPassiveScanner.setPayloadProvider(() -> functions);
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldNotAlertGivenMatchOutsideScript()
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        String body =
+                "<h1>Some text <script>Something innocent happening here</script></h1>\n"
+                        + "<b>You should not use bypassSecurityTrustHtml()</b>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised, empty());
+    }
+
+    @Test
+    public void shouldAlertGivenMatchInSecondScript()
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        String body =
+                "<h1>Some text <script>Something innocent happening here</script></h1>\n"
+                        + "<p><b>Just some words going on</b>\n"
+                        + "<script>eval()</script></p>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldAlertOnceGivenMultipleMatchesHTML()
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        String body =
+                "<h1>Some text <script>eval()</script></h1>\n"
+                        + "<p><b>Just some words going on</b>\n"
+                        + "<script>bypassSecurityTrustHtml()</script></p>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        // When
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldAlertOnceGivenMultipleMatchesJS()
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        String body = "Some text <script>eval()</script>\n" + "bypassSecurityTrustHtml()\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         // When
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
