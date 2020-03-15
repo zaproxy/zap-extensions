@@ -84,8 +84,10 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
     }
 
     /**
-     * Mongo DB supports inclusion of javascript when executing queries. We try to add js code to sleep the web server and check
-     * if response exceeds a certain threshold to verify whether the sleep attack works
+     * Mongo DB supports inclusion of javascript when executing queries. We try to add js code to
+     * sleep the web server and check if response exceeds a certain threshold to verify whether the
+     * sleep attack works
+     *
      * @param param
      */
     private void detectJavascriptInjection(String param) {
@@ -116,9 +118,10 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
     }
 
     /**
-     * This attack injects the '[$gt]' operator to a parameter and checks if the returned response is of json while
-     * the original response is not . If the second response is JSON we can conclude that the web server returned
-     * some unintended data back to the user
+     * This attack injects the '[$gt]' operator to a parameter and checks if the returned response
+     * is of json while the original response is not . If the second response is JSON we can
+     * conclude that the web server returned some unintended data back to the user
+     *
      * @param originalResponse
      * @param param
      */
@@ -150,9 +153,10 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
     }
 
     /**
-     * We try to attack login pages by appending '[$ne]' operator to username and password fields and then check
-     * whether the attack was succesful by detecting if the attack led to the user being redirected to authenticated
-     * page
+     * We try to attack login pages by appending '[$ne]' operator to username and password fields
+     * and then check whether the attack was succesful by detecting if the attack led to the user
+     * being redirected to authenticated page
+     *
      * @param param
      */
     @SuppressWarnings("deprecation")
