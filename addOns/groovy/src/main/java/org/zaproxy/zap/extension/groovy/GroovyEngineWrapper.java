@@ -41,7 +41,7 @@ public class GroovyEngineWrapper extends DefaultEngineWrapper {
     }
 
     private GroovyEngineWrapper(GroovyScriptEngineFactory factory) {
-        super(factory.getScriptEngine());
+        super(factory);
         this.factory = factory;
         // Use AddOnLoader as parent class loader to allow access to (all) add-on classes.
         this.classLoader =

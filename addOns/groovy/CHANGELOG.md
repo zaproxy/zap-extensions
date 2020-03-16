@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add info and repo URLs.
 
 ### Changed
+- Update minimum ZAP version to 2.9.0.
 - Promote to beta status.
 - Change add-on name/description and update help.
 - Start using Semantic Versioning.

@@ -116,7 +116,7 @@ public class AccessControlScannerThread
         this.alertsProcessor = new AccessControlAlertsProcessor(getStartOptions());
         this.targetUsers = getStartOptions().targetUsers;
         this.accessRulesManager =
-                extension.getContextAccessRulesManager(getStartOptions().targetContext.getIndex());
+                extension.getContextAccessRulesManager(getStartOptions().targetContext.getId());
         this.authorizationDetection =
                 getStartOptions().targetContext.getAuthorizationDetectionMethod();
         // Initialize the HTTP sender

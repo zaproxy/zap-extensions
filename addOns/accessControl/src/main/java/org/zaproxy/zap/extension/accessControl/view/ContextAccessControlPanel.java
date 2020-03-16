@@ -98,7 +98,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     /** Initialize the panel. */
     private void initializeView() {
-        this.setName(getContextIndex() + ": " + PANEL_NAME);
+        this.setName(getContextId() + ": " + PANEL_NAME);
         this.setLayout(new GridBagLayout());
 
         this.add(
@@ -163,13 +163,13 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     private ContextPanelUsersSelectComboBox getUsersComboBox() {
         if (usersComboBox == null) {
-            usersComboBox = new ContextPanelUsersSelectComboBox(getContextIndex());
+            usersComboBox = new ContextPanelUsersSelectComboBox(getContextId());
 
             // We need to add a 'custom' user for allowing setting access rules for unauthenticated
             // visitors. The custom user will have the id '-1' which is an id that should not be
             // generated for normal users.
             User unauthenticatedUser =
-                    new User(getContextIndex(), UNAUTHENTICATED_USER_NAME, UNAUTHENTICATED_USER_ID);
+                    new User(getContextId(), UNAUTHENTICATED_USER_NAME, UNAUTHENTICATED_USER_ID);
             unauthenticatedUser.setEnabled(true);
             usersComboBox.setCustomUsers(new User[] {unauthenticatedUser});
 
@@ -204,7 +204,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     @Override
     public void initContextData(Session session, Context uiSharedContext) {
-        log.debug("Initing panel for context: " + uiSharedContext.getIndex());
+        log.debug("Initing panel for context: " + uiSharedContext.getId());
 
         // Clone the Access Rules Manager so we can support canceling any changes. If the internal
         // manager already existed, just copy the rules, otherwise create a cloned one.
@@ -218,14 +218,14 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
         // according to the 'old' field separators.
         // TODO: Eventually we should find a better solution for the above issue
         ContextAccessRulesManager originalManager =
-                extension.getContextAccessRulesManager(uiSharedContext.getIndex());
+                extension.getContextAccessRulesManager(uiSharedContext.getId());
         if (internalRulesManager == null) {
-            Context context = Model.getSingleton().getSession().getContext(getContextIndex());
+            Context context = Model.getSingleton().getSession().getContext(getContextId());
             this.internalRulesManager = new ContextAccessRulesManager(context, originalManager);
         } else {
             internalRulesManager.copyRulesFrom(
                     originalManager,
-                    getUsersManagementExtension().getUIConfiguredUsers(getContextIndex()));
+                    getUsersManagementExtension().getUIConfiguredUsers(getContextId()));
         }
 
         // Re-generate the context tree so we are up-to-date
@@ -255,9 +255,9 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     @Override
     public void saveContextData(Session session) {
-        List<User> users = getUsersManagementExtension().getUIConfiguredUsers(getContextIndex());
+        List<User> users = getUsersManagementExtension().getUIConfiguredUsers(getContextId());
         extension
-                .getContextAccessRulesManager(getContextIndex())
+                .getContextAccessRulesManager(getContextId())
                 .copyRulesFrom(internalRulesManager, users);
     }
 

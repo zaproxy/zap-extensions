@@ -30,6 +30,7 @@ import static org.mockito.Mockito.withSettings;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +49,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import net.htmlparser.jericho.Config;
+import net.htmlparser.jericho.LoggerProvider;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -72,6 +75,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
@@ -94,6 +98,15 @@ public abstract class TestUtils {
      * <p>Can be used for other temporary files/dirs.
      */
     @ClassRule public static TemporaryFolder tempDir = new TemporaryFolder();
+
+    static {
+        try {
+            Field loggerProvider = ZAP.class.getField("JERICHO_LOGGER_PROVIDER");
+            Config.LoggerProvider = (LoggerProvider) loggerProvider.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            // Nothing to do, older ZAP version.
+        }
+    }
 
     private static String zapInstallDir;
     private static String zapHomeDir;

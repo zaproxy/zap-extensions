@@ -6,7 +6,7 @@ description = "Adds Groovy support to ZAP"
 zapAddOn {
     addOnName.set("Groovy Support")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -3,7 +3,7 @@ description = "Lists vulnerabilities from known databases"
 
 zapAddOn {
     addOnName.set("VulnCheck")
-    zapVersion.set("2.5.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -230,10 +230,7 @@ public class AttackThread extends Thread {
         SiteNode startNode = null;
         // Request the URL
         try {
-            final HttpMessage msg =
-                    new HttpMessage(
-                            new URI(url.toString(), true),
-                            extension.getModel().getOptionsParam().getConnectionParam());
+            final HttpMessage msg = new HttpMessage(new URI(url.toString(), true));
             getHttpSender().sendAndReceive(msg, true);
 
             if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {

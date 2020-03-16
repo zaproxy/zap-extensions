@@ -95,7 +95,7 @@ public class CodeDxExtension extends ExtensionAdaptor {
                 @Override
                 public void actionPerformed(ActionEvent ae) {
                     ReportLastScanHttp saver = new ReportLastScanHttp();
-                    saver.generateReport(getView(), getModel(), ReportType.XML);
+                    saver.generateReport(getView(), ReportType.XML);
                 }
             });
         }

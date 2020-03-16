@@ -94,8 +94,7 @@ public class ExtensionJython extends ExtensionAdaptor {
                                                 .registerScriptEngineWrapper(
                                                         new JythonEngineWrapper(
                                                                 jythonOptionsParam,
-                                                                new PyScriptEngineFactory()
-                                                                        .getScriptEngine()));
+                                                                new PyScriptEngineFactory()));
                                         LOGGER.info("Jython engine loaded.");
                                     } finally {
                                         if (engineLoaderCDL != null) {

@@ -132,7 +132,7 @@ public class ReportLastScan {
             Boolean responseBody) {
 
         SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
-        SiteNode root = (SiteNode) siteMap.getRoot();
+        SiteNode root = siteMap.getRoot();
         int siteNumber = root.getChildCount();
         for (int i = 0; i < siteNumber; i++) {
             SiteNode site = (SiteNode) root.getChildAt(i);

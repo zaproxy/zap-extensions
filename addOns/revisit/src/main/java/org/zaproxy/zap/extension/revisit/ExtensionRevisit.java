@@ -162,7 +162,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
     private void removeRevisitIconSiteNodes() {
         SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
-        SiteNode root = (SiteNode) siteMap.getRoot();
+        SiteNode root = siteMap.getRoot();
         @SuppressWarnings("unchecked")
         Enumeration<TreeNode> en = root.breadthFirstEnumeration();
         while (en.hasMoreElements()) {

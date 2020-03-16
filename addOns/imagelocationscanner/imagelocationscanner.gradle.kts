@@ -6,7 +6,7 @@ description = "Image Location and Privacy Passive Scanner"
 zapAddOn {
     addOnName.set("Image Location and Privacy Scanner")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("Veggiespam and the ZAP Dev Team")

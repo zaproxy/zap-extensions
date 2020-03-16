@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
@@ -117,12 +116,12 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
-        Vector<String> stsOption = msg.getResponseHeader().getHeaders(STS_HEADER);
+        List<String> stsOption = msg.getResponseHeader().getHeaderValues(STS_HEADER);
         String metaHSTS = getMetaHSTSEvidence(source);
 
         if (msg.getRequestHeader().isSecure()) { // No point reporting missing for non-SSL resources
             // Content available via both HTTPS and HTTP is a separate though related issue
-            if (stsOption == null) { // Header NOT found
+            if (stsOption.isEmpty()) { // Header NOT found
                 boolean report = true;
                 if (!this.getAlertThreshold().equals(AlertThreshold.LOW)
                         && HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())) {
@@ -167,9 +166,7 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner {
                     raiseAlert(VulnType.HSTS_MALFORMED_MAX_AGE, stsOption.get(0), msg, id);
                 }
             }
-        } else if (AlertThreshold.LOW.equals(this.getAlertThreshold())
-                && stsOption != null
-                && !stsOption.isEmpty()) {
+        } else if (AlertThreshold.LOW.equals(this.getAlertThreshold()) && !stsOption.isEmpty()) {
             // isSecure is false at this point
             // HSTS Header found on non-HTTPS response (technically there could be more than one
             // but we only care that there is one or more)

@@ -54,7 +54,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Session;
-import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.DefaultStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
@@ -126,7 +125,6 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                             "resources/icons/script-payload-processor.png"));
 
     public static final String NAME = "ExtensionFuzz";
-    public static final Version CURRENT_VERSION = new Version("2.0.1");
 
     private static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz";
 
@@ -150,7 +148,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     private ZapMenuItem menuItemCustomScan = null;
 
     public ExtensionFuzz() {
-        super(NAME, CURRENT_VERSION);
+        super(NAME);
 
         setI18nPrefix("fuzz");
     }
@@ -359,8 +357,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
 
             if (extensionScript != null) {
-                extensionScript.removeScripType(scriptTypeGenerator);
-                extensionScript.removeScripType(scriptTypeProcessor);
+                extensionScript.removeScriptType(scriptTypeGenerator);
+                extensionScript.removeScriptType(scriptTypeProcessor);
             }
         }
     }

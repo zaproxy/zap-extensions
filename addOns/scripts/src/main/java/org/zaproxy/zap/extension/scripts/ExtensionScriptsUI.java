@@ -254,7 +254,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                     this.uninstallExtenderScript(script);
                 }
             }
-            extScript.removeScripType(extScriptType);
+            extScript.removeScriptType(extScriptType);
         }
 
         if (nullEngineWrapper != null) {

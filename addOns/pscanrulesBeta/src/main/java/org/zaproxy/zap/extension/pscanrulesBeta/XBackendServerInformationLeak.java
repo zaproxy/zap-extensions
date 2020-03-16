@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -56,8 +56,8 @@ public class XBackendServerInformationLeak extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
 
-        Vector<String> xbsOption = msg.getResponseHeader().getHeaders("X-Backend-Server");
-        if (xbsOption != null) { // Header Found
+        List<String> xbsOption = msg.getResponseHeader().getHeaderValues("X-Backend-Server");
+        if (!xbsOption.isEmpty()) { // Header Found
             // It is set so lets check it. Should only be one but it's a vector so iterate to be
             // sure.
             for (String xbsDirective : xbsOption) {

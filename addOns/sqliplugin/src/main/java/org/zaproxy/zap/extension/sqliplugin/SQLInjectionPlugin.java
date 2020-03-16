@@ -1130,17 +1130,14 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             String payload,
             String otherInfo,
             HttpMessage message) {
-        this.bingo(
-                Alert.RISK_HIGH,
-                Alert.CONFIDENCE_MEDIUM,
-                Constant.messages.getString(ALERT_MESSAGE_PREFIX + "name", subTitle),
-                getDescription(),
-                null,
-                parameter,
-                payload,
-                otherInfo,
-                getSolution(),
-                message);
+        newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(Constant.messages.getString(ALERT_MESSAGE_PREFIX + "name", subTitle))
+                .setParam(parameter)
+                .setAttack(payload)
+                .setOtherInfo(otherInfo)
+                .setMessage(message)
+                .raise();
     }
 
     /**

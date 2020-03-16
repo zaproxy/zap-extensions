@@ -55,7 +55,7 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 
     private void initialize() {
         this.setLayout(new CardLayout());
-        this.setName(getPanelName(getContextIndex()));
+        this.setName(getPanelName(getContextId()));
         this.setLayout(new GridBagLayout());
 
         this.add(
