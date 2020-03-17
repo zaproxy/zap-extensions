@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -62,9 +62,9 @@ public class FeaturePolicyScanner extends PluginPassiveScanner {
         // Feature-Policy is supported by Chrome 60+, Firefox 65+, Opera 47+, but not by Internet
         // Exploder or Safari
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy#Browser_compatibility
-        Vector<String> featurePolicyOptions =
-                httpMessage.getResponseHeader().getHeaders("Feature-Policy");
-        if (featurePolicyOptions == null || featurePolicyOptions.isEmpty()) {
+        List<String> featurePolicyOptions =
+                httpMessage.getResponseHeader().getHeaderValues("Feature-Policy");
+        if (featurePolicyOptions.isEmpty()) {
             Alert alert =
                     new Alert(
                             getPluginId(), // PluginID

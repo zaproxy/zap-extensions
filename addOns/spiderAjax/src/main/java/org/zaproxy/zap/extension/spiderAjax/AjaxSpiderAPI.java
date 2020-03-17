@@ -206,7 +206,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         if (usersExtension == null) {
             throw new ApiException(Type.NO_IMPLEMENTOR, ExtensionUserManagement.NAME);
         }
-        List<User> users = usersExtension.getContextUserAuthManager(context.getIndex()).getUsers();
+        List<User> users = usersExtension.getContextUserAuthManager(context.getId()).getUsers();
         for (User user : users) {
             if (userName.equals(user.getName())) {
                 return user;

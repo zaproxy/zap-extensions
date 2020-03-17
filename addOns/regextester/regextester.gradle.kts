@@ -3,7 +3,7 @@ description = "Allows to test Regular Expressions"
 
 zapAddOn {
     addOnName.set("Regular Expression Tester")
-    zapVersion.set("2.8.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")

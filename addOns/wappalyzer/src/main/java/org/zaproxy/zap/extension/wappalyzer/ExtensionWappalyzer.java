@@ -321,7 +321,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         }
 
         // TODO Repopulate
-        SiteNode root = (SiteNode) session.getSiteTree().getRoot();
+        SiteNode root = session.getSiteTree().getRoot();
         @SuppressWarnings("unchecked")
         Enumeration<TreeNode> en = root.children();
         while (en.hasMoreElements()) {

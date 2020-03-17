@@ -175,10 +175,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                                     true,
                                     HttpSender.CHECK_FOR_UPDATES_INITIATOR);
                     httpSender.setFollowRedirect(true);
-                    msg =
-                            new HttpMessage(
-                                    new URI(newsPageUrl, true),
-                                    Model.getSingleton().getOptionsParam().getConnectionParam());
+                    msg = new HttpMessage(new URI(newsPageUrl, true));
                     httpSender.sendAndReceive(msg, true);
                     if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
                         String zapLocale = Constant.getLocale().toString();
@@ -481,7 +478,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     private String getScanReport() throws Exception {
         ReportLastScan report = new ReportLastScan();
         StringBuilder rpt = new StringBuilder();
-        report.generate(rpt, getModel());
+        report.generate(rpt);
         return rpt.toString();
     }
 

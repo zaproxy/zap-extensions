@@ -22,9 +22,9 @@ package org.zaproxy.zap.extension.websocket.utility;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.encoder.Encoder;
 import org.parosproxy.paros.network.HttpMessage;
@@ -74,10 +74,10 @@ public final class WebSocketUtils {
      * @return Map with extension name and parameter string.
      */
     public static Map<String, String> parseWebSocketExtensions(HttpMessage msg) {
-        Vector<String> extensionHeaders =
-                msg.getResponseHeader().getHeaders(WebSocketProtocol.HEADER_EXTENSION);
+        List<String> extensionHeaders =
+                msg.getResponseHeader().getHeaderValues(WebSocketProtocol.HEADER_EXTENSION);
 
-        if (extensionHeaders == null) {
+        if (extensionHeaders.isEmpty()) {
             return null;
         }
 

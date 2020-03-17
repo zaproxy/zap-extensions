@@ -434,8 +434,7 @@ public class ExtensionWavsepReport extends ExtensionAdaptor {
 
         // Walk the tree looking for a 'wavsep' node
         SiteNode wavsepNode =
-                this.getWavsepNode(
-                        (SiteNode) Model.getSingleton().getSession().getSiteTree().getRoot());
+                this.getWavsepNode(Model.getSingleton().getSession().getSiteTree().getRoot());
         if (wavsepNode == null) {
             getOutputPane().setText("Failed to find wavsep node :(");
             return;

@@ -10,7 +10,7 @@ tasks.withType<JavaCompile> {
 zapAddOn {
     addOnName.set("AdvFuzzer")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         semVer.set("2.0.1")

@@ -106,7 +106,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
     public PopupUseScriptAsAuthenticationScript(ExtensionScriptsUI extension, Context ctx) {
         super();
         this.extension = extension;
-        this.contextId = ctx.getIndex();
+        this.contextId = ctx.getId();
 
         this.setText(MessageFormat.format(MENU_NAME, ctx.getName()));
         this.addActionListener(

@@ -61,9 +61,7 @@ public class UserHttpFuzzerMessageProcessorUIHandler
                 session.getContextsForUrl(message.getRequestHeader().getURI().toString());
         for (Context context : contexts) {
             List<User> users =
-                    extensionUserManagement
-                            .getContextUserAuthManager(context.getIndex())
-                            .getUsers();
+                    extensionUserManagement.getContextUserAuthManager(context.getId()).getUsers();
             if (!users.isEmpty()) {
                 return true;
             }
@@ -229,7 +227,7 @@ public class UserHttpFuzzerMessageProcessorUIHandler
             for (Context context : contexts) {
                 List<User> users =
                         extensionUserManagement
-                                .getContextUserAuthManager(context.getIndex())
+                                .getContextUserAuthManager(context.getId())
                                 .getUsers();
                 if (!users.isEmpty()) {
                     contextsComboBox.addItem(new ContextUI(context, users));
@@ -328,7 +326,7 @@ public class UserHttpFuzzerMessageProcessorUIHandler
         }
 
         public int getId() {
-            return this.context.getIndex();
+            return this.context.getId();
         }
 
         @Override

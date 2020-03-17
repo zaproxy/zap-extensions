@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.jython;
 import java.util.ArrayList;
 import java.util.List;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.swing.ImageIcon;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.python.core.Py;
@@ -31,8 +32,8 @@ public class JythonEngineWrapper extends DefaultEngineWrapper {
 
     private final JythonOptionsParam options;
 
-    public JythonEngineWrapper(JythonOptionsParam options, ScriptEngine engine) {
-        super(engine);
+    public JythonEngineWrapper(JythonOptionsParam options, ScriptEngineFactory engineFactory) {
+        super(engineFactory);
 
         this.options = options;
     }

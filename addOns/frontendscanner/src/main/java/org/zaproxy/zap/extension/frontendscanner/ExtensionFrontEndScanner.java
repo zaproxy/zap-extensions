@@ -174,8 +174,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     public void unload() {
         super.unload();
 
-        this.extensionScript.removeScripType(activeScriptType);
-        this.extensionScript.removeScripType(passiveScriptType);
+        this.extensionScript.removeScriptType(activeScriptType);
+        this.extensionScript.removeScriptType(passiveScriptType);
     }
 
     @Override

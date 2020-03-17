@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.util.Vector;
+import java.util.List;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
@@ -59,8 +59,8 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
 
-        Vector<String> serverOption = msg.getResponseHeader().getHeaders("Server");
-        if (serverOption != null) { // Header Found
+        List<String> serverOption = msg.getResponseHeader().getHeaderValues("Server");
+        if (!serverOption.isEmpty()) { // Header Found
             // It is set so lets check it. Should only be one but it's a vector so iterate to be
             // sure.
             for (String serverDirective : serverOption) {

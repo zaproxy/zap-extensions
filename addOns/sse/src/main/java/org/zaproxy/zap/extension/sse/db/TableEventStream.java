@@ -73,35 +73,33 @@ public class TableEventStream extends ParosAbstractTable {
         try {
             if (!DbUtils.hasTable(conn, "EVENT_STREAM")) {
                 // need to create the tables
-                PreparedStatement stmt =
-                        conn.prepareStatement(
-                                "CREATE CACHED TABLE event_stream ("
-                                        + "stream_id BIGINT PRIMARY KEY,"
-                                        + "host VARCHAR(255) NOT NULL,"
-                                        + "port INTEGER NOT NULL,"
-                                        + "url VARCHAR(255) NOT NULL,"
-                                        + "start_timestamp TIMESTAMP NOT NULL,"
-                                        + "end_timestamp TIMESTAMP NULL,"
-                                        + "history_id INTEGER NULL,"
-                                        + "FOREIGN KEY (history_id) REFERENCES HISTORY(HISTORYID) ON DELETE SET NULL ON UPDATE SET NULL"
-                                        + ")");
-                DbUtils.executeAndClose(stmt);
+                DbUtils.execute(
+                        conn,
+                        "CREATE CACHED TABLE event_stream ("
+                                + "stream_id BIGINT PRIMARY KEY,"
+                                + "host VARCHAR(255) NOT NULL,"
+                                + "port INTEGER NOT NULL,"
+                                + "url VARCHAR(255) NOT NULL,"
+                                + "start_timestamp TIMESTAMP NOT NULL,"
+                                + "end_timestamp TIMESTAMP NULL,"
+                                + "history_id INTEGER NULL,"
+                                + "FOREIGN KEY (history_id) REFERENCES HISTORY(HISTORYID) ON DELETE SET NULL ON UPDATE SET NULL"
+                                + ")");
 
-                stmt =
-                        conn.prepareStatement(
-                                "CREATE CACHED TABLE event_stream_event ("
-                                        + "event_id BIGINT NOT NULL,"
-                                        + "stream_id BIGINT NOT NULL,"
-                                        + "timestamp TIMESTAMP NOT NULL,"
-                                        + "last_event_id VARCHAR(255) NOT NULL,"
-                                        + "data CLOB(16M) NOT NULL,"
-                                        + "event_type VARCHAR(255) NOT NULL,"
-                                        + "reconnection_time BIGINT NULL,"
-                                        + "raw_event CLOB(16M) NOT NULL,"
-                                        + "PRIMARY KEY (event_id, stream_id),"
-                                        + "FOREIGN KEY (stream_id) REFERENCES event_stream(stream_id)"
-                                        + ")");
-                DbUtils.executeAndClose(stmt);
+                DbUtils.execute(
+                        conn,
+                        "CREATE CACHED TABLE event_stream_event ("
+                                + "event_id BIGINT NOT NULL,"
+                                + "stream_id BIGINT NOT NULL,"
+                                + "timestamp TIMESTAMP NOT NULL,"
+                                + "last_event_id VARCHAR(255) NOT NULL,"
+                                + "data CLOB(16M) NOT NULL,"
+                                + "event_type VARCHAR(255) NOT NULL,"
+                                + "reconnection_time BIGINT NULL,"
+                                + "raw_event CLOB(16M) NOT NULL,"
+                                + "PRIMARY KEY (event_id, stream_id),"
+                                + "FOREIGN KEY (stream_id) REFERENCES event_stream(stream_id)"
+                                + ")");
 
                 streamIds = new HashSet<>();
             } else {

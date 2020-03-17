@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -74,32 +74,29 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner {
 
         // Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but
         // Internet Exploder
-        Vector<String> cspOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy");
-        // If it's not null or empty then we found one
-        if (cspOptions != null && !cspOptions.isEmpty()) {
+        List<String> cspOptions =
+                msg.getResponseHeader().getHeaderValues("Content-Security-Policy");
+        if (!cspOptions.isEmpty()) {
             cspHeaderFound = true;
         }
 
-        Vector<String> cspROOptions =
-                msg.getResponseHeader().getHeaders("Content-Security-Policy-Report-Only");
-        // If it's not null or empty then we found one
-        if (cspROOptions != null && !cspROOptions.isEmpty()) {
+        List<String> cspROOptions =
+                msg.getResponseHeader().getHeaderValues("Content-Security-Policy-Report-Only");
+        if (!cspROOptions.isEmpty()) {
             cspROHeaderFound = true;
         }
 
         // X-Content-Security-Policy is an older header, supported by Firefox 4.0+, and IE 10+ (in a
         // limited fashion)
-        Vector<String> xcspOptions =
-                msg.getResponseHeader().getHeaders("X-Content-Security-Policy");
-        // If it's not null or empty then we found one
-        if (xcspOptions != null && !xcspOptions.isEmpty()) {
+        List<String> xcspOptions =
+                msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy");
+        if (!xcspOptions.isEmpty()) {
             xCspHeaderFound = true;
         }
 
         // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
-        Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders("X-WebKit-CSP");
-        // If it's not null or empty then we found one
-        if (xwkcspOptions != null && !xwkcspOptions.isEmpty()) {
+        List<String> xwkcspOptions = msg.getResponseHeader().getHeaderValues("X-WebKit-CSP");
+        if (!xwkcspOptions.isEmpty()) {
             xWebKitHeaderFound = true;
         }
 

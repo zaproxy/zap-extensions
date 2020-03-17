@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -76,8 +76,8 @@ public class RetrievedFromCacheScanner extends PluginPassiveScanner {
             // X-Cache HIT from proxy.domain.tld, MISS from proxy.local
             // X-Cache-Lookup HIT from proxy.domain.tld:3128, MISS from proxy.local:3128
 
-            Vector<String> xcacheHeaders = msg.getResponseHeader().getHeaders("X-Cache");
-            if (xcacheHeaders != null) {
+            List<String> xcacheHeaders = msg.getResponseHeader().getHeaderValues("X-Cache");
+            if (!xcacheHeaders.isEmpty()) {
                 for (String xcacheHeader : xcacheHeaders) {
                     for (String proxyServerDetails : xcacheHeader.split(",")) {
                         // strip off any leading space for the second and subsequent proxies
@@ -136,8 +136,8 @@ public class RetrievedFromCacheScanner extends PluginPassiveScanner {
             // Note: HTTP/1.0 caches do not implement "Age", so the absence of an "Age" header does
             // *not* imply that the response was served from the origin server, rather than a
             // cache..
-            Vector<String> ageHeaders = msg.getResponseHeader().getHeaders("Age");
-            if (ageHeaders != null) {
+            List<String> ageHeaders = msg.getResponseHeader().getHeaderValues("Age");
+            if (!ageHeaders.isEmpty()) {
                 for (String ageHeader : ageHeaders) {
                     if (logger.isTraceEnabled())
                         logger.trace("Validating Age header value [" + ageHeader + "]");
