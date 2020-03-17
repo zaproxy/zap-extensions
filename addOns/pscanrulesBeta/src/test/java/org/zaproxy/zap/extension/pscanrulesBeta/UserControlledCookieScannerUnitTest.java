@@ -42,7 +42,6 @@ public class UserControlledCookieScannerUnitTest
     }
 
     public HttpMessage createMessage() {
-        HttpMessage msg = new HttpMessage();
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         try {
             requestHeader.setURI(new URI("http://example.com/i.php", false));
@@ -50,7 +49,7 @@ public class UserControlledCookieScannerUnitTest
         }
         requestHeader.setMethod(HttpRequestHeader.GET);
 
-        msg = new HttpMessage();
+        HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
@@ -71,6 +70,18 @@ public class UserControlledCookieScannerUnitTest
     public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
         // Given
         HttpMessage msg = createMessage();
+        // WHen
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertIfResponseHasCookiesButRequestHasNoParams() {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=aValue; Secure");
         // WHen
         rule.scanHttpResponseReceive(msg, -1, createSource(msg));
         // Then
