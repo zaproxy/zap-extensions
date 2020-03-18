@@ -42,7 +42,6 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.usernameidor.";
     private static final int PLUGIN_ID = 10057;
 
-    private PassiveScanThread parent = null;
     private static final Logger LOGGER = Logger.getLogger(UsernameIdorScanner.class);
 
     private static final String ADMIN = "Admin";
@@ -55,11 +54,9 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
 
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
-    private List<User> testUsers = null;
-
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     private List<User> getUsers() {
@@ -67,11 +64,6 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
 
         for (String payload : getUsernameIdorPayloads().get()) {
             usersList.add(new User(-1, payload));
-        }
-
-        if (testUsers != null) {
-            testUsers.addAll(usersList);
-            return testUsers;
         }
 
         usersList.addAll(getHelper().getUsers());
@@ -127,25 +119,19 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
 
     private void raiseAlert(
             String username, String evidence, String hashType, int id, HttpMessage msg) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_HIGH, // PluginID, Risk, Reliability
-                        getName());
-        alert.setDetail(
-                getDescription(username), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                getOtherinfo(hashType, evidence), // Other info
-                getSolution(), // Solution
-                getReference(), // References
-                evidence, // Evidence
-                284, // CWE-284: Improper Access Control
-                02, // WASC-02: Insufficient Authorization
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(getDescription(username))
+                .setOtherInfo(getOtherinfo(hashType, evidence))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                // CWE-284: Improper Access Control
+                .setCweId(284)
+                // WASC-02: Insufficient Authorization
+                .setWascId(02)
+                .raise();
     }
 
     @Override
@@ -188,11 +174,5 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
 
     private static Supplier<Iterable<String>> getUsernameIdorPayloads() {
         return payloadProvider;
-    }
-
-    // The following method supports unit testing
-    protected void setUsers(String username) {
-        testUsers = new ArrayList<User>();
-        this.testUsers.add(new User(testUsers.size() + 1, username));
     }
 }

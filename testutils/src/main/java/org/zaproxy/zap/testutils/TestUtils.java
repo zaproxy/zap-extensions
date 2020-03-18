@@ -78,7 +78,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
-import org.zaproxy.zap.utils.ClassLoaderUtil;
 import org.zaproxy.zap.utils.I18N;
 
 /**
@@ -162,12 +161,13 @@ public abstract class TestUtils {
      * @throws Exception if an error occurred while setting up the dirs or core classes.
      * @see #setUpMessages()
      */
+    @SuppressWarnings("deprecation")
     protected void setUpZap() throws Exception {
         Constant.setZapInstall(zapInstallDir);
         Constant.setZapHome(zapHomeDir);
 
         File langDir = new File(Constant.getZapInstall(), "lang");
-        ClassLoaderUtil.addFile(langDir.getAbsolutePath());
+        org.zaproxy.zap.utils.ClassLoaderUtil.addFile(langDir.getAbsolutePath());
 
         Control control = mock(Control.class, withSettings().lenient());
         when(control.getExtensionLoader()).thenReturn(mock(ExtensionLoader.class));
