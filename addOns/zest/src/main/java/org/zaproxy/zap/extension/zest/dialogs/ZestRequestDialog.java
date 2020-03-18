@@ -166,7 +166,10 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
                     0,
                     Integer.MAX_VALUE,
                     (int) request.getResponse().getResponseTimeInMs());
-            this.addMultilineField(2, FIELD_RESP_HEADERS, request.getResponse().getHeaders());
+            this.addMultilineField(
+                    2,
+                    FIELD_RESP_HEADERS,
+                    request.getResponse().getHeaders().replaceAll("\r\n", "\n"));
             this.addMultilineField(2, FIELD_RESP_BODY, request.getResponse().getBody());
         } else {
             this.addComboField(
@@ -211,7 +214,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
             }
         }
         this.request.setMethod(this.getStringValue(FIELD_METHOD));
-        this.request.setHeaders(this.getStringValue(FIELD_HEADERS));
+        this.request.setHeaders(this.getStringValue(FIELD_HEADERS).replaceAll("\r?\n", "\r\n"));
         this.request.setFollowRedirects(this.getBoolValue(FIELD_FOLLOW_REDIR));
         this.request.setData(this.getStringValue(FIELD_BODY));
 
