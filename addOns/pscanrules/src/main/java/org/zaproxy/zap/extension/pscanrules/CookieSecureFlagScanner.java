@@ -41,12 +41,11 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
 
     private static final String SECURE_COOKIE_ATTRIBUTE = "Secure";
 
-    private PassiveScanThread parent = null;
     private Model model = null;
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -90,21 +89,19 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String headerValue) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                CookieUtils.getCookieName(headerValue),
-                "",
-                "",
-                getSolution(),
-                getReference(),
-                CookieUtils.getSetCookiePlusName(msg.getResponseHeader().toString(), headerValue),
-                614, // CWE Id
-                13, // WASC Id - Info leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(CookieUtils.getCookieName(headerValue))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(
+                        CookieUtils.getSetCookiePlusName(
+                                msg.getResponseHeader().toString(), headerValue))
+                .setCweId(614)
+                .setWascId(13)
+                .raise();
     }
 
     @Override

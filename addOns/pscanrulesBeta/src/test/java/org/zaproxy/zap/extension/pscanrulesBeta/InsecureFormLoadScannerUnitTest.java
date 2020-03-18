@@ -55,7 +55,7 @@ public class InsecureFormLoadScannerUnitTest extends PassiveScannerTest<Insecure
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setSecure(true);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -66,7 +66,7 @@ public class InsecureFormLoadScannerUnitTest extends PassiveScannerTest<Insecure
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -77,7 +77,7 @@ public class InsecureFormLoadScannerUnitTest extends PassiveScannerTest<Insecure
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -88,7 +88,7 @@ public class InsecureFormLoadScannerUnitTest extends PassiveScannerTest<Insecure
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -100,7 +100,7 @@ public class InsecureFormLoadScannerUnitTest extends PassiveScannerTest<Insecure
         msg.setResponseBody(
                 "<html><form name=\"someform\" action=\"https://example.com/processform\"></form</html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
     }
@@ -112,7 +112,7 @@ public class InsecureFormLoadScannerUnitTest extends PassiveScannerTest<Insecure
         msg.setResponseBody(
                 "<html><form name=\"someform\" action=\"http://example.com/processform\"></form</html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }

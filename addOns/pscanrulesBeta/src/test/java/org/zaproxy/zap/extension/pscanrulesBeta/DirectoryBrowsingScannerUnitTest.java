@@ -53,7 +53,7 @@ public class DirectoryBrowsingScannerUnitTest extends PassiveScannerTest<Directo
         // Given
         HttpMessage msg = createMessage();
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -64,7 +64,7 @@ public class DirectoryBrowsingScannerUnitTest extends PassiveScannerTest<Directo
         HttpMessage msg = createMessage();
         msg.setResponseBody("<html><H1>Some Title</H1></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -75,7 +75,7 @@ public class DirectoryBrowsingScannerUnitTest extends PassiveScannerTest<Directo
         HttpMessage msg = createMessage();
         msg.setResponseBody("<html><title>Index of /htdocs</title></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
     }
@@ -87,7 +87,7 @@ public class DirectoryBrowsingScannerUnitTest extends PassiveScannerTest<Directo
         msg.setResponseBody(
                 "<html><head><title>somesite.net - /site/</title></head><body><H1>somesite.net - /site/</H1><hr><pre><A HREF=\"/\">[To Parent Directory]</A><br><br> 6/12/2014  3:25 AM        &lt;dir&gt; <A HREF=\"/site/file.ext/\">file.ext</A><br></pre><hr></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
     }

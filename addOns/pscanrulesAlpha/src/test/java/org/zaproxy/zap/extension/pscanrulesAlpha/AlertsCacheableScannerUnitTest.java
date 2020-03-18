@@ -62,7 +62,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
         msg.setRequestHeader("PUT / HTTP/1.1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertNonStoreable("PUT ");
     }
@@ -76,7 +76,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
         msg.setResponseHeader("HTTP/1.1 600 OK");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertNonStoreable("600");
@@ -91,7 +91,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
         msg.setResponseHeader("HTTP/1.1 200 OK");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertNonStoreable("no-store");
@@ -106,7 +106,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
         msg.setResponseHeader("HTTP/1.1 200 OK");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertNonStoreable("no-store");
@@ -121,7 +121,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: no-store");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertNonStoreable("no-store");
@@ -136,7 +136,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Pragma: no-store");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertNonStoreable("no-store");
@@ -152,7 +152,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: must-revalidate, private");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertNonStoreable("private");
@@ -171,7 +171,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
                         + "Content-Type: text/xml;charset=UTF-8");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertNonStoreable(HttpHeader.AUTHORIZATION + ":");
@@ -186,7 +186,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Content-Type: text/xml;charset=UTF-8");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertNonStoreable(HttpHeader.AUTHORIZATION + ":");
@@ -201,7 +201,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
         msg.setRequestHeader("GET / HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 208 OK\r\n" + "Cache-Control: no-cache");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertNonStoreable("208");
@@ -218,7 +218,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
                         + "Cache-Control: public, no-cache\r\n"
                         + "Content-Type: text/xml;charset=UTF-8");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertStoreableNonCacheable("no-cache");
@@ -249,7 +249,7 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
                         + "Date: Wed, 02 Oct 2019 07:00:00 GMT");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertStoreableNonCacheable(cacheControlDirective);

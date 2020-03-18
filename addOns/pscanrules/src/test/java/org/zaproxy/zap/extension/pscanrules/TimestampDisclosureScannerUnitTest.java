@@ -48,7 +48,7 @@ public class TimestampDisclosureScannerUnitTest
                         + "Server: Apache-Coyote/1.1\r\n"
                         + "Strict-Transport-Security: max-age=15552000; includeSubDomains\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
     }
@@ -60,7 +60,7 @@ public class TimestampDisclosureScannerUnitTest
                 String.valueOf(System.currentTimeMillis()).substring(0, 10); // 10 Digit precision
         HttpMessage msg = createMessage(now);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(now));
@@ -74,7 +74,7 @@ public class TimestampDisclosureScannerUnitTest
         HttpMessage msg = createMessage(now);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(now));
@@ -87,7 +87,7 @@ public class TimestampDisclosureScannerUnitTest
         String strTestDate = String.valueOf(testDate.getEpochSecond());
         HttpMessage msg = createMessage(strTestDate);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -101,7 +101,7 @@ public class TimestampDisclosureScannerUnitTest
         HttpMessage msg = createMessage(strTestDate);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -114,7 +114,7 @@ public class TimestampDisclosureScannerUnitTest
         String strTestDate = String.valueOf(testDate.getEpochSecond());
         HttpMessage msg = createMessage(strTestDate);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -128,7 +128,7 @@ public class TimestampDisclosureScannerUnitTest
         HttpMessage msg = createMessage(strTestDate);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -141,7 +141,7 @@ public class TimestampDisclosureScannerUnitTest
         String strTestDate = String.valueOf(testDate.getEpochSecond());
         HttpMessage msg = createMessage(strTestDate);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -155,7 +155,7 @@ public class TimestampDisclosureScannerUnitTest
         HttpMessage msg = createMessage(strTestDate);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
     }
@@ -167,7 +167,7 @@ public class TimestampDisclosureScannerUnitTest
         String strTestDate = String.valueOf(testDate.getEpochSecond());
         HttpMessage msg = createMessage(strTestDate);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -182,7 +182,7 @@ public class TimestampDisclosureScannerUnitTest
         HttpMessage msg = createMessage(strTestDate);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
     }
@@ -193,7 +193,7 @@ public class TimestampDisclosureScannerUnitTest
         String strTestDate = String.valueOf(33333333);
         HttpMessage msg = createMessage(strTestDate);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -206,7 +206,7 @@ public class TimestampDisclosureScannerUnitTest
         HttpMessage msg = createMessage(strTestDate);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
     }
@@ -217,7 +217,7 @@ public class TimestampDisclosureScannerUnitTest
         String strTestDate = String.valueOf(2147483647);
         HttpMessage msg = createMessage(strTestDate);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -230,7 +230,7 @@ public class TimestampDisclosureScannerUnitTest
         HttpMessage msg = createMessage(strTestDate);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
     }
@@ -246,7 +246,7 @@ public class TimestampDisclosureScannerUnitTest
         String body = "{\"date\":" + strTestDate + ",\"endDate\":\"" + strTestDate2 + "\"}";
         msg.setResponseBody(body);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(2, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -266,7 +266,7 @@ public class TimestampDisclosureScannerUnitTest
         msg.setResponseBody(body);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -283,7 +283,7 @@ public class TimestampDisclosureScannerUnitTest
         String body = "{\"date\":" + strTestDate + ",\"endDate\":\"" + strTestDate2 + "\"}";
         msg.setResponseBody(body);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(2, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate));
@@ -303,7 +303,7 @@ public class TimestampDisclosureScannerUnitTest
         msg.setResponseBody(body);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals(strTestDate2));

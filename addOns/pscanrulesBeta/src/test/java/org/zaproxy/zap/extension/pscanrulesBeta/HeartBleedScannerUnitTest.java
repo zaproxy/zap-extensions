@@ -45,7 +45,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
         HttpMessage msg = createMsg();
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -57,7 +57,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
         HttpMessage msg = createMsg("Apache/2.4.1 (" + SAFE_OPENSSL_VERSION + ")");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -69,7 +69,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
         HttpMessage msg = createMsg("Apache/2.4.1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -83,7 +83,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
         HttpMessage msg = createMsg(String.format("Apache-Coyote/1.1 (%s)", opensslVersion));
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -98,7 +98,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
             HttpMessage msg = createMsg(String.format("Apache-Coyote/1.1 (OpenSSL/%s)", version));
 
             // When
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+            scanHttpResponseReceive(msg);
 
             // Then
             String reason = "Expecting alert to be raised for OpenSSL/" + version;
@@ -116,7 +116,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
         addServerHeader(msg, String.format("Apache-Coyote/1.1 (%s)", SAFE_OPENSSL_VERSION));
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -132,7 +132,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
         addServerHeader(msg, String.format("Apache-Coyote/1.1 (%s)", vulnerableVersion));
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));

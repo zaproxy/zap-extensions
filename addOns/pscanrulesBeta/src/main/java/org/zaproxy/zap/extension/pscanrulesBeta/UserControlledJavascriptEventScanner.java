@@ -84,8 +84,6 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
                 "onunload"
             };
 
-    private PassiveScanThread parent = null;
-
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.usercontrolledjavascriptevent.";
 
@@ -174,23 +172,17 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
             Element htmlElement,
             Attribute htmlAttribute,
             HtmlParameter param) {
-        Alert alert =
-                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
-
-        alert.setDetail(
-                getDescriptionMessage(),
-                msg.getRequestHeader().getURI().toString(),
-                param.getName(),
-                "",
-                getExtraInfoMessage(msg, htmlAttribute, param),
-                getSolutionMessage(),
-                getReferenceMessage(),
-                "", // No evidence
-                20, // CWE-20: Improper Input Validation
-                20, // WASC-20: Improper Input Handling
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescriptionMessage())
+                .setParam(param.getName())
+                .setOtherInfo(getExtraInfoMessage(msg, htmlAttribute, param))
+                .setSolution(getSolutionMessage())
+                .setReference(getReferenceMessage())
+                .setCweId(20) // CWE-20: Improper Input Validation
+                .setWascId(20) // WASC-20: Improper Input Handling
+                .raise();
     }
 
     @Override
@@ -200,7 +192,7 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /*

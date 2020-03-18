@@ -34,7 +34,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class XFrameOptionScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.xframeoptionsscanner.";
 
@@ -120,31 +119,24 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
             other = Constant.messages.getString(MESSAGE_PREFIX + "incInCsp");
         }
 
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        risk,
-                        Alert.CONFIDENCE_MEDIUM,
-                        getAlertElement(currentVT, "name"));
-        alert.setDetail(
-                getAlertElement(currentVT, "desc"),
-                msg.getRequestHeader().getURI().toString(),
-                HttpHeader.X_FRAME_OPTION, // Param
-                "", // Attack
-                other, // OtherInfo
-                getAlertElement(currentVT, "soln"),
-                getAlertElement(currentVT, "refs"),
-                evidence, // Evidence
-                16, // CWE-16: Configuration
-                15, // WASC-15: Application Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(getAlertElement(currentVT, "name"))
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getAlertElement(currentVT, "desc"))
+                .setParam(HttpHeader.X_FRAME_OPTION)
+                .setOtherInfo(other)
+                .setSolution(getAlertElement(currentVT, "soln"))
+                .setReference(getAlertElement(currentVT, "refs"))
+                .setEvidence(evidence)
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .raise();
     }
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

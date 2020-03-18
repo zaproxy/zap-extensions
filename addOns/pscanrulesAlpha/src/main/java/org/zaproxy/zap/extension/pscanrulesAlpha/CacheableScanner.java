@@ -82,12 +82,11 @@ public class CacheableScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX_STORABLE_CACHEABLE = "pscanalpha.storablecacheable.";
     private static final int PLUGIN_ID = 10049;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(CacheableScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -783,25 +782,17 @@ public class CacheableScanner extends PluginPassiveScanner {
      * @param evidence
      */
     public void alertNonStorable(HttpMessage msg, int id, String evidence) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "name"));
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "desc"), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                "", // Other info
-                Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "soln"), // Solution
-                Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "refs"), // References
-                evidence, // Evidence
-                524, // CWE-524: Information Exposure Through Caching
-                13, // WASC-13: Information Leakage
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "name"))
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "refs"))
+                .setEvidence(evidence)
+                .setCweId(524) // CWE-524: Information Exposure Through Caching
+                .setWascId(13) // WASC-13: Information Leakage
+                .raise();
     }
 
     /**
@@ -812,28 +803,20 @@ public class CacheableScanner extends PluginPassiveScanner {
      * @param evidence
      */
     public void alertStorableNonCacheable(HttpMessage msg, int id, String evidence) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"));
-        alert.setDetail(
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "desc"), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                "", // Other info
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "soln"), // Solution
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "refs"), // References
-                evidence, // Evidence
-                524, // CWE-524: Information Exposure Through Caching
-                13, // WASC-13: Information Leakage
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"))
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "desc"))
+                .setSolution(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "soln"))
+                .setReference(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "refs"))
+                .setEvidence(evidence)
+                .setCweId(524) // CWE-524: Information Exposure Through Caching
+                .setWascId(13) // WASC-13: Information Leakage
+                .raise();
     }
 
     /**
@@ -845,26 +828,20 @@ public class CacheableScanner extends PluginPassiveScanner {
      * @param otherInfo
      */
     public void alertStorableCacheable(HttpMessage msg, int id, String evidence, String otherInfo) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "name"));
-        alert.setDetail(
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_CACHEABLE + "desc"), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                otherInfo, // Other info
-                Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "soln"), // Solution
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_CACHEABLE + "refs"), // References
-                evidence, // Evidence
-                524, // CWE-524: Information Exposure Through Caching
-                13, // WASC-13: Information Leakage
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "name"))
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "desc"))
+                .setOtherInfo(otherInfo)
+                .setSolution(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "soln"))
+                .setReference(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "refs"))
+                .setEvidence(evidence)
+                .setCweId(524) // CWE-524: Information Exposure Through Caching
+                .setWascId(13) // WASC-13: Information Leakage
+                .raise();
     }
 }

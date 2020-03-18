@@ -60,7 +60,7 @@ public class UserControlledJavascriptEventScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -71,7 +71,7 @@ public class UserControlledJavascriptEventScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -83,7 +83,7 @@ public class UserControlledJavascriptEventScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpHeader.CONTENT_TYPE, ""); // Removed when value set empty
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -93,7 +93,7 @@ public class UserControlledJavascriptEventScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // WHen
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -104,7 +104,7 @@ public class UserControlledJavascriptEventScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -117,7 +117,7 @@ public class UserControlledJavascriptEventScannerUnitTest
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" onerror=alert(\"Error\")></img></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -130,7 +130,7 @@ public class UserControlledJavascriptEventScannerUnitTest
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" onblah=fred></img></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -143,7 +143,7 @@ public class UserControlledJavascriptEventScannerUnitTest
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" onerror=fred></img></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));

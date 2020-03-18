@@ -42,11 +42,9 @@ public class InPageBannerInfoLeakScanner extends PluginPassiveScanner {
     private static final int PLUGIN_ID = 10009;
     private static final String MESSAGE_PREFIX = "pscanalpha.inpagebanner.";
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -95,25 +93,17 @@ public class InPageBannerInfoLeakScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(int risk, int confidence, String evidence, HttpMessage msg, int id) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        risk,
-                        confidence, // PluginID, Risk, Reliability
-                        getName());
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX + "desc"), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                Constant.messages.getString(MESSAGE_PREFIX + "other"), // Other info
-                Constant.messages.getString(MESSAGE_PREFIX + "soln"), // Solution
-                Constant.messages.getString(MESSAGE_PREFIX + "refs"), // References
-                evidence, // Evidence - Return the in page banner
-                200, // CWE Id: 200 - Information Exposure
-                13, // WASC Id: 13 - Information Leakage
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "other"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setEvidence(evidence) // Evidence - Return the in page banner
+                .setCweId(200) // CWE Id: 200 - Information Exposure
+                .setWascId(13) // WASC Id: 13 - Information Leakage
+                .raise();
     }
 
     public enum BannerPattern {

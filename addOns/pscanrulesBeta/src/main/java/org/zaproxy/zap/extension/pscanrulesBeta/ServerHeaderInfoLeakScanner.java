@@ -40,14 +40,13 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10036;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(ServerHeaderInfoLeakScanner.class);
 
     private static final Pattern VERSION_PATTERN = Pattern.compile(".*\\d.*");
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -80,8 +79,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
                             Constant.messages.getString(
                                     "pscanbeta.serverheaderinfoleak.general.refs"),
                             serverDirective,
-                            msg,
-                            id);
+                            msg);
                 } else if (Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
                     raiseAlert(
                             Alert.RISK_INFO,
@@ -93,8 +91,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
                             Constant.messages.getString(
                                     "pscanbeta.serverheaderinfoleak.general.refs"),
                             serverDirective,
-                            msg,
-                            id);
+                            msg);
                 }
             }
         }
@@ -126,26 +123,16 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
             String soln,
             String refs,
             String evidence,
-            HttpMessage msg,
-            int id) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        risk,
-                        confidence, // PluginID, Risk, Reliability
-                        name);
-        alert.setDetail(
-                desc, // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                "", // Other info
-                soln, // Solution
-                refs, // References
-                evidence, // Evidence - Return the Server Header info
-                200, // CWE Id
-                13, // WASC Id
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+            HttpMessage msg) {
+        newAlert()
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setDescription(desc)
+                .setSolution(soln)
+                .setReference(refs)
+                .setEvidence(evidence)
+                .setCweId(200)
+                .setWascId(13)
+                .raise();
     }
 }

@@ -61,13 +61,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     private static final String MESSAGE_PREFIX = "pscanrules.insecurejsfviewstate.";
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -190,21 +188,16 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String viewState) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_LOW, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", viewState),
-                "",
-                "",
-                getSolution(),
-                getReference(),
-                "", // No Evidence
-                16, // CWE Id 16 - Configuration
-                14, // WASC Id - Server Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(getDescription())
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", viewState))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setCweId(16) // CWE Id 16 - Configuration
+                .setWascId(14) // WASC Id - Server Misconfiguration
+                .raise();
     }
 
     // jsf server side implementation in com.sun.faces.renderkit.ServerSideStateHelper

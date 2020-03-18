@@ -101,7 +101,7 @@ public class InformationDisclosureDebugErrorsUnitTest
 
             HttpMessage msg = createHttpMessageWithRespBody(responseBody);
 
-            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+            scanHttpResponseReceive(msg);
 
             assertThat(alertsRaised.size(), equalTo(i + 1));
 
@@ -124,7 +124,7 @@ public class InformationDisclosureDebugErrorsUnitTest
         HttpMessage msg =
                 createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE + "</html>");
 
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
@@ -138,7 +138,7 @@ public class InformationDisclosureDebugErrorsUnitTest
                 createHttpMessageWithRespBody(
                         "<html>" + DEFAULT_ERROR_MESSAGE.toLowerCase() + "</html>");
 
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
@@ -152,7 +152,7 @@ public class InformationDisclosureDebugErrorsUnitTest
                 createHttpMessageWithRespBody(
                         "<html>" + DEFAULT_ERROR_MESSAGE.toUpperCase() + "</html>");
 
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
@@ -177,7 +177,7 @@ public class InformationDisclosureDebugErrorsUnitTest
 
             HttpMessage msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
 
-            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+            scanHttpResponseReceive(msg);
 
             assertThat(alertsRaised.size(), equalTo(0));
         }
@@ -187,7 +187,7 @@ public class InformationDisclosureDebugErrorsUnitTest
     public void passesIfResponseIsEmpty() throws HttpMalformedHeaderException {
         HttpMessage msg = createHttpMessageWithRespBody("");
 
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -200,7 +200,7 @@ public class InformationDisclosureDebugErrorsUnitTest
                         HttpResponseHeader.CONTENT_TYPE,
                         "application/octet-stream;charset=ISO-8859-1");
 
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -215,7 +215,7 @@ public class InformationDisclosureDebugErrorsUnitTest
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.HIGH);
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -230,7 +230,7 @@ public class InformationDisclosureDebugErrorsUnitTest
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -245,7 +245,7 @@ public class InformationDisclosureDebugErrorsUnitTest
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.LOW);
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getCweId(), equalTo(200));
@@ -264,7 +264,7 @@ public class InformationDisclosureDebugErrorsUnitTest
         HttpMessage msg =
                 createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE + "</html>");
 
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
@@ -278,7 +278,7 @@ public class InformationDisclosureDebugErrorsUnitTest
             String debugError = alternativeDebugErrors.get(i);
             msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
 
-            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+            scanHttpResponseReceive(msg);
 
             assertThat(alertsRaised.size(), equalTo(expectedAlerts));
         }
@@ -295,7 +295,7 @@ public class InformationDisclosureDebugErrorsUnitTest
         // Should NOT raise alert with default error messages loaded after changed definitions
         msg = createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE + "</html>");
 
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
 
@@ -304,7 +304,7 @@ public class InformationDisclosureDebugErrorsUnitTest
             String debugError = alternativeDebugErrors.get(i);
             msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
 
-            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+            scanHttpResponseReceive(msg);
 
             expectedAlerts++;
             assertThat(alertsRaised.size(), equalTo(expectedAlerts));

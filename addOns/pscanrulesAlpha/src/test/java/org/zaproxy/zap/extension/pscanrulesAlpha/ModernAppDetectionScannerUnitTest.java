@@ -46,7 +46,7 @@ public class ModernAppDetectionScannerUnitTest
         msg.setResponseBody(
                 "<html><head></head><body><H1>Nothing to see here...</H1></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -58,7 +58,7 @@ public class ModernAppDetectionScannerUnitTest
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseBody("<html><head></head><body><a href=\"#\">Link</a></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getEvidence(), is("<a href=\"#\">Link</a>"));
@@ -71,7 +71,7 @@ public class ModernAppDetectionScannerUnitTest
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseBody("<html><head></head><body><a href=\"#blah\">Link</a></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -84,7 +84,7 @@ public class ModernAppDetectionScannerUnitTest
         msg.setResponseBody(
                 "<html><head></head><body><a href=\"link\" target=\"_self\">Link</a></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(
@@ -99,7 +99,7 @@ public class ModernAppDetectionScannerUnitTest
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseBody("<html><head></head><body><a href=\"\">Link</a></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getEvidence(), is("<a href=\"\">Link</a>"));
@@ -113,7 +113,7 @@ public class ModernAppDetectionScannerUnitTest
         msg.setResponseBody(
                 "<html><head></head><body><script src=\"/script.js\"></script></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getEvidence(), is("<script src=\"/script.js\"></script>"));
@@ -127,7 +127,7 @@ public class ModernAppDetectionScannerUnitTest
         msg.setResponseBody(
                 "<html><head><script src=\"/script.js\"></script></head><body></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getEvidence(), is("<script src=\"/script.js\"></script>"));
@@ -141,7 +141,7 @@ public class ModernAppDetectionScannerUnitTest
         msg.setResponseBody(
                 "<html><head><script src=\"/script.js\"></script></head><body><a href=\"link\">link</a><noscript>You need to enable JavaScript to run this app.</noscript></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(

@@ -67,7 +67,7 @@ public class XChromeLoggerDataInfoLeakScannerUnitTest
         HttpMessage msg = createMessage();
         msg.setResponseBody("Some text <h1>Some Title Element</h1>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -78,7 +78,7 @@ public class XChromeLoggerDataInfoLeakScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(XCLD, XCLD_VALUE);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(XCLD_VALUE));
@@ -94,7 +94,7 @@ public class XChromeLoggerDataInfoLeakScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(XCPD, XCLD_VALUE);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(XCLD_VALUE));
@@ -112,7 +112,7 @@ public class XChromeLoggerDataInfoLeakScannerUnitTest
         String malformedEncodedValue = "ê" + XCLD_VALUE;
         msg.getResponseHeader().addHeader(XCPD, malformedEncodedValue);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(malformedEncodedValue));

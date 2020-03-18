@@ -71,7 +71,7 @@ public class PiiScannerCreditCardUnitTest extends PassiveScannerTest<PiiScanner>
         msg.setResponseBody("{\"cc\": \"" + cardNumber + "\"}");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));

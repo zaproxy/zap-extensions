@@ -41,8 +41,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class UserControlledCookieScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.usercontrolledcookie.";
 
@@ -151,23 +149,17 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, HtmlParameter param, String cookie) {
-        Alert alert =
-                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
-
-        alert.setDetail(
-                getDescriptionMessage(),
-                msg.getRequestHeader().getURI().toString(),
-                param.getName(),
-                "",
-                getExtraInfoMessage(msg, param, cookie),
-                getSolutionMessage(),
-                getReferenceMessage(),
-                "", // No evidence
-                20, // CWE-20: Improper Input Validation
-                20, // WASC-20: Improper Input Handling
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescriptionMessage())
+                .setParam(param.getName())
+                .setOtherInfo(getExtraInfoMessage(msg, param, cookie))
+                .setSolution(getSolutionMessage())
+                .setReference(getReferenceMessage())
+                .setCweId(20) // CWE-20: Improper Input Validation
+                .setWascId(20) // WASC-20: Improper Input Handling
+                .raise();
     }
 
     @Override
@@ -177,7 +169,7 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /*

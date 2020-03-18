@@ -38,12 +38,11 @@ public class RetrievedFromCacheScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.retrievedfromcache.";
     private static final int PLUGIN_ID = 10050;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(RetrievedFromCacheScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -96,27 +95,15 @@ public class RetrievedFromCacheScanner extends PluginPassiveScanner {
                                     logger.debug(
                                             msg.getRequestHeader().getURI().getURI()
                                                     + " was served from a cache, due to presence of a 'HIT' in the 'X-Cache' response header");
-                                Alert alert =
-                                        new Alert(
-                                                getPluginId(),
-                                                Alert.RISK_INFO,
-                                                Alert.CONFIDENCE_MEDIUM,
-                                                Constant.messages.getString(
-                                                        MESSAGE_PREFIX + "name"));
                                 // could be from HTTP/1.0 or HTTP/1.1. We don't know which.
-                                alert.setDetail(
-                                        getDescription(), // Description
-                                        msg.getRequestHeader().getURI().toString(), // URI
-                                        "", // Param
-                                        "", // Attack
-                                        "", // Other info:
-                                        getSolution(), // Solution
-                                        getReference(), // References
-                                        evidence, // Evidence
-                                        0, // 0 - not necessarily an issue at all
-                                        0, // 0 - not necessarily an issue at all
-                                        msg); // HttpMessage
-                                parent.raiseAlert(id, alert);
+                                newAlert()
+                                        .setRisk(Alert.RISK_INFO)
+                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                        .setDescription(getDescription())
+                                        .setSolution(getSolution())
+                                        .setReference(getReference())
+                                        .setEvidence(evidence)
+                                        .raise();
                                 return;
                             }
                         }
@@ -148,31 +135,24 @@ public class RetrievedFromCacheScanner extends PluginPassiveScanner {
                             logger.debug(
                                     msg.getRequestHeader().getURI().getURI()
                                             + " was served from a HTTP/1.1 cache, due to presence of a valid (non-negative decimal integer) 'Age' response header value");
-                        Alert alert =
-                                new Alert(
-                                        getPluginId(),
-                                        Alert.RISK_INFO,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        Constant.messages.getString(MESSAGE_PREFIX + "name"));
-                        alert.setDetail(
-                                getDescription(), // Description
-                                msg.getRequestHeader().getURI().toString(), // URI
-                                "", // Param
-                                "", // Attack
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX
-                                                + "extrainfo.http11ageheader"), // Other info: "Age"
+                        newAlert()
+                                .setRisk(Alert.RISK_INFO)
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setDescription(getDescription())
+                                .setOtherInfo(
+                                        Constant.messages.getString(
+                                                MESSAGE_PREFIX
+                                                        + "extrainfo.http11ageheader")) // Other
+                                // info:
+                                // "Age"
                                 // header implies a
                                 // HTTP/1.1
                                 // compliant cache
                                 // server.
-                                getSolution(), // Solution
-                                getReference(), // References
-                                evidence, // Evidence
-                                0, // 0 - not necessarily an issue at all
-                                0, // 0 - not necessarily an issue at all
-                                msg); // HttpMessage
-                        parent.raiseAlert(id, alert);
+                                .setSolution(getSolution())
+                                .setReference(getReference())
+                                .setEvidence(evidence)
+                                .raise();
                         return;
                     }
                 }

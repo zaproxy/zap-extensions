@@ -49,8 +49,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class TimestampDisclosureScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** a map of a regular expression pattern to details of the timestamp type found */
     static Map<Pattern, String> timestampPatterns = new HashMap<Pattern, String>();
 
@@ -179,25 +177,18 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
                                     continue;
                                 }
                             }
-                            Alert alert =
-                                    new Alert(
-                                            getPluginId(),
-                                            Alert.RISK_INFO,
-                                            Alert.CONFIDENCE_LOW,
-                                            getName() + " - " + timestampType);
-                            alert.setDetail(
-                                    getDescription() + " - " + timestampType,
-                                    msg.getRequestHeader().getURI().toString(),
-                                    "", // param
-                                    "", // attack
-                                    getExtraInfo(msg, evidence, timestamp), // other info
-                                    getSolution(),
-                                    getReference(),
-                                    evidence,
-                                    200, // Information Exposure,
-                                    13, // Information Leakage
-                                    msg);
-                            parent.raiseAlert(id, alert);
+                            newAlert()
+                                    .setName(getName() + " - " + timestampType)
+                                    .setRisk(Alert.RISK_INFO)
+                                    .setConfidence(Alert.CONFIDENCE_LOW)
+                                    .setDescription(getDescription() + " - " + timestampType)
+                                    .setOtherInfo(getExtraInfo(msg, evidence, timestamp))
+                                    .setSolution(getSolution())
+                                    .setReference(getReference())
+                                    .setEvidence(evidence)
+                                    .setCweId(200) // Information Exposure,
+                                    .setWascId(13) // Information Leakage
+                                    .raise();
                             // do NOT break at this point.. we need to find *all* the potential
                             // timestamps in the response..
                         }
@@ -216,7 +207,7 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
      */
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /**

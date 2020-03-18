@@ -44,7 +44,6 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
             "pscanrules.informationdisclosuresuspiciouscomments.";
     private static final int PLUGIN_ID = 10027;
 
-    private PassiveScanThread parent = null;
     public static final String suspiciousCommentsListDir = "xml";
     public static final String suspiciousCommentsListFile = "suspicious-comments.txt";
     private static final Logger logger =
@@ -121,21 +120,15 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
     }
 
     private void raiseAlert(HttpMessage msg, int id, String detail, int confidence) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, confidence, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                detail,
-                getSolution(),
-                "",
-                "", // No Evidence
-                200, // CWE Id 200 - Information Exposure
-                13, // WASC Id 13 - Info leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(confidence)
+                .setDescription(getDescription())
+                .setOtherInfo(detail)
+                .setSolution(getSolution())
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13) // WASC Id 13 - Info leakage
+                .raise();
     }
 
     private static List<Pattern> getPatterns() {
@@ -180,7 +173,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

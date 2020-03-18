@@ -43,7 +43,7 @@ public class XPoweredByHeaderInfoLeakScannerUnitTest
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -60,7 +60,7 @@ public class XPoweredByHeaderInfoLeakScannerUnitTest
                         + "X-Powered-By: Servlet/3.0\r\n");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -81,7 +81,7 @@ public class XPoweredByHeaderInfoLeakScannerUnitTest
                         + "X-Powered-By: ASP.NET\r\n");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -102,7 +102,7 @@ public class XPoweredByHeaderInfoLeakScannerUnitTest
                         + "x-pOwEReD-bY: Servlet/3.0\r\n");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));

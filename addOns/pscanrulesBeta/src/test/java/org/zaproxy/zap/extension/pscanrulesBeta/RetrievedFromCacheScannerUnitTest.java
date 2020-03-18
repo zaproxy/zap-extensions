@@ -64,7 +64,7 @@ public class RetrievedFromCacheScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -76,7 +76,7 @@ public class RetrievedFromCacheScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -87,7 +87,7 @@ public class RetrievedFromCacheScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(X_CACHE, "");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -99,7 +99,7 @@ public class RetrievedFromCacheScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(xCacheValue));
@@ -112,7 +112,7 @@ public class RetrievedFromCacheScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(xCacheValue));
@@ -125,7 +125,7 @@ public class RetrievedFromCacheScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(X_CACHE, xCacheValue);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("HIT from proxy.domain.tld"));
@@ -137,7 +137,7 @@ public class RetrievedFromCacheScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(AGE, "");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -149,7 +149,7 @@ public class RetrievedFromCacheScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(AGE, ageValue);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(AGE + ": " + ageValue));

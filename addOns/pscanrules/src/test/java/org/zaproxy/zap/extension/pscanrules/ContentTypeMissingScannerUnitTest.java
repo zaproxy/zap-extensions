@@ -60,7 +60,7 @@ public class ContentTypeMissingScannerUnitTest
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
         msg.setResponseBody("");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -72,7 +72,7 @@ public class ContentTypeMissingScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html;charset=ISO-8859-1");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -84,7 +84,7 @@ public class ContentTypeMissingScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -99,7 +99,7 @@ public class ContentTypeMissingScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(

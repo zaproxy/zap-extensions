@@ -39,8 +39,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class HashDisclosureScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** a map of a regular expression pattern to details of the Hash type found */
     static Map<Pattern, HashAlert> hashPatterns = new LinkedHashMap<Pattern, HashAlert>();
 
@@ -231,7 +229,7 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
         while (patternIterator.hasNext()) {
             Pattern hashPattern = patternIterator.next();
             HashAlert hashalert = hashPatterns.get(hashPattern);
-            if (hashalert.getReliability() < minimumConfidence) {
+            if (hashalert.getConfidence() < minimumConfidence) {
                 continue;
             }
             hashType = hashalert.getDescription();
@@ -245,25 +243,18 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
                         log.debug("Found a match for hash type " + hashType + ":" + evidence);
                     if (evidence != null && evidence.length() > 0) {
                         // we found something
-                        Alert alert =
-                                new Alert(
-                                        getPluginId(),
-                                        hashalert.getRisk(),
-                                        hashalert.getReliability(),
-                                        getName() + " - " + hashType);
-                        alert.setDetail(
-                                getDescription() + " - " + hashType,
-                                msg.getRequestHeader().getURI().toString(),
-                                "", // param
-                                "", // attack
-                                getExtraInfo(msg, evidence), // other info
-                                getSolution(),
-                                getReference(),
-                                evidence,
-                                200, // Information Exposure,
-                                13, // Information Leakage
-                                msg);
-                        parent.raiseAlert(id, alert);
+                        newAlert()
+                                .setName(getName() + " - " + hashType)
+                                .setRisk(hashalert.getRisk())
+                                .setConfidence(hashalert.getConfidence())
+                                .setDescription(getDescription() + " - " + hashType)
+                                .setOtherInfo(getExtraInfo(msg, evidence))
+                                .setSolution(getSolution())
+                                .setReference(getReference())
+                                .setEvidence(evidence)
+                                .setCweId(200) // Information Exposure,
+                                .setWascId(13) // Information Leakage
+                                .raise();
                         // do NOT break at this point.. we need to find *all* the potential hashes
                         // in the response..
                     }
@@ -279,7 +270,7 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
      */
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /**
@@ -333,7 +324,7 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
     static class HashAlert {
         private String description;
         private int risk;
-        private int reliability;
+        private int confidence;
 
         public String getDescription() {
             return description;
@@ -343,14 +334,14 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
             return risk;
         }
 
-        public int getReliability() {
-            return reliability;
+        public int getConfidence() {
+            return confidence;
         }
 
-        public HashAlert(String description, int risk, int reliability) {
+        public HashAlert(String description, int risk, int confidence) {
             this.description = description;
             this.risk = risk;
-            this.reliability = reliability;
+            this.confidence = confidence;
         }
     }
 }

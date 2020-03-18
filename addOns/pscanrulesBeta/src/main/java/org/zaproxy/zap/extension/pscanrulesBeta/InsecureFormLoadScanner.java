@@ -37,8 +37,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class InsecureFormLoadScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.insecureformload.";
 
@@ -96,23 +94,16 @@ public class InsecureFormLoadScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, Element formElement) {
-        Alert alert =
-                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
-
-        alert.setDetail(
-                getDescriptionMessage(),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                getExtraInfoMessage(msg, formElement),
-                getSolutionMessage(),
-                getReferenceMessage(),
-                "", // No evidence
-                16, // CWE-16: Configuration
-                15, // WASC-15: Application Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescriptionMessage())
+                .setOtherInfo(getExtraInfoMessage(msg, formElement))
+                .setSolution(getSolutionMessage())
+                .setReference(getReferenceMessage())
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .raise();
     }
 
     @Override
@@ -122,7 +113,7 @@ public class InsecureFormLoadScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /*

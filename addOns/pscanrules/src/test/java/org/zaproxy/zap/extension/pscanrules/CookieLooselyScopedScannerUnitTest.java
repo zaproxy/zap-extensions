@@ -50,7 +50,7 @@ public class CookieLooselyScopedScannerUnitTest
         msg.setRequestHeader("GET /admin/roles/ HTTP/1.1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -64,7 +64,7 @@ public class CookieLooselyScopedScannerUnitTest
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -79,7 +79,7 @@ public class CookieLooselyScopedScannerUnitTest
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -94,7 +94,7 @@ public class CookieLooselyScopedScannerUnitTest
                 .setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=local.yahoo.com;");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -108,7 +108,7 @@ public class CookieLooselyScopedScannerUnitTest
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=tEst.org;");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -125,7 +125,7 @@ public class CookieLooselyScopedScannerUnitTest
                 .setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=test.example.com;");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -139,7 +139,7 @@ public class CookieLooselyScopedScannerUnitTest
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=example.com;");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -155,7 +155,7 @@ public class CookieLooselyScopedScannerUnitTest
                 .setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=stage.example.com;");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -169,7 +169,7 @@ public class CookieLooselyScopedScannerUnitTest
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.example.com");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -183,7 +183,7 @@ public class CookieLooselyScopedScannerUnitTest
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=com");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then = No exception.
     }
@@ -197,7 +197,7 @@ public class CookieLooselyScopedScannerUnitTest
                 .setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=subdomain.intranet");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then = No exception.
     }

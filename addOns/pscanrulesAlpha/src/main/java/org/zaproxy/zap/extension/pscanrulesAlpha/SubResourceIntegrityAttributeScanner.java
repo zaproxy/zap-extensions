@@ -89,8 +89,6 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.sri-integrity.";
 
-    private PassiveScanThread parent;
-
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
         // do nothing
@@ -105,26 +103,16 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
                 .filter(unsafeSubResource(msg.getRequestHeader().getHostName()))
                 .forEach(
                         element -> {
-                            Alert alert =
-                                    new Alert(
-                                            getPluginId(),
-                                            Alert.RISK_MEDIUM,
-                                            Alert.CONFIDENCE_HIGH,
-                                            getName());
-
-                            alert.setDetail(
-                                    getString("desc"),
-                                    msg.getRequestHeader().getURI().toString(),
-                                    "",
-                                    "",
-                                    "",
-                                    getString("soln"),
-                                    getString("refs"),
-                                    element.toString(),
-                                    16, // CWE CATEGORY: Configuration
-                                    15, // Application Misconfiguration
-                                    msg);
-                            parent.raiseAlert(id, alert);
+                            newAlert()
+                                    .setRisk(Alert.RISK_MEDIUM)
+                                    .setConfidence(Alert.CONFIDENCE_HIGH)
+                                    .setDescription(getString("desc"))
+                                    .setSolution(getString("soln"))
+                                    .setReference(getString("refs"))
+                                    .setEvidence(element.toString())
+                                    .setCweId(16) // CWE CATEGORY: Configuration
+                                    .setWascId(15) // Application Misconfiguration
+                                    .raise();
                         });
     }
 
@@ -138,7 +126,7 @@ public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

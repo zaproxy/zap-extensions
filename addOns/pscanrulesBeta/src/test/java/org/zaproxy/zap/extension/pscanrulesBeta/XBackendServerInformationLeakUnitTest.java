@@ -53,7 +53,7 @@ public class XBackendServerInformationLeakUnitTest
         // Given
         HttpMessage msg = createMessage();
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -64,7 +64,7 @@ public class XBackendServerInformationLeakUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(XBS_HEADER, HEADER_VALUE);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // THen
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(HEADER_VALUE));
