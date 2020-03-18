@@ -45,9 +45,6 @@ public class ProcessChecker extends TimerTask {
     }
 
     public void run() {
-        if (System.currentTimeMillis() - scheduledExecutionTime() > 5000) {
-            return;
-        }
         long timePassed = (scheduledExecutionTime() - timeStarted) / 1000;
         if (timePassed > 0) {
             int totalDirs = 1;
