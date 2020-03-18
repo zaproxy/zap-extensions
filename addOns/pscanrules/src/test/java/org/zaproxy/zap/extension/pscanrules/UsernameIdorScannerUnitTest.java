@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.users.User;
 
 public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdorScanner> {
 
@@ -46,7 +48,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
     @Before
     public void before() throws URIException {
 
-        rule.setUsers("guest");
+        when(passiveScanData.getUsers()).thenReturn(Arrays.asList(new User(1, "guest")));
 
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
@@ -66,7 +68,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
         // Given
         msg.setResponseBody("Some text <h1>Some Title Element</h1>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -77,7 +79,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
         msg.setResponseBody(
                 "Some text <h1>Some Title Element</h1><i>adb831a7fdd83dd1e2a309ce7591dff8</i>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -88,7 +90,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
         msg.setResponseBody(
                 "Some text <h1>Some Title Element</h1><i>084E0343A0486fF05530DF6C705C8Bb4</i>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getEvidence(), "084E0343A0486fF05530DF6C705C8Bb4");
@@ -100,7 +102,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
         msg.setResponseBody(
                 "Some text <h1>Some Title Element</h1><b>84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec</b>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getEvidence(), GUEST_SHA1);
@@ -118,7 +120,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
                         + GUEST_SHA1
                         + "</b>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 2);
         assertEquals(alertsRaised.get(0).getEvidence(), GUEST_SHA1);
@@ -135,7 +137,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
                         + "pulvinar convallis. Maecenas laoreet fermentum tempor. "
                         + "Nulla et.</p>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getEvidence(), GUEST_MD5);
@@ -147,7 +149,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
         msg.getResponseHeader().setHeader("X-Test-Thing", ADMIN_MD5);
         msg.setResponseBody("Some text <h1>Some Title Element</h1>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getEvidence(), ADMIN_MD5);
@@ -161,7 +163,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
         List<String> testUsers = Arrays.asList("foobar");
         UsernameIdorScanner.setPayloadProvider(() -> testUsers);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getEvidence(), FOOBAR_MD2);

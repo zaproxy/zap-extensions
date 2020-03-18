@@ -12,7 +12,7 @@ java {
 val nanohttpdVersion = "2.3.1"
 
 dependencies {
-    compileOnly("org.zaproxy:zap:2.7.0")
+    compileOnly("org.zaproxy:zap:2.9.0")
 
     api("junit:junit:4.11")
 
