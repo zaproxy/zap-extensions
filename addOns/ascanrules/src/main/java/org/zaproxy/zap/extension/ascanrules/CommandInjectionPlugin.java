@@ -138,16 +138,15 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // OS_PAYLOADS.put("'|'ld", null);
 
         /**
-         * Null Byte Payloads. Say NIX OS is there and original input: "image" Vulnerable
-         * application is executing command as "cat" + <input value>+ ".jpeg". ZAP payload: ";cat
-         * /etc/passwd" final value passed to Vulnerable application is "image;cat /etc/passwd".
-         * Command executed by application "cat image;cat /etc/passwd.jpeg" and it will not succeed
-         * but if we add null byte to the payload then command executed by application: "cat
-         * image;cat /etc/passwd\0.jpeg" and hence .jpeg will be ignored and attack will succeed.
-         * Here we are not adding null byte before the payload i.e. "image\0;cat /etc/passwd" reason
-         * is then the underline C/C++ utility stops execution as it finds null byte.
-         *
-         * <p>More information:
+         * Null Byte Payloads. Say NIX OS is there and original input is "image". Now Vulnerable
+         * application is executing command as "cat" + <input value>+ ".jpeg". If ZAP payload is
+         * ";cat /etc/passwd" then the final value passed to Vulnerable application is "image;cat
+         * /etc/passwd" and Command executed by application is "cat image;cat /etc/passwd.jpeg" and
+         * it will not succeed but if we add null byte to the payload then command executed by
+         * application will be "cat image;cat /etc/passwd\0.jpeg" and hence .jpeg will be ignored
+         * and attack will succeed. Here we are not adding null byte before the payload i.e.
+         * "image\0;cat /etc/passwd" reason is then the underline C/C++ utility stops execution as
+         * it finds null byte. More information:
          * http://projects.webappsec.org/w/page/13246949/Null%20Byte%20Injection
          */
         // No quote payloads
