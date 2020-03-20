@@ -85,6 +85,9 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
             while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
                 String elStr = el.toString();
                 searchPatterns(evidence, elStr);
+                if (evidence.length() != 0) {
+                    break;
+                }
                 offset = el.getEnd();
             }
         } else if (msg.getResponseHeader().isJavaScript()) {
@@ -143,7 +146,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
                     if (!line.startsWith("#") && line.length() > 0) {
-                        addPatterns(line, defaultPatterns);
+                        addPattern(line, defaultPatterns);
                     }
                 }
             }
@@ -162,11 +165,11 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     private static void loadPayload() {
         patterns = new HashSet<>(defaultPatterns);
         for (String line : getJsFunctionPayloads().get()) {
-            addPatterns(line, patterns);
+            addPattern(line, patterns);
         }
     }
 
-    private static void addPatterns(String line, Set<Pattern> set) {
+    private static void addPattern(String line, Set<Pattern> set) {
         set.add(Pattern.compile(Pattern.quote(line), Pattern.CASE_INSENSITIVE));
     }
 
