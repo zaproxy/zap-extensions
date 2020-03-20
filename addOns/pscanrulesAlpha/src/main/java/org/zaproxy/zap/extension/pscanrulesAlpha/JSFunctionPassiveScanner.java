@@ -167,7 +167,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     }
 
     private static void addPatterns(String line, Set<Pattern> set) {
-        set.add(Pattern.compile("\\b" + Pattern.quote(line) + "\\b", Pattern.CASE_INSENSITIVE));
+        set.add(Pattern.compile(Pattern.quote(line), Pattern.CASE_INSENSITIVE));
     }
 
     public static void setPayloadProvider(Supplier<Iterable<String>> provider) {

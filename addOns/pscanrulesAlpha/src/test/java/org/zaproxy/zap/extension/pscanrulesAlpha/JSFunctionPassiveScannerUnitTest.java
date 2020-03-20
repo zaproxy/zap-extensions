@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.nio.file.Files;
@@ -69,6 +70,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
+        assertEquals(alertsRaised.get(0).getEvidence(), "eval");
     }
 
     @Test
@@ -86,6 +88,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
+        assertEquals(alertsRaised.get(0).getEvidence(), "bypassSecurityTrustHtml");
     }
 
     @Test
@@ -120,9 +123,9 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
     public void shouldAlertGivenCustomPayloadFunctionMatch()
             throws HttpMalformedHeaderException, URIException {
         // Given
-        String body = "Some text <script>badFunction()</script>\nLine 2\n";
+        String body = "Some text <script>$badFunction()</script>\nLine 2\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
-        List<String> functions = Collections.singletonList("badFunction");
+        List<String> functions = Collections.singletonList("$badFunction");
         JSFunctionPassiveScanner.setPayloadProvider(() -> functions);
 
         // When
@@ -130,6 +133,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
+        assertEquals(alertsRaised.get(0).getEvidence(), "$badFunction");
     }
 
     @Test
@@ -155,7 +159,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         String body =
                 "<h1>Some text <script>Something innocent happening here</script></h1>\n"
                         + "<p><b>Just some words going on</b>\n"
-                        + "<script>eval()</script></p>\n";
+                        + "<script>$eval()</script></p>\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         // When
@@ -163,6 +167,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
+        assertEquals(alertsRaised.get(0).getEvidence(), "eval");
     }
 
     @Test

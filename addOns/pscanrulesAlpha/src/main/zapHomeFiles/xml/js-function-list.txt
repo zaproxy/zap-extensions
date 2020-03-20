@@ -1,10 +1,11 @@
 # This file lists all dangerous JS functions being scanned for.
-# Searching is done via whole word match on each line item [e.g. 'eval' below will match with '$eval()'].
 bypassSecurityTrustHtml
 bypassSecurityTrustScript
 bypassSecurityTrustStyle
 bypassSecurityTrustUrl
 bypassSecurityTrustResourceUrl
 trustAsHtml
+$sce.trustAsHtml
+$eval
+$evalAsync
 eval
-evalAsync
