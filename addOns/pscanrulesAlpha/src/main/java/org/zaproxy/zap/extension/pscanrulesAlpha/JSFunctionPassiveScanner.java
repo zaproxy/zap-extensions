@@ -59,7 +59,6 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
 
     private static List<Pattern> defaultPatterns = null;
     private static List<Pattern> patterns = null;
-    private PassiveScanThread parent = null;
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -110,21 +109,15 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String evidence) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_LOW, getName());
-        alert.setDetail(
-                this.getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "", // Param, not relevant for this vulnerability
-                "", // Attack, not relevant for passive vulnerabilities
-                "", // Other info not specified in message bundle
-                this.getSolution(),
-                this.getReference(),
-                evidence,
-                749, // CWE-749: Exposed Dangerous Method or Function
-                0, // WASC Id - return 0 if no relevant one
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(getDescription())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(749) // CWE-749: Exposed Dangerous Method or Function
+                .raise();
     }
 
     private static void createDefaultPatterns() {
@@ -182,7 +175,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
