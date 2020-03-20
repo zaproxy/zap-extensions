@@ -200,7 +200,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals(alertsRaised.get(0).getEvidence(), "eval");
+        assertEquals(alertsRaised.get(0).getEvidence(), "bypassSecurityTrustHtml");
     }
 
     private HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)
