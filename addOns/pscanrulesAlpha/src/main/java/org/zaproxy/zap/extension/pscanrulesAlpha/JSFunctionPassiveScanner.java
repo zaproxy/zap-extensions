@@ -26,7 +26,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -56,8 +58,8 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
 
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
-    private static HashSet<Pattern> defaultPatterns = null;
-    private static HashSet<Pattern> patterns = null;
+    private static Set<Pattern> defaultPatterns = null;
+    private static Set<Pattern> patterns = null;
     private PassiveScanThread parent = null;
 
     @Override
@@ -71,8 +73,8 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                 || (!msg.getResponseHeader().isHtml() && !msg.getResponseHeader().isJavaScript())) {
             return;
         }
-        if (patterns == null) {
-            createPatterns();
+        if (defaultPatterns == null) {
+            createDefaultPatterns();
         }
         loadPayload();
         StringBuilder evidence = new StringBuilder();
@@ -82,26 +84,26 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
             int offset = 0;
             while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
                 String elStr = el.toString();
-                for (Pattern pattern : patterns) {
-                    if (pattern.matcher(elStr).find()) {
-                        evidence.append(elStr);
-                        break; // Only need to record this script once
-                    }
-                }
+                searchPatterns(evidence, elStr);
                 offset = el.getEnd();
             }
         } else if (msg.getResponseHeader().isJavaScript()) {
             // Raw search on response body
             String content = msg.getResponseBody().toString();
-            for (Pattern pattern : patterns) {
-                if (pattern.matcher(content).find()) {
-                    evidence.append(pattern);
-                    break; // Only need to record one instance of vulnerability
-                }
-            }
+            searchPatterns(evidence, content);
         }
         if (evidence.length() > 0) {
             this.raiseAlert(msg, id, evidence.toString());
+        }
+    }
+
+    private void searchPatterns(StringBuilder evidence, String data) {
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(data);
+            if (matcher.find()) {
+                evidence.append(matcher.group());
+                break; // Only need to record one instance of vulnerability
+            }
         }
     }
 
@@ -123,8 +125,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
         parent.raiseAlert(id, alert);
     }
 
-    private static void createPatterns() {
-        patterns = new HashSet<>();
+    private static void createDefaultPatterns() {
         defaultPatterns = new HashSet<>();
         try {
             File f =
@@ -142,8 +143,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
                     if (!line.startsWith("#") && line.length() > 0) {
-                        defaultPatterns.add(
-                                Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+                        addPatterns(line, defaultPatterns);
                     }
                 }
             }
@@ -160,10 +160,14 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     }
 
     private static void loadPayload() {
-        patterns = defaultPatterns;
+        patterns = new HashSet<>(defaultPatterns);
         for (String line : getJsFunctionPayloads().get()) {
-            patterns.add(Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
+            addPatterns(line, patterns);
         }
+    }
+
+    private static void addPatterns(String line, Set<Pattern> set) {
+        set.add(Pattern.compile("\\b" + Pattern.quote(line) + "\\b", Pattern.CASE_INSENSITIVE));
     }
 
     public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
