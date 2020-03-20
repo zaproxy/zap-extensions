@@ -177,8 +177,6 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     /** the logger object */
     private static final Logger log = Logger.getLogger(TestPathTraversal.class);
 
-    private boolean includeNullByteInjectionPayload = false;
-
     /**
      * returns the plugin id
      *
@@ -252,9 +250,8 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             int winCount = 0;
             int dirCount = 0;
             int localTraversalLength = 0;
-            int index = -1;
             String extension = null;
-
+            boolean includeNullByteInjectionPayload = false;
             // DEBUG only
             if (log.isDebugEnabled()) {
                 log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
@@ -293,7 +290,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     localTraversalLength = 4;
                     includeNullByteInjectionPayload = true;
                     if (value != null) {
-                        index = value.lastIndexOf(".");
+                        int index = value.lastIndexOf(".");
                         if (index != -1) {
                             extension = value.substring(index);
                         }
@@ -331,10 +328,8 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         return;
                     }
                     // Null Byte is appended to the value for ignoring the postfix data appended
-                    // to the input
-                    // for more information:
-                    // https://owasp.org/www-community/attacks/Embedding_Null_Code for more
-                    // information
+                    // to the input for more information:
+                    // https://owasp.org/www-community/attacks/Embedding_Null_Code
                     if (includeNullByteInjectionPayload) {
                         if (sendAndCheckPayload(
                                         param,
@@ -343,7 +338,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                                 || isStop()) {
                             return;
                         }
-                        if (index != -1) {
+                        if (extension != null) {
                             if (sendAndCheckPayload(
                                             param,
                                             WIN_LOCAL_FILE_TARGETS[h]
@@ -387,7 +382,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                             return;
                         }
 
-                        if (index != -1) {
+                        if (extension != null) {
                             if (sendAndCheckPayload(
                                             param,
                                             NIX_LOCAL_FILE_TARGETS[h]

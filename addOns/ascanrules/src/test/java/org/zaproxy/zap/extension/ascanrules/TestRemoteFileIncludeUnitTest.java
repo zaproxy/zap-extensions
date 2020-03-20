@@ -50,11 +50,7 @@ public class TestRemoteFileIncludeUnitTest
                     protected String getContent(IHTTPSession session) {
                         String value = getFirstParamValue(session, "p");
                         if (value.contains(NULL_BYTE_CHARACTER)) {
-                            return "<!doctype html><html itemscope=\"\" itemtype=\"http://schema.org/WebPage\" "
-                                    + "lang=\"en-IN\"><head><meta charset=\"UTF-8\"><meta content=\"origin\" "
-                                    + "name=\"referrer\"><meta content=\"/logos/doodles/2020/sir-john-tenniels-200th-birthday-6753651837108300.5-l.png\" "
-                                    + "itemprop=\"image\"><meta content=\"origin\" name=\"referrer\"><title>Google</title> "
-                                    + "</html>";
+                            return "<html><title>Google</title></html>";
                         } else {
                             return "<html></html>";
                         }

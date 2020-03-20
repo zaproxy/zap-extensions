@@ -189,8 +189,6 @@ public class CommandInjectionPluginUnitTest
     public void shouldRaiseAlertIfResponseHasPasswdFileContentAndPayloadIsNullByteBased()
             throws HttpMalformedHeaderException {
         // Given
-        // While checking for relevant handler in HTTPDTestServer, it checks handler
-        // Name with the URI so ensure you pass URI same as ServerHandler Name
         NullByteVulnerableServerHandler vulnServerHandler =
                 new NullByteVulnerableServerHandler("/", "p", Tech.Linux);
         nano.addHandler(vulnServerHandler);

@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP Development Team
+ * Copyright 2020 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,9 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /**
- * @author KSASAN General Null Byte Vulnerable Server Handler, used by {@link
- *     CommandInjectionPluginUnitTest} and {@link TestPathTraversalUnitTest}
+ * General Null Byte Vulnerable Server Handler
+ *
+ * @author KSASAN preetkaran20@gmail.com
  */
 public class NullByteVulnerableServerHandler extends NanoServerHandler {
 
