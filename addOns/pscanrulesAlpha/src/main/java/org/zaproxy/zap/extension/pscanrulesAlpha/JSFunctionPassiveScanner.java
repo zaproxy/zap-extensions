@@ -23,10 +23,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,8 +57,8 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
 
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
-    private static Set<Pattern> defaultPatterns = null;
-    private static Set<Pattern> patterns = null;
+    private static List<Pattern> defaultPatterns = null;
+    private static List<Pattern> patterns = null;
     private PassiveScanThread parent = null;
 
     @Override
@@ -129,7 +128,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     }
 
     private static void createDefaultPatterns() {
-        defaultPatterns = new HashSet<>();
+        defaultPatterns = new ArrayList<>();
         try {
             File f =
                     new File(
@@ -163,14 +162,14 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     }
 
     private static void loadPayload() {
-        patterns = new HashSet<>(defaultPatterns);
+        patterns = new ArrayList<>(defaultPatterns);
         for (String line : getJsFunctionPayloads().get()) {
             addPattern(line, patterns);
         }
     }
 
-    private static void addPattern(String line, Set<Pattern> set) {
-        set.add(Pattern.compile(Pattern.quote(line), Pattern.CASE_INSENSITIVE));
+    private static void addPattern(String line, List<Pattern> list) {
+        list.add(Pattern.compile(Pattern.quote(line), Pattern.CASE_INSENSITIVE));
     }
 
     public static void setPayloadProvider(Supplier<Iterable<String>> provider) {

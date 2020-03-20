@@ -23,7 +23,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,7 +70,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals(alertsRaised.get(0).getEvidence(), "eval");
+        assertEquals("eval", alertsRaised.get(0).getEvidence());
     }
 
     @Test
@@ -89,7 +88,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals(alertsRaised.get(0).getEvidence(), "bypassSecurityTrustHtml");
+        assertEquals("bypassSecurityTrustHtml", alertsRaised.get(0).getEvidence());
     }
 
     @Test
@@ -134,7 +133,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals(alertsRaised.get(0).getEvidence(), "$badFunction");
+        assertEquals("$badFunction", alertsRaised.get(0).getEvidence());
     }
 
     @Test
@@ -168,7 +167,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals(alertsRaised.get(0).getEvidence(), "eval");
+        assertEquals("eval", alertsRaised.get(0).getEvidence());
     }
 
     @Test
@@ -186,9 +185,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertTrue(
-                alertsRaised.get(0).getEvidence().equals("bypassSecurityTrustHtml")
-                        || alertsRaised.get(0).getEvidence().equals("eval"));
+        assertEquals("eval", alertsRaised.get(0).getEvidence());
     }
 
     @Test
@@ -203,9 +200,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertTrue(
-                alertsRaised.get(0).getEvidence().equals("bypassSecurityTrustHtml")
-                        || alertsRaised.get(0).getEvidence().equals("eval"));
+        assertEquals("bypassSecurityTrustHtml", alertsRaised.get(0).getEvidence());
     }
 
     private HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)
