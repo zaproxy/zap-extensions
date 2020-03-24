@@ -219,7 +219,6 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
                             .setDescription(
                                     Constant.messages.getString(
                                             "pscanrules.authenticationcredentialscaptured.desc"))
-                            .setUri(uri)
                             .setOtherInfo(extraInfo)
                             .setSolution(
                                     Constant.messages.getString(

@@ -381,7 +381,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                     .setSolution(getSolution())
                                     .setReference(getReference())
                                     .setEvidence(base64evidence)
-                                    .setCweId(642) // CWE-200 = Information Exposure
+                                    .setCweId(200) // CWE-200 = Information Exposure
                                     .setWascId(13) // Information Leakage
                                     .raise();
                             if (!AlertThreshold.LOW.equals(getAlertThreshold())) {

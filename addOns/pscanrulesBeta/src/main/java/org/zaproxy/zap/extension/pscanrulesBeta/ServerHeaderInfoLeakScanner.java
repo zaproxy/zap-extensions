@@ -78,8 +78,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
                                     "pscanbeta.serverheaderinfoleak.general.soln"),
                             Constant.messages.getString(
                                     "pscanbeta.serverheaderinfoleak.general.refs"),
-                            serverDirective,
-                            msg);
+                            serverDirective);
                 } else if (Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
                     raiseAlert(
                             Alert.RISK_INFO,
@@ -90,8 +89,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
                                     "pscanbeta.serverheaderinfoleak.general.soln"),
                             Constant.messages.getString(
                                     "pscanbeta.serverheaderinfoleak.general.refs"),
-                            serverDirective,
-                            msg);
+                            serverDirective);
                 }
             }
         }
@@ -122,9 +120,9 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
             String desc,
             String soln,
             String refs,
-            String evidence,
-            HttpMessage msg) {
+            String evidence) {
         newAlert()
+                .setName(name)
                 .setRisk(risk)
                 .setConfidence(confidence)
                 .setDescription(desc)
