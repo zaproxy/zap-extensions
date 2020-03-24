@@ -225,7 +225,7 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
         HttpMessage msg = createHttpMessageWithRespBody("", "text/html;charset=ISO-8859-1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -242,7 +242,7 @@ public class InformationDisclosureSuspiciousCommentsUnitTest
                         "application/octet-stream;charset=ISO-8859-1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());

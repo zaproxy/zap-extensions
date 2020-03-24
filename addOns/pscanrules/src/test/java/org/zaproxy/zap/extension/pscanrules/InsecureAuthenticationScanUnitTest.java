@@ -58,7 +58,7 @@ public class InsecureAuthenticationScanUnitTest
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));

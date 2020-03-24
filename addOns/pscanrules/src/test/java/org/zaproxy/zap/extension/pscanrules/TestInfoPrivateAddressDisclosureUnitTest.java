@@ -344,7 +344,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
     @Test
     public void testOfScanHttpRequestSend() throws HttpMalformedHeaderException {
         // the method should do nothing (test just for code coverage)
-        rule.scanHttpRequestSend(null, -1);
+        scanHttpRequestSend(createHttpMessage("10.0.2.2"));
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
