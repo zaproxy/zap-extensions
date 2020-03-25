@@ -42,12 +42,11 @@ public class XChromeLoggerDataInfoLeakScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.xchromeloggerdata.";
     private static final int PLUGIN_ID = 10052;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(XChromeLoggerDataInfoLeakScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -75,25 +74,17 @@ public class XChromeLoggerDataInfoLeakScanner extends PluginPassiveScanner {
 
         if (!loggerHeaders.isEmpty()) { // Header(s) Found
             for (String xcldField : loggerHeaders) {
-                Alert alert =
-                        new Alert(
-                                getPluginId(),
-                                Alert.RISK_MEDIUM,
-                                Alert.CONFIDENCE_HIGH, // PluginID, Risk, Reliability
-                                getName());
-                alert.setDetail(
-                        getDescription(), // Description
-                        msg.getRequestHeader().getURI().toString(), // URI
-                        "", // Param
-                        "", // Attack
-                        getOtherInfo(xcldField), // Other info
-                        getSolution(), // Solution
-                        getReference(), // References
-                        xcldField, // Evidence
-                        200, // CWE Id
-                        13, // WASC Id
-                        msg); // HttpMessage
-                parent.raiseAlert(id, alert);
+                newAlert()
+                        .setRisk(Alert.RISK_MEDIUM)
+                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                        .setDescription(getDescription())
+                        .setOtherInfo(getOtherInfo(xcldField))
+                        .setSolution(getSolution())
+                        .setReference(getReference())
+                        .setEvidence(xcldField)
+                        .setCweId(200)
+                        .setWascId(13)
+                        .raise();
             }
         }
         if (logger.isDebugEnabled()) {

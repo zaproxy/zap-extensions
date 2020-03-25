@@ -51,7 +51,7 @@ public class ContentSecurityPolicyScannerUnitTest
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
 

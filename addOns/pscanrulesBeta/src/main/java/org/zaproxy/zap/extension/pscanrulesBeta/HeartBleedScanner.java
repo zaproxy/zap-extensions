@@ -119,22 +119,18 @@ public class HeartBleedScanner extends PluginPassiveScanner {
     private void raiseAlert(HttpMessage msg, int id, String fullVersionString) {
         // Suspicious, but not a warning, because the reported version could have a
         // security back-port.
-        Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, getName());
-
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "", // param
-                "", // attack
-                getExtraInfo(fullVersionString), // other info
-                getSolution(),
-                getReference(),
-                fullVersionString,
-                119, // CWE 119: Failure to Constrain Operations within the Bounds of a
+        newAlert()
+                .setRisk(Alert.RISK_HIGH)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(getDescription())
+                .setOtherInfo(getExtraInfo(fullVersionString))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(fullVersionString)
+                .setCweId(119) // CWE 119: Failure to Constrain Operations within the Bounds of a
                 // Memory Buffer
-                20, // WASC-20: Improper Input Handling
-                msg);
-        parent.raiseAlert(id, alert);
+                .setWascId(20) // WASC-20: Improper Input Handling
+                .raise();
     }
 
     /**

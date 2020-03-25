@@ -43,8 +43,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class UserControlledHTMLAttributesScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.usercontrolledhtmlattributes.";
 
@@ -237,27 +235,23 @@ public class UserControlledHTMLAttributesScanner extends PluginPassiveScanner {
             Attribute htmlAttribute,
             HtmlParameter param,
             String userControlledValue) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getName());
-
-        alert.setDetail(
-                getDescriptionMessage(),
-                msg.getRequestHeader().getURI().toString(),
-                param.getName(),
-                "",
-                getExtraInfoMessage(
-                        msg,
-                        htmlElement.getName(),
-                        htmlAttribute.getName(),
-                        param,
-                        userControlledValue),
-                getSolutionMessage(),
-                getReferenceMessage(),
-                "", // No evidence
-                20, // CWE-20: Improper Input Validation
-                20, // WASC-20: Improper Input Handling
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(getDescriptionMessage())
+                .setParam(param.getName())
+                .setOtherInfo(
+                        getExtraInfoMessage(
+                                msg,
+                                htmlElement.getName(),
+                                htmlAttribute.getName(),
+                                param,
+                                userControlledValue))
+                .setSolution(getSolutionMessage())
+                .setReference(getReferenceMessage())
+                .setCweId(20) // CWE-20: Improper Input Validation
+                .setWascId(20) // WASC-20: Improper Input Handling
+                .raise();
     }
 
     @Override
@@ -267,7 +261,7 @@ public class UserControlledHTMLAttributesScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /*

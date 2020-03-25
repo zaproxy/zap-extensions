@@ -45,7 +45,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
         HttpMessage msg =
                 createHtmlResponse(uri, "<script src=\"https://example.com/script.js\"></script>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -57,7 +57,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
         HttpMessage msg =
                 createHtmlResponse(uri, "<script src=\"https://example.com/script.js\"></script>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -68,7 +68,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
         String uri = "https://example.com/";
         HttpMessage msg = createHtmlResponse(uri, "");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -85,7 +85,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
                         // https://raw.githubusercontent.com/angular/angular.js/master/src/ng/directive/attrs.js
                         "/** <img src=\"http://www.gravatar.com/avatar/{{hash}}\" alt=\"Description\"/> */");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -98,7 +98,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
         HttpMessage msg =
                 createHtmlResponse(uri, "<tag " + attribute + "=\"http://example.com/file\" />");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -123,7 +123,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
                     createHtmlResponse(
                             uri, "<tag " + attribute + "=\"http://example.com/file\" />");
             // When
-            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+            scanHttpResponseReceive(msg);
             // Then
             assertThat(alertsRaised.size(), is(1));
             assertThat(alertsRaised.get(0).getEvidence(), is("http://example.com/file"));
@@ -146,7 +146,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
                             uri, "<tag " + attribute + "=\"http://example.com/file\" />");
             rule.setAlertThreshold(AlertThreshold.HIGH);
             // When
-            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+            scanHttpResponseReceive(msg);
             // Then
             assertThat(alertsRaised.size(), is(0));
         }
@@ -159,7 +159,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
         HttpMessage msg =
                 createHtmlResponse(uri, "<script src=\"http://example.com/script.js\"></script>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getEvidence(), is("http://example.com/script.js"));
@@ -181,7 +181,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest<MixedContent
                         "<script src=\"http://example.com/script.js\"></script>\n"
                                 + "<img src=\"http://example.com/image.png\" />");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getEvidence(), is("http://example.com/script.js"));

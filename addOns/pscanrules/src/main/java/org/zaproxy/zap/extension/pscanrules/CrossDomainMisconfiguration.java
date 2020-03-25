@@ -39,8 +39,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class CrossDomainMisconfiguration extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** the logger. it logs stuff. */
     private static Logger log = Logger.getLogger(CrossDomainMisconfiguration.class);
 
@@ -129,28 +127,21 @@ public class CrossDomainMisconfiguration extends PluginPassiveScanner {
                 // The CORS misconfig could still allow an attacker to access the data returned from
                 // an unauthenticated API, which is protected by some other form of security, such
                 // as IP address white-listing, for instance.
-                Alert alert =
-                        new Alert(
-                                getPluginId(),
-                                Alert.RISK_MEDIUM,
-                                Alert.CONFIDENCE_MEDIUM,
-                                getName());
-                alert.setDetail(
-                        getDescription(),
-                        msg.getRequestHeader().getURI().toString(),
-                        "", // param
-                        "", // attack
-                        Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"), // other info
-                        Constant.messages.getString(MESSAGE_PREFIX + "soln"),
-                        Constant.messages.getString(MESSAGE_PREFIX + "refs"),
-                        extractEvidence(
-                                msg.getResponseHeader().toString(),
-                                HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
-                                corsAllowOriginValue),
-                        264, // CWE 264: Permissions, Privileges, and Access Controls
-                        14, // WASC-14: Server Misconfiguration
-                        msg);
-                parent.raiseAlert(id, alert);
+                newAlert()
+                        .setRisk(Alert.RISK_MEDIUM)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setDescription(getDescription())
+                        .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"))
+                        .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                        .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                        .setEvidence(
+                                extractEvidence(
+                                        msg.getResponseHeader().toString(),
+                                        HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
+                                        corsAllowOriginValue))
+                        .setCweId(264) // CWE 264: Permissions, Privileges, and Access Controls
+                        .setWascId(14) // WASC-14: Server Misconfiguration
+                        .raise();
             }
 
         } catch (Exception e) {
@@ -178,7 +169,7 @@ public class CrossDomainMisconfiguration extends PluginPassiveScanner {
      */
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /**

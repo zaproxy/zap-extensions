@@ -61,7 +61,7 @@ public class UserControlledCookieScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -71,7 +71,7 @@ public class UserControlledCookieScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // WHen
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -83,7 +83,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=aValue; Secure");
         // WHen
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -96,7 +96,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=aValue; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -109,7 +109,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=\"\"; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -121,7 +121,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=fred", false));
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -134,7 +134,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=fred; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
@@ -148,7 +148,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=freddy; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -166,7 +166,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpHeader.SET_COOKIE, "Set-Cookie: aCookie=evil; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));

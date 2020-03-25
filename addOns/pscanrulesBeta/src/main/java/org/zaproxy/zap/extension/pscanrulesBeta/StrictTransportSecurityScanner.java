@@ -78,12 +78,11 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner {
         HSTS_MALFORMED_CONTENT
     };
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(StrictTransportSecurityScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -92,25 +91,17 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(VulnType currentVT, String evidence, HttpMessage msg, int id) {
-        Alert alert =
-                new Alert(
-                        getPluginId(), // PluginID
-                        getRisk(currentVT),
-                        Alert.CONFIDENCE_HIGH, // Reliability
-                        getAlertElement(currentVT, "name")); // Name
-        alert.setDetail(
-                getAlertElement(currentVT, "desc"), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                "", // Other info
-                getAlertElement(currentVT, "soln"), // Solution
-                getAlertElement(currentVT, "refs"), // References
-                evidence, // Evidence
-                16, // CWE-16: Configuration
-                15, // WASC-15: Application Misconfiguration
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(getAlertElement(currentVT, "name"))
+                .setRisk(getRisk(currentVT))
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(getAlertElement(currentVT, "desc"))
+                .setSolution(getAlertElement(currentVT, "soln"))
+                .setReference(getAlertElement(currentVT, "refs"))
+                .setEvidence(evidence)
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .raise();
     }
 
     @Override

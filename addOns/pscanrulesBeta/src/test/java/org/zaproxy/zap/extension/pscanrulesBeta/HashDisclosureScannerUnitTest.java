@@ -48,7 +48,7 @@ public class HashDisclosureScannerUnitTest extends PassiveScannerTest<HashDisclo
         String hashVal = "DD6433D07B73FC14A2A4D03C5A8FAA90";
         HttpMessage msg = createMsg(hashVal);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - MD4 / MD5"));
@@ -61,7 +61,7 @@ public class HashDisclosureScannerUnitTest extends PassiveScannerTest<HashDisclo
         String hashVal = "cc03e747a6afbbcbf8be7668acfebee5";
         HttpMessage msg = createMsg(hashVal);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - MD4 / MD5"));
@@ -75,7 +75,7 @@ public class HashDisclosureScannerUnitTest extends PassiveScannerTest<HashDisclo
         HttpMessage msg = createMsg("");
         msg.getResponseHeader().addHeader(HttpHeader.SET_COOKIE, "userid=" + hashVal);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - MD4 / MD5"));
@@ -88,7 +88,7 @@ public class HashDisclosureScannerUnitTest extends PassiveScannerTest<HashDisclo
         String hashVal = "mm6433d07b73fc14a2a4d03c5a8faa90";
         HttpMessage msg = createMsg(hashVal);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -100,7 +100,7 @@ public class HashDisclosureScannerUnitTest extends PassiveScannerTest<HashDisclo
         HttpMessage msg = createMsg("");
         msg.getResponseHeader().addHeader(HttpHeader.SET_COOKIE, "jsessionid=" + hashVal);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }

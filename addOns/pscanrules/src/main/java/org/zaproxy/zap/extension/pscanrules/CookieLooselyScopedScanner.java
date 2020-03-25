@@ -37,8 +37,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cookielooselyscoped.";
 
@@ -153,27 +151,25 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 
     private void raiseAlert(
             HttpMessage msg, int id, String host, List<HttpCookie> looselyScopedCookies) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getName());
+
         StringBuilder sbCookies = new StringBuilder();
         for (HttpCookie cookie : looselyScopedCookies) {
             sbCookies.append(
                     Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.cookie", cookie));
         }
 
-        alert.setDetail(
-                getDescriptionMessage(),
-                msg.getRequestHeader().getURI().toString(),
-                null,
-                "",
-                Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", host, sbCookies),
-                getSolutionMessage(),
-                getReferenceMessage(),
-                "", // No Evidence
-                565, // CWE-565: Reliance on Cookies without Validation and Integrity Checking
-                15, // WASC-15: Application Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(getDescriptionMessage())
+                .setOtherInfo(
+                        Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", host, sbCookies))
+                .setSolution(getSolutionMessage())
+                .setReference(getReferenceMessage())
+                .setCweId(565) // CWE-565: Reliance on Cookies without Validation and Integrity
+                // Checking
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .raise();
     }
 
     @Override
@@ -183,7 +179,7 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /*

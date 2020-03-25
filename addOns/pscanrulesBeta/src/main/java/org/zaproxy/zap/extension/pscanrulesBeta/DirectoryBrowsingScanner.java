@@ -39,8 +39,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class DirectoryBrowsingScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /**
      * a consistently ordered map of: a regular expression pattern, mapping to the Web server to
      * which the pattern most likely corresponds
@@ -113,26 +111,18 @@ public class DirectoryBrowsingScanner extends PluginPassiveScanner {
         }
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            Alert alert =
-                    new Alert(
-                            getPluginId(),
-                            Alert.RISK_MEDIUM,
-                            Alert.CONFIDENCE_MEDIUM,
-                            getName() + " - " + server);
-
-            alert.setDetail(
-                    getDescription() + " - " + server,
-                    msg.getRequestHeader().getURI().toString(),
-                    "", // param
-                    "", // attack
-                    getExtraInfo(msg, evidence), // other info
-                    getSolution(),
-                    getReference(),
-                    evidence,
-                    548, // Information Exposure Through Directory Listing
-                    16, // Directory Indexing
-                    msg);
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setName(getName() + " - " + server)
+                    .setRisk(Alert.RISK_MEDIUM)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getDescription() + " - " + server)
+                    .setOtherInfo(getExtraInfo(msg, evidence))
+                    .setSolution(getSolution())
+                    .setReference(getReference())
+                    .setEvidence(evidence)
+                    .setCweId(548) // Information Exposure Through Directory Listing
+                    .setWascId(16) // Directory Indexing
+                    .raise();
         }
     }
 
@@ -143,7 +133,7 @@ public class DirectoryBrowsingScanner extends PluginPassiveScanner {
      */
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /**

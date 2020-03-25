@@ -41,13 +41,12 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.contentsecuritypolicymissing.";
     private static final int PLUGIN_ID = 10038;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger =
             Logger.getLogger(ContentSecurityPolicyMissingScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -118,47 +117,28 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner {
                         && (!xCspHeaderFound || !xWebKitHeaderFound))) {
             // Always report if the latest header isnt found,
             // but only report if the older ones arent present at Low threshold
-            Alert alert =
-                    new Alert(
-                            getPluginId(), // PluginID
-                            Alert.RISK_LOW, // Risk
-                            Alert.CONFIDENCE_MEDIUM, // Reliability
-                            getName());
-            alert.setDetail(
-                    getAlertAttribute("desc"), // Description
-                    msg.getRequestHeader().getURI().toString(), // URI
-                    "", // Param
-                    "", // Attack
-                    "", // Other info
-                    getAlertAttribute("soln"), // Solution
-                    getAlertAttribute("refs"), // References
-                    "", // Evidence
-                    16, // CWE-16: Configuration
-                    15, // WASC-15: Application Misconfiguration
-                    msg); // HttpMessage
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setRisk(Alert.RISK_LOW)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getAlertAttribute("desc"))
+                    .setSolution(getAlertAttribute("soln"))
+                    .setReference(getAlertAttribute("refs"))
+                    .setCweId(16) // CWE-16: Configuration
+                    .setWascId(15) // WASC-15: Application Misconfiguration
+                    .raise();
         }
 
         if (cspROHeaderFound) {
-            Alert alert =
-                    new Alert(
-                            getPluginId(),
-                            Alert.RISK_INFO,
-                            Alert.CONFIDENCE_MEDIUM, // PluginID, Risk, Reliability
-                            getAlertAttribute("ro.name"));
-            alert.setDetail(
-                    getAlertAttribute("ro.desc"), // Description
-                    msg.getRequestHeader().getURI().toString(), // URI
-                    "", // Param
-                    "", // Attack
-                    "", // Other info
-                    getAlertAttribute("soln"), // Solution
-                    getAlertAttribute("ro.refs"), // References
-                    "", // Evidence
-                    16, // CWE-16: Configuration
-                    15, // WASC-15: Application Misconfiguration
-                    msg); // HttpMessage
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setName(getAlertAttribute("ro.name"))
+                    .setRisk(Alert.RISK_INFO)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getAlertAttribute("ro.desc"))
+                    .setSolution(getAlertAttribute("soln"))
+                    .setReference(getAlertAttribute("ro.refs"))
+                    .setCweId(16) // CWE-16: Configuration
+                    .setWascId(15) // WASC-15: Application Misconfiguration
+                    .raise();
         }
 
         if (logger.isDebugEnabled()) {

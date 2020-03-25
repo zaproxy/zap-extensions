@@ -45,7 +45,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
                 "HTTP/1.1 200 OK\r\n" + "X-Custom-Info: NOPE\r\n" + "Set-Cookie: NOPE=NOPE");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, empty());
@@ -61,7 +61,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "X-Custom-Info: " + jso + "\r\n");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -77,7 +77,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Set-Cookie: CRUNCHY=" + jso + "\r\n");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -100,7 +100,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setResponseBody(jso);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -123,7 +123,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setResponseBody(jso);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -138,7 +138,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
                 "GET / HTTP/1.1\r\n" + "X-Custom-Info: NOPE\r\n" + "Cookie: NOPE=NOPE\r\n");
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertThat(alertsRaised, empty());
@@ -152,7 +152,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setRequestHeader("GET /some_action?q=" + createUriEncodedJso() + "&p=&m HTTP/1.1");
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -167,7 +167,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setRequestHeader("GET /some_action?q=" + jso + "&p=&m HTTP/1.1");
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -181,7 +181,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setRequestHeader("GET / HTTP/1.1\r\n" + "X-Custom-Info: " + createUriEncodedJso());
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -196,7 +196,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setRequestHeader("GET / HTTP/1.1\r\n" + "X-Custom-Info: " + jso + "\r\n");
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -211,7 +211,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
                 "GET / HTTP/1.1\r\n" + "Cookie: CRUNCHY=" + createUriEncodedJso() + "\r\n");
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -226,7 +226,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setRequestHeader("GET / HTTP/1.1\r\n" + "Cookie: CRUNCHY=" + jso + "\r\n");
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -247,7 +247,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setRequestBody(jso);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -269,7 +269,7 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
         msg.setRequestBody(jso);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));

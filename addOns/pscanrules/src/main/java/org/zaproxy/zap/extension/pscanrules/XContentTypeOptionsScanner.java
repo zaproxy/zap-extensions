@@ -32,7 +32,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.xcontenttypeoptionsscanner.";
 
@@ -80,26 +79,23 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String xContentTypeOption) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(), // Desc
-                msg.getRequestHeader().getURI().toString(), // URL
-                HttpHeader.X_CONTENT_TYPE_OPTIONS, // Parameter
-                "", // Attack
-                getOtherInfo(), // OtherInfo
-                getSolution(), // Soln
-                getReference(), // Refs
-                xContentTypeOption, // Evidence
-                16, // CWE-16: Configuration
-                15, // WASC15: Application Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(HttpHeader.X_CONTENT_TYPE_OPTIONS)
+                .setOtherInfo(getOtherInfo())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(xContentTypeOption)
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC15: Application Misconfiguration
+                .raise();
     }
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

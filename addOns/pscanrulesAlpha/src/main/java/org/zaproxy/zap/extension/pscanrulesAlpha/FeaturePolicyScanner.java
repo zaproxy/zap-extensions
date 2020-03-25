@@ -39,8 +39,6 @@ public class FeaturePolicyScanner extends PluginPassiveScanner {
     private static final Logger LOGGER = Logger.getLogger(FeaturePolicyScanner.class);
     private static final int PLUGIN_ID = 10063;
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void scanHttpRequestSend(HttpMessage httpMessage, int id) {
         // Only checking the response for this plugin
@@ -65,25 +63,15 @@ public class FeaturePolicyScanner extends PluginPassiveScanner {
         List<String> featurePolicyOptions =
                 httpMessage.getResponseHeader().getHeaderValues("Feature-Policy");
         if (featurePolicyOptions.isEmpty()) {
-            Alert alert =
-                    new Alert(
-                            getPluginId(), // PluginID
-                            Alert.RISK_LOW, // Risk
-                            Alert.CONFIDENCE_MEDIUM, // Reliability
-                            getName());
-            alert.setDetail(
-                    getAlertAttribute("desc"), // Description
-                    httpMessage.getRequestHeader().getURI().toString(), // URI
-                    "", // Param
-                    "", // Attack
-                    "", // Other info
-                    getAlertAttribute("soln"), // Solution
-                    getAlertAttribute("refs"), // References
-                    "", // Evidence
-                    0, // CWE-16: Configuration
-                    0, // WASC-15: Application Misconfiguration
-                    httpMessage); // HttpMessage
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setRisk(Alert.RISK_LOW)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getAlertAttribute("desc"))
+                    .setSolution(getAlertAttribute("soln"))
+                    .setReference(getAlertAttribute("refs"))
+                    .setCweId(16) // CWE-16: Configuration
+                    .setWascId(15) // WASC-15: Application Misconfiguration
+                    .raise();
         }
 
         if (LOGGER.isDebugEnabled()) {
@@ -98,7 +86,7 @@ public class FeaturePolicyScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread passiveScanThread) {
-        this.parent = passiveScanThread;
+        // Nothing to do.
     }
 
     @Override

@@ -68,7 +68,7 @@ public class StrictTransportSecurityScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setSecure(false);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -78,7 +78,7 @@ public class StrictTransportSecurityScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -91,7 +91,7 @@ public class StrictTransportSecurityScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -103,7 +103,7 @@ public class StrictTransportSecurityScannerUnitTest
         msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE);
         msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -118,7 +118,7 @@ public class StrictTransportSecurityScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, "max-age=0");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getName(), equalTo("Strict-Transport-Security Disabled"));
@@ -130,7 +130,7 @@ public class StrictTransportSecurityScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, "");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -144,7 +144,7 @@ public class StrictTransportSecurityScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, SHORT_VALUE + "”"); // Append curly quote
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -158,7 +158,7 @@ public class StrictTransportSecurityScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(STS_HEADER, "\"max-age=84600\""); // Quotes before max
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -174,7 +174,7 @@ public class StrictTransportSecurityScannerUnitTest
         msg.getResponseHeader().addHeader(STS_HEADER, HEADER_VALUE);
         rule.setAlertThreshold(AlertThreshold.LOW);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -189,7 +189,7 @@ public class StrictTransportSecurityScannerUnitTest
         msg.getRequestHeader().setSecure(false);
         rule.setAlertThreshold(AlertThreshold.LOW);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -202,7 +202,7 @@ public class StrictTransportSecurityScannerUnitTest
         msg.setResponseBody(
                 "<html><meta http-equiv=\"Strict-Transport-Security\" content=\"max-age=31536000\" /></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -217,7 +217,7 @@ public class StrictTransportSecurityScannerUnitTest
         msg.getResponseHeader().setStatusCode(301);
         msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://example.com/default/");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -230,7 +230,7 @@ public class StrictTransportSecurityScannerUnitTest
         msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://example.com/default/");
         rule.setAlertThreshold(AlertThreshold.LOW);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -244,7 +244,7 @@ public class StrictTransportSecurityScannerUnitTest
         msg.getResponseHeader().setStatusCode(301);
         msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "/default/");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -257,7 +257,7 @@ public class StrictTransportSecurityScannerUnitTest
         msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "/default/");
         rule.setAlertThreshold(AlertThreshold.LOW);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -271,7 +271,7 @@ public class StrictTransportSecurityScannerUnitTest
         msg.getResponseHeader().setStatusCode(301);
         msg.getResponseHeader().addHeader(HttpHeader.LOCATION, "https://other.com/default/");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(

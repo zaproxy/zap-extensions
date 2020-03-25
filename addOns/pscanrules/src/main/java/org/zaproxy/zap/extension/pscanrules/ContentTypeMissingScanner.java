@@ -35,8 +35,6 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10019;
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
         // ignore
@@ -66,26 +64,22 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
             issue = getName();
         }
 
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, issue);
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                contentType,
-                "",
-                "",
-                getSolution(),
-                getReference(),
-                "", // No evidence
-                345, // CWE Id 345 - Insufficient Verification of Data Authenticity
-                12, // WASC Id 12 - Content Spoofing
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(issue)
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(contentType)
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setCweId(345) // CWE Id 345 - Insufficient Verification of Data Authenticity
+                .setWascId(12) // WASC Id 12 - Content Spoofing
+                .raise();
     }
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

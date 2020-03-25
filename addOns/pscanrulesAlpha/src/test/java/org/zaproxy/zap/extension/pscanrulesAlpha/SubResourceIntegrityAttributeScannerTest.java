@@ -49,7 +49,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "      ></head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -67,7 +67,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "        ></script></head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -84,7 +84,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.get(0).getPluginId(), equalTo(rule.getPluginId()));
@@ -101,7 +101,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(
@@ -121,7 +121,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -138,7 +138,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
@@ -160,7 +160,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -186,7 +186,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -202,7 +202,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(1));

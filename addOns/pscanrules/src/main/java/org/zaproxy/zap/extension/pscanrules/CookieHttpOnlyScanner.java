@@ -41,12 +41,11 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 
     private static final String HTTP_ONLY_COOKIE_ATTRIBUTE = "HttpOnly";
 
-    private PassiveScanThread parent = null;
     private Model model = null;
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -85,21 +84,19 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String headerValue) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                CookieUtils.getCookieName(headerValue),
-                "",
-                "",
-                getSolution(),
-                getReference(),
-                CookieUtils.getSetCookiePlusName(msg.getResponseHeader().toString(), headerValue),
-                16, // CWE Id 16 - Configuration
-                13, // WASC Id - Info leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(CookieUtils.getCookieName(headerValue))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(
+                        CookieUtils.getSetCookiePlusName(
+                                msg.getResponseHeader().toString(), headerValue))
+                .setCweId(16) // CWE Id 16 - Configuration
+                .setWascId(13) // WASC Id 13 - Info leakage)
+                .raise();
     }
 
     @Override

@@ -42,7 +42,6 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10017;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(CrossDomainScriptInclusionScanner.class);
     private Model model = null;
 
@@ -76,26 +75,22 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String crossDomainScript, String evidence) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                crossDomainScript,
-                "",
-                "",
-                getSolution(),
-                "",
-                evidence,
-                829, // CWE Id 829 - Inclusion of Functionality from Untrusted Control Sphere
-                15, // WASC Id 15 - Application Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(crossDomainScript)
+                .setSolution(getSolution())
+                .setEvidence(evidence)
+                .setCweId(829) // CWE Id 829 - Inclusion of Functionality from Untrusted Control
+                // Sphere
+                .setWascId(15) // WASC Id 15 - Application Misconfiguration
+                .raise();
     }
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

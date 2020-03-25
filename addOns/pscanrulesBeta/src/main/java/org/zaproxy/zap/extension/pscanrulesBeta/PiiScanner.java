@@ -45,8 +45,6 @@ public class PiiScanner extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10062;
 
-    private PassiveScanThread parent = null;
-
     private enum CreditCard {
         AMERICAN_EXPRESS("American Express", "\\b(?:3[47][0-9]{13})\\b"),
         DINERSCLUB("DinersClub", "\\b(?:3(?:0[0-5]|[68][0-9])[0-9]{11})\\b"),
@@ -80,7 +78,7 @@ public class PiiScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do
     }
 
     @Override
@@ -127,21 +125,15 @@ public class PiiScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String evidence, String cardType) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName());
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX + "desc"),
-                msg.getRequestHeader().getURI().toString(),
-                "", // parameter
-                "", // attack
-                Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", cardType),
-                "", // solution
-                "",
-                evidence, // evidence, if any
-                359, // CWE-359: Exposure of Private Information ('Privacy Violation')
-                13, // WASC-13: Information Leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_HIGH)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", cardType))
+                .setEvidence(evidence)
+                .setCweId(359) // CWE-359: Exposure of Private Information ('Privacy Violation')
+                .setWascId(13) // WASC-13: Information Leakage
+                .raise();
     }
 
     private static List<Candidate> getNumberSequences(String inputString) {

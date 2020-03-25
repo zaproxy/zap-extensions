@@ -65,7 +65,7 @@ public class ServerHeaderInfoLeakScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -77,7 +77,7 @@ public class ServerHeaderInfoLeakScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(SERVER, apacheHeader);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertEquals(apacheHeader, alertsRaised.get(0).getEvidence());
@@ -89,7 +89,7 @@ public class ServerHeaderInfoLeakScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(SERVER, "Apache");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -103,7 +103,7 @@ public class ServerHeaderInfoLeakScannerUnitTest
         msg.getResponseHeader().addHeader(SERVER, bareApacheHeader);
         rule.setAlertThreshold(AlertThreshold.LOW);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertEquals(bareApacheHeader, alertsRaised.get(0).getEvidence());

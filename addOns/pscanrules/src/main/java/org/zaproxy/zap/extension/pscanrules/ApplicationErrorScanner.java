@@ -69,8 +69,6 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
 
     // Inner Content Matcher component with pattern definitions
     private ContentMatcher matcher = null;
-    // Inner Thread Parent variable
-    private PassiveScanThread parent = null;
 
     private ContentMatcher getContentMatcher() {
         if (matcher == null) {
@@ -144,7 +142,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
      */
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /**
@@ -200,24 +198,16 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
 
     // Internal service method for alert management
     private void raiseAlert(HttpMessage msg, int id, String evidence, int risk) {
-        // Raise an alert according to Passive Scan Rule model
-        // description, uri, param, attack, otherInfo,
-        // solution, reference, evidence, cweId, wascId, msg
-        Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                "",
-                getSolution(),
-                getReference(),
-                evidence, // evidence
-                getCweId(), // CWE Id
-                getWascId(), // WASC Id - Info leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert() // has PluginId, msg, URI, name
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(getCweId())
+                .setWascId(getWascId())
+                .raise();
     }
 
     static Supplier<Iterable<String>> getCustomPayloads() {

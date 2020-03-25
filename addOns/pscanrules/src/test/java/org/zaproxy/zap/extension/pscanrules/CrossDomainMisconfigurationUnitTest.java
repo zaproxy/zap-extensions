@@ -45,7 +45,7 @@ public class CrossDomainMisconfigurationUnitTest
         // Given
         HttpMessage msg = createResponse(URI, null);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -55,7 +55,7 @@ public class CrossDomainMisconfigurationUnitTest
         // Given
         HttpMessage msg = createResponse(URI, "");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -65,7 +65,7 @@ public class CrossDomainMisconfigurationUnitTest
         // Given
         HttpMessage msg = createResponse(URI, "UnrecognisedValue");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -75,7 +75,7 @@ public class CrossDomainMisconfigurationUnitTest
         // Given
         HttpMessage msg = createResponse(URI, "*");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(
@@ -93,7 +93,7 @@ public class CrossDomainMisconfigurationUnitTest
         msg.getResponseHeader()
                 .addHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN.toUpperCase(Locale.ROOT), "*");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(

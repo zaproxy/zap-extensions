@@ -30,7 +30,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
@@ -63,10 +62,9 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         // Given
         String body = "Some text <script>$eval()</script>\nLine 2\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
-        Source source = createSource(msg);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, source);
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -84,7 +82,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -96,10 +94,9 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         // Given
         String body = "Some text <script>innocentFunction()</script>\nLine 2\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
-        Source source = createSource(msg);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, source);
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, empty());
@@ -113,7 +110,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, empty());
@@ -129,7 +126,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         JSFunctionPassiveScanner.setPayloadProvider(() -> functions);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -146,7 +143,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, empty());
@@ -163,7 +160,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -181,7 +178,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
@@ -196,7 +193,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));
