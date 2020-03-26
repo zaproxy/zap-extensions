@@ -110,6 +110,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         passiveScanner = new WappalyzerPassiveScanner(this);
     }
 
+    WappalyzerPassiveScanner getPassiveScanner() {
+        return passiveScanner;
+    }
+
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
