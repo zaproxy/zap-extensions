@@ -31,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.model.Tech;
 
 /**
  * Servlet Parameter Pollution rule. Suggested by Jeff Williams on the OWASP Leaders List:
@@ -62,7 +63,8 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (!AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+        if (!AlertThreshold.LOW.equals(this.getAlertThreshold())
+                || !getHelper().getTechSet().includes(Tech.JSP_SERVLET)) {
             return;
         }
 
