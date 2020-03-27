@@ -126,7 +126,9 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
     private static String generatePath(String baseUriPath, String hiddenFile) {
         String newPath = "";
-        if (baseUriPath.contains("/")) {
+        if (baseUriPath == null) {
+            newPath = "/" + hiddenFile;
+        } else if (baseUriPath.contains("/")) {
             if (baseUriPath.endsWith("/")) {
                 newPath = baseUriPath + hiddenFile;
             } else {
