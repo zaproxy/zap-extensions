@@ -38,11 +38,10 @@ public class PathGenerator {
                     continue;
                 }
                 String parameterType = parameter.getIn();
+                String value = dataGenerator.generate(parameter.getName(), parameter);
                 if ("query".equals(parameterType)) {
-                    String value = dataGenerator.generate(parameter.getName(), parameter);
                     queryString += parameter.getName() + "=" + value + "&";
                 } else if ("path".equals(parameterType)) {
-                    String value = dataGenerator.generate(parameter.getName(), parameter);
                     String newPath =
                             operationModel
                                     .getPath()
