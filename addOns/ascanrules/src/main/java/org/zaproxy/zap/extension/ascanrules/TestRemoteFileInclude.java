@@ -50,7 +50,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
         "HtTp://",
         "HtTpS://",
         // Null Byte payload, incase validator for the remote file inclusion is
-        // vulnerable to null byte ie say validator is written in C/C++ where Null
+        // vulnerable to null byte i.e. say validator is written in C/C++ where Null
         // character marks end of string then that validator will not read characters
         // after null byte hence validation can be bypassed and if url is invoked by trimming null
         // bytes then it will cause RFI

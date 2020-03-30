@@ -328,8 +328,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         return;
                     }
                     // Null Byte is appended to the value for ignoring the postfix data appended
-                    // to the input for more information:
-                    // https://owasp.org/www-community/attacks/Embedding_Null_Code
+                    // to the input.
                     if (includeNullByteInjectionPayload) {
                         if (sendAndCheckPayload(
                                         param,
@@ -370,9 +369,6 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     }
                     // Null Byte is appended to the value for ignoring the postfix data appended
                     // to the input
-                    // for more information:
-                    // https://owasp.org/www-community/attacks/Embedding_Null_Code for more
-                    // information
                     if (includeNullByteInjectionPayload) {
                         if (sendAndCheckPayload(
                                         param,
