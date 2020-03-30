@@ -3,7 +3,7 @@ description = "Fingerprint web applications"
 
 zapAddOn {
     addOnName.set("WAFP Extension")
-    zapVersion.set("2.5.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")

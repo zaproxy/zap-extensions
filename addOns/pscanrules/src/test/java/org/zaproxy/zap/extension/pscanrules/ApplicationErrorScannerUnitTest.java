@@ -73,7 +73,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setResponseHeader(createResponseHeader(INTERNAL_SERVER_ERROR));
         // When
         rule.setAlertThreshold(AlertThreshold.LOW);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         Alert result = alertsRaised.get(0);
@@ -93,7 +93,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setResponseHeader(createResponseHeader(INTERNAL_SERVER_ERROR));
         // When
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         Alert result = alertsRaised.get(0);
@@ -113,7 +113,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setResponseHeader(createResponseHeader(INTERNAL_SERVER_ERROR));
         // When
         rule.setAlertThreshold(AlertThreshold.HIGH);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -125,7 +125,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setRequestHeader(REQUEST_HEADER);
         msg.setResponseHeader(createResponseHeader(NOT_FOUND));
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -138,7 +138,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setRequestHeader(REQUEST_HEADER);
         msg.setResponseHeader(createResponseHeader(OK));
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -153,7 +153,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setResponseBody(
                 "<html>" + "<div>" + "here a body with no evidence" + "</div>" + "</html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -168,7 +168,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setResponseHeader(createResponseHeader(OK));
         msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         Alert result = alertsRaised.get(0);
@@ -186,7 +186,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setResponseHeader(createResponseHeader(OK));
         msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         Alert result = alertsRaised.get(0);
@@ -205,7 +205,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
         ApplicationErrorScanner.setPayloadProvider(() -> Arrays.asList(expectedEvidence));
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         Alert result = alertsRaised.get(0);
@@ -224,7 +224,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
         ApplicationErrorScanner.setPayloadProvider(() -> Arrays.asList("notDetectedString"));
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -241,7 +241,7 @@ public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<Applicat
         msg.setResponseBody("<html>" + "<div>" + expectedEvidence + "</div>" + "</html>");
         ApplicationErrorScanner.setPayloadProvider(() -> Arrays.asList(expectedEvidence));
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         Alert result = alertsRaised.get(0);

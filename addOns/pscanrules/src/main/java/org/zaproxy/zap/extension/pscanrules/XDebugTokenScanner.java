@@ -41,7 +41,6 @@ public class XDebugTokenScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.xdebugtoken.";
     private static final int PLUGIN_ID = 10056;
 
-    private PassiveScanThread parent = null;
     private static final Logger LOGGER = Logger.getLogger(XDebugTokenScanner.class);
 
     private static final String X_DEBUG_TOKEN_HEADER = "X-Debug-Token";
@@ -49,7 +48,7 @@ public class XDebugTokenScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -64,14 +63,14 @@ public class XDebugTokenScanner extends PluginPassiveScanner {
         // Check "Link" variant first as it's of greater concern/convenience.
         if (responseHasHeader(msg, X_DEBUG_TOKEN_LINK_HEADER)) {
             for (String xdtl : getHeaders(msg, X_DEBUG_TOKEN_LINK_HEADER)) {
-                parent.raiseAlert(id, getAlert(msg, xdtl));
+                raiseAlert(msg, xdtl);
                 return; // No need to continue
             }
         }
         // Check non-Link variant
         if (responseHasHeader(msg, X_DEBUG_TOKEN_HEADER)) {
             for (String xdt : getHeaders(msg, X_DEBUG_TOKEN_HEADER)) {
-                parent.raiseAlert(id, getAlert(msg, xdt));
+                raiseAlert(msg, xdt);
                 return; // No need to continue
             }
         }
@@ -86,26 +85,18 @@ public class XDebugTokenScanner extends PluginPassiveScanner {
         }
     }
 
-    private Alert getAlert(HttpMessage msg, String evidence) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_LOW,
-                        Alert.CONFIDENCE_HIGH, // PluginID, Risk, Reliability
-                        getName());
-        alert.setDetail(
-                getDescription(), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                getOtherInfo(), // Other info
-                getSolution(), // Solution
-                getReference(), // References
-                evidence, // Evidence
-                200, // CWE-200: Information Exposure
-                13, // WASC Id
-                msg); // HttpMessage
-        return alert;
+    private void raiseAlert(HttpMessage msg, String evidence) {
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(getDescription())
+                .setOtherInfo(getOtherInfo())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(200) // CWE-200: Information Exposure
+                .setWascId(13)
+                .raise();
     }
 
     /**

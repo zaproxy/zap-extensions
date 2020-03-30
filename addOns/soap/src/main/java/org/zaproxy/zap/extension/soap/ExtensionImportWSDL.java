@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.soap;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -179,14 +177,5 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("soap.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

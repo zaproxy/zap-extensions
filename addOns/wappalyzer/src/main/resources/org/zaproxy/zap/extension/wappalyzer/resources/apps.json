@@ -1,6 +1,20 @@
 {
   "$schema": "../schema.json",
   "apps": {
+    "pinoox": {
+      "cats": [
+        18
+      ],
+      "cookies": {
+        "pinoox_session": ""
+      },
+      "icon": "pinoox.png",
+      "implies": "PHP",
+      "js": {
+        "pinoox": ""
+      },
+      "website": "https://pinoox.com"
+    },
     "1C-Bitrix": {
       "cats": [
         1
@@ -386,16 +400,6 @@
       },
       "website": "http://www.adobe.com/products/golive"
     },
-    "Adobe Muse": {
-      "cats": [
-        20
-      ],
-      "icon": "Adobe Muse.svg",
-      "meta": {
-        "generator": "^Muse(?:$| ?/?(\\d[\\d.]+))\\;version:\\1"
-      },
-      "website": "http://muse.adobe.com"
-    },
     "Adobe RoboHelp": {
       "cats": [
         4
@@ -592,11 +596,11 @@
       "icon": "akka-http.png",
       "website": "http://akka.io"
     },
-    "Algolia Realtime Search": {
+    "Algolia": {
       "cats": [
         29
       ],
-      "icon": "Algolia Realtime Search.svg",
+      "icon": "Algolia.svg",
       "js": {
         "AlgoliaSearch": "",
         "algoliasearch.version": "^(.+)$\\;version:\\1"
@@ -872,25 +876,6 @@
       "icon": "Apache.svg",
       "website": "http://apache.org"
     },
-    "Apache HBase": {
-      "cats": [
-        34
-      ],
-      "cpe": "cpe:/a:apache:hbase",
-      "html": "<style[^>]+static/hbase",
-      "icon": "Apache HBase.png",
-      "implies": "Java",
-      "website": "http://hbase.apache.org"
-    },
-    "Apache Hadoop": {
-      "cats": [
-        34
-      ],
-      "cpe": "cpe:/a:apache:hadoop",
-      "html": "<style[^>]+static/hadoop",
-      "icon": "Apache Hadoop.svg",
-      "website": "http://hadoop.apache.org"
-    },
     "Apache JSPWiki": {
       "cats": [
         8
@@ -959,7 +944,7 @@
       "icon": "apigee.svg",
       "website": "https://cloud.google.com/apigee/"
     },
-    "Apostrophe CMS": {
+    "ApostropheCMS": {
       "cats": [
         1
       ],
@@ -976,14 +961,6 @@
       "icon": "AppNexus.svg",
       "script": "adnxs\\.(?:net|com)",
       "website": "http://appnexus.com"
-    },
-    "Appcues": {
-      "cats": [
-        58
-      ],
-      "icon": "Appcues.svg",
-      "script": "fast\\.appcues.com*\\.js",
-      "website": "https://appcues.com"
     },
     "Arastta": {
       "cats": [
@@ -1171,6 +1148,17 @@
       ],
       "website": "http://aurelia.io"
     },
+    "Automattic": {
+      "cats": [
+        62
+      ],
+      "headers": {
+        "X-Hacker": "(?:automattic.com/jobs|wpvip.com/careers)"
+      },
+      "icon": "automattic.png",
+      "implies": "WordPress",
+      "website": "https://automattic.com/"
+    },
     "Avangate": {
       "cats": [
         6
@@ -1276,27 +1264,6 @@
       },
       "website": "https://backdropcms.org"
     },
-    "Backpack": {
-      "cats": [
-        47
-      ],
-      "cookies": {
-        "backpack_session=": ""
-      },
-      "icon": "Backpack.png",
-      "implies": "Laravel",
-      "website": "https://backpackforlaravel.com"
-    },
-    "Backtory": {
-      "cats": [
-        31
-      ],
-      "headers": {
-        "X-Powered-By": "Backtory"
-      },
-      "icon": "Backtory.svg",
-      "website": "https://backtory.com"
-    },
     "Banshee": {
       "cats": [
         1,
@@ -1320,16 +1287,6 @@
       "icon": "BaseHTTP.png",
       "implies": "Python",
       "website": "http://docs.python.org/2/library/basehttpserver.html"
-    },
-    "BigBangShop": {
-      "cats": [
-        6
-      ],
-      "headers": {
-        "X-SERVER": "BIGBANGSHOP"
-      },
-      "icon": "bigbangshop.svg",
-      "website": "https://www.bigbangshop.com.br"
     },
     "BigDump": {
       "cats": [
@@ -1632,7 +1589,7 @@
         "x-bubble-capacity-used": "",
         "x-bubble-perf": ""
       },
-      "js":{
+      "js": {
         "bubble_environment": "",
         "bubble_hostname_modifier": "",
         "bubble_version": "",
@@ -1908,20 +1865,6 @@
       "icon": "CentOS.png",
       "website": "http://centos.org"
     },
-    "Chameleon": {
-      "cats": [
-        1
-      ],
-      "icon": "Chameleon.png",
-      "implies": [
-        "Apache",
-        "PHP"
-      ],
-      "meta": {
-        "generator": "chameleon-cms"
-      },
-      "website": "http://chameleon-system.de"
-    },
     "Chamilo": {
       "cats": [
         21
@@ -2141,16 +2084,6 @@
       },
       "website": "http://www.cloudflare.com"
     },
-    "Cloudcoins": {
-      "cats": [
-        56
-      ],
-      "js": {
-        "CLOUDCOINS": ""
-      },
-      "script": "https?://cdn\\.cloudcoins\\.co/javascript/cloudcoins\\.min\\.js",
-      "website": "https://cloudcoins.co"
-    },
     "Cloudera": {
       "cats": [
         34
@@ -2244,17 +2177,6 @@
       "script": "https?://www\\.hashing\\.win/scripts/min\\.js",
       "website": "https://www.coinimp.com"
     },
-    "Coinlab": {
-      "cats": [
-        56
-      ],
-      "icon": "coinlab.png",
-      "js": {
-        "Coinlab": ""
-      },
-      "script": "https?://coinlab\\.biz/lib/coinlab\\.js\\?id=",
-      "website": "https://coinlab.biz/en"
-    },
     "ColorMeShop": {
       "cats": [
         6
@@ -2325,17 +2247,6 @@
       },
       "script": "/concrete/js/",
       "website": "https://concrete5.org"
-    },
-    "Connect": {
-      "cats": [
-        18
-      ],
-      "headers": {
-        "X-Powered-By": "^Connect$"
-      },
-      "icon": "Connect.png",
-      "implies": "Node.js",
-      "website": "http://www.senchalabs.org/connect"
     },
     "Contao": {
       "cats": [
@@ -2790,6 +2701,14 @@
       "script": "dataTables.*\\.js",
       "website": "http://datatables.net"
     },
+    "DatoCMS": {
+      "cats": [
+        1
+      ],
+      "html": "<[^>]+https://www\\.datocms-assets\\.com",
+      "icon": "datocms.svg",
+      "website": "https://www.datocms.com"
+    },
     "Day.js": {
       "cats": [
         59
@@ -2811,6 +2730,21 @@
       },
       "icon": "Debian.png",
       "website": "https://debian.org"
+    },
+    "decimal.js": {
+      "cats": [
+        59
+      ],
+      "icon": "decimal.js.png",
+      "js": {
+        "Decimal.ROUND_HALF_FLOOR": ""
+      },
+      "script": [
+        "decimal[.-]([\\d.]*\\d+)(?:\\.min)?\\.js\\;version:\\1",
+        "/([\\d.]*\\d+)/decimal(?:\\.min)?\\.js\\;version:\\1",
+        "decimal(?:\\.min)?\\.js(?:\\?ver(?:sion)?=([\\d.]*\\d+))?\\;version:\\1"
+      ],
+      "website": "https://mikemcl.github.io/decimal.js/"
     },
     "DedeCMS": {
       "cats": [
@@ -2899,14 +2833,6 @@
         "django": ""
       },
       "website": "https://djangoproject.com"
-    },
-    "Django CMS": {
-      "cats": [
-        1
-      ],
-      "icon": "Django CMS.png",
-      "implies": "Django",
-      "website": "https://django-cms.org"
     },
     "Docusaurus": {
       "cats": [
@@ -3103,6 +3029,17 @@
       "implies": "Drupal",
       "website": "http://drupalcommerce.org"
     },
+    "Duda": {
+      "cats": [
+        1
+      ],
+      "js": {
+        "SystemID": "^.*DIRECT.*$\\;confidence:100",
+        "version": "^(.*)$\\;version:\\1\\;confidence:0"
+      },
+      "icon": "duda.png",
+      "website": "https://www.duda.co/website-builder"
+    },
     "Dynamicweb": {
       "cats": [
         1,
@@ -3198,10 +3135,9 @@
       "cats": [
         6
       ],
-      "headers": {
-        "X-Powered-By": "epages 6"
+      "js": {
+        "epages": ""
       },
-      "html": "<div class=\"BoxContainer\">",
       "icon": "epages.png",
       "website": "http://www.epages.com/"
     },
@@ -3427,6 +3363,14 @@
       "script": "exhibit.*\\.js",
       "website": "http://simile-widgets.org/exhibit/"
     },
+    "ExpertRec": {
+      "cats": [
+        29
+      ],
+      "icon": "ExpertRec.png",
+      "script": "cse\\.expertrec\\.com/api/js/ci_common\\.js\\?id=.*$",
+      "website": "https://expertrec.com"
+    },
     "Express": {
       "cats": [
         18,
@@ -3507,17 +3451,6 @@
       ],
       "url": "Pages/SearchResults\\.aspx\\?k=",
       "website": "http://sharepoint.microsoft.com/en-us/product/capabilities/search/Pages/Fast-Search.aspx"
-    },
-    "FWP": {
-      "cats": [
-        6
-      ],
-      "html": "<!--\\s+FwP Systems",
-      "icon": "FWP.png",
-      "meta": {
-        "generator": "FWP Shop"
-      },
-      "website": "http://fwpshop.org"
     },
     "Facebook": {
       "cats": [
@@ -4001,6 +3934,23 @@
       "html": "<a [^>]*onclick=\"gemius_hit",
       "website": "https://www.gemius.com"
     },
+    "GeneXus": {
+      "cats": [
+        27
+      ],
+      "html": [
+        "<link[^>]+?id=\"gxtheme_css_reference\""
+      ],
+      "icon": "GeneXus.png",
+      "js": {
+        "gx.gxVersion": "^(.+)-.*$\\;version:\\1"
+      },
+      "script": [
+        ".*/static/gxgral.js",
+        ".*/static/gxtimezone.js"
+      ],
+      "website": "https://www.genexus.com/"
+    },
     "Gentoo": {
       "cats": [
         28
@@ -4110,7 +4060,10 @@
         "<header class=\"navbar navbar-fixed-top navbar-gitlab with-horizontal-nav\">"
       ],
       "icon": "GitLab.svg",
-      "implies": "Ruby on Rails",
+      "implies": [
+        "Ruby on Rails",
+        "Vue.js"
+      ],
       "js": {
         "GitLab": "",
         "gl.dashboardOptions": ""
@@ -4224,18 +4177,6 @@
         "go.version": "(.*)\\;version:\\1",
         "go.GraphObject": ""
       }
-    },
-    "GoSquared": {
-      "cats": [
-        10,
-        52,
-        53
-      ],
-      "icon": "gosquared.png",
-      "js": {
-        "_gs": "\\;confidence:30"
-      },
-      "website": "https://www.gosquared.com/"
     },
     "GoStats": {
       "cats": [
@@ -4545,9 +4486,6 @@
       "cats": [
         10
       ],
-      "js": {
-        "gio": ""
-      },
       "cookies": {
         "grwng_uid": "",
         "gr_user_id": ""
@@ -4592,24 +4530,6 @@
       ],
       "headers": {
         "Server": "HP_Compact_Server(?:/([\\d.]+))?\\;version:\\1"
-      },
-      "icon": "HP.svg",
-      "website": "http://hp.com"
-    },
-    "HP ProCurve": {
-      "cats": [
-        37
-      ],
-      "cpe": "cpe:/h:hp:procurve_switch",
-      "icon": "HP.svg",
-      "website": "http://hp.com/networking"
-    },
-    "HP System Management": {
-      "cats": [
-        46
-      ],
-      "headers": {
-        "Server": "HP System Management"
       },
       "icon": "HP.svg",
       "website": "http://hp.com"
@@ -4828,18 +4748,6 @@
       ],
       "website": "https://twitter.github.io/hogan.js/"
     },
-    "Homeland": {
-      "cats": [
-        1,
-        2
-      ],
-      "cookies": {
-        "_homeland_": ""
-      },
-      "icon": "Homeland.png",
-      "implies": "Ruby on Rails",
-      "website": "https://gethomeland.com"
-    },
     "Hotaru CMS": {
       "cats": [
         1
@@ -4933,17 +4841,6 @@
       },
       "icon": "IBM.svg",
       "website": "http://ibm.com/software/webservers/httpservers"
-    },
-    "IBM Tivoli Storage Manager": {
-      "cats": [
-        22
-      ],
-      "cpe": "cpe:/a:ibm:tivoli_storage_manager",
-      "headers": {
-        "Server": "TSM_HTTP(?:/([\\d.]+))?\\;version:\\1"
-      },
-      "icon": "IBM.svg",
-      "website": "http://ibm.com"
     },
     "IBM WebSphere Commerce": {
       "cats": [
@@ -5095,16 +4992,6 @@
       },
       "icon": "Incapsula.png",
       "website": "http://www.incapsula.com"
-    },
-    "PageCDN": {
-      "cats": [
-        31
-      ],
-      "headers": {
-        "X-CDN": "PageCDN"
-      },
-      "icon": "PageCDN.png",
-      "website": "https://pagecdn.com"
     },
     "Includable": {
       "cats": [
@@ -5273,17 +5160,6 @@
       "icon": "Invenio.png",
       "website": "http://invenio-software.org"
     },
-    "Inwemo": {
-      "cats": [
-        56
-      ],
-      "icon": "inwemo.png",
-      "js": {
-        "Inwemo": ""
-      },
-      "script": "https?://cdn\\.inwemo\\.com/inwemo\\.min\\.js",
-      "website": "https://inwemo.com/"
-    },
     "Ionic": {
       "cats": [
         18
@@ -5420,6 +5296,14 @@
       "implies": "Java",
       "website": "http://www.oracle.com/technetwork/java/index-jsp-135475.html"
     },
+    "Javadoc": {
+      "cats": [
+        4
+      ],
+      "html": "<!-- Generated by javadoc -->",
+      "icon": "Java.png",
+      "website": "https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javadoc.html"
+    },
     "JavaScript Infovis Toolkit": {
       "cats": [
         25
@@ -5518,10 +5402,6 @@
       },
       "icon": "jimdo.png",
       "url": "\\.jimdo\\.com/",
-      "js": {
-        "jimdoData": "",
-        "jimdo_Data": ""
-      },
       "website": "https://www.jimdo.com"
     },
     "Jirafe": {
@@ -5878,14 +5758,6 @@
       },
       "website": "http://www.komodocms.com"
     },
-    "Kontaktify": {
-      "cats": [
-        5
-      ],
-      "icon": "Kontaktify.png",
-      "script": "//(?:www\\.)?kontaktify\\.com/embed\\.js",
-      "website": "https://www.kontaktify.com"
-    },
     "Koobi": {
       "cats": [
         1
@@ -5938,17 +5810,6 @@
       },
       "website": "http://www.lepton-cms.org"
     },
-    "LabVIEW": {
-      "cats": [
-        22
-      ],
-      "cpe": "cpe:/a:ni:labview",
-      "headers": {
-        "Server": "LabVIEW(?:/([\\d\\.]+))?\\;version:\\1"
-      },
-      "icon": "LabVIEW.png",
-      "website": "http://ni.com/labview"
-    },
     "Laravel": {
       "cats": [
         18
@@ -5974,13 +5835,6 @@
       },
       "script": "https?://connectormwi\\.laterpay\\.net/([0-9.]+)[a-zA-z-]*/live/[\\w-]+\\.js\\;version:\\1",
       "website": "https://www.laterpay.net/"
-    },
-    "Lazy.js": {
-      "cats": [
-        59
-      ],
-      "script": "lazy(?:\\.browser)?(?:\\.min)?\\.js",
-      "website": "http://danieltao.com/lazy.js"
     },
     "Leaflet": {
       "cats": [
@@ -6063,28 +5917,6 @@
       "script": "http://assets\\.webshopapp\\.com",
       "url": "seoshop.webshopapp.com",
       "website": "http://www.lightspeedhq.com/products/ecommerce/"
-    },
-    "Lighty": {
-      "cats": [
-        18
-      ],
-      "cookies": {
-        "lighty_version": ""
-      },
-      "icon": "Lighty.png",
-      "implies": "PHP",
-      "website": "https://gitlab.com/lighty/framework"
-    },
-    "LimeSurvey": {
-      "cats": [
-        19
-      ],
-      "cpe": "cpe:/a:limesurvey:limesurvey",
-      "headers": {
-        "generator": "LimeSurvey"
-      },
-      "icon": "LimeSurvey.png",
-      "website": "http://limesurvey.org/"
     },
     "LinkSmart": {
       "cats": [
@@ -6274,6 +6106,7 @@
       "icon": "Lo-dash.png",
       "js": {
         "_.VERSION": "^(.+)$\\;confidence:0\\;version:\\1",
+        "_.templateSettings.imports._.templateSettings.imports._.VERSION": "^(.+)$\\;version:\\1",
         "_.differenceBy": ""
       },
       "script": "lodash.*\\.js",
@@ -6365,21 +6198,6 @@
         "generator": "MODX[^\\d.]*([\\d.]+)?\\;version:\\1"
       },
       "website": "http://modx.com"
-    },
-    "MYPAGE Platform": {
-      "cats": [
-        1,
-        6
-      ],
-      "cookies": {
-        "mypage_session": ""
-      },
-      "headers": {
-        "CMS-Version": "^(.+)$\\;version:\\1\\;confidence:0"
-      },
-      "icon": "mypage-platform.png",
-      "implies": "Laravel",
-      "website": "https://www.mypage.vn"
     },
     "Botble CMS": {
       "cats": [
@@ -6561,7 +6379,6 @@
       ],
       "html": "<link[^>]* href=\"[^\"]*materialize(?:\\.min)?\\.css",
       "icon": "Materialize CSS.png",
-      "implies": "jQuery",
       "script": "materialize(?:\\.min)?\\.js",
       "website": "http://materializecss.com"
     },
@@ -6652,21 +6469,6 @@
       },
       "website": "http://max-3000.com"
     },
-    "Mean.io": {
-      "cats": [
-        12
-      ],
-      "headers": {
-        "X-Powered-CMS": "Mean\\.io"
-      },
-      "icon": "Mean.io.png",
-      "implies": [
-        "MongoDB",
-        "Express",
-        "Angular"
-      ],
-      "website": "http://mean.io"
-    },
     "MediaElement.js": {
       "cats": [
         14
@@ -6677,16 +6479,6 @@
         "mejs.version": "^(.+)$\\;version:\\1"
       },
       "website": "http://www.mediaelementjs.com"
-    },
-    "MediaTomb": {
-      "cats": [
-        38
-      ],
-      "headers": {
-        "Server": "MediaTomb(?:/([\\d.]+))?\\;version:\\1"
-      },
-      "icon": "MediaTomb.png",
-      "website": "http://mediatomb.cc"
     },
     "MediaWiki": {
       "cats": [
@@ -6902,17 +6694,6 @@
       },
       "website": "https://office.microsoft.com/word"
     },
-    "Mietshop": {
-      "cats": [
-        6
-      ],
-      "html": "<a href=\"https://ssl\\.mietshop\\.d",
-      "icon": "mietshop.png",
-      "meta": {
-        "generator": "Mietshop"
-      },
-      "website": "http://www.mietshop.de/"
-    },
     "Milligram": {
       "cats": [
         66
@@ -6960,14 +6741,6 @@
       },
       "script": "mint/\\?js",
       "website": "https://haveamint.com"
-    },
-    "Mithril": {
-      "cats": [
-        12
-      ],
-      "icon": "Mithril.svg",
-      "script": "mithril/\\?js",
-      "website": "https://mithril.js.org"
     },
     "Mixpanel": {
       "cats": [
@@ -7151,14 +6924,6 @@
         "generator": "Mondo Shop"
       },
       "website": "http://mondo-media.de"
-    },
-    "Monerominer": {
-      "cats": [
-        56
-      ],
-      "html": "<iframe[^>]+src=[\\'\"]https?://monerominer\\.rocks/miner\\.php\\?siteid=",
-      "icon": "monerominer.png",
-      "website": "https://monerominer.rocks/"
     },
     "MongoDB": {
       "cats": [
@@ -7368,6 +7133,21 @@
       },
       "website": "http://www.netcap-creation.fr"
     },
+    "MyWebsite": {
+      "cats": [
+        1
+      ],
+      "meta": {
+        "generator": "^.*MyWebsite.*$\\;confidence:100\\;version:8"
+      },
+      "js": {
+        "SystemID": "^.*1AND1.*$\\;confidence:100",
+        "version": "^(.*)$\\;version:\\1\\;confidence:0"
+      },
+      "script": "\\/\\/integration.mywebsite-editor.com.*\\.js\\;confidence:100\\;version:9",
+      "icon": "Ionos-by-1and1-logo.svg",
+      "website": "https://www.ionos.com"
+    },
     "NEO - Omnichannel Commerce Platform": {
       "cats": [
         6
@@ -7424,16 +7204,6 @@
       "icon": "Neos.svg",
       "implies": "PHP",
       "website": "https://flow.neos.io"
-    },
-    "Nepso": {
-      "cats": [
-        1
-      ],
-      "headers": {
-        "X-Powered-CMS": "Nepso"
-      },
-      "icon": "Nepso.png",
-      "website": "http://nepso.com"
     },
     "Netlify": {
       "cats": [
@@ -7521,7 +7291,7 @@
       "js": {
         "__NEXT_DATA__": ""
       },
-      "website": "https://github.com/zeit/next.js"
+      "website": "https://nextjs.org"
     },
     "NextGEN Gallery": {
       "cats": [
@@ -7615,7 +7385,7 @@
         1
       ],
       "cookies": {
-        "october_session=": ""
+        "october_session": ""
       },
       "icon": "October CMS.png",
       "implies": "Laravel",
@@ -7765,6 +7535,14 @@
       "icon": "OpenCart.png",
       "implies": "PHP",
       "website": "http://www.opencart.com"
+    },
+    "Tebex": {
+      "cats": [
+        6
+      ],
+      "script": "https://server.tebex.io/tebexAccounts/tebexaccounts\\.js",
+      "icon": "Tebex.png",
+      "website": "https://www.tebex.io/"
     },
     "OpenCms": {
       "cats": [
@@ -8026,16 +7804,6 @@
       "url": "/owa/auth/log(?:on|off)\\.aspx",
       "website": "http://help.outlook.com"
     },
-    "PANSITE": {
-      "cats": [
-        1
-      ],
-      "icon": "PANSITE.png",
-      "meta": {
-        "generator": "PANSITE"
-      },
-      "website": "http://panvision.de/Produkte/Content_Management/index.asp"
-    },
     "PDF.js": {
       "cats": [
         19
@@ -8118,7 +7886,7 @@
       ],
       "icon": "Cecil.png",
       "meta": {
-        "generator": "^Cecil|PHPoole$"
+        "generator": "^Cecil(?: ([0-9.]+))?$\\;version:\\1"
       },
       "website": "https://cecil.app"
     },
@@ -8161,16 +7929,6 @@
       ],
       "icon": "pantheon.svg",
       "website": "https://pantheon.io/"
-    },
-    "Paper.js": {
-      "cats": [
-        25
-      ],
-      "icon": "paperjs.png",
-      "js": {
-        "paper.version": "^(.+)$\\;version:\\1"
-      },
-      "website": "http://paperjs.org/"
     },
     "Pardot": {
       "cats": [
@@ -8262,14 +8020,6 @@
       "icon": "PencilBlue.png",
       "implies": "Node.js",
       "website": "http://pencilblue.org"
-    },
-    "Pendo": {
-      "cats": [
-        58
-      ],
-      "icon": "Pendo.svg",
-      "script": "cdn\\.pendo\\.io*\\.js",
-      "website": "https://pendo.io"
     },
     "Percona": {
       "cats": [
@@ -8636,17 +8386,6 @@
       "script": "^https?://(?:www\\.)?projectwonderful\\.com/(?:pwa\\.js|gen\\.php)",
       "website": "http://projectwonderful.com"
     },
-    "ProjectPoi": {
-      "cats": [
-        56
-      ],
-      "icon": "ProjectPoi.png",
-      "js": {
-        "ProjectPoi": ""
-      },
-      "script": "^(?:https):?//ppoi\\.org/lib/",
-      "website": "https://ppoi.org/"
-    },
     "Projesoft": {
       "cats": [
         6
@@ -8867,8 +8606,7 @@
       ],
       "cpe": "cpe:/a:dave_thomas:rdoc",
       "html": [
-        "<link[^>]+href=\"[^\"]*rdoc-style\\.css",
-        "Generated by <a[^>]+href=\"https?://rdoc\\.rubyforge\\.org[^>]+>RDoc</a> ([\\d.]*\\d)\\;version:\\1"
+        "<link[^>]+href=\"[^\"]*rdoc-style\\.css"
       ],
       "js": {
         "rdoc_rel_prefix": ""
@@ -8909,17 +8647,6 @@
       },
       "script": "^rainloop/v/([0-9.]+)/\\;version:\\1",
       "website": "https://www.rainloop.net/"
-    },
-    "Rakuten DBCore": {
-      "cats": [
-        6
-      ],
-      "icon": "Rakuten DBCore.png",
-      "meta": {
-        "generator": "Rakuten DBCore",
-        "generator:site": "http://ecservice\\.rakuten\\.com\\.br"
-      },
-      "website": "http://ecservice.rakuten.com.br"
     },
     "Rakuten Digital Commerce": {
       "cats": [
@@ -8989,12 +8716,6 @@
       },
       "website": "http://www.rayo.ir"
     },
-    "Rdf": {
-      "cats": [
-        27
-      ],
-      "website": "https://www.w3.org/RDF/"
-    },
     "Redaxscript": {
       "cats": [
         1
@@ -9046,8 +8767,8 @@
         "Server": "Red Hat",
         "X-Powered-By": "Red Hat"
       },
-      "icon": "Red Hat.png",
-      "website": "http://redhat.com"
+      "icon": "Red Hat.svg",
+      "website": "https://www.redhat.com"
     },
     "Reddit": {
       "cats": [
@@ -9179,6 +8900,24 @@
       "script": "riot(?:\\+compiler)?(?:\\.min)?\\.js",
       "website": "https://riot.js.org/"
     },
+    "Riskified": {
+      "cats": [
+        6
+      ],
+      "icon": "riskified.png",
+      "headers": {
+        "server": "Riskified Server"
+      },
+      "js": {
+        "riskifiedBeaconLoad": "",
+        "RISKX": ""
+      },
+      "html": [
+        "<[^>]*beacon\\.riskified\\.com",
+        "<[^>]*c\\.riskified\\.com"
+      ],
+      "website": "https://www.riskified.com/"
+    },
     "RiteCMS": {
       "cats": [
         1
@@ -9265,6 +9004,7 @@
       "cats": [
         27
       ],
+      "cpe": "cpe:/a:ruby-lang:ruby",
       "headers": {
         "Server": "(?:Mongrel|WEBrick|Ruby)"
       },
@@ -9275,6 +9015,7 @@
       "cats": [
         18
       ],
+      "cpe": "cpe:/a:rubyonrails:rails",
       "headers": {
         "Server": "mod_(?:rails|rack)",
         "X-Powered-By": "mod_(?:rails|rack)"
@@ -9521,16 +9262,6 @@
       "script": "swfobject.*\\.js",
       "website": "https://github.com/swfobject/swfobject"
     },
-    "Saia PCD": {
-      "cats": [
-        45
-      ],
-      "headers": {
-        "Server": "Saia PCD(?:([/a-z\\d.]+))?\\;version:\\1"
-      },
-      "icon": "Saia PCD.png",
-      "website": "http://saia-pcd.com"
-    },
     "Sails.js": {
       "cats": [
         18
@@ -9610,7 +9341,7 @@
         "Phoenix": ""
       },
       "meta": {
-        "generator": "^sazito-phoenix"
+        "generator": "^phoenix"
       },
       "implies": [
         "React",
@@ -9698,7 +9429,7 @@
       ],
       "icon": "Sencha Touch.png",
       "script": "sencha-touch.*\\.js",
-      "website": "http://sencha.com/products/touch"
+      "website": "http://www.sencha.com/products/touch"
     },
     "Seravo": {
       "cats": [
@@ -9907,7 +9638,13 @@
         6
       ],
       "html": "<title>Shopware ([\\d\\.]+) [^<]+\\;version:\\1",
-      "icon": "Shopware.png",
+      "headers": {
+        "sw-context-token": "^[\\w]{32}$\\;version:6",
+        "sw-language-id": "^[a-fA-F0-9]{32}$\\;version:6",
+        "sw-invalidation-states": "\\;version:6",
+        "sw-version-id": "\\;version:6"
+      },
+      "icon": "Shopware.svg",
       "implies": [
         "PHP",
         "MySQL",
@@ -9922,7 +9659,7 @@
         "/jquery\\.shopware\\.min\\.js",
         "/engine/Shopware/"
       ],
-      "website": "http://shopware.com"
+      "website": "https://www.shopware.com"
     },
     "Signal": {
       "cats": [
@@ -9959,6 +9696,16 @@
       },
       "implies": "PHP",
       "website": "https://www.silverstripe.org"
+    },
+    "Simbel": {
+      "cats": [
+        6
+      ],
+      "headers": {
+        "powered": "simbel"
+      },
+      "icon": "simbel.svg",
+      "website": "http://simbel.com.ar/"
     },
     "Simple Analytics": {
       "cats": [
@@ -10289,16 +10036,6 @@
       },
       "website": "http://sphinx.pocoo.org"
     },
-    "SpiderControl iniNet": {
-      "cats": [
-        45
-      ],
-      "icon": "SpiderControl iniNet.png",
-      "meta": {
-        "generator": "iniNet SpiderControl"
-      },
-      "website": "http://spidercontrol.net/ininet"
-    },
     "SpinCMS": {
       "cats": [
         1
@@ -10496,6 +10233,14 @@
       },
       "script": "js\\.stripe\\.com",
       "website": "http://stripe.com"
+    },
+    "Strikingly": {
+      "cats": [
+        1
+      ],
+      "html": "<!-- Powered by Strikingly.com",
+      "icon": "Strikingly.png",
+      "website": "https://strikingly.com"
     },
     "SublimeVideo": {
       "cats": [
@@ -11090,16 +10835,17 @@
       "url": "^https?://(?:www\\.)?[^/]+\\.tumblr\\.com/",
       "website": "http://www.tumblr.com"
     },
-    "TweenMax": {
+    "GSAP": {
       "cats": [
         12
       ],
       "icon": "TweenMax.png",
       "js": {
-        "TweenMax.version": "^(.+)$\\;version:\\1"
+        "TweenMax": "",
+        "gsapVersions": ""
       },
       "script": "TweenMax(?:\\.min)?\\.js",
-      "website": "http://greensock.com/tweenmax"
+      "website": "https://greensock.com/gsap"
     },
     "Twilight CMS": {
       "cats": [
@@ -11341,20 +11087,6 @@
       },
       "website": "https://user.com"
     },
-    "UserGuiding": {
-      "cats": [
-        58,
-        10
-      ],
-      "icon": "UserGuiding.svg",
-      "implies": [
-        "React",
-        "webpack",
-        "Node.js"
-      ],
-      "script": "static\\.userguiding*\\.js",
-      "website": "https://userguiding.com"
-    },
     "UserLike": {
       "cats": [
         52
@@ -11494,16 +11226,6 @@
       "icon": "Varnish.svg",
       "website": "http://www.varnish-cache.org"
     },
-    "Venda": {
-      "cats": [
-        6
-      ],
-      "headers": {
-        "X-venda-hitid": ""
-      },
-      "icon": "Venda.png",
-      "website": "http://venda.com"
-    },
     "Veoxa": {
       "cats": [
         36
@@ -11622,26 +11344,19 @@
       "script": "visualpath[^/]*\\.trackset\\.it/[^/]+/track/include\\.js",
       "website": "http://www.trackset.com/web-analytics-software/visualpath"
     },
-    "Volusion (V1)": {
+    "Volusion": {
       "cats": [
         6
       ],
-      "html": "<link [^>]*href=\"[^\"]*/vspfiles/",
+      "html": [
+        "<link [^>]*href=\"[^\"]*/vspfiles/\\;version:1",
+        "<body [^>]*data-vn-page-name\\;version:2"
+      ],
       "icon": "Volusion.svg",
-      "implies": "Microsoft ASP.NET",
       "js": {
         "volusion": ""
       },
       "script": "/volusion\\.js(?:\\?([\\d.]*))?\\;version:\\1",
-      "website": "https://www.volusion.com"
-    },
-    "Volusion (V2)": {
-      "cats": [
-        6
-      ],
-      "html": "<body [^>]*data-vn-page-name",
-      "icon": "Volusion.svg",
-      "implies": "AngularJS",
       "website": "https://www.volusion.com"
     },
     "Vue.js": {
@@ -11738,7 +11453,8 @@
       "headers": {
         "wpe-backend": "",
         "X-Pass-Why": "",
-        "X-WPE-Loopback-Upstream-Addr": ""
+        "X-WPE-Loopback-Upstream-Addr": "",
+        "X-Powered-By": "WP Engine"
       },
       "icon": "wpengine.svg",
       "implies": "WordPress",
@@ -11854,16 +11570,6 @@
       "icon": "webmine.png",
       "website": "https://webmine.cz/"
     },
-    "Webs": {
-      "cats": [
-        1
-      ],
-      "headers": {
-        "Server": "Webs\\.com/?([\\d\\.]+)?\\;version:\\1"
-      },
-      "icon": "Webs.png",
-      "website": "http://webs.com"
-    },
     "Websocket": {
       "cats": [
         19
@@ -11890,7 +11596,9 @@
         6
       ],
       "icon": "Websale.png",
-      "url": "/websale7/",
+      "cookies": {
+        "websale_ac": ""
+      },
       "website": "http://websale.de"
     },
     "Website Creator": {
@@ -12140,26 +11848,12 @@
       "script": "static\\.woopra\\.com",
       "website": "http://www.woopra.com"
     },
-    "Woosa": {
-      "cats": [
-        1,
-        6
-      ],
-      "excludes": [
-        "WordPress",
-        "WooCommerce"
-      ],
-      "icon": "Woosa.png",
-      "meta": {
-        "generator": "^Woosa$"
-      },
-      "website": "https://woosa.nl"
-    },
     "WordPress": {
       "cats": [
         1,
         11
       ],
+      "cpe": "cpe:/a:wordpress:wordpress",
       "html": [
         "<link rel=[\"']stylesheet[\"'] [^>]+/wp-(?:content|includes)/",
         "<link[^>]+s\\d+\\.wp\\.com"
@@ -12724,16 +12418,6 @@
       "script": "zepto.*\\.js",
       "website": "http://zeptojs.com"
     },
-    "Zeuscart": {
-      "cats": [
-        6
-      ],
-      "html": "<form name=\"product\" method=\"post\" action=\"[^\"]+\\?do=addtocart&prodid=\\d+\"(?!<\\/form>.)+<input type=\"hidden\" name=\"addtocart\" value=\"\\d+\">",
-      "icon": "Zeuscart.png",
-      "implies": "PHP",
-      "url": "\\?do=prodetail&action=show&prodid=\\d+",
-      "website": "http://zeuscart.com"
-    },
     "Zimbra": {
       "cats": [
         30
@@ -12930,6 +12614,18 @@
       },
       "website": "http://esyndicat.com"
     },
+    "eZ Platform": {
+      "cats": [
+        1,
+        6
+      ],
+      "icon": "eZ.svg",
+      "implies": "Symfony",
+      "meta": {
+        "generator": "eZ Platform"
+      },
+      "website": "https://ezplatform.com/"
+    },
     "eZ Publish": {
       "cats": [
         1,
@@ -12941,12 +12637,12 @@
       "headers": {
         "X-Powered-By": "^eZ Publish"
       },
-      "icon": "eZ Publish.png",
+      "icon": "eZ.svg",
       "implies": "PHP",
       "meta": {
         "generator": "eZ Publish"
       },
-      "website": "http://ez.no"
+      "website": "https://github.com/ezsystems/ezpublish-legacy"
     },
     "ef.js": {
       "cats": [
@@ -13034,17 +12730,6 @@
       "implies": "Python",
       "website": "http://gunicorn.org"
     },
-    "iCongo": {
-      "cats": [
-        6
-      ],
-      "icon": "Hybris.png",
-      "implies": "Adobe ColdFusion",
-      "meta": {
-        "iCongo": ""
-      },
-      "website": "http://hybris.com/icongo"
-    },
     "iPresta": {
       "cats": [
         6
@@ -13130,6 +12815,7 @@
       "cats": [
         59
       ],
+      "cpe": "cpe:/a:jquery:jquery",
       "icon": "jQuery.svg",
       "js": {
         "jQuery.fn.jquery": "([\\d.]+)\\;version:\\1"
@@ -13196,6 +12882,7 @@
       "cats": [
         59
       ],
+      "cpe": "cpe:/a:jquery:jquery_ui",
       "icon": "jQuery UI.svg",
       "implies": "jQuery",
       "js": {
@@ -13418,24 +13105,6 @@
       },
       "website": "http://www.nopcommerce.com"
     },
-    "openEngine": {
-      "cats": [
-        1
-      ],
-      "icon": "openEngine.png",
-      "meta": {
-        "openEngine": ""
-      },
-      "website": "http://openengine.de/html/pages/de/"
-    },
-    "osCSS": {
-      "cats": [
-        6
-      ],
-      "html": "<body onload=\"window\\.defaultStatus='oscss templates';\"",
-      "icon": "osCSS.png",
-      "website": "http://www.oscss.org"
-    },
     "osCommerce": {
       "cats": [
         6
@@ -13562,18 +13231,18 @@
       },
       "website": "https://phpbb.com"
     },
-    "phpCMS": {
-      "cats": [
-        1
-      ],
-      "icon": "phpCMS.png",
-      "implies": "PHP",
-      "js": {
-        "phpcms": ""
-      },
-      "website": "http://phpcms.de"
-    },
     "phpDocumentor": {
+      "phpCMS": {
+        "cats": [
+          1
+        ],
+        "icon": "phpCMS.png",
+        "implies": "PHP",
+        "js": {
+          "phpcms": ""
+        },
+        "website": "http://phpcms.de"
+      },
       "cats": [
         4
       ],
@@ -13586,7 +13255,10 @@
       "cats": [
         3
       ],
-      "html": "(?: \\| phpMyAdmin ([\\d.]+)<\\/title>|PMA_sendHeaderLocation\\(|<link [^>]*href=\"[^\"]*phpmyadmin\\.css\\.php)\\;version:\\1",
+      "html": [
+        "!\\[CDATA\\[[^<]*PMA_VERSION:\\\"([\\d.]+)\\;version:\\1",
+        "(?: \\| phpMyAdmin ([\\d.]+)<\\/title>|PMA_sendHeaderLocation\\(|<link [^>]*href=\"[^\"]*phpmyadmin\\.css\\.php)\\;version:\\1"
+      ],
       "icon": "phpMyAdmin.png",
       "implies": [
         "PHP",
@@ -13619,22 +13291,6 @@
         "generator": "^phpSQLiteCMS(?: (.+))?$\\;version:\\1"
       },
       "website": "http://phpsqlitecms.net"
-    },
-    "phpliteadmin": {
-      "cats": [
-        3
-      ],
-      "html": [
-        "<span id='logo'>phpLiteAdmin</span> <span id='version'>v([0-9.]+)<\\;version:\\1",
-        "<!-- Copyright [0-9]+ phpLiteAdmin (?:https?://www\\.phpliteadmin\\.org/) -->",
-        "Powered by <a href='https?://www\\.phpliteadmin\\.org/'"
-      ],
-      "icon": "phpliteadmin.png",
-      "implies": [
-        "PHP",
-        "SQLite"
-      ],
-      "website": "https://www.phpliteadmin.org/"
     },
     "phpwind": {
       "cats": [
@@ -14075,6 +13731,17 @@
       "implies": "Vue.js",
       "website": "https://saber.land/"
     },
+    "VuePress": {
+      "cats": [
+        57
+      ],
+      "icon": "VuePress.svg",
+      "meta": {
+        "generator": "^VuePress(?: ([0-9.]+))?$\\;version:\\1"
+      },
+      "implies": "Vue.js",
+      "website": "https://vuepress.vuejs.org/"
+    },
     "GoCache": {
       "cats": [
         31
@@ -14118,6 +13785,38 @@
       },
       "script": "/opencart_custom\\.js",
       "website": "https://onshop.asia"
+    },
+    "PageFly": {
+      "cats": [
+        51
+      ],
+      "icon": "pagefly.png",
+      "script": "pagefly\\.io",
+      "website": "https://pagefly.io"
+    },
+    "GOV.UK Frontend": {
+      "cats": [
+        66,
+        19
+      ],
+      "html": [
+        "<body[^>]+govuk-template__body",
+        "<a[^>]+govuk-link"
+      ],
+      "icon": "govuk.png",
+      "website": "https://design-system.service.gov.uk/"
+    },
+    "Varbase": {
+      "cats": [
+        1
+      ],
+      "meta": {
+        "generator": "Varbase"
+      },
+      "cpe": "cpe:/a:vardot:varbase",
+      "icon": "varbase.png",
+      "implies": "Drupal",
+      "website": "https://drupal.org/project/varbase"
     }
   },
   "categories": {
@@ -14126,15 +13825,15 @@
       "priority": 1
     },
     "2": {
-      "name": "Message Boards",
+      "name": "Message boards",
       "priority": 1
     },
     "3": {
-      "name": "Database Managers",
+      "name": "Database managers",
       "priority": 2
     },
     "4": {
-      "name": "Documentation Tools",
+      "name": "Documentation tools",
       "priority": 2
     },
     "5": {
@@ -14146,7 +13845,7 @@
       "priority": 1
     },
     "7": {
-      "name": "Photo Galleries",
+      "name": "Photo galleries",
       "priority": 1
     },
     "8": {
@@ -14154,7 +13853,7 @@
       "priority": 1
     },
     "9": {
-      "name": "Hosting Panels",
+      "name": "Hosting panels",
       "priority": 1
     },
     "10": {
@@ -14166,19 +13865,19 @@
       "priority": 1
     },
     "12": {
-      "name": "JavaScript Frameworks",
+      "name": "JavaScript frameworks",
       "priority": 8
     },
     "13": {
-      "name": "Issue Trackers",
+      "name": "Issue trackers",
       "priority": 2
     },
     "14": {
-      "name": "Video Players",
+      "name": "Video players",
       "priority": 7
     },
     "15": {
-      "name": "Comment Systems",
+      "name": "Comment systems",
       "priority": 9
     },
     "16": {
@@ -14186,11 +13885,11 @@
       "priority": 9
     },
     "17": {
-      "name": "Font Scripts",
+      "name": "Font scripts",
       "priority": 9
     },
     "18": {
-      "name": "Web Application Frameworks",
+      "name": "Web frameworks",
       "priority": 7
     },
     "19": {
@@ -14206,39 +13905,39 @@
       "priority": 1
     },
     "22": {
-      "name": "Web Servers",
+      "name": "Web servers",
       "priority": 8
     },
     "23": {
-      "name": "Cache Tools",
+      "name": "Caching",
       "priority": 7
     },
     "24": {
-      "name": "Rich Text Editors",
+      "name": "Rich text editors",
       "priority": 5
     },
     "25": {
-      "name": "JavaScript Graphics",
+      "name": "JavaScript graphics",
       "priority": 6
     },
     "26": {
-      "name": "Mobile Frameworks",
+      "name": "Mobile frameworks",
       "priority": 8
     },
     "27": {
-      "name": "Programming Languages",
+      "name": "Programming languages",
       "priority": 5
     },
     "28": {
-      "name": "Operating Systems",
+      "name": "Operating systems",
       "priority": 6
     },
     "29": {
-      "name": "Search Engines",
+      "name": "Search engines",
       "priority": 4
     },
     "30": {
-      "name": "Web Mail",
+      "name": "Webmail",
       "priority": 2
     },
     "31": {
@@ -14246,11 +13945,11 @@
       "priority": 9
     },
     "32": {
-      "name": "Marketing Automation",
+      "name": "Marketing automation",
       "priority": 9
     },
     "33": {
-      "name": "Web Server Extensions",
+      "name": "Web server extensions",
       "priority": 7
     },
     "34": {
@@ -14262,15 +13961,15 @@
       "priority": 6
     },
     "36": {
-      "name": "Advertising Networks",
+      "name": "Advertising",
       "priority": 9
     },
     "37": {
-      "name": "Network Devices",
+      "name": "Network devices",
       "priority": 2
     },
     "38": {
-      "name": "Media Servers",
+      "name": "Media servers",
       "priority": 1
     },
     "39": {
@@ -14278,47 +13977,47 @@
       "priority": 9
     },
     "41": {
-      "name": "Payment Processors",
+      "name": "Payment processors",
       "priority": 8
     },
     "42": {
-      "name": "Tag Managers",
+      "name": "Tag managers",
       "priority": 9
     },
     "44": {
-      "name": "Build CI Systems",
+      "name": "CI",
       "priority": 3
     },
     "45": {
-      "name": "Control Systems",
+      "name": "Control systems",
       "priority": 2
     },
     "46": {
-      "name": "Remote Access",
+      "name": "Remote access",
       "priority": 1
     },
     "47": {
-      "name": "Dev Tools",
+      "name": "Development",
       "priority": 2
     },
     "48": {
-      "name": "Network Storage",
+      "name": "Network storage",
       "priority": 2
     },
     "49": {
-      "name": "Feed Readers",
+      "name": "Feed readers",
       "priority": 1
     },
     "50": {
-      "name": "Document Management Systems",
+      "name": "DMS",
       "priority": 1
     },
     "51": {
-      "name": "Landing Page Builders",
+      "name": "Page builders",
       "priority": 2
     },
     "52": {
-      "name": "Live Chat",
+      "name": "Live chat",
       "priority": 8
     },
     "53": {
@@ -14334,11 +14033,11 @@
       "priority": 1
     },
     "56": {
-      "name": "Cryptominer",
+      "name": "Cryptominers",
       "priority": 5
     },
     "57": {
-      "name": "Static Site Generator",
+      "name": "Static site generator",
       "priority": 1
     },
     "58": {
@@ -14346,7 +14045,7 @@
       "priority": 8
     },
     "59": {
-      "name": "JavaScript Libraries",
+      "name": "JavaScript libraries",
       "priority": 9
     },
     "60": {
@@ -14366,15 +14065,15 @@
       "priority": 8
     },
     "64": {
-      "name": "Reverse Proxy",
+      "name": "Reverse proxies",
       "priority": 7
     },
     "65": {
-      "name": "Load Balancer",
+      "name": "Load balancers",
       "priority": 7
     },
     "66": {
-      "name": "UI Frameworks",
+      "name": "UI frameworks",
       "priority": 7
     }
   }

@@ -41,8 +41,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     private static final Logger LOGGER = Logger.getLogger(UserControlledOpenRedirectScanner.class);
 
     /** Prefix for internationalized messages used by this rule */
@@ -130,22 +128,17 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 
     private void raiseAlert(
             HttpMessage msg, int id, String paramName, String paramValue, String responseLocation) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName());
-
-        alert.setDetail(
-                getDescriptionMessage(),
-                msg.getRequestHeader().getURI().toString(),
-                paramName,
-                "", // No attack
-                getExtraInfoMessage(msg, paramName, paramValue, responseLocation),
-                getSolutionMessage(),
-                getReferenceMessage(),
-                "", // No evidence
-                601, // CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
-                38, // WASC Id
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_HIGH)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescriptionMessage())
+                .setParam(paramName)
+                .setOtherInfo(getExtraInfoMessage(msg, paramName, paramValue, responseLocation))
+                .setSolution(getSolutionMessage())
+                .setReference(getReferenceMessage())
+                .setCweId(601) // CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
+                .setWascId(38) // WASC-38: URL Redirector Abuse
+                .raise();
     }
 
     @Override
@@ -155,7 +148,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /*

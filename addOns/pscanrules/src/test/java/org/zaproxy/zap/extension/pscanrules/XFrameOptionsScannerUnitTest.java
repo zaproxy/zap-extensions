@@ -58,7 +58,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -78,7 +78,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -98,7 +98,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -118,7 +118,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -138,7 +138,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -157,7 +157,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
@@ -182,7 +182,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
@@ -207,7 +207,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -228,7 +228,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -249,7 +249,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
@@ -274,7 +274,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -295,7 +295,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -316,7 +316,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_MULTIPLE_HEADERS));
@@ -340,7 +340,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(2));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
@@ -371,7 +371,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_DEFINED_IN_META));
@@ -397,7 +397,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_MALFORMED));
@@ -421,7 +421,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
@@ -445,7 +445,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -466,7 +466,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -489,7 +489,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_MALFORMED));
@@ -516,7 +516,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -539,7 +539,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest<XFrameOptio
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }

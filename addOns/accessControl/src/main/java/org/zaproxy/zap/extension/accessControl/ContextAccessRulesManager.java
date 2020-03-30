@@ -305,12 +305,12 @@ public class ContextAccessRulesManager {
                 log.debug(
                         String.format(
                                 "Imported access control rule (context, userId, node, rule): (%d, %d, %s, %s) ",
-                                context.getIndex(), userId, uri.toString(), rule));
+                                context.getId(), userId, uri.toString(), rule));
             }
         } catch (Exception ex) {
             log.error(
                     "Unable to import serialized rule for context "
-                            + context.getIndex()
+                            + context.getId()
                             + ":"
                             + serializedRule,
                     ex);
@@ -344,7 +344,7 @@ public class ContextAccessRulesManager {
             log.debug(
                     String.format(
                             "Identified hanging rules for context %d and user %d: %s",
-                            context.getIndex(), userId, rules));
+                            context.getId(), userId, rules));
         }
         return rules;
     }

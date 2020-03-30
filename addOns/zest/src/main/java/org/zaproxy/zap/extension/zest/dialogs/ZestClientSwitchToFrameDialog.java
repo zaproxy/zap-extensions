@@ -34,7 +34,6 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -94,7 +93,7 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
         this.addNumberField(FIELD_FRAME_INDEX, -1, 1024, client.getFrameIndex());
         this.addCheckBoxField(FIELD_PARENT_FRAME, client.isParent());
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_FRAME_NAME));
+        setFieldMainPopupMenu(FIELD_FRAME_NAME);
 
         // Only allow one choice to be selected
         ((ZapTextField) getField(FIELD_FRAME_NAME))

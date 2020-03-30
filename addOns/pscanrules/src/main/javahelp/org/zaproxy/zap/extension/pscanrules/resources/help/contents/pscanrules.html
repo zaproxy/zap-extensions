@@ -6,7 +6,7 @@
 Passive Scan Rules
 </TITLE>
 </HEAD>
-<BODY BGCOLOR="#ffffff">
+<BODY>
 <H1>Passive Scan Rules</H1>
 The following release quality passive scan rules are included in this add-on:
 
@@ -65,7 +65,7 @@ being set should not be acted upon by client side script (such as JavaScript).
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieHttpOnlyScanner.java">CookieHttpOnlyScanner.java</a>
 
 <H2>Cookie - Loosely Scoped</H2>
-Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
+Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. <code>www.nottrusted.com</code>, or loosely scoped to a parent domain e.g. <code>nottrusted.com</code>. In the latter case, any subdomain of <code>nottrusted.com</code> can access the cookie. Loosely scoped cookies are common in mega-applications like <code>google.com</code> and <code>live.com</code>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieLooselyScopedScanner.java">CookieLooselyScopedScanner.java</a>
 
@@ -131,7 +131,7 @@ Attempts to identify the existence of sensitive details within the visited URIs 
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InformationDisclosureInURL.java">InformationDisclosureInURL.java</a>
 
 <H2>Information Disclosure: Referrer</H2>
-Identifies the existence of sensitive details within the the Referrer header field of HTTP requests
+Identifies the existence of sensitive details within the Referrer header field of HTTP requests
 (this may include parameters, document names, directory names, etc.).
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InformationDisclosureReferrerScanner.java">InformationDisclosureReferrerScanner.java</a>

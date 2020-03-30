@@ -88,7 +88,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -104,7 +104,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -121,7 +121,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -147,7 +147,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -161,7 +161,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -177,7 +177,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -197,7 +197,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -213,7 +213,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -233,7 +233,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -247,7 +247,7 @@ public class InformationDisclosureInURLUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testURI);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());

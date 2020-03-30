@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import net.htmlparser.jericho.Source;
@@ -31,7 +32,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -40,8 +40,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledCookie}
  */
 public class UserControlledCookieScanner extends PluginPassiveScanner {
-
-    private PassiveScanThread parent = null;
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.usercontrolledcookie.";
@@ -58,16 +56,18 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (msg.getResponseHeader().getHeader(HttpResponseHeader.SET_COOKIE) != null) {}
-
-        Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
-        params.addAll(msg.getUrlParams());
-
-        if (msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE) == null) {
+        List<String> cookies = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE);
+        if (cookies.isEmpty()) {
             return;
         }
 
-        for (String cookie : msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE)) {
+        Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
+        params.addAll(msg.getUrlParams());
+        if (params.isEmpty()) {
+            return;
+        }
+
+        for (String cookie : cookies) {
             cookie = decodeCookie(cookie, msg.getResponseHeader().getCharset());
             if (cookie == null) {
                 continue;
@@ -86,9 +86,7 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
             // Common delimiters in cookies.  E.g. name=value;name2=v1|v2|v3
             String[] cookieSplit = cookie.split("[;=|]");
             for (String cookiePart : cookieSplit) {
-                if (params != null && params.size() > 0) {
-                    checkUserControllableCookieHeaderValue(msg, id, params, cookiePart, cookie);
-                }
+                checkUserControllableCookieHeaderValue(msg, id, params, cookiePart, cookie);
             }
         }
     }
@@ -151,23 +149,17 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, HtmlParameter param, String cookie) {
-        Alert alert =
-                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
-
-        alert.setDetail(
-                getDescriptionMessage(),
-                msg.getRequestHeader().getURI().toString(),
-                param.getName(),
-                "",
-                getExtraInfoMessage(msg, param, cookie),
-                getSolutionMessage(),
-                getReferenceMessage(),
-                "", // No evidence
-                20, // CWE-20: Improper Input Validation
-                20, // WASC-20: Improper Input Handling
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescriptionMessage())
+                .setParam(param.getName())
+                .setOtherInfo(getExtraInfoMessage(msg, param, cookie))
+                .setSolution(getSolutionMessage())
+                .setReference(getReferenceMessage())
+                .setCweId(20) // CWE-20: Improper Input Validation
+                .setWascId(20) // WASC-20: Improper Input Handling
+                .raise();
     }
 
     @Override
@@ -177,7 +169,7 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /*

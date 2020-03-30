@@ -25,8 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -204,7 +202,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             this.zestEngineFactory = new ZestScriptEngineFactory();
             se = zestEngineFactory.getScriptEngine();
         }
-        zestEngineWrapper = new ZestEngineWrapper(se, defaultTemplates);
+        zestEngineWrapper = new ZestEngineWrapper(zestEngineFactory, defaultTemplates);
         this.getExtScript().registerScriptEngineWrapper(zestEngineWrapper);
 
         this.getExtScript().addListener(this);
@@ -533,22 +531,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("zest.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     public ScriptNode add(ZestScriptWrapper script, boolean display) {

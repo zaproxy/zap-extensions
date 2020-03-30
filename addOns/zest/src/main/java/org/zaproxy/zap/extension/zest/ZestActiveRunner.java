@@ -77,19 +77,13 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
     @Override
     public void alertFound(Alert alert) {
         // Override this as we can put in more info from the script and message
-        sas.raiseAlert(
-                alert.getRisk(),
-                alert.getConfidence(),
-                alert.getName(),
-                script.getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                param,
-                "",
-                "",
-                "",
-                "",
-                -1,
-                -1,
-                msg);
+        sas.newAlert()
+                .setRisk(alert.getRisk())
+                .setConfidence(alert.getConfidence())
+                .setName(alert.getName())
+                .setDescription(script.getDescription())
+                .setParam(param)
+                .setMessage(msg)
+                .raise();
     }
 }

@@ -78,7 +78,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         // When
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -91,7 +91,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         // When
         msg.setResponseBody("<html><a href=\"http://www.example.com\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -110,7 +110,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"https://www.example2.com/\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -128,7 +128,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"https://www.example2.com/page1\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -146,7 +146,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"https://www.example3.com/page1\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -164,7 +164,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"http://www.example2.com\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -181,7 +181,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"http://www.example2.com\" target=\"other\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -200,7 +200,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"http://www.example2.com\" target=\"other\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -221,7 +221,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
                         + "</map> </html>");
 
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -244,7 +244,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
                         + "  <area shape=\"circle\" coords=\"124,58,8\" href=\"https://www.example.com/venus.html\" target=\"_blank\" alt=\"Venus\">"
                         + "</map> </html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -266,7 +266,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
                         + "<a href=\"http://www.example.com\" target=\"_blank\">link</a>"
                         + "</html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -288,7 +288,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
                         + "<a href=\"http://www.example2.com\" target=\"_blank\">link</a>"
                         + "</html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -306,7 +306,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"http://www.example2.com\" target=\"_blank\" rel=\"noopener noreferrer\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -321,7 +321,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"http://www.example2.com\" target=\"_blank\" rel=\"noreferrer noopener\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -343,7 +343,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
                         + "<a href=\"http://www.example.com/6\" target=\"_blank\">link</a>"
                         + "</html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -365,7 +365,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
                         + "<a href=\"http://www.example2.com/6\" target=\"_blank\">link</a>"
                         + "</html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -383,7 +383,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"http://www.example2.com\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(TEXT_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -402,7 +402,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"https://www.example2.com/\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -421,7 +421,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"http://www.example3.com/\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -437,7 +437,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         msg.setResponseBody("<html><a>link</a><area>area</area></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then = no exception.
     }
 
@@ -451,7 +451,7 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setResponseBody(
                 "<html><a href=\"https://www.example2.com/page1\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then = no exception.
     }
 }

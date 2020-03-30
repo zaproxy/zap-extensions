@@ -43,7 +43,6 @@ public class ViewstateScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.viewstatescanner.";
     private static final int PLUGIN_ID = 10032;
 
-    private PassiveScanThread parent = null;
     private static Pattern hiddenFieldPattern = Pattern.compile("__.*");
 
     @Override
@@ -80,122 +79,68 @@ public class ViewstateScanner extends PluginPassiveScanner {
 
     private void alertViewstateAnalyzerResult(
             HttpMessage msg, int id, ViewstateAnalyzerResult var) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_MEDIUM,
-                        Alert.CONFIDENCE_MEDIUM,
-                        var.pattern.getAlertHeader());
-
-        alert.setDetail(
-                var.pattern.getAlertDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                var.getResultExtract().toString(),
-                getSolution(), // Solution
-                "",
-                "", // No Evidence
-                16, // CWE Id 16 - Configuration
-                14, // WASC Id - Server Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(var.pattern.getAlertHeader())
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(var.pattern.getAlertDescription())
+                .setOtherInfo(var.getResultExtract().toString())
+                .setSolution(getSolution())
+                .setCweId(16) // CWE Id 16 - Configuration
+                .setWascId(14) // WASC Id - Server Misconfiguration
+                .raise();
     }
 
     private void alertOldAspVersion(HttpMessage msg, int id) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_LOW,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(MESSAGE_PREFIX + "oldver.name"));
-
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX + "oldver.desc"),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                "",
-                Constant.messages.getString(MESSAGE_PREFIX + "oldver.soln"),
-                "",
-                "", // No Evidence
-                16, // CWE Id 16 - Configuration
-                14, // WASC Id - Server Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX + "oldver.name"))
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "oldver.desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "oldver.soln"))
+                .setCweId(16) // CWE Id 16 - Configuration
+                .setWascId(14) // WASC Id - Server Misconfiguration
+                .raise();
     }
 
     // TODO: see if this alert triggers too often, as the detection rule is far from being robust
     // for the moment
     private void alertNoMACUnsure(HttpMessage msg, int id) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_LOW,
-                        Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.name"));
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.desc"),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                "",
-                Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.soln"),
-                Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.refs"),
-                "", // No Evidence
-                642, // CWE Id 642 - External Control of Critical State Data
-                14, // WASC Id 14 - Server Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.name"))
+                .setRisk(Alert.RISK_HIGH)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.refs"))
+                .setCweId(642) // CWE Id 642 - External Control of Critical State Data
+                .setWascId(14) // WASC Id - Server Misconfiguration
+                .raise();
     }
 
     private void alertNoMACforSure(HttpMessage msg, int id) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.name"));
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.desc"),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                "",
-                Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.soln"),
-                Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.refs"),
-                "", // No Evidence
-                642, // CWE Id 642 - External Control of Critical State Data
-                14, // WASC Id 14 - Server Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.name"))
+                .setRisk(Alert.RISK_HIGH)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.refs"))
+                .setCweId(642) // CWE Id 642 - External Control of Critical State Data
+                .setWascId(14) // WASC Id - Server Misconfiguration
+                .raise();
     }
 
     private void alertSplitViewstate(HttpMessage msg, int id) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_INFO,
-                        Alert.RISK_INFO,
-                        Constant.messages.getString(MESSAGE_PREFIX + "split.name"));
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX + "split.desc"),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                "",
-                Constant.messages.getString(MESSAGE_PREFIX + "split.soln"),
-                "",
-                "", // No Evidence
-                16, // CWE Id 16 - Configuration
-                14, // WASC Id - Server Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX + "split.name"))
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "split.desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "split.soln"))
+                .setCweId(16) // CWE Id 16 - Configuration
+                .setWascId(14) // WASC Id - Server Misconfiguration
+                .raise();
     }
 
     @Override
@@ -205,7 +150,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

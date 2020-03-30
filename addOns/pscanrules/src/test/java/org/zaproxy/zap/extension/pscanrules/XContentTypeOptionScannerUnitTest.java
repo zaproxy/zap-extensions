@@ -52,7 +52,7 @@ public class XContentTypeOptionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -75,7 +75,7 @@ public class XContentTypeOptionScannerUnitTest
                             + msg.getResponseBody().length()
                             + "\r\n");
             // When
-            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+            scanHttpResponseReceive(msg);
             // Then
             assertThat(alertsRaised.size(), equalTo(0));
         } finally {
@@ -97,7 +97,7 @@ public class XContentTypeOptionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_CONTENT_TYPE_OPTIONS));
@@ -119,7 +119,7 @@ public class XContentTypeOptionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_CONTENT_TYPE_OPTIONS));
@@ -143,7 +143,7 @@ public class XContentTypeOptionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_CONTENT_TYPE_OPTIONS));
@@ -167,7 +167,7 @@ public class XContentTypeOptionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -189,7 +189,7 @@ public class XContentTypeOptionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }

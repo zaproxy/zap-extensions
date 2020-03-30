@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
@@ -62,7 +61,7 @@ public class UserControlledCharsetScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -72,7 +71,7 @@ public class UserControlledCharsetScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // WHen
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -83,7 +82,7 @@ public class UserControlledCharsetScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -94,7 +93,7 @@ public class UserControlledCharsetScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -106,7 +105,7 @@ public class UserControlledCharsetScannerUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html; charset=");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -119,7 +118,7 @@ public class UserControlledCharsetScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html; charset=utf-8");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("cs"));
@@ -133,7 +132,7 @@ public class UserControlledCharsetScannerUnitTest
         msg.setResponseBody(
                 "<html><META http-equiv=\"Content-Type\" content=\"text/html; charset=\"></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -145,7 +144,7 @@ public class UserControlledCharsetScannerUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.setResponseBody("<html><META http-equiv=\"info\" content=\"Someinfo\"></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -158,7 +157,7 @@ public class UserControlledCharsetScannerUnitTest
         msg.setResponseBody(
                 "<html><META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("cs"));
@@ -172,7 +171,7 @@ public class UserControlledCharsetScannerUnitTest
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/xml");
         msg.setResponseBody("<?xml version='1.0' encoding=?>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -184,9 +183,8 @@ public class UserControlledCharsetScannerUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/xml");
         msg.setResponseBody("<?xml version='1.0' encoding='utf-8'?>");
-        Source source = createSource(msg);
         // When
-        rule.scanHttpResponseReceive(msg, -1, source);
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("cs"));

@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -41,13 +41,12 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.contentsecuritypolicymissing.";
     private static final int PLUGIN_ID = 10038;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger =
             Logger.getLogger(ContentSecurityPolicyMissingScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -74,32 +73,29 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner {
 
         // Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but
         // Internet Exploder
-        Vector<String> cspOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy");
-        // If it's not null or empty then we found one
-        if (cspOptions != null && !cspOptions.isEmpty()) {
+        List<String> cspOptions =
+                msg.getResponseHeader().getHeaderValues("Content-Security-Policy");
+        if (!cspOptions.isEmpty()) {
             cspHeaderFound = true;
         }
 
-        Vector<String> cspROOptions =
-                msg.getResponseHeader().getHeaders("Content-Security-Policy-Report-Only");
-        // If it's not null or empty then we found one
-        if (cspROOptions != null && !cspROOptions.isEmpty()) {
+        List<String> cspROOptions =
+                msg.getResponseHeader().getHeaderValues("Content-Security-Policy-Report-Only");
+        if (!cspROOptions.isEmpty()) {
             cspROHeaderFound = true;
         }
 
         // X-Content-Security-Policy is an older header, supported by Firefox 4.0+, and IE 10+ (in a
         // limited fashion)
-        Vector<String> xcspOptions =
-                msg.getResponseHeader().getHeaders("X-Content-Security-Policy");
-        // If it's not null or empty then we found one
-        if (xcspOptions != null && !xcspOptions.isEmpty()) {
+        List<String> xcspOptions =
+                msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy");
+        if (!xcspOptions.isEmpty()) {
             xCspHeaderFound = true;
         }
 
         // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
-        Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders("X-WebKit-CSP");
-        // If it's not null or empty then we found one
-        if (xwkcspOptions != null && !xwkcspOptions.isEmpty()) {
+        List<String> xwkcspOptions = msg.getResponseHeader().getHeaderValues("X-WebKit-CSP");
+        if (!xwkcspOptions.isEmpty()) {
             xWebKitHeaderFound = true;
         }
 
@@ -121,47 +117,28 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner {
                         && (!xCspHeaderFound || !xWebKitHeaderFound))) {
             // Always report if the latest header isnt found,
             // but only report if the older ones arent present at Low threshold
-            Alert alert =
-                    new Alert(
-                            getPluginId(), // PluginID
-                            Alert.RISK_LOW, // Risk
-                            Alert.CONFIDENCE_MEDIUM, // Reliability
-                            getName());
-            alert.setDetail(
-                    getAlertAttribute("desc"), // Description
-                    msg.getRequestHeader().getURI().toString(), // URI
-                    "", // Param
-                    "", // Attack
-                    "", // Other info
-                    getAlertAttribute("soln"), // Solution
-                    getAlertAttribute("refs"), // References
-                    "", // Evidence
-                    16, // CWE-16: Configuration
-                    15, // WASC-15: Application Misconfiguration
-                    msg); // HttpMessage
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setRisk(Alert.RISK_LOW)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getAlertAttribute("desc"))
+                    .setSolution(getAlertAttribute("soln"))
+                    .setReference(getAlertAttribute("refs"))
+                    .setCweId(16) // CWE-16: Configuration
+                    .setWascId(15) // WASC-15: Application Misconfiguration
+                    .raise();
         }
 
         if (cspROHeaderFound) {
-            Alert alert =
-                    new Alert(
-                            getPluginId(),
-                            Alert.RISK_INFO,
-                            Alert.CONFIDENCE_MEDIUM, // PluginID, Risk, Reliability
-                            getAlertAttribute("ro.name"));
-            alert.setDetail(
-                    getAlertAttribute("ro.desc"), // Description
-                    msg.getRequestHeader().getURI().toString(), // URI
-                    "", // Param
-                    "", // Attack
-                    "", // Other info
-                    getAlertAttribute("soln"), // Solution
-                    getAlertAttribute("ro.refs"), // References
-                    "", // Evidence
-                    16, // CWE-16: Configuration
-                    15, // WASC-15: Application Misconfiguration
-                    msg); // HttpMessage
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setName(getAlertAttribute("ro.name"))
+                    .setRisk(Alert.RISK_INFO)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getAlertAttribute("ro.desc"))
+                    .setSolution(getAlertAttribute("soln"))
+                    .setReference(getAlertAttribute("ro.refs"))
+                    .setCweId(16) // CWE-16: Configuration
+                    .setWascId(15) // WASC-15: Application Misconfiguration
+                    .raise();
         }
 
         if (logger.isDebugEnabled()) {

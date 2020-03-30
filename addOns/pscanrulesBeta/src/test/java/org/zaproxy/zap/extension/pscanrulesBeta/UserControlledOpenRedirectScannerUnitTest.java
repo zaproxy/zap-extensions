@@ -59,7 +59,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -70,7 +70,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -85,7 +85,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -97,7 +97,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -112,7 +112,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -127,7 +127,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -142,7 +142,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
@@ -158,7 +158,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.FOUND);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
@@ -177,7 +177,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.FOUND);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
@@ -197,7 +197,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.FOUND);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -213,7 +213,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://example.com");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -229,7 +229,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com/xyz");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -244,7 +244,7 @@ public class UserControlledOpenRedirectScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "/images");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }

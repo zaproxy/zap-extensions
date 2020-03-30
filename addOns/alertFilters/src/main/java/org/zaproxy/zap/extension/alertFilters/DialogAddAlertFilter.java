@@ -226,7 +226,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         }
 
         return new AlertFilter(
-                workingContext != null ? workingContext.getIndex() : -1,
+                workingContext != null ? workingContext.getId() : -1,
                 ExtensionAlertFilters.getIdForRuleName(alertName),
                 getNewLevel(),
                 getUrlTextField().getText(),

@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.revisit;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -164,7 +162,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
     private void removeRevisitIconSiteNodes() {
         SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
-        SiteNode root = (SiteNode) siteMap.getRoot();
+        SiteNode root = siteMap.getRoot();
         @SuppressWarnings("unchecked")
         Enumeration<TreeNode> en = root.breadthFirstEnumeration();
         while (en.hasMoreElements()) {
@@ -180,15 +178,6 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

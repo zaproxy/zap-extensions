@@ -35,11 +35,9 @@ public class CacheControlScanner extends PluginPassiveScanner {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cachecontrolscanner.";
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -99,21 +97,17 @@ public class CacheControlScanner extends PluginPassiveScanner {
             // Strip so that if a single headers used the highlighting will work
             evidence = evidence.substring(1, evidence.length() - 1);
         }
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                header,
-                "",
-                "",
-                getSolution(),
-                getReference(),
-                evidence,
-                525, // CWE
-                13, // WASC-13: Information Leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(header)
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(525)
+                .setWascId(13)
+                .raise();
     }
 
     @Override

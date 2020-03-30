@@ -42,8 +42,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class UserControlledCharsetScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.usercontrolledcharset.";
 
@@ -193,23 +191,17 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 
     private void raiseAlert(
             HttpMessage msg, int id, String tag, String attr, HtmlParameter param, String charset) {
-        Alert alert =
-                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
-
-        alert.setDetail(
-                getDescriptionMessage(),
-                msg.getRequestHeader().getURI().toString(),
-                param.getName(),
-                "",
-                getExtraInfoMessage(tag, attr, param, charset),
-                getSolutionMessage(),
-                getReferenceMessage(),
-                "", // No evidence
-                20, // CWE-20: Improper Input Validation
-                20, // WASC-20: Improper Input Handling
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescriptionMessage())
+                .setParam(param.getName())
+                .setOtherInfo(getExtraInfoMessage(tag, attr, param, charset))
+                .setSolution(getSolutionMessage())
+                .setReference(getReferenceMessage())
+                .setCweId(20) // CWE-20: Improper Input Validation
+                .setWascId(20) // WASC-20: Improper Input Handling
+                .raise();
     }
 
     @Override
@@ -219,7 +211,7 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /*

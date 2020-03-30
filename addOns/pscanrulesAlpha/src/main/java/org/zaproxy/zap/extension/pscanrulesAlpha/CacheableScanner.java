@@ -19,8 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
@@ -81,12 +82,11 @@ public class CacheableScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX_STORABLE_CACHEABLE = "pscanalpha.storablecacheable.";
     private static final int PLUGIN_ID = 10049;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(CacheableScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -149,15 +149,11 @@ public class CacheableScanner extends PluginPassiveScanner {
             // 2: check the Pragma response header (for HTTP 1.0 caches)
             // 3: check the Cache-Control request header (for HTTP 1.1 caches)
             // 4: check the Cache-Control response header (for HTTP 1.1 caches)
-            Vector<String> headers = new Vector<String>();
-            Vector<String> temp = msg.getRequestHeader().getHeaders(HttpHeader.PRAGMA);
-            if (temp != null) headers.addAll(temp);
-            temp = msg.getResponseHeader().getHeaders(HttpHeader.PRAGMA);
-            if (temp != null) headers.addAll(temp);
-            temp = msg.getRequestHeader().getHeaders(HttpHeader.CACHE_CONTROL);
-            if (temp != null) headers.addAll(temp);
-            temp = msg.getResponseHeader().getHeaders(HttpHeader.CACHE_CONTROL);
-            if (temp != null) headers.addAll(temp);
+            List<String> headers = new ArrayList<>();
+            headers.addAll(msg.getRequestHeader().getHeaderValues(HttpHeader.PRAGMA));
+            headers.addAll(msg.getResponseHeader().getHeaderValues(HttpHeader.PRAGMA));
+            headers.addAll(msg.getRequestHeader().getHeaderValues(HttpHeader.CACHE_CONTROL));
+            headers.addAll(msg.getResponseHeader().getHeaderValues(HttpHeader.CACHE_CONTROL));
 
             for (String directive : headers) {
                 for (String directiveToken : directive.split(" ")) {
@@ -179,9 +175,9 @@ public class CacheableScanner extends PluginPassiveScanner {
 
             // does the "private" response directive appear in the response, if the cache is shared
             // check the Cache-Control response header only (for HTTP 1.1 caches)
-            Vector<String> responseHeadersCacheControl =
-                    msg.getResponseHeader().getHeaders(HttpHeader.CACHE_CONTROL);
-            if (responseHeadersCacheControl != null) {
+            List<String> responseHeadersCacheControl =
+                    msg.getResponseHeader().getHeaderValues(HttpHeader.CACHE_CONTROL);
+            if (!responseHeadersCacheControl.isEmpty()) {
                 for (String directive : responseHeadersCacheControl) {
                     for (String directiveToken : directive.split(" ")) {
                         // strip off any trailing comma
@@ -211,14 +207,14 @@ public class CacheableScanner extends PluginPassiveScanner {
             // as whether the cached response is
             // considered stale (based on the values of s-maxage and other values).  This is in
             // accordance with rfc7234 section 3.2.
-            Vector<String> authHeaders =
-                    msg.getRequestHeader().getHeaders(HttpHeader.AUTHORIZATION);
-            if (authHeaders != null) {
+            List<String> authHeaders =
+                    msg.getRequestHeader().getHeaderValues(HttpHeader.AUTHORIZATION);
+            if (!authHeaders.isEmpty()) {
                 // there is an authorization header
                 // look for "must-revalidate", "public", and "s-maxage", in the response, since
                 // these permit
                 // a request with an "Authorization" request header to be cached
-                if (responseHeadersCacheControl != null) {
+                if (!responseHeadersCacheControl.isEmpty()) {
                     boolean authorizedIsStorable = false;
                     for (String directive : responseHeadersCacheControl) {
                         for (String directiveToken : directive.split(" ")) {
@@ -275,17 +271,17 @@ public class CacheableScanner extends PluginPassiveScanner {
             */
             // TODO: replace "Expires" with some defined constant. Can't find one right now though.
             // Ho Hum.
-            Vector<String> expires = msg.getResponseHeader().getHeaders("Expires");
-            if (expires != null)
+            List<String> expires = msg.getResponseHeader().getHeaderValues("Expires");
+            if (!expires.isEmpty())
                 if (logger.isDebugEnabled())
                     logger.debug(
                             msg.getRequestHeader().getURI().getURI()
                                     + " *is* storable due to the basic checks, and the presence of the 'Expires' header in the response");
             // grab this for later. Not needed for "storability" checks.
-            Vector<String> dates = msg.getResponseHeader().getHeaders("Date");
+            List<String> dates = msg.getResponseHeader().getHeaderValues("Date");
 
             String maxAge = null, sMaxAge = null, publicDirective = null;
-            if (responseHeadersCacheControl != null) {
+            if (!responseHeadersCacheControl.isEmpty()) {
                 for (String directive : responseHeadersCacheControl) {
                     for (String directiveToken : directive.split(" ")) {
                         // strip off any trailing comma
@@ -348,7 +344,7 @@ public class CacheableScanner extends PluginPassiveScanner {
                                     + " *is* storable due to the basic checks, and the presence of a cacheable response status code (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501)");
             }
 
-            if (expires == null
+            if (expires.isEmpty()
                     && maxAge == null
                     && sMaxAge == null
                     && statusCodeCacheable == false
@@ -407,8 +403,8 @@ public class CacheableScanner extends PluginPassiveScanner {
             // not.  In any event, this decision is made by the origin
             // server, and is not at the discretion of the cache server, so we do not concern
             // ourselves with it here.
-            headers = msg.getResponseHeader().getHeaders(HttpHeader.CACHE_CONTROL);
-            if (headers != null) {
+            headers = msg.getResponseHeader().getHeaderValues(HttpHeader.CACHE_CONTROL);
+            if (!headers.isEmpty()) {
                 for (String directive : headers) {
                     for (String directiveToken : directive.split(" ")) {
                         // strip off any trailing comma
@@ -446,7 +442,7 @@ public class CacheableScanner extends PluginPassiveScanner {
             // the following priority, as specified by rfc7234.
             //	1a:Get the "s-maxage" response directive value (if duplicates exist, the values are
             // invalid)
-            if (responseHeadersCacheControl != null) {
+            if (!responseHeadersCacheControl.isEmpty()) {
                 int lifetimesFound = 0;
                 for (String directive : responseHeadersCacheControl) {
                     for (String directiveToken : directive.split(" ")) {
@@ -485,7 +481,7 @@ public class CacheableScanner extends PluginPassiveScanner {
             //	1b:Get the "max-age" response directive value (if duplicates exist, the values are
             // invalid)
             if (!lifetimeFound) {
-                if (responseHeadersCacheControl != null) {
+                if (!responseHeadersCacheControl.isEmpty()) {
                     int lifetimesFound = 0;
                     for (String directive : responseHeadersCacheControl) {
                         for (String directiveToken : directive.split(" ")) {
@@ -542,7 +538,7 @@ public class CacheableScanner extends PluginPassiveScanner {
             if (!lifetimeFound) {
                 String expiresHeader = null;
                 String dateHeader = null;
-                if (expires != null) {
+                if (!expires.isEmpty()) {
                     // Expires can be absent, or take the form of "Thu, 27 Nov 2014 12:21:57 GMT",
                     // "-1", "0", etc.
                     // Invalid dates are treated as "expired"
@@ -567,7 +563,7 @@ public class CacheableScanner extends PluginPassiveScanner {
                         // we now have a single "expiry".
                         // Now it is time to get the "date" for the request, so we can subtract the
                         // "date" from the "expiry" to get the "lifetime".
-                        if (dates != null) {
+                        if (!dates.isEmpty()) {
                             int dateHeadersFound = 0;
                             for (String directive : dates) {
                                 if (logger.isDebugEnabled())
@@ -707,7 +703,7 @@ public class CacheableScanner extends PluginPassiveScanner {
 
                 boolean staleRetrieveAllowed = true;
                 String doNotRetrieveStaleEvidence = null;
-                if (responseHeadersCacheControl != null) {
+                if (!responseHeadersCacheControl.isEmpty()) {
                     for (String directive : responseHeadersCacheControl) {
                         for (String directiveToken : directive.split(" ")) {
                             // strip off any trailing comma
@@ -786,25 +782,17 @@ public class CacheableScanner extends PluginPassiveScanner {
      * @param evidence
      */
     public void alertNonStorable(HttpMessage msg, int id, String evidence) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "name"));
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "desc"), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                "", // Other info
-                Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "soln"), // Solution
-                Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "refs"), // References
-                evidence, // Evidence
-                524, // CWE-524: Information Exposure Through Caching
-                13, // WASC-13: Information Leakage
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "name"))
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "refs"))
+                .setEvidence(evidence)
+                .setCweId(524) // CWE-524: Information Exposure Through Caching
+                .setWascId(13) // WASC-13: Information Leakage
+                .raise();
     }
 
     /**
@@ -815,28 +803,20 @@ public class CacheableScanner extends PluginPassiveScanner {
      * @param evidence
      */
     public void alertStorableNonCacheable(HttpMessage msg, int id, String evidence) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"));
-        alert.setDetail(
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "desc"), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                "", // Other info
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "soln"), // Solution
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "refs"), // References
-                evidence, // Evidence
-                524, // CWE-524: Information Exposure Through Caching
-                13, // WASC-13: Information Leakage
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"))
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "desc"))
+                .setSolution(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "soln"))
+                .setReference(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "refs"))
+                .setEvidence(evidence)
+                .setCweId(524) // CWE-524: Information Exposure Through Caching
+                .setWascId(13) // WASC-13: Information Leakage
+                .raise();
     }
 
     /**
@@ -848,26 +828,20 @@ public class CacheableScanner extends PluginPassiveScanner {
      * @param otherInfo
      */
     public void alertStorableCacheable(HttpMessage msg, int id, String evidence, String otherInfo) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "name"));
-        alert.setDetail(
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_CACHEABLE + "desc"), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                otherInfo, // Other info
-                Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "soln"), // Solution
-                Constant.messages.getString(
-                        MESSAGE_PREFIX_STORABLE_CACHEABLE + "refs"), // References
-                evidence, // Evidence
-                524, // CWE-524: Information Exposure Through Caching
-                13, // WASC-13: Information Leakage
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "name"))
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "desc"))
+                .setOtherInfo(otherInfo)
+                .setSolution(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "soln"))
+                .setReference(
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "refs"))
+                .setEvidence(evidence)
+                .setCweId(524) // CWE-524: Information Exposure Through Caching
+                .setWascId(13) // WASC-13: Information Leakage
+                .raise();
     }
 }

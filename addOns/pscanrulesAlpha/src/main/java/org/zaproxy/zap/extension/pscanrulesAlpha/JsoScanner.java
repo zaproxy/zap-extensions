@@ -40,7 +40,6 @@ public class JsoScanner extends PluginPassiveScanner {
     private static final byte[] JSO_BYTE_MAGIC_SEQUENCE = {(byte) 0xac, (byte) 0xed, 0x00, 0x05};
     private static final String JSO_BASE_64_MAGIC_SEQUENCE = "rO0AB";
     private static final String JSO_URI_ENCODED_MAGIC_SEQUENCE = "%C2%AC%C3%AD%00%05";
-    private PassiveScanThread parent;
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -111,21 +110,15 @@ public class JsoScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, String evidence) {
-        Alert alert =
-                new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getString("desc"),
-                msg.getRequestHeader().getURI().toString(),
-                null,
-                "",
-                "",
-                getString("soln"),
-                getString("refs"),
-                evidence,
-                502, // CWE-502: Deserialization of Untrusted Data
-                -1, // No WASC-ID
-                msg);
-        parent.raiseAlert(getPluginId(), alert);
+        newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getString("desc"))
+                .setSolution(getString("soln"))
+                .setReference(getString("refs"))
+                .setEvidence(evidence)
+                .setCweId(502) // CWE-502: Deserialization of Untrusted Data
+                .raise();
     }
 
     private boolean hasJsoMagicSequence(String value) {
@@ -146,7 +139,7 @@ public class JsoScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

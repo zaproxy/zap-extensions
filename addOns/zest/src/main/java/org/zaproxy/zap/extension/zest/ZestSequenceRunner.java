@@ -57,9 +57,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
     private ZestScriptWrapper script = null;
     private static final Logger logger = Logger.getLogger(ZestSequenceRunner.class);
 
-    // TODO Replace the value (17) with HistoryReference.TYPE_SEQUENCE_TEMPORARY once released with
-    // core
-    private static final int SEQUENCE_HISTORY_TYPE = 17;
+    private static final int SEQUENCE_HISTORY_TYPE = HistoryReference.TYPE_SEQUENCE_TEMPORARY;
 
     private static final Map<String, String> EMPTYPARAMS = new HashMap<String, String>();
     private AbstractPlugin currentPlugin = null;

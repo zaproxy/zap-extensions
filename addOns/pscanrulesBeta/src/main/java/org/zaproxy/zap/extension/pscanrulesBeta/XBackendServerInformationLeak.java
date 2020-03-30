@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -39,12 +39,11 @@ public class XBackendServerInformationLeak extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.xbackendserver.";
     private static final int PLUGIN_ID = 10039;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(XBackendServerInformationLeak.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -56,30 +55,21 @@ public class XBackendServerInformationLeak extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
 
-        Vector<String> xbsOption = msg.getResponseHeader().getHeaders("X-Backend-Server");
-        if (xbsOption != null) { // Header Found
+        List<String> xbsOption = msg.getResponseHeader().getHeaderValues("X-Backend-Server");
+        if (!xbsOption.isEmpty()) { // Header Found
             // It is set so lets check it. Should only be one but it's a vector so iterate to be
             // sure.
             for (String xbsDirective : xbsOption) {
-                Alert alert =
-                        new Alert(
-                                getPluginId(),
-                                Alert.RISK_LOW,
-                                Alert.CONFIDENCE_MEDIUM, // PluginID, Risk, Reliability
-                                getName());
-                alert.setDetail(
-                        getDescription(), // Description
-                        msg.getRequestHeader().getURI().toString(), // URI
-                        "", // Param
-                        "", // Attack
-                        "", // Other info
-                        getSolution(), // Solution
-                        getReference(), // References
-                        xbsDirective, // Evidence
-                        200, // CWE Id
-                        13, // WASC Id
-                        msg); // HttpMessage
-                parent.raiseAlert(id, alert);
+                newAlert()
+                        .setRisk(Alert.RISK_LOW)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setDescription(getDescription())
+                        .setSolution(getSolution())
+                        .setReference(getReference())
+                        .setEvidence(xbsDirective)
+                        .setCweId(200)
+                        .setWascId(13)
+                        .raise();
             }
         }
         if (logger.isDebugEnabled()) {

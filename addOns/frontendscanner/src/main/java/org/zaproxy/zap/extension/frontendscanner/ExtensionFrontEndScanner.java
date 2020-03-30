@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.frontendscanner;
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -176,8 +174,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     public void unload() {
         super.unload();
 
-        this.extensionScript.removeScripType(activeScriptType);
-        this.extensionScript.removeScripType(passiveScriptType);
+        this.extensionScript.removeScriptType(activeScriptType);
+        this.extensionScript.removeScriptType(passiveScriptType);
     }
 
     @Override
@@ -188,15 +186,6 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

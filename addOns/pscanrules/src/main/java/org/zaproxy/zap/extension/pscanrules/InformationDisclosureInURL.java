@@ -42,7 +42,6 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
     public static final String MESSAGE_PREFIX = "pscanrules.informationdisclosureinurl.";
     private static final int PLUGIN_ID = 10024;
 
-    private PassiveScanThread parent = null;
     public static final String URL_SENSITIVE_INFORMATION_DIR = "xml";
     public static final String URL_SENSITIVE_INFORMATION_FILE =
             "URL-information-disclosure-messages.txt";
@@ -104,21 +103,17 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {}
 
     private void raiseAlert(HttpMessage msg, int id, String param, String evidence, String other) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                param,
-                "",
-                other,
-                getSolution(),
-                "",
-                evidence, // Evidence
-                200, // CWE Id 200 - Information Exposure
-                13, // WASC Id 13 - Info leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(param)
+                .setOtherInfo(other)
+                .setSolution(getSolution())
+                .setEvidence(evidence)
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13) // WASC Id 13 - Info leakage
+                .raise();
     }
 
     private static List<String> loadFile(String file) {
@@ -162,7 +157,7 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

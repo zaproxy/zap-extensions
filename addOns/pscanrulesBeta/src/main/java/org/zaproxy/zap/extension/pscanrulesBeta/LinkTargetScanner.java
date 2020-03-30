@@ -53,14 +53,13 @@ public class LinkTargetScanner extends PluginPassiveScanner {
     private String trustedConfig = "";
     private List<String> trustedDomainRegexes = new ArrayList<String>();
 
-    private PassiveScanThread parent = null;
     private Model model = null;
 
     private static final Logger LOG = Logger.getLogger(PluginPassiveScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -162,22 +161,14 @@ public class LinkTargetScanner extends PluginPassiveScanner {
                 }
             }
             // Its bad
-            Alert alert =
-                    new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
-            alert.setDetail(
-                    getDescription(),
-                    msg.getRequestHeader().getURI().toString(),
-                    "", // Param
-                    "", // Attack
-                    "", // Other info
-                    getSolution(),
-                    getReference(),
-                    link.toString(), // Evidence
-                    0, // CWE Id
-                    0, // WASC Id
-                    msg);
-
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setRisk(Alert.RISK_MEDIUM)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getDescription())
+                    .setSolution(getSolution())
+                    .setReference(getReference())
+                    .setEvidence(link.toString())
+                    .raise();
             return true;
         }
         return false;

@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
@@ -79,12 +78,11 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner {
         HSTS_MALFORMED_CONTENT
     };
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(StrictTransportSecurityScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -93,36 +91,28 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(VulnType currentVT, String evidence, HttpMessage msg, int id) {
-        Alert alert =
-                new Alert(
-                        getPluginId(), // PluginID
-                        getRisk(currentVT),
-                        Alert.CONFIDENCE_HIGH, // Reliability
-                        getAlertElement(currentVT, "name")); // Name
-        alert.setDetail(
-                getAlertElement(currentVT, "desc"), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                "", // Other info
-                getAlertElement(currentVT, "soln"), // Solution
-                getAlertElement(currentVT, "refs"), // References
-                evidence, // Evidence
-                16, // CWE-16: Configuration
-                15, // WASC-15: Application Misconfiguration
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(getAlertElement(currentVT, "name"))
+                .setRisk(getRisk(currentVT))
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(getAlertElement(currentVT, "desc"))
+                .setSolution(getAlertElement(currentVT, "soln"))
+                .setReference(getAlertElement(currentVT, "refs"))
+                .setEvidence(evidence)
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .raise();
     }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
-        Vector<String> stsOption = msg.getResponseHeader().getHeaders(STS_HEADER);
+        List<String> stsOption = msg.getResponseHeader().getHeaderValues(STS_HEADER);
         String metaHSTS = getMetaHSTSEvidence(source);
 
         if (msg.getRequestHeader().isSecure()) { // No point reporting missing for non-SSL resources
             // Content available via both HTTPS and HTTP is a separate though related issue
-            if (stsOption == null) { // Header NOT found
+            if (stsOption.isEmpty()) { // Header NOT found
                 boolean report = true;
                 if (!this.getAlertThreshold().equals(AlertThreshold.LOW)
                         && HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())) {
@@ -167,9 +157,7 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner {
                     raiseAlert(VulnType.HSTS_MALFORMED_MAX_AGE, stsOption.get(0), msg, id);
                 }
             }
-        } else if (AlertThreshold.LOW.equals(this.getAlertThreshold())
-                && stsOption != null
-                && !stsOption.isEmpty()) {
+        } else if (AlertThreshold.LOW.equals(this.getAlertThreshold()) && !stsOption.isEmpty()) {
             // isSecure is false at this point
             // HSTS Header found on non-HTTPS response (technically there could be more than one
             // but we only care that there is one or more)

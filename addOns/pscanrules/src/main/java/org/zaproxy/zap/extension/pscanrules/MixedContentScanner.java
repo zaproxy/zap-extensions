@@ -37,11 +37,9 @@ public class MixedContentScanner extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10040;
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -124,21 +122,18 @@ public class MixedContentScanner extends PluginPassiveScanner {
             name = Constant.messages.getString(MESSAGE_PREFIX + "name.inclscripts");
             risk = Alert.RISK_MEDIUM;
         }
-        Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, name);
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                all,
-                getSolution(),
-                getReference(),
-                first, // evidence
-                311, // CWE Id 311 - Missing Encryption of Sensitive Data
-                4, // WASC Id 4 - Insufficient Transport Layer Protection
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(name)
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setOtherInfo(all)
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(first)
+                .setCweId(311) // CWE Id 311 - Missing Encryption of Sensitive Data
+                .setWascId(4) // WASC Id 4 - Insufficient Transport Layer Protection
+                .raise();
     }
 
     @Override

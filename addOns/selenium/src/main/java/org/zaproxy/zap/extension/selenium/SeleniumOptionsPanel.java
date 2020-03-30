@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -144,8 +143,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         resourceBundle.getString("selenium.options.webdrivers.title"),
                         TitledBorder.DEFAULT_JUSTIFICATION,
                         TitledBorder.DEFAULT_POSITION,
-                        FontUtils.getFont(FontUtils.Size.standard),
-                        Color.black));
+                        FontUtils.getFont(FontUtils.Size.standard)));
 
         GroupLayout driversLayout = new GroupLayout(driversPanel);
         driversPanel.setLayout(driversLayout);
@@ -232,8 +230,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         resourceBundle.getString("selenium.options.binaries.title"),
                         TitledBorder.DEFAULT_JUSTIFICATION,
                         TitledBorder.DEFAULT_POSITION,
-                        FontUtils.getFont(FontUtils.Size.standard),
-                        Color.black));
+                        FontUtils.getFont(FontUtils.Size.standard)));
 
         GroupLayout binariesLayout = new GroupLayout(binariesPanel);
         binariesPanel.setLayout(binariesLayout);

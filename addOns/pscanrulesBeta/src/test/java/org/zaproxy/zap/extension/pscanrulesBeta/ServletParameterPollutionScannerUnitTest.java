@@ -162,10 +162,6 @@ public class ServletParameterPollutionScannerUnitTest
         assertEquals(expected, alertsRaised.size());
     }
 
-    private void scanHttpResponseReceive(HttpMessage msg) {
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-    }
-
     private HttpMessage createHttpMessageFromHtml(String html) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET " + URI + " HTTP/1.1");

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Update the help to mention the bundled JRuby version.
+- Update minimum ZAP version to 2.9.0.
 
 ### Fixed
 - Fix link in a script template.

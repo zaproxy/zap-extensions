@@ -6,10 +6,10 @@ description = "Imports and spiders OpenAPI definitions."
 zapAddOn {
     addOnName.set("OpenAPI Support")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.8.0")
+    zapVersion.set("2.9.0")
 
     manifest {
-        author.set("ZAP Core Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak and Marcin Spiewak")
+        author.set("ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak and Marcin Spiewak")
         url.set("https://www.zaproxy.org/docs/desktop/addons/openapi-support/")
     }
 

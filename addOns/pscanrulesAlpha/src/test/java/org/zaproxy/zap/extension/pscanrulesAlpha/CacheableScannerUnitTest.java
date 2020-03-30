@@ -99,7 +99,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
                         + DateUtil.formatDate(new Date())
                         + "\r\n\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
     }
@@ -115,7 +115,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
                         + "Expires: Wed, 02 Oct 2019 07:00:00 GMT\r\n"
                         + "Date: Wed, 02 Oct 2019 06:00:00 GMT");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertStoreAndCacheable("Wed, 02 Oct 2019 07:00:00 GMT");
     }
@@ -127,7 +127,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         HttpMessage msg = createMessage();
         msg.setResponseHeader("HTTP/1.1 207 OK\r\n" + "Cache-Control: public");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertStoreAndCacheable("");
     }
@@ -139,7 +139,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         HttpMessage msg = createMessage();
         msg.setResponseHeader("HTTP/1.1 207 OK\r\n" + "Cache-Control: max-age=100");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertStoreAndCacheable("max-age=100");
     }
@@ -151,7 +151,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         HttpMessage msg = createMessage();
         msg.setResponseHeader("HTTP/1.1 207 OK\r\n" + "Cache-Control: s-maxage=100");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertStoreAndCacheable("s-maxage=100");
     }
@@ -181,7 +181,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         msg.setResponseHeader(
                 "HTTP/1.1 " + statusCode + " OK\r\n" + "Cache-Control: must-revalidate");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertStoreAndCacheable("");
     }
@@ -193,7 +193,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         HttpMessage msg = createMessageBasicAuthorization();
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: must-revalidate");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertStoreAndCacheable("");
     }
@@ -205,7 +205,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         HttpMessage msg = createMessageBasicAuthorization();
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: public");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertStoreAndCacheable("");
     }
@@ -217,7 +217,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         HttpMessage msg = createMessageBasicAuthorization();
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: s-maxage=100");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertStoreAndCacheable("s-maxage=100");
     }
@@ -230,7 +230,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: s-maxage=100, public");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertStoreAndCacheable("s-maxage=100");
@@ -244,7 +244,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: max-age=100,public");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertStoreAndCacheable("max-age=100,public");
@@ -262,7 +262,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
                         + "Date: Wed, 02 Oct 2019 07:00:00 GMT");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertStoreAndCacheable("Wed, 02 Oct 2019 08:00:00 GMT");
@@ -276,7 +276,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: public");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertStoreAndCacheable("");
@@ -299,7 +299,7 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
                         + "Date: Wed, 02 Oct 2019 07:00:00 GMT");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertStoreAndCacheable("");

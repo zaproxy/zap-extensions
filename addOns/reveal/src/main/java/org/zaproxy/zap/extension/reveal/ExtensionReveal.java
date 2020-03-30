@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.reveal;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -238,14 +236,5 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
     @Override
     public String getDescription() {
         return Constant.messages.getString("reveal.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

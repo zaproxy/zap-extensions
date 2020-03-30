@@ -28,7 +28,6 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
 public class ZestClientElementSendKeysDialog extends ZestClientElementDialog implements ZestDialog {
 
@@ -60,7 +59,7 @@ public class ZestClientElementSendKeysDialog extends ZestClientElementDialog imp
                     Constant.messages.getString("zest.dialog.clientElementSendKeys.edit.title"));
         }
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
+        setFieldMainPopupMenu(FIELD_VALUE);
     }
 
     @Override

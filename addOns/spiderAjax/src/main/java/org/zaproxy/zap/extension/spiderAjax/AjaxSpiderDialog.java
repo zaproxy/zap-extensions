@@ -301,7 +301,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         if (context != null && extUserMgmt != null) {
             String userName = this.getStringValue(FIELD_USER);
             List<User> users =
-                    this.extUserMgmt.getContextUserAuthManager(context.getIndex()).getUsers();
+                    this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
             for (User user : users) {
                 if (userName.equals(user.getName())) {
                     return user;
@@ -316,7 +316,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         Context context = this.getSelectedContext();
         List<String> userNames = new ArrayList<>();
         if (context != null && extUserMgmt != null) {
-            List<User> users = extUserMgmt.getContextUserAuthManager(context.getIndex()).getUsers();
+            List<User> users = extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
             userNames.add("");
             for (User user : users) {
                 userNames.add(user.getName());

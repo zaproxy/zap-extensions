@@ -19,17 +19,11 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import net.htmlparser.jericho.Config;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
-import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 
 public abstract class ActiveScannerTest<T extends AbstractPlugin>
         extends ActiveScannerTestUtils<T> {
-
-    static {
-        Config.LoggerProvider = ZAP.JERICHO_LOGGER_PROVIDER;
-    }
 
     @Override
     protected void setUpMessages() {

@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.openapi;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
@@ -327,15 +325,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     @Override
     public String getDescription() {
         return Constant.messages.getString("openapi.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     private CommandLineArgument[] getCommandLineArguments() {

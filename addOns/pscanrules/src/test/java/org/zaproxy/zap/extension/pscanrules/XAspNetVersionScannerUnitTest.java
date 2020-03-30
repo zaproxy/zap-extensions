@@ -38,7 +38,7 @@ public class XAspNetVersionScannerUnitTest extends PassiveScannerTest<XAspNetVer
             throws HttpMalformedHeaderException {
 
         HttpMessage msg = createMessage("X-AspNet-Version");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("1/1.1"));
@@ -49,7 +49,7 @@ public class XAspNetVersionScannerUnitTest extends PassiveScannerTest<XAspNetVer
             throws HttpMalformedHeaderException {
 
         HttpMessage msg = createMessage("X-AspNetMvc-Version");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("1/1.1"));
@@ -60,7 +60,7 @@ public class XAspNetVersionScannerUnitTest extends PassiveScannerTest<XAspNetVer
             throws HttpMalformedHeaderException {
 
         HttpMessage msg = createMessage("dummy");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }

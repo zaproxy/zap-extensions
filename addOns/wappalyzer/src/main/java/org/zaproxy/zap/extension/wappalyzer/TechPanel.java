@@ -21,11 +21,15 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.Toolkit;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import javax.swing.Box;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,6 +47,7 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.utils.TableExportButton;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 public class TechPanel extends AbstractPanel {
 
@@ -63,6 +68,7 @@ public class TechPanel extends AbstractPanel {
     private TechTableModel techModel = new TechTableModel();
 
     private TableExportButton<JXTable> exportButton = null;
+    private ZapToggleButton enableButton = null;
 
     private static final Icon TRANSPARENT_ICON =
             new Icon() {
@@ -147,7 +153,6 @@ public class TechPanel extends AbstractPanel {
         if (panelToolbar == null) {
 
             panelToolbar = new javax.swing.JToolBar();
-            panelToolbar.setLayout(new java.awt.GridBagLayout());
             panelToolbar.setEnabled(true);
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
@@ -155,49 +160,13 @@ public class TechPanel extends AbstractPanel {
             panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
             panelToolbar.setName("WappTechToolbar");
 
-            GridBagConstraints gridBagConstraints0 = new GridBagConstraints();
-            GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-            GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-            GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-            GridBagConstraints gridBagConstraintsx = new GridBagConstraints();
-
-            gridBagConstraints0.gridx = 0;
-            gridBagConstraints0.gridy = 0;
-            gridBagConstraints0.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints0.anchor = java.awt.GridBagConstraints.WEST;
-
-            gridBagConstraints1.gridx = 1;
-            gridBagConstraints1.gridy = 0;
-            gridBagConstraints1.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints1.anchor = java.awt.GridBagConstraints.WEST;
-
-            gridBagConstraints2.gridx = 2;
-            gridBagConstraints2.gridy = 0;
-            gridBagConstraints2.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints2.anchor = java.awt.GridBagConstraints.WEST;
-
-            gridBagConstraints3.gridx = 3;
-            gridBagConstraints3.gridy = 0;
-            gridBagConstraints3.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints3.anchor = java.awt.GridBagConstraints.WEST;
-
-            gridBagConstraintsx.gridx = 3;
-            gridBagConstraintsx.gridy = 0;
-            gridBagConstraintsx.weightx = 1.0;
-            gridBagConstraintsx.weighty = 1.0;
-            gridBagConstraintsx.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraintsx.anchor = java.awt.GridBagConstraints.EAST;
-            gridBagConstraintsx.fill = java.awt.GridBagConstraints.HORIZONTAL;
-
-            JLabel t1 = new JLabel();
-
             panelToolbar.add(
-                    new JLabel(Constant.messages.getString("wappalyzer.toolbar.site.label")),
-                    gridBagConstraints1);
-            panelToolbar.add(getSiteSelect(), gridBagConstraints2);
-            panelToolbar.add(getExportButton(), gridBagConstraints3);
+                    new JLabel(Constant.messages.getString("wappalyzer.toolbar.site.label")));
+            panelToolbar.add(getSiteSelect());
+            panelToolbar.add(getExportButton());
+            panelToolbar.add(getEnableToggleButton());
 
-            panelToolbar.add(t1, gridBagConstraintsx);
+            panelToolbar.add(Box.createHorizontalGlue());
         }
         return panelToolbar;
     }
@@ -270,6 +239,7 @@ public class TechPanel extends AbstractPanel {
         if (siteSelect == null) {
             siteSelect = new JComboBox<>(siteModel);
             siteSelect.addItem(Constant.messages.getString("params.toolbar.site.select"));
+            siteSelect.setPreferredSize(new Dimension(250, 22));
             siteSelect.setSelectedIndex(0);
 
             siteSelect.addActionListener(
@@ -342,5 +312,41 @@ public class TechPanel extends AbstractPanel {
             exportButton = new TableExportButton<JXTable>(getTechTable());
         }
         return exportButton;
+    }
+
+    private ZapToggleButton getEnableToggleButton() {
+        if (enableButton == null) {
+            enableButton =
+                    new ZapToggleButton(
+                            Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled"),
+                            true);
+            enableButton.setIcon(
+                    new ImageIcon(
+                            TechPanel.class.getResource(
+                                    ExtensionWappalyzer.RESOURCE + "/off.png")));
+            enableButton.setToolTipText(
+                    Constant.messages.getString(
+                            "wappalyzer.toolbar.toggle.state.disabled.tooltip"));
+            enableButton.setSelectedIcon(
+                    new ImageIcon(
+                            TechPanel.class.getResource(ExtensionWappalyzer.RESOURCE + "/on.png")));
+            enableButton.setSelectedToolTipText(
+                    Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled.tooltip"));
+            enableButton.addItemListener(
+                    event -> {
+                        if (event.getStateChange() == ItemEvent.SELECTED) {
+                            enableButton.setText(
+                                    Constant.messages.getString(
+                                            "wappalyzer.toolbar.toggle.state.enabled"));
+                            extension.getPassiveScanner().setEnabled(true);
+                        } else {
+                            enableButton.setText(
+                                    Constant.messages.getString(
+                                            "wappalyzer.toolbar.toggle.state.disabled"));
+                            extension.getPassiveScanner().setEnabled(false);
+                        }
+                    });
+        }
+        return enableButton;
     }
 }

@@ -89,8 +89,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                             QuickStartSubPanel.class.getResource(
                                     RESOURCES + "/document-pdf-text.png")));
 
-    protected static final String SCRIPT_CONSOLE_HOME_PAGE = Constant.ZAP_HOMEPAGE;
-
     private static final String DEFAULT_NEWS_PAGE_URL_PREFIX = "https://bit.ly/owaspzap-news-";
     private static final String DEV_NEWS_PAGE = "dev";
 
@@ -177,10 +175,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                                     true,
                                     HttpSender.CHECK_FOR_UPDATES_INITIATOR);
                     httpSender.setFollowRedirect(true);
-                    msg =
-                            new HttpMessage(
-                                    new URI(newsPageUrl, true),
-                                    Model.getSingleton().getOptionsParam().getConnectionParam());
+                    msg = new HttpMessage(new URI(newsPageUrl, true));
                     httpSender.sendAndReceive(msg, true);
                     if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
                         String zapLocale = Constant.getLocale().toString();
@@ -318,15 +313,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     @Override
     public String getUIName() {
         return Constant.messages.getString("quickstart.name");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     public void attack(URL url, boolean useStdSpider) {
@@ -492,7 +478,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     private String getScanReport() throws Exception {
         ReportLastScan report = new ReportLastScan();
         StringBuilder rpt = new StringBuilder();
-        report.generate(rpt, getModel());
+        report.generate(rpt);
         return rpt.toString();
     }
 

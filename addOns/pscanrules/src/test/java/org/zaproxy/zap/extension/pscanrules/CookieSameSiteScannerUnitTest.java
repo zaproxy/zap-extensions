@@ -51,7 +51,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
@@ -72,7 +72,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -92,7 +92,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -112,7 +112,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -133,7 +133,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
@@ -155,7 +155,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
@@ -177,7 +177,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
@@ -199,7 +199,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -219,7 +219,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -248,7 +248,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
@@ -279,7 +279,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
@@ -301,7 +301,7 @@ public class CookieSameSiteScannerUnitTest extends PassiveScannerTest<CookieSame
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));

@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add help.
 - Add info and repo URLs.
 
+### Changed
+- Update minimum ZAP version to 2.9.0.
+
 ## [8] - 2019-08-30
 
 - Update minimum ZAP version to 2.5.0.

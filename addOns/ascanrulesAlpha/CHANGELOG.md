@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Change info URL to link to the site.
+- Update ZAP blog links.
 
 ## [27] - 2019-12-16
 

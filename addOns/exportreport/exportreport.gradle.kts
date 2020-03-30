@@ -3,7 +3,7 @@ description = "Report Export module that allows users to customize content and e
 
 zapAddOn {
     addOnName.set("Export Report")
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("Goran Sarenkapa - JordanGS")

@@ -41,11 +41,9 @@ public class CookieSameSiteScanner extends PluginPassiveScanner {
     private static final String SAME_SITE_COOKIE_VALUE_STRICT = "Strict";
     private static final String SAME_SITE_COOKIE_VALUE_LAX = "Lax";
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -84,22 +82,19 @@ public class CookieSameSiteScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String cookieHeaderValue, String description) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                description,
-                msg.getRequestHeader().getURI().toString(),
-                SetCookieUtils.getCookieName(cookieHeaderValue),
-                "",
-                "",
-                getSolution(),
-                getReference(),
-                SetCookieUtils.getSetCookiePlusName(
-                        msg.getResponseHeader().toString(), cookieHeaderValue),
-                16, // CWE Id 16 - Configuration
-                13, // WASC Id - Info leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(description)
+                .setParam(SetCookieUtils.getCookieName(cookieHeaderValue))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(
+                        SetCookieUtils.getSetCookiePlusName(
+                                msg.getResponseHeader().toString(), cookieHeaderValue))
+                .setCweId(16) // CWE Id 16 - Configuration
+                .setWascId(13) // WASC Id - Info leakage
+                .raise();
     }
 
     @Override

@@ -60,11 +60,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
     private static final String WILDCARD_URI = "http://*";
     private static final URI PARSED_WILDCARD_URI = URI.parse(WILDCARD_URI);
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -337,24 +335,17 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
             String evidence) {
         String alertName = StringUtils.isEmpty(name) ? getName() : getName() + ": " + name;
 
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        risk,
-                        Alert.CONFIDENCE_MEDIUM, // PluginID, Risk, Reliability
-                        alertName);
-        alert.setDetail(
-                description, // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                param, // Param
-                "", // Attack
-                "", // Other info
-                getSolution(), // Solution
-                getReference(), // References
-                evidence, // Evidence
-                16, // CWE-16: Configuration
-                15, // WASC-15: Application Misconfiguration
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(alertName)
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(description)
+                .setParam(param)
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC-15: Application Misconfiguration)
+                .raise();
     }
 }

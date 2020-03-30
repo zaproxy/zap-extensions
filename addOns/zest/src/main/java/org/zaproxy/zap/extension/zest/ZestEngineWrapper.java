@@ -22,9 +22,9 @@ package org.zaproxy.zap.extension.zest;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import javax.script.ScriptEngine;
 import javax.swing.ImageIcon;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.mozilla.zest.impl.ZestScriptEngineFactory;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -32,8 +32,8 @@ public class ZestEngineWrapper extends DefaultEngineWrapper {
 
     private final List<Path> defaultTemplates;
 
-    public ZestEngineWrapper(ScriptEngine engine, List<Path> defaultTemplates) {
-        super(engine);
+    public ZestEngineWrapper(ZestScriptEngineFactory engineFactory, List<Path> defaultTemplates) {
+        super(engineFactory);
 
         if (defaultTemplates == null) {
             throw new IllegalArgumentException("Parameter defaultTemplates must not be null.");

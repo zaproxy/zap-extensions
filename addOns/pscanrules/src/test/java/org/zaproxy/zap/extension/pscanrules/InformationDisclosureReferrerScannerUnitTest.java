@@ -88,7 +88,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -114,7 +114,7 @@ public class InformationDisclosureReferrerScannerUnitTest
                         + "\r\n");
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -129,7 +129,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -147,7 +147,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -171,7 +171,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -193,7 +193,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -214,7 +214,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -232,7 +232,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -252,7 +252,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -270,7 +270,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -290,7 +290,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());
@@ -308,7 +308,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(1, alertsRaised.size());
@@ -328,7 +328,7 @@ public class InformationDisclosureReferrerScannerUnitTest
         HttpMessage msg = createHttpMessageWithRespBody(testReferer);
 
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
 
         // Then
         assertEquals(0, alertsRaised.size());

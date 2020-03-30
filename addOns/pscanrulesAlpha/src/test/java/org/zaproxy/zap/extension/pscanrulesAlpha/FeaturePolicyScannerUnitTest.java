@@ -55,7 +55,7 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
         // Given
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "name"));
@@ -66,7 +66,7 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
         // Given
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
     }
@@ -76,7 +76,7 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
         // Given
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/json");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -87,7 +87,7 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
         msg.getResponseHeader().addHeader("Feature-Policy", "vibrate 'none'");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/HTML");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -100,7 +100,7 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
         msg.setResponseHeader("HTTP/1.1 301 Moved Permanently\r\n");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -112,7 +112,7 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
         msg.setResponseHeader("HTTP/1.1 301 Moved Permanently\r\n");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(MESSAGE_PREFIX + "name"));

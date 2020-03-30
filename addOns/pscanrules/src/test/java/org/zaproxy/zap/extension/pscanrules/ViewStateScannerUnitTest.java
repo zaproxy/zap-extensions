@@ -55,7 +55,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
 
     @Test
     public void shouldNotRaiseAlertAsThereIsNoContent() {
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -64,7 +64,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
     public void shouldNotRaiseAlertAsThereIsNoValidViewState() {
         msg.setResponseBody("<input name=\"__specialstate\">");
 
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -73,7 +73,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
     public void shouldNotRaiseAlertAsThereIsAnUnknowVersionOfASP() {
         msg.setResponseBody("<input name=\"__specialstate\" value=\"bm90dmFsaWQ=\">");
 
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -83,7 +83,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
         msg.setResponseBody(
                 "<input name=\"__VIEWSTATE\" value=\"/wEPDWUKMTkwNjc4NTIwMWRkaKrolbpTKYmPUNsab597kh8iOBU=\">");
 
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
@@ -99,7 +99,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
         msg.setResponseBody(
                 "<input name=\"__VIEWSTATE\" value=\"/wEPDWUKMTkwNjc4NTIwwEPDWUKMTkwNjc4NTIwMWRkaMWRka\">");
 
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
@@ -115,7 +115,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
         msg.setResponseBody(
                 "<input name=\"__VIEWSTATE\" value=\"dDPDWUKMTkwNjc4NTIwMWRkaKrolbpTKYmPUNsab597kh8iOBU=\">");
 
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat("There should be two alerts raised.", alertsRaised.size(), equalTo(2));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_LOW));
@@ -131,7 +131,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
         msg.setResponseBody(
                 "<input name=\"__VIEWSTATE\" value=\"/wEPDwUJODczNjQ5OTk0D2QWAgIDD2QWAgIFDw8WAh4EVGV4dAUWSSBMb3ZlIERvdG5ldEN1cnJ5LmNvbWRkZMHbBY9JqBTvB5/6kXnY15AUSAwa\">");
 
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -141,7 +141,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
         String encodedViewstate = getViewstateWithText("test@test.com");
         msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"" + encodedViewstate + "\">");
 
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -158,7 +158,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
         String encodedViewstate = getViewstateWithText("127.0.0.1");
         msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"" + encodedViewstate + "\">");
 
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -184,7 +184,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
                         + "<input type=\"hidden\" name=\"__VIEWSTATE1\" id=\"__VIEWSTATE1\" value=\"KwANAGQYAQUJR3JpZFZpZXcxD2dk4sjERFfnDXV/\" />"
                         + "<input type=\"hidden\" name=\"__VIEWSTATE2\" id=\"__VIEWSTATE2\" value=\"hMFGAL10HQUnZbk=\" />");
 
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(2));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_INFO));
