@@ -80,6 +80,11 @@ public class TestUserAgent extends AbstractAppPlugin {
     }
 
     @Override
+    public int getRisk() {
+        return Alert.RISK_INFO;
+    }
+
+    @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
@@ -163,7 +168,7 @@ public class TestUserAgent extends AbstractAppPlugin {
 
     private void createAlert(HttpMessage newMsg, String userAgent) {
         bingo(
-                Alert.RISK_INFO,
+                getRisk(),
                 Alert.CONFIDENCE_MEDIUM,
                 getBaseMsg().getRequestHeader().getURI().toString(),
                 USER_AGENT_PARAM_NAME,

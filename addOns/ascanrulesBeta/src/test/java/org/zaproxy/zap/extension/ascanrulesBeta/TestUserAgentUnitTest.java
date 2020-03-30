@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2018 The ZAP Development Team
+ * Copyright 2020 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrules;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -26,19 +26,19 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 
-/** Unit test for {@link TestExternalRedirect}. */
-public class TestExternalRedirectUnitTest extends ActiveScannerAppParamTest<TestExternalRedirect> {
+/** Unit test for {@link TestUserAgent}. */
+public class TestUserAgentUnitTest extends ActiveScannerTest<TestUserAgent> {
 
     @Override
-    protected TestExternalRedirect createScanner() {
-        return new TestExternalRedirect();
+    protected TestUserAgent createScanner() {
+        return new TestUserAgent();
     }
 
     @Test
-    public void shouldHaveHighRisk() {
+    public void shouldHaveInfoRisk() {
         // Given / When
         int risk = rule.getRisk();
         // Then
-        assertThat(risk, is(equalTo(Alert.RISK_HIGH)));
+        assertThat(risk, is(equalTo(Alert.RISK_INFO)));
     }
 }
