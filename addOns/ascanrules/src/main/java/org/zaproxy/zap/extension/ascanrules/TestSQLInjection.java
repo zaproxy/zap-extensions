@@ -463,7 +463,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
         }
 
         for (Tech tech : technologies.getIncludeTech()) {
-            if (tech.getParent() == Tech.Db) {
+            if (Tech.Db.equals(tech.getParent())) {
                 return true;
             }
         }
