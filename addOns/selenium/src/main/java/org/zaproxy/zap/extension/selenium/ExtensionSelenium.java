@@ -770,6 +770,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     firefoxOptions.addPreference("network.proxy.ssl_port", proxyPort);
                     firefoxOptions.addPreference("network.proxy.share_proxy_settings", true);
                     firefoxOptions.addPreference("network.proxy.no_proxies_on", "");
+                    // Fixes a problem with the HUD
+                    firefoxOptions.addPreference("browser.tabs.documentchannel", false);
                     // And remove the PROXY capability:
                     firefoxOptions.setCapability(CapabilityType.PROXY, (Object) null);
                 }
