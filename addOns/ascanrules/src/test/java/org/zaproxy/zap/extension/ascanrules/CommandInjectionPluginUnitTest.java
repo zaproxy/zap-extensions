@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -36,6 +37,7 @@ import org.apache.commons.configuration.Configuration;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -56,9 +58,9 @@ public class CommandInjectionPluginUnitTest
             default:
                 return recommendMax + 20;
             case HIGH:
-                return recommendMax + 22;
+                return recommendMax + 27;
             case INSANE:
-                return recommendMax;
+                return recommendMax + 14;
         }
     }
 
@@ -181,6 +183,36 @@ public class CommandInjectionPluginUnitTest
         Configuration config = new ZapXmlConfiguration();
         config.setProperty(RuleConfigParam.RULE_COMMON_SLEEP_TIME, value);
         return config;
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseHasPasswdFileContentAndPayloadIsNullByteBased()
+            throws HttpMalformedHeaderException {
+        // Given
+        NullByteVulnerableServerHandler vulnServerHandler =
+                new NullByteVulnerableServerHandler("/", "p", Tech.Linux);
+        nano.addHandler(vulnServerHandler);
+        rule.init(getHttpMessage("/?p=a"), parent);
+        rule.setAttackStrength(AttackStrength.INSANE);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseHasSystemINIFileContentAndPayloadIsNullByteBased()
+            throws HttpMalformedHeaderException {
+        // Given
+        NullByteVulnerableServerHandler vulnServerHandler =
+                new NullByteVulnerableServerHandler("/", "p", Tech.Windows);
+        nano.addHandler(vulnServerHandler);
+        rule.init(getHttpMessage("/?p=a"), parent);
+        rule.setAttackStrength(AttackStrength.INSANE);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
     }
 
     private static class PayloadCollectorHandler extends NanoServerHandler {
