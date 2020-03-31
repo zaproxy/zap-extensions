@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Fix typo in the help page.
+- Use correct risk (`HIGH`) in External Redirect, to run earlier in the scan.
 
 ## [34] - 2020-01-17
 ### Added
