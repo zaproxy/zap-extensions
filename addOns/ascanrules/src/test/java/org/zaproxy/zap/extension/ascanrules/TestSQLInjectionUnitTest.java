@@ -82,6 +82,16 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
     }
 
     @Test
+    public void shouldTargetDbChildTechsWithNonBuiltInTechInstances() {
+        // Given
+        TechSet techSet = techSet(new Tech(new Tech("Db"), "SomeDb"));
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
     public void shouldNotTargetNonDbTechs() {
         // Given
         TechSet techSet = techSetWithout(techsOf(Tech.Db));
