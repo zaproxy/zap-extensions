@@ -93,7 +93,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
 Java Servlet spec calls for aggregation of query string and post data elements which may result in 
 unintended handling of user controlled data. This may impact other frameworks and technologies as well.
-<strong>Note:</strong> This scan rule will only analyze responses on LOW Threshold.
+<strong>Note:</strong> This scan rule will only analyze responses on LOW Threshold, and in Context URLs for which the Tech JSP/Servlet is applicable.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServletParameterPollutionScanner.java">ServletParameterPollutionScanner.java</a>
 
