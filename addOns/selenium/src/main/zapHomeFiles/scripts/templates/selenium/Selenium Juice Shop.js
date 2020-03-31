@@ -1,8 +1,11 @@
 // This script will log a browser into Juice Shop when forced user mode is enabled.
-// The  'Juice Shop Session Management.js' script must have been set to authenticate correctly.
+// The 'Juice Shop Session Management.js' script must have been set to authenticate correctly.
 // The version of that script included with ZAP 2.9.0 also needs to be be tweaked to add the 2 lines indicated below:
 
 /*
+
+var ScriptVars = Java.type('org.zaproxy.zap.extension.script.ScriptVars');	// <-- Add this line
+
 function extractWebSession(sessionWrapper) {
 	// parse the authentication response
 	var json = JSON.parse(sessionWrapper.getHttpMessage().getResponseBody().toString());
@@ -28,12 +31,9 @@ function browserLaunched(ssutils) {
 	if (token != null) {
 		logger('browserLaunched ' + ssutils.getBrowserId());
 		var wd = ssutils.getWebDriver();
-		var url = wd.getCurrentUrl();
-		while (! url.startsWith("http")) {
-			java.lang.Thread.sleep(100);
-		}
+		var url = ssutils.waitForURL(5000);
 		if (url.startsWith(jsUrl)) {
-			logger('url: ' + wd.getCurrentUrl() + ' setting token ' + token);
+			logger('url: ' + url + ' setting token ' + token);
 			var script = 'document.cookie = \'token=' + token + '\';\n' +
 				'window.localStorage.setItem(\'token\', \'' + token + '\');';
 			wd.executeScript(script);

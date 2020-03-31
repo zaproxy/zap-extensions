@@ -18,12 +18,10 @@
 		getBrowserId() Returns the browser Id, eg "firefox" or "chrome"
 		getProxyAddress() Returns the address of the proxy
 		getProxyPort() Returns the port of the proxy
+		waitForUrl(timeoutInMsecs) Returns the current URL (once loaded) - waits up to timeoutInMsecs
 */
 function browserLaunched(utils) {
-	var url = utils.getWebDriver().getCurrentUrl();
-	while (! url.startsWith("http")) {
-		java.lang.Thread.sleep(100);
-	}
+	var url = utils.waitForURL(5000);
 	logger('browserLaunched ' + utils.getBrowserId() + ' url: ' + url);
 }
 

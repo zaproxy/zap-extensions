@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.util.Locale;
 import org.openqa.selenium.WebDriver;
 
 public class SeleniumScriptUtils {
@@ -56,5 +57,20 @@ public class SeleniumScriptUtils {
 
     public int getProxyPort() {
         return proxyPort;
+    }
+
+    public String waitForURL(int timeoutInMsecs) {
+        String url = "";
+        int time = 0;
+        while (time < timeoutInMsecs
+                && !(url = this.wd.getCurrentUrl()).toLowerCase(Locale.ROOT).startsWith("http")) {
+            try {
+                Thread.sleep(200);
+                time += 200;
+            } catch (InterruptedException e) {
+                // Ignore
+            }
+        }
+        return url;
     }
 }

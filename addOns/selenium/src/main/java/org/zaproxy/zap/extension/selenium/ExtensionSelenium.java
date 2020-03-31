@@ -198,8 +198,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         extensionHook.addApiImplementor(seleniumApi);
 
-        ExtensionScript extScript = getExtScript();
-        if (extScript != null) {
+        if (getExtScript() != null) {
             seleniumScriptType =
                     new ScriptType(
                             SCRIPT_TYPE_SELENIUM,
@@ -234,9 +233,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        ExtensionScript extScript = getExtScript();
-        if (extScript != null && seleniumScriptType != null) {
-            extScript.removeScripType(seleniumScriptType);
+        if (extScript != null) {
+            extScript.removeScriptType(seleniumScriptType);
         }
     }
 
@@ -677,15 +675,16 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             throw new IllegalArgumentException("Unknown browser: " + providedBrowserId);
         }
 
+        WebDriver wd;
         if (proxyAddress == null) {
-            return webDriverProviders.get(providedBrowser.getProviderId()).getWebDriver(requester);
+            wd = webDriverProviders.get(providedBrowser.getProviderId()).getWebDriver(requester);
+        } else {
+            wd =
+                    webDriverProviders
+                            .get(providedBrowser.getProviderId())
+                            .getWebDriver(requester, proxyAddress, proxyPort);
         }
-        WebDriver wd =
-                webDriverProviders
-                        .get(providedBrowser.getProviderId())
-                        .getWebDriver(requester, proxyAddress, proxyPort);
-        ExtensionScript extScript = getExtScript();
-        if (extScript != null) {
+        if (getExtScript() != null) {
             List<ScriptWrapper> scripts = extScript.getScripts(SCRIPT_TYPE_SELENIUM);
             for (ScriptWrapper script : scripts) {
                 try {
