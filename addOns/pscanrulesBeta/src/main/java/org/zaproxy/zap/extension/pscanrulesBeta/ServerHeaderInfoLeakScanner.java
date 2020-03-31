@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.util.Vector;
+import java.util.List;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
@@ -40,14 +40,13 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10036;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(ServerHeaderInfoLeakScanner.class);
 
     private static final Pattern VERSION_PATTERN = Pattern.compile(".*\\d.*");
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -59,8 +58,8 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
 
-        Vector<String> serverOption = msg.getResponseHeader().getHeaders("Server");
-        if (serverOption != null) { // Header Found
+        List<String> serverOption = msg.getResponseHeader().getHeaderValues("Server");
+        if (!serverOption.isEmpty()) { // Header Found
             // It is set so lets check it. Should only be one but it's a vector so iterate to be
             // sure.
             for (String serverDirective : serverOption) {
@@ -79,9 +78,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
                                     "pscanbeta.serverheaderinfoleak.general.soln"),
                             Constant.messages.getString(
                                     "pscanbeta.serverheaderinfoleak.general.refs"),
-                            serverDirective,
-                            msg,
-                            id);
+                            serverDirective);
                 } else if (Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
                     raiseAlert(
                             Alert.RISK_INFO,
@@ -92,9 +89,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
                                     "pscanbeta.serverheaderinfoleak.general.soln"),
                             Constant.messages.getString(
                                     "pscanbeta.serverheaderinfoleak.general.refs"),
-                            serverDirective,
-                            msg,
-                            id);
+                            serverDirective);
                 }
             }
         }
@@ -125,27 +120,17 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner {
             String desc,
             String soln,
             String refs,
-            String evidence,
-            HttpMessage msg,
-            int id) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        risk,
-                        confidence, // PluginID, Risk, Reliability
-                        name);
-        alert.setDetail(
-                desc, // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                "", // Other info
-                soln, // Solution
-                refs, // References
-                evidence, // Evidence - Return the Server Header info
-                200, // CWE Id
-                13, // WASC Id
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+            String evidence) {
+        newAlert()
+                .setName(name)
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setDescription(desc)
+                .setSolution(soln)
+                .setReference(refs)
+                .setEvidence(evidence)
+                .setCweId(200)
+                .setWascId(13)
+                .raise();
     }
 }

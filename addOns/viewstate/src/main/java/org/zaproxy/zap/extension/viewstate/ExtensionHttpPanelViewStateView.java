@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.viewstate;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -158,15 +156,6 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("viewstate.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     /** No database tables used, so all supported */

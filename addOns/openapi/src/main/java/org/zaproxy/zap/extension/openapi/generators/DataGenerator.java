@@ -20,8 +20,13 @@
 package org.zaproxy.zap.extension.openapi.generators;
 
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.FileSchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.MapSchema;
+import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
@@ -29,12 +34,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
 
 public class DataGenerator {
 
     private Generators generators;
-    private static final Logger LOG = Logger.getLogger(DataGenerator.class);
 
     public DataGenerator(Generators generators) {
         this.generators = generators;
@@ -49,14 +52,17 @@ public class DataGenerator {
                             put("number", "1.2");
                             put("string", "\"John Doe\"");
                             put("boolean", "true");
-                            put("array", "");
-                            put("file", "\u0800");
-                            put("ref", "ref");
                         }
                     });
 
-    public boolean isSupported(String type) {
-        return TYPES.get(type) != null;
+    public boolean isSupported(Schema<?> schema) {
+        return schema instanceof ArraySchema
+                || schema instanceof BooleanSchema
+                || schema instanceof FileSchema
+                || schema instanceof IntegerSchema
+                || schema instanceof MapSchema
+                || schema instanceof NumberSchema
+                || schema instanceof StringSchema;
     }
 
     public String generate(String name, Parameter parameter) {
@@ -117,10 +123,13 @@ public class DataGenerator {
     }
 
     public String generateBodyValue(String name, Schema<?> property) {
-        if (isArray(property.getType())) {
+        if (isArray(property)) {
             return generators
                     .getArrayGenerator()
                     .generate(name, (ArraySchema) property, "csv", false);
+        }
+        if (isMap(property)) {
+            return generators.getMapGenerator().generate(TYPES, property);
         }
         return generateValue(name, property, false);
     }
@@ -202,11 +211,23 @@ public class DataGenerator {
         return "array".equals(type);
     }
 
+    private static boolean isArray(Schema<?> schema) {
+        return schema instanceof ArraySchema;
+    }
+
     public boolean isDateTime(Schema<?> schema) {
         return schema instanceof DateTimeSchema;
     }
 
     public boolean isDate(Schema<?> schema) {
         return schema instanceof DateSchema;
+    }
+
+    private static boolean isMap(Schema<?> schema) {
+        return schema instanceof MapSchema;
+    }
+
+    public Generators getGenerators() {
+        return generators;
     }
 }

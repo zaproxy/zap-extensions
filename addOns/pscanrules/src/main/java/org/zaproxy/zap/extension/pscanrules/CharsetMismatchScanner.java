@@ -40,8 +40,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class CharsetMismatchScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.charsetmismatch.";
 
@@ -259,31 +257,22 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
             String firstCharset,
             String secondCharset,
             MismatchType currentMismatch) {
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_LOW,
+        newAlert()
+                .setName(
                         getName()
                                 + " "
                                 + getVariant(
-                                        currentMismatch)); // Compound name (to account for variant
-        // designations, and muitiple alerts on
-        // single URI)
-        alert.setDetail(
-                getDescriptionMessage(),
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                getExtraInfo(firstCharset, secondCharset, currentMismatch),
-                getSolutionMessage(), // Solution
-                getReferenceMessage(), // Refs
-                "", // No Evidence
-                16, // CWE-16: Configuration
-                15, // WASC-15: Application Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+                                        currentMismatch)) // Compound name (to account for variant
+                // designations, and muitiple alerts on single URI)
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(getDescriptionMessage())
+                .setOtherInfo(getExtraInfo(firstCharset, secondCharset, currentMismatch))
+                .setSolution(getSolutionMessage())
+                .setReference(getReferenceMessage())
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .raise();
     }
 
     @Override
@@ -293,7 +282,7 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /*

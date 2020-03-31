@@ -23,8 +23,6 @@ import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -256,7 +254,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                     this.uninstallExtenderScript(script);
                 }
             }
-            extScript.removeScripType(extScriptType);
+            extScript.removeScriptType(extScriptType);
         }
 
         if (nullEngineWrapper != null) {
@@ -485,6 +483,10 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     }
 
     public void displayType(ScriptType type) {
+        displayTypeImpl(type, false);
+    }
+
+    private void displayTypeImpl(ScriptType type, boolean template) {
         if (!View.isInitialised()) {
             return;
         }
@@ -492,12 +494,21 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         this.saveChanges();
 
         this.getConsolePanel().clearScript();
-        this.getConsolePanel().getOutputPanel().clear();
+        OutputPanel outputPanel = getConsolePanel().getOutputPanel();
+        outputPanel.clear();
+
+        if (template) {
+            outputPanel.append(Constant.messages.getString("scripts.template.desc"));
+        }
 
         if (Constant.messages.containsKey(type.getI18nKey() + ".desc")) {
-            setOutput(Constant.messages.getString(type.getI18nKey() + ".desc"));
+            outputPanel.append(Constant.messages.getString(type.getI18nKey() + ".desc"));
             this.getConsolePanel().setTabFocus();
         }
+    }
+
+    void displayTemplateType(ScriptType type) {
+        displayTypeImpl(type, true);
     }
 
     @Override
@@ -522,15 +533,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     @Override
     public String getDescription() {
         return Constant.messages.getString("scripts.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     /*

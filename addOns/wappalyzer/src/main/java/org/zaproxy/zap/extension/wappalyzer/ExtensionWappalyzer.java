@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import java.awt.EventQueue;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -112,6 +110,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         passiveScanner = new WappalyzerPassiveScanner(this);
     }
 
+    WappalyzerPassiveScanner getPassiveScanner() {
+        return passiveScanner;
+    }
+
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
@@ -179,15 +181,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     @Override
     public String getDescription() {
         return Constant.messages.getString("wappalyzer.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override
@@ -332,7 +325,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         }
 
         // TODO Repopulate
-        SiteNode root = (SiteNode) session.getSiteTree().getRoot();
+        SiteNode root = session.getSiteTree().getRoot();
         @SuppressWarnings("unchecked")
         Enumeration<TreeNode> en = root.children();
         while (en.hasMoreElements()) {

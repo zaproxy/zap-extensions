@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -43,12 +42,11 @@ public class XChromeLoggerDataInfoLeakScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.xchromeloggerdata.";
     private static final int PLUGIN_ID = 10052;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(XChromeLoggerDataInfoLeakScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -60,43 +58,33 @@ public class XChromeLoggerDataInfoLeakScanner extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
 
-        Vector<String> xcldHeader =
-                msg.getResponseHeader().getHeaders("X-ChromeLogger-Data"); // Get the header(s)
-        Vector<String> xcpdHeader =
-                msg.getResponseHeader()
-                        .getHeaders(
-                                "X-ChromePhp-Data"); // Add any header(s) using the alternate name
+        // Get the header(s)
+        List<String> xcldHeader = msg.getResponseHeader().getHeaderValues("X-ChromeLogger-Data");
+        // Add any header(s) using the alternate name
+        List<String> xcpdHeader = msg.getResponseHeader().getHeaderValues("X-ChromePhp-Data");
 
         List<String> loggerHeaders = new ArrayList<String>(2);
 
-        if (xcldHeader != null && !xcldHeader.isEmpty()) {
+        if (!xcldHeader.isEmpty()) {
             loggerHeaders.addAll(xcldHeader);
         }
-        if (xcpdHeader != null && !xcpdHeader.isEmpty()) {
+        if (!xcpdHeader.isEmpty()) {
             loggerHeaders.addAll(xcpdHeader);
         }
 
         if (!loggerHeaders.isEmpty()) { // Header(s) Found
             for (String xcldField : loggerHeaders) {
-                Alert alert =
-                        new Alert(
-                                getPluginId(),
-                                Alert.RISK_MEDIUM,
-                                Alert.CONFIDENCE_HIGH, // PluginID, Risk, Reliability
-                                getName());
-                alert.setDetail(
-                        getDescription(), // Description
-                        msg.getRequestHeader().getURI().toString(), // URI
-                        "", // Param
-                        "", // Attack
-                        getOtherInfo(xcldField), // Other info
-                        getSolution(), // Solution
-                        getReference(), // References
-                        xcldField, // Evidence
-                        200, // CWE Id
-                        13, // WASC Id
-                        msg); // HttpMessage
-                parent.raiseAlert(id, alert);
+                newAlert()
+                        .setRisk(Alert.RISK_MEDIUM)
+                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                        .setDescription(getDescription())
+                        .setOtherInfo(getOtherInfo(xcldField))
+                        .setSolution(getSolution())
+                        .setReference(getReference())
+                        .setEvidence(xcldField)
+                        .setCweId(200)
+                        .setWascId(13)
+                        .raise();
             }
         }
         if (logger.isDebugEnabled()) {

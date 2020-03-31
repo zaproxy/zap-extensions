@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.httpsinfo;
 
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -139,15 +137,6 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
     @Override
     public String getDescription() {
         return Constant.messages.getString("httpsinfo.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     protected int getTabIndex(String tabName) {

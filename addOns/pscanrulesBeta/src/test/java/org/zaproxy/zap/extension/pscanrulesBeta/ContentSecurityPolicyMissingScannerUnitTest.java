@@ -50,7 +50,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertContentSecurityPolicyAlertRaised();
@@ -64,7 +64,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(301, HEADER_HTML);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -78,7 +78,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(301, HEADER_HTML);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertContentSecurityPolicyAlertRaised();
@@ -91,7 +91,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -104,7 +104,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertContentSecurityPolicyAlertRaised();
@@ -117,7 +117,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP, HEADER_WEBKIT_CSP);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertContentSecurityPolicyAlertRaised();
@@ -131,7 +131,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP, HEADER_X_CSP);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertContentSecurityPolicyAlertRaised();
@@ -145,7 +145,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(headers);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -158,7 +158,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_TEXT);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -171,7 +171,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_TEXT);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertContentSecurityPolicyAlertRaised();
@@ -186,7 +186,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(headers);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -199,7 +199,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_REPORT_ONLY);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(2));
@@ -214,7 +214,7 @@ public class ContentSecurityPolicyMissingScannerUnitTest
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_REPORT_ONLY, HEADER_CSP);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));

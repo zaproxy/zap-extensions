@@ -105,7 +105,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
         if (sequencePanel != null) {
             getExtActiveScan().removeCustomScanPanel(sequencePanel);
         }
-        getExtScript().removeScripType(scriptType);
+        getExtScript().removeScriptType(scriptType);
     }
 
     @Override

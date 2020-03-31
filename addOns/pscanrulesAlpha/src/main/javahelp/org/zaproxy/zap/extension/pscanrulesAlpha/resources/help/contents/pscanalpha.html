@@ -5,13 +5,13 @@
 Passive Scan Rules - Alpha
 </TITLE>
 </HEAD>
-<BODY BGCOLOR="#ffffff">
+<BODY>
 <H1>Passive Scan Rules - Alpha</H1>
 The following alpha quality passive scan rules are included in this add-on:
 
 <H2>An example passive scan rule which loads data from a file</H2>
 This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanner.java">ExampleFilePassiveScanner.java</a>
 
@@ -21,6 +21,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
  <li><b>ASP.NET ViewState Integrity:</b> The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client</li>
  <li><b>Base64 Disclosure:</b> Base64 encoded data was disclosed by the application/web server</li>
 </ul>
+<strong>Note:</strong> At Low Threshold all occurrences within each response will be included.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
 
@@ -38,7 +39,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 
 <H2>Example Passive Scanner: Denial of Service</H2>
 This implements a very simple example passive scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanner.java">ExampleSimplePassiveScanner.java</a>
 
@@ -81,6 +82,13 @@ This scanner checks whether the integrity attribute in the script or the link el
 It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanner.java">SubResourceIntegrityAttributeScanner.java</a>
+
+<H2>Dangerous JS Functions</H2>
+This scanner checks for any dangerous JS functions present in a site response.<br>
+<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own function names (payloads) in the Custom Payloads options panel.
+They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the amount of time needed to passively scan.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JSFunctionPassiveScanner.java">JSFunctionPassiveScanner.java</a>
 
 </BODY>
 </HTML>

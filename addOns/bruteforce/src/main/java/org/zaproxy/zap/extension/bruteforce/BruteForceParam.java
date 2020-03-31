@@ -39,6 +39,8 @@ public class BruteForceParam extends AbstractParam {
     private static final String DEFAULT_FILE = "bruteforce.defaultFile";
     private static final String RECURSIVE = "bruteforce.recursive";
     private static final String BROWSE_FILES = "bruteforce.browsefiles";
+    private static final String BROWSE_FILES_WITHOUT_EXTENSION =
+            "bruteforce.browsefileswithoutextension";
     private static final String FILE_EXTENSIONS = "bruteforce.fileextensions";
     private static final String EXTENSIONS_TO_MISS = "bruteforce.extensionsToMiss";
     private static final String FAIL_CASE_STRING = "bruteforce.failCaseString";
@@ -47,6 +49,7 @@ public class BruteForceParam extends AbstractParam {
     public static final int MAXIMUM_THREADS_PER_SCAN = 200;
     public static final boolean DEFAULT_RECURSIVE = true;
     public static final boolean DEFAULT_BROWSE_FILES = false;
+    public static final boolean DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION = false;
     public static final String EMPTY_STRING = "";
     public static final String DEFAULT_EXTENSIONS_TO_MISS = "jpg, gif, jpeg, ico, tiff, png, bmp";
     public static final String DEFAULT_FAIL_CASE_STRING = Config.failCaseString;
@@ -55,6 +58,7 @@ public class BruteForceParam extends AbstractParam {
     private boolean recursive = DEFAULT_RECURSIVE;
     private ForcedBrowseFile defaultFile = null;
     private boolean browseFiles = DEFAULT_BROWSE_FILES;
+    private boolean browseFilesWithoutExtension = DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION;
     // can't be null
     private String fileExtensions = EMPTY_STRING;
     private String extensionsToMiss = DEFAULT_EXTENSIONS_TO_MISS;
@@ -68,6 +72,11 @@ public class BruteForceParam extends AbstractParam {
             this.threadPerScan = getConfig().getInt(THREAD_PER_SCAN, DEFAULT_THREAD_PER_SCAN);
             this.recursive = getConfig().getBoolean(RECURSIVE, DEFAULT_RECURSIVE);
             this.browseFiles = getConfig().getBoolean(BROWSE_FILES, DEFAULT_BROWSE_FILES);
+            this.browseFilesWithoutExtension =
+                    getConfig()
+                            .getBoolean(
+                                    BROWSE_FILES_WITHOUT_EXTENSION,
+                                    DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION);
             this.fileExtensions = getConfig().getString(FILE_EXTENSIONS, EMPTY_STRING);
             this.extensionsToMiss =
                     getConfig().getString(EXTENSIONS_TO_MISS, DEFAULT_EXTENSIONS_TO_MISS);
@@ -120,6 +129,15 @@ public class BruteForceParam extends AbstractParam {
         }
 
         getConfig().setProperty(DEFAULT_FILE, absolutePath);
+    }
+
+    public boolean isBrowseFilesWithoutExtension() {
+        return browseFilesWithoutExtension;
+    }
+
+    public void setBrowseFilesWithoutExtension(boolean browseFilesWithoutExtension) {
+        this.browseFilesWithoutExtension = browseFilesWithoutExtension;
+        getConfig().setProperty(BROWSE_FILES_WITHOUT_EXTENSION, browseFilesWithoutExtension);
     }
 
     public boolean isBrowseFiles() {

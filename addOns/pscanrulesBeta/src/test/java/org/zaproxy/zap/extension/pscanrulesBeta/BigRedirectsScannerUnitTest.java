@@ -61,7 +61,7 @@ public class BigRedirectsScannerUnitTest extends PassiveScannerTest<BigRedirects
         msg.setResponseBody(new byte[ALLOWABLE_BODY_SIZE]);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -75,7 +75,7 @@ public class BigRedirectsScannerUnitTest extends PassiveScannerTest<BigRedirects
         msg.setResponseBody(new byte[ALLOWABLE_BODY_SIZE + 1]);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -90,7 +90,7 @@ public class BigRedirectsScannerUnitTest extends PassiveScannerTest<BigRedirects
         msg.setResponseBody(new byte[ALLOWABLE_BODY_SIZE + 1]);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -104,7 +104,7 @@ public class BigRedirectsScannerUnitTest extends PassiveScannerTest<BigRedirects
         msg.setResponseBody(new byte[ALLOWABLE_BODY_SIZE + 1]);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -117,7 +117,7 @@ public class BigRedirectsScannerUnitTest extends PassiveScannerTest<BigRedirects
         msg.setResponseBody(new byte[ALLOWABLE_BODY_SIZE + 1]);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));

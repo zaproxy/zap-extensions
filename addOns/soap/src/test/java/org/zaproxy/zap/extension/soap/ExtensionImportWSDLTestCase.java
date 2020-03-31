@@ -44,9 +44,4 @@ public class ExtensionImportWSDLTestCase extends TestUtils {
     public void getDescriptionTest() {
         assertNotNull(extension.getDescription());
     }
-
-    @Test
-    public void getURLTest() {
-        assertNotNull(extension.getURL());
-    }
 }

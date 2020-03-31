@@ -40,9 +40,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class InsecureAuthenticationScan extends PluginPassiveScanner {
 
-    /** the Passive Scanner Thread */
-    private PassiveScanThread parent = null;
-
     /** for logging. */
     private static Logger log = Logger.getLogger(InsecureAuthenticationScan.class);
 
@@ -55,7 +52,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -91,7 +88,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
                 if ((authHeaderValue.toLowerCase(Locale.ENGLISH).startsWith("basic "))
                         || (authHeaderValue.toLowerCase(Locale.ENGLISH).startsWith("digest "))) {
                     int alertRisk = Alert.RISK_MEDIUM; // Medium by default.. maybe even high.
-                    int alertLevel = Alert.CONFIDENCE_MEDIUM;
+                    int alertConf = Alert.CONFIDENCE_MEDIUM;
                     String username = null, password = null;
 
                     // gets Basic or Digest.. (trailing spaces trimmed off)
@@ -213,30 +210,25 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
                         digestInfo = authValues[1]; // info to output in the logging message.
                     }
 
-                    Alert alert =
-                            new Alert(
-                                    getPluginId(),
-                                    alertRisk,
-                                    alertLevel,
+                    newAlert()
+                            .setName(
                                     Constant.messages.getString(
-                                            "pscanrules.authenticationcredentialscaptured.name"));
-                    alert.setDetail(
-                            Constant.messages.getString(
-                                    "pscanrules.authenticationcredentialscaptured.desc"),
-                            uri,
-                            "", // No specific parameter. It's in the header.
-                            "",
-                            extraInfo,
-                            Constant.messages.getString(
-                                    "pscanrules.authenticationcredentialscaptured.soln"),
-                            Constant.messages.getString(
-                                    "pscanrules.authenticationcredentialscaptured.refs"),
-                            "", // No Evidence
-                            287, // CWE Id - Improper authentication
-                            1, // WASC Id - Insufficient authentication
-                            msg);
-                    // raise the alert
-                    parent.raiseAlert(id, alert);
+                                            "pscanrules.authenticationcredentialscaptured.name"))
+                            .setRisk(alertRisk)
+                            .setConfidence(alertConf)
+                            .setDescription(
+                                    Constant.messages.getString(
+                                            "pscanrules.authenticationcredentialscaptured.desc"))
+                            .setOtherInfo(extraInfo)
+                            .setSolution(
+                                    Constant.messages.getString(
+                                            "pscanrules.authenticationcredentialscaptured.soln"))
+                            .setReference(
+                                    Constant.messages.getString(
+                                            "pscanrules.authenticationcredentialscaptured.refs"))
+                            .setCweId(287) // CWE Id - Improper authentication
+                            .setWascId(1) // WASC Id - Insufficient authentication
+                            .raise();
 
                     // and log it, without internationalising it.
                     log.info(
@@ -296,25 +288,16 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
             for (String auth : authHeaders) {
                 if (auth.toLowerCase().indexOf("basic") > -1
                         || auth.toLowerCase().indexOf("digest") > -1) {
-                    Alert alert =
-                            new Alert(
-                                    getPluginId(),
-                                    Alert.RISK_MEDIUM,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    getName());
-                    alert.setDetail(
-                            getDescription(),
-                            msg.getRequestHeader().getURI().toString(),
-                            "",
-                            "",
-                            "",
-                            getSolution(),
-                            getReference(),
-                            HttpHeader.WWW_AUTHENTICATE + ": " + auth,
-                            326, // CWE Id - Inadequate Encryption Strength
-                            4, // WASC Id - Insufficient Transport Layer Protection
-                            msg);
-                    parent.raiseAlert(id, alert);
+                    newAlert()
+                            .setRisk(Alert.RISK_MEDIUM)
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setDescription(getDescription())
+                            .setSolution(getSolution())
+                            .setReference(getReference())
+                            .setEvidence(HttpHeader.WWW_AUTHENTICATE + ": " + auth)
+                            .setCweId(326) // CWE Id - Inadequate Encryption Strength
+                            .setWascId(4) // WASC Id - Insufficient Transport Layer Protection
+                            .raise();
                 }
             }
         }

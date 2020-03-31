@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -36,6 +37,7 @@ import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.TreeSet;
 import org.junit.Test;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.ScannerParam;
@@ -86,6 +88,50 @@ public class TestCrossSiteScriptV2UnitTest
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("</p><script>alert(1);</script><p>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(alertsRaised.get(0).getAttack(), equalTo("</p><script>alert(1);</script><p>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    public void shouldReportXssInParagraphForNullBytePayloadInjection()
+            throws NullPointerException, IOException {
+        String test = "/shouldReportXssInParagraphForNullByteInjection/";
+        // Given
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null
+                                && (name.contains(NULL_BYTE_CHARACTER)
+                                        || name.equals(Constant.getEyeCatcher()))) {
+                            response =
+                                    getHtml(
+                                            "InputInParagraph.html",
+                                            new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        // When
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("</p>" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><p>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("</p>" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><p>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -157,6 +203,48 @@ public class TestCrossSiteScriptV2UnitTest
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("--><script>alert(1);</script><!--"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(alertsRaised.get(0).getAttack(), equalTo("--><script>alert(1);</script><!--"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    public void shouldReportXssInCommentForNullBytePayloadInjection()
+            throws NullPointerException, IOException {
+        String test = "/shouldReportXssInCommentForNullBytePayloadInjection/";
+        // Given
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null
+                                && (name.contains(NULL_BYTE_CHARACTER)
+                                        || name.equals(Constant.getEyeCatcher()))) {
+                            response =
+                                    getHtml("InputInComment.html", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        // When
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("-->" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><!--"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("-->" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><!--"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -271,6 +359,46 @@ public class TestCrossSiteScriptV2UnitTest
     }
 
     @Test
+    public void shouldReportXssInBodyForNullByteBasedInjectionPayload()
+            throws NullPointerException, IOException {
+        String test = "/shouldReportXssInBodyForNullByteBasedInjectionPayload/";
+        // Given
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null
+                                && (name.contains(NULL_BYTE_CHARACTER)
+                                        || name.equals(Constant.getEyeCatcher()))) {
+                            response = getHtml("InputInBody.html", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+        // When
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo(NULL_BYTE_CHARACTER + "<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo(NULL_BYTE_CHARACTER + "<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
     public void shouldReportXssInSpanContent() throws NullPointerException, IOException {
         String test = "/shouldReportXssInSpanContent/";
 
@@ -303,6 +431,45 @@ public class TestCrossSiteScriptV2UnitTest
         assertThat(
                 alertsRaised.get(0).getAttack(),
                 equalTo("</span><script>alert(1);</script><span>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    public void shouldReportXssInSpanContentForNullByteInjectionPayload()
+            throws NullPointerException, IOException {
+        String test = "/shouldReportXssInSpanContentForNullByteInjectionPayload/";
+        // Given
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null
+                                && (name.contains(NULL_BYTE_CHARACTER)
+                                        || name.equals(Constant.getEyeCatcher()))) {
+                            response = getHtml("InputInSpan.html", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+        // When
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("</span>" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><span>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("</span>" + NULL_BYTE_CHARACTER + "<script>alert(1);</script><span>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -368,6 +535,46 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.rule.scan();
 
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    public void shouldReportXssOutsideOfHtmlTagsForNullByteBasedInjection()
+            throws NullPointerException, IOException {
+        String test = "/shouldReportXssOutsideOfHtmlTagsForNullByteBasedInjection/";
+        // Given
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null
+                                && (name.contains(NULL_BYTE_CHARACTER)
+                                        || name.equals(Constant.getEyeCatcher()))) {
+                            response =
+                                    getHtml(
+                                            "InputOutsideHtmlTag.html",
+                                            new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        // When
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("<script>alert(1);</script>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
@@ -834,7 +1041,7 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.rule.scan();
 
-        assertThat(httpMessagesSent, hasSize(equalTo(3)));
+        assertThat(httpMessagesSent, hasSize(equalTo(4)));
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("<img src=x onerror=alert(1);>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));

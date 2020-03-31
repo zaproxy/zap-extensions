@@ -76,7 +76,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
             String candidate = data[i][0];
             String evidence = data[i][1];
             HttpMessage msg = createHttpMessage(candidate);
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+            scanHttpResponseReceive(msg);
 
             assertThat(candidate, alertsRaised.size(), equalTo(i + 1));
             assertThat(alertsRaised.get(i).getEvidence(), equalTo(evidence));
@@ -96,7 +96,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
                 String candidate = ipHost[ii] + ports[pi];
                 HttpMessage msg = createHttpMessage(candidate, candidate);
                 // When
-                rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+                scanHttpResponseReceive(msg);
                 // Then
                 assertThat(candidate, alertsRaised.size(), equalTo(0));
             }
@@ -112,7 +112,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
         HttpMessage msg = createHttpMessage(requestUri, privateIp);
         rule.setAlertThreshold(AlertThreshold.LOW);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(privateIp));
@@ -158,7 +158,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
                 };
         for (String candidate : candidates) {
             HttpMessage msg = createHttpMessage(candidate);
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+            scanHttpResponseReceive(msg);
         }
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -183,7 +183,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
                 alertsRaised.clear();
                 String candidate = ipHost[ii] + ports[pi];
                 HttpMessage msg = createHttpMessage(candidate);
-                rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+                scanHttpResponseReceive(msg);
 
                 assertThat(candidate, alertsRaised.size(), equalTo(1));
                 assertThat(alertsRaised.get(0).getEvidence(), equalTo(candidate));
@@ -213,7 +213,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
                 alertsRaised.clear();
                 String candidate = ipHost[ii] + ports[pi];
                 HttpMessage msg = createHttpMessage(candidate);
-                rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+                scanHttpResponseReceive(msg);
 
                 assertThat(candidate, alertsRaised.size(), equalTo(1));
                 assertThat(alertsRaised.get(0).getEvidence(), equalTo(ipHost[ii]));
@@ -254,7 +254,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
             String candidate = data[i][0];
             String evidence = data[i][1];
             HttpMessage msg = createHttpMessage(candidate);
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+            scanHttpResponseReceive(msg);
 
             assertThat(candidate, alertsRaised.size(), equalTo(i + 1));
             assertThat(alertsRaised.get(i).getEvidence(), equalTo(evidence));
@@ -304,7 +304,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
                 };
         for (String candidate : candidates) {
             HttpMessage msg = createHttpMessage(candidate);
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+            scanHttpResponseReceive(msg);
             assertThat(candidate, alertsRaised.size(), equalTo(0));
         }
     }
@@ -330,7 +330,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
         for (int i = 0; i < data.length; i++) {
             String candidate = data[i][0];
             HttpMessage msg = createHttpMessage(candidate);
-            rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+            scanHttpResponseReceive(msg);
 
             assertThat(candidate, alertsRaised.size(), equalTo(i + 1));
             assertThat(alertsRaised.get(i).getEvidence(), equalTo(data[i][1]));
@@ -344,7 +344,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest
     @Test
     public void testOfScanHttpRequestSend() throws HttpMalformedHeaderException {
         // the method should do nothing (test just for code coverage)
-        rule.scanHttpRequestSend(null, -1);
+        scanHttpRequestSend(createHttpMessage("10.0.2.2"));
         assertThat(alertsRaised.size(), equalTo(0));
     }
 

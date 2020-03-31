@@ -40,12 +40,11 @@ public class BigRedirectsScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.bigredirectsscanner.";
     private static final int PLUGIN_ID = 10044;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(BigRedirectsScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -80,30 +79,22 @@ public class BigRedirectsScanner extends PluginPassiveScanner {
                 // Check if response is bigger than predicted
                 if (responseBodyLength > predictedResponseSize) {
                     // Response is larger than predicted so raise an alert
-                    Alert alert =
-                            new Alert(
-                                    getPluginId(),
-                                    Alert.RISK_LOW,
-                                    Alert.CONFIDENCE_MEDIUM, // PluginID, Risk, Reliability
-                                    getName());
-                    alert.setDetail(
-                            getDescription(), // Description
-                            msg.getRequestHeader().getURI().toString(), // URI
-                            "", // Param
-                            "", // Attack
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX + "extrainfo",
-                                    responseLocationHeaderURILength,
-                                    locationHeaderValue,
-                                    predictedResponseSize,
-                                    responseBodyLength), // Other info
-                            getSolution(), // Solution
-                            getReference(), // References
-                            "", // Evidence
-                            201, // CWE Id
-                            13, // WASC Id
-                            msg); // HttpMessage
-                    parent.raiseAlert(id, alert);
+                    newAlert()
+                            .setRisk(Alert.RISK_LOW)
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setDescription(getDescription())
+                            .setOtherInfo(
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX + "extrainfo",
+                                            responseLocationHeaderURILength,
+                                            locationHeaderValue,
+                                            predictedResponseSize,
+                                            responseBodyLength))
+                            .setSolution(getSolution())
+                            .setReference(getReference())
+                            .setCweId(201)
+                            .setWascId(13)
+                            .raise();
                 }
             }
         }

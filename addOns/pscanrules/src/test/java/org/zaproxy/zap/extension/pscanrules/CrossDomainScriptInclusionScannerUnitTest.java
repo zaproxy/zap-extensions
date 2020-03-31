@@ -69,7 +69,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -94,7 +94,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -119,7 +119,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("https://www.otherDomain.com/script2"));
@@ -148,7 +148,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -173,7 +173,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("https://www.otherDomain.com/script2"));
@@ -206,7 +206,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("https://www.otherDomain.com/script2"));
@@ -239,7 +239,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -271,7 +271,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -303,7 +303,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -330,7 +330,7 @@ public class CrossDomainScriptInclusionScannerUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("https://www.otherDomain.com/script2"));

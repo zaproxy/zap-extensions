@@ -503,10 +503,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             processedLinks.clear();
 
             task = new ProcessChecker(this);
-            timer.scheduleAtFixedRate(task, 1000L, 1000L);
+            timer.scheduleAtFixedRate(task, 0L, 1000L);
 
             task2 = new ProcessEnd(this);
-            timer.scheduleAtFixedRate(task2, 30000L, 30000L);
+            timer.scheduleAtFixedRate(task2, 0L, 10000L);
 
             // start the pure brute force thread
             if (pureBrute) {
@@ -789,7 +789,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     }
 
     // TODO: check how  youAreFinished() is called and when it is called
-    public void youAreFinished() {
+    public synchronized void youAreFinished() {
 
         // clear all the queue
         workQueue.clear();
@@ -843,15 +843,15 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         pureBrutefuzz = false;
     }
 
-    public double getTotalPass() {
+    public synchronized double getTotalPass() {
         return totalPass;
     }
 
-    public void setTotalPass(double totalPass) {
+    public synchronized void setTotalPass(double totalPass) {
         this.totalPass = totalPass;
     }
 
-    public int getTotalDirsFound() {
+    public synchronized int getTotalDirsFound() {
         return totalDirsFound;
     }
 
@@ -1078,7 +1078,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         return baseCaseCounterCorrection;
     }
 
-    public int getParsedLinksProcessed() {
+    public synchronized int getParsedLinksProcessed() {
         return parsedLinksProcessed;
     }
 
@@ -1124,7 +1124,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         parsedLinksProcessed++;
     }
 
-    public int getNumberOfBaseCasesProduced() {
+    public synchronized int getNumberOfBaseCasesProduced() {
         return numberOfBaseCasesProduced;
     }
 
@@ -1171,7 +1171,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         this.currentlyProcessing = currentlyProcessing;
     }
 
-    public void addToWorkCorrection(int amount) {
+    public synchronized void addToWorkCorrection(int amount) {
         workAmountCorrection = workAmountCorrection + amount;
     }
 
@@ -1195,7 +1195,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         return userName;
     }
 
-    public int getWorkAmountCorrection() {
+    public synchronized int getWorkAmountCorrection() {
         return workAmountCorrection;
     }
 

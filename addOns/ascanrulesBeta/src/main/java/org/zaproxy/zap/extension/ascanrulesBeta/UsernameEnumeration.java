@@ -692,7 +692,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
                         // calculate line level diffs of the 2 Longest Common Substrings to aid the
                         // user in deciding if the match is a false positive
                         // get the diff as a series of patches
-                        Patch diffpatch =
+                        Patch<String> diffpatch =
                                 DiffUtils.diff(
                                         new LinkedList<String>(
                                                 Arrays.asList(
@@ -706,7 +706,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
                         // and convert the list of patches to a String, joining using a newline
                         // String diffAB = StringUtils.join(diffpatch.getDeltas(), "\n");
                         StringBuilder tempDiff = new StringBuilder(250);
-                        for (Delta delta : diffpatch.getDeltas()) {
+                        for (Delta<String> delta : diffpatch.getDeltas()) {
                             String changeType = null;
                             if (delta.getType() == Delta.TYPE.CHANGE) changeType = "Changed Text";
                             else if (delta.getType() == Delta.TYPE.DELETE)

@@ -19,17 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import net.htmlparser.jericho.Config;
-import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
 public abstract class PassiveScannerTest<T extends PluginPassiveScanner>
         extends PassiveScannerTestUtils<T> {
-
-    static {
-        Config.LoggerProvider = ZAP.JERICHO_LOGGER_PROVIDER;
-    }
 
     @Override
     protected void setUpMessages() {

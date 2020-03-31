@@ -42,12 +42,11 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner {
     private static final String HEADER_NAME = "X-Powered-By";
     private static final int PLUGIN_ID = 10037;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(XPoweredByHeaderInfoLeakScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -123,25 +122,17 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner {
             }
             alertOtherInfo = sb.toString();
         }
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        Alert.RISK_LOW,
-                        Alert.CONFIDENCE_MEDIUM, // PluginID, Risk, Reliability
-                        getName());
-        alert.setDetail(
-                getDescription(), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                "", // Param
-                "", // Attack
-                alertOtherInfo, // Other info
-                getSolution(), // Solution
-                getReference(), // References
-                alertEvidence, // Evidence
-                200, // CWE Id
-                13, // WASC Id
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setOtherInfo(alertOtherInfo)
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(alertEvidence)
+                .setCweId(200)
+                .setWascId(13)
+                .raise();
     }
 
     @Override

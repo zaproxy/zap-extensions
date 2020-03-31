@@ -61,7 +61,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -72,7 +72,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -84,7 +84,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
         msg.setResponseHeader(new HttpResponseHeader());
         msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -94,7 +94,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // WHen
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -105,7 +105,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -118,7 +118,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><H1>Title</H1></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -131,7 +131,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" alt=\"Some image (x)\")></img></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -145,7 +145,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
         msg.setResponseBody(
                 "<html><meta name=\"description\" content=\"UnitTest Content\"></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -158,7 +158,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><meta name=\"description\" content=\"fred\"></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
@@ -173,7 +173,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
         msg.setResponseBody(
                 "<html><meta http-equiv=\"refresh\" content=\"0; url=http://example.com/\"></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -187,7 +187,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
         msg.setResponseBody(
                 "<html><meta http-equiv=\"refresh\" content=\"0; url=http://example.com/\"></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
@@ -205,7 +205,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
         msg.setResponseBody(
                 "<html><meta http-equiv=\"refresh\" content=\"0; url=http://example.com/\"><img src=\"x.jpg\" alt=fred></img></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
@@ -220,7 +220,7 @@ public class UserControlledHTMLAttributesScannerUnitTest
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" alt=\"fred, here\")></img></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));

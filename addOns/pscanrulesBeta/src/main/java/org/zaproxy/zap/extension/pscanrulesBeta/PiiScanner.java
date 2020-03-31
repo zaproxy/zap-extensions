@@ -30,13 +30,13 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.PiiUtils;
 
 /**
  * A scanner to passively scan for the presence of PII in response Currently only credit card
  * numbers
  *
- * @author Michael Kruglos (@michaelkruglos) TODO Extract credit card code when moved to beta(?) to
- *     also be used by InformationDisclosureReferrerScanner
+ * @author Michael Kruglos (@michaelkruglos)
  */
 public class PiiScanner extends PluginPassiveScanner {
 
@@ -44,8 +44,6 @@ public class PiiScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.piiscanner.";
 
     private static final int PLUGIN_ID = 10062;
-
-    private PassiveScanThread parent = null;
 
     private enum CreditCard {
         AMERICAN_EXPRESS("American Express", "\\b(?:3[47][0-9]{13})\\b"),
@@ -80,7 +78,7 @@ public class PiiScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do
     }
 
     @Override
@@ -95,7 +93,7 @@ public class PiiScanner extends PluginPassiveScanner {
                 Matcher matcher = cc.matcher(candidate.getCandidate());
                 while (matcher.find()) {
                     String evidence = matcher.group();
-                    if (validateLuhnChecksum(evidence) && !isSci(candidate.getContainingString())) {
+                    if (PiiUtils.isValidLuhn(evidence) && !isSci(candidate.getContainingString())) {
                         raiseAlert(msg, id, evidence, cc.name);
                     }
                 }
@@ -103,22 +101,14 @@ public class PiiScanner extends PluginPassiveScanner {
         }
     }
 
-    private static boolean validateLuhnChecksum(String evidence) {
-        int sum = 0;
-        int parity = evidence.length() % 2;
-        for (int index = 0; index < evidence.length(); index++) {
-            int digit = Integer.parseInt(evidence.substring(index, index + 1));
-            if ((index % 2) == parity) {
-                digit *= 2;
-                if (digit > 9) {
-                    digit -= 9;
-                }
-            }
-            sum += digit;
-        }
-        return (sum % 10) == 0;
-    }
-
+    /**
+     * Checks whether a particular {@code String} input appears to be a valid number in scientific
+     * (exponent) notation. Ex: 2.14111111111111111e-2, 8.46786664623715E-47, 3.14111111111117293e5
+     *
+     * @param containingString the value to be checked.
+     * @return {@code true} if the value successfully parses as a {@code Float}, {@code false}
+     *     otherwise.
+     */
     private static boolean isSci(String containingString) {
         if (!StringUtils.containsIgnoreCase(containingString, "e")) {
             return false;
@@ -135,21 +125,15 @@ public class PiiScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String evidence, String cardType) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName());
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX + "desc"),
-                msg.getRequestHeader().getURI().toString(),
-                "", // parameter
-                "", // attack
-                Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", cardType),
-                "", // solution
-                "",
-                evidence, // evidence, if any
-                359, // CWE-359: Exposure of Private Information ('Privacy Violation')
-                13, // WASC-13: Information Leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_HIGH)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", cardType))
+                .setEvidence(evidence)
+                .setCweId(359) // CWE-359: Exposure of Private Information ('Privacy Violation')
+                .setWascId(13) // WASC-13: Information Leakage
+                .raise();
     }
 
     private static List<Candidate> getNumberSequences(String inputString) {

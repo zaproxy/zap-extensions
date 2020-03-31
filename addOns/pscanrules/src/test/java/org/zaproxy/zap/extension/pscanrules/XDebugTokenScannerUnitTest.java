@@ -50,7 +50,7 @@ public class XDebugTokenScannerUnitTest extends PassiveScannerTest<XDebugTokenSc
         HttpMessage msg = createMessage();
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -63,7 +63,7 @@ public class XDebugTokenScannerUnitTest extends PassiveScannerTest<XDebugTokenSc
         msg.getResponseHeader().setHeader(X_DEBUG_TOKEN_HEADER, "9687e6");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -77,7 +77,7 @@ public class XDebugTokenScannerUnitTest extends PassiveScannerTest<XDebugTokenSc
         msg.getResponseHeader().setHeader(X_DEBUG_TOKEN_LINK_HEADER, "/_profiler/97b958");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -93,7 +93,7 @@ public class XDebugTokenScannerUnitTest extends PassiveScannerTest<XDebugTokenSc
         msg.getResponseHeader().setHeader(X_DEBUG_TOKEN_HEADER, "9687e6");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));

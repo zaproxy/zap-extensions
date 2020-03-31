@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +29,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 public class ServletParameterPollutionScannerUnitTest
         extends PassiveScannerTest<ServletParameterPollutionScanner> {
@@ -42,6 +45,7 @@ public class ServletParameterPollutionScannerUnitTest
     @Before
     public void before() {
         rule.setAlertThreshold(AlertThreshold.LOW);
+        when(passiveScanData.getTechSet()).thenReturn(TechSet.AllTech);
     }
 
     @Test
@@ -108,6 +112,32 @@ public class ServletParameterPollutionScannerUnitTest
     }
 
     @Test
+    public void
+            givenFormWithNoActionAttributeWhenScanHttpResponseReceiveWithTechNotRelevantThenNoAlertRaised()
+                    throws Exception {
+        // Given
+        HttpMessage msg = createHttpMessageFromHtml("<form />");
+        when(passiveScanData.getTechSet()).thenReturn(new TechSet(new Tech[] {Tech.Access}));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertNumberOfAlertsRaised(0);
+    }
+
+    @Test
+    public void
+            givenFormWithNoActionAttributeWhenScanHttpResponseReceiveWithTechRelevantThenAlertRaised()
+                    throws Exception {
+        // Given
+        HttpMessage msg = createHttpMessageFromHtml("<form />");
+        when(passiveScanData.getTechSet()).thenReturn(new TechSet(new Tech[] {Tech.JSP_SERVLET}));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertNumberOfAlertsRaised(1);
+    }
+
+    @Test
     public void givenFormWithValuelessActionAttributeWhenScanHttpResponseReceiveThenAlertRaised()
             throws Exception {
         // Given - Threshold set LOW in before()
@@ -160,10 +190,6 @@ public class ServletParameterPollutionScannerUnitTest
 
     private void assertNumberOfAlertsRaised(int expected) {
         assertEquals(expected, alertsRaised.size());
-    }
-
-    private void scanHttpResponseReceive(HttpMessage msg) {
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
     }
 
     private HttpMessage createHttpMessageFromHtml(String html) throws HttpMalformedHeaderException {

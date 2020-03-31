@@ -42,7 +42,6 @@ public class UserControlledCookieScannerUnitTest
     }
 
     public HttpMessage createMessage() {
-        HttpMessage msg = new HttpMessage();
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         try {
             requestHeader.setURI(new URI("http://example.com/i.php", false));
@@ -50,7 +49,7 @@ public class UserControlledCookieScannerUnitTest
         }
         requestHeader.setMethod(HttpRequestHeader.GET);
 
-        msg = new HttpMessage();
+        HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
@@ -62,7 +61,7 @@ public class UserControlledCookieScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -72,7 +71,19 @@ public class UserControlledCookieScannerUnitTest
         // Given
         HttpMessage msg = createMessage();
         // WHen
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertIfResponseHasCookiesButRequestHasNoParams() {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=aValue; Secure");
+        // WHen
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -85,7 +96,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=aValue; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -98,7 +109,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=\"\"; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -110,7 +121,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=fred", false));
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -123,7 +134,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=fred; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
@@ -137,7 +148,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=freddy; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -155,7 +166,7 @@ public class UserControlledCookieScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpHeader.SET_COOKIE, "Set-Cookie: aCookie=evil; Secure");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));

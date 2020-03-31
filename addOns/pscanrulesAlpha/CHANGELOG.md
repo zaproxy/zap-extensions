@@ -7,10 +7,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added links to the code in the help.
 - Add info and repo URLs.
+- Add JS Function Scanner
+
+### Changed
+- Update minimum ZAP version to 2.9.0.
+- Update ZAP blog links.
 
 ### Fixed
 - Fixed NullPointerException in Sub Resource Integrity Attribute Missing scan rule (Issue 5789).
 - Minor spacing issue in help content.
+- Base64 Disclosure do not keep looping after identifying a disclosure (Issue 5856), unless the Threshold is set to Low.
 
 ### Removed
 - 'Insecure Component' was deprecated and removed (Issue 5788).

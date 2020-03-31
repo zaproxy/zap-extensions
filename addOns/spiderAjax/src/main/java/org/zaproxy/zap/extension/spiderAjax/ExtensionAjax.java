@@ -21,9 +21,7 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -408,17 +406,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return this.getMessages().getString("spiderajax.desc");
-    }
-
-    /** @return the url of the proj */
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            logger.error(e);
-            return null;
-        }
     }
 
     SpiderThread createSpiderThread(

@@ -37,6 +37,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.PiiUtils;
 
 public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
@@ -44,7 +45,6 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
             "pscanrules.informationdisclosurereferrerscanner.";
     private static final int PLUGIN_ID = 10025;
 
-    private PassiveScanThread parent = null;
     public static final String URL_SENSITIVE_INFORMATION_DIR = "xml";
     public static final String URL_SENSITIVE_INFORMATION_FILE =
             "URL-information-disclosure-messages.txt";
@@ -119,21 +119,16 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String evidence, String other) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                other,
-                getSolution(),
-                "",
-                evidence, // Evidence
-                200, // CWE Id 200 - Information Exposure
-                13, // WASC Id 13 - Info leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setOtherInfo(other)
+                .setSolution(getSolution())
+                .setEvidence(evidence)
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13) // WASC Id 13 - Info leakage
+                .raise();
     }
 
     private List<String> loadFile(String file) {
@@ -187,7 +182,7 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -214,7 +209,10 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
     private String doesContainCreditCard(String creditCard) {
         Matcher matcher = creditCardPattern.matcher(creditCard);
         if (matcher.find()) {
-            return matcher.group();
+            String candidate = matcher.group();
+            if (PiiUtils.isValidLuhn(candidate)) {
+                return candidate;
+            }
         }
         return null;
     }

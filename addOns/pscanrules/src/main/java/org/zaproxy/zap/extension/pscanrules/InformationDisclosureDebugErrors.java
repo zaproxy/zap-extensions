@@ -42,7 +42,6 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.informationdisclosuredebugerrors.";
     private static final int PLUGIN_ID = 10023;
 
-    private PassiveScanThread parent = null;
     private static final String debugErrorFile = "xml/debug-error-messages.txt";
     private static final Logger logger = Logger.getLogger(InformationDisclosureDebugErrors.class);
     private List<String> errors = null;
@@ -67,21 +66,15 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String infoDisclosureDBError) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "",
-                "",
-                "",
-                getSolution(),
-                "",
-                infoDisclosureDBError, // Evidence
-                200, // CWE Id 200 - Information Exposure
-                13, // WASC Id - Info leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setSolution(getSolution())
+                .setEvidence(infoDisclosureDBError)
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13) // WASC Id - Info leakage
+                .raise();
     }
 
     private String doesResponseContainsDebugErrorMessage(HttpBody body) {
@@ -131,7 +124,7 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     public void setDebugErrorFile(Path path) {

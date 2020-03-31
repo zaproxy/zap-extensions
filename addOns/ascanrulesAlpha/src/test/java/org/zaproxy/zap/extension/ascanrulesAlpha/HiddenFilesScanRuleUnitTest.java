@@ -59,6 +59,25 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
+    public void shouldScanMessageWithoutPath() throws HttpMalformedHeaderException {
+        // Given
+        String path = "";
+        HttpMessage msg = getHttpMessage(path);
+        rule.init(msg, parent);
+        HiddenFilesScanRule.addTestPayload(
+                new HiddenFile(
+                        "",
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        "",
+                        Collections.emptyList(),
+                        "file"));
+        // When
+        rule.scan();
+        // Then = No Exception
+    }
+
+    @Test
     public void shouldRaiseAlertIfTestedUrlRespondsOkWithRelevantContent()
             throws HttpMalformedHeaderException {
         // Given

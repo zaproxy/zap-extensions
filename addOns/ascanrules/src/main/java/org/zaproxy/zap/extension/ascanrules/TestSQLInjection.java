@@ -463,7 +463,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
         }
 
         for (Tech tech : technologies.getIncludeTech()) {
-            if (tech.getParent() == Tech.Db) {
+            if (Tech.Db.equals(tech.getParent())) {
                 return true;
             }
         }
@@ -1275,7 +1275,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                                             + sqlBooleanAndTrueValue
                                             + "] does NOT match the (refreshed) original results for "
                                             + refreshedmessage.getRequestHeader().getURI());
-                            Patch diffpatch =
+                            Patch<String> diffpatch =
                                     DiffUtils.diff(
                                             new LinkedList<String>(
                                                     Arrays.asList(
@@ -1292,7 +1292,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
                             // and convert the list of patches to a String, joining using a newline
                             StringBuilder tempDiff = new StringBuilder(250);
-                            for (Delta delta : diffpatch.getDeltas()) {
+                            for (Delta<String> delta : diffpatch.getDeltas()) {
                                 String changeType = null;
                                 if (delta.getType() == Delta.TYPE.CHANGE) {
                                     changeType = "Changed Text";

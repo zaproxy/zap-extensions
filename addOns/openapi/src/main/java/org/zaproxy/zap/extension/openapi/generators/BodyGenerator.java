@@ -121,7 +121,7 @@ public class BodyGenerator {
             json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
             json.append(SYNTAX.get(Element.INNER_SEPARATOR));
             String value;
-            if (dataGenerator.isSupported(property.getValue().getType())) {
+            if (dataGenerator.isSupported(property.getValue())) {
                 value = dataGenerator.generateBodyValue(property.getKey(), property.getValue());
             } else {
 

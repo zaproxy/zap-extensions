@@ -37,8 +37,6 @@ public class XAspNetVersionScanner extends PluginPassiveScanner {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.xaspnetversioncanner.";
 
-    private PassiveScanThread parent = null;
-
     private final List<String> xAspNetHeaders = new ArrayList<String>();
 
     public XAspNetVersionScanner() {
@@ -48,7 +46,7 @@ public class XAspNetVersionScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -66,21 +64,18 @@ public class XAspNetVersionScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String evidence) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_HIGH, getName());
-        alert.setDetail(
-                Constant.messages.getString(MESSAGE_PREFIX + "desc"),
-                msg.getRequestHeader().getURI().toString(),
-                "", // parameter
-                "", // attack
-                Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"), // other info
-                Constant.messages.getString(MESSAGE_PREFIX + "soln"), // solution
-                Constant.messages.getString(MESSAGE_PREFIX + "refs"), // refs
-                evidence, // evidence, if any
-                933, // CWE-933: OWASP Top Ten 2013 Category A5 - Security Misconfiguration
-                14, // WASC-14: Server Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setEvidence(evidence)
+                .setCweId(933) // CWE-933: OWASP Top Ten 2013 Category A5 - Security
+                // Misconfiguration
+                .setWascId(14) // WASC-14: Server Misconfiguration
+                .raise();
     }
 
     @Override

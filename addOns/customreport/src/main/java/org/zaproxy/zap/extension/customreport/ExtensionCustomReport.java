@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.customreport;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -204,15 +202,6 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
     @Override
     public String getAuthor() {
         return "\n Author: Chienli Ma";
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     void dialogClosed() {

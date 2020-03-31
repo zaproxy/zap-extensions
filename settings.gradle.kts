@@ -38,6 +38,7 @@ var addOns = listOf(
     "fuzz",
     "fuzzdb",
     "gettingStarted",
+    "graaljs",
     "groovy",
     "highlighter",
     "httpsInfo",

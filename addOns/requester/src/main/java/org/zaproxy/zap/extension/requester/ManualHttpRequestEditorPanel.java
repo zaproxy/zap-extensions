@@ -307,11 +307,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
         try {
             URI uri = new URI("http://www.any_domain_name.org/path", true);
             msg.setRequestHeader(
-                    new HttpRequestHeader(
-                            HttpRequestHeader.GET,
-                            uri,
-                            HttpHeader.HTTP10,
-                            Model.getSingleton().getOptionsParam().getConnectionParam()));
+                    new HttpRequestHeader(HttpRequestHeader.GET, uri, HttpHeader.HTTP10));
             setMessage(msg);
         } catch (HttpMalformedHeaderException e) {
             logger.error(e.getMessage(), e);

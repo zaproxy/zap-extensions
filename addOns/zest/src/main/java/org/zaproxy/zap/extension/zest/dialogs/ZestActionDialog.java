@@ -49,7 +49,6 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog {
@@ -142,12 +141,12 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
                         priorities,
                         priorityToStr(ZestActionFail.Priority.valueOf(za.getPriority())));
             }
-            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_MESSAGE));
+            setFieldMainPopupMenu(FIELD_MESSAGE);
 
         } else if (action instanceof ZestActionPrint) {
             ZestActionPrint za = (ZestActionPrint) action;
             this.addMultilineField(FIELD_MESSAGE, za.getMessage());
-            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_MESSAGE));
+            setFieldMainPopupMenu(FIELD_MESSAGE);
 
         } else if (action instanceof ZestActionSleep) {
             ZestActionSleep za = (ZestActionSleep) action;
@@ -172,7 +171,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
             ZestActionGlobalVariableSet za = (ZestActionGlobalVariableSet) action;
             addTextField(FIELD_GLOBAL_VAR, za.getGlobalVariableName());
             addMultilineField(FIELD_GLOBAL_VAR_VALUE, za.getValue());
-            ZestZapUtils.setMainPopupMenu(getField(FIELD_GLOBAL_VAR_VALUE));
+            setFieldMainPopupMenu(FIELD_GLOBAL_VAR_VALUE);
         } else if (action instanceof ZestActionGlobalVariableRemove) {
             ZestActionGlobalVariableRemove za = (ZestActionGlobalVariableRemove) action;
             addTextField(FIELD_GLOBAL_VAR, za.getGlobalVariableName());

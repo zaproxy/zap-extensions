@@ -50,7 +50,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -70,7 +70,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -88,7 +88,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised, hasSize(0));
     }
@@ -108,7 +108,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
@@ -130,7 +130,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
@@ -152,7 +152,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
@@ -175,7 +175,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -196,7 +196,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.PRAGMA));
@@ -220,7 +220,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
@@ -244,7 +244,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -266,7 +266,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -287,7 +287,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
@@ -310,7 +310,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -331,7 +331,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -352,7 +352,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
@@ -375,7 +375,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -396,7 +396,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest<CacheControl
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
     }

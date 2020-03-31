@@ -19,11 +19,26 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Alert;
+
 /** Unit test for {@link TestExternalRedirect}. */
 public class TestExternalRedirectUnitTest extends ActiveScannerAppParamTest<TestExternalRedirect> {
 
     @Override
     protected TestExternalRedirect createScanner() {
         return new TestExternalRedirect();
+    }
+
+    @Test
+    public void shouldHaveHighRisk() {
+        // Given / When
+        int risk = rule.getRisk();
+        // Then
+        assertThat(risk, is(equalTo(Alert.RISK_HIGH)));
     }
 }
