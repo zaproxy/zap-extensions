@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -50,11 +51,15 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptType;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvider;
 
 /**
@@ -67,6 +72,7 @@ import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvide
 public class ExtensionSelenium extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionSelenium";
+    public static final String SCRIPT_TYPE_SELENIUM = "selenium";
 
     private static final int MIN_PORT = 1;
 
@@ -109,6 +115,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private List<WeakReference<ProvidedBrowsersComboBoxModel>> providedBrowserComboBoxModels =
             new ArrayList<WeakReference<ProvidedBrowsersComboBoxModel>>();
+
+    private ExtensionScript extScript;
+
+    private ScriptType seleniumScriptType;
 
     public ExtensionSelenium() {
         super(NAME);
@@ -187,11 +197,45 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
 
         extensionHook.addApiImplementor(seleniumApi);
+
+        if (getExtScript() != null) {
+            seleniumScriptType =
+                    new ScriptType(
+                            SCRIPT_TYPE_SELENIUM,
+                            "selenium.scripts.type.selenium",
+                            createScriptIcon(),
+                            true);
+            extScript.registerScriptType(seleniumScriptType);
+        }
+    }
+
+    private ExtensionScript getExtScript() {
+        if (extScript == null) {
+            extScript =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        }
+        return extScript;
+    }
+
+    private ImageIcon createScriptIcon() {
+        if (getView() == null) {
+            return null;
+        }
+        return new ImageIcon(
+                ExtensionSelenium.class.getResource(
+                        "/org/zaproxy/zap/extension/selenium/resources/script-selenium.png"));
     }
 
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void unload() {
+        if (extScript != null) {
+            extScript.removeScriptType(seleniumScriptType);
+        }
     }
 
     @Override
@@ -631,12 +675,54 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             throw new IllegalArgumentException("Unknown browser: " + providedBrowserId);
         }
 
+        WebDriver wd;
         if (proxyAddress == null) {
-            return webDriverProviders.get(providedBrowser.getProviderId()).getWebDriver(requester);
+            wd = webDriverProviders.get(providedBrowser.getProviderId()).getWebDriver(requester);
+        } else {
+            wd =
+                    webDriverProviders
+                            .get(providedBrowser.getProviderId())
+                            .getWebDriver(requester, proxyAddress, proxyPort);
         }
-        return webDriverProviders
-                .get(providedBrowser.getProviderId())
-                .getWebDriver(requester, proxyAddress, proxyPort);
+        if (getExtScript() != null) {
+            List<ScriptWrapper> scripts = extScript.getScripts(SCRIPT_TYPE_SELENIUM);
+            for (ScriptWrapper script : scripts) {
+                try {
+                    if (script.isEnabled()) {
+                        SeleniumScript s = extScript.getInterface(script, SeleniumScript.class);
+
+                        if (s != null) {
+                            new Thread("ZAP-selenium-script") {
+                                @Override
+                                public void run() {
+                                    try {
+                                        s.browserLaunched(
+                                                new SeleniumScriptUtils(
+                                                        wd,
+                                                        requester,
+                                                        providedBrowserId,
+                                                        proxyAddress,
+                                                        proxyPort));
+                                    } catch (Exception e) {
+                                        extScript.handleScriptException(script, e);
+                                    }
+                                }
+                            }.start();
+                        } else {
+                            extScript.handleFailedScriptInterface(
+                                    script,
+                                    Constant.messages.getString(
+                                            "selenium.scripts.interface.error", script.getName()));
+                        }
+                    }
+
+                } catch (Exception e) {
+                    extScript.handleScriptException(script, e);
+                }
+            }
+        }
+
+        return wd;
     }
 
     /**
