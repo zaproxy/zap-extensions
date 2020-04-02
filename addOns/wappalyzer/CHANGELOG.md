@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.9.0.
+- Update with Wappalyzer icon and pattern changes.
 
 ### Added
 - The Wappalyzer toolbar now has a toggle button to allow users to enable/disable the passive scanner simply from the GUI (Issue 5846).
