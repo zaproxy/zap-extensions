@@ -19,7 +19,7 @@ val parentProjects = listOf(
     "webdrivers"
 )
 
-val jacocoToolVersion = "0.8.4"
+val jacocoToolVersion = "0.8.5"
 jacoco {
     toolVersion = jacocoToolVersion
 }
