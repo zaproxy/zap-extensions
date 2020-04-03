@@ -23,7 +23,7 @@ fun configureDownloadTask(outputDir: File, targetOs: DownloadWebDriver.OS, task:
         path += ".exe"
     }
 
-    with (task) {
+    with(task) {
         os.set(targetOs)
         version.set(if (geckodriver) geckodriverVersion else chromeDriverVersion)
         outputFile.set(File(outputDir, path))
