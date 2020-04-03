@@ -275,14 +275,19 @@ public class WappalyzerJsonParser {
                     objStr = ((JSONArray) obj).getString(0);
                 }
                 try {
-                    list.add(this.strToAppPattern(type, objStr));
+                    if (!objStr.isEmpty()) {
+                        list.add(this.strToAppPattern(type, objStr));
+                    }
                 } catch (PatternSyntaxException e) {
                     patternErrorHandler.handleError(objStr, e);
                 }
             }
         } else if (json != null) {
             try {
-                list.add(this.strToAppPattern(type, json.toString()));
+                String jsonValue = json.toString();
+                if (!jsonValue.isEmpty()) {
+                    list.add(this.strToAppPattern(type, jsonValue));
+                }
             } catch (PatternSyntaxException e) {
                 patternErrorHandler.handleError(json.toString(), e);
             }
