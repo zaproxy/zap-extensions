@@ -20,7 +20,7 @@
  */
 package org.zaproxy.zap.extension.sqliplugin;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * Service class used to store test's abstract request payload, and any other elements useful to
