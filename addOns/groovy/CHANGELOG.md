@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Promote to beta status.
 - Change add-on name/description and update help.
 - Start using Semantic Versioning.
+- Update Groovy from 2.4.14 to 3.0.2.
 
 ### Fixed
 - Fix links in script templates.

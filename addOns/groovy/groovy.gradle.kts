@@ -15,7 +15,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("org.codehaus.groovy:groovy-all:2.4.14")
+    implementation("org.codehaus.groovy:groovy-all:3.0.2")
 
     testImplementation(project(":testutils"))
     testImplementation(parent!!.childProjects.get("websocket")!!)
