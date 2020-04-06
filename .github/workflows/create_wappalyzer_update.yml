@@ -1,0 +1,44 @@
+name: Create Wappalyzer Update PR
+
+on:
+  schedule:
+    - cron:  '0 4 3 * *'
+
+jobs:
+  create_pr:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Feature Branch and Raise PR
+      run: |
+        # Setup git details
+        export GITHUB_USER=zapbot
+        git config --global user.email "12745184+zapbot@users.noreply.github.com"
+        git config --global user.name $GITHUB_USER
+        # Clone repos
+        git clone https://github.com/AliasIO/wappalyzer.git --depth 1
+        git clone -o upstream https://github.com/zaproxy/zap-extensions.git
+        cd zap-extensions
+        git remote add origin https://github.com/$GITHUB_USER/zap-extensions.git
+        cd ../wappalyzer
+        # Setup env vars for later
+        SRC_BASE="AliasIO/Wappalyzer@"$(git log -1 --format=format:%h)
+        BRANCH_STAMP="$(date +"%Y%m%d%H%M%S")"
+        SHORT_DATE="$(date +"%Y-%m-%d")"
+        export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
+        # Build the feature branch
+        cd ../zap-extensions
+        git checkout -b $BRANCH_STAMP
+        cd ..
+        rm -rf zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
+        chmod -R 664 wappalyzer/src/icons/*.*
+        rm -rf wappalyzer/src/icons/converted/
+        cp -R wappalyzer/src/icons/ zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
+        cp -f wappalyzer/src/apps.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources
+        cd zap-extensions
+        git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
+        git add .
+        git commit -m "Wappalyzer Update $SHORT_DATE" -m "Updates based on $SRC_BASE"
+        git push --set-upstream origin $BRANCH_STAMP
+        # Open the PR
+        hub pull-request --no-edit
