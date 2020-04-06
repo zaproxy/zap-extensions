@@ -28,8 +28,8 @@ configurations {
 }
 
 dependencies {
-    implementation("io.swagger.parser.v3:swagger-parser:2.0.16")
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.48") {
+    implementation("io.swagger.parser.v3:swagger-parser:2.0.18")
+    implementation("io.swagger:swagger-compat-spec-parser:1.0.50") {
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
