@@ -137,6 +137,11 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 Identifies the existence of sensitive details within the Referrer header field of HTTP requests
 (this may include parameters, document names, directory names, etc.).
 <p>
+Note: In the case of suspected credit card identifiers in the Referrer value, the potential credit card numbers are looked up against a Bank Identification
+Number List (BINList). If a match is found the alert is raised at High confidence and additional details are added to the 'Other Information' field in the alert,
+otherwise the alerts will have Medium confidence.
+See: <a href="https://github.com/iannuttall/binlist-data">binlist-data</a> for more information.
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InformationDisclosureReferrerScanner.java">InformationDisclosureReferrerScanner.java</a>
 
 <H2>Information Disclosure: Suspicious Comments</H2>

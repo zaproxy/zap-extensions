@@ -19,8 +19,13 @@
  */
 package org.zaproxy.zap.sharedutils;
 
+import org.zaproxy.zap.sharedutils.binlist.BinList;
+import org.zaproxy.zap.sharedutils.binlist.BinRecord;
+
 /** A utility class for dealing with PII. */
 public final class PiiUtils {
+
+    private static BinList binList;
 
     private PiiUtils() {}
 
@@ -45,5 +50,16 @@ public final class PiiUtils {
             sum += digit;
         }
         return (sum % 10) == 0;
+    }
+
+    private static BinList getBinList() {
+        if (binList == null) {
+            binList = new BinList();
+        }
+        return binList;
+    }
+
+    public static BinRecord getBinRecord(String candidate) {
+        return getBinList().get(candidate);
     }
 }

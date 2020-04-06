@@ -31,6 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.sharedutils.PiiUtils;
+import org.zaproxy.zap.sharedutils.binlist.BinRecord;
 
 /**
  * A scanner to passively scan for the presence of PII in response Currently only credit card
@@ -94,7 +95,8 @@ public class PiiScanner extends PluginPassiveScanner {
                 while (matcher.find()) {
                     String evidence = matcher.group();
                     if (PiiUtils.isValidLuhn(evidence) && !isSci(candidate.getContainingString())) {
-                        raiseAlert(msg, id, evidence, cc.name);
+                        BinRecord binRec = PiiUtils.getBinRecord(evidence);
+                        raiseAlert(msg, evidence, cc.name, binRec);
                     }
                 }
             }
@@ -124,16 +126,44 @@ public class PiiScanner extends PluginPassiveScanner {
         return true;
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String evidence, String cardType) {
+    private void raiseAlert(HttpMessage msg, String evidence, String cardType, BinRecord binRec) {
+        String other = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", cardType);
+        if (binRec != null) {
+            other = other + '\n' + getBinRecString(binRec);
+        }
         newAlert()
                 .setRisk(Alert.RISK_HIGH)
-                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setConfidence(binRec != null ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
-                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", cardType))
+                .setOtherInfo(other)
                 .setEvidence(evidence)
                 .setCweId(359) // CWE-359: Exposure of Private Information ('Privacy Violation')
                 .setWascId(13) // WASC-13: Information Leakage
                 .raise();
+    }
+
+    private String getBinRecString(BinRecord binRec) {
+        StringBuilder recString = new StringBuilder(75);
+        recString
+                .append(Constant.messages.getString(MESSAGE_PREFIX + "bin.field"))
+                .append(' ')
+                .append(binRec.getBin())
+                .append('\n');
+        recString
+                .append(Constant.messages.getString(MESSAGE_PREFIX + "brand.field"))
+                .append(' ')
+                .append(binRec.getBrand())
+                .append('\n');
+        recString
+                .append(Constant.messages.getString(MESSAGE_PREFIX + "category.field"))
+                .append(' ')
+                .append(binRec.getCategory())
+                .append('\n');
+        recString
+                .append(Constant.messages.getString(MESSAGE_PREFIX + "issuer.field"))
+                .append(' ')
+                .append(binRec.getIssuer());
+        return recString.toString();
     }
 
     private static List<Candidate> getNumberSequences(String inputString) {

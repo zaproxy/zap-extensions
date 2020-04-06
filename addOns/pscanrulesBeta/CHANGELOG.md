@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - 'Servlet Parameter Pollution' scan rule will now only scan responses for in Context URLs for which the Technology JSP/Serlet is applicable.
 - Updated owasp.org references (Issue 5962).
+- 'PII Disclosure' added support for looking up evidence against an Open Source Bank Identification Number List. Confidence is now modified based on whether the lookup is successful or not. Additional details are added to 'Other Info' if available (Issue 5842).
 
 ## [21] - 2019-12-16
 
