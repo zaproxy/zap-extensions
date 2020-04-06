@@ -17,7 +17,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.2")
+    implementation("com.google.re2j:re2j:1.3")
 
     val batikVersion = "1.12"
     implementation("org.apache.xmlgraphics:batik-anim:$batikVersion")
