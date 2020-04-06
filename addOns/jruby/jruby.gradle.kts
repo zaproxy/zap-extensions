@@ -18,5 +18,5 @@ dependencies {
     implementation("org.jruby:jruby-complete:1.7.4")
 
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.commons:commons-lang3:3.5")
+    testImplementation("org.apache.commons:commons-lang3:3.10")
 }
