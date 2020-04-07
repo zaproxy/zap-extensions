@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add repo URL.
 - Add links to the code in the help.
+- Add scan rule for MongoDB (Issue 3480).
 
 ### Changed
 - Change info URL to link to the site.
