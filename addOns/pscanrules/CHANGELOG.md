@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [28] - 2020-04-08
 
 ### Changed
 - 'CSP Scanner' rule upgrade salvation library to v2.7.1.
@@ -182,6 +182,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[28]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v25
