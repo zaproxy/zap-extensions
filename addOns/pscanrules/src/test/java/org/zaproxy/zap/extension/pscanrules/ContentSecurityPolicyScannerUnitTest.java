@@ -83,4 +83,46 @@ public class ContentSecurityPolicyScannerUnitTest
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
+
+    @Test
+    public void shouldIntersectMultipleCspHeaders() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: default-src 'self'; script-src www.example.com\r\n"
+                        + "Content-Security-Policy: script-src *; style-src *:80\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP Scanner: Wildcard Directive"));
+        assertThat(
+                alertsRaised.get(0).getDescription(),
+                equalTo(
+                        "The following directives either allow wildcard sources (or ancestors), "
+                                + "are not defined, or are overly broadly defined: \nframe-ancestor"));
+
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("default-src 'self'; script-src www.example.com"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        "The response contained multiple CSP headers, "
+                                + "these were merged (intersected) into a single policy for evaluation:\ndefault-src 'self'; "
+                                + "script-src www.example.com; style-src\nNote: The highlighting and evidence for this alert "
+                                + "may be inaccurate due to these multiple headers."));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
 }

@@ -42,7 +42,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Content Security Policy Header passive scan rule https://github.com/zaproxy/zaproxy/issues/527
  * Meant to complement the CSP Header Missing passive scan rule
  *
- * <p>TODO: Add handling for multiple CSP headers TODO: Add handling for CSP via META tag See
+ * <p>TODO: Add handling for CSP via META tag. See
  * https://github.com/shapesecurity/salvation/issues/149 for info on combining CSP policies
  *
  * @author kingthorin+owaspzap@gmail.com
@@ -106,7 +106,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                     Constant.messages.getString(MESSAGE_PREFIX + "xcsp.desc"),
                     getHeaderField(msg, HTTP_HEADER_XCSP).get(0),
                     cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
-                    xcspOptions.get(0));
+                    xcspOptions.get(0),
+                    false,
+                    "");
         }
 
         // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
@@ -120,14 +122,26 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                     Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.desc"),
                     getHeaderField(msg, HTTP_HEADER_WEBKIT_CSP).get(0),
                     cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
-                    xwkcspOptions.get(0));
+                    xwkcspOptions.get(0),
+                    false,
+                    "");
         }
 
         if (cspHeaderFound) {
             ArrayList<Notice> notices = new ArrayList<>();
             Origin origin = URI.parse(msg.getRequestHeader().getURI().toString());
-            String policyText = cspOptions.toString().replace("[", "").replace("]", "");
-            Policy pol = ParserWithLocation.parse(policyText, origin, notices); // Populate notices
+            Policy unifiedPolicy = new Policy(origin);
+            boolean multipleCsp = cspOptions.size() > 1;
+            if (multipleCsp) {
+                for (String csp : cspOptions) {
+                    Policy policy = ParserWithLocation.parse(csp, origin);
+                    unifiedPolicy.intersect(policy);
+                }
+            }
+            String unifiedPolicyText = multipleCsp ? unifiedPolicy.show() : cspOptions.get(0);
+            Policy pol =
+                    ParserWithLocation.parse(
+                            unifiedPolicyText, origin, notices); // Populate notices
 
             if (!notices.isEmpty()) {
                 String cspNoticesString = getCSPNoticesString(notices);
@@ -146,10 +160,13 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                         cspNoticesString,
                         getHeaderField(msg, HTTP_HEADER_CSP).get(0),
                         noticesRisk,
-                        cspOptions.get(0));
+                        cspOptions.get(0),
+                        multipleCsp,
+                        unifiedPolicyText);
             }
 
-            List<String> allowedWildcardSources = getAllowedWildcardSources(policyText, origin);
+            List<String> allowedWildcardSources =
+                    getAllowedWildcardSources(unifiedPolicyText, origin);
             if (!allowedWildcardSources.isEmpty()) {
                 String allowedWildcardSrcs =
                         allowedWildcardSources.toString().replace("[", "").replace("]", "");
@@ -163,7 +180,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                         wildcardSrcDesc,
                         getHeaderField(msg, HTTP_HEADER_CSP).get(0),
                         Alert.RISK_MEDIUM,
-                        cspOptions.get(0));
+                        cspOptions.get(0),
+                        multipleCsp,
+                        unifiedPolicyText);
             }
 
             if (pol.allowsUnsafeInlineScript()) {
@@ -174,7 +193,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                         Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.desc"),
                         getHeaderField(msg, HTTP_HEADER_CSP).get(0),
                         Alert.RISK_MEDIUM,
-                        cspOptions.get(0));
+                        cspOptions.get(0),
+                        multipleCsp,
+                        unifiedPolicyText);
             }
 
             if (pol.allowsUnsafeInlineStyle()) {
@@ -185,7 +206,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                         Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.desc"),
                         getHeaderField(msg, HTTP_HEADER_CSP).get(0),
                         Alert.RISK_MEDIUM,
-                        cspOptions.get(0));
+                        cspOptions.get(0),
+                        multipleCsp,
+                        unifiedPolicyText);
             }
         }
 
@@ -332,8 +355,14 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
             String description,
             String param,
             int risk,
-            String evidence) {
+            String evidence,
+            boolean multipleCsp,
+            String policy) {
         String alertName = StringUtils.isEmpty(name) ? getName() : getName() + ": " + name;
+        String otherInfo =
+                multipleCsp
+                        ? Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", policy)
+                        : "";
 
         newAlert()
                 .setName(alertName)
@@ -341,6 +370,7 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(description)
                 .setParam(param)
+                .setOtherInfo(otherInfo)
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence)
