@@ -103,6 +103,9 @@ The Content Security Policy (CSP) Scanner adds a passive scan rule which parses 
 or weakness. This scanner leverages Shape Security's <a href="https://github.com/shapesecurity/salvation">Salvation</a> 
 library to perform it's parsing and assessment of CSPs.
 <p>
+Note: If multiple CSP headers are encountered they are merged (intersected) into a single policy for analysis, check the 'Other Info' field of alerts 
+for further details.
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyScanner.java">ContentSecurityPolicyScanner.java</a>
 
 <H2>CSRF Countermeasures</H2>
