@@ -236,54 +236,49 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
     private void raiseAlert(HttpMessage msg, int code) {
         switch (code) {
             case INVALID_FORMAT:
-                bingo(
-                        Alert.RISK_LOW,
-                        Alert.CONFIDENCE_MEDIUM,
-                        null,
-                        null,
-                        null,
-                        Constant.messages.getString(MESSAGE_PREFIX + "invalidFormatMsg"),
-                        msg);
+                newAlert()
+                        .setRisk(Alert.RISK_LOW)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setOtherInfo(
+                                Constant.messages.getString(MESSAGE_PREFIX + "invalidFormatMsg"))
+                        .setMessage(msg)
+                        .raise();
                 break;
             case FAULT_CODE:
-                bingo(
-                        Alert.RISK_LOW,
-                        Alert.CONFIDENCE_MEDIUM,
-                        null,
-                        null,
-                        null,
-                        Constant.messages.getString(MESSAGE_PREFIX + "faultCodeMsg"),
-                        msg);
+                newAlert()
+                        .setRisk(Alert.RISK_LOW)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "faultCodeMsg"))
+                        .setMessage(msg)
+                        .raise();
                 break;
             case EMPTY_RESPONSE:
-                bingo(
-                        Alert.RISK_LOW,
-                        Alert.CONFIDENCE_MEDIUM,
-                        null,
-                        null,
-                        null,
-                        Constant.messages.getString(MESSAGE_PREFIX + "emptyResponseMsg"),
-                        msg);
+                newAlert()
+                        .setRisk(Alert.RISK_LOW)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setOtherInfo(
+                                Constant.messages.getString(MESSAGE_PREFIX + "emptyResponseMsg"))
+                        .setMessage(msg)
+                        .raise();
                 break;
             case SOAPACTION_IGNORED:
-                bingo(
-                        Alert.RISK_INFO,
-                        Alert.CONFIDENCE_MEDIUM,
-                        null,
-                        null,
-                        null,
-                        Constant.messages.getString(MESSAGE_PREFIX + "soapactionIgnoredMsg"),
-                        msg);
+                newAlert()
+                        .setRisk(Alert.RISK_INFO)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setOtherInfo(
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "soapactionIgnoredMsg"))
+                        .setMessage(msg)
+                        .raise();
                 break;
             case SOAPACTION_EXECUTED:
-                bingo(
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        null,
-                        null,
-                        null,
-                        Constant.messages.getString(MESSAGE_PREFIX + "soapactionExecutedMsg"),
-                        msg);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setOtherInfo(
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "soapactionExecutedMsg"))
+                        .setMessage(msg)
+                        .raise();
                 break;
         }
     }

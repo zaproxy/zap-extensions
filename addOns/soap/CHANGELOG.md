@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Various fixes (related to Issue 4832 and other testing).
 - Change default accelerator for "Import a WSDL file from local file system".
 - Fix exception with Java 9+ (Issue 4037).
-- Update minimum ZAP version to 2.8.0.
+- Update minimum ZAP version to 2.9.0.
 - Add import menus to (new) top level Import menu instead of Tools menu.
 - Maintenance changes.
 

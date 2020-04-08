@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add link to the code in the help.
 
 ### Changed
+- Update minimum ZAP version to 2.9.0.
 - Maintenance changes.
 
 ## [9] - 2019-06-12
