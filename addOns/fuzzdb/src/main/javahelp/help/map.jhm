@@ -5,4 +5,5 @@
 
 <map version="1.0">
     <mapID target="fuzzdb" url="contents/fuzzdb.html" />
+    <mapID target="fuzzdb-icon" url="contents/images/fuzzdb-icon.png" />
 </map>
