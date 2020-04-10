@@ -326,6 +326,7 @@ paths:
           in: path
           description: ID of pet that needs to be fetched
           required: true
+          example: 42424242
           schema:
             type: integer
             format: int64
@@ -419,12 +420,14 @@ paths:
           in: query
           description: The user name for login
           required: true
+          example: "kermit"
           schema:
             type: string
         - name: password
           in: query
           description: The password for login in clear text
           required: true
+          example: "thefrog"
           schema:
             type: string
       responses:
