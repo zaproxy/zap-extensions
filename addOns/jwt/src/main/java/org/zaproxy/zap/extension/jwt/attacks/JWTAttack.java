@@ -33,18 +33,18 @@ public interface JWTAttack {
     /**
      * Executes the attack and returns {@code true} if successful otherwise false.
      *
-     * @param fuzzedJWTToken
+     * @param newJWTToken
      * @param serverSideAttack
      * @return
      */
-    default boolean verifyJWTToken(String fuzzedJWTToken, ServerSideAttack serverSideAttack) {
+    default boolean verifyJWTToken(String newJWTToken, ServerSideAttack serverSideAttack) {
         serverSideAttack.getJwtActiveScanner().decreaseRequestCount();
         return serverSideAttack
                 .getJwtActiveScanner()
                 .sendManipulatedMsgAndCheckIfAttackSuccessful(
                         serverSideAttack.getMsg(),
                         serverSideAttack.getParam(),
-                        fuzzedJWTToken,
+                        newJWTToken,
                         serverSideAttack.getParamValue());
     }
 

@@ -44,15 +44,15 @@ public class PayloadAttack implements JWTAttack {
     private ServerSideAttack serverSideAttack;
 
     private boolean executAttackAndRaiseAlert(
-            String fuzzedJWTToken, VulnerabilityType vulnerabilityType) {
-        boolean result = verifyJWTToken(fuzzedJWTToken, serverSideAttack);
+            String newJWTToken, VulnerabilityType vulnerabilityType) {
+        boolean result = verifyJWTToken(newJWTToken, serverSideAttack);
         if (result) {
             raiseAlert(
                     MESSAGE_PREFIX,
                     vulnerabilityType,
                     Alert.RISK_HIGH,
                     Alert.CONFIDENCE_HIGH,
-                    fuzzedJWTToken,
+                    newJWTToken,
                     this.serverSideAttack);
         }
         return result;
@@ -62,7 +62,7 @@ public class PayloadAttack implements JWTAttack {
      * Adds Null Byte and ZAP Eye catcher after the payload to check if JWT signature is still
      * valid. if Signature is still valid then JWT validator is vulnerable to Null Byte Injection
      */
-    private boolean executeNullByteFuzzedTokens() {
+    private boolean executeNullByteAttack() {
         String nullBytePayload = NULL_BYTE_CHARACTER + Constant.getEyeCatcher();
         JWTTokenBean clonedJWTToken = new JWTTokenBean(this.serverSideAttack.getJwtTokenBean());
         try {
@@ -110,6 +110,6 @@ public class PayloadAttack implements JWTAttack {
     @Override
     public boolean executeAttack(ServerSideAttack serverSideAttack) {
         this.serverSideAttack = serverSideAttack;
-        return executeNullByteFuzzedTokens();
+        return executeNullByteAttack();
     }
 }

@@ -86,7 +86,7 @@ public class SignatureAttack implements JWTAttack {
      *
      * @throws JWTException
      */
-    private boolean executeNullByteFuzzTokens() throws JWTException {
+    private boolean executeNullByteAttack() throws JWTException {
         // Appends signature with NullByte plus ZAP eyeCather.
         JWTTokenBean cloneJWTTokenBean = new JWTTokenBean(this.serverSideAttack.getJwtTokenBean());
         if (this.serverSideAttack.getJwtActiveScanner().isStop()) {
@@ -154,7 +154,7 @@ public class SignatureAttack implements JWTAttack {
      *
      * @throws JWTException
      */
-    public boolean executeCustomPrivateKeySignedFuzzToken() throws JWTException {
+    public boolean executeCustomPrivateKeySignedJWTTokenAttack() throws JWTException {
         JSONObject headerJSONObject =
                 new JSONObject(this.serverSideAttack.getJwtTokenBean().getHeader());
         JSONObject payloadJSONObject =
@@ -228,7 +228,7 @@ public class SignatureAttack implements JWTAttack {
      *
      * @throws JWTException
      */
-    private boolean executeAlgoKeyConfusionFuzzedToken() throws JWTException {
+    private boolean executeAlgoKeyConfusionAttack() throws JWTException {
         try {
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
             String trustStorePath = JWTConfiguration.getInstance().getTrustStorePath();
@@ -238,10 +238,10 @@ public class SignatureAttack implements JWTAttack {
             if (StringUtils.isNotEmpty(trustStorePath)) {
                 String algoType = this.serverSideAttack.getJwtTokenBean().getAlgorithm();
                 if (algoType.startsWith(JWT_RSA_ALGORITHM_IDENTIFIER)) {
-                    String jwtFuzzedHeader =
+                    String newJwtHeader =
                             String.format(JWT_HEADER_WITH_ALGO_PLACEHOLDER, HMAC_256);
-                    String base64EncodedFuzzedHeaderAndPayload =
-                            JWTUtils.getBase64UrlSafeWithoutPaddingEncodedString(jwtFuzzedHeader)
+                    String base64EncodedNewHeaderAndPayload =
+                            JWTUtils.getBase64UrlSafeWithoutPaddingEncodedString(newJwtHeader)
                                     + JWT_TOKEN_PERIOD_CHARACTER
                                     + JWTUtils.getBase64UrlSafeWithoutPaddingEncodedString(
                                             this.serverSideAttack.getJwtTokenBean().getPayload());
@@ -257,11 +257,11 @@ public class SignatureAttack implements JWTAttack {
                         Key publicKey = certificate.getPublicKey();
                         JWTTokenBean clonedJWTokenBean =
                                 JWTTokenBean.parseJWTToken(
-                                        base64EncodedFuzzedHeaderAndPayload
+                                        base64EncodedNewHeaderAndPayload
                                                 + JWT_TOKEN_PERIOD_CHARACTER
                                                 + JWTUtils.getBase64EncodedHMACSignedToken(
                                                         JWTUtils.getBytes(
-                                                                base64EncodedFuzzedHeaderAndPayload),
+                                                                base64EncodedNewHeaderAndPayload),
                                                         publicKey.getEncoded(),
                                                         HMAC_256));
                         if (verifyJWTToken(
@@ -292,9 +292,9 @@ public class SignatureAttack implements JWTAttack {
     public boolean executeAttack(ServerSideAttack serverSideAttack) {
         this.serverSideAttack = serverSideAttack;
         try {
-            return this.executeCustomPrivateKeySignedFuzzToken()
-                    || this.executeAlgoKeyConfusionFuzzedToken()
-                    || this.executeNullByteFuzzTokens();
+            return this.executeCustomPrivateKeySignedJWTTokenAttack()
+                    || this.executeAlgoKeyConfusionAttack()
+                    || this.executeNullByteAttack();
         } catch (JWTException e) {
             LOGGER.error("error occurred while getting signed manipulated tokens", e);
         }
