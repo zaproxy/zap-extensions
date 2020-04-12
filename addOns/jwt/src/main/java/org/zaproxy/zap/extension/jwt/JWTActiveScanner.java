@@ -38,7 +38,7 @@ import org.zaproxy.zap.model.TechSet;
  *       Practices(IETF document)</a>
  *   <li><a
  *       href="https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet_for_Java.html">
- *       OWASP cheatsheet for vulnerabilities in JWT implementation </a>
+ *       OWASP cheatsheet for vulnerabilities in JWT implementation</a>
  *   <li><a href="https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries">For
  *       server side vulnerabilities in JWT implementations</a>
  * </ol>
