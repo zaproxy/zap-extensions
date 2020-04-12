@@ -246,33 +246,35 @@ public class SignatureAttack implements JWTAttack {
                                             this.serverSideAttack.getJwtTokenBean().getPayload());
                     char[] password =
                             JWTConfiguration.getInstance().getTrustStorePassword().toCharArray();
-                    keyStore.load(new FileInputStream(trustStorePath), password);
-                    while (keyStore.aliases().hasMoreElements()) {
-                        if (this.serverSideAttack.getJwtActiveScanner().isStop()) {
-                            return false;
-                        }
-                        String alias = keyStore.aliases().nextElement();
-                        Certificate certificate = keyStore.getCertificate(alias);
-                        Key publicKey = certificate.getPublicKey();
-                        JWTTokenBean clonedJWTokenBean =
-                                JWTTokenBean.parseJWTToken(
-                                        base64EncodedNewHeaderAndPayload
-                                                + JWT_TOKEN_PERIOD_CHARACTER
-                                                + JWTUtils.getBase64EncodedHMACSignedToken(
-                                                        JWTUtils.getBytes(
-                                                                base64EncodedNewHeaderAndPayload),
-                                                        publicKey.getEncoded(),
-                                                        HMAC_256));
-                        if (verifyJWTToken(
-                                clonedJWTokenBean.getBase64EncodedToken(), serverSideAttack)) {
-                            raiseAlert(
-                                    MESSAGE_PREFIX,
-                                    VulnerabilityType.ALGORITHM_CONFUSION,
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_HIGH,
-                                    clonedJWTokenBean.getBase64EncodedToken(),
-                                    serverSideAttack);
-                            return true;
+                    try (FileInputStream fileInputStream = new FileInputStream(trustStorePath)) {
+                        keyStore.load(fileInputStream, password);
+                        while (keyStore.aliases().hasMoreElements()) {
+                            if (this.serverSideAttack.getJwtActiveScanner().isStop()) {
+                                return false;
+                            }
+                            String alias = keyStore.aliases().nextElement();
+                            Certificate certificate = keyStore.getCertificate(alias);
+                            Key publicKey = certificate.getPublicKey();
+                            JWTTokenBean clonedJWTokenBean =
+                                    JWTTokenBean.parseJWTToken(
+                                            base64EncodedNewHeaderAndPayload
+                                                    + JWT_TOKEN_PERIOD_CHARACTER
+                                                    + JWTUtils.getBase64EncodedHMACSignedToken(
+                                                            JWTUtils.getBytes(
+                                                                    base64EncodedNewHeaderAndPayload),
+                                                            publicKey.getEncoded(),
+                                                            HMAC_256));
+                            if (verifyJWTToken(
+                                    clonedJWTokenBean.getBase64EncodedToken(), serverSideAttack)) {
+                                raiseAlert(
+                                        MESSAGE_PREFIX,
+                                        VulnerabilityType.ALGORITHM_CONFUSION,
+                                        Alert.RISK_HIGH,
+                                        Alert.CONFIDENCE_HIGH,
+                                        clonedJWTokenBean.getBase64EncodedToken(),
+                                        serverSideAttack);
+                                return true;
+                            }
                         }
                     }
                 }

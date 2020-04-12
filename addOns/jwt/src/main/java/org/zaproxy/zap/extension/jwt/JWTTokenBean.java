@@ -23,6 +23,7 @@ import static org.zaproxy.zap.extension.jwt.utils.JWTConstants.JWT_ALGORITHM_KEY
 import static org.zaproxy.zap.extension.jwt.utils.JWTConstants.JWT_TOKEN_PERIOD_CHARACTER;
 import static org.zaproxy.zap.extension.jwt.utils.JWTConstants.JWT_TOKEN_PERIOD_CHARACTER_REGEX;
 
+import java.util.Arrays;
 import java.util.Base64;
 import org.json.JSONObject;
 import org.zaproxy.zap.extension.jwt.exception.JWTException;
@@ -147,7 +148,7 @@ public class JWTTokenBean {
                 + ", payload="
                 + payload
                 + ", signature="
-                + Base64.getUrlDecoder().decode(signature)
+                + Arrays.toString(signature)
                 + "]";
     }
 }
