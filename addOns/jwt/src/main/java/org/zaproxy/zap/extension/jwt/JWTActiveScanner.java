@@ -132,7 +132,7 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
     }
 
     /**
-     * performs attack to find JWT implementation weaknesses like weak key usage or other types of
+     * Performs attack to find JWT implementation weaknesses like weak key usage or other types of
      * attacks.
      *
      * @param msg
