@@ -42,14 +42,14 @@ public class HeaderAttack implements JWTAttack {
     private ServerSideAttack serverSideAttack;
 
     private boolean executeAttackAndRaiseAlert(
-            JWTHolder clonJWTTokenBean, VulnerabilityType vulnerabilityType) {
-        if (verifyJWTToken(clonJWTTokenBean.getBase64EncodedToken(), serverSideAttack)) {
+            JWTHolder clonedJWTHolder, VulnerabilityType vulnerabilityType) {
+        if (verifyJWTToken(clonedJWTHolder.getBase64EncodedToken(), serverSideAttack)) {
             raiseAlert(
                     MESSAGE_PREFIX,
                     vulnerabilityType,
                     Alert.RISK_HIGH,
                     Alert.CONFIDENCE_HIGH,
-                    clonJWTTokenBean.getBase64EncodedToken(),
+                    clonedJWTHolder.getBase64EncodedToken(),
                     serverSideAttack);
             return true;
         }
