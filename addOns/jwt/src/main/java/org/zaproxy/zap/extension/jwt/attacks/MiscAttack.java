@@ -51,8 +51,6 @@ public class MiscAttack implements JWTAttack {
     }
 
     /**
-     *
-     *
      * <ol>
      *   <li>Adds empty header/payload/signature
      *   <li>Adds multiple dots in tokens
