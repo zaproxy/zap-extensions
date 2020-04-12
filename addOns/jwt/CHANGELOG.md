@@ -5,5 +5,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-- First version of JWT Extension
-- Contains scanning rules for basic JWT related vulnerabilities.
+- First version of JWT Extension.
+  - Contains scanning rules for basic JWT related vulnerabilities.
