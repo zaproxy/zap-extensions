@@ -30,7 +30,7 @@ import org.zaproxy.zap.extension.jwt.utils.JWTUtils;
 import org.zaproxy.zap.extension.jwt.utils.VulnerabilityType;
 
 /**
- * This class contains attacks related to manipulation of header fields of JWT token.
+ * This class contains attacks related to manipulation of JWT header fields.
  *
  * @author preetkaran20@gmail.com KSASAN
  * @since TODO add version
