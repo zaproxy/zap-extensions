@@ -30,7 +30,7 @@ import org.zaproxy.zap.extension.jwt.exception.JWTException;
 import org.zaproxy.zap.extension.jwt.utils.JWTUtils;
 
 /**
- * JWT token is parsed and broken into Header, Payload and Signature.<br>
+ * JWT token is parsed and broken into Header, Payload, and Signature.<br>
  * This bean is created for easier computations and manipulation of JWT Token.<br>
  * JWT Token Bean fields are not encoded in base64 encoding.
  *
