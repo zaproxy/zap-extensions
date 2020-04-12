@@ -91,7 +91,7 @@ public class JWTTokenBean {
     }
 
     /**
-     * we are using <a href="https://en.wikipedia.org/wiki/Base64#URL_applications">base64 Url Safe
+     * We are using <a href="https://en.wikipedia.org/wiki/Base64#URL_applications">Base64 URL Safe
      * encoding</a>. because of JWT specifications <br>
      * Also we are removing the padding as per <a
      * href="https://www.rfc-editor.org/rfc/rfc7515.txt">RFC 7515</a> padding is not there in JWT.
