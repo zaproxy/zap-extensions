@@ -73,8 +73,8 @@ public class ClientSideAttack {
 
     /**
      * @param jwtActiveScanner
-     * @param msg original Http Message
      * @param param parameter having JWT token
+     * @param msg original Http Message
      */
     public ClientSideAttack(JWTActiveScanner jwtActiveScanner, String param, HttpMessage msg) {
         this.jwtActiveScanner = jwtActiveScanner;
