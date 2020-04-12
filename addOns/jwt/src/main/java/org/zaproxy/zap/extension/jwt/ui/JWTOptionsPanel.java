@@ -66,7 +66,7 @@ public class JWTOptionsPanel extends AbstractParamPanel {
     private JTextField trustStoreFileChooserTextField;
     private JCheckBox ignoreClientConfigurationScanCheckBox;
 
-    /** Custom Fuzzers configuration */
+    /** Custom JWT configuration */
     public JWTOptionsPanel() {
         super();
         this.setName(JWTI18n.getMessage("jwt.settings.title"));
@@ -259,10 +259,5 @@ public class JWTOptionsPanel extends AbstractParamPanel {
         jwtConfiguration.setTrustStorePassword(trustStorePassword);
         jwtConfiguration.setIgnoreClientConfigurationScan(
                 ignoreClientConfigurationScanCheckBox.isSelected());
-    }
-
-    @Override
-    public String getHelpIndex() {
-        return "addon.fuzzer.options";
     }
 }

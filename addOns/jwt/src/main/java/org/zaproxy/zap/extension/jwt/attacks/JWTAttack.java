@@ -49,7 +49,7 @@ public interface JWTAttack {
     }
 
     /**
-     * Raises Alert for all the JWT fuzzers.
+     * Raises Alert for JWT attack.
      *
      * @param messagePrefix
      * @param vulnerabilityType

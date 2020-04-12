@@ -69,7 +69,7 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
                 maxRequestCount = 12;
                 break;
             case INSANE:
-                maxRequestCount = 30;
+                maxRequestCount = 28;
                 break;
             default:
                 break;
@@ -143,10 +143,6 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
     private boolean performAttackServerSideConfigurations(
             HttpMessage msg, String param, JWTTokenBean jwtTokenBean, String value) {
 
-        // TODO there are scenarios where base64 encoded secrete is used in JWT. more
-        // information in
-        // below link
-        // https://stackoverflow.com/questions/58044813/how-to-create-a-jwt-in-java-with-the-secret-base64-encoded
         boolean result = new ServerSideAttack(jwtTokenBean, this, param, msg, value).execute();
         return result;
     }

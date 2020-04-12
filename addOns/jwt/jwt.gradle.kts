@@ -1,7 +1,7 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
 version = "1"
-description = "Detect, Show, Edit, Fuzz JWT requests"
+description = "Detect JWT requests and scan them to find the vulnerabilities"
 
 zapAddOn {
     addOnName.set("JWT Extension")
@@ -9,7 +9,7 @@ zapAddOn {
     addOnStatus.set(AddOnStatus.BETA)
 
     manifest {
-        author.set("ZAP Dev Team")
+        author.set("Karan Preet Singh Sasan")
     }
 }
 
@@ -17,6 +17,5 @@ dependencies {
     implementation("org.json:json:20190722")
     // https://mvnrepository.com/artifact/com.nimbusds/nimbus-jose-jwt
     implementation("com.nimbusds:nimbus-jose-jwt:8.3")
-    implementation(project(":addOns:fuzz"))
     implementation(project(":sharedutils"))
 }
