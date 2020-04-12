@@ -57,8 +57,8 @@ public class HeaderAttack implements JWTAttack {
     }
 
     /**
-     * There are various variants of NONE algorithm attack and this method executes all those
-     * attacks and returns true if successful otherwise false.
+     * There are multiple variants of NONE algorithm attack, this method executes all those
+     * attacks returning {@code true} if successful otherwise {@code false}.
      *
      * @param jwtTokenBean
      * @return
