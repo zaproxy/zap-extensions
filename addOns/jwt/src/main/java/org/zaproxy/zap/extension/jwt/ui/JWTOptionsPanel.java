@@ -47,7 +47,7 @@ import org.zaproxy.zap.extension.jwt.JWTI18n;
 
 /**
  * JWT options panel for specifying settings which are used by {@code JWTActiveScanner} for finding
- * vulnerabilities in applications
+ * vulnerabilities in applications.
  *
  * @author KSASAN preetkaran20@gmail.com
  * @since TODO add version

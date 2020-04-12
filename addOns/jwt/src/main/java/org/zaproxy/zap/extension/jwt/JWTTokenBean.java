@@ -40,9 +40,7 @@ import org.zaproxy.zap.extension.jwt.utils.JWTUtils;
 public class JWTTokenBean {
 
     private String header;
-
     private String payload;
-
     private byte[] signature;
 
     private JWTTokenBean() {}

@@ -66,7 +66,7 @@ import org.zaproxy.zap.extension.jwt.utils.JWTUtils;
 import org.zaproxy.zap.extension.jwt.utils.VulnerabilityType;
 
 /**
- * This class contains attacks related to manipulation of signature of JWT token.
+ * This class contains attacks related to manipulation of JWT token signatures.
  *
  * @author preetkaran20@gmail.com KSASAN
  * @since TODO add version
@@ -284,7 +284,7 @@ public class SignatureAttack implements JWTAttack {
                 | CertificateException
                 | IOException e) {
             new JWTException(
-                    "Exception occurred while getting manipulated token for confusion scenario", e);
+                    "An exception occurred while getting manipulated token for confusion scenario", e);
         }
         return false;
     }
@@ -297,7 +297,7 @@ public class SignatureAttack implements JWTAttack {
                     || this.executeAlgoKeyConfusionAttack()
                     || this.executeNullByteAttack();
         } catch (JWTException e) {
-            LOGGER.error("error occurred while getting signed manipulated tokens", e);
+            LOGGER.error("An error occurred while getting signed manipulated tokens", e);
         }
         return false;
     }

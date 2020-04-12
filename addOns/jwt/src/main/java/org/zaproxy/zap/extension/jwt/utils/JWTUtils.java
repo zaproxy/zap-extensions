@@ -35,7 +35,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.zaproxy.zap.extension.jwt.exception.JWTException;
 
 /**
- * Contains Utility methods for handling various operations on JWT Token.
+ * Contains Utility methods for handling various operations on JWT Tokens.
  *
  * @author KSASAN preetkaran20@gmail.com
  * @since TODO add version
@@ -54,7 +54,7 @@ public class JWTUtils {
     }
 
     /**
-     * Converts bytes to String. This method assumes that bytes provides are as per UTF-8 charset
+     * Converts bytes to String. This method assumes that bytes provides are as per UTF-8 charset.
      *
      * @param tokenBytes
      * @return
@@ -64,8 +64,8 @@ public class JWTUtils {
     }
 
     /**
-     * we are using <a href="https://en.wikipedia.org/wiki/Base64#URL_applications">base64 Url Safe
-     * encoding</a>. because of JWT specifications <br>
+     * Using <a href="https://en.wikipedia.org/wiki/Base64#URL_applications">Base64 URL Safe
+     * encoding</a>. because of JWT specifications.<br>
      * Also we are removing the padding as per <a
      * href="https://www.rfc-editor.org/rfc/rfc7515.txt">RFC 7515</a> padding is not there in JWT.
      *
@@ -77,8 +77,8 @@ public class JWTUtils {
     }
 
     /**
-     * we are using <a href="https://en.wikipedia.org/wiki/Base64#URL_applications">base64 Url Safe
-     * encoding</a>. because of JWT specifications <br>
+     * Using <a href="https://en.wikipedia.org/wiki/Base64#URL_applications">Base64 URL Safe
+     * encoding</a>. because of JWT specifications.<br>
      * Also we are removing the padding as per <a
      * href="https://www.rfc-editor.org/rfc/rfc7515.txt">RFC 7515</a> padding is not there in JWT.
      *
@@ -105,11 +105,11 @@ public class JWTUtils {
 
     /**
      * Signs token using provided secretKey based on the provided algorithm. This method only
-     * handles signing of token using HS*(Hmac + Sha*) based algorithm <br>
+     * handles signing of token using HS*(Hmac + Sha*) based algorithm.<br>
      *
      * <p>Note: This method adds custom java based implementation of HS* algorithm and doesn't use
      * any library like Nimbus+JOSE or JJWT and reason for this is, libraries are having validations
-     * related to Key sizes and they doesn't allow weak keys so for signing token using weak keys
+     * related to Key sizes and they don't allow weak keys so for signing token using weak keys
      * (for finding vulnerabilities in web applications that are using old implementations or custom
      * implementations) is not possible therefore added this custom implementation for HS*
      * algorithms.

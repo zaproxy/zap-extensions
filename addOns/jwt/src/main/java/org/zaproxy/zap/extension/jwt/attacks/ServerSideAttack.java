@@ -57,10 +57,10 @@ public class ServerSideAttack {
             String param,
             HttpMessage msg,
             String paramValue) {
+        this.jwtTokenBean = jwtTokenBean;
         this.jwtActiveScanner = jwtActiveScanner;
         this.param = param;
         this.msg = msg;
-        this.jwtTokenBean = jwtTokenBean;
         this.paramValue = paramValue;
     }
 
