@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.jwt;
 
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.jwt.ui.JWTOptionsPanel;
@@ -35,7 +34,7 @@ public class JWTExtension extends ExtensionAdaptor {
 
     @Override
     public String getAuthor() {
-        return Constant.ZAP_TEAM;
+        return "KSASAN preetkaran20@gmail.com";
     }
 
     @Override
@@ -45,7 +44,7 @@ public class JWTExtension extends ExtensionAdaptor {
         try {
             extensionHook.addOptionsParamSet(getJWTConfiguration());
             extensionHook.getHookView().addOptionPanel(new JWTOptionsPanel());
-            LOGGER.info("JWT Extension loaded successfully");
+            LOGGER.debug("JWT Extension loaded successfully");
         } catch (Exception e) {
             LOGGER.error("JWT Extension can't be loaded. Configuration not found or invalid", e);
         }

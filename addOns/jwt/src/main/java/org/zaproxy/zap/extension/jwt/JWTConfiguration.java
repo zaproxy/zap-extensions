@@ -25,7 +25,7 @@ import org.parosproxy.paros.common.AbstractParam;
 /**
  * This class holds configuration related to JWT scanner.
  *
- * @author preetkaran20@gmail.com KSASAN
+ * @author KSASAN preetkaran20@gmail.com
  * @since TODO add version
  */
 public class JWTConfiguration extends AbstractParam {

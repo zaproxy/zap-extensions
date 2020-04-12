@@ -31,11 +31,11 @@ import org.zaproxy.zap.extension.jwt.utils.VulnerabilityType;
 public interface JWTAttack {
 
     /**
-     * Executes the attack and returns {@code true} if successful otherwise false.
+     * Verifies the attack and returns {@code true} if successful otherwise {@code false}.
      *
-     * @param newJWTToken
+     * @param newJWTToken is the manipulated JWT token with various attacks.
      * @param serverSideAttack
-     * @return
+     * @return {@code true} if attacks is successful else {@code false}
      */
     default boolean verifyJWTToken(String newJWTToken, ServerSideAttack serverSideAttack) {
         serverSideAttack.getJwtActiveScanner().decreaseRequestCount();
@@ -51,11 +51,12 @@ public interface JWTAttack {
     /**
      * Raises Alert for JWT attack.
      *
-     * @param messagePrefix
-     * @param vulnerabilityType
-     * @param alertLevel
-     * @param confidenceLevel
-     * @param serverSideAttack
+     * @param messagePrefix prefix of the message key
+     * @param vulnerabilityType type of the vulnerability. This will be appended to prefix for
+     *     finding exact message key.
+     * @param alertLevel represents the risk of the attack
+     * @param confidenceLevel represents the confidence in the attack
+     * @param serverSideAttack instance of {@link ServerSideAttack}
      */
     default void raiseAlert(
             String messagePrefix,
@@ -85,8 +86,8 @@ public interface JWTAttack {
     /**
      * Manipulates the JWT token, executes an attack, and also raise alert if successful.
      *
-     * @param serverSideAttack
-     * @return true if attack is successful.
+     * @param serverSideAttack instance of {@link ServerSideAttack}
+     * @return {@code true} if attack is successful else {@code false}
      */
     boolean executeAttack(ServerSideAttack serverSideAttack);
 }

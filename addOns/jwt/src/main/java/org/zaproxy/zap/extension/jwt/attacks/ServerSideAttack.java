@@ -46,7 +46,7 @@ public class ServerSideAttack {
 
     /**
      * @param jwtTokenBean Parsed JWT Token Bean
-     * @param jwtActiveScanner
+     * @param jwtActiveScanner instance of {@link JWTActiveScanner}
      * @param msg original Http Message
      * @param param parameter having JWT token
      * @param paramValue original parameter value

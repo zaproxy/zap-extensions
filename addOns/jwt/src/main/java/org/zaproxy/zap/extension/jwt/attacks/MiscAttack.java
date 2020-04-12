@@ -51,10 +51,12 @@ public class MiscAttack implements JWTAttack {
     }
 
     /**
+     *
+     *
      * <ol>
      *   <li>Adds empty header/payload/signature
      *   <li>Adds multiple dots in tokens
-     * <ol>
+     *       <ol>
      */
     private boolean executeEmptyPayloads() {
         List<String> jwtEmptyTokens = Arrays.asList("...", ".....");

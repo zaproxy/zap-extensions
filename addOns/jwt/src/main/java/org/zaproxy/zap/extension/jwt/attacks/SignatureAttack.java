@@ -226,7 +226,7 @@ public class SignatureAttack implements JWTAttack {
      * HMAC and will try to decrypt it and as public key is known to everyone so anyone can sign the
      * key with public key and HMAC will accept it.
      *
-     * @throws JWTException
+     * @throws JWTException if provided keystore is not valid.
      */
     private boolean executeAlgoKeyConfusionAttack() throws JWTException {
         try {
@@ -284,7 +284,8 @@ public class SignatureAttack implements JWTAttack {
                 | CertificateException
                 | IOException e) {
             new JWTException(
-                    "An exception occurred while getting manipulated token for confusion scenario", e);
+                    "An exception occurred while getting manipulated token for confusion scenario",
+                    e);
         }
         return false;
     }

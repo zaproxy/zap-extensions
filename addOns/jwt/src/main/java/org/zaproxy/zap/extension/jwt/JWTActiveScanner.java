@@ -22,12 +22,12 @@ package org.zaproxy.zap.extension.jwt;
 import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
+import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.jwt.attacks.ClientSideAttack;
 import org.zaproxy.zap.extension.jwt.attacks.ServerSideAttack;
 import org.zaproxy.zap.extension.jwt.exception.JWTException;
 import org.zaproxy.zap.extension.jwt.utils.JWTUtils;
-import org.zaproxy.zap.model.TechSet;
 
 /**
  * JWT Scanner is used to find the vulnerabilities in JWT implementations. <br>
@@ -51,6 +51,8 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
     private static final int PLUGIN_ID = 1001;
     private static final String NAME = JWTI18n.getMessage("ascanrules.jwt.name");
     private static final String DESCRIPTION = JWTI18n.getMessage("ascanrules.jwt.description");
+    private static final String SOLUTION = JWTI18n.getMessage("jwt.scanner.soln");
+    private static final String REFERENCE = JWTI18n.getMessage("jwt.scanner.refs");
     private static final Logger LOGGER = Logger.getLogger(JWTActiveScanner.class);
     private int maxRequestCount;
 
@@ -72,6 +74,7 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
                 maxRequestCount = 28;
                 break;
             default:
+                maxRequestCount = 8;
                 break;
         }
     }
@@ -102,7 +105,7 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
         }
 
         if (!JWTConfiguration.getInstance().isIgnoreClientConfigurationScan()) {
-            if (performAttackClientSideConfigurations(msg, param, jwtTokenBean, value)) {
+            if (performAttackClientSideConfigurations(msg, param)) {
                 return;
             }
             this.decreaseRequestCount();
@@ -110,6 +113,7 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
         performAttackServerSideConfigurations(msg, param, jwtTokenBean, value);
     }
 
+    @Override
     public boolean isStop() {
         return super.isStop() || (this.maxRequestCount <= 0);
     }
@@ -121,13 +125,11 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
     /**
      * Performs attack to find if client side configuration for JWT token is proper.
      *
-     * @param msg
-     * @param param
-     * @param jwtTokenBean
+     * @param msg a copy of the HTTP message currently under scanning
+     * @param param the name of the parameter under testing
      * @return {@code true} if the vulnerability is found, {@code false} otherwise.
      */
-    private boolean performAttackClientSideConfigurations(
-            HttpMessage msg, String param, JWTTokenBean jwtTokenBean, String value) {
+    private boolean performAttackClientSideConfigurations(HttpMessage msg, String param) {
         return new ClientSideAttack(this, param, msg).execute();
     }
 
@@ -135,9 +137,10 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
      * Performs attack to find JWT implementation weaknesses like weak key usage or other types of
      * attacks.
      *
-     * @param msg
-     * @param param
-     * @param jwtTokenBean
+     * @param msg a copy of the HTTP message currently under scanning
+     * @param param the name of the parameter under testing
+     * @param jwtTokenBean is the parsed representation of JWT token
+     * @param value the value of the parameter under testing
      * @return {@code true} if the vulnerability is found, {@code false} otherwise.
      */
     private boolean performAttackServerSideConfigurations(
@@ -150,10 +153,10 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
      * TODO Not sure how can this be implemented. Waits some time to check if token is expired and
      * then execute the attack. TODO need to implement it.
      *
-     * @param jwtTokenBean
-     * @param msg
-     * @param param
-     * @return
+     * @param jwtTokenBean is the parsed representation of JWT token
+     * @param msg a copy of the HTTP message currently under scanning
+     * @param param the name of the parameter under testing
+     * @return {@code true} if the vulnerability is found, {@code false} otherwise.
      */
     private boolean checkExpiredTokenAttack(
             JWTTokenBean jwtTokenBean, HttpMessage msg, String param) {
@@ -186,9 +189,10 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
     }
 
     /**
-     * @param msg
-     * @param param
-     * @param jwtToken
+     * @param msg a copy of the HTTP message currently under scanning
+     * @param param the name of the parameter under testing
+     * @param jwtToken manipulated value of the parameter under testing
+     * @param value the value of the parameter under testing
      * @return {@code true} if the vulnerability is found, {@code false} otherwise.
      */
     public boolean sendManipulatedMsgAndCheckIfAttackSuccessful(
@@ -224,25 +228,16 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        return "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet_for_Java.html";
+        return SOLUTION;
     }
 
     @Override
     public String getReference() {
-        return "https://tools.ietf.org/html/draft-ietf-oauth-jwt-bcp-06";
-    }
-
-    @Override
-    public TechSet getTechSet() {
-        TechSet techSet = super.getTechSet();
-        if (techSet != null) {
-            return techSet;
-        }
-        return TechSet.AllTech;
+        return REFERENCE;
     }
 
     @Override
     public int getCategory() {
-        return 0;
+        return Category.MISC;
     }
 }

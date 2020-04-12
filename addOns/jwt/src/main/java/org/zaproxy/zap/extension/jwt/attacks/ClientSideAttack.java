@@ -82,9 +82,11 @@ public class ClientSideAttack {
         this.msg = msg;
     }
 
-    public boolean execute() {
-        // Check Cookie Values
-        boolean paramExists = false;
+    /**
+     * @return Iterator for iterating through the {@link HttpHeader#SET_COOKIE} and {@link
+     *     HttpHeader#SET_COOKIE2} Header.
+     */
+    private IteratorChain getCookieIterator() {
         IteratorChain iterator = new IteratorChain();
         List<String> cookies1 = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE);
 
@@ -97,8 +99,15 @@ public class ClientSideAttack {
         if (cookies2 != null) {
             iterator.addIterator(cookies2.iterator());
         }
-        while (iterator.hasNext()) {
-            String headerValue = (String) iterator.next();
+        return iterator;
+    }
+
+    public boolean execute() {
+        // Check Cookie Values
+        boolean paramExists = false;
+        IteratorChain setCookieHeaderIterator = getCookieIterator();
+        while (setCookieHeaderIterator.hasNext()) {
+            String headerValue = (String) setCookieHeaderIterator.next();
             String cookieKey = CookieUtils.getCookieName(headerValue);
             if (cookieKey != null && cookieKey.equals(this.param)) {
                 paramExists = true;

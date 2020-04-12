@@ -141,7 +141,8 @@ public class JWTOptionsPanel extends AbstractParamPanel {
 
                                     @Override
                                     public String getDescription() {
-                                        return "PKCS12 format";
+                                        return JWTI18n.getMessage(
+                                                "jwt.settings.rsa.trustStoreFileDescription");
                                     }
 
                                     @Override

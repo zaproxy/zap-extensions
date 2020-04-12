@@ -47,7 +47,7 @@ public class JWTUtils {
      * the JWT specifications.
      *
      * @param token
-     * @return
+     * @return resultant byte array
      */
     public static byte[] getBytes(String token) {
         return token.getBytes(StandardCharsets.UTF_8);
@@ -57,7 +57,7 @@ public class JWTUtils {
      * Converts bytes to String. This method assumes that bytes provides are as per UTF-8 charset.
      *
      * @param tokenBytes
-     * @return
+     * @return {@code String} by decoding in UTF_8 charset.
      */
     public static String getString(byte[] tokenBytes) {
         return new String(tokenBytes, StandardCharsets.UTF_8);
@@ -70,7 +70,7 @@ public class JWTUtils {
      * href="https://www.rfc-editor.org/rfc/rfc7515.txt">RFC 7515</a> padding is not there in JWT.
      *
      * @param token
-     * @return
+     * @return base64 url encoded provided token.
      */
     public static String getBase64UrlSafeWithoutPaddingEncodedString(String token) {
         return JWTUtils.getBase64UrlSafeWithoutPaddingEncodedString(getBytes(token));
@@ -83,7 +83,7 @@ public class JWTUtils {
      * href="https://www.rfc-editor.org/rfc/rfc7515.txt">RFC 7515</a> padding is not there in JWT.
      *
      * @param token
-     * @return
+     * @return base64 url encoded provided token.
      */
     public static String getBase64UrlSafeWithoutPaddingEncodedString(byte[] token) {
         return JWTUtils.getString(Base64.getUrlEncoder().encode(token))
@@ -94,7 +94,7 @@ public class JWTUtils {
      * Checks if the provided value is in a valid JWT format.
      *
      * @param jwtToken
-     * @return
+     * @return {@code true} if the provided value is in a valid JWT format else {@code false}
      */
     public static boolean isTokenValid(String jwtToken) {
         if (Objects.isNull(jwtToken)) {
@@ -109,18 +109,18 @@ public class JWTUtils {
      *
      * <p>Note: This method adds custom java based implementation of HS* algorithm and doesn't use
      * any library like Nimbus+JOSE or JJWT and reason for this is, libraries are having validations
-     * related to Key sizes and they don't allow weak keys so for signing token using weak keys
-     * (for finding vulnerabilities in web applications that are using old implementations or custom
+     * related to Key sizes and they don't allow weak keys so for signing token using weak keys (for
+     * finding vulnerabilities in web applications that are using old implementations or custom
      * implementations) is not possible therefore added this custom implementation for HS*
      * algorithms.
      *
      * <p>
      *
-     * @param token
-     * @param secretKey
-     * @param algorithm
-     * @return
-     * @throws JWTException
+     * @param token to be signed.
+     * @param secretKey used for signing the Hmac token.
+     * @param algorithm Hmac signature algorithm e.g. HS256, HS384, HS512
+     * @return base64 encoded Hmac signed token.
+     * @throws JWTException if provided Hmac algorithm is not supported.
      */
     public static String getBase64EncodedHMACSignedToken(
             byte[] token, byte[] secretKey, String algorithm) throws JWTException {
@@ -154,8 +154,8 @@ public class JWTUtils {
      * removing {@literal BEARER_TOKEN_REGEX} but in future we might need to remove other type of
      * schemes too.
      *
-     * @param value
-     * @return
+     * @param value the value of the parameter under testing
+     * @return value by replacing the {@literal BEARER_TOKEN_REGEX}
      */
     public static String extractingJWTFromParamValue(String value) {
         if (hasBearerToken(value)) {
@@ -168,9 +168,9 @@ public class JWTUtils {
      * This utility method adds the {@literal BEARER_TOKEN_KEY} to the value. This method reverses
      * the operation performed by {@link JWTUtils#extractingJWTFromParamValue}
      *
-     * @param value
-     * @param jwtToken
-     * @return
+     * @param value the value of the parameter under testing
+     * @param jwtToken value of the manipulated token
+     * @return jwt token by adding {@literal BEARER_TOKEN_REGEX}
      */
     public static String addingJWTToParamValue(String value, String jwtToken) {
         if (hasBearerToken(value)) {

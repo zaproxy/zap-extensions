@@ -94,7 +94,7 @@ public class JWTTokenBean {
      * Also we are removing the padding as per <a
      * href="https://www.rfc-editor.org/rfc/rfc7515.txt">RFC 7515</a> padding is not there in JWT.
      *
-     * @return
+     * @return base64 url encoded JWT token
      */
     public String getBase64EncodedToken() {
         String base64EncodedHeader = JWTUtils.getBase64UrlSafeWithoutPaddingEncodedString(header);
@@ -120,9 +120,9 @@ public class JWTTokenBean {
      * href="https://en.wikipedia.org/wiki/Base64#URL_applications">Base64 URL Safe encoding</a> as
      * per JWT specifications.<br>
      *
-     * @param jwtToken
-     * @return JWTTokenBean
-     * @throws JWTException
+     * @param jwtToken base64 encoded JSON Web Token.
+     * @return JWTTokenBean parsed JWT token.
+     * @throws JWTException if provided jwtToken is not a valid JSON Web Token.
      */
     public static JWTTokenBean parseJWTToken(String jwtToken) throws JWTException {
         if (!JWTUtils.isTokenValid(jwtToken)) {

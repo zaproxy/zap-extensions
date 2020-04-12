@@ -57,11 +57,11 @@ public class HeaderAttack implements JWTAttack {
     }
 
     /**
-     * There are multiple variants of NONE algorithm attack, this method executes all those
-     * attacks returning {@code true} if successful otherwise {@code false}.
+     * There are multiple variants of NONE algorithm attack, this method executes all those attacks
+     * returning {@code true} if successful otherwise {@code false}.
      *
-     * @param jwtTokenBean
-     * @return
+     * @param jwtTokenBean parsed parameter value (JWT Token) present in httpMessage.
+     * @return {@code true} if None Algorithm Attack is successful else {@code false}
      */
     private boolean executeNoneAlgorithmVariantAttacks(JWTTokenBean jwtTokenBean) {
         JWTTokenBean clonedJWTokenBean = new JWTTokenBean(jwtTokenBean);

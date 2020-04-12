@@ -9,7 +9,7 @@ zapAddOn {
     addOnStatus.set(AddOnStatus.BETA)
 
     manifest {
-        author.set("Karan Preet Singh Sasan")
+        author.set("KSASAN preetkaran20@gmail.com")
     }
 }
 
