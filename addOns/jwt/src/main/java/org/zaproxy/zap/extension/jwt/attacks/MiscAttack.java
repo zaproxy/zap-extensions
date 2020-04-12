@@ -25,7 +25,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.jwt.utils.VulnerabilityType;
 
 /**
- * This class contains attacks related to manipulation of more than one component of JWT token.
+ * This class contains attacks related to manipulation of more than one component of JWT tokens.
  *
  * @author preetkaran20@gmail.com KSASAN
  * @since TODO add version
