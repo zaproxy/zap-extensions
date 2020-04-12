@@ -83,7 +83,7 @@ public interface JWTAttack {
                         serverSideAttack.getMsg());
     }
     /**
-     * Manipulates the JWT token, executes them and also raise alert if successful
+     * Manipulates the JWT token, executes an attack, and also raise alert if successful.
      *
      * @param serverSideAttack
      * @return true if attack is successful.
