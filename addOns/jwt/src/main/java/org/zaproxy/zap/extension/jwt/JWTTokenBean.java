@@ -119,7 +119,7 @@ public class JWTTokenBean {
 
     /**
      * Parses JWT token and creates JWTTokenBean instance. we are using <a
-     * href="https://en.wikipedia.org/wiki/Base64#URL_applications">base64 Url Safe encoding</a> as
+     * href="https://en.wikipedia.org/wiki/Base64#URL_applications">Base64 URL Safe encoding</a> as
      * per JWT specifications <br>
      *
      * @param jwtToken
