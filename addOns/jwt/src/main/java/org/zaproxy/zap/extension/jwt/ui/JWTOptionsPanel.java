@@ -77,7 +77,7 @@ public class JWTOptionsPanel extends AbstractParamPanel {
                         settingsPanel,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        settingsScrollPane.setPreferredSize(new Dimension(500, 425));
+        settingsScrollPane.setPreferredSize(new Dimension(300, 300));
         this.add(settingsScrollPane, BorderLayout.NORTH);
         GridBagLayout gridBagLayout = new GridBagLayout();
         settingsPanel.setLayout(gridBagLayout);
