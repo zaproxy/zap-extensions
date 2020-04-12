@@ -36,15 +36,15 @@ public class MiscAttack implements JWTAttack {
 
     private ServerSideAttack serverSideAttack;
 
-    private boolean executeAttackAndRaiseAlert(String fuzzedJWTToken) {
-        boolean result = verifyJWTToken(fuzzedJWTToken, serverSideAttack);
+    private boolean executeAttackAndRaiseAlert(String newJWTToken) {
+        boolean result = verifyJWTToken(newJWTToken, serverSideAttack);
         if (result) {
             raiseAlert(
                     MESSAGE_PREFIX,
                     VulnerabilityType.EMPTY_TOKENS,
                     Alert.RISK_HIGH,
                     Alert.CONFIDENCE_HIGH,
-                    fuzzedJWTToken,
+                    newJWTToken,
                     this.serverSideAttack);
         }
         return result;
