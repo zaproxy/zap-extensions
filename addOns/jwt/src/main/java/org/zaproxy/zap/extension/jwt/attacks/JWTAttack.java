@@ -23,7 +23,7 @@ import org.zaproxy.zap.extension.jwt.JWTI18n;
 import org.zaproxy.zap.extension.jwt.utils.VulnerabilityType;
 
 /**
- * JWTAttack is the common interface for all the jwt attacks.
+ * JWTAttack is the common interface for various JWT attacks.
  *
  * @author preetkaran20@gmail.com KSASAN
  * @since TODO add version
