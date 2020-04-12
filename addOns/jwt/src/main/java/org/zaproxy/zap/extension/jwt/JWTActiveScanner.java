@@ -35,7 +35,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * <ol>
  *   <li><a href="https://tools.ietf.org/html/draft-ietf-oauth-jwt-bcp-06" >JSON Web Token Best
- *       Practices(ieft document)</a>
+ *       Practices(IETF document)</a>
  *   <li><a
  *       href="https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet_for_Java.html">
  *       OWASP cheatsheet for vulnerabilities in JWT implementation </a>
