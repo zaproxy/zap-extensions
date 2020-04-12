@@ -119,7 +119,7 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
     }
 
     /**
-     * performs attack to find if client side configuration for JWT token is proper.
+     * Performs attack to find if client side configuration for JWT token is proper.
      *
      * @param msg
      * @param param
