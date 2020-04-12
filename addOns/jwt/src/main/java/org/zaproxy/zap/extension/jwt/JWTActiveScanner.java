@@ -143,8 +143,7 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
     private boolean performAttackServerSideConfigurations(
             HttpMessage msg, String param, JWTTokenBean jwtTokenBean, String value) {
 
-        boolean result = new ServerSideAttack(jwtTokenBean, this, param, msg, value).execute();
-        return result;
+        return new ServerSideAttack(jwtTokenBean, this, param, msg, value).execute();
     }
 
     /**
