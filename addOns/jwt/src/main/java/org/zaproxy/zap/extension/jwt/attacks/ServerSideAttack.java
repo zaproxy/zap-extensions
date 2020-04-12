@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.jwt.JWTActiveScanner;
-import org.zaproxy.zap.extension.jwt.JWTTokenBean;
+import org.zaproxy.zap.extension.jwt.JWTHolder;
 
 /**
  * This class is used to find vulnerabilities in server side implementation of JWT.
@@ -36,7 +36,7 @@ public class ServerSideAttack {
     private String param;
     private String paramValue;
     private HttpMessage msg;
-    private JWTTokenBean jwtTokenBean;
+    private JWTHolder jwtHolder;
     private static final List<JWTAttack> JWTATTACKS =
             Arrays.asList(
                     new HeaderAttack(),
@@ -45,19 +45,19 @@ public class ServerSideAttack {
                     new MiscAttack());
 
     /**
-     * @param jwtTokenBean Parsed JWT Token Bean
+     * @param jwtHolder Parsed JWT Token
      * @param jwtActiveScanner instance of {@link JWTActiveScanner}
      * @param msg original Http Message
      * @param param parameter having JWT token
      * @param paramValue original parameter value
      */
     public ServerSideAttack(
-            JWTTokenBean jwtTokenBean,
+            JWTHolder jwtHolder,
             JWTActiveScanner jwtActiveScanner,
             String param,
             HttpMessage msg,
             String paramValue) {
-        this.jwtTokenBean = jwtTokenBean;
+        this.jwtHolder = jwtHolder;
         this.jwtActiveScanner = jwtActiveScanner;
         this.param = param;
         this.msg = msg;
@@ -80,8 +80,8 @@ public class ServerSideAttack {
         return msg;
     }
 
-    public JWTTokenBean getJwtTokenBean() {
-        return jwtTokenBean;
+    public JWTHolder getJwtHolder() {
+        return jwtHolder;
     }
 
     public boolean execute() {

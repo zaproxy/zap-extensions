@@ -31,24 +31,24 @@ import org.zaproxy.zap.extension.jwt.utils.JWTUtils;
 
 /**
  * JWT token is parsed and broken into Header, Payload, and Signature.<br>
- * This bean is created for easier computations and manipulation of JWT Token.<br>
- * JWT Token Bean fields are not encoded in base64 encoding.
+ * This class is created for easier computations and manipulation of JWT Token.<br>
+ * JWT Holder fields are not encoded in base64 encoding.
  *
  * @author KSASAN preetkaran20@gmail.com
  * @since TODO add version
  */
-public class JWTTokenBean {
+public class JWTHolder {
 
     private String header;
     private String payload;
     private byte[] signature;
 
-    private JWTTokenBean() {}
+    private JWTHolder() {}
 
-    public JWTTokenBean(JWTTokenBean jwtTokenBean) {
-        this.header = jwtTokenBean.getHeader();
-        this.payload = jwtTokenBean.getPayload();
-        this.signature = jwtTokenBean.getSignature();
+    public JWTHolder(JWTHolder jwtHolder) {
+        this.header = jwtHolder.getHeader();
+        this.payload = jwtHolder.getPayload();
+        this.signature = jwtHolder.getSignature();
     }
 
     /** @return Header without base64 encoding */
@@ -116,32 +116,32 @@ public class JWTTokenBean {
     }
 
     /**
-     * Parses JWT token and creates JWTTokenBean instance. we are using <a
+     * Parses JWT token and creates JWTHolder instance. we are using <a
      * href="https://en.wikipedia.org/wiki/Base64#URL_applications">Base64 URL Safe encoding</a> as
      * per JWT specifications.<br>
      *
      * @param jwtToken base64 encoded JSON Web Token.
-     * @return JWTTokenBean parsed JWT token.
+     * @return JWTHolder parsed JWT token.
      * @throws JWTException if provided jwtToken is not a valid JSON Web Token.
      */
-    public static JWTTokenBean parseJWTToken(String jwtToken) throws JWTException {
+    public static JWTHolder parseJWTToken(String jwtToken) throws JWTException {
         if (!JWTUtils.isTokenValid(jwtToken)) {
             throw new JWTException("JWT token:" + jwtToken + " is not valid");
         }
-        JWTTokenBean jwtTokenBean = new JWTTokenBean();
+        JWTHolder jwtHolder = new JWTHolder();
         String[] tokens = jwtToken.split(JWT_TOKEN_PERIOD_CHARACTER_REGEX, -1);
-        jwtTokenBean.setHeader(
+        jwtHolder.setHeader(
                 JWTUtils.getString(Base64.getUrlDecoder().decode(JWTUtils.getBytes(tokens[0]))));
-        jwtTokenBean.setPayload(
+        jwtHolder.setPayload(
                 JWTUtils.getString(Base64.getUrlDecoder().decode(JWTUtils.getBytes(tokens[1]))));
-        jwtTokenBean.setSignature(Base64.getUrlDecoder().decode(JWTUtils.getBytes(tokens[2])));
+        jwtHolder.setSignature(Base64.getUrlDecoder().decode(JWTUtils.getBytes(tokens[2])));
 
-        return jwtTokenBean;
+        return jwtHolder;
     }
 
     @Override
     public String toString() {
-        return "JWTTokenBean [header="
+        return "JWTHolder [header="
                 + header
                 + ", payload="
                 + payload

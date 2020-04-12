@@ -25,7 +25,7 @@ import static org.zaproxy.zap.extension.jwt.utils.JWTConstants.NONE_ALGORITHM_VA
 import java.util.ArrayList;
 import java.util.List;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.zaproxy.zap.extension.jwt.JWTTokenBean;
+import org.zaproxy.zap.extension.jwt.JWTHolder;
 import org.zaproxy.zap.extension.jwt.utils.JWTUtils;
 import org.zaproxy.zap.extension.jwt.utils.VulnerabilityType;
 
@@ -42,7 +42,7 @@ public class HeaderAttack implements JWTAttack {
     private ServerSideAttack serverSideAttack;
 
     private boolean executeAttackAndRaiseAlert(
-            JWTTokenBean clonJWTTokenBean, VulnerabilityType vulnerabilityType) {
+            JWTHolder clonJWTTokenBean, VulnerabilityType vulnerabilityType) {
         if (verifyJWTToken(clonJWTTokenBean.getBase64EncodedToken(), serverSideAttack)) {
             raiseAlert(
                     MESSAGE_PREFIX,
@@ -60,20 +60,20 @@ public class HeaderAttack implements JWTAttack {
      * There are multiple variants of NONE algorithm attack, this method executes all those attacks
      * returning {@code true} if successful otherwise {@code false}.
      *
-     * @param jwtTokenBean parsed parameter value (JWT Token) present in httpMessage.
+     * @param jwtHolder parsed parameter value (JWT Token) present in httpMessage.
      * @return {@code true} if None Algorithm Attack is successful else {@code false}
      */
-    private boolean executeNoneAlgorithmVariantAttacks(JWTTokenBean jwtTokenBean) {
-        JWTTokenBean clonedJWTokenBean = new JWTTokenBean(jwtTokenBean);
+    private boolean executeNoneAlgorithmVariantAttacks(JWTHolder jwtHolder) {
+        JWTHolder clonedJWTHolder = new JWTHolder(jwtHolder);
         for (String noneVariant : NONE_ALGORITHM_VARIANTS) {
             for (String headerVariant : this.manipulatingHeaders(noneVariant)) {
                 if (this.serverSideAttack.getJwtActiveScanner().isStop()) {
                     return false;
                 }
-                clonedJWTokenBean.setHeader(headerVariant);
-                clonedJWTokenBean.setSignature(JWTUtils.getBytes(""));
+                clonedJWTHolder.setHeader(headerVariant);
+                clonedJWTHolder.setSignature(JWTUtils.getBytes(""));
                 if (this.executeAttackAndRaiseAlert(
-                        clonedJWTokenBean, VulnerabilityType.NONE_ALGORITHM)) {
+                        clonedJWTHolder, VulnerabilityType.NONE_ALGORITHM)) {
                     return true;
                 }
             }
@@ -93,7 +93,7 @@ public class HeaderAttack implements JWTAttack {
     @Override
     public boolean executeAttack(ServerSideAttack serverSideAttack) {
         this.serverSideAttack = serverSideAttack;
-        JWTTokenBean jwtTokenBean = this.serverSideAttack.getJwtTokenBean();
-        return executeNoneAlgorithmVariantAttacks(jwtTokenBean);
+        JWTHolder jwtHolder = this.serverSideAttack.getJwtHolder();
+        return executeNoneAlgorithmVariantAttacks(jwtHolder);
     }
 }

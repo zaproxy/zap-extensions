@@ -96,9 +96,9 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
             return;
         }
 
-        JWTTokenBean jwtTokenBean;
+        JWTHolder jwtHolder;
         try {
-            jwtTokenBean = JWTTokenBean.parseJWTToken(newValue);
+            jwtHolder = JWTHolder.parseJWTToken(newValue);
         } catch (JWTException e) {
             LOGGER.error("Unable to parse JWT Token", e);
             return;
@@ -110,7 +110,7 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
             }
             this.decreaseRequestCount();
         }
-        performAttackServerSideConfigurations(msg, param, jwtTokenBean, value);
+        performAttackServerSideConfigurations(msg, param, jwtHolder, value);
     }
 
     @Override
@@ -139,27 +139,26 @@ public class JWTActiveScanner extends AbstractAppParamPlugin {
      *
      * @param msg a copy of the HTTP message currently under scanning
      * @param param the name of the parameter under testing
-     * @param jwtTokenBean is the parsed representation of JWT token
+     * @param jwtHolder is the parsed representation of JWT token
      * @param value the value of the parameter under testing
      * @return {@code true} if the vulnerability is found, {@code false} otherwise.
      */
     private boolean performAttackServerSideConfigurations(
-            HttpMessage msg, String param, JWTTokenBean jwtTokenBean, String value) {
+            HttpMessage msg, String param, JWTHolder jwtHolder, String value) {
 
-        return new ServerSideAttack(jwtTokenBean, this, param, msg, value).execute();
+        return new ServerSideAttack(jwtHolder, this, param, msg, value).execute();
     }
 
     /**
      * TODO Not sure how can this be implemented. Waits some time to check if token is expired and
      * then execute the attack. TODO need to implement it.
      *
-     * @param jwtTokenBean is the parsed representation of JWT token
+     * @param jwtHolder is the parsed representation of JWT token
      * @param msg a copy of the HTTP message currently under scanning
      * @param param the name of the parameter under testing
      * @return {@code true} if the vulnerability is found, {@code false} otherwise.
      */
-    private boolean checkExpiredTokenAttack(
-            JWTTokenBean jwtTokenBean, HttpMessage msg, String param) {
+    private boolean checkExpiredTokenAttack(JWTHolder jwtHolder, HttpMessage msg, String param) {
         return false;
     }
 

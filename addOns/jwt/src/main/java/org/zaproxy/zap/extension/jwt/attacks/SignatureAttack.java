@@ -60,7 +60,7 @@ import org.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.jwt.JWTConfiguration;
-import org.zaproxy.zap.extension.jwt.JWTTokenBean;
+import org.zaproxy.zap.extension.jwt.JWTHolder;
 import org.zaproxy.zap.extension.jwt.exception.JWTException;
 import org.zaproxy.zap.extension.jwt.utils.JWTUtils;
 import org.zaproxy.zap.extension.jwt.utils.VulnerabilityType;
@@ -88,13 +88,13 @@ public class SignatureAttack implements JWTAttack {
      */
     private boolean executeNullByteAttack() throws JWTException {
         // Appends signature with NullByte plus ZAP eyeCather.
-        JWTTokenBean cloneJWTTokenBean = new JWTTokenBean(this.serverSideAttack.getJwtTokenBean());
+        JWTHolder cloneJWTHolder = new JWTHolder(this.serverSideAttack.getJwtHolder());
         if (this.serverSideAttack.getJwtActiveScanner().isStop()) {
             return false;
         }
 
         if (verifyJWTToken(
-                cloneJWTTokenBean.getBase64EncodedToken()
+                cloneJWTHolder.getBase64EncodedToken()
                         + NULL_BYTE_CHARACTER
                         + Constant.getEyeCatcher(),
                 serverSideAttack)) {
@@ -103,7 +103,7 @@ public class SignatureAttack implements JWTAttack {
                     VulnerabilityType.NULL_BYTE,
                     Alert.RISK_MEDIUM,
                     Alert.CONFIDENCE_HIGH,
-                    cloneJWTTokenBean.getBase64EncodedToken(),
+                    cloneJWTHolder.getBase64EncodedToken(),
                     serverSideAttack);
             return true;
         }
@@ -114,14 +114,14 @@ public class SignatureAttack implements JWTAttack {
 
         // Replaces the signature with NullByte. Assumption is may be because of null bytes JWT
         // token validators behaves differently.
-        cloneJWTTokenBean.setSignature(JWTUtils.getBytes(NULL_BYTE_CHARACTER));
-        if (verifyJWTToken(cloneJWTTokenBean.getBase64EncodedToken(), serverSideAttack)) {
+        cloneJWTHolder.setSignature(JWTUtils.getBytes(NULL_BYTE_CHARACTER));
+        if (verifyJWTToken(cloneJWTHolder.getBase64EncodedToken(), serverSideAttack)) {
             raiseAlert(
                     MESSAGE_PREFIX,
                     VulnerabilityType.NULL_BYTE,
                     Alert.RISK_HIGH,
                     Alert.CONFIDENCE_HIGH,
-                    cloneJWTTokenBean.getBase64EncodedToken(),
+                    cloneJWTHolder.getBase64EncodedToken(),
                     serverSideAttack);
             return true;
         }
@@ -156,10 +156,10 @@ public class SignatureAttack implements JWTAttack {
      */
     public boolean executeCustomPrivateKeySignedJWTTokenAttack() throws JWTException {
         JSONObject headerJSONObject =
-                new JSONObject(this.serverSideAttack.getJwtTokenBean().getHeader());
+                new JSONObject(this.serverSideAttack.getJwtHolder().getHeader());
         JSONObject payloadJSONObject =
-                new JSONObject(this.serverSideAttack.getJwtTokenBean().getPayload());
-        String algoType = this.serverSideAttack.getJwtTokenBean().getAlgorithm();
+                new JSONObject(this.serverSideAttack.getJwtHolder().getPayload());
+        String algoType = this.serverSideAttack.getJwtHolder().getAlgorithm();
 
         try {
             if (algoType.startsWith(JWT_RSA_ALGORITHM_IDENTIFIER)
@@ -236,14 +236,14 @@ public class SignatureAttack implements JWTAttack {
                 trustStorePath = System.getProperty("javax.net.ssl.trustStore");
             }
             if (StringUtils.isNotEmpty(trustStorePath)) {
-                String algoType = this.serverSideAttack.getJwtTokenBean().getAlgorithm();
+                String algoType = this.serverSideAttack.getJwtHolder().getAlgorithm();
                 if (algoType.startsWith(JWT_RSA_ALGORITHM_IDENTIFIER)) {
                     String newJwtHeader = String.format(JWT_HEADER_WITH_ALGO_PLACEHOLDER, HMAC_256);
                     String base64EncodedNewHeaderAndPayload =
                             JWTUtils.getBase64UrlSafeWithoutPaddingEncodedString(newJwtHeader)
                                     + JWT_TOKEN_PERIOD_CHARACTER
                                     + JWTUtils.getBase64UrlSafeWithoutPaddingEncodedString(
-                                            this.serverSideAttack.getJwtTokenBean().getPayload());
+                                            this.serverSideAttack.getJwtHolder().getPayload());
                     char[] password =
                             JWTConfiguration.getInstance().getTrustStorePassword().toCharArray();
                     try (FileInputStream fileInputStream = new FileInputStream(trustStorePath)) {
@@ -255,8 +255,8 @@ public class SignatureAttack implements JWTAttack {
                             String alias = keyStore.aliases().nextElement();
                             Certificate certificate = keyStore.getCertificate(alias);
                             Key publicKey = certificate.getPublicKey();
-                            JWTTokenBean clonedJWTokenBean =
-                                    JWTTokenBean.parseJWTToken(
+                            JWTHolder clonedJWTHolder =
+                                    JWTHolder.parseJWTToken(
                                             base64EncodedNewHeaderAndPayload
                                                     + JWT_TOKEN_PERIOD_CHARACTER
                                                     + JWTUtils.getBase64EncodedHMACSignedToken(
@@ -265,13 +265,13 @@ public class SignatureAttack implements JWTAttack {
                                                             publicKey.getEncoded(),
                                                             HMAC_256));
                             if (verifyJWTToken(
-                                    clonedJWTokenBean.getBase64EncodedToken(), serverSideAttack)) {
+                                    clonedJWTHolder.getBase64EncodedToken(), serverSideAttack)) {
                                 raiseAlert(
                                         MESSAGE_PREFIX,
                                         VulnerabilityType.ALGORITHM_CONFUSION,
                                         Alert.RISK_HIGH,
                                         Alert.CONFIDENCE_HIGH,
-                                        clonedJWTokenBean.getBase64EncodedToken(),
+                                        clonedJWTHolder.getBase64EncodedToken(),
                                         serverSideAttack);
                                 return true;
                             }

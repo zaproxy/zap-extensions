@@ -26,7 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.zaproxy.zap.extension.jwt.JWTTokenBean;
+import org.zaproxy.zap.extension.jwt.JWTHolder;
 import org.zaproxy.zap.extension.jwt.utils.JWTConstants;
 import org.zaproxy.zap.extension.jwt.utils.JWTUtils;
 import org.zaproxy.zap.extension.jwt.utils.VulnerabilityType;
@@ -64,7 +64,7 @@ public class PayloadAttack implements JWTAttack {
      */
     private boolean executeNullByteAttack() {
         String nullBytePayload = NULL_BYTE_CHARACTER + Constant.getEyeCatcher();
-        JWTTokenBean clonedJWTToken = new JWTTokenBean(this.serverSideAttack.getJwtTokenBean());
+        JWTHolder clonedJWTToken = new JWTHolder(this.serverSideAttack.getJwtHolder());
         try {
             if (this.serverSideAttack.getJwtActiveScanner().isStop()) {
                 return false;
