@@ -238,8 +238,7 @@ public class SignatureAttack implements JWTAttack {
             if (StringUtils.isNotEmpty(trustStorePath)) {
                 String algoType = this.serverSideAttack.getJwtTokenBean().getAlgorithm();
                 if (algoType.startsWith(JWT_RSA_ALGORITHM_IDENTIFIER)) {
-                    String newJwtHeader =
-                            String.format(JWT_HEADER_WITH_ALGO_PLACEHOLDER, HMAC_256);
+                    String newJwtHeader = String.format(JWT_HEADER_WITH_ALGO_PLACEHOLDER, HMAC_256);
                     String base64EncodedNewHeaderAndPayload =
                             JWTUtils.getBase64UrlSafeWithoutPaddingEncodedString(newJwtHeader)
                                     + JWT_TOKEN_PERIOD_CHARACTER

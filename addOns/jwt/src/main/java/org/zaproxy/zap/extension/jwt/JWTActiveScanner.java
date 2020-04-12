@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.jwt;
 
 import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.network.HttpMessage;
