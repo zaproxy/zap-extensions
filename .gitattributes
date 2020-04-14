@@ -27,5 +27,6 @@
 gradlew text
 
 *.jbrf binary
+*.pdf binary
 *.png binary
 *.jar binary
