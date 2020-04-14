@@ -11,7 +11,7 @@ eclipse {
     }
 }
 
-version = "6"
+version = "7"
 description = "FuzzDB files which can be used with the ZAP fuzzer"
 
 zapAddOn {
