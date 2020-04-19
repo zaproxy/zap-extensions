@@ -1,0 +1,23 @@
+openapi: 3.0.0
+paths:
+  /pets-with-example:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+      responses:
+        '201':
+          description: Created
+components:
+  schemas:
+    Pet:
+      type: object
+      properties: 
+        age: 
+          type: integer
+          example: 3
+        name:
+          type: string
+          example: Fluffy
