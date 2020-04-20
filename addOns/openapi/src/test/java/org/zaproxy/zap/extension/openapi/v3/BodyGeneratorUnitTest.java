@@ -110,7 +110,7 @@ public class BodyGeneratorUnitTest {
                                 generators)
                         .getBody();
         Assert.assertEquals(
-                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\"}],\"status\":\"available\"}",
+                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"doggie\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\"}],\"status\":\"available\"}",
                 requestBody);
     }
 
