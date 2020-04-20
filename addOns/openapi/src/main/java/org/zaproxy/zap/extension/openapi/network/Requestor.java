@@ -29,12 +29,15 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.zap.network.HttpRedirectionValidator;
+import org.zaproxy.zap.network.HttpRequestConfig;
 
 public class Requestor {
 
     private final int initiator;
     private List<RequesterListener> listeners = new ArrayList<RequesterListener>();
     private HttpSender sender;
+    private final HttpRequestConfig requestConfig;
     private static final Logger LOG = Logger.getLogger(Requestor.class);
 
     public Requestor(int initiator) {
@@ -44,6 +47,8 @@ public class Requestor {
                         Model.getSingleton().getOptionsParam().getConnectionParam(),
                         true,
                         initiator);
+        requestConfig =
+                HttpRequestConfig.builder().setRedirectionValidator(new MessageHandler()).build();
     }
 
     public List<String> run(List<RequestModel> requestsModel) {
@@ -62,17 +67,8 @@ public class Requestor {
                         .setContentLength(httpRequest.getRequestBody().length());
 
                 try {
-                    sender.sendAndReceive(httpRequest, true);
 
-                    for (RequesterListener listener : listeners) {
-                        try {
-                            listener.handleMessage(httpRequest, initiator);
-                        } catch (Exception e) {
-                            // Dont add handler errors to the list returned - these are assumed to
-                            // be handler specific
-                            LOG.error(e.getMessage(), e);
-                        }
-                    }
+                    sender.sendAndReceive(httpRequest, requestConfig);
                 } catch (IOException e) {
                     errors.add(
                             Constant.messages.getString(
@@ -110,5 +106,25 @@ public class Requestor {
 
     public void removeListener(RequesterListener listener) {
         this.listeners.remove(listener);
+    }
+
+    /** Notifies the {@link #listeners} of the messages sent. */
+    private class MessageHandler implements HttpRedirectionValidator {
+
+        @Override
+        public void notifyMessageReceived(HttpMessage message) {
+            for (RequesterListener listener : listeners) {
+                try {
+                    listener.handleMessage(message, initiator);
+                } catch (Exception e) {
+                    LOG.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        @Override
+        public boolean isValid(URI redirection) {
+            return true;
+        }
     }
 }
