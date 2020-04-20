@@ -59,11 +59,11 @@ public abstract class AbstractServerTest extends AbstractOpenApiTest {
         // Check all of the expected URLs have been accessed and with the right data
         assertTrue(accessedUrls.containsKey("POST " + baseUrl + "/pet"));
         assertEquals(
-                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\"}],\"status\":\"available\"}",
+                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"doggie\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\"}],\"status\":\"available\"}",
                 accessedUrls.get("POST " + baseUrl + "/pet"));
         assertTrue(accessedUrls.containsKey("PUT " + baseUrl + "/pet"));
         assertEquals(
-                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\"}],\"status\":\"available\"}",
+                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"doggie\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\"}],\"status\":\"available\"}",
                 accessedUrls.get("PUT " + baseUrl + "/pet"));
         assertTrue(
                 accessedUrls.containsKey("GET " + baseUrl + "/pet/findByStatus?status=available"));
