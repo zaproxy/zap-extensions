@@ -1,3 +1,4 @@
+# E
 openapi: 3.0.0
 paths:
   /pets-with-example:
@@ -7,6 +8,25 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Pet'
+      responses:
+        '201':
+          description: Created
+  /pets-with-array-example:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  age:
+                    type: integer
+                    example: 3
+                  name:
+                    type: string
+                    example: Fluffy
       responses:
         '201':
           description: Created
@@ -21,3 +41,4 @@ components:
         name:
           type: string
           example: Fluffy
+

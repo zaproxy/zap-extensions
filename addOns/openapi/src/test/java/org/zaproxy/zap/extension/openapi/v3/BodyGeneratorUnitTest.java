@@ -317,6 +317,25 @@ public class BodyGeneratorUnitTest {
         Assert.assertEquals("{\"age\":3,\"name\":\"Fluffy\"}", request);
     }
 
+    @Test
+    public void shouldGenerateArraysFromExamples() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/pets-with-array-example",
+                                        openAPI.getPaths()
+                                                .get("/pets-with-array-example")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+
+        Assert.assertEquals(
+                "[{\"age\":3,\"name\":\"Fluffy\"},{\"age\":3,\"name\":\"Fluffy\"}]", request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
