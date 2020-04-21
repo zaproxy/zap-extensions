@@ -1,6 +1,17 @@
-# E
 openapi: 3.0.0
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        age:
+          type: integer
+          example: 3
+        name:
+          type: string
+          example: Fluffy
 paths:
+  # Using Examples defined in a references schema
   /pets-with-example:
     post:
       requestBody:
@@ -11,6 +22,7 @@ paths:
       responses:
         '201':
           description: Created
+  # Using an Array with examples for the properties described in the items
   /pets-with-array-example:
     post:
       requestBody:
@@ -30,7 +42,7 @@ paths:
       responses:
         '201':
           description: Created
-  # Array has a example formatted as string, which describes the full array instead of examples for the individual properties
+  # Using an Array has a example formatted as string
   /pets-with-array-full-example-string:
     post:
       requestBody:
@@ -49,7 +61,7 @@ paths:
       responses:
         '201':
           description: Created
-  # Array has a example formatted , which describes the full array instead of examples for the individual properties
+  # Array has an example formatted as a yaml array
   /pets-with-array-full-example-yaml:
     post:
       requestBody:
@@ -72,15 +84,3 @@ paths:
       responses:
         '201':
           description: Created
-components:
-  schemas:
-    Pet:
-      type: object
-      properties: 
-        age: 
-          type: integer
-          example: 3
-        name:
-          type: string
-          example: Fluffy
-
