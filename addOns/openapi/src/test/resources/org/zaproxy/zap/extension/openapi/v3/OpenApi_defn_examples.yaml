@@ -30,6 +30,48 @@ paths:
       responses:
         '201':
           description: Created
+  # Array has a example formatted as string, which describes the full array instead of examples for the individual properties
+  /pets-with-array-full-example-string:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  age:
+                    type: integer
+                  name:
+                    type: string
+              example: '[{"age":3,"name":"Fluffy"},{"age":512,"name":"Fawkes"}]'
+      responses:
+        '201':
+          description: Created
+  # Array has a example formatted , which describes the full array instead of examples for the individual properties
+  /pets-with-array-full-example-yaml:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  age:
+                    type: integer
+                  name:
+                    type: string
+              example:
+                - age: 3
+                  name: "Fluffy"
+                - age: 512
+                  name: "Fawkes"
+      responses:
+        '201':
+          description: Created
 components:
   schemas:
     Pet:
