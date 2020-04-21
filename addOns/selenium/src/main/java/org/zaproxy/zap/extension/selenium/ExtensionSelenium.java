@@ -685,6 +685,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                             .getWebDriver(requester, proxyAddress, proxyPort);
         }
         if (getExtScript() != null) {
+            boolean synchronously = requester == HttpSender.AJAX_SPIDER_INITIATOR;
             List<ScriptWrapper> scripts = extScript.getScripts(SCRIPT_TYPE_SELENIUM);
             for (ScriptWrapper script : scripts) {
                 try {
@@ -692,22 +693,25 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                         SeleniumScript s = extScript.getInterface(script, SeleniumScript.class);
 
                         if (s != null) {
-                            new Thread("ZAP-selenium-script") {
-                                @Override
-                                public void run() {
-                                    try {
-                                        s.browserLaunched(
-                                                new SeleniumScriptUtils(
-                                                        wd,
-                                                        requester,
-                                                        providedBrowserId,
-                                                        proxyAddress,
-                                                        proxyPort));
-                                    } catch (Exception e) {
-                                        extScript.handleScriptException(script, e);
-                                    }
-                                }
-                            }.start();
+                            Runnable runnable =
+                                    () -> {
+                                        try {
+                                            s.browserLaunched(
+                                                    new SeleniumScriptUtils(
+                                                            wd,
+                                                            requester,
+                                                            providedBrowserId,
+                                                            proxyAddress,
+                                                            proxyPort));
+                                        } catch (Exception e) {
+                                            extScript.handleScriptException(script, e);
+                                        }
+                                    };
+                            if (synchronously) {
+                                runnable.run();
+                            } else {
+                                new Thread(runnable, "ZAP-selenium-script").start();
+                            }
                         } else {
                             extScript.handleFailedScriptInterface(
                                     script,
