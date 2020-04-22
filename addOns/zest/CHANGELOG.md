@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Make sure the header fields are separated with CRLF when edited in the UI.
+- Handle client requests when authenticating (Issue 5940).
 
 ## [32] - 2020-01-24
 ### Changed
