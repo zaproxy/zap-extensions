@@ -939,8 +939,7 @@
                   "$ref": "#/components/schemas/Category"
                },
                "name": {
-                  "type": "string",
-                  "example": "doggie"
+                  "type": "string"
                },
                "photoUrls": {
                   "type": "array",

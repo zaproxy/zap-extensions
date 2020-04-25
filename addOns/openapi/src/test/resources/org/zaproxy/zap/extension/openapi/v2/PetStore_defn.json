@@ -983,8 +983,7 @@
                "$ref":"#/definitions/Category"
             },
             "name":{
-               "type":"string",
-               "example":"doggie"
+               "type":"string"
             },
             "photoUrls":{
                "type":"array",
