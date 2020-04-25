@@ -106,8 +106,6 @@ public class BodyGenerator {
             return (String) schema.getExample();
         }
 
-        StringBuilder json = new StringBuilder();
-
         if (schema.getExample() instanceof Iterable) {
             try {
                 return Json.mapper().writeValueAsString(schema.getExample());
@@ -117,9 +115,7 @@ public class BodyGenerator {
             }
         }
 
-        json.append(generate(schema.getItems()));
-
-        return createJsonArrayWith(json.toString());
+        return createJsonArrayWith(generate(schema.getItems()));
     }
 
     @SuppressWarnings("rawtypes")
