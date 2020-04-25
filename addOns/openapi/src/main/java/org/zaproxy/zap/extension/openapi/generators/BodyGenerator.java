@@ -111,7 +111,8 @@ public class BodyGenerator {
                 return Json.mapper().writeValueAsString(schema.getExample());
             } catch (JsonProcessingException e) {
                 LOG.warn(
-                        "Failed to encode Example Object. Falling back to default example generation");
+                        "Failed to encode Example Object. Falling back to default example generation",
+                        e);
             }
         }
 
