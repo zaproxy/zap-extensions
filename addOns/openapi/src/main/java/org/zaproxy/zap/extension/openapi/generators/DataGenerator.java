@@ -140,8 +140,8 @@ public class DataGenerator {
 
     public String generateValue(String name, Schema<?> schema, boolean isPath) {
         String value = "";
-        if (hasExample(schema)) {
-            value = getExample(schema).toString();
+        if (schema.getExample() != null) {
+            value = schema.getExample().toString();
         } else if (isEnumValue(schema)) {
             value = getEnumValue(schema);
         } else if (isDateTime(schema)) {
@@ -205,14 +205,6 @@ public class DataGenerator {
             value = ((StringSchema) schema).getEnum().get(0);
         }
         return value;
-    }
-
-    public boolean hasExample(Schema<?> schema) {
-        return schema.getExample() != null;
-    }
-
-    public Object getExample(Schema<?> schema) {
-        return schema.getExample();
     }
 
     public boolean isPath(String type) {
