@@ -302,7 +302,7 @@ public class BodyGeneratorUnitTest {
     }
 
     @Test
-    public void shouldUseExampleInRequest() throws IOException {
+    public void shouldUseExample() throws IOException {
         OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
         String request =
                 new RequestModelConverter()
