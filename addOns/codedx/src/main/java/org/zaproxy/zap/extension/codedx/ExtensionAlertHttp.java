@@ -26,16 +26,14 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.report.ReportGenerator;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
-public class ExtensionAlertHttp extends ExtensionAlert {
+public class ExtensionAlertHttp {
 	
 	private static final Logger LOGGER = Logger.getLogger(ExtensionAlertHttp.class);
 
     public ExtensionAlertHttp() {
     }
 
-    @Override
     public String getXml(SiteNode site) {
         StringBuilder xml = new StringBuilder();
         xml.append("<alerts>");
