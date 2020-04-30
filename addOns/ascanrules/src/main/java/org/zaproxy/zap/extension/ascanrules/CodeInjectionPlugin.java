@@ -34,7 +34,7 @@ import org.zaproxy.zap.model.TechSet;
 
 /**
  * Active Plugin for Code Injection testing and verification.
- * https://www.owasp.org/index.php/Code_Injection
+ * https://owasp.org/www-community/attacks/Code_Injection
  *
  * @author yhawke (2013)
  */

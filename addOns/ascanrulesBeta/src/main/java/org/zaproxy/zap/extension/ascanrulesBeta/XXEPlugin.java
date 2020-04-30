@@ -37,7 +37,7 @@ import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
 /**
- * https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+ * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
  *
  * @author yhawke (2104)
  */
@@ -51,7 +51,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     private static final int CHALLENGE_LENGTH = 16;
 
     // Payload built on examples retrieved in:
-    // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+    // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
     //
     private static final String ATTACK_ENTITY = "&zapxxe;";
 
@@ -242,7 +242,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
             // Check #1 : XXE Remote File Inclusion Attack
             // ------------------------------------------------------
             // This attack is described in
-            // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
             // using an external bouncing site, in this case we use
             // the ZAP API as a server for the vulnerability check
             // using a challenge/response model based on a random string
@@ -349,7 +349,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
             // Check #3 : XXE Local File Inclusion Attack
             // ------------------------------------------------------
             // This attack is described in
-            // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
             // trying to include a local file and maybe have the inclusion back in
             // the result page. This situation is very uncommon because it works
             // only in case of a bare XML parser which execute the conetnt and then

@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Backup File Disclosure scan rule - updated CWE to 530, added reference links to alerts, made sure WASC and CWE identifiers are included in alerts.
 - Maintenance changes.
+- Updated owasp.org references (Issue 5962).
 
 ### Fixed
 - Use correct risk (`INFO`) in User Agent Fuzzer, to run later in the scan.
