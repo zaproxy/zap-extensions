@@ -19,9 +19,7 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -30,7 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
-import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.ScrollableSizeHint;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -38,7 +35,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.FontUtils.Size;
 import org.zaproxy.zap.view.LayoutHelper;
 
-public abstract class QuickStartSubPanel extends JXPanel {
+public abstract class QuickStartSubPanel extends QuickStartBackgroundPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,18 +51,14 @@ public abstract class QuickStartSubPanel extends JXPanel {
     }
 
     private void initialize() {
-        this.setLayout(new GridBagLayout());
         this.setScrollableHeightHint(ScrollableSizeHint.PREFERRED_STRETCH);
-        this.setBackground(Color.white);
         this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 
-        JPanel topPanel = new JPanel();
-        BoxLayout layout = new BoxLayout(topPanel, BoxLayout.X_AXIS);
-        topPanel.setLayout(layout);
-        topPanel.setBackground(Color.WHITE);
+        JPanel topPanel = new QuickStartBackgroundPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
         topPanel.add(getBackButton());
         JLabel topTitle = new JLabel(Constant.messages.getString(this.getTitleKey()));
-        topTitle.setBackground(Color.WHITE);
+        topTitle.setBackground(topPanel.getBackground());
         topTitle.setFont(FontUtils.getFont(Size.much_larger));
         topPanel.add(Box.createHorizontalGlue());
         topPanel.add(topTitle);
