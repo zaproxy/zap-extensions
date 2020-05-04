@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart.launch;
 
-import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -46,6 +45,7 @@ import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.quickstart.PlugableHud;
+import org.zaproxy.zap.extension.quickstart.QuickStartBackgroundPanel;
 import org.zaproxy.zap.extension.quickstart.QuickStartHelper;
 import org.zaproxy.zap.extension.quickstart.QuickStartPanel;
 import org.zaproxy.zap.extension.quickstart.QuickStartSubPanel;
@@ -100,8 +100,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     @Override
     public JPanel getDescriptionPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
         panel.add(
                 QuickStartHelper.getWrappedLabel("quickstart.launch.panel.message1"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
@@ -126,9 +125,8 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
     @Override
     public JPanel getContentPanel() {
         if (this.contentPanel == null) {
-            contentPanel = new JXPanel(new GridBagLayout());
+            contentPanel = new QuickStartBackgroundPanel();
             contentPanel.setScrollableHeightHint(ScrollableSizeHint.PREFERRED_STRETCH);
-            contentPanel.setBackground(Color.white);
             int offset = 0;
             contentPanel.add(
                     new JLabel(Constant.messages.getString("quickstart.label.exploreurl")),
@@ -279,8 +277,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             }
         }
 
-        JPanel hudPanel = new JPanel(new GridBagLayout());
-        hudPanel.setBackground(Color.WHITE);
+        JPanel hudPanel = new QuickStartBackgroundPanel();
         hudPanel.add(getHudCheckbox(), LayoutHelper.getGBC(0, 0, 1, 0));
         hudPanel.add(getHudIsInScopeOnly(), LayoutHelper.getGBC(1, 0, 1, 0));
         hudPanel.add(new JLabel(), LayoutHelper.getGBC(1, 0, 2, 1.0));
@@ -388,8 +385,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     @Override
     public JPanel getFooterPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
         panel.add(
                 new JLabel(Constant.messages.getString("quickstart.panel.launch.manual")),
                 LayoutHelper.getGBC(0, 0, 5, 1.0D, new Insets(5, 5, 5, 5)));

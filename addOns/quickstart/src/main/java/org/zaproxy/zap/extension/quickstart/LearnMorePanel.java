@@ -19,11 +19,9 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -66,8 +64,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
 
     @Override
     public JPanel getDescriptionPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
         panel.add(
                 QuickStartHelper.getWrappedLabel("quickstart.learn.panel.message1"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
@@ -90,8 +87,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
     @Override
     public JPanel getContentPanel() {
         if (contentPanel == null) {
-            contentPanel = new JPanel(new GridBagLayout());
-            contentPanel.setBackground(Color.WHITE);
+            contentPanel = new QuickStartBackgroundPanel();
             int formPanelY = 0;
 
             ExtensionHelp extHelp =
