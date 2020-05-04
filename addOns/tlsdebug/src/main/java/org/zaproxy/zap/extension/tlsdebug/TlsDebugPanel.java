@@ -40,6 +40,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
@@ -92,7 +93,7 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
         JPanel panelContent = new JPanel(new GridBagLayout());
         this.add(panelContent, BorderLayout.NORTH);
 
-        panelContent.setBackground(Color.white);
+        panelContent.setBackground(new Color(UIManager.getColor("TextField.background").getRGB()));
         panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 
         panelContent.add(
