@@ -720,7 +720,7 @@
         19
       ],
       "headers": {
-        "Server": "^AmazonS3$"
+        "server": "^AmazonS3$"
       },
       "icon": "aws-s3.svg",
       "implies": "Amazon Web Services",
@@ -13271,7 +13271,7 @@
       "cats": [
         13
       ],
-      "html": "<!--\\s+OTRS: Copyright \\d+-\\d+, OTRS AG",
+      "html": "<!--\\s+OTRS: Copyright",
       "icon": "otrs.png",
       "implies": "Perl",
       "script": "^/otrs-web/js/",
