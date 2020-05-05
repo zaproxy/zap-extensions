@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Command Injection, Test Path Traversal, Test Cross Site ScriptV2 and Remote File Include rules are updated to include payloads for Null Byte Injection (Issue 3877).
+- Updated owasp.org references (Issue 5962).
 
 ### Fixed
 - Fix typo in the help page.

@@ -20,9 +20,9 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 /**
- * https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+ * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
  *
- * @author yhawke (2104)
+ * @author yhawke (2014)
  */
 public class XXEPluginCallbackImplementor extends ChallengeCallbackImplementor {
 

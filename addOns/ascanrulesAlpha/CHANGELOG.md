@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Change info URL to link to the site.
 - Update ZAP blog links.
+- Updated owasp.org references (Issue 5962).
 
 ### Fixed
 - Fix exception when scanning a message without path with Hidden File Finder.

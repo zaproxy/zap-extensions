@@ -47,7 +47,7 @@ import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * Active Plugin for Command Injection testing and verification.
- * https://www.owasp.org/index.php/Command_Injection
+ * https://owasp.org/www-community/attacks/Command_Injection
  *
  * @author yhawke (2013)
  * @author kingthorin+owaspzap@gmail.com (2015)

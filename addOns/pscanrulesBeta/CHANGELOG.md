@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - 'PII Disclosure' added further false positive handling with regard to exponential numbers such as 2.4670000000000001E-2 or 2.4670000000000001E2.
 - Maintenance changes.
 - 'Servlet Parameter Pollution' scan rule will now only scan responses for in Context URLs for which the Technology JSP/Serlet is applicable.
+- Updated owasp.org references (Issue 5962).
 
 ## [21] - 2019-12-16
 
