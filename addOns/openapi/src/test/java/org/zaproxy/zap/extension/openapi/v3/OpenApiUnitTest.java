@@ -184,8 +184,6 @@ public class OpenApiUnitTest extends AbstractServerTest {
         requestor.addListener(listener);
         requestor.run(converter.getRequestModels());
 
-        System.out.println(accessedUrls.keySet());
-
         assertTrue(
                 "Should use OpenAPI Example Values in URL Path when crawling urls",
                 accessedUrls.containsKey(
