@@ -173,8 +173,8 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
             Attribute htmlAttribute,
             HtmlParameter param) {
         newAlert()
-                .setRisk(Alert.RISK_MEDIUM)
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescriptionMessage())
                 .setParam(param.getName())
                 .setOtherInfo(getExtraInfoMessage(msg, htmlAttribute, param))
