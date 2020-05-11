@@ -150,8 +150,8 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 
     private void raiseAlert(HttpMessage msg, int id, HtmlParameter param, String cookie) {
         newAlert()
-                .setRisk(Alert.RISK_MEDIUM)
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescriptionMessage())
                 .setParam(param.getName())
                 .setOtherInfo(getExtraInfoMessage(msg, param, cookie))

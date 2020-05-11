@@ -192,8 +192,8 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
     private void raiseAlert(
             HttpMessage msg, int id, String tag, String attr, HtmlParameter param, String charset) {
         newAlert()
-                .setRisk(Alert.RISK_MEDIUM)
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescriptionMessage())
                 .setParam(param.getName())
                 .setOtherInfo(getExtraInfoMessage(tag, attr, param, charset))
