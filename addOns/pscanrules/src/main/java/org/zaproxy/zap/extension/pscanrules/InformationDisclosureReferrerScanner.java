@@ -38,6 +38,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.sharedutils.PiiUtils;
+import org.zaproxy.zap.sharedutils.binlist.BinRecord;
 
 public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
@@ -70,29 +71,26 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
                 if ((evidence = doesURLContainsSensitiveInformation(referrerValue)) != null) {
                     this.raiseAlert(
                             msg,
-                            id,
                             evidence,
                             Constant.messages.getString(
                                     MESSAGE_PREFIX + "otherinfo.sensitiveinfo"));
                 }
                 if ((evidence = doesContainCreditCard(referrerValue)) != null) {
-                    this.raiseAlert(
+                    this.raiseCcAlert(
                             msg,
-                            id,
                             evidence,
-                            Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"));
+                            Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"),
+                            PiiUtils.getBinRecord(evidence));
                 }
                 if ((evidence = doesContainEmailAddress(referrerValue)) != null) {
                     this.raiseAlert(
                             msg,
-                            id,
                             evidence,
                             Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.email"));
                 }
                 if ((evidence = doesContainUsSSN(referrerValue)) != null) {
                     this.raiseAlert(
                             msg,
-                            id,
                             evidence,
                             Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn"));
                 }
@@ -118,7 +116,7 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
         return result;
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String evidence, String other) {
+    private void raiseAlert(HttpMessage msg, String evidence, String other) {
         newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -129,6 +127,46 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
                 .setCweId(200) // CWE Id 200 - Information Exposure
                 .setWascId(13) // WASC Id 13 - Info leakage
                 .raise();
+    }
+
+    private void raiseCcAlert(HttpMessage msg, String evidence, String other, BinRecord binRec) {
+        if (binRec != null) {
+            other = other + '\n' + getBinRecString(binRec);
+        }
+        newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(binRec != null ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setOtherInfo(other)
+                .setSolution(getSolution())
+                .setEvidence(evidence)
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13) // WASC Id 13 - Info leakage
+                .raise();
+    }
+
+    private String getBinRecString(BinRecord binRec) {
+        StringBuilder recString = new StringBuilder(75);
+        recString
+                .append(Constant.messages.getString(MESSAGE_PREFIX + "bin.field"))
+                .append(' ')
+                .append(binRec.getBin())
+                .append('\n');
+        recString
+                .append(Constant.messages.getString(MESSAGE_PREFIX + "brand.field"))
+                .append(' ')
+                .append(binRec.getBrand())
+                .append('\n');
+        recString
+                .append(Constant.messages.getString(MESSAGE_PREFIX + "category.field"))
+                .append(' ')
+                .append(binRec.getCategory())
+                .append('\n');
+        recString
+                .append(Constant.messages.getString(MESSAGE_PREFIX + "issuer.field"))
+                .append(' ')
+                .append(binRec.getIssuer());
+        return recString.toString();
     }
 
     private List<String> loadFile(String file) {

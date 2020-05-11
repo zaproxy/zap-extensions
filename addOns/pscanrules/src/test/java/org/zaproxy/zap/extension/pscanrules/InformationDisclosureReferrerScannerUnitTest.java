@@ -239,7 +239,16 @@ public class InformationDisclosureReferrerScannerUnitTest
         assertEquals(sensitiveValue, alertsRaised.get(0).getEvidence());
         assertEquals(
                 Constant.messages.getString(
-                        InformationDisclosureReferrerScanner.MESSAGE_PREFIX + "otherinfo.cc"),
+                                InformationDisclosureReferrerScanner.MESSAGE_PREFIX
+                                        + "otherinfo.cc")
+                        + '\n'
+                        + "Bank Identification Number: 601100"
+                        + '\n'
+                        + "Brand: DISCOVER"
+                        + '\n'
+                        + "Category: PLATINUM"
+                        + '\n'
+                        + "Issuer: DISCOVER",
                 alertsRaised.get(0).getOtherInfo());
     }
 

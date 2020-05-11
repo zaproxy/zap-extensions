@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - 'CSP Scanner' rule upgrade salvation library to v2.7.1.
 - 'CSP Scanner' rule now merges (intersects) multiple CSP header fields to more accurately evaluate policies and prevent parsing issues (Issue 5931).
 - 'X-Frame-Options Header Scanner' replace now invalid MSDN reference link with MDN link on X-Frame-Options (Issue 5867).
+- 'Information Disclosure Referrer' scan rule added support for looking up evidence against an Open Source Bank Identification Number List. Confidence is now modified based on whether the lookup is successful or not. Additional details are added to 'Other Info' if available (Issue 5842).
 
 ## [27] - 2020-02-11
 
