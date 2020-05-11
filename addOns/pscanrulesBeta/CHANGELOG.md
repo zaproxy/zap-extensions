@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added links to the code in the help.
 - Add info and repo URLs.
+- 'Modern Web Application' scan rule was added, being promoted to Beta.
 
 ### Changed
 - Update minimum ZAP version to 2.9.0.
