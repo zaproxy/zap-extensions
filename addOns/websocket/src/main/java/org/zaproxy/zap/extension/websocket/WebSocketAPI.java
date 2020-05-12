@@ -212,9 +212,11 @@ public class WebSocketAPI extends ApiImplementor {
                                 json = JSONObject.fromObject(message.getReadablePayload());
                                 String component = json.getString("component");
                                 String name = json.getString("name");
-                                JSONObject params = null;
+                                JSONObject params;
                                 if (json.has("params")) {
                                     params = json.getJSONObject("params");
+                                } else {
+                                    params = new JSONObject();
                                 }
                                 JSON response = null;
 

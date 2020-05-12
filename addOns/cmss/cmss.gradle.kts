@@ -3,10 +3,16 @@ description = "Fingerprint web applications"
 
 zapAddOn {
     addOnName.set("WAFP Extension")
-    zapVersion.set("2.5.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/wafp-extension/")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

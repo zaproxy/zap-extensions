@@ -12,10 +12,11 @@ repositories {
 
 zapAddOn {
     addOnName.set("Bug Tracker")
-    zapVersion.set("2.5.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/bug-tracker/")
     }
 }
 
@@ -24,7 +25,7 @@ dependencies {
         // Not needed.
         exclude(group = "junit")
     }
-    implementation("org.kohsuke:github-api:1.75") {
+    implementation("org.kohsuke:github-api:1.109") {
         // Not needed.
         exclude(group = "com.infradna.tool")
         // Provided by ZAP.

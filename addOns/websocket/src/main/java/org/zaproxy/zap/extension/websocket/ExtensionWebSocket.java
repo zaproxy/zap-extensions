@@ -547,13 +547,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             removeAllChannelSenderListener(webSocketSenderScriptListener);
-            extensionScript.removeScripType(websocketSenderSciptType);
+            extensionScript.removeScriptType(websocketSenderSciptType);
         }
 
         // shut down Passive Scanner & unregister the WebSocket Passive Scan script type
         if (webSocketPassiveScannerManager != null) {
             webSocketPassiveScannerManager.shutdownThread();
-            extensionScript.removeScripType(websocketPassiveScanScriptType);
+            extensionScript.removeScriptType(websocketPassiveScanScriptType);
         }
 
         eventPublisher.shutdown();

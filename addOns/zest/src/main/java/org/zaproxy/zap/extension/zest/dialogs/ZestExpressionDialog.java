@@ -124,7 +124,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
             this.addTextField(FIELD_VALUE, za.getValue());
             this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
 
-            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
+            setFieldMainPopupMenu(FIELD_VALUE);
 
         } else if (expression instanceof ZestExpressionStatusCode) {
             ZestExpressionStatusCode za = (ZestExpressionStatusCode) expression;
@@ -171,7 +171,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
                     ZestClientElementDialog.FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
             this.addTextField(ZestClientElementDialog.FIELD_ELEMENT, zc.getElement());
 
-            ZestZapUtils.setMainPopupMenu(this.getField(ZestClientElementDialog.FIELD_ELEMENT));
+            setFieldMainPopupMenu(ZestClientElementDialog.FIELD_ELEMENT);
         }
         this.addCheckBoxField(FIELD_INVERSE, expression.isInverse());
         this.addPadding();

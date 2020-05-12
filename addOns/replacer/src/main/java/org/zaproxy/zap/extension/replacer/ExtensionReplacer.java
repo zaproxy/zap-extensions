@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.replacer;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.regex.Pattern;
 import javax.swing.*;
 import org.apache.log4j.Logger;
@@ -107,15 +105,6 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

@@ -23,7 +23,6 @@ import com.sittinglittleduck.DirBuster.BaseCase;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -360,7 +359,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
                 return;
             }
             // Add new hosts
-            SiteNode root = (SiteNode) session.getSiteTree().getRoot();
+            SiteNode root = session.getSiteTree().getRoot();
             @SuppressWarnings("unchecked")
             Enumeration<TreeNode> en = root.children();
             while (en.hasMoreElements()) {
@@ -535,15 +534,6 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     @Override
     public String getDescription() {
         return Constant.messages.getString("bruteforce.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

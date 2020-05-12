@@ -4,7 +4,19 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Update minimum ZAP version to 2.9.0.
+- Update docker refs to use zaproxy.org instead of GitHub wiki.
 
+## [7] - 2020-01-17
+### Added
+- Add info and repo URLs.
+
+### Changed
+- Updated for move from irc.mozilla.org to freenode
+
+### Removed
+- Remove tips related to Filter functionality, it no longer exists.
 
 ## [6] - 2019-06-07
 
@@ -31,4 +43,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[7]: https://github.com/zaproxy/zap-extensions/releases/tips-v7
 [6]: https://github.com/zaproxy/zap-extensions/releases/tips-v6

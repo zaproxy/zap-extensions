@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "34"
+version = "35"
 description = "The release quality Active Scanner rules"
 
 zapAddOn {
@@ -10,12 +10,13 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/active-scan-rules/")
     }
 }
 
 dependencies {
-    implementation("com.googlecode.java-diff-utils:diffutils:1.2.1")
-    implementation("org.bitbucket.mstrobel:procyon-compilertools:0.5.25")
+    implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
+    implementation("org.bitbucket.mstrobel:procyon-compilertools:0.5.36")
 
     testImplementation(project(":testutils"))
     testImplementation("org.apache.commons:commons-lang3:3.9")

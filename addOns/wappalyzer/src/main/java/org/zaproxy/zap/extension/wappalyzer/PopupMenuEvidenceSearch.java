@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import java.awt.Component;
 import java.util.regex.Pattern;
+import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
@@ -57,7 +58,9 @@ public class PopupMenuEvidenceSearch extends ExtensionPopupMenuItem {
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
-        if (invoker.getName() != null && invoker.getName().equals(TechPanel.PANEL_NAME)) {
+        if (invoker.getName() != null
+                && invoker.getName().equals(TechPanel.PANEL_NAME)
+                && ((JXTable) invoker).getSelectedRows().length < 2) {
             this.setEnabled(true);
             return true;
         }

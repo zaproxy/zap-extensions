@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-## Added
+### Added
 - Add API support.
+- Add info and repo URLs.
+
+### Changed
+- Update minimum ZAP version to 2.9.0.
 
 ## 5 - 2018-11-02
 

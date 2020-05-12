@@ -23,8 +23,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -439,15 +437,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         return Constant.messages.getString("plugnhack.desc");
     }
 
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
-
     private PopupMenuOpenAndMonitorUrl getPopupMenuOpenAndMonitorUrl() {
         if (popupMenuOpenAndMonitorUrl == null) {
             popupMenuOpenAndMonitorUrl = new PopupMenuOpenAndMonitorUrl(this.mpm);
@@ -684,7 +673,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     }
 
     /*
-     * Called when the specified oracle is invoked in the client, eg as a result on an XSS
+     * Called when the specified oracle is invoked in the client, e.g. as a result on an XSS
      */
     public void oracleInvoked(int id) {
         logger.debug("Oracle invoked for " + id);

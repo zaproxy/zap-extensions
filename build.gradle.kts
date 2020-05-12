@@ -1,5 +1,6 @@
 plugins {
     id("com.diffplug.gradle.spotless")
+    id("com.github.ben-manes.versions") version "0.27.0"
 }
 
 apply(from = "$rootDir/gradle/travis-ci.gradle.kts")
@@ -7,6 +8,7 @@ apply(from = "$rootDir/gradle/lgtm.gradle.kts")
 
 allprojects {
     apply(plugin = "com.diffplug.gradle.spotless")
+    apply(plugin = "com.github.ben-manes.versions")
 
     repositories {
         mavenCentral()

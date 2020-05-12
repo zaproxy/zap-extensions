@@ -591,15 +591,13 @@ public class TestDomXSS extends AbstractAppParamPlugin {
                                 + e.getAttributeId();
             }
 
-            bingo(
-                    Alert.RISK_HIGH,
-                    Alert.CONFIDENCE_MEDIUM,
-                    e.getUrl(),
-                    null,
-                    e.getAttack(),
-                    otherInfo,
-                    null,
-                    msg);
+            newAlert()
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setUri(e.getUrl())
+                    .setAttack(e.getAttack())
+                    .setOtherInfo(otherInfo)
+                    .setMessage(msg)
+                    .raise();
             Stats.incCounter("domxss.attack." + attackVector);
             vulnerable = true;
             return true;

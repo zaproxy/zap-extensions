@@ -32,8 +32,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /** A class to passively scan responses for indications that this is a modern web application. */
 public class ModernAppDetectionScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.modernapp.";
 
@@ -91,28 +89,20 @@ public class ModernAppDetectionScanner extends PluginPassiveScanner {
 
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            Alert alert =
-                    new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getName());
-
-            alert.setDetail(
-                    getDescription(),
-                    msg.getRequestHeader().getURI().toString(),
-                    "", // param
-                    "", // attack
-                    otherInfo, // other info
-                    getSolution(),
-                    "", // reference
-                    evidence,
-                    0, // Its not really an issue
-                    0, // Its not really an issue
-                    msg);
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setRisk(Alert.RISK_INFO)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getDescription())
+                    .setOtherInfo(otherInfo)
+                    .setSolution(getSolution())
+                    .setEvidence(evidence)
+                    .raise();
         }
     }
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

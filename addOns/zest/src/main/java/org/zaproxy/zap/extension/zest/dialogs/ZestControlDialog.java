@@ -29,7 +29,6 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestControlDialog extends StandardFieldsDialog implements ZestDialog {
@@ -76,7 +75,7 @@ public class ZestControlDialog extends StandardFieldsDialog implements ZestDialo
         if (control instanceof ZestControlReturn) {
             ZestControlReturn za = (ZestControlReturn) control;
             this.addTextField(FIELD_VALUE, za.getValue());
-            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_VALUE));
+            setFieldMainPopupMenu(FIELD_VALUE);
         }
         this.addPadding();
     }

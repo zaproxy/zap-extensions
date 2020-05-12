@@ -75,9 +75,6 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      * http://www.portent.com/blog/random/session-id-parameters-list.htm
      */
 
-    // Inner Thread Parent variable
-    private PassiveScanThread parent = null;
-
     /**
      * Get this plugin id
      *
@@ -129,7 +126,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      */
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /**
@@ -184,26 +181,17 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                     // If the param value length is greater than MIN_LENGTH (therefore there is a
                     // value)
                     if (param.getValue().length() > SESSION_TOKEN_MIN_LENGTH) {
-                        // Raise an alert according to Passive Scan Rule model
-                        // description, uri, param, attack, otherInfo,
-                        // solution, reference, evidence, cweId, wascId, msg
-                        Alert alert =
-                                new Alert(
-                                        getPluginId(), getRisk(), Alert.CONFIDENCE_HIGH, getName());
-                        alert.setDetail(
-                                getDescription(),
-                                uri,
-                                param.getName(), // param
-                                "", // attack
-                                "", // otherinfo
-                                getSolution(),
-                                getReference(),
-                                param.getValue(), // evidence
-                                getCweId(), // CWE Id
-                                getWascId(), // WASC Id - Info leakage
-                                msg);
-
-                        parent.raiseAlert(id, alert);
+                        newAlert()
+                                .setRisk(getRisk())
+                                .setConfidence(Alert.CONFIDENCE_HIGH)
+                                .setDescription(getDescription())
+                                .setParam(param.getName())
+                                .setSolution(getSolution())
+                                .setReference(getReference())
+                                .setEvidence(param.getValue())
+                                .setCweId(getCweId())
+                                .setWascId(getWascId())
+                                .raise();
                         // We don't break on this one.
                         // There shouldn't be more than one per URL but bizarre things do happen.
                         // Improbable doesn't mean impossible.
@@ -223,21 +211,16 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
             } catch (URIException e) {
             }
             if (jsessMatcher != null && jsessMatcher.find()) {
-                Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_HIGH, getName());
-                alert.setDetail(
-                        getDescription(),
-                        uri,
-                        "", // param
-                        "", // attack
-                        "", // otherinfo
-                        getSolution(),
-                        getReference(),
-                        jsessMatcher.group(), // evidence
-                        getCweId(), // CWE Id
-                        getWascId(), // WASC Id - Info leakage
-                        msg);
-
-                parent.raiseAlert(id, alert);
+                newAlert()
+                        .setRisk(getRisk())
+                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                        .setDescription(getDescription())
+                        .setSolution(getSolution())
+                        .setReference(getReference())
+                        .setEvidence(jsessMatcher.group())
+                        .setCweId(getCweId())
+                        .setWascId(getWascId())
+                        .raise();
                 found = true;
             }
         }
@@ -313,29 +296,17 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                 linkHostName = matcher.group(1);
                 if (host.compareToIgnoreCase(linkHostName) != 0) {
 
-                    // Raise an alert according to Passive Scan Rule model
-                    // description, uri, param, attack, otherInfo,
-                    // solution, reference, evidence, cweId, wascId, msg
-                    Alert alert =
-                            new Alert(
-                                    getPluginId(),
-                                    risk,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    getRefererAlert());
-                    alert.setDetail(
-                            getRefererDescription(),
-                            msg.getRequestHeader().getURI().getURI(),
-                            "",
-                            "",
-                            "",
-                            getRefererSolution(),
-                            getReference(),
-                            linkHostName, // evidence
-                            getCweId(), // CWE Id
-                            getWascId(), // WASC Id - Info leakage
-                            msg);
-
-                    parent.raiseAlert(id, alert);
+                    newAlert()
+                            .setName(getRefererAlert())
+                            .setRisk(risk)
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setDescription(getRefererDescription())
+                            .setSolution(getRefererSolution())
+                            .setReference(getReference())
+                            .setEvidence(linkHostName)
+                            .setCweId(getCweId())
+                            .setWascId(getWascId())
+                            .raise();
 
                     break; // Only need one
                 }

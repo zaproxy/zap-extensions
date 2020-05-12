@@ -35,7 +35,7 @@ public class ContextSiteTree extends SiteTree {
     }
 
     public void reloadTree(Session session, Context context) {
-        log.debug("Reloading tree for context: " + context.getIndex());
+        log.debug("Reloading tree for context: " + context.getId());
         this.getRoot().removeAllChildren();
         List<SiteNode> contextNodes = session.getNodesInContextFromSiteTree(context);
         for (SiteNode node : contextNodes) {

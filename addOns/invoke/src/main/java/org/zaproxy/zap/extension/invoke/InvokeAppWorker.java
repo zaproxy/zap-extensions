@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.SwingWorker;
@@ -96,8 +95,8 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
         if (msg.getRequestBody().length() != 0) {
             postdata = msg.getRequestBody().toString().replaceAll("\n", "\\n");
         }
-        Vector<String> cookies = msg.getRequestHeader().getHeaders(HttpHeader.COOKIE);
-        if (cookies != null && cookies.size() > 0) {
+        List<String> cookies = msg.getRequestHeader().getHeaderValues(HttpHeader.COOKIE);
+        if (!cookies.isEmpty()) {
             cookie = cookies.get(0);
         }
 

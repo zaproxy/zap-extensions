@@ -57,9 +57,6 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
     /** contains the base vulnerability that this plugin refers to */
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
 
-    /** the passive scan thread class used */
-    private PassiveScanThread parent = null;
-
     private ExtensionAntiCSRF extensionAntiCSRF;
     private String csrfIgnoreList;
     private String csrfAttIgnoreList;
@@ -74,7 +71,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /** does nothing. The request itself is not scanned. Only the response is scanned. */
@@ -231,21 +228,17 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
                                     "pscanrules.noanticsrftokens.extrainfo.annotation");
                 }
 
-                Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, getName());
-                alert.setDetail(
-                        desc + "\n" + getDescription(),
-                        msg.getRequestHeader().getURI().toString(),
-                        "", // parameter: none.
-                        "",
-                        extraInfo,
-                        getSolution(),
-                        getReference(),
-                        evidence, // Evidence
-                        352, // CWE-352: Cross-Site Request Forgery (CSRF)
-                        9, // WASC Id
-                        msg);
-
-                parent.raiseAlert(id, alert);
+                newAlert()
+                        .setRisk(risk)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setDescription(desc + "\n" + getDescription())
+                        .setOtherInfo(extraInfo)
+                        .setSolution(getSolution())
+                        .setReference(getReference())
+                        .setEvidence(evidence)
+                        .setCweId(352) // CWE-352: Cross-Site Request Forgery (CSRF)
+                        .setWascId(9)
+                        .raise();
             }
         }
         if (logger.isDebugEnabled()) {

@@ -109,7 +109,7 @@ public class Config {
      *+ Will now scan mutiple file extentions
      *+ Added information about the supplied lists
      *+ Changed links and branding
-     *+ Fixed bug with stoped start point from being scanned eg /
+     *+ Fixed bug with stoped start point from being scanned e.g. /
      *+ Added HTML parsing of found pages
      *+ Added optins to configure the HTML parsing
      *+ Imporved checking for if the server does not support HEAD requests

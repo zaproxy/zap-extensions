@@ -26,7 +26,6 @@ import static org.junit.Assert.assertThat;
 
 import java.net.ConnectException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import org.apache.commons.httpclient.params.HttpConnectionParams;
@@ -35,25 +34,25 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.simpleframework.http.core.ContainerServer;
-import org.simpleframework.transport.connect.Connection;
-import org.simpleframework.transport.connect.SocketConnection;
+import org.zaproxy.zap.testutils.HTTPDTestServer;
 
 public class EasySSLProtocolSocketFactoryUnitTest {
 
     private EasySSLProtocolSocketFactory socketFactory;
 
-    private static Connection hostConnection;
+    private static HTTPDTestServer testServer;
+    private static int serverPort;
 
     @BeforeClass
     public static void startEmbeddedHttpServers() throws Exception {
-        hostConnection = new SocketConnection(new ContainerServer(null));
-        hostConnection.connect(new InetSocketAddress(18080));
+        testServer = new HTTPDTestServer(0);
+        testServer.start();
+        serverPort = testServer.getListeningPort();
     }
 
     @AfterClass
-    public static void stopEmbeddedHttpServers() throws Exception {
-        hostConnection.close();
+    public static void stopEmbeddedHttpServers() {
+        testServer.stop();
     }
 
     @Before
@@ -65,7 +64,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
     public void shouldCreateSocketForGivenHostAndPort() throws Exception {
         // Given
         String host = "localhost";
-        int port = 18080;
+        int port = serverPort;
         // When
         Socket sslSocket = socketFactory.createSocket(host, port);
         // Then
@@ -84,7 +83,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
         HttpConnectionParams params = new HttpConnectionParams();
         params.setConnectionTimeout(60000);
         // When
-        socketFactory.createSocket(unknownHost, 18080, localAddress, localPort, params);
+        socketFactory.createSocket(unknownHost, serverPort, localAddress, localPort, params);
         // Then = IOException
     }
 
@@ -103,7 +102,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
         HttpConnectionParams nullParams = null;
         // When
         socketFactory.createSocket(
-                "localhost", 18080, InetAddress.getLoopbackAddress(), 12345, nullParams);
+                "localhost", serverPort, InetAddress.getLoopbackAddress(), 12345, nullParams);
         // Then = IllegalArgumentException
     }
 
@@ -115,7 +114,11 @@ public class EasySSLProtocolSocketFactoryUnitTest {
         // When
         Socket sslSocket =
                 socketFactory.createSocket(
-                        "localhost", 18080, localAddress, localPort, new HttpConnectionParams());
+                        "localhost",
+                        serverPort,
+                        localAddress,
+                        localPort,
+                        new HttpConnectionParams());
         // Then
         assertThat(sslSocket.getLocalAddress(), is(equalTo(localAddress)));
         assertThat(sslSocket.getLocalPort(), is(equalTo(localPort)));
@@ -129,7 +132,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
         params.setConnectionTimeout(1);
         // When
         socketFactory.createSocket(
-                "localhost", 18080, InetAddress.getLoopbackAddress(), 38080, params);
+                "localhost", serverPort, InetAddress.getLoopbackAddress(), 38080, params);
         // Then = SocketTimeoutException
     }
 
@@ -141,7 +144,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
         // When
         Socket sslSocket =
                 socketFactory.createSocket(
-                        "localhost", 18080, InetAddress.getLoopbackAddress(), 48080, params);
+                        "localhost", serverPort, InetAddress.getLoopbackAddress(), 48080, params);
         // Then
         assertThat(sslSocket, is(notNullValue()));
     }

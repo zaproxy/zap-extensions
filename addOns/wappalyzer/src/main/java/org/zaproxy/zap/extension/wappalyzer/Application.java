@@ -30,6 +30,7 @@ public class Application {
     private String website;
     private ImageIcon icon = null;
     private List<String> categories = new ArrayList<String>();
+    private String cpe;
     private List<Map<String, AppPattern>> headers;
     private List<AppPattern> url = new ArrayList<AppPattern>();
     private List<AppPattern> html = new ArrayList<AppPattern>();
@@ -60,6 +61,14 @@ public class Application {
 
     public void setCategories(List<String> categories) {
         this.categories = categories;
+    }
+
+    public String getCpe() {
+        return cpe;
+    }
+
+    public void setCpe(String cpe) {
+        this.cpe = cpe;
     }
 
     public void setHeaders(List<Map<String, AppPattern>> headers) {
@@ -144,5 +153,10 @@ public class Application {
 
     public void setIcon(ImageIcon icon) {
         this.icon = icon;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

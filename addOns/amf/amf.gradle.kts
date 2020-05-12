@@ -6,11 +6,17 @@ repositories {
 }
 
 zapAddOn {
-    addOnName.set("AMF")
-    zapVersion.set("2.7.0")
+    addOnName.set("AMF Support")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/amf-support/")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

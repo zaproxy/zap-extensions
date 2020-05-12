@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -248,7 +250,8 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             int winCount = 0;
             int dirCount = 0;
             int localTraversalLength = 0;
-
+            String extension = null;
+            boolean includeNullByteInjectionPayload = false;
             // DEBUG only
             if (log.isDebugEnabled()) {
                 log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
@@ -285,6 +288,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     winCount = WIN_LOCAL_FILE_TARGETS.length;
                     dirCount = LOCAL_DIR_TARGETS.length;
                     localTraversalLength = 4;
+                    includeNullByteInjectionPayload = true;
+                    if (value != null) {
+                        int index = value.lastIndexOf(".");
+                        if (index != -1) {
+                            extension = value.substring(index);
+                        }
+                    }
                     break;
 
                 default:
@@ -317,6 +327,28 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         // Exit the plugin
                         return;
                     }
+                    // Null Byte is appended to the value for ignoring the postfix data appended
+                    // to the input.
+                    if (includeNullByteInjectionPayload) {
+                        if (sendAndCheckPayload(
+                                        param,
+                                        WIN_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER,
+                                        WIN_PATTERN)
+                                || isStop()) {
+                            return;
+                        }
+                        if (extension != null) {
+                            if (sendAndCheckPayload(
+                                            param,
+                                            WIN_LOCAL_FILE_TARGETS[h]
+                                                    + NULL_BYTE_CHARACTER
+                                                    + extension,
+                                            WIN_PATTERN)
+                                    || isStop()) {
+                                return;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -334,6 +366,29 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         // Dispose all resources
                         // Exit the plugin
                         return;
+                    }
+                    // Null Byte is appended to the value for ignoring the postfix data appended
+                    // to the input
+                    if (includeNullByteInjectionPayload) {
+                        if (sendAndCheckPayload(
+                                        param,
+                                        NIX_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER,
+                                        NIX_PATTERN)
+                                || isStop()) {
+                            return;
+                        }
+
+                        if (extension != null) {
+                            if (sendAndCheckPayload(
+                                            param,
+                                            NIX_LOCAL_FILE_TARGETS[h]
+                                                    + NULL_BYTE_CHARACTER
+                                                    + extension,
+                                            NIX_PATTERN)
+                                    || isStop()) {
+                                return;
+                            }
+                        }
                     }
                 }
             }

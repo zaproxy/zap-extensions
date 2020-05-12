@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "12"
+version = "13"
 description = "Advanced fuzzer for manual testing"
 
 tasks.withType<JavaCompile> {
@@ -10,12 +10,12 @@ tasks.withType<JavaCompile> {
 zapAddOn {
     addOnName.set("AdvFuzzer")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         semVer.set("2.0.1")
         author.set("ZAP Dev Team")
-        url.set("https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/fuzzer/")
     }
 
     apiClientGen {

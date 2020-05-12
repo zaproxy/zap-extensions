@@ -20,7 +20,7 @@
  */
 package org.zaproxy.zap.extension.sqliplugin;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * Service class used to store test's response detection model parsed from the XML payload

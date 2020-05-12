@@ -66,7 +66,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + "Content-Type: text/html;charset=UTF-8\r\n"
                         + "Content-Length: 0\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -83,7 +83,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -99,7 +99,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -123,7 +123,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -142,7 +142,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(HEADER_METACHARSET_MISMATCH));
@@ -174,7 +174,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
@@ -204,7 +204,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(HEADER_METACONTENTYPE_MISMATCH));
@@ -233,7 +233,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(HEADER_METACHARSET_MISMATCH));
@@ -270,7 +270,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
         assertThat(
@@ -300,7 +300,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -318,7 +318,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
                         + msg.getResponseBody().length()
                         + "\r\n");
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(

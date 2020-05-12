@@ -4,9 +4,24 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Command Injection, Test Path Traversal, Test Cross Site ScriptV2 and Remote File Include rules are updated to include payloads for Null Byte Injection (Issue 3877).
+- Updated owasp.org references (Issue 5962).
 
+### Fixed
+- Fix typo in the help page.
+- Use correct risk (`HIGH`) in External Redirect, to run earlier in the scan.
+- Correct tech check in SQL Injection scan rule, which could cause it to be skipped with imported contexts (Issue 5918).
+
+## [34] - 2020-01-17
+### Added
+- Add info and repo URLs.
+- Add links to the code in the help.
+
+### Changed
 - Improved PowerShell injection control patterns to reduce false positives.
 - Maintenance changes.
+- Issue 5271: Fix SQLi false positive (and potential false negative) when response bodies contain injection strings.
 
 ## [33] - 2019-06-07
 
@@ -46,7 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Issue 1365: Additional Path Traversal detection.
 - Correct alert's evidence/attack of Parameter Tampering (Issue 3524).
-- Fix Path Traversal false positives when etc is a substring (Issue 3735).
+- Fix Path Traversal false positives when `etc` is a substring (Issue 3735).
 - Code changes for Java 9 (Issue 2602).
 - TestSQLInjection Modifications to improve handling of injected math expressions and reflected params (Issue 3139).
 
@@ -191,4 +206,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[34]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v33

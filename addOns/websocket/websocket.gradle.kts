@@ -1,15 +1,16 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "21"
+version = "22"
 description = "Allows you to inspect WebSocket communication."
 
 zapAddOn {
     addOnName.set("WebSockets")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.8.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/websockets/")
         classnames {
             restricted.set(listOf("org.zaproxy.zap.extension.websocket.fuzz"))
         }

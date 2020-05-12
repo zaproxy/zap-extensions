@@ -1,12 +1,18 @@
 version = "2"
-description = "list vulnerabilities from known databases"
+description = "Lists vulnerabilities from known databases"
 
 zapAddOn {
-    addOnName.set("VulnCheck Extension")
-    zapVersion.set("2.5.0")
+    addOnName.set("VulnCheck")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/vulncheck/")
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

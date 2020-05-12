@@ -40,14 +40,13 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 
     // wasc_10 is Denial of Service - well, its just an example ;)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(ExampleSimplePassiveScanner.class);
 
     private Random rnd = new Random();
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -80,22 +79,13 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
         // For this example we're just going to raise the alert at random!
 
         if (rnd.nextInt(10) == 0) {
-            Alert alert =
-                    new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName());
-            alert.setDetail(
-                    getDescription(),
-                    msg.getRequestHeader().getURI().toString(),
-                    "", // Param
-                    "", // Attack
-                    "", // Other info
-                    getSolution(),
-                    getReference(),
-                    "", // Evidence
-                    0, // CWE Id
-                    0, // WASC Id
-                    msg);
-
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setRisk(Alert.RISK_MEDIUM)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getDescription())
+                    .setSolution(getSolution())
+                    .setReference(getReference())
+                    .raise();
         }
 
         if (logger.isDebugEnabled()) {

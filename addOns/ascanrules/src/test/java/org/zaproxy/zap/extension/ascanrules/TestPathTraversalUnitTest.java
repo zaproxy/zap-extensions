@@ -33,6 +33,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -51,7 +53,7 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
             case HIGH:
                 return recommendMax + 7;
             case INSANE:
-                return recommendMax;
+                return recommendMax + 9;
         }
     }
 
@@ -149,6 +151,36 @@ public class TestPathTraversalUnitTest extends ActiveScannerAppParamTest<TestPat
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseHasPasswdFileContentAndPayloadIsNullByteBased()
+            throws HttpMalformedHeaderException {
+        // Given
+        NullByteVulnerableServerHandler vulnServerHandler =
+                new NullByteVulnerableServerHandler("/", "p", Tech.Linux);
+        nano.addHandler(vulnServerHandler);
+        rule.init(getHttpMessage("/?p=a"), parent);
+        rule.setAttackStrength(AttackStrength.INSANE);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseHasSystemINIFileContentAndPayloadIsNullByteBased()
+            throws HttpMalformedHeaderException {
+        // Given
+        NullByteVulnerableServerHandler vulnServerHandler =
+                new NullByteVulnerableServerHandler("/", "p", Tech.Windows);
+        nano.addHandler(vulnServerHandler);
+        rule.init(getHttpMessage("/?p=a"), parent);
+        rule.setAttackStrength(AttackStrength.INSANE);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
     }
 
     private abstract static class ListDirsOnAttack extends NanoServerHandler {

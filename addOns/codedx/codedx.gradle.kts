@@ -3,11 +3,11 @@ description = "Includes request and response data in XML reports and provides th
 
 zapAddOn {
     addOnName.set("Code Dx Extension")
-    zapVersion.set("2.5.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("Code Dx, Inc.")
-        url.set("https://www.codedx.com/")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/code-dx/")
     }
 }
 

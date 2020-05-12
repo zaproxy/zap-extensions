@@ -55,7 +55,7 @@ public class InPageBannerInfoLeakScannerUnitTest
         HttpMessage msg = createMessage("");
         msg.getResponseHeader().setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -66,7 +66,7 @@ public class InPageBannerInfoLeakScannerUnitTest
         String squidBanner = "Squid/2.5.STABLE4";
         HttpMessage msg = createMessage(squidBanner);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Squid/2.5"));
@@ -79,7 +79,7 @@ public class InPageBannerInfoLeakScannerUnitTest
         HttpMessage msg = createMessage(apacheBanner);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -93,7 +93,7 @@ public class InPageBannerInfoLeakScannerUnitTest
         msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
         rule.setAlertThreshold(AlertThreshold.LOW);
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Jetty://9.4"));

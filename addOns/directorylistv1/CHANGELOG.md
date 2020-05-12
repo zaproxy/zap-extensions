@@ -5,8 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.9.0.
+
+## [4] - 2020-01-17
+### Added
+- Add help.
+- Add repo URL.
+
+### Changed
 - Update minimum ZAP version to 2.5.0.
-- Update info URL of the add-on.
+- Change info URL to link to the site.
 
 ## 3 - 2015-12-04
 
@@ -21,3 +29,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[4]: https://github.com/zaproxy/zap-extensions/releases/directorylistv1-v4

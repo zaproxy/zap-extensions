@@ -70,8 +70,8 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
     public void init(Context context) {
         this.removeAllFields();
 
-        usersSelectTable = new UsersMultiSelectTable(context.getIndex());
-        unauthenticatedUser = new User(context.getIndex(), UNAUTHENTICATED_USER_NAME);
+        usersSelectTable = new UsersMultiSelectTable(context.getId());
+        unauthenticatedUser = new User(context.getId(), UNAUTHENTICATED_USER_NAME);
         usersSelectTable.addCustomUser(unauthenticatedUser);
 
         this.addContextSelectField(FIELD_CONTEXT, context);

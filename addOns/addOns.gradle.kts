@@ -1,4 +1,5 @@
 import java.nio.charset.StandardCharsets
+import java.util.Locale
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.apigen.ApiClientGenExtension
@@ -6,52 +7,19 @@ import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.addon.misc.ConvertMarkdownToHtml
 import org.zaproxy.gradle.addon.misc.CreateGitHubRelease
 import org.zaproxy.gradle.addon.misc.ExtractLatestChangesFromChangelog
-import org.zaproxy.gradle.addon.wiki.WikiGenExtension
 
 plugins {
     jacoco
-    id("org.zaproxy.add-on") version "0.2.0" apply false
+    id("org.zaproxy.add-on") version "0.4.0" apply false
 }
 
 description = "Common configuration of the add-ons."
-
-val zapCoreHelpWikiDir = "$rootDir/../zap-core-help-wiki/"
-val zapExtensionsWikiDir = "$rootDir/../zap-extensions-wiki/"
 
 val parentProjects = listOf(
     "webdrivers"
 )
 
-val addOnsInZapCoreHelp = listOf(
-    "alertFilters",
-    "ascanrules",
-    "bruteforce",
-    "coreLang",
-    "diff",
-    "directorylistv1",
-    "fuzz",
-    "gettingStarted",
-    "importurls",
-    "invoke",
-    "onlineMenu",
-    "pscanrules",
-    "quickstart",
-    "replacer",
-    "reveal",
-    "saverawmessage",
-    "savexmlmessage",
-    "scripts",
-    "selenium",
-    "spiderAjax",
-    "tips",
-    "webdriverlinux",
-    "webdrivermacos",
-    "webdriverwindows",
-    "websocket",
-    "zest"
-)
-
-val jacocoToolVersion = "0.8.4"
+val jacocoToolVersion = "0.8.5"
 jacoco {
     toolVersion = jacocoToolVersion
 }
@@ -74,18 +42,14 @@ subprojects {
         toolVersion = jacocoToolVersion
     }
 
-    val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.8.0"))
+    val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.9.0"))
 
     zapAddOn {
         releaseLink.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v@CURRENT_VERSION@" })
 
         manifest {
             changesFile.set(tasks.named<ConvertMarkdownToHtml>("generateManifestChanges").flatMap { it.html })
-        }
-
-        wikiGen {
-            wikiFilesPrefix.set("HelpAddons${zapAddOn.addOnId.get().capitalize()}")
-            wikiDir.set(project.provider { project.layout.projectDirectory.dir(if (addOnsInZapCoreHelp.contains(zapAddOn.addOnId.get())) zapCoreHelpWikiDir else zapExtensionsWikiDir) })
+            repo.set("https://github.com/zaproxy/zap-extensions/")
         }
 
         apiClientGen {
@@ -93,6 +57,26 @@ subprojects {
                 setFrom(apiGenClasspath)
                 from(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
+        }
+    }
+}
+
+tasks.register("reportMissingHelp") {
+    description = "Reports the add-ons that do not have help pages."
+    doLast {
+        val addOns = mutableListOf<AddOnPluginExtension>()
+        subprojects.forEach {
+            it.plugins.withType(AddOnPlugin::class) {
+                if (!File(it.projectDir, "src/main/javahelp").exists()) {
+                    addOns.add(it.zapAddOn)
+                }
+            }
+        }
+        if (addOns.isEmpty()) {
+            println("All add-ons have help.")
+        } else {
+            println("The following add-ons do not have help:")
+            addOns.forEach { println("${it.addOnId.get()} (${it.addOnStatus.get().toString().toLowerCase(Locale.ROOT)})") }
         }
     }
 }
@@ -197,9 +181,6 @@ val Project.zapAddOn: AddOnPluginExtension get() =
 
 fun AddOnPluginExtension.manifest(configure: ManifestExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("manifest", configure)
-
-fun AddOnPluginExtension.wikiGen(configure: WikiGenExtension.() -> Unit): Unit =
-    (this as ExtensionAware).extensions.configure("wikiGen", configure)
 
 fun AddOnPluginExtension.apiClientGen(configure: ApiClientGenExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("apiClientGen", configure)

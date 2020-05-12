@@ -10,10 +10,11 @@ tasks.withType<JavaCompile> {
 zapAddOn {
     addOnName.set("Token Generation and Analysis")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.6.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/token-generator/")
     }
 }
 

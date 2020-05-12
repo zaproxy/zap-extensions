@@ -8,10 +8,14 @@ common-unix-httpd-log-locations.fuzz.txt
 common-windows-httpd-log-locations.fuzz.txt
 * To exploit a lfi bug, you have to get code into a local file. This list contains a list of common windows logfile locations based on common packages formats.
 
+JHADDIX_LFI.txt
+This file contains many common locations you might have write access to. It's not useful to fuzz it as-is, more to extract the applicable parts, create any possible variants, and use a customized list to hunt for including it. 
+
 For more details:
-* http://www.wtfchan.org/~evil1/Web-Shells-rev2.pdf
+* https://github.com/fuzzdb-project/fuzzdb/blob/master/docs/misc/Web-Shells-rev2.pdf
 
 other tools:
-* fimap http://code.google.com/p/fimap/
+* fimap https://tha-imax.de/git/root/fimap
+  * how-to http://kaoticcreations.blogspot.com/2011/08/automated-lfirfi-scanning-exploiting.html
 
 

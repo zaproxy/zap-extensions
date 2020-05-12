@@ -1,15 +1,16 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "27"
+version = "29"
 description = "Provides a tab which allows you to quickly test a target application"
 
 zapAddOn {
     addOnName.set("Quick Start")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/quick-start/")
         extensions {
             register("org.zaproxy.zap.extension.quickstart.ajaxspider.ExtensionQuickStartAjaxSpider") {
                 classnames {

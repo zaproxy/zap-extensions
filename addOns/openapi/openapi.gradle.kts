@@ -1,12 +1,16 @@
-version = "14"
-description = "Imports and spiders Open API definitions."
+import org.zaproxy.gradle.addon.AddOnStatus
+
+version = "16"
+description = "Imports and spiders OpenAPI definitions."
 
 zapAddOn {
     addOnName.set("OpenAPI Support")
-    zapVersion.set("2.8.0")
+    addOnStatus.set(AddOnStatus.BETA)
+    zapVersion.set("2.9.0")
 
     manifest {
-        author.set("ZAP Core Team plus Joanna Bona, Artur Grzesica, Markus Kiss, Michal Materniak and Marcin Spiewak")
+        author.set("ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak and Marcin Spiewak")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/openapi-support/")
     }
 
     apiClientGen {
@@ -24,9 +28,8 @@ configurations {
 }
 
 dependencies {
-    compileOnly("org.glassfish.jaxb:jaxb-runtime:2.3.2")
-    implementation("io.swagger:swagger-parser:1.0.44")
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.44") {
+    implementation("io.swagger.parser.v3:swagger-parser:2.0.18")
+    implementation("io.swagger:swagger-compat-spec-parser:1.0.50") {
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
