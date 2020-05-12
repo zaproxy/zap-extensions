@@ -61,7 +61,9 @@ public class UserHttpFuzzerMessageProcessorUIHandler
                 session.getContextsForUrl(message.getRequestHeader().getURI().toString());
         for (Context context : contexts) {
             List<User> users =
-                    extensionUserManagement.getContextUserAuthManager(context.getId()).getUsers();
+                    extensionUserManagement
+                            .getContextUserAuthManager(context.getIndex())
+                            .getUsers();
             if (!users.isEmpty()) {
                 return true;
             }
@@ -227,7 +229,7 @@ public class UserHttpFuzzerMessageProcessorUIHandler
             for (Context context : contexts) {
                 List<User> users =
                         extensionUserManagement
-                                .getContextUserAuthManager(context.getId())
+                                .getContextUserAuthManager(context.getIndex())
                                 .getUsers();
                 if (!users.isEmpty()) {
                     contextsComboBox.addItem(new ContextUI(context, users));
@@ -284,7 +286,7 @@ public class UserHttpFuzzerMessageProcessorUIHandler
 
         private boolean setSelectedContext(int contextId) {
             for (int i = 0; i < contextsComboBox.getModel().getSize(); i++) {
-                if (contextId == contextsComboBox.getModel().getElementAt(i).getId()) {
+                if (contextId == contextsComboBox.getModel().getElementAt(i).getIndex()) {
                     contextsComboBox.setSelectedIndex(i);
                     return true;
                 }
@@ -325,8 +327,8 @@ public class UserHttpFuzzerMessageProcessorUIHandler
             this.users = Collections.emptyList();
         }
 
-        public int getId() {
-            return this.context.getId();
+        public int getIndex() {
+            return this.context.getIndex();
         }
 
         @Override
