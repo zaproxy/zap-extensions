@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 - 'Insecure Component' was deprecated and removed (Issue 5788).
+- 'Modern Web Application' scan rule was removed in being promoted to Beta.
 
 ## [26] - 2019-12-16
 
