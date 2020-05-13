@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.quickstart.PlugableSpider;
 import org.zaproxy.zap.extension.quickstart.QuickStartBackgroundPanel;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
@@ -41,7 +42,6 @@ import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class AjaxSpiderExplorer implements PlugableSpider {
@@ -62,8 +62,12 @@ public class AjaxSpiderExplorer implements PlugableSpider {
     @Override
     public void startScan(URI uri) {
         ExtensionAjax extAjax = this.getExtAjax();
-        AjaxSpiderParam options = new AjaxSpiderParam();
-        options.load(new ZapXmlConfiguration());
+        AjaxSpiderParam options =
+                (AjaxSpiderParam)
+                        Model.getSingleton()
+                                .getOptionsParam()
+                                .getParamSet(AjaxSpiderParam.class)
+                                .clone();
         ProvidedBrowserUI browserUi = (ProvidedBrowserUI) getBrowserComboBox().getSelectedItem();
         options.setBrowserId(browserUi.getBrowser().getId());
         AjaxSpiderTarget.Builder builder =
