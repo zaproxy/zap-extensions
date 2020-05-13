@@ -40,13 +40,18 @@ public class AdvancedEncoderConfig {
     private static final String OUTPUT_PANEL_NAME_KEY = "name";
     private static final String OUTPUT_PANEL_SCRIPT_KEY = "processorId";
     private static final String CONFIG_FILE_NAME = "advanced-encoder-config.xml";
+    private static final String DEFAULT_CONFIG_FILE_NAME = "advanced-encoder-default.xml";
 
     public static List<TabModel> loadConfig() throws ConfigurationException, IOException {
-        return loadConfig(getConfigFile());
+        return loadConfig(getConfigFile(CONFIG_FILE_NAME));
     }
 
-    private static File getConfigFile() throws IOException {
-        File file = new File(Constant.getZapHome() + "/" + CONFIG_FILE_NAME);
+    public static List<TabModel> resetConfig() throws ConfigurationException, IOException {
+        return loadConfig(getConfigFile(DEFAULT_CONFIG_FILE_NAME));
+    }
+
+    private static File getConfigFile(String configName) throws IOException {
+        File file = new File(Constant.getZapHome() + "/" + configName);
         if (!file.exists()) {
             file.createNewFile();
         }
@@ -82,7 +87,7 @@ public class AdvancedEncoderConfig {
     }
 
     public static void saveConfig(List<TabModel> tabs) throws ConfigurationException, IOException {
-        saveConfig(getConfigFile(), tabs);
+        saveConfig(getConfigFile(CONFIG_FILE_NAME), tabs);
     }
 
     public static void saveConfig(File file, List<TabModel> tabs) throws ConfigurationException {

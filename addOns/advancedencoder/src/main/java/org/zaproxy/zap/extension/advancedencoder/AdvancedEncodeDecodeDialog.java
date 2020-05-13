@@ -26,6 +26,7 @@ import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -42,6 +43,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.AbstractFrame;
@@ -70,6 +72,8 @@ public class AdvancedEncodeDecodeDialog extends AbstractFrame implements WindowL
     private AddEncodeDecodeOutputPanelDialog addOutputDialog;
     private JButton deleteSelectedTabButton;
     private int globalOutputPanelIndex;
+    private JButton resetButton;
+    private static List<TabModel> defaultTabModels = new ArrayList<>();
 
     /**
      * @param tabModels
@@ -80,6 +84,7 @@ public class AdvancedEncodeDecodeDialog extends AbstractFrame implements WindowL
         encodeDecodeProcessors = new EncodeDecodeProcessors();
         initialize();
         setTabs(tabModels);
+        defaultTabModels.addAll(tabModels);
     }
 
     public void setTabs(List<TabModel> tabModels) {
@@ -91,6 +96,29 @@ public class AdvancedEncodeDecodeDialog extends AbstractFrame implements WindowL
             List<OutputPanelModel> outputPanels = tabModel.getOutputPanels();
             tabModel.setOutputPanels(new ArrayList<>());
             addTab(tabModel, outputPanels);
+        }
+    }
+
+    private void resetTabs() {
+        getTabbedPane().removeAll();
+        tabs = new ArrayList<>();
+        defaultTabModels = new ArrayList<>();
+
+        try {
+            defaultTabModels.addAll(AdvancedEncoderConfig.resetConfig());
+        } catch (ConfigurationException | IOException e) {
+            LOGGER.warn("There was a problem loading the default advanced encoder config.", e);
+        }
+        for (TabModel tabModel : defaultTabModels) {
+            List<OutputPanelModel> outputPanels = tabModel.getOutputPanels();
+            tabModel.setOutputPanels(new ArrayList<>());
+            addTab(tabModel, outputPanels);
+        }
+
+        try {
+            AdvancedEncoderConfig.saveConfig(tabs);
+        } catch (ConfigurationException | IOException e) {
+            LOGGER.warn("There was a problem saving the advanced encoder config.", e);
         }
     }
 
@@ -128,11 +156,15 @@ public class AdvancedEncodeDecodeDialog extends AbstractFrame implements WindowL
             panelToolbar.add(getAddOutputButton(), gbc);
             ++gbc.gridx;
 
+            panelToolbar.add(new JLabel(), gbc);
+            ++gbc.gridx;
+
             gbc.weightx = 1.0;
             gbc.weighty = 1.0;
             gbc.anchor = java.awt.GridBagConstraints.EAST;
-            gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
             panelToolbar.add(new JLabel(), gbc);
+            ++gbc.gridx;
+            panelToolbar.add(getResetButton(), gbc);
         }
         return panelToolbar;
     }
@@ -150,6 +182,19 @@ public class AdvancedEncodeDecodeDialog extends AbstractFrame implements WindowL
             DisplayUtils.scaleIcon(deleteSelectedTabButton);
         }
         return deleteSelectedTabButton;
+    }
+
+    private JButton getResetButton() {
+        if (resetButton == null) {
+            resetButton =
+                    new JButton(
+                            Constant.messages.getString(
+                                    "advancedencoder.dialog.reset.button.title"));
+            resetButton.addActionListener(e -> resetTabs());
+            resetButton.setToolTipText(
+                    Constant.messages.getString("advancedencoder.dialog.reset.button.tooltip"));
+        }
+        return resetButton;
     }
 
     private void deleteSelectedTab() {
@@ -195,7 +240,13 @@ public class AdvancedEncodeDecodeDialog extends AbstractFrame implements WindowL
 
         final JPanel jPanel = new JPanel();
         jPanel.setLayout(new GridBagLayout());
-        getTabbedPane().insertTab(createTabTitle(tabModel), null, jPanel, null, tabIndex);
+        getTabbedPane()
+                .insertTab(
+                        createTabTitle(tabModel),
+                        null,
+                        jPanel,
+                        null,
+                        getTabbedPane().getTabCount());
         getTabbedPane().setSelectedIndex(tabIndex);
 
         for (OutputPanelModel outputPanel : outputPanelModels) {
