@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.advancedencoder;
 
 import java.awt.Frame;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +56,6 @@ public class ExtensionAdvancedEncoder extends ExtensionAdaptor {
     }
 
     private static ScriptType advEncodeScriptType = null;
-    private ExtensionScript extensionScript = null;
     private AdvancedEncodeDecodeDialog encodeDecodeDialog = null;
     private PopupAdvancedEncoderMenu popupEncodeMenu = null;
     private ZapMenuItem toolsMenuEncoder = null;
@@ -189,7 +186,7 @@ public class ExtensionAdvancedEncoder extends ExtensionAdaptor {
         super.unload();
         ExtensionScript extScript = getExtensionScript();
         if (extScript != null) {
-            extScript.removeScripType(getAdvancedEncoderScriptType());
+            extScript.removeScriptType(getAdvancedEncoderScriptType());
         }
     }
 
@@ -206,15 +203,6 @@ public class ExtensionAdvancedEncoder extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("advancedencoder.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

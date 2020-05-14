@@ -9,6 +9,10 @@
                 </outputpanel>
                 <outputpanel>
                     <name/>
+                    <processorId>advancedencoder.predefined.base64urlencode</processorId>
+                </outputpanel>
+                <outputpanel>
+                    <name/>
                     <processorId>advancedencoder.predefined.urlencode</processorId>
                 </outputpanel>
                 <outputpanel>
@@ -31,6 +35,10 @@
                 <outputpanel>
                     <name/>
                     <processorId>advancedencoder.predefined.base64decode</processorId>
+                </outputpanel>
+                <outputpanel>
+                    <name/>
+                    <processorId>advancedencoder.predefined.base64urldecode</processorId>
                 </outputpanel>
                 <outputpanel>
                     <name/>

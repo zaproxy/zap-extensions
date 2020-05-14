@@ -26,11 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.advancedencoder.ExtensionAdvancedEncoder;
 import org.zaproxy.zap.extension.advancedencoder.processors.predefined.Base64Decoder;
 import org.zaproxy.zap.extension.advancedencoder.processors.predefined.Base64Encoder;
+import org.zaproxy.zap.extension.advancedencoder.processors.predefined.Base64UrlDecoder;
+import org.zaproxy.zap.extension.advancedencoder.processors.predefined.Base64UrlEncoder;
 import org.zaproxy.zap.extension.advancedencoder.processors.predefined.HexStringDecoder;
 import org.zaproxy.zap.extension.advancedencoder.processors.predefined.HexStringEncoder;
 import org.zaproxy.zap.extension.advancedencoder.processors.predefined.HtmlStringDecoder;
@@ -52,12 +53,14 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 public class EncodeDecodeProcessors {
 
     public static final String PREDEFINED_PREFIX = "advancedencoder.predefined.";
-    private static final Logger LOGGER = Logger.getLogger(EncodeDecodeProcessors.class);
     private static List<EncodeDecodeProcessorItem> predefinedProcessors = new ArrayList<>();
 
     static {
         addPredefined("base64decode", new Base64Decoder());
         addPredefined("base64encode", new Base64Encoder());
+
+        addPredefined("base64urldecode", new Base64UrlDecoder());
+        addPredefined("base64urlencode", new Base64UrlEncoder());
 
         addPredefined("hexdecode", new HexStringDecoder());
         addPredefined("hexencode", new HexStringEncoder());
