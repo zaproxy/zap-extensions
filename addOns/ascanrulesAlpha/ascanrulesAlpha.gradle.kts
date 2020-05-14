@@ -8,6 +8,13 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/active-scan-rules-alpha/")
+
+        dependencies {
+            addOns {
+                register("commonlib")
+            }
+        }
+
         extensions {
             register("org.zaproxy.zap.extension.ascanrulesAlpha.payloader.ExtensionPayloader") {
                 classnames {
@@ -26,10 +33,10 @@ zapAddOn {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
-    implementation(project(":sharedutils"))
-
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
 }

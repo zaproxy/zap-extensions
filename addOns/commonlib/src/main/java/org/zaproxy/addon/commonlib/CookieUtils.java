@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.sharedutils;
+package org.zaproxy.addon.commonlib;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,8 +31,12 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
-/** Utility class to extract/parse/check Set-Cookie header values. */
-public class CookieUtils {
+/**
+ * Utility class to extract/parse/check Set-Cookie header values.
+ *
+ * @since 1.0.0
+ */
+public final class CookieUtils {
 
     private static final int NOT_FOUND = -1;
     private static final Logger LOGGER = Logger.getLogger(CookieUtils.class);
@@ -75,7 +79,7 @@ public class CookieUtils {
     }
 
     /**
-     * Return the value of the specified attribute in the given Set-Cookie header value, or null if
+     * Returns the value of the specified attribute in the given Set-Cookie header value, or null if
      * it is not present.
      *
      * @param headerValue the value of the header
@@ -177,8 +181,17 @@ public class CookieUtils {
         }
     }
 
+    /**
+     * Returns the set of cookies to ignore when scanning.
+     *
+     * <p>The name of the cookies are obtained from the configuration rule {@link
+     * RuleConfigParam#RULE_COOKIE_IGNORE_LIST}.
+     *
+     * @param model the core model.
+     * @return a set containing the cookies to ignore.
+     */
     public static Set<String> getCookieIgnoreList(Model model) {
-        Set<String> ignoreList = new HashSet<String>();
+        Set<String> ignoreList = new HashSet<>();
         String ignoreConf =
                 model.getOptionsParam()
                         .getConfig()

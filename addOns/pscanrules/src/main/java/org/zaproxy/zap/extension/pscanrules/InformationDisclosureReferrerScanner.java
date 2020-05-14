@@ -35,10 +35,11 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.PiiUtils;
+import org.zaproxy.addon.commonlib.binlist.BinList;
+import org.zaproxy.addon.commonlib.binlist.BinRecord;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.sharedutils.PiiUtils;
-import org.zaproxy.zap.sharedutils.binlist.BinRecord;
 
 public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
@@ -80,7 +81,7 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
                             msg,
                             evidence,
                             Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"),
-                            PiiUtils.getBinRecord(evidence));
+                            BinList.getSingleton().get(evidence));
                 }
                 if ((evidence = doesContainEmailAddress(referrerValue)) != null) {
                     this.raiseAlert(

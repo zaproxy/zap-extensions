@@ -17,15 +17,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.sharedutils;
+package org.zaproxy.addon.commonlib;
 
-import org.zaproxy.zap.sharedutils.binlist.BinList;
-import org.zaproxy.zap.sharedutils.binlist.BinRecord;
-
-/** A utility class for dealing with PII. */
+/**
+ * A utility class for dealing with PII.
+ *
+ * @since 1.0.0
+ */
 public final class PiiUtils {
-
-    private static BinList binList;
 
     private PiiUtils() {}
 
@@ -50,16 +49,5 @@ public final class PiiUtils {
             sum += digit;
         }
         return (sum % 10) == 0;
-    }
-
-    private static BinList getBinList() {
-        if (binList == null) {
-            binList = new BinList();
-        }
-        return binList;
-    }
-
-    public static BinRecord getBinRecord(String candidate) {
-        return getBinList().get(candidate);
     }
 }
