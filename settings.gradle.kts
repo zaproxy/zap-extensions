@@ -60,6 +60,7 @@ var addOns = listOf(
     "regextester",
     "replacer",
     "requester",
+    "retire",
     "reveal",
     "revisit",
     "saml",
