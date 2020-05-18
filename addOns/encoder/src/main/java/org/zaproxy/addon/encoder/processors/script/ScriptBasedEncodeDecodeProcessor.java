@@ -41,7 +41,9 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
     private EncodeDecodeScript cachedScript;
 
     public ScriptBasedEncodeDecodeProcessor(String scriptName) {
-        if (scriptName == null) throw new IllegalArgumentException("scriptName is null");
+        if (scriptName == null) {
+            throw new IllegalArgumentException("scriptName was null");
+        }
         this.scriptName = scriptName;
     }
 
@@ -75,7 +77,7 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
             } else {
                 String errorMsg =
                         Constant.messages.getString(
-                                "ascan.scripts.interface.active.error", scriptWrapper.getName());
+                                "encoder.scripts.interface.error", scriptWrapper.getName());
                 ExtensionEncoder.getExtensionScript()
                         .handleFailedScriptInterface(scriptWrapper, errorMsg);
                 throw new Exception(errorMsg);
@@ -95,9 +97,6 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
         }
 
         ExtensionScript extensionScript = ExtensionEncoder.getExtensionScript();
-        if (extensionScript == null) {
-            return null;
-        }
 
         EncodeDecodeScript encodeDecodeScript =
                 extensionScript.getInterface(scriptWrapper, EncodeDecodeScript.class);
@@ -111,7 +110,7 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
             MessageDigest md = MessageDigest.getInstance("MD5");
             return new String(Hex.encodeHex(md.digest(value.getBytes())));
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            return "";
         }
     }
 }

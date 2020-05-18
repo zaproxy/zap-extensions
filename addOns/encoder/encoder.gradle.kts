@@ -1,5 +1,5 @@
-version = "1.0.0"
-description = "Adds support for scriptable encoders to ZAP"
+version = "0.1.0"
+description = "Adds encode/decode/hash dialog and support for scripted processors as well"
 
 zapAddOn {
     addOnName.set("Encoder")

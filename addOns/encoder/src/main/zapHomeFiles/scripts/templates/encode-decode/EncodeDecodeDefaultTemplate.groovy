@@ -1,4 +1,4 @@
-import org.zaproxy.zap.extension.advancedencoder.processors.EncodeDecodeResult
+import org.zaproxy.addon.edencoder.processors.EncodeDecodeResult
 import groovy.transform.Field
 
 @Field final int test =  1

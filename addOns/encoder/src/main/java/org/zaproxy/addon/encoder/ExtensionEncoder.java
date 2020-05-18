@@ -55,7 +55,7 @@ public class ExtensionEncoder extends ExtensionAdaptor {
         ICON = createIcon("encoder.png");
     }
 
-    private static ScriptType advEncodeScriptType = null;
+    private ScriptType encodeScriptType = null;
     private EncodeDecodeDialog encodeDecodeDialog = null;
     private PopupEncoderMenu popupEncodeMenu = null;
     private ZapMenuItem toolsMenuEncoder = null;
@@ -81,23 +81,20 @@ public class ExtensionEncoder extends ExtensionAdaptor {
 
     public static List<ScriptWrapper> getEncodeDecodeScripts() {
         ExtensionScript extensionScript = getExtensionScript();
-        if (extensionScript == null) {
-            return new ArrayList<>();
-        }
 
         return extensionScript.getScripts(ExtensionEncoder.SCRIPT_TYPE_ENCODE_DECODE);
     }
 
     private ScriptType getEncoderScriptType() {
-        if (advEncodeScriptType == null) {
-            advEncodeScriptType =
+        if (encodeScriptType == null) {
+            encodeScriptType =
                     new ScriptType(
                             SCRIPT_TYPE_ENCODE_DECODE,
                             "encoder.scripts.type.encodedecode",
                             createIcon("script-encoder.png"),
                             true);
         }
-        return advEncodeScriptType;
+        return encodeScriptType;
     }
 
     @Override
@@ -111,9 +108,7 @@ public class ExtensionEncoder extends ExtensionAdaptor {
         }
 
         ExtensionScript extScript = getExtensionScript();
-        if (extScript != null) {
-            extScript.registerScriptType(getEncoderScriptType());
-        }
+        extScript.registerScriptType(getEncoderScriptType());
     }
 
     private ZapMenuItem getToolsMenuItemEncoder() {
@@ -183,9 +178,7 @@ public class ExtensionEncoder extends ExtensionAdaptor {
     public void unload() {
         super.unload();
         ExtensionScript extScript = getExtensionScript();
-        if (extScript != null) {
-            extScript.removeScriptType(getEncoderScriptType());
-        }
+        extScript.removeScriptType(getEncoderScriptType());
     }
 
     @Override

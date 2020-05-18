@@ -1,4 +1,4 @@
-var EncodeDecodeResult = Java.type("org.zaproxy.zap.extension.advancedencoder.processors.EncodeDecodeResult");
+var EncodeDecodeResult = Java.type("org.zaproxy.addon.encoder.processors.EncodeDecodeResult");
 
 /**
  * Process the input value and return the encoded/decoded/hashed etc. value
