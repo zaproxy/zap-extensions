@@ -7,7 +7,6 @@ include("testutils")
 // Keep the add-ons in alphabetic order.
 var addOns = listOf(
     "accessControl",
-    "advancedencoder",
     "alertFilters",
     "alertReport",
     "allinonenotes",
@@ -33,6 +32,7 @@ var addOns = listOf(
     "directorylistv2_3",
     "directorylistv2_3_lc",
     "domxss",
+    "encoder",
     "exportreport",
     "formhandler",
     "frontendscanner",
