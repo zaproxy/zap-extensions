@@ -28,9 +28,9 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CookieUtils;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.sharedutils.CookieUtils;
 
 public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 

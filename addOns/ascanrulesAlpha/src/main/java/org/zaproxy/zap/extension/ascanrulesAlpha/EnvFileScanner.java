@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
-import org.zaproxy.zap.sharedutils.AbstractAppFilePlugin;
+import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
 
 public class EnvFileScanner extends AbstractAppFilePlugin {
 

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.sharedutils;
+package org.zaproxy.addon.commonlib;
 
 import java.io.IOException;
 import org.apache.commons.httpclient.URI;
@@ -31,12 +31,26 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
+/**
+ * An {@code AbstractAppPlugin} that checks for the presence of a file.
+ *
+ * @since 1.0.0
+ */
 public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
 
     private static final Logger LOG = Logger.getLogger(AbstractAppFilePlugin.class);
     private final String filename;
     private final String messagePrefix;
 
+    /**
+     * Constructs an {@code AbstractAppFilePlugin} with the given file name and messages prefix.
+     *
+     * <p>The message prefix is used to load the messages for the alert and scan rule, from the main
+     * resource bundle ({@link Constant#messages}).
+     *
+     * @param filename the name of the file to check if it's present.
+     * @param messagePrefix the messages prefix.
+     */
     protected AbstractAppFilePlugin(String filename, String messagePrefix) {
         this.filename = filename;
         this.messagePrefix = messagePrefix;
@@ -174,7 +188,7 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
     /**
      * Always returns false - override to add functionality to detect FPs
      *
-     * @param msg
+     * @param msg the message being scanned (after being sent).
      * @return true if its a false positive
      */
     public boolean isFalsePositive(HttpMessage msg) {
@@ -196,19 +210,12 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
     }
 
     private void raiseAlert(HttpMessage msg, int risk, String otherInfo) {
-        bingo(
-                risk, // Risk
-                Alert.CONFIDENCE_HIGH, // Confidence
-                getName(), // Name
-                getDescription(), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                null, // Param
-                "", // Attack
-                otherInfo, // OtherInfo
-                getSolution(), // Solution
-                msg.getResponseHeader().getPrimeHeader(), // Evidence
-                getCweId(), // CWE ID
-                getWascId(), // WASC ID
-                msg); // HTTPMessage
+        newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setOtherInfo(otherInfo)
+                .setEvidence(msg.getResponseHeader().getPrimeHeader())
+                .setMessage(msg)
+                .raise();
     }
 }

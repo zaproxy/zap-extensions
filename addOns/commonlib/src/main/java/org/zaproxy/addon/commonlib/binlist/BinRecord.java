@@ -17,13 +17,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.sharedutils.binlist;
+package org.zaproxy.addon.commonlib.binlist;
 
-public class BinRecord {
-    String bin;
-    String brand;
-    String category;
-    String issuer;
+/**
+ * A Bank Identification Number (BIN) record.
+ *
+ * <p>Contains information about the bank/issuer of a credit card.
+ *
+ * @since 1.0.0
+ */
+public final class BinRecord {
+    private final String bin;
+    private final String brand;
+    private final String category;
+    private final String issuer;
 
     BinRecord(String bin, String brand, String category, String issuer) {
         this.bin = bin;

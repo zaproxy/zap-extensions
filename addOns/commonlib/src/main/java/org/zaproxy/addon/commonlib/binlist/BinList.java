@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.sharedutils.binlist;
+package org.zaproxy.addon.commonlib.binlist;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,18 +30,39 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.log4j.Logger;
 
-public class BinList {
+/**
+ * The list of {@link BinRecord}s for credit card numbers.
+ *
+ * @since 1.0.0
+ */
+public final class BinList {
 
     private static final Logger LOGGER = Logger.getLogger(BinList.class);
     private static final String BINLIST = "binlist-data.csv";
 
-    private static Trie<String, BinRecord> binList = new PatriciaTrie<>();
+    private static BinList singleton;
 
-    public BinList() {
-        loadList();
+    private Trie<String, BinRecord> trie;
+
+    private BinList() {
+        trie = createTrie();
     }
 
-    private static void loadList() {
+    public static BinList getSingleton() {
+        if (singleton == null) {
+            createSingleton();
+        }
+        return singleton;
+    }
+
+    private static synchronized void createSingleton() {
+        if (singleton == null) {
+            singleton = new BinList();
+        }
+    }
+
+    private static Trie<String, BinRecord> createTrie() {
+        Trie<String, BinRecord> trie = new PatriciaTrie<>();
         Iterable<CSVRecord> records;
         try (InputStream in = BinList.class.getResourceAsStream(BINLIST);
                 BOMInputStream bomStream = new BOMInputStream(in);
@@ -50,14 +71,11 @@ public class BinList {
             records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(inStream).getRecords();
         } catch (NullPointerException | IOException e) {
             LOGGER.warn("Exception while loading: " + BINLIST, e);
-            return;
+            return trie;
         }
-        fillList(records);
-    }
 
-    private static void fillList(Iterable<CSVRecord> records) {
         for (CSVRecord record : records) {
-            binList.put(
+            trie.put(
                     record.get("bin"),
                     new BinRecord(
                             record.get("bin"),
@@ -65,25 +83,31 @@ public class BinList {
                             record.get("category"),
                             record.get("issuer")));
         }
+        return trie;
     }
 
+    /**
+     * Gets the {@code BinRecord} for the given (candidate) credit card number.
+     *
+     * @param candidate the candidate credit card number.
+     * @return the {@code BinRecord}, or {@code null} if no match found.
+     */
     public BinRecord get(String candidate) {
-        BinRecord binRec;
-        binRec = binList.get(candidate);
+        BinRecord binRec = trie.get(candidate);
         // Per https://github.com/iannuttall/binlist-data the collection should have BINs 6-8 but
         // based on my searching there are actually entries 5-8. The following are ordered based
         // on count of occurrence
         if (binRec == null) {
-            binRec = binList.get(candidate.substring(0, 6));
+            binRec = trie.get(candidate.substring(0, 6));
         }
         if (binRec == null) {
-            binRec = binList.get(candidate.substring(0, 8));
+            binRec = trie.get(candidate.substring(0, 8));
         }
         if (binRec == null) {
-            binRec = binList.get(candidate.substring(0, 5));
+            binRec = trie.get(candidate.substring(0, 5));
         }
         if (binRec == null) {
-            binRec = binList.get(candidate.substring(0, 7));
+            binRec = trie.get(candidate.substring(0, 7));
         }
         return binRec;
     }
