@@ -34,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -97,6 +98,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements WindowListener 
             tabModel.setOutputPanels(new ArrayList<>());
             addTab(tabModel, outputPanels);
         }
+        getTabbedPane().setSelectedIndex(0);
     }
 
     private void resetTabs() {
@@ -119,6 +121,13 @@ public class EncodeDecodeDialog extends AbstractFrame implements WindowListener 
             EncoderConfig.saveConfig(tabs);
         } catch (ConfigurationException | IOException e) {
             LOGGER.warn("There was a problem saving the encoder config.", e);
+        }
+
+        if (tabs.size() > 0) {
+            getDeleteSelectedTabButton().setEnabled(true);
+            getAddOutputButton().setEnabled(true);
+            getTabbedPane().setSelectedIndex(0);
+            getInputField().requestFocusInWindow();
         }
     }
 
@@ -188,7 +197,18 @@ public class EncodeDecodeDialog extends AbstractFrame implements WindowListener 
         if (resetButton == null) {
             resetButton =
                     new JButton(Constant.messages.getString("encoder.dialog.reset.button.title"));
-            resetButton.addActionListener(e -> resetTabs());
+            resetButton.addActionListener(
+                    e -> {
+                        int confirm =
+                                View.getSingleton()
+                                        .showConfirmDialog(
+                                                this,
+                                                Constant.messages.getString(
+                                                        "encoder.dialog.reset.confirm"));
+                        if (confirm == JOptionPane.OK_OPTION) {
+                            resetTabs();
+                        }
+                    });
             resetButton.setToolTipText(
                     Constant.messages.getString("encoder.dialog.reset.button.tooltip"));
         }
@@ -197,8 +217,14 @@ public class EncodeDecodeDialog extends AbstractFrame implements WindowListener 
 
     private void deleteSelectedTab() {
         int selectedIndex = getTabbedPane().getSelectedIndex();
-        getTabbedPane().remove(selectedIndex);
-        tabs.remove(selectedIndex);
+        if (selectedIndex != -1) {
+            getTabbedPane().remove(selectedIndex);
+            tabs.remove(selectedIndex);
+        }
+        if (tabs.size() < 1) {
+            getDeleteSelectedTabButton().setEnabled(false);
+            getAddOutputButton().setEnabled(false);
+        }
     }
 
     private JButton getAddTabButton() {
@@ -225,6 +251,12 @@ public class EncodeDecodeDialog extends AbstractFrame implements WindowListener 
             addTab(tabModel, new ArrayList<>());
             SwingUtilities.invokeLater(() -> jPanel.repaint());
         }
+
+        if (tabs.size() > 0) {
+            getDeleteSelectedTabButton().setEnabled(true);
+            getAddOutputButton().setEnabled(true);
+        }
+        getInputField().requestFocusInWindow();
     }
 
     private void addTab(TabModel tabModel, List<OutputPanelModel> outputPanelModels) {
@@ -460,8 +492,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements WindowListener 
                             Constant.messages.getString("encoder.dialog.field.input.label"),
                             TitledBorder.DEFAULT_JUSTIFICATION,
                             TitledBorder.DEFAULT_POSITION,
-                            FontUtils.getFont(FontUtils.Size.standard),
-                            java.awt.Color.black));
+                            FontUtils.getFont(FontUtils.Size.standard)));
 
             final GridBagConstraints gbcToolbar = new GridBagConstraints();
             gbcToolbar.gridx = 0;

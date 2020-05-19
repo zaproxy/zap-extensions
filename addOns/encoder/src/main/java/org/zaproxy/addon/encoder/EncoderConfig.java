@@ -39,7 +39,7 @@ public class EncoderConfig {
     private static final String OUTPUT_PANEL_PATH = OUTPUT_PANELS_KEY + "." + OUTPUT_PANEL_KEY;
     private static final String OUTPUT_PANEL_NAME_KEY = "name";
     private static final String OUTPUT_PANEL_SCRIPT_KEY = "processorId";
-    private static final String CONFIG_BASE = "/addOnData/encoder/config/";
+    private static final String CONFIG_BASE = "addOnData/encoder/config/";
     private static final String CONFIG_FILE_NAME = CONFIG_BASE + "encoder-config.xml";
     private static final String DEFAULT_CONFIG_FILE_NAME = CONFIG_BASE + "encoder-default.xml";
 

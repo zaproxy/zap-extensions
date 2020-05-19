@@ -21,6 +21,7 @@ package org.zaproxy.addon.encoder;
 
 import java.awt.Component;
 import javax.swing.text.JTextComponent;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 
 public class PopupEncoderDeleteOutputPanelMenu extends ExtensionPopupMenuItem {
@@ -46,7 +47,7 @@ public class PopupEncoderDeleteOutputPanelMenu extends ExtensionPopupMenuItem {
 
     /** This method initializes this */
     private void initialize() {
-        this.setText("DElete");
+        this.setText(Constant.messages.getString("encoder.popup.delete"));
     }
 
     @Override
