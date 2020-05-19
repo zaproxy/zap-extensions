@@ -20,11 +20,13 @@
 package org.zaproxy.addon.encoder;
 
 import java.awt.Frame;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
@@ -34,6 +36,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.keyboard.ExtensionKeyboard;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -45,8 +48,11 @@ public class ExtensionEncoder extends ExtensionAdaptor {
     public static final String NAME = "ExtensionEncoder";
     public static final int EXTENSION_ORDER = 87;
     public static final ImageIcon ICON;
+
     private static final Logger LOGGER = Logger.getLogger(ExtensionEncoder.class);
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final String CORE_MENU_IDENTIFIER = "enc2.tools.menu.encdec";
+    private static final String ENCODER_MENU_IDENTIFIER = "encoder.tools.menu.encdec";
 
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
@@ -113,7 +119,10 @@ public class ExtensionEncoder extends ExtensionAdaptor {
 
     private ZapMenuItem getToolsMenuItemEncoder() {
         if (toolsMenuEncoder == null) {
-            toolsMenuEncoder = new ZapMenuItem("encoder.tools.menu.encdec");
+            toolsMenuEncoder =
+                    new ZapMenuItem(
+                            ENCODER_MENU_IDENTIFIER,
+                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_E, 0, false));
             toolsMenuEncoder.addActionListener(e -> showEncodeDecodeDialog(null));
         }
         return toolsMenuEncoder;
@@ -198,5 +207,18 @@ public class ExtensionEncoder extends ExtensionAdaptor {
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return EXTENSION_DEPENDENCIES;
+    }
+
+    @Override
+    public void postInstall() {
+        ExtensionKeyboard keybdExt =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionKeyboard.class);
+        if (keybdExt != null) {
+            KeyStroke coreKs = keybdExt.getShortcut(CORE_MENU_IDENTIFIER);
+            if (coreKs != null) {
+                keybdExt.setShortcut(CORE_MENU_IDENTIFIER, null);
+                keybdExt.setShortcut(ENCODER_MENU_IDENTIFIER, coreKs);
+            }
+        }
     }
 }
