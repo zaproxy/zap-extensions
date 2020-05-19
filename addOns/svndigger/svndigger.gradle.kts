@@ -10,14 +10,19 @@ val processFiles by tasks.registering(ProcessSvnDiggerFiles::class) {
 }
 
 zapAddOn {
-    addOnName.set("SVN Digger files")
+    addOnName.set("SVN Digger Files")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.5.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("http://www.mavitunasecurity.com/blog/svn-digger-better-lists-for-forced-browsing/")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/svn-digger-files/")
         files.from(svndiggerDir)
+
+        helpSet {
+            baseName.set("help%LC%.helpset")
+            localeToken.set("%LC%")
+        }
     }
 }
 

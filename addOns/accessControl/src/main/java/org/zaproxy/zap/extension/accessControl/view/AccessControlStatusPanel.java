@@ -184,7 +184,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
             return;
         }
 
-        this.currentResultsModel = getResultsModel(context.getIndex());
+        this.currentResultsModel = getResultsModel(context.getId());
         this.getScanResultsTable().setModel(this.currentResultsModel);
         this.setScanResultsTableColumnSizes();
     }
@@ -254,7 +254,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
                             try {
                                 generatedFile =
                                         extension.generateAccessControlReport(
-                                                getSelectedContext().getIndex(), targetFile);
+                                                getSelectedContext().getId(), targetFile);
                             } catch (ParserConfigurationException e1) {
                                 log.error("Failed to generate access control report:", e1);
                             }

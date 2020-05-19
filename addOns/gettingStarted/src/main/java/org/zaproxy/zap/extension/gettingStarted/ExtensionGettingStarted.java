@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.gettingStarted;
 
 import java.awt.*;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -97,14 +95,5 @@ public class ExtensionGettingStarted extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("gettingStarted.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

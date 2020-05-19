@@ -63,7 +63,7 @@ public class SourceCodeDisclosureScannerUnitTest
         msg.setResponseBody(CODE_HTML);
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(0));
@@ -75,7 +75,7 @@ public class SourceCodeDisclosureScannerUnitTest
         msg.setResponseBody(wrapWithHTML(CODE_PHP));
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -88,7 +88,7 @@ public class SourceCodeDisclosureScannerUnitTest
         msg.setResponseBody(wrapWithHTML(CODE_SQL));
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));
@@ -101,7 +101,7 @@ public class SourceCodeDisclosureScannerUnitTest
         msg.setResponseBody(wrapWithHTML(CODE_SQL + CODE_PHP));
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), is(1));

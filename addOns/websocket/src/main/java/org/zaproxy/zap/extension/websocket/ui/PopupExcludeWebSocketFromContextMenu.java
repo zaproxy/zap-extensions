@@ -89,12 +89,12 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
             View.getSingleton().getSessionDialog().recreateUISharedContexts(session);
 
             Context uiSharedContext =
-                    View.getSingleton().getSessionDialog().getUISharedContext(context.getIndex());
+                    View.getSingleton().getSessionDialog().getUISharedContext(context.getId());
             uiSharedContext.addExcludeFromContextRegex(url);
 
             View.getSingleton()
                     .showSessionDialog(
-                            session, ContextExcludePanel.getPanelName(context.getIndex()), false);
+                            session, ContextExcludePanel.getPanelName(context.getId()), false);
         }
     }
 

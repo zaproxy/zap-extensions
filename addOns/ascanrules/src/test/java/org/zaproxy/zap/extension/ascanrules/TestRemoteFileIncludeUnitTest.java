@@ -19,12 +19,49 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
+
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
+
 /** Unit test for {@link TestRemoteFileInclude}. */
 public class TestRemoteFileIncludeUnitTest
         extends ActiveScannerAppParamTest<TestRemoteFileInclude> {
 
     @Override
     protected TestRemoteFileInclude createScanner() {
-        return new TestRemoteFileInclude();
+        TestRemoteFileInclude scanner = new TestRemoteFileInclude();
+        scanner.setConfig(new ZapXmlConfiguration());
+        return scanner;
+    }
+
+    @Test
+    public void shouldRaiseAlertIfResponseHasRemoteFileContentAndPayloadIsNullByteBased()
+            throws HttpMalformedHeaderException {
+        // Given
+        NullByteVulnerableServerHandler vulnServerHandler =
+                new NullByteVulnerableServerHandler("/", "p", Tech.Linux) {
+                    protected String getContent(IHTTPSession session) {
+                        String value = getFirstParamValue(session, "p");
+                        if (value.contains(NULL_BYTE_CHARACTER)) {
+                            return "<html><title>Google</title></html>";
+                        } else {
+                            return "<html></html>";
+                        }
+                    }
+                };
+        nano.addHandler(vulnServerHandler);
+        rule.init(getHttpMessage("/?p=a"), parent);
+        rule.setAttackStrength(AttackStrength.INSANE);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
     }
 }

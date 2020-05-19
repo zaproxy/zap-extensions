@@ -631,7 +631,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     protected SiteNode getSiteNode(ScanTarget scanTarget) {
         SiteMap siteTree = Model.getSingleton().getSession().getSiteTree();
-        SiteNode rootNode = (SiteNode) siteTree.getRoot();
+        SiteNode rootNode = siteTree.getRoot();
 
         @SuppressWarnings("unchecked")
         Enumeration<TreeNode> en = rootNode.children();

@@ -19,8 +19,9 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import io.swagger.models.Scheme;
+import java.util.Locale;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpHeader;
@@ -47,12 +48,10 @@ public class OpenApiSpider extends SpiderParser {
     @Override
     public boolean parseResource(HttpMessage message, Source source, int depth) {
         try {
-            Scheme defaultScheme =
-                    Scheme.forValue(message.getRequestHeader().getURI().getScheme().toLowerCase());
             Converter converter =
                     new SwaggerConverter(
-                            defaultScheme,
-                            message.getRequestHeader().getURI().getAuthority(),
+                            null,
+                            message.getRequestHeader().getURI().toString(),
                             message.getResponseBody().toString(),
                             this.getValueGenerator());
             requestor.run(converter.getRequestModels());
@@ -67,11 +66,18 @@ public class OpenApiSpider extends SpiderParser {
     @Override
     public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
         try {
-            String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
-            if (contentType.toLowerCase().startsWith("text")
-                    && message.getResponseBody().toString().toLowerCase().startsWith("swagger:")) {
+            String contentType =
+                    message.getResponseHeader()
+                            .getHeader(HttpHeader.CONTENT_TYPE)
+                            .toLowerCase(Locale.ROOT);
+            String responseBodyStart =
+                    StringUtils.left(message.getResponseBody().toString(), 250)
+                            .toLowerCase(Locale.ROOT);
+            if (contentType.startsWith("application/vnd.oai.openapi")) {
                 return true;
-            } else if (contentType.toLowerCase().startsWith("application")) {
+            } else if ((contentType.contains("json") || contentType.contains("yaml"))
+                    && (responseBodyStart.contains("swagger")
+                            || responseBodyStart.contains("openapi"))) {
                 return true;
             }
         } catch (Exception e) {

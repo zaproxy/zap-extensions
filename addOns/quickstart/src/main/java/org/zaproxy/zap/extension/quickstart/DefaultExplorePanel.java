@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
-import java.awt.Color;
-import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -77,8 +75,7 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
 
     @Override
     public JPanel getDescriptionPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
 
         panel.add(
                 QuickStartHelper.getWrappedLabel("quickstart.launch.panel.default.message1"),
@@ -97,8 +94,7 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
     @Override
     public JPanel getContentPanel() {
         if (contentPanel == null) {
-            contentPanel = new JPanel(new GridBagLayout());
-            contentPanel.setBackground(Color.WHITE);
+            contentPanel = new QuickStartBackgroundPanel();
             int formPanelY = 0;
 
             JPanel savePanel = QuickStartHelper.getHorizontalPanel();
@@ -237,8 +233,7 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
 
     @Override
     public JPanel getFooterPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
         panel.add(
                 QuickStartHelper.getWrappedLabel("quickstart.explore.panel.footer"),
                 LayoutHelper.getGBC(0, 0, 1, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));

@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +38,7 @@ import org.mozilla.zest.core.v1.ZestClientElementClick;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestClientElementSubmit;
 import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientScreenshot;
 import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
@@ -103,8 +103,7 @@ public class ZestDialogManager extends AbstractPanel {
     private ZestClientWindowCloseDialog clientWindowCloseDialog = null;
     private ZestClientWindowOpenUrlDialog clientWindowOpenUrlDialog = null;
     private ZestClientSwitchToFrameDialog clientSwitchToFrameDialog = null;
-    // TODO Work in progress
-    // private ZestClientTakeScreenshotDialog clientTakeScreenshotDialog = null;
+    private ZestClientScreenshotDialog clientScreenshotDialog;
 
     private MouseAdapter mouseListener;
     private TreeSelectionListener treeSelectionListener;
@@ -270,37 +269,23 @@ public class ZestDialogManager extends AbstractPanel {
                                                 null,
                                                 (ZestClientSwitchToFrame) obj,
                                                 false);
-                                        /* TODO Work in progress
-                                        } else if (obj instanceof ZestClientTakeScreenshot) {
-                                        	showZestClientTakeScreenshotDialog(parent, sn, null,
-                                        			(ZestClientTakeScreenshot) obj, false);
-                                        */
+                                    } else if (obj instanceof ZestClientScreenshot) {
+                                        showZestClientScreenshotDialog(
+                                                parent,
+                                                sn,
+                                                null,
+                                                (ZestClientScreenshot) obj,
+                                                false);
                                     }
                                 }
                             }
-                        } else {
-                            // Single click
-                            displayHttpMessageOfSelectedNode();
                         }
                     }
                 };
         this.scriptUI.addMouseListener(mouseListener);
 
         treeSelectionListener = e -> displayHttpMessageOfSelectedNode();
-        // TODO remove reflection (and single click logic above, redundant) once available in
-        // targeted ZAP version.
-        // this.scriptUI.addSelectionListener(treeSelectionListener);
-        Method addSelectionListenerMethod;
-        try {
-            addSelectionListenerMethod =
-                    ScriptUI.class.getDeclaredMethod(
-                            "addSelectionListener", TreeSelectionListener.class);
-            addSelectionListenerMethod.invoke(this.scriptUI, treeSelectionListener);
-        } catch (NoSuchMethodException ignore) {
-            // Ignore, older versions don't have the method.
-        } catch (Exception e) {
-            logger.debug("Failed to add tree selection listener.", e);
-        }
+        scriptUI.addSelectionListener(treeSelectionListener);
     }
 
     private void displayHttpMessageOfSelectedNode() {
@@ -774,23 +759,25 @@ public class ZestDialogManager extends AbstractPanel {
         clientWindowOpenUrlDialog.setVisible(true);
     }
 
-    /* TODO Work in progress
-    public void showZestClientTakeScreenshotDialog(ScriptNode parent, ScriptNode child,
-    		ZestStatement req, ZestClientTakeScreenshot client, boolean add) {
-    	if (clientTakeScreenshotDialog == null) {
-    		clientTakeScreenshotDialog = new ZestClientTakeScreenshotDialog(extension, View
-    				.getSingleton().getMainFrame(), new Dimension(300, 200));
-    	} else if (clientTakeScreenshotDialog.isVisible()) {
-    		// Already being displayed, bring to the front but dont overwrite anything
-    		bringToFront(clientTakeScreenshotDialog);
-    		return;
-    	}
-    	ZestScriptWrapper script = extension.getZestTreeModel()
-    			.getScriptWrapper(parent);
-    	clientTakeScreenshotDialog.init(script, parent, child, req, client, add);
-    	clientTakeScreenshotDialog.setVisible(true);
+    public void showZestClientScreenshotDialog(
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientScreenshot client,
+            boolean add) {
+        if (clientScreenshotDialog == null) {
+            clientScreenshotDialog =
+                    new ZestClientScreenshotDialog(
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+        } else if (clientScreenshotDialog.isVisible()) {
+            // Already being displayed, bring to the front but dont overwrite anything
+            bringToFront(clientScreenshotDialog);
+            return;
+        }
+        ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+        clientScreenshotDialog.init(script, parent, child, req, client, add);
+        clientScreenshotDialog.setVisible(true);
     }
-    */
 
     public void showZestClientSwitchToFrameDialog(
             ScriptNode parent,
@@ -819,18 +806,7 @@ public class ZestDialogManager extends AbstractPanel {
 
     public void unload() {
         scriptUI.removeMouseListener(mouseListener);
-        // TODO remove reflection once available in targeted ZAP version.
-        // this.scriptUI.removeSelectionListener(treeSelectionListener);
-        try {
-            Method addSelectionListenerMethod =
-                    ScriptUI.class.getDeclaredMethod(
-                            "removeSelectionListener", TreeSelectionListener.class);
-            addSelectionListenerMethod.invoke(this.scriptUI, treeSelectionListener);
-        } catch (NoSuchMethodException ignore) {
-            // Ignore, older versions don't have the method.
-        } catch (Exception e) {
-            logger.debug("Failed to remove tree selection listener.", e);
-        }
+        scriptUI.removeSelectionListener(treeSelectionListener);
 
         if (scriptDialog != null) {
             scriptDialog.dispose();

@@ -82,6 +82,16 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
     }
 
     @Test
+    public void shouldTargetDbChildTechsWithNonBuiltInTechInstances() {
+        // Given
+        TechSet techSet = techSet(new Tech(new Tech("Db"), "SomeDb"));
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
     public void shouldNotTargetNonDbTechs() {
         // Given
         TechSet techSet = techSetWithout(techsOf(Tech.Db));
@@ -161,6 +171,28 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
     }
 
     @Test
+    public void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessfulAndIsReflectedInResponse()
+            throws Exception {
+        // Given
+        String param = "id";
+        nano.addHandler(
+                new ExpressionBasedHandler(
+                        "/",
+                        param,
+                        ExpressionBasedHandler.Expression.SUM,
+                        true,
+                        ExpressionBasedHandler.Expression.SUM.confirmationExpression));
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
+                parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
     public void shouldAlertIfMultExpressionsAreSuccessful() throws Exception {
         // Given
         String param = "id";
@@ -218,9 +250,31 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
         String param = "id";
         nano.addHandler(
                 new ExpressionBasedHandler(
-                        "/", param, ExpressionBasedHandler.Expression.SUM, true));
+                        "/", param, ExpressionBasedHandler.Expression.MULT, true));
         rule.init(
-                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
+                parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessfulAndReflectedInResponse()
+            throws Exception {
+        // Given
+        String param = "id";
+        nano.addHandler(
+                new ExpressionBasedHandler(
+                        "/",
+                        param,
+                        ExpressionBasedHandler.Expression.MULT,
+                        true,
+                        ExpressionBasedHandler.Expression.MULT.confirmationExpression));
+        rule.init(
+                getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
                 parent);
         // When
         rule.scan();
@@ -249,6 +303,7 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
         private final String param;
         private final Expression expression;
         private final boolean confirmationFails;
+        private String contentAddition = "";
 
         public ExpressionBasedHandler(String path, String param, Expression expression) {
             this(path, param, expression, false);
@@ -261,6 +316,16 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
             this.param = param;
             this.expression = expression;
             this.confirmationFails = confirmationFails;
+        }
+
+        public ExpressionBasedHandler(
+                String parth,
+                String param,
+                Expression expression,
+                boolean confirmationFails,
+                String contentAddition) {
+            this(parth, param, expression, confirmationFails);
+            this.contentAddition = contentAddition;
         }
 
         @Override
@@ -282,7 +347,7 @@ public class TestSQLInjectionUnitTest extends ActiveScannerAppParamTest<TestSQLI
         }
 
         protected String getContent(String value) {
-            return "Some Content";
+            return "Some Content " + contentAddition;
         }
     }
 }

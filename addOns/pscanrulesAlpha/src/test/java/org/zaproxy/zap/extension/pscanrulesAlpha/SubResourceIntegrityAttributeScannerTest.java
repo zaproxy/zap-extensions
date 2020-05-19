@@ -49,7 +49,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "      ></head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -67,7 +67,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "        ></script></head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -84,7 +84,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.get(0).getPluginId(), equalTo(rule.getPluginId()));
@@ -101,7 +101,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(
@@ -121,7 +121,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
@@ -138,10 +138,58 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertGivenElementIsServedRelatively()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<!doctype html>\n"
+                                + "<html lang=\"en\">\n"
+                                + "  <head>\n"
+                                + "    <link href=\"/dashboard/stylesheets/normalize.css\" rel=\"stylesheet\" type=\"text/css\" />\n"
+                                + "  </head>\n"
+                                + "  <body class=\"index\">\n"
+                                + "  </body>\n"
+                                + "</html>");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertGivenElementIsInline() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<!doctype html>\n"
+                                + "<html lang=\"en\">\n"
+                                + "  <body class=\"index\">\n"
+                                + "    <div id=\"fb-root\"></div>\n"
+                                + "    <script>(function(d, s, id) {\n"
+                                + "      var js, fjs = d.getElementsByTagName(s)[0];\n"
+                                + "      if (d.getElementById(id)) return;\n"
+                                + "      js = d.createElement(s); js.id = id;\n"
+                                + "      js.src = \"//connect.facebook.net/en_US/all.js#xfbml=1&appId=277385395761685\";\n"
+                                + "      fjs.parentNode.insertBefore(js, fjs);\n"
+                                + "    }(document, 'script', 'facebook-jssdk'));</script>"
+                                + "  </body>\n"
+                                + "</html>");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
@@ -154,7 +202,7 @@ public class SubResourceIntegrityAttributeScannerTest
                                 + "</head><body></body></html>");
 
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised.size(), equalTo(1));

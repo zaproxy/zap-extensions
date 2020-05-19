@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha.payloader;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,16 +28,14 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.ascanrulesAlpha.HiddenFilesScanRule;
-import org.zaproxy.zap.extension.ascanrulesAlpha.TestUserAgent;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionPayloader";
+    public static final String NAME = "ExtensionPayloaderAscanRulesAlpha";
     private static final List<Class<? extends Extension>> DEPENDENCIES;
     private static ExtensionCustomPayloads ecp;
-    private PayloadCategory uaCategory;
     private PayloadCategory hfCategory;
 
     static {
@@ -60,11 +56,6 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                 Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionCustomPayloads.class);
-        uaCategory =
-                new PayloadCategory(
-                        TestUserAgent.USER_AGENT_PAYLOAD_CATEGORY, TestUserAgent.USER_AGENTS);
-        ecp.addPayloadCategory(uaCategory);
-        TestUserAgent.setPayloadProvider(() -> uaCategory.getPayloadsIterator());
         hfCategory =
                 new PayloadCategory(
                         HiddenFilesScanRule.HIDDEN_FILE_PAYLOAD_CATEGORY,
@@ -80,8 +71,6 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        TestUserAgent.setPayloadProvider(null);
-        ecp.removePayloadCategory(uaCategory);
         HiddenFilesScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(hfCategory);
     }
@@ -94,15 +83,6 @@ public class ExtensionPayloader extends ExtensionAdaptor {
     @Override
     public String getAuthor() {
         return Constant.ZAP_TEAM;
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override

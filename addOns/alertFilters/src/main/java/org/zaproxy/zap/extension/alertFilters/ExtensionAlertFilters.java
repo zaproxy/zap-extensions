@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.alertFilters;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -263,15 +261,6 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         return Constant.messages.getString(PREFIX + ".desc");
     }
 
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
-
     /**
      * Gets the context alert filter manager for a given context.
      *
@@ -291,10 +280,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     public void loadContextData(Session session, Context context) {
         try {
             List<String> encodedAlertFilters =
-                    session.getContextDataStrings(context.getIndex(), TYPE_ALERT_FILTER);
-            ContextAlertFilterManager afManager = getContextAlertFilterManager(context.getIndex());
+                    session.getContextDataStrings(context.getId(), TYPE_ALERT_FILTER);
+            ContextAlertFilterManager afManager = getContextAlertFilterManager(context.getId());
             for (String e : encodedAlertFilters) {
-                AlertFilter af = AlertFilter.decode(context.getIndex(), e);
+                AlertFilter af = AlertFilter.decode(context.getId(), e);
                 afManager.addAlertFilter(af);
             }
         } catch (Exception ex) {
@@ -306,12 +295,12 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     public void persistContextData(Session session, Context context) {
         try {
             List<String> encodedAlertFilters = new ArrayList<>();
-            ContextAlertFilterManager afManager = getContextAlertFilterManager(context.getIndex());
+            ContextAlertFilterManager afManager = getContextAlertFilterManager(context.getId());
             if (afManager != null) {
                 for (AlertFilter af : afManager.getAlertFilters()) {
                     encodedAlertFilters.add(AlertFilter.encode(af));
                 }
-                session.setContextData(context.getIndex(), TYPE_ALERT_FILTER, encodedAlertFilters);
+                session.setContextData(context.getId(), TYPE_ALERT_FILTER, encodedAlertFilters);
             }
         } catch (Exception ex) {
             log.error("Unable to persist AlertFilters", ex);
@@ -320,7 +309,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     @Override
     public void exportContextData(Context ctx, Configuration config) {
-        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getIndex());
+        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getId());
         if (m != null) {
             for (AlertFilter af : m.getAlertFilters()) {
                 config.addProperty(CONTEXT_CONFIG_ALERT_FILTER, AlertFilter.encode(af));
@@ -331,16 +320,16 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     @Override
     public void importContextData(Context ctx, Configuration config) {
         List<Object> list = config.getList(CONTEXT_CONFIG_ALERT_FILTER);
-        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getIndex());
+        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getId());
         for (Object o : list) {
-            AlertFilter af = AlertFilter.decode(ctx.getIndex(), o.toString());
+            AlertFilter af = AlertFilter.decode(ctx.getId(), o.toString());
             m.addAlertFilter(af);
         }
     }
 
     @Override
     public AbstractContextPropertiesPanel getContextPanel(Context ctx) {
-        return getContextPanel(ctx.getIndex());
+        return getContextPanel(ctx.getId());
     }
 
     /**
@@ -370,8 +359,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     @Override
     public void discardContext(Context ctx) {
-        this.contextManagers.remove(ctx.getIndex());
-        this.alertFilterPanelsMap.remove(ctx.getIndex());
+        this.contextManagers.remove(ctx.getId());
+        this.alertFilterPanelsMap.remove(ctx.getId());
     }
 
     private ExtensionAlert getExtAlert() {
@@ -483,7 +472,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                 if (log.isDebugEnabled()) {
                     log.debug(
                             "Is in context "
-                                    + context.getIndex()
+                                    + context.getId()
                                     + " got "
                                     + mgr.getAlertFilters().size()
                                     + " filters");

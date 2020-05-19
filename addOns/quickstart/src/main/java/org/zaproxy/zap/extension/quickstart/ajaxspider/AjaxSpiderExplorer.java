@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart.ajaxspider;
 
-import java.awt.Color;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
@@ -34,6 +32,7 @@ import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.quickstart.PlugableSpider;
+import org.zaproxy.zap.extension.quickstart.QuickStartBackgroundPanel;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
@@ -139,8 +138,7 @@ public class AjaxSpiderExplorer implements PlugableSpider {
     @Override
     public JPanel getPanel() {
         if (panel == null) {
-            panel = new JPanel(new GridBagLayout());
-            panel.setBackground(Color.WHITE);
+            panel = new QuickStartBackgroundPanel();
             panel.add(
                     getSelectCheckBox(),
                     LayoutHelper.getGBC(0, 0, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));

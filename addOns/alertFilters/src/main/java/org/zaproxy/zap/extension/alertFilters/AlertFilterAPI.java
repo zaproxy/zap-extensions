@@ -175,9 +175,7 @@ public class AlertFilterAPI extends ApiImplementor {
                 ApiResponseList listResponse = new ApiResponseList(name);
                 context = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID);
                 List<AlertFilter> afs =
-                        extension
-                                .getContextAlertFilterManager(context.getIndex())
-                                .getAlertFilters();
+                        extension.getContextAlertFilterManager(context.getId()).getAlertFilters();
 
                 for (AlertFilter af : afs) {
                     listResponse.addItem(buildResponseFromAlertFilter(af, true));
@@ -209,7 +207,7 @@ public class AlertFilterAPI extends ApiImplementor {
                 context = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID);
                 af =
                         new AlertFilter(
-                                context.getIndex(),
+                                context.getId(),
                                 ApiUtils.getIntParam(params, PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
@@ -223,13 +221,13 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ENABLED, true));
 
                 // TODO more validation, esp url!
-                extension.getContextAlertFilterManager(context.getIndex()).addAlertFilter(af);
+                extension.getContextAlertFilterManager(context.getId()).addAlertFilter(af);
                 return ApiResponseElement.OK;
             case ACTION_REMOVE_ALERT_FILTER:
                 context = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID);
                 af =
                         new AlertFilter(
-                                context.getIndex(),
+                                context.getId(),
                                 ApiUtils.getIntParam(params, PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
@@ -241,9 +239,7 @@ public class AlertFilterAPI extends ApiImplementor {
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
                                 getParam(params, PARAM_ENABLED, true));
-                if (extension
-                        .getContextAlertFilterManager(context.getIndex())
-                        .removeAlertFilter(af)) {
+                if (extension.getContextAlertFilterManager(context.getId()).removeAlertFilter(af)) {
                     return ApiResponseElement.OK;
                 }
 

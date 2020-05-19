@@ -6,16 +6,17 @@ description = "Image Location and Privacy Passive Scanner"
 zapAddOn {
     addOnName.set("Image Location and Privacy Scanner")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("Veggiespam and the ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/image-location-and-privacy-scanner/")
     }
 }
 
 dependencies {
-    implementation("com.adobe.xmp:xmpcore:5.1.3")
-    implementation("com.drewnoakes:metadata-extractor:2.10.1")
+    implementation("com.adobe.xmp:xmpcore:6.0.6")
+    implementation("com.drewnoakes:metadata-extractor:2.13.0")
 
     testImplementation(project(":testutils"))
 }

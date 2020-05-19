@@ -41,6 +41,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.report.ReportLastScan.ReportType;
 import org.parosproxy.paros.view.View;
 
 public class UploadActionListener implements ActionListener{
@@ -183,7 +184,7 @@ public class UploadActionListener implements ActionListener{
 	
 	public static void generateReportString(CodeDxExtension extension, StringBuilder report) throws Exception {
 		ReportLastScanHttp saver = new ReportLastScanHttp();
-		saver.generate(report, extension.getModel());
+		saver.generate(report);
 	}
 
 	public static File generateReportFile(CodeDxExtension extension) throws Exception {
@@ -191,7 +192,7 @@ public class UploadActionListener implements ActionListener{
 		reportFile.deleteOnExit();
 
 		ReportLastScanHttp saver = new ReportLastScanHttp();
-		saver.generate(reportFile.getCanonicalPath(), extension.getModel(), null);
+		saver.generate(reportFile.getCanonicalPath(), ReportType.XML);
 
 		return reportFile;
 	}

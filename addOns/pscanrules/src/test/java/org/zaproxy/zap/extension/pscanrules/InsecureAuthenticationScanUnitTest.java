@@ -58,8 +58,8 @@ public class InsecureAuthenticationScanUnitTest
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
-        rule.scanHttpRequestSend(msg, -1);
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpRequestSend(msg);
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -82,7 +82,7 @@ public class InsecureAuthenticationScanUnitTest
                         + Base64.encodeBytes(userAndPass.getBytes(), Base64.DONT_GUNZIP));
         msg.setRequestHeader(requestHeader);
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(ALERT_NAME));
@@ -118,7 +118,7 @@ public class InsecureAuthenticationScanUnitTest
                         + Base64.encodeBytes(user.getBytes(), Base64.DONT_GUNZIP));
         msg.setRequestHeader(requestHeader);
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(ALERT_NAME));
@@ -153,7 +153,7 @@ public class InsecureAuthenticationScanUnitTest
                 HttpHeader.WWW_AUTHENTICATE, AUTHORIZATION_BASIC + " realm=\"Private\"");
         msg.setResponseHeader(responsHeader);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(INSECURE_RESPONSE));
@@ -177,7 +177,7 @@ public class InsecureAuthenticationScanUnitTest
         requestHeader.addHeader(HttpHeader.AUTHORIZATION, AUTHORIZATION_DIGEST + " " + digestValue);
         msg.setRequestHeader(requestHeader);
         // When
-        rule.scanHttpRequestSend(msg, -1);
+        scanHttpRequestSend(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(ALERT_NAME));

@@ -73,7 +73,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         // Given
         msg.setResponseBody("no html");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -83,7 +83,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         // Given
         msg.setResponseBody("<html><head></head><body><p>no form</p></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -94,7 +94,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         msg.setResponseBody(
                 "<form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -105,7 +105,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getWascId(), 9);
@@ -118,7 +118,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"form_name\"><input type=\"text\" name=\"token\"/><input type=\"submit\"/></form></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -129,7 +129,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"form_name\"><input type=\"text\" id=\"token\"/><input type=\"submit\"/></form></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -140,7 +140,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"form_name\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form></body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(alertsRaised.size(), 0);
     }
@@ -154,7 +154,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
                         + "<form id=\"first_form\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(alertsRaised.get(0).getEvidence(), "<form id=\"second_form\">");
@@ -169,7 +169,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
                         + "<form id=\"second_form\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(alertsRaised.get(0).getEvidence(), "<form id=\"second_form\">");
@@ -185,7 +185,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
                         + "<form id=\"second_form\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(2, alertsRaised.size());
         assertEquals(
@@ -204,7 +204,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
                         + "<form id=\"ignoredName\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
     }
@@ -219,7 +219,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
                         + "<form name=\"otherName\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
     }
@@ -234,7 +234,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
                         + "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.RISK_INFO, alertsRaised.get(0).getRisk());
@@ -251,7 +251,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
                         + "<form name=\"someName\" data-no-csrf=\"data-no-csrf\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.RISK_INFO, alertsRaised.get(0).getRisk());
@@ -267,7 +267,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
                         + "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.RISK_LOW, alertsRaised.get(0).getRisk());
@@ -281,7 +281,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.HIGH);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
     }
@@ -294,7 +294,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.HIGH);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
     }
@@ -307,7 +307,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
     }
@@ -320,7 +320,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.LOW);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
     }

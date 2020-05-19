@@ -93,8 +93,6 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
                             + "(:(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65([0-4]\\d{2}|5[0-2]\\d|53[0-5]))\\b)?",
                     Pattern.MULTILINE);
 
-    private PassiveScanThread parent = null;
-
     @Override
     public int getPluginId() {
         return 00002;
@@ -144,24 +142,17 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
         }
 
         if (sbTxtFound.length() != 0) {
-            Alert alert =
-                    new Alert(
-                            getPluginId(), this.getRisk(), Alert.CONFIDENCE_MEDIUM, this.getName());
-
-            alert.setDetail(
-                    this.getDescription(),
-                    msg.getRequestHeader().getURI().toString(),
-                    "",
-                    "",
-                    sbTxtFound.toString(),
-                    this.getSolution(),
-                    this.getReference(),
-                    firstOne, // evidence
-                    200, // CWE Id
-                    13, // WASC Id - Info leakage
-                    msg);
-
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setRisk(getRisk())
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getDescription())
+                    .setOtherInfo(sbTxtFound.toString())
+                    .setSolution(getSolution())
+                    .setReference(getReference())
+                    .setEvidence(firstOne)
+                    .setCweId(200)
+                    .setWascId(13)
+                    .raise();
         }
     }
 
@@ -171,6 +162,6 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 }

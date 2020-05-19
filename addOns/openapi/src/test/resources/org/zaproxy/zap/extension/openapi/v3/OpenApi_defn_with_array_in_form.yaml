@@ -1,0 +1,24 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@/PetStore
+paths:
+  /pet:
+    post:
+      requestBody:
+        $ref: '#/components/requestBodies/Pet'
+      responses:
+        '204':
+          description: Empty Response.
+components:
+  requestBodies:
+    Pet:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              somearray:
+                type: array
+                items:
+                  type: number
+

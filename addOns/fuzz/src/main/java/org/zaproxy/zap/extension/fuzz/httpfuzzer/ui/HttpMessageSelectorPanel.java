@@ -61,8 +61,7 @@ public class HttpMessageSelectorPanel implements MessageSelectorPanel<HttpMessag
                         -1,
                         Constant.messages.getString(
                                 "fuzz.httpfuzzer.select.message.dialogue.rootNode"));
-        SiteNode mainTreeRoot =
-                (SiteNode) Model.getSingleton().getSession().getSiteTree().getRoot();
+        SiteNode mainTreeRoot = Model.getSingleton().getSession().getSiteTree().getRoot();
         copyTree(mainTreeRoot, root);
         messagesTreeModel = new DefaultTreeModel(root);
 

@@ -242,9 +242,7 @@ public class MonitoredPagesManager {
                     protected Void doInBackground() throws Exception {
                         logger.debug("Refreshing tree with monitor client flags");
                         setMonitorFlags(
-                                (SiteNode)
-                                        Model.getSingleton().getSession().getSiteTree().getRoot(),
-                                false);
+                                Model.getSingleton().getSession().getSiteTree().getRoot(), false);
                         return null;
                     }
                 };

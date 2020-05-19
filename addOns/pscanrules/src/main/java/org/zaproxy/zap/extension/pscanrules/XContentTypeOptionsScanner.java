@@ -19,8 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -32,7 +32,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.xcontenttypeoptionsscanner.";
 
@@ -62,9 +61,9 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
                             || HttpStatusCode.isRedirection(responseStatus))) {
                 return;
             }
-            Vector<String> xContentTypeOptions =
-                    msg.getResponseHeader().getHeaders(HttpHeader.X_CONTENT_TYPE_OPTIONS);
-            if (xContentTypeOptions == null) {
+            List<String> xContentTypeOptions =
+                    msg.getResponseHeader().getHeaderValues(HttpHeader.X_CONTENT_TYPE_OPTIONS);
+            if (xContentTypeOptions.isEmpty()) {
                 this.raiseAlert(msg, id, "");
             } else {
                 for (String xContentTypeOptionsDirective : xContentTypeOptions) {
@@ -80,26 +79,23 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String xContentTypeOption) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(), // Desc
-                msg.getRequestHeader().getURI().toString(), // URL
-                HttpHeader.X_CONTENT_TYPE_OPTIONS, // Parameter
-                "", // Attack
-                getOtherInfo(), // OtherInfo
-                getSolution(), // Soln
-                getReference(), // Refs
-                xContentTypeOption, // Evidence
-                16, // CWE-16: Configuration
-                15, // WASC15: Application Misconfiguration
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(HttpHeader.X_CONTENT_TYPE_OPTIONS)
+                .setOtherInfo(getOtherInfo())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(xContentTypeOption)
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC15: Application Misconfiguration
+                .raise();
     }
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

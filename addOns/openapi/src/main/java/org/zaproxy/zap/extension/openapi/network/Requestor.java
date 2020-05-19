@@ -29,14 +29,16 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.zap.network.HttpRedirectionValidator;
+import org.zaproxy.zap.network.HttpRequestConfig;
 
 public class Requestor {
 
     private final int initiator;
     private List<RequesterListener> listeners = new ArrayList<RequesterListener>();
     private HttpSender sender;
+    private final HttpRequestConfig requestConfig;
     private static final Logger LOG = Logger.getLogger(Requestor.class);
-    private String siteOverride;
 
     public Requestor(int initiator) {
         this.initiator = initiator;
@@ -45,6 +47,8 @@ public class Requestor {
                         Model.getSingleton().getOptionsParam().getConnectionParam(),
                         true,
                         initiator);
+        requestConfig =
+                HttpRequestConfig.builder().setRedirectionValidator(new MessageHandler()).build();
     }
 
     public List<String> run(List<RequestModel> requestsModel) {
@@ -52,17 +56,7 @@ public class Requestor {
         try {
             for (RequestModel requestModel : requestsModel) {
                 String url = requestModel.getUrl();
-                URI uri;
-                if (siteOverride != null && siteOverride.length() > 0) {
-                    int s1 = url.indexOf("://");
-                    int s2 = url.indexOf("/", s1 + 4);
-                    url = url.substring(0, s1) + "://" + siteOverride + url.substring(s2);
-                    uri = new URI(url, false);
-                } else {
-                    uri = new URI(url, false);
-                }
-
-                HttpMessage httpRequest = new HttpMessage(uri);
+                HttpMessage httpRequest = new HttpMessage(new URI(url, false));
                 httpRequest.getRequestHeader().setMethod(requestModel.getMethod().name());
                 for (HttpHeaderField hhf : requestModel.getHeaders()) {
                     httpRequest.getRequestHeader().setHeader(hhf.getName(), hhf.getValue());
@@ -73,17 +67,8 @@ public class Requestor {
                         .setContentLength(httpRequest.getRequestBody().length());
 
                 try {
-                    sender.sendAndReceive(httpRequest, true);
 
-                    for (RequesterListener listener : listeners) {
-                        try {
-                            listener.handleMessage(httpRequest, initiator);
-                        } catch (Exception e) {
-                            // Dont add handler errors to the list returned - these are assumed to
-                            // be handler specific
-                            LOG.error(e.getMessage(), e);
-                        }
-                    }
+                    sender.sendAndReceive(httpRequest, requestConfig);
                 } catch (IOException e) {
                     errors.add(
                             Constant.messages.getString(
@@ -123,11 +108,23 @@ public class Requestor {
         this.listeners.remove(listener);
     }
 
-    public String getSiteOverride() {
-        return siteOverride;
-    }
+    /** Notifies the {@link #listeners} of the messages sent. */
+    private class MessageHandler implements HttpRedirectionValidator {
 
-    public void setSiteOverride(String siteOverride) {
-        this.siteOverride = siteOverride;
+        @Override
+        public void notifyMessageReceived(HttpMessage message) {
+            for (RequesterListener listener : listeners) {
+                try {
+                    listener.handleMessage(message, initiator);
+                } catch (Exception e) {
+                    LOG.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        @Override
+        public boolean isValid(URI redirection) {
+            return true;
+        }
     }
 }

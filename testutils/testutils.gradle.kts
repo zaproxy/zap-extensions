@@ -12,12 +12,12 @@ java {
 val nanohttpdVersion = "2.3.1"
 
 dependencies {
-    compileOnly("org.zaproxy:zap:2.7.0")
+    compileOnly("org.zaproxy:zap:2.9.0")
 
     api("junit:junit:4.11")
 
     api("org.hamcrest:hamcrest-library:1.3")
-    api("org.mockito:mockito-core:3.1.0")
+    api("org.mockito:mockito-core:3.3.3")
 
     api("org.nanohttpd:nanohttpd-webserver:$nanohttpdVersion")
     api("org.nanohttpd:nanohttpd-websocket:$nanohttpdVersion")

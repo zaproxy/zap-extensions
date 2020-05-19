@@ -46,20 +46,20 @@ public class HttpFuzzerTask extends AbstractFuzzerTask<HttpMessage> {
 
     @Override
     protected void runImpl(HttpMessage message, List<Object> payloads) {
-        getParent().preProcessMessage(getId(), message, payloads);
+        getParent().preProcessMessage(getIndex(), message, payloads);
         HttpMessage messageSent = sendMessage(getParent().getHttpSender(), message);
         if (messageSent == null) {
             return;
         }
-        getParent().messageSent(getId(), messageSent);
+        getParent().messageSent(getIndex(), messageSent);
 
         HttpFuzzResult result =
                 new HttpFuzzResult(
-                        getId(),
+                        getIndex(),
                         Constant.messages.getString("fuzz.httpfuzzer.messagetype.result"),
                         messageSent,
                         payloads);
-        if (getParent().processResult(getId(), result)) {
+        if (getParent().processResult(getIndex(), result)) {
             getParent().fuzzResultAvailable(result);
         }
     }
@@ -98,7 +98,7 @@ public class HttpFuzzerTask extends AbstractFuzzerTask<HttpMessage> {
 
                     getParent()
                             .increaseErrorCount(
-                                    getId(),
+                                    getIndex(),
                                     Constant.messages.getString("fuzz.httpfuzzer.error.source"),
                                     Constant.messages.getString(
                                             "fuzz.httpfuzzer.error.message",

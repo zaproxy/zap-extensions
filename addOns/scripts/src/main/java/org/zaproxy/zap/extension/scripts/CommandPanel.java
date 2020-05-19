@@ -129,7 +129,15 @@ public class CommandPanel extends AbstractPanel {
     }
 
     protected void setCommandCursorPosition(int offset) {
-        getTxtOutput().setCaretPosition(offset);
+        try {
+            getTxtOutput().setCaretPosition(offset);
+        } catch (IllegalArgumentException e) {
+            // Ignore
+        }
+    }
+
+    protected int getCommandCursorPosition() {
+        return getTxtOutput().getCaretPosition();
     }
 
     void unload() {

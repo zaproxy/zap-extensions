@@ -39,8 +39,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 
-    private PassiveScanThread parent = null;
-
     private static final Logger log = Logger.getLogger(SourceCodeDisclosureScanner.class);
 
     /**
@@ -688,26 +686,18 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
         }
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            Alert alert =
-                    new Alert(
-                            getPluginId(),
-                            Alert.RISK_MEDIUM,
-                            Alert.CONFIDENCE_MEDIUM,
-                            getName() + " - " + programminglanguage);
-
-            alert.setDetail(
-                    getDescription() + " - " + programminglanguage,
-                    msg.getRequestHeader().getURI().toString(),
-                    "", // param
-                    "", // attack
-                    getExtraInfo(evidence), // other info
-                    getSolution(),
-                    getReference(),
-                    evidence,
-                    540, // Information Exposure Through Source Code
-                    13, // WASC-13: Information Leakage
-                    msg);
-            parent.raiseAlert(id, alert);
+            newAlert()
+                    .setName(getName() + " - " + programminglanguage)
+                    .setRisk(Alert.RISK_MEDIUM)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setDescription(getDescription() + " - " + programminglanguage)
+                    .setOtherInfo(getExtraInfo(evidence))
+                    .setSolution(getSolution())
+                    .setReference(getReference())
+                    .setEvidence(evidence)
+                    .setCweId(540) // Information Exposure Through Source Code
+                    .setWascId(13) // WASC-13: Information Leakage
+                    .raise();
         }
     }
 
@@ -718,7 +708,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
      */
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     /**

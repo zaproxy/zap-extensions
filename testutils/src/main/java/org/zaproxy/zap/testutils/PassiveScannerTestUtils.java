@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,8 @@ import org.junit.Before;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.pscan.PassiveScanData;
+import org.zaproxy.zap.extension.pscan.PassiveScanTestHelper;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -45,6 +48,7 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
 
     protected T rule;
     protected PassiveScanThread parent;
+    protected PassiveScanData passiveScanData = mock(PassiveScanData.class);
     protected List<Alert> alertsRaised;
 
     public PassiveScannerTestUtils() {
@@ -83,6 +87,22 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
     }
 
     protected abstract T createScanner();
+
+    protected void scanHttpRequestSend(HttpMessage msg) {
+        initRule(msg);
+        rule.scanHttpRequestSend(msg, -1);
+    }
+
+    protected void scanHttpResponseReceive(HttpMessage msg) {
+        initRule(msg);
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+    }
+
+    private void initRule(HttpMessage msg) {
+        if (rule instanceof PluginPassiveScanner) {
+            PassiveScanTestHelper.init((PluginPassiveScanner) rule, parent, msg, passiveScanData);
+        }
+    }
 
     protected Source createSource(HttpMessage msg) {
         return new Source(msg.getResponseBody().toString());

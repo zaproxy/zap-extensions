@@ -59,7 +59,7 @@ public class AlertReportExportPDF {
      * @author 70pointer@gmail.com
      */
     private static class Formatting {
-        private final PDFont font; // also contains the font formatting info (bold, italics, etc)
+        private final PDFont font; // also contains the font formatting info (bold, italics, etc.)
         private final int fontSize;
         private final TextJustification textJustification;
 

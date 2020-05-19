@@ -299,7 +299,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private List<String> getSites() {
         List<String> list = new ArrayList<String>();
         list.add(""); // Always start with the blank option
-        SiteNode siteRoot = (SiteNode) Model.getSingleton().getSession().getSiteTree().getRoot();
+        SiteNode siteRoot = Model.getSingleton().getSession().getSiteTree().getRoot();
         if (siteRoot != null && siteRoot.getChildCount() > 0) {
             SiteNode child = (SiteNode) siteRoot.getFirstChild();
             while (child != null) {

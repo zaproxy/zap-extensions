@@ -46,7 +46,6 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.examplefile.";
 
-    private PassiveScanThread parent = null;
     private static final String examplePscanFile = "xml/example-pscan-file.txt";
     private static final Logger logger = Logger.getLogger(ExampleFilePassiveScanner.class);
     private List<String> strings = null;
@@ -72,21 +71,16 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String evidence) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                this.getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                "", // Param, not relevant for this example vulnerability
-                "", // Attack, not relevant for passive vulnerabilities
-                this.getOtherInfo(),
-                this.getSolution(),
-                this.getReference(),
-                evidence, // Evidence
-                0, // CWE Id - return 0 if no relevant one
-                13, // WASC Id - Info leakage (return 0 if no relevant one)
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setOtherInfo(getOtherInfo())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setWascId(13)
+                .raise();
     }
 
     private String doesResponseContainString(HttpBody body) {
@@ -152,7 +146,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override

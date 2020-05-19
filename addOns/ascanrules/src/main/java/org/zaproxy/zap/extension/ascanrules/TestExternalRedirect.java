@@ -284,7 +284,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
 
                     // Now create the alert message
                     this.bingo(
-                            Alert.RISK_HIGH,
+                            getRisk(),
                             Alert.CONFIDENCE_MEDIUM,
                             null,
                             param,
@@ -509,7 +509,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
      */
     @Override
     public int getRisk() {
-        return Alert.RISK_MEDIUM;
+        return Alert.RISK_HIGH;
     }
 
     /**

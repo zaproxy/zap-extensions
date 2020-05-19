@@ -25,8 +25,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.swing.JFileChooser;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
@@ -229,14 +227,5 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("importurls.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

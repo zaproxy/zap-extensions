@@ -99,12 +99,12 @@ public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
             View.getSingleton().getSessionDialog().recreateUISharedContexts(session);
 
             Context uiSharedContext =
-                    View.getSingleton().getSessionDialog().getUISharedContext(context.getIndex());
+                    View.getSingleton().getSessionDialog().getUISharedContext(context.getId());
             uiSharedContext.addIncludeInContextRegex(url);
 
             View.getSingleton()
                     .showSessionDialog(
-                            session, ContextIncludePanel.getPanelName(context.getIndex()), false);
+                            session, ContextIncludePanel.getPanelName(context.getId()), false);
         }
     }
 

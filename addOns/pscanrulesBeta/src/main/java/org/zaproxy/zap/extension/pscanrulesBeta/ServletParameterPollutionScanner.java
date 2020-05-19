@@ -31,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.model.Tech;
 
 /**
  * Servlet Parameter Pollution rule. Suggested by Jeff Williams on the OWASP Leaders List:
@@ -43,12 +44,11 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.servletparameterpollutionscanner.";
     private static final int PLUGIN_ID = 10026;
 
-    private PassiveScanThread parent = null;
     private static final Logger logger = Logger.getLogger(ServletParameterPollutionScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -63,7 +63,8 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (!AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+        if (!AlertThreshold.LOW.equals(this.getAlertThreshold())
+                || !getHelper().getTechSet().includes(Tech.JSP_SERVLET)) {
             return;
         }
 
@@ -80,29 +81,21 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
                         StringUtils.isEmpty(formElement.getAttributeValue("action"));
 
                 if (actionMissingOrEmpty) {
-                    Alert alert =
-                            new Alert(
-                                    getPluginId(),
-                                    Alert.RISK_MEDIUM,
-                                    Alert.CONFIDENCE_LOW,
-                                    getName());
-                    alert.setDetail(
-                            getDescription(),
-                            msg.getRequestHeader().getURI().toString(),
-                            "",
-                            "",
-                            "",
-                            getSolution(),
-                            getReference(),
-                            formElement
-                                    .getFirstStartTag()
-                                    .toString(), // evidence - just include the first <form ..>
+                    newAlert()
+                            .setRisk(Alert.RISK_MEDIUM)
+                            .setConfidence(Alert.CONFIDENCE_LOW)
+                            .setDescription(getDescription())
+                            .setSolution(getSolution())
+                            .setReference(getReference())
+                            .setEvidence(
+                                    formElement
+                                            .getFirstStartTag()
+                                            .toString()) // evidence - just include the first <form
+                            // ..>
                             // element
-                            20, // CWE Id 20 - Improper Input Validation
-                            20, // WASC Id 20 - Improper Input Handling
-                            msg);
-
-                    parent.raiseAlert(id, alert);
+                            .setCweId(20) // CWE Id 20 - Improper Input Validation
+                            .setWascId(20) // WASC Id 20 - Improper Input Handling
+                            .raise();
                     // Only raise one alert per page
                     return;
                 }

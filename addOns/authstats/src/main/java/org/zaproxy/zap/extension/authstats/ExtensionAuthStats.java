@@ -49,12 +49,8 @@ public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderLi
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        HttpSender.addListener(this);
-    }
 
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+        extensionHook.addHttpSenderListener(this);
     }
 
     @Override
@@ -74,14 +70,7 @@ public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderLi
 
     @Override
     public boolean canUnload() {
-        // TODO change when unload() can be implemented
-        return false;
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-        // TODO change to use HttpSender.removeListener when available
+        return true;
     }
 
     @Override

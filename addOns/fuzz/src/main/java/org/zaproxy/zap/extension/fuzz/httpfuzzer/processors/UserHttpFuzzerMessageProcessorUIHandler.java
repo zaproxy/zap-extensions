@@ -286,7 +286,7 @@ public class UserHttpFuzzerMessageProcessorUIHandler
 
         private boolean setSelectedContext(int contextId) {
             for (int i = 0; i < contextsComboBox.getModel().getSize(); i++) {
-                if (contextId == contextsComboBox.getModel().getElementAt(i).getId()) {
+                if (contextId == contextsComboBox.getModel().getElementAt(i).getIndex()) {
                     contextsComboBox.setSelectedIndex(i);
                     return true;
                 }
@@ -327,7 +327,7 @@ public class UserHttpFuzzerMessageProcessorUIHandler
             this.users = Collections.emptyList();
         }
 
-        public int getId() {
+        public int getIndex() {
             return this.context.getIndex();
         }
 

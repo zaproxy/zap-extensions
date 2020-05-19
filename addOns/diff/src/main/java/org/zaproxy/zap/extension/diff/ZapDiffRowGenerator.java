@@ -68,7 +68,7 @@ public class ZapDiffRowGenerator {
  private final String InlineNewCssClass;
  private final int columnWidth;
  private final Equalizer equalizer;
- 
+
  public interface Equalizer {
 	    public boolean equals(Object original, Object revised);
 	}
@@ -232,8 +232,7 @@ public class ZapDiffRowGenerator {
   * @param patch the given patch
   * @return the DiffRows between original and revised texts
   */
- @SuppressWarnings("unchecked")
- public List<DiffRow> generateDiffRows(List<String> original, List<String> revised, Patch patch) {
+ public List<DiffRow> generateDiffRows(List<String> original, List<String> revised, Patch<String> patch) {
      // normalize the lines (expand tabs, escape html entities)
 	 // ZAP: Dont normalise the strings
      //original = StringUtills.normalize(original);
@@ -246,11 +245,11 @@ public class ZapDiffRowGenerator {
 
      List<DiffRow> diffRows = new ArrayList<DiffRow>();
      int endPos = 0;
-     final List<Delta> deltaList = patch.getDeltas();
+     final List<Delta<String>> deltaList = patch.getDeltas();
      for (int i = 0; i < deltaList.size(); i++) {
-         Delta delta = deltaList.get(i);
-         Chunk orig = delta.getOriginal();
-         Chunk rev = delta.getRevised();
+         Delta<String> delta = deltaList.get(i);
+         Chunk<String> orig = delta.getOriginal();
+         Chunk<String> rev = delta.getRevised();
 
          // We should normalize and wrap lines in deltas too.
     	 // ZAP: Dont normalise the strings
@@ -269,7 +268,7 @@ public class ZapDiffRowGenerator {
          // Inserted DiffRow
          if (delta.getClass().equals(InsertDelta.class)) {
              endPos = orig.last() + 1;
-             for (String line : (List<String>) rev.getLines()) {
+             for (String line : rev.getLines()) {
                  diffRows.add(new DiffRow(Tag.INSERT, "", line));
              }
              continue;
@@ -278,7 +277,7 @@ public class ZapDiffRowGenerator {
          // Deleted DiffRow
          if (delta.getClass().equals(DeleteDelta.class)) {
              endPos = orig.last() + 1;
-             for (String line : (List<String>) orig.getLines()) {
+             for (String line : orig.getLines()) {
                  diffRows.add(new DiffRow(Tag.DELETE, line, ""));
              }
              continue;
@@ -290,18 +289,18 @@ public class ZapDiffRowGenerator {
          // the changed size is match
          if (orig.size() == rev.size()) {
              for (int j = 0; j < orig.size(); j++) {
-                 diffRows.add(new DiffRow(Tag.CHANGE, (String) orig.getLines().get(j),
-                         (String) rev.getLines().get(j)));
+                 diffRows.add(new DiffRow(Tag.CHANGE, orig.getLines().get(j),
+                         rev.getLines().get(j)));
              }
          } else if (orig.size() > rev.size()) {
              for (int j = 0; j < orig.size(); j++) {
-                 diffRows.add(new DiffRow(Tag.CHANGE, (String) orig.getLines().get(j), rev
-                         .getLines().size() > j ? (String) rev.getLines().get(j) : ""));
+                 diffRows.add(new DiffRow(Tag.CHANGE, orig.getLines().get(j), rev
+                         .getLines().size() > j ? rev.getLines().get(j) : ""));
              }
          } else {
              for (int j = 0; j < rev.size(); j++) {
-                 diffRows.add(new DiffRow(Tag.CHANGE, orig.getLines().size() > j ? (String) orig
-                         .getLines().get(j) : "", (String) rev.getLines().get(j)));
+                 diffRows.add(new DiffRow(Tag.CHANGE, orig.getLines().size() > j ? orig
+                         .getLines().get(j) : "", rev.getLines().get(j)));
              }
          }
          endPos = orig.last() + 1;
@@ -318,10 +317,9 @@ public class ZapDiffRowGenerator {
   * Add the inline diffs for given delta
   * @param delta the given delta
   */
- @SuppressWarnings("unchecked")
- private void addInlineDiffs(Delta delta) {
-     List<String> orig = (List<String>) delta.getOriginal().getLines();
-     List<String> rev = (List<String>) delta.getRevised().getLines();
+ private void addInlineDiffs(Delta<String> delta) {
+     List<String> orig = delta.getOriginal().getLines();
+     List<String> rev = delta.getRevised().getLines();
      LinkedList<String> origList = new LinkedList<String>();
      for (Character character : join(orig, "\n").toCharArray()) {
          origList.add(character.toString());
@@ -330,12 +328,12 @@ public class ZapDiffRowGenerator {
      for (Character character : join(rev, "\n").toCharArray()) {
          revList.add(character.toString());
      }
-     List<Delta> inlineDeltas = DiffUtils.diff(origList, revList).getDeltas();
+     List<Delta<String>> inlineDeltas = DiffUtils.diff(origList, revList).getDeltas();
      if (inlineDeltas.size() < 3) {
          Collections.reverse(inlineDeltas);
-         for (Delta inlineDelta : inlineDeltas) {
-             Chunk inlineOrig = inlineDelta.getOriginal();
-             Chunk inlineRev = inlineDelta.getRevised();
+         for (Delta<String> inlineDelta : inlineDeltas) {
+             Chunk<String> inlineOrig = inlineDelta.getOriginal();
+             Chunk<String> inlineRev = inlineDelta.getRevised();
              if (inlineDelta.getClass().equals(DeleteDelta.class)) {
                  origList = wrapInTag(origList, inlineOrig.getPosition(), inlineOrig
                          .getPosition()

@@ -26,7 +26,6 @@ import com.shapesecurity.salvation.data.Policy;
 import com.shapesecurity.salvation.data.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
@@ -43,7 +42,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Content Security Policy Header passive scan rule https://github.com/zaproxy/zaproxy/issues/527
  * Meant to complement the CSP Header Missing passive scan rule
  *
- * <p>TODO: Add handling for multiple CSP headers TODO: Add handling for CSP via META tag See
+ * <p>TODO: Add handling for CSP via META tag. See
  * https://github.com/shapesecurity/salvation/issues/149 for info on combining CSP policies
  *
  * @author kingthorin+owaspzap@gmail.com
@@ -61,11 +60,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
     private static final String WILDCARD_URI = "http://*";
     private static final URI PARSED_WILDCARD_URI = URI.parse(WILDCARD_URI);
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -93,15 +90,15 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 
         // Content-Security-Policy is supported by Chrome 25+, Firefox 23+,
         // Safari 7+, Edge but not Internet Explorer
-        Vector<String> cspOptions = msg.getResponseHeader().getHeaders(HTTP_HEADER_CSP);
-        if (cspOptions != null && !cspOptions.isEmpty()) {
+        List<String> cspOptions = msg.getResponseHeader().getHeaderValues(HTTP_HEADER_CSP);
+        if (!cspOptions.isEmpty()) {
             cspHeaderFound = true;
         }
 
         // X-Content-Security-Policy is an older header, supported by Firefox
         // 4.0+, and IE 10+ (in a limited fashion)
-        Vector<String> xcspOptions = msg.getResponseHeader().getHeaders(HTTP_HEADER_XCSP);
-        if (xcspOptions != null && !xcspOptions.isEmpty()) {
+        List<String> xcspOptions = msg.getResponseHeader().getHeaderValues(HTTP_HEADER_XCSP);
+        if (!xcspOptions.isEmpty()) {
             raiseAlert(
                     msg,
                     Constant.messages.getString(MESSAGE_PREFIX + "xcsp.name"),
@@ -109,12 +106,15 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                     Constant.messages.getString(MESSAGE_PREFIX + "xcsp.desc"),
                     getHeaderField(msg, HTTP_HEADER_XCSP).get(0),
                     cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
-                    xcspOptions.get(0));
+                    xcspOptions.get(0),
+                    false,
+                    "");
         }
 
         // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
-        Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders(HTTP_HEADER_WEBKIT_CSP);
-        if (xwkcspOptions != null && !xwkcspOptions.isEmpty()) {
+        List<String> xwkcspOptions =
+                msg.getResponseHeader().getHeaderValues(HTTP_HEADER_WEBKIT_CSP);
+        if (!xwkcspOptions.isEmpty()) {
             raiseAlert(
                     msg,
                     Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.name"),
@@ -122,14 +122,26 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                     Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.desc"),
                     getHeaderField(msg, HTTP_HEADER_WEBKIT_CSP).get(0),
                     cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
-                    xwkcspOptions.get(0));
+                    xwkcspOptions.get(0),
+                    false,
+                    "");
         }
 
         if (cspHeaderFound) {
             ArrayList<Notice> notices = new ArrayList<>();
             Origin origin = URI.parse(msg.getRequestHeader().getURI().toString());
-            String policyText = cspOptions.toString().replace("[", "").replace("]", "");
-            Policy pol = ParserWithLocation.parse(policyText, origin, notices); // Populate notices
+            Policy unifiedPolicy = new Policy(origin);
+            boolean multipleCsp = cspOptions.size() > 1;
+            if (multipleCsp) {
+                for (String csp : cspOptions) {
+                    Policy policy = ParserWithLocation.parse(csp, origin);
+                    unifiedPolicy.intersect(policy);
+                }
+            }
+            String unifiedPolicyText = multipleCsp ? unifiedPolicy.show() : cspOptions.get(0);
+            Policy pol =
+                    ParserWithLocation.parse(
+                            unifiedPolicyText, origin, notices); // Populate notices
 
             if (!notices.isEmpty()) {
                 String cspNoticesString = getCSPNoticesString(notices);
@@ -148,10 +160,13 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                         cspNoticesString,
                         getHeaderField(msg, HTTP_HEADER_CSP).get(0),
                         noticesRisk,
-                        cspOptions.get(0));
+                        cspOptions.get(0),
+                        multipleCsp,
+                        unifiedPolicyText);
             }
 
-            List<String> allowedWildcardSources = getAllowedWildcardSources(policyText, origin);
+            List<String> allowedWildcardSources =
+                    getAllowedWildcardSources(unifiedPolicyText, origin);
             if (!allowedWildcardSources.isEmpty()) {
                 String allowedWildcardSrcs =
                         allowedWildcardSources.toString().replace("[", "").replace("]", "");
@@ -165,7 +180,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                         wildcardSrcDesc,
                         getHeaderField(msg, HTTP_HEADER_CSP).get(0),
                         Alert.RISK_MEDIUM,
-                        cspOptions.get(0));
+                        cspOptions.get(0),
+                        multipleCsp,
+                        unifiedPolicyText);
             }
 
             if (pol.allowsUnsafeInlineScript()) {
@@ -176,7 +193,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                         Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.desc"),
                         getHeaderField(msg, HTTP_HEADER_CSP).get(0),
                         Alert.RISK_MEDIUM,
-                        cspOptions.get(0));
+                        cspOptions.get(0),
+                        multipleCsp,
+                        unifiedPolicyText);
             }
 
             if (pol.allowsUnsafeInlineStyle()) {
@@ -187,7 +206,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
                         Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.desc"),
                         getHeaderField(msg, HTTP_HEADER_CSP).get(0),
                         Alert.RISK_MEDIUM,
-                        cspOptions.get(0));
+                        cspOptions.get(0),
+                        multipleCsp,
+                        unifiedPolicyText);
             }
         }
 
@@ -334,27 +355,27 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
             String description,
             String param,
             int risk,
-            String evidence) {
+            String evidence,
+            boolean multipleCsp,
+            String policy) {
         String alertName = StringUtils.isEmpty(name) ? getName() : getName() + ": " + name;
+        String otherInfo =
+                multipleCsp
+                        ? Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", policy)
+                        : "";
 
-        Alert alert =
-                new Alert(
-                        getPluginId(),
-                        risk,
-                        Alert.CONFIDENCE_MEDIUM, // PluginID, Risk, Reliability
-                        alertName);
-        alert.setDetail(
-                description, // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                param, // Param
-                "", // Attack
-                "", // Other info
-                getSolution(), // Solution
-                getReference(), // References
-                evidence, // Evidence
-                16, // CWE-16: Configuration
-                15, // WASC-15: Application Misconfiguration
-                msg); // HttpMessage
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setName(alertName)
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(description)
+                .setParam(param)
+                .setOtherInfo(otherInfo)
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC-15: Application Misconfiguration)
+                .raise();
     }
 }

@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -99,7 +98,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
         this.setLayout(new BorderLayout());
 
-        panelContent = new JXPanel(new GridBagLayout());
+        panelContent = new QuickStartBackgroundPanel();
         panelContent.setScrollableHeightHint(ScrollableSizeHint.FIT);
 
         jScrollPane = new JScrollPane();
@@ -112,11 +111,10 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
         this.add(jScrollPane, BorderLayout.CENTER);
 
-        panelContent.setBackground(Color.white);
         panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 
         JLabel topTitle = new JLabel(Constant.messages.getString("quickstart.top.panel.title"));
-        topTitle.setBackground(Color.WHITE);
+        topTitle.setBackground(panelContent.getBackground());
         topTitle.setFont(FontUtils.getFont(Size.much_larger));
         topTitle.setHorizontalAlignment(SwingConstants.CENTER);
         panelContent.add(
@@ -141,7 +139,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
                 LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5))); // Spacer
 
         buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.setBackground(Color.white);
+        buttonPanel.setBackground(panelContent.getBackground());
         buttonPanel.add(this.getAttackButton());
         buttonPanel.add(this.getExploreButton());
         buttonPanel.add(this.getLearnMoreButton());
@@ -293,8 +291,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
     private JXPanel getNewsPanel() {
         if (newsPanel == null) {
-            newsPanel = new JXPanel(new GridBagLayout());
-            newsPanel.setBackground(Color.WHITE);
+            newsPanel = new QuickStartBackgroundPanel();
             if (newsItem != null) {
                 this.showNews(newsItem);
             }
@@ -304,11 +301,10 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
     private void showNews(NewsItem newsItem) {
 
-        JXPanel innerPanel = new JXPanel(new GridBagLayout());
+        JXPanel innerPanel = new QuickStartBackgroundPanel();
 
         CloseButton closeButton = new CloseButton();
-        JPanel closePanel = new JPanel(new GridBagLayout());
-        closePanel.setBackground(Color.WHITE);
+        JPanel closePanel = new QuickStartBackgroundPanel();
         closePanel.add(new JLabel(""), LayoutHelper.getGBC(0, 0, 1, 1.0D)); // Spacer
         closePanel.add(closeButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
         closeButton.setVerticalAlignment(SwingConstants.TOP);
@@ -337,7 +333,6 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(Color.RED),
                         Constant.messages.getString("quickstart.label.news")));
-        innerPanel.setBackground(Color.WHITE);
         innerPanel.add(
                 new JLabel(newsItem.getText()),
                 LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));

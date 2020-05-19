@@ -1,15 +1,16 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "15.1.0"
+version = "15.3.0"
 description = "WebDriver provider and includes HtmlUnit browser"
 
 zapAddOn {
     addOnName.set("Selenium")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/selenium/")
     }
 
     apiClientGen {

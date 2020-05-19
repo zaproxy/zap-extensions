@@ -48,7 +48,7 @@ public class InsecureJSFViewStatePassiveScannerUnitTest
         msg.setResponseBody("");
         setTextHtmlResponseHeader(msg);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -66,7 +66,7 @@ public class InsecureJSFViewStatePassiveScannerUnitTest
                         + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -87,7 +87,7 @@ public class InsecureJSFViewStatePassiveScannerUnitTest
                         + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -109,7 +109,7 @@ public class InsecureJSFViewStatePassiveScannerUnitTest
                         + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -130,7 +130,7 @@ public class InsecureJSFViewStatePassiveScannerUnitTest
                         + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(INSECURE_JSF));
@@ -156,7 +156,7 @@ public class InsecureJSFViewStatePassiveScannerUnitTest
                         + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(INSECURE_JSF));
@@ -182,7 +182,7 @@ public class InsecureJSFViewStatePassiveScannerUnitTest
                         + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(INSECURE_JSF));
@@ -212,7 +212,7 @@ public class InsecureJSFViewStatePassiveScannerUnitTest
                         + "</html>");
         setTextHtmlResponseHeader(msg);
         // When
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), containsNameLoadedWithKey(INSECURE_JSF));

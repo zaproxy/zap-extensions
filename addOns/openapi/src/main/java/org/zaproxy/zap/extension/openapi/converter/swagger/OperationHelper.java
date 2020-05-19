@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
-import io.swagger.models.Path;
+import io.swagger.v3.oas.models.PathItem;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -29,7 +29,7 @@ public class OperationHelper {
 
     private static final Logger log = Logger.getLogger(OperationHelper.class);
 
-    public List<OperationModel> getAllOperations(Path path, String url) {
+    public List<OperationModel> getAllOperations(PathItem path, String url) {
         List<OperationModel> operations = new LinkedList<OperationModel>();
 
         if (path.getGet() != null) {

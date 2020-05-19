@@ -85,6 +85,9 @@ public class ConsolePanel extends AbstractPanel implements Tab {
                 Constant.messages.getString("scripts.changed.replace")
             };
 
+    private Map<ScriptWrapper, Integer> scriptWrapperToOffset =
+            new HashMap<ScriptWrapper, Integer>();
+
     private static final Logger LOG = Logger.getLogger(ConsolePanel.class);
 
     public ConsolePanel(ExtensionScriptsUI extension) {
@@ -447,7 +450,15 @@ public class ConsolePanel extends AbstractPanel implements Tab {
         getScriptTitle().setText("");
     }
 
+    public void removeScript(ScriptWrapper script) {
+        scriptWrapperToOffset.remove(script);
+    }
+
     public void setScript(ScriptWrapper script) {
+        if (this.script != null) {
+            // Save the offset
+            scriptWrapperToOffset.put(this.script, getCommandPanel().getCommandCursorPosition());
+        }
         this.script = script;
         this.template = null;
 
@@ -481,7 +492,11 @@ public class ConsolePanel extends AbstractPanel implements Tab {
         getCommandPanel().clear();
         getCommandPanel().setCommandScript(script.getContents());
         getCommandPanel().setScriptType(script.getTypeName());
-        getCommandPanel().setCommandCursorPosition(0);
+        if (this.scriptWrapperToOffset.containsKey(script)) {
+            getCommandPanel().setCommandCursorPosition(this.scriptWrapperToOffset.get(script));
+        } else {
+            getCommandPanel().setCommandCursorPosition(0);
+        }
         if (script.getType().hasCapability(ExtensionScriptsUI.CAPABILITY_EXTERNAL)) {
             getCommandPanel().setSyntax(getSyntaxForExtension(script.getName()));
         } else if (script.getEngine().getSyntaxStyle() != null) {

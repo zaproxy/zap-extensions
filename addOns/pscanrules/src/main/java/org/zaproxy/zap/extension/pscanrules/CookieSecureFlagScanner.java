@@ -19,8 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.collections.iterators.IteratorChain;
 import org.parosproxy.paros.Constant;
@@ -30,6 +30,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.sharedutils.CookieUtils;
 
 public class CookieSecureFlagScanner extends PluginPassiveScanner {
 
@@ -40,12 +41,11 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
 
     private static final String SECURE_COOKIE_ATTRIBUTE = "Secure";
 
-    private PassiveScanThread parent = null;
     private Model model = null;
 
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -61,15 +61,15 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
         }
 
         IteratorChain iterator = new IteratorChain();
-        Vector<String> cookies1 = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE);
+        List<String> cookies1 = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE);
 
-        if (cookies1 != null) {
+        if (!cookies1.isEmpty()) {
             iterator.addIterator(cookies1.iterator());
         }
 
-        Vector<String> cookies2 = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE2);
+        List<String> cookies2 = msg.getResponseHeader().getHeaderValues(HttpHeader.SET_COOKIE2);
 
-        if (cookies2 != null) {
+        if (!cookies2.isEmpty()) {
             iterator.addIterator(cookies2.iterator());
         }
 
@@ -78,6 +78,9 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
         while (iterator.hasNext()) {
             String headerValue = (String) iterator.next();
             if (!CookieUtils.hasAttribute(headerValue, SECURE_COOKIE_ATTRIBUTE)) {
+                if (CookieUtils.isExpired(headerValue)) {
+                    continue;
+                }
                 if (!ignoreList.contains(CookieUtils.getCookieName(headerValue))) {
                     this.raiseAlert(msg, id, headerValue);
                 }
@@ -86,21 +89,19 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(HttpMessage msg, int id, String headerValue) {
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                CookieUtils.getCookieName(headerValue),
-                "",
-                "",
-                getSolution(),
-                getReference(),
-                CookieUtils.getSetCookiePlusName(msg.getResponseHeader().toString(), headerValue),
-                614, // CWE Id
-                13, // WASC Id - Info leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(CookieUtils.getCookieName(headerValue))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(
+                        CookieUtils.getSetCookiePlusName(
+                                msg.getResponseHeader().toString(), headerValue))
+                .setCweId(614)
+                .setWascId(13)
+                .raise();
     }
 
     @Override

@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.accessControl;
 
 import java.awt.Dimension;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -191,15 +189,6 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     }
 
     @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
-
-    @Override
     public List<Class<? extends Extension>> getDependencies() {
         return EXTENSION_DEPENDENCIES;
     }
@@ -213,10 +202,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
     @Override
     public AbstractContextPropertiesPanel getContextPanel(Context context) {
-        ContextAccessControlPanel panel = this.contextPanelsMap.get(context.getIndex());
+        ContextAccessControlPanel panel = this.contextPanelsMap.get(context.getId());
         if (panel == null) {
-            panel = new ContextAccessControlPanel(this, context.getIndex());
-            this.contextPanelsMap.put(context.getIndex(), panel);
+            panel = new ContextAccessControlPanel(this, context.getId());
+            this.contextPanelsMap.put(context.getId(), panel);
         }
         return panel;
     }
@@ -246,7 +235,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
      */
     @SuppressWarnings("fallthrough")
     public void startScan(AccessControlScanStartOptions startOptions) {
-        int contextId = startOptions.targetContext.getIndex();
+        int contextId = startOptions.targetContext.getId();
         AccessControlScannerThread scannerThread = threadManager.getScannerThread(contextId);
         if (scannerThread.isRunning()) {
             log.warn("Access control scan already running for context: " + contextId);
@@ -301,7 +290,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         // move to the "loadContextData()" method
         if (session != null) {
             for (Context c : session.getContexts()) {
-                ContextAccessRulesManager m = contextManagers.get(c.getIndex());
+                ContextAccessRulesManager m = contextManagers.get(c.getId());
                 if (m != null) {
                     m.reloadContextSiteTree(session);
                 }
@@ -537,10 +526,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor
      * @return the user access rules manager
      */
     public ContextAccessRulesManager getContextAccessRulesManager(Context context) {
-        ContextAccessRulesManager manager = contextManagers.get(context.getIndex());
+        ContextAccessRulesManager manager = contextManagers.get(context.getId());
         if (manager == null) {
             manager = new ContextAccessRulesManager(context);
-            contextManagers.put(context.getIndex(), manager);
+            contextManagers.put(context.getId(), manager);
         }
         return manager;
     }
@@ -558,11 +547,11 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
     @Override
     public void discardContext(Context ctx) {
-        ContextAccessControlPanel panel = this.contextPanelsMap.remove(ctx.getIndex());
+        ContextAccessControlPanel panel = this.contextPanelsMap.remove(ctx.getId());
         if (panel != null) {
             panel.unload();
         }
-        this.contextManagers.remove(ctx.getIndex());
+        this.contextManagers.remove(ctx.getId());
     }
 
     @Override
@@ -572,9 +561,9 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         try {
             serializedRules =
                     session.getContextDataStrings(
-                            context.getIndex(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
+                            context.getId(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
         } catch (Exception e) {
-            log.error("Unable to load access control rules for context: " + context.getIndex(), e);
+            log.error("Unable to load access control rules for context: " + context.getId(), e);
             return;
         }
 
@@ -590,13 +579,13 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     @Override
     public void persistContextData(Session session, Context context) {
         try {
-            ContextAccessRulesManager contextManager = contextManagers.get(context.getIndex());
+            ContextAccessRulesManager contextManager = contextManagers.get(context.getId());
             if (contextManager != null) {
                 List<String> serializedRules = contextManager.exportSerializedRules();
                 // Save only if we have anything to save
                 if (!serializedRules.isEmpty()) {
                     session.setContextData(
-                            context.getIndex(),
+                            context.getId(),
                             RecordContext.TYPE_ACCESS_CONTROL_RULE,
                             serializedRules);
                     return;
@@ -605,15 +594,15 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
             // If we don't have any rules, force delete any previous values
             session.clearContextDataForType(
-                    context.getIndex(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
+                    context.getId(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
         } catch (Exception e) {
-            log.error("Unable to persist access rules for context: " + context.getIndex(), e);
+            log.error("Unable to persist access rules for context: " + context.getId(), e);
         }
     }
 
     @Override
     public void exportContextData(Context ctx, Configuration config) {
-        ContextAccessRulesManager contextManager = contextManagers.get(ctx.getIndex());
+        ContextAccessRulesManager contextManager = contextManagers.get(ctx.getId());
         if (contextManager != null) {
             List<String> serializedRules = contextManager.exportSerializedRules();
             config.setProperty(CONTEXT_CONFIG_ACCESS_RULES_RULE, serializedRules);

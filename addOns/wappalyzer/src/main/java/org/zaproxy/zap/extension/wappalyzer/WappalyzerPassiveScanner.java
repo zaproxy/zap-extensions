@@ -28,7 +28,6 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
@@ -43,6 +42,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     private Set<String> visitedSiteIdentifiers = new HashSet<>();
     private ApplicationMatch appMatch;
     private Application currentApp;
+    private volatile boolean enabled = true;
 
     public WappalyzerPassiveScanner(WappalyzerApplicationHolder applicationHolder) {
         super();
@@ -72,10 +72,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
             this.currentApp = app;
             checkAppMatches(msg, source);
             if (appMatch != null) {
-                String site =
-                        msg.getRequestHeader().getHostName()
-                                + ":"
-                                + msg.getRequestHeader().getHostPort();
+                String site = ExtensionWappalyzer.normalizeSite(msg.getRequestHeader().getURI());
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Adding " + app.getName() + " to " + site);
                 }
@@ -209,20 +206,12 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        // Does not apply.
-    }
-
-    public AlertThreshold getAlertThreshold() {
-        return AlertThreshold.MEDIUM;
-    }
-
-    public void setAlertThresholdl(AlertThreshold level) {
-        // Does not apply.
+        this.enabled = enabled;
     }
 
     @Override

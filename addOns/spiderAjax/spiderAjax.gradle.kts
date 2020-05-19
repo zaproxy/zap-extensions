@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "23.1.0"
+version = "23.2.0"
 description = "Allows you to spider sites that make heavy use of JavaScript using Crawljax"
 
 repositories {
@@ -10,11 +10,11 @@ repositories {
 zapAddOn {
     addOnName.set("Ajax Spider")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.8.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/ajax-spider/")
         dependencies {
             addOns {
                 register("selenium") {

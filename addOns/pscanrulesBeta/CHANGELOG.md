@@ -4,7 +4,56 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Added links to the code in the help.
+- Add info and repo URLs.
 
+### Changed
+- Update minimum ZAP version to 2.9.0.
+- 'PII Disclosure scanner' alerts and help entry renamed 'PII Disclosure' for clarity and proper title caps.
+- 'PII Disclosure' added further false positive handling with regard to exponential numbers such as 2.4670000000000001E-2 or 2.4670000000000001E2.
+- Maintenance changes.
+- 'Servlet Parameter Pollution' scan rule will now only scan responses for in Context URLs for which the Technology JSP/Serlet is applicable.
+- Updated owasp.org references (Issue 5962).
+- 'PII Disclosure' added support for looking up evidence against an Open Source Bank Identification Number List. Confidence is now modified based on whether the lookup is successful or not. Additional details are added to 'Other Info' if available (Issue 5842).
+- Changed to set Risk Info and Confidence Low for the following passive scan rules: User Controlled Cookie, User Controlled JavaScript Event, and User Controlled Charset.
+
+## [21] - 2019-12-16
+
+### Added
+- The following scan rules were added being promoted from Alpha to Beta:
+  - Big Redirect Detected (Potential Sensitive Information Leak)
+  - Content Security Policy (CSP) Header Not Set
+  - Cookie Poisoning
+  - Directory Browsing
+  - Hash Disclosure
+  - Heartbleed OpenSSL Vulnerability (Indicative)
+  - HTTP Server Response Header Scanner
+  - HTTP to HTTPS Insecure Transition in Form Post
+  - HTTPS to HTTP Insecure Transition in Form Post
+  - Open Redirect
+  - PII Scanner
+  - Retrieved from Cache
+  - Reverse Tabnabbing
+  - Strict-Transport-Security Header Scanner
+  - User Controllable Charset
+  - User Controllable HTML Element Attribute (Potential XSS)
+  - User Controllable JavaScript Event (XSS)
+  - X-Backend-Server Header Information Leak
+  - X-ChromeLogger-Data (XCOLD) Header Information Leak
+
+### Removed
+- The following scan rules were removed in being promoted Beta to Release:
+  - Cookie Without SameSite Attribute
+  - Cross Domain Misconfiguration
+  - Information Disclosure: In URL
+  - Information Disclosure: Referrer
+  - Information Disclosure: Suspicious Comments
+  - Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+  - Timestamp Disclosure
+  - Username Hash Found
+  - X-AspNet-Version Response Header Scanner
+  - X-Debug-Token Information Leak
 
 ## [20] - 2019-11-19
 
@@ -111,5 +160,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[21]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v19

@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.util.Vector;
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -35,11 +35,9 @@ public class CacheControlScanner extends PluginPassiveScanner {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cachecontrolscanner.";
 
-    private PassiveScanThread parent = null;
-
     @Override
     public void setParent(PassiveScanThread parent) {
-        this.parent = parent;
+        // Nothing to do.
     }
 
     @Override
@@ -69,10 +67,10 @@ public class CacheControlScanner extends PluginPassiveScanner {
                 }
             }
 
-            Vector<String> cacheControlVect =
-                    msg.getResponseHeader().getHeaders(HttpHeader.CACHE_CONTROL);
+            List<String> cacheControlList =
+                    msg.getResponseHeader().getHeaderValues(HttpHeader.CACHE_CONTROL);
             String cacheControlHeaders =
-                    (cacheControlVect != null) ? cacheControlVect.toString().toLowerCase() : "";
+                    (!cacheControlList.isEmpty()) ? cacheControlList.toString().toLowerCase() : "";
 
             if (cacheControlHeaders.isEmpty()
                     || // No Cache-Control header at all
@@ -82,8 +80,8 @@ public class CacheControlScanner extends PluginPassiveScanner {
                 this.raiseAlert(msg, id, HttpHeader.CACHE_CONTROL, cacheControlHeaders);
             }
 
-            Vector<String> pragma = msg.getResponseHeader().getHeaders(HttpHeader.PRAGMA);
-            if (pragma != null) {
+            List<String> pragma = msg.getResponseHeader().getHeaderValues(HttpHeader.PRAGMA);
+            if (!pragma.isEmpty()) {
                 for (String pragmaDirective : pragma) {
                     if (pragmaDirective.toLowerCase().indexOf("no-cache") < 0) {
                         this.raiseAlert(msg, id, HttpHeader.PRAGMA, pragmaDirective);
@@ -99,21 +97,17 @@ public class CacheControlScanner extends PluginPassiveScanner {
             // Strip so that if a single headers used the highlighting will work
             evidence = evidence.substring(1, evidence.length() - 1);
         }
-        Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, getName());
-        alert.setDetail(
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                header,
-                "",
-                "",
-                getSolution(),
-                getReference(),
-                evidence,
-                525, // CWE
-                13, // WASC-13: Information Leakage
-                msg);
-
-        parent.raiseAlert(id, alert);
+        newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setParam(header)
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(525)
+                .setWascId(13)
+                .raise();
     }
 
     @Override

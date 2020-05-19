@@ -34,8 +34,7 @@ public class ApplicationErrorScannerRegexMatcherUnitTest {
     private static final String INPUT_PREFIX = "<b>Some text before</b>";
     private static final String INPUT_SUFFIX = "<b>Some text after</b>";
 
-    private static final String APP_ERRORS_FILE =
-            "/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml";
+    private static final String APP_ERRORS_FILE = "/xml/application_errors.xml";
     private static final ContentMatcher MATCHER =
             ContentMatcher.getInstance(
                     ApplicationErrorScannerRegexMatcherUnitTest.class.getResourceAsStream(

@@ -76,9 +76,9 @@ public class WappalyzerPassiveScannerUnitTest
 
         scan(msg);
 
-        assertFoundAppCount("www.example.com:443", 2);
-        assertFoundApp("www.example.com:443", "Apache");
-        assertFoundApp("www.example.com:443", "PHP", "5.6.34");
+        assertFoundAppCount("https://www.example.com", 2);
+        assertFoundApp("https://www.example.com", "Apache");
+        assertFoundApp("https://www.example.com", "PHP", "5.6.34");
     }
 
     @Test
@@ -92,8 +92,8 @@ public class WappalyzerPassiveScannerUnitTest
                         + "</html>");
         scan(msg);
 
-        assertFoundAppCount("www.example.com:443", 1);
-        assertFoundApp("www.example.com:443", "Modernizr");
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Modernizr");
     }
 
     @Test
@@ -106,7 +106,7 @@ public class WappalyzerPassiveScannerUnitTest
         // When
         scan(msg);
         // Then
-        assertNull(getDefaultHolder().getAppsForSite("www.example.com:443"));
+        assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
     }
 
     @Test
@@ -121,9 +121,9 @@ public class WappalyzerPassiveScannerUnitTest
         // When
         scan(msg);
         // Then
-        assertFoundAppCount("www.example.com:443", 2);
-        assertFoundApp("www.example.com:443", "1C-Bitrix"); // Matched
-        assertFoundApp("www.example.com:443", "PHP"); // Implied
+        assertFoundAppCount("https://www.example.com", 2);
+        assertFoundApp("https://www.example.com", "1C-Bitrix"); // Matched
+        assertFoundApp("https://www.example.com", "PHP"); // Implied
     }
 
     private void scan(HttpMessage msg) {

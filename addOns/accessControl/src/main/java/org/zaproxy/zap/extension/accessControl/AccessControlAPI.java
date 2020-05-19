@@ -62,6 +62,11 @@ public class AccessControlAPI extends ApiImplementor {
 
     private static final Logger LOGGER = Logger.getLogger(AccessControlAPI.class);
 
+    /** Provided only for API client generator usage. */
+    public AccessControlAPI() {
+        this(null);
+    }
+
     public AccessControlAPI(ExtensionAccessControl extension) {
         this.extension = extension;
         this.addApiAction(
@@ -137,8 +142,7 @@ public class AccessControlAPI extends ApiImplementor {
                     }
                     User userToAdd =
                             usersExtension
-                                    .getContextUserAuthManager(
-                                            startOptions.targetContext.getIndex())
+                                    .getContextUserAuthManager(startOptions.targetContext.getId())
                                     .getUserById(userID);
                     if (userToAdd != null) {
                         users.add(userToAdd);
@@ -214,7 +218,7 @@ public class AccessControlAPI extends ApiImplementor {
             case VIEW_GET_SCAN_PROGRESS:
                 LOGGER.debug("Access control get scan progress called");
 
-                contextId = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID).getIndex();
+                contextId = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID).getId();
 
                 String scanStatus;
                 try {
@@ -229,7 +233,7 @@ public class AccessControlAPI extends ApiImplementor {
             case VIEW_GET_SCAN_STATUS:
                 LOGGER.debug("Access control get scan status called");
 
-                contextId = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID).getIndex();
+                contextId = ApiUtils.getContextByParamId(params, PARAM_CONTEXT_ID).getId();
 
                 result = new ApiResponseElement(name, extension.getScanStatus(contextId));
                 break;

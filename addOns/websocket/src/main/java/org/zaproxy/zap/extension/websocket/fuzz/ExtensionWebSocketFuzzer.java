@@ -155,7 +155,7 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
             ExtensionScript extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
             if (extensionScript != null) {
-                extensionScript.removeScripType(scriptType);
+                extensionScript.removeScriptType(scriptType);
             }
         }
         MessageLocationReplacers.getInstance().removeReplacer(WebSocketMessageDTO.class, replacer);

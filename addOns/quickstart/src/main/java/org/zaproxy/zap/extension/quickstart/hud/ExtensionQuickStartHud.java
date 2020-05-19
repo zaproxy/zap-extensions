@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.quickstart.hud;
 
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -91,6 +89,20 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
         }
     }
 
+    public boolean isInScopeOnly() {
+        try {
+            Method methodGetHudParam = getExtHudClass().getMethod("getHudParam");
+            Object hudParam = methodGetHudParam.invoke(ExtensionQuickStartHud.getExtHud());
+            if (hudParam != null) {
+                Method methodIsInScopeOnly = hudParam.getClass().getMethod("isInScopeOnly");
+                return (boolean) methodIsInScopeOnly.invoke(hudParam);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
     @Override
     public boolean canUnload() {
         return true;
@@ -116,15 +128,6 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
     @Override
     public String getUIName() {
         return Constant.messages.getString("quickstart.launch.name");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     public ExtensionQuickStart getExtQuickStart() {

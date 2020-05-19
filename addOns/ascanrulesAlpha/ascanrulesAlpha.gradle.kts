@@ -1,4 +1,4 @@
-version = "27"
+version = "28"
 description = "The alpha quality Active Scanner rules"
 
 zapAddOn {
@@ -7,7 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAscanrulesAlphaAscanalpha")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/active-scan-rules-alpha/")
         extensions {
             register("org.zaproxy.zap.extension.ascanrulesAlpha.payloader.ExtensionPayloader") {
                 classnames {
@@ -26,8 +26,9 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("org.jsoup:jsoup:1.7.2")
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
+
+    implementation(project(":sharedutils"))
 
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
