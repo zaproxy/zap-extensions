@@ -203,6 +203,13 @@
       "binary":"SQLite format",
       "type":"drupaldb",
       "source":"snallygaster"
+    },
+    {
+      "path":"vim_settings.xml",
+      "content":["component name=\"VimSettings\""],
+      "links":["https://blog.jetbrains.com/blog/2019/09/26/jetbrains-security-bulletin-q2-2019/","https://nvd.nist.gov/vuln/detail/CVE-2019-14957"],
+      "type":"jetbrains_vim_settings",
+      "source":"misc"
     }
   ]
 } 
