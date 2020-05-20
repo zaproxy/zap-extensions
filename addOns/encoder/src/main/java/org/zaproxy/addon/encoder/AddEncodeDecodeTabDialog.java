@@ -41,7 +41,7 @@ class AddEncodeDecodeTabDialog extends AbstractFormDialog {
             Constant.messages.getString("encoder.dialog.addtab.button.confirm");
 
     private ZapTextField nameTextField;
-    private String name;
+    private String tabName;
 
     public AddEncodeDecodeTabDialog(Frame owner) {
         super(owner, DIALOG_TITLE);
@@ -123,7 +123,7 @@ class AddEncodeDecodeTabDialog extends AbstractFormDialog {
     @Override
     public void setVisible(boolean b) {
         if (b) {
-            name = null;
+            tabName = null;
         }
         super.setVisible(b);
     }
@@ -135,7 +135,7 @@ class AddEncodeDecodeTabDialog extends AbstractFormDialog {
 
     @Override
     protected void performAction() {
-        name = getNameTextField().getText();
+        tabName = getNameTextField().getText();
     }
 
     @Override
@@ -144,7 +144,7 @@ class AddEncodeDecodeTabDialog extends AbstractFormDialog {
         getNameTextField().discardAllEdits();
     }
 
-    public String getName() {
-        return name;
+    public String getTabName() {
+        return tabName;
     }
 }

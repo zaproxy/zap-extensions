@@ -309,7 +309,7 @@ public class EncodeDecodeDialog extends AbstractFrame {
         }
 
         addTabDialog.setVisible(true);
-        String name = addTabDialog.getName();
+        String name = addTabDialog.getTabName();
         addTabDialog.clearFields();
 
         if (name != null) {
@@ -416,7 +416,7 @@ public class EncodeDecodeDialog extends AbstractFrame {
             addOutputDialog.pack();
         }
         addOutputDialog.setVisible(true);
-        String name = addOutputDialog.getName();
+        String name = addOutputDialog.getOutputPanelName();
         String processorId = addOutputDialog.getProcessorId();
 
         addOutputDialog.clearFields();

@@ -47,7 +47,7 @@ class AddEncodeDecodeOutputPanelDialog extends AbstractFormDialog {
     private final EncodeDecodeProcessors encodeDecodeProcessors;
 
     private ZapTextField nameTextField;
-    private String name;
+    private String outputPanelName;
     private JComboBox<String> processorComboboxField;
     private String processorId;
 
@@ -134,7 +134,7 @@ class AddEncodeDecodeOutputPanelDialog extends AbstractFormDialog {
     @Override
     public void setVisible(boolean b) {
         if (b) {
-            name = null;
+            outputPanelName = null;
             processorId = null;
         }
         super.setVisible(b);
@@ -147,7 +147,7 @@ class AddEncodeDecodeOutputPanelDialog extends AbstractFormDialog {
 
     @Override
     protected void performAction() {
-        name = getNameTextField().getText();
+        outputPanelName = getNameTextField().getText();
         String selectedProcessorName = getProcessorComboboxField().getSelectedItem().toString();
         String selectedProcessorId = findProcessorIdByName(selectedProcessorName);
         processorId = selectedProcessorId;
@@ -168,8 +168,8 @@ class AddEncodeDecodeOutputPanelDialog extends AbstractFormDialog {
         getNameTextField().discardAllEdits();
     }
 
-    public String getName() {
-        return name;
+    public String getOutputPanelName() {
+        return outputPanelName;
     }
 
     public String getProcessorId() {
