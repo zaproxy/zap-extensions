@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -75,11 +74,7 @@ public class EncodeDecodeDialog extends AbstractFrame {
     private int globalOutputPanelIndex;
     private JButton resetButton;
 
-    /**
-     * @param tabModels
-     * @throws HeadlessException
-     */
-    public EncodeDecodeDialog(List<TabModel> tabModels) throws HeadlessException {
+    public EncodeDecodeDialog(List<TabModel> tabModels) {
         super();
         encodeDecodeProcessors = new EncodeDecodeProcessors();
         initialize();
