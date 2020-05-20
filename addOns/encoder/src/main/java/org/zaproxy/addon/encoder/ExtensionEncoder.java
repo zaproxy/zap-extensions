@@ -154,15 +154,14 @@ public class ExtensionEncoder extends ExtensionAdaptor {
     }
 
     private EncodeDecodeDialog showEncodeDecodeDialog(JTextComponent lastInvoker) {
-
-        List<TabModel> tabModels = new ArrayList<>();
-        try {
-            tabModels = EncoderConfig.loadConfig();
-        } catch (ConfigurationException | IOException e) {
-            LOGGER.error("Can not load Encoder Config");
-        }
-
         if (encodeDecodeDialog == null) {
+            List<TabModel> tabModels;
+            try {
+                tabModels = EncoderConfig.loadConfig();
+            } catch (ConfigurationException | IOException e) {
+                LOGGER.error("Can not load Encoder Config");
+                tabModels = new ArrayList<>(0);
+            }
             encodeDecodeDialog = new EncodeDecodeDialog(tabModels);
         } else {
             if ((encodeDecodeDialog.getState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
