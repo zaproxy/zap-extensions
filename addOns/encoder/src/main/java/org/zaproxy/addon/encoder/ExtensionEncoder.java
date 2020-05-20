@@ -187,6 +187,10 @@ public class ExtensionEncoder extends ExtensionAdaptor {
         super.unload();
         ExtensionScript extScript = getExtensionScript();
         extScript.removeScriptType(getEncoderScriptType());
+
+        if (encodeDecodeDialog != null) {
+            encodeDecodeDialog.dispose();
+        }
     }
 
     @Override
