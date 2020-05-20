@@ -19,16 +19,22 @@
  */
 package org.zaproxy.addon.encoder;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class EncoderConfig {
+
+    private static final Logger logger = Logger.getLogger(EncoderConfig.class);
 
     private static final String TABS_KEY = "tabs";
     private static final String TAB_KEY = "tab";
@@ -40,28 +46,51 @@ public class EncoderConfig {
     private static final String OUTPUT_PANEL_NAME_KEY = "name";
     private static final String OUTPUT_PANEL_SCRIPT_KEY = "processorId";
     private static final String CONFIG_BASE = "addOnData/encoder/config/";
-    private static final String CONFIG_FILE_NAME = CONFIG_BASE + "encoder-config.xml";
-    private static final String DEFAULT_CONFIG_FILE_NAME = CONFIG_BASE + "encoder-default.xml";
+    private static final String CONFIG_FILE = CONFIG_BASE + "encoder-config.xml";
+    private static final String DEFAULT_CONFIG_FILE_NAME = "encoder-default.xml";
+    private static final String DEFAULT_CONFIG_FILE = CONFIG_BASE + DEFAULT_CONFIG_FILE_NAME;
+    private static final String DEFAULT_BUNDLED_CONFIG_FILE =
+            "resources/" + DEFAULT_CONFIG_FILE_NAME;
 
     public static List<TabModel> loadConfig() throws ConfigurationException, IOException {
-        return loadConfig(getConfigFile(CONFIG_FILE_NAME));
+        Path config = getConfigPath(CONFIG_FILE);
+        if (Files.notExists(config)) {
+            return loadDefaultConfig();
+        }
+        return loadConfig(config);
     }
 
     public static List<TabModel> loadDefaultConfig() throws ConfigurationException, IOException {
-        return loadConfig(getConfigFile(DEFAULT_CONFIG_FILE_NAME));
-    }
+        Path defaultConfig = getConfigPath(DEFAULT_CONFIG_FILE);
+        if (Files.notExists(defaultConfig)) {
+            Files.createDirectories(defaultConfig.getParent());
+            try (InputStream in =
+                    EncoderConfig.class.getResourceAsStream(DEFAULT_BUNDLED_CONFIG_FILE)) {
+                Files.copy(in, defaultConfig);
+            } catch (IOException e) {
+                logger.warn("Failed to create the default configuration file.", e);
 
-    private static File getConfigFile(String configName) throws IOException {
-        File file = new File(Constant.getZapHome() + "/" + configName);
-        if (!file.exists()) {
-            file.createNewFile();
+                try (InputStream in =
+                        EncoderConfig.class.getResourceAsStream(DEFAULT_BUNDLED_CONFIG_FILE)) {
+                    return loadConfig(new ZapXmlConfiguration(in));
+                } catch (IOException e1) {
+                    logger.error("Failed to load the default bundled configuration file.", e1);
+                }
+                return new ArrayList<>();
+            }
         }
-        return file;
+        return loadConfig(defaultConfig);
     }
 
-    public static List<TabModel> loadConfig(File file) throws ConfigurationException {
-        ZapXmlConfiguration config = new ZapXmlConfiguration(file);
+    private static Path getConfigPath(String configName) {
+        return Paths.get(Constant.getZapHome(), configName);
+    }
 
+    private static List<TabModel> loadConfig(Path file) throws ConfigurationException {
+        return loadConfig(new ZapXmlConfiguration(file.toFile()));
+    }
+
+    private static List<TabModel> loadConfig(ZapXmlConfiguration config) {
         List<TabModel> tabs = new ArrayList<>();
         List<HierarchicalConfiguration> tabConfigs = config.configurationsAt(TAB_PATH);
         for (HierarchicalConfiguration tabConfig : tabConfigs) {
@@ -88,10 +117,11 @@ public class EncoderConfig {
     }
 
     public static void saveConfig(List<TabModel> tabs) throws ConfigurationException, IOException {
-        saveConfig(getConfigFile(CONFIG_FILE_NAME), tabs);
+        saveConfig(getConfigPath(CONFIG_FILE), tabs);
     }
 
-    public static void saveConfig(File file, List<TabModel> tabs) throws ConfigurationException {
+    private static void saveConfig(Path file, List<TabModel> tabs)
+            throws ConfigurationException, IOException {
         ZapXmlConfiguration config = new ZapXmlConfiguration();
         int t = 0;
         for (TabModel tab : tabs) {
@@ -106,6 +136,7 @@ public class EncoderConfig {
             }
         }
 
-        config.save(file);
+        Files.createDirectories(file.getParent());
+        config.save(file.toFile());
     }
 }
