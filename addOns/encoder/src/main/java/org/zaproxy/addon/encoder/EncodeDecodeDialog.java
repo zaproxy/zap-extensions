@@ -113,7 +113,24 @@ public class EncodeDecodeDialog extends AbstractFrame {
             tabModel.setOutputPanels(new ArrayList<>());
             addTab(tabModel, outputPanels);
         }
-        getTabbedPane().setSelectedIndex(0);
+
+        updatePanelState();
+        if (!tabs.isEmpty()) {
+            getTabbedPane().setSelectedIndex(0);
+        }
+    }
+
+    /**
+     * Updates the state of the buttons and requests focus in the input field.
+     *
+     * <p>Should be called after adding or removing a tab.
+     */
+    private void updatePanelState() {
+        boolean tabsPresent = !tabs.isEmpty();
+        getDeleteSelectedTabButton().setEnabled(tabsPresent);
+        getAddOutputButton().setEnabled(tabsPresent);
+
+        getInputField().requestFocusInWindow();
     }
 
     private void resetTabs() {
@@ -132,13 +149,6 @@ public class EncodeDecodeDialog extends AbstractFrame {
             EncoderConfig.saveConfig(tabs);
         } catch (ConfigurationException | IOException e) {
             LOGGER.warn("There was a problem saving the encoder config.", e);
-        }
-
-        if (tabs.size() > 0) {
-            getDeleteSelectedTabButton().setEnabled(true);
-            getAddOutputButton().setEnabled(true);
-            getTabbedPane().setSelectedIndex(0);
-            getInputField().requestFocusInWindow();
         }
     }
 
@@ -230,10 +240,7 @@ public class EncodeDecodeDialog extends AbstractFrame {
         if (selectedIndex != -1) {
             getTabbedPane().remove(selectedIndex);
             tabs.remove(selectedIndex);
-        }
-        if (tabs.size() < 1) {
-            getDeleteSelectedTabButton().setEnabled(false);
-            getAddOutputButton().setEnabled(false);
+            updatePanelState();
         }
     }
 
@@ -260,13 +267,8 @@ public class EncodeDecodeDialog extends AbstractFrame {
         if (tabModel != null) {
             addTab(tabModel, new ArrayList<>());
             SwingUtilities.invokeLater(() -> jPanel.repaint());
+            updatePanelState();
         }
-
-        if (tabs.size() > 0) {
-            getDeleteSelectedTabButton().setEnabled(true);
-            getAddOutputButton().setEnabled(true);
-        }
-        getInputField().requestFocusInWindow();
     }
 
     private void addTab(TabModel tabModel, List<OutputPanelModel> outputPanelModels) {
