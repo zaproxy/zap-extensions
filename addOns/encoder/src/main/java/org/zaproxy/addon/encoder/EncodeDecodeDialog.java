@@ -74,7 +74,6 @@ public class EncodeDecodeDialog extends AbstractFrame {
     private JButton deleteSelectedTabButton;
     private int globalOutputPanelIndex;
     private JButton resetButton;
-    private static List<TabModel> defaultTabModels = new ArrayList<>();
 
     /**
      * @param tabModels
@@ -85,7 +84,6 @@ public class EncodeDecodeDialog extends AbstractFrame {
         encodeDecodeProcessors = new EncodeDecodeProcessors();
         initialize();
         setTabs(tabModels);
-        defaultTabModels.addAll(tabModels);
 
         addWindowListener(
                 new WindowAdapter() {
@@ -123,8 +121,8 @@ public class EncodeDecodeDialog extends AbstractFrame {
     private void resetTabs() {
         getTabbedPane().removeAll();
         tabs = new ArrayList<>();
-        defaultTabModels = new ArrayList<>();
 
+        List<TabModel> defaultTabModels = new ArrayList<>();
         try {
             defaultTabModels.addAll(EncoderConfig.resetConfig());
         } catch (ConfigurationException | IOException e) {
