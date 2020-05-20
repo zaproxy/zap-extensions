@@ -29,10 +29,8 @@ public class PopupEncoderDeleteOutputPanelMenu extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
     private JTextComponent lastInvoker = null;
 
-    /** This method initializes */
     public PopupEncoderDeleteOutputPanelMenu() {
-        super();
-        initialize();
+        super(Constant.messages.getString("encoder.popup.delete"));
     }
 
     /** @return Returns the lastInvoker. */
@@ -45,28 +43,22 @@ public class PopupEncoderDeleteOutputPanelMenu extends ExtensionPopupMenuItem {
         this.lastInvoker = lastInvoker;
     }
 
-    /** This method initializes this */
-    private void initialize() {
-        this.setText(Constant.messages.getString("encoder.popup.delete"));
-    }
-
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (invoker instanceof JTextComponent && isInvokerFromEncodeDecode(invoker)) {
             setEnabled(true);
             setLastInvoker((JTextComponent) invoker);
             return true;
-        } else {
-            setLastInvoker(null);
-            return false;
         }
+
+        setLastInvoker(null);
+        return false;
     }
 
     private boolean isInvokerFromEncodeDecode(Component invoker) {
         if (invoker.getName() == null) {
             return false;
-        } else {
-            return invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_RESULTFIELD);
         }
+        return invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_RESULTFIELD);
     }
 }

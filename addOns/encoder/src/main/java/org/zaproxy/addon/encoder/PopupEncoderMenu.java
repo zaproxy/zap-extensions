@@ -29,10 +29,8 @@ public class PopupEncoderMenu extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
     private JTextComponent lastInvoker = null;
 
-    /** This method initializes */
     public PopupEncoderMenu() {
-        super();
-        initialize();
+        super(Constant.messages.getString("encoder.tools.menu.encdec"));
     }
 
     /** @return Returns the lastInvoker. */
@@ -43,11 +41,6 @@ public class PopupEncoderMenu extends ExtensionPopupMenuItem {
     /** @param lastInvoker The lastInvoker to set. */
     public void setLastInvoker(JTextComponent lastInvoker) {
         this.lastInvoker = lastInvoker;
-    }
-
-    /** This method initializes this */
-    private void initialize() {
-        this.setText(Constant.messages.getString("encoder.tools.menu.encdec"));
     }
 
     @Override
@@ -64,18 +57,18 @@ public class PopupEncoderMenu extends ExtensionPopupMenuItem {
 
             setLastInvoker((JTextComponent) invoker);
             return true;
-        } else {
-            setLastInvoker(null);
-            return false;
         }
+
+        setLastInvoker(null);
+        return false;
     }
 
     private boolean isInvokerFromEncodeDecode(Component invoker) {
         if (invoker.getName() == null) {
             return false;
-        } else {
-            return invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_FIELD)
-                    || invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_RESULTFIELD);
         }
+
+        return invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_FIELD)
+                || invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_RESULTFIELD);
     }
 }
