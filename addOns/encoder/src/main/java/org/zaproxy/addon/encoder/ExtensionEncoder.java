@@ -143,7 +143,9 @@ public class ExtensionEncoder extends ExtensionAdaptor {
             popupDeleteOutputMenu = new PopupEncoderDeleteOutputPanelMenu();
             popupDeleteOutputMenu.addActionListener(
                     e -> {
-                        EncodeDecodeDialog encodeDecodeDialog = showEncodeDecodeDialog(null);
+                        if (encodeDecodeDialog == null) {
+                            return;
+                        }
                         encodeDecodeDialog.deleteOutputPanel(
                                 popupDeleteOutputMenu.getLastInvoker());
                     });
