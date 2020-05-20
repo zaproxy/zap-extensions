@@ -47,7 +47,7 @@ public class EncoderConfig {
         return loadConfig(getConfigFile(CONFIG_FILE_NAME));
     }
 
-    public static List<TabModel> resetConfig() throws ConfigurationException, IOException {
+    public static List<TabModel> loadDefaultConfig() throws ConfigurationException, IOException {
         return loadConfig(getConfigFile(DEFAULT_CONFIG_FILE_NAME));
     }
 

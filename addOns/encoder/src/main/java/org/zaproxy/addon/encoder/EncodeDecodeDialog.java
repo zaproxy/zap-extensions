@@ -124,7 +124,7 @@ public class EncodeDecodeDialog extends AbstractFrame {
 
         List<TabModel> defaultTabModels = new ArrayList<>();
         try {
-            defaultTabModels.addAll(EncoderConfig.resetConfig());
+            defaultTabModels.addAll(EncoderConfig.loadDefaultConfig());
         } catch (ConfigurationException | IOException e) {
             LOGGER.warn("There was a problem loading the default encoder config.", e);
         }
