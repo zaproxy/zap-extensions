@@ -106,9 +106,7 @@ public class EncodeDecodeDialog extends AbstractFrame {
     }
 
     public void setTabs(List<TabModel> tabModels) {
-        for (int i = 0; i < getTabbedPane().getTabCount(); i++) {
-            getTabbedPane().remove(i);
-        }
+        getTabbedPane().removeAll();
 
         for (TabModel tabModel : tabModels) {
             List<OutputPanelModel> outputPanels = tabModel.getOutputPanels();
@@ -119,7 +117,6 @@ public class EncodeDecodeDialog extends AbstractFrame {
     }
 
     private void resetTabs() {
-        getTabbedPane().removeAll();
         tabs = new ArrayList<>();
 
         List<TabModel> defaultTabModels = new ArrayList<>();
@@ -128,11 +125,8 @@ public class EncodeDecodeDialog extends AbstractFrame {
         } catch (ConfigurationException | IOException e) {
             LOGGER.warn("There was a problem loading the default encoder config.", e);
         }
-        for (TabModel tabModel : defaultTabModels) {
-            List<OutputPanelModel> outputPanels = tabModel.getOutputPanels();
-            tabModel.setOutputPanels(new ArrayList<>());
-            addTab(tabModel, outputPanels);
-        }
+
+        setTabs(defaultTabModels);
 
         try {
             EncoderConfig.saveConfig(tabs);
