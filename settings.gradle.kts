@@ -32,6 +32,7 @@ var addOns = listOf(
     "directorylistv2_3",
     "directorylistv2_3_lc",
     "domxss",
+    "encoder",
     "exportreport",
     "formhandler",
     "frontendscanner",
