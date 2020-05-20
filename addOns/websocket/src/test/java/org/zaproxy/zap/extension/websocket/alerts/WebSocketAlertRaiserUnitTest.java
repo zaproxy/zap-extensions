@@ -19,11 +19,13 @@
  */
 package org.zaproxy.zap.extension.websocket.alerts;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
@@ -31,7 +33,7 @@ import org.zaproxy.zap.testutils.WebSocketTestUtils;
 
 public class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUpZap();
     }
@@ -66,14 +68,11 @@ public class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
         message.channel = mock(WebSocketChannelDTO.class);
         WebSocketAlertRaiser alertRaiser =
                 new WebSocketAlertRaiser(webSocketAlertThread, 0, message);
-        try {
-            // When
-            alertRaiser.raise();
-            // Then
-            fail("Expected an IllegalStateException to be thrown");
-        } catch (IllegalStateException e) {
-            assertTrue(e.getMessage().contains("Alert Name"));
-            assertTrue(e.getMessage().contains("Alert Source"));
-        }
+        // When
+        IllegalStateException e =
+                assertThrows(IllegalStateException.class, () -> alertRaiser.raise());
+        // Then
+        assertTrue(e.getMessage().contains("Alert Name"));
+        assertTrue(e.getMessage().contains("Alert Source"));
     }
 }

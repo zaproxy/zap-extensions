@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,8 +27,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -134,11 +134,7 @@ public class InformationDisclosureInURLUnitTest
     }
 
     @Test
-    @Ignore
-    /*
-     * TODO: InformationDisclosureInURL scanner should eliminate dashes when looking
-     * for credit card numbers.
-     */
+    @Disabled(value = "Scanner does not yet eliminate dashes when looking for credit card numbers.")
     public void creditCardDashesInURLParamValue()
             throws HttpMalformedHeaderException, URIException {
 

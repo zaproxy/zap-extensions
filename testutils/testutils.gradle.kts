@@ -10,14 +10,16 @@ java {
 }
 
 val nanohttpdVersion = "2.3.1"
+val jupiterVersion = "5.6.0"
 
 dependencies {
     compileOnly("org.zaproxy:zap:2.9.0")
 
-    api("junit:junit:4.11")
-
     api("org.hamcrest:hamcrest-library:1.3")
-    api("org.mockito:mockito-core:3.3.3")
+    api("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
+    api("org.junit.jupiter:junit-jupiter-params:$jupiterVersion")
+    runtimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
+    api("org.mockito:mockito-junit-jupiter:3.1.0")
 
     api("org.nanohttpd:nanohttpd-webserver:$nanohttpdVersion")
     api("org.nanohttpd:nanohttpd-websocket:$nanohttpdVersion")

@@ -19,12 +19,12 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -42,7 +42,7 @@ public class ServletParameterPollutionScannerUnitTest
         return new ServletParameterPollutionScanner();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         rule.setAlertThreshold(AlertThreshold.LOW);
         when(passiveScanData.getTechSet()).thenReturn(TechSet.AllTech);
@@ -184,7 +184,7 @@ public class ServletParameterPollutionScannerUnitTest
     }
 
     private Alert getFirstAlertRaised() {
-        assertTrue("Expected Alert but none raised.", alertsRaised.size() > 0);
+        assertTrue(alertsRaised.size() > 0, "Expected Alert but none raised.");
         return alertsRaised.get(0);
     }
 

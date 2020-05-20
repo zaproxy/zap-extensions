@@ -22,8 +22,8 @@ package org.zaproxy.zap.extension.groovy;
 import groovy.lang.GroovyClassLoader;
 import java.io.IOException;
 import java.nio.file.Path;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
 
 /** Verifies that the Groovy templates are parsed without errors. */
@@ -31,12 +31,12 @@ public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
     private static GroovyClassLoader groovyCl;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         groovyCl = new GroovyClassLoader();
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardown() throws IOException {
         groovyCl.close();
     }

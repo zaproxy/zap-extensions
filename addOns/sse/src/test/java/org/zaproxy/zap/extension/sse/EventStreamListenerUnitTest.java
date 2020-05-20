@@ -19,7 +19,9 @@
  */
 package org.zaproxy.zap.extension.sse;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,16 +32,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 /** Unit test for {@link EventStreamListener}. */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class EventStreamListenerUnitTest {
 
     @Test
@@ -49,7 +50,7 @@ public class EventStreamListenerUnitTest {
 
         // When
         BufferedReader readerMock = getReaderMockForStream(prepareEventStreamLines(event1));
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
 
         EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
         listener.run();
@@ -69,7 +70,7 @@ public class EventStreamListenerUnitTest {
         // When
         BufferedReader readerMock =
                 getReaderMockForStream(prepareEventStreamLines(event1, event2, event3, event4));
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
 
         EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
         listener.run();
@@ -89,7 +90,7 @@ public class EventStreamListenerUnitTest {
 
         // When
         BufferedReader readerMock = getReaderMockForStream(prepareEventStreamLines(event1));
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
 
         EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
         listener.run();
@@ -107,13 +108,13 @@ public class EventStreamListenerUnitTest {
 
         // When
         BufferedReader readerMock = getReaderMockForStream(streamLines);
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
 
         EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
         listener.run();
 
         // Then
-        verify(proxyMock, never()).processEvent(Mockito.anyString());
+        verify(proxyMock, never()).processEvent(anyString());
     }
 
     @Test
@@ -124,7 +125,7 @@ public class EventStreamListenerUnitTest {
 
         // When
         BufferedReader readerMock = getReaderMockForStream(streamLines);
-        EventStreamProxy proxyMock = Mockito.mock(EventStreamProxy.class);
+        EventStreamProxy proxyMock = mock(EventStreamProxy.class);
 
         EventStreamListener listener = new EventStreamListener(proxyMock, readerMock);
         listener.run();
@@ -143,7 +144,7 @@ public class EventStreamListenerUnitTest {
      */
     private BufferedReader getReaderMockForStream(final List<String> streamLines)
             throws IOException {
-        BufferedReader readerMock = Mockito.mock(BufferedReader.class);
+        BufferedReader readerMock = mock(BufferedReader.class);
 
         when(readerMock.readLine())
                 .thenAnswer(

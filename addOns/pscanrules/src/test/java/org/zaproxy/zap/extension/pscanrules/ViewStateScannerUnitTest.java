@@ -19,16 +19,16 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 import java.util.Arrays;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
@@ -39,7 +39,7 @@ public class ViewStateScannerUnitTest extends PassiveScannerTest<ViewstateScanne
     private HttpMessage msg;
     private HttpRequestHeader header;
 
-    @Before
+    @BeforeEach
     public void before() throws URIException {
         msg = new HttpMessage();
         header = new HttpRequestHeader();

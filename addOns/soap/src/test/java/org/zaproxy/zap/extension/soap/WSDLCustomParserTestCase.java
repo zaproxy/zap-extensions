@@ -19,7 +19,10 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,8 +30,8 @@ import java.nio.file.Path;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -37,7 +40,7 @@ public class WSDLCustomParserTestCase extends TestUtils {
     private String wsdlContent;
     private WSDLCustomParser parser;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         /* Simple log configuration to prevent Log4j malfunction. */
         BasicConfigurator.configure();

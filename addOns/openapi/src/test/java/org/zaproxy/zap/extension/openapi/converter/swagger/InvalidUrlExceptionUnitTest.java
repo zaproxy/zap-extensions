@@ -19,22 +19,22 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link InvalidUrlException}. */
 public class InvalidUrlExceptionUnitTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldFailToCreateException2ArgWithNullUrl() {
         // Given
         String url = null;
-        // When
-        new InvalidUrlException(url, null);
-        // Then = NullPointerException
+        // When / Then
+        assertThrows(NullPointerException.class, () -> new InvalidUrlException(url, null));
     }
 
     @Test
@@ -47,13 +47,12 @@ public class InvalidUrlExceptionUnitTest {
         assertThat(iue.getUrl(), is(equalTo(url)));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldFailToCreateException3ArgWithNullUrl() {
         // Given
         String url = null;
-        // When
-        new InvalidUrlException(url, null, null);
-        // Then = NullPointerException
+        // When / Then
+        assertThrows(NullPointerException.class, () -> new InvalidUrlException(url, null, null));
     }
 
     @Test

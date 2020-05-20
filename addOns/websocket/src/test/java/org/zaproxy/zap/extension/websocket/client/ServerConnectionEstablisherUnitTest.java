@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.websocket.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
@@ -37,13 +37,13 @@ import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketTestServer;
 public class ServerConnectionEstablisherUnitTest extends WebSocketTestUtils {
     private static final String HOST_NAME = "localhost";
 
-    @Before
+    @BeforeEach
     public void openWebSocketServer() throws Exception {
         super.startWebSocketServer(HOST_NAME);
         super.setUpZap();
     }
 
-    @After
+    @AfterEach
     @Override
     public void stopWebSocketServer() {
         super.stopWebSocketServer();

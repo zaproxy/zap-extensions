@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.alertFilters;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 
 /** Unit test for {@link AlertFilter}. */
@@ -31,7 +31,7 @@ public class AlertFilterTest {
 
     private Alert alert;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         alert = new Alert(1, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, "Test alert");
         alert.setUri("https://www.example.com");

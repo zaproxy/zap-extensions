@@ -19,11 +19,13 @@
  */
 package org.zaproxy.zap.testutils;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Before;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
@@ -108,13 +110,13 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         super();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUpZap();
 
-        PluginFactory pluginFactory = Mockito.mock(PluginFactory.class);
-        ScanPolicy scanPolicy = Mockito.mock(ScanPolicy.class);
-        Mockito.when(scanPolicy.getPluginFactory()).thenReturn(pluginFactory);
+        PluginFactory pluginFactory = mock(PluginFactory.class);
+        ScanPolicy scanPolicy = mock(ScanPolicy.class);
+        when(scanPolicy.getPluginFactory()).thenReturn(pluginFactory);
 
         ConnectionParam connectionParam = new ConnectionParam();
 
@@ -166,7 +168,7 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         }
     }
 
-    @After
+    @AfterEach
     public void shutDownServer() throws Exception {
         stopServer();
     }

@@ -19,15 +19,15 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.users.User;
@@ -45,7 +45,7 @@ public class UsernameIdorScannerUnitTest extends PassiveScannerTest<UsernameIdor
     // Hash in lower case for "foobar" without quotes
     private static final String FOOBAR_MD2 = "3af4bb69e03489fc4ceebe50151d3e1a";
 
-    @Before
+    @BeforeEach
     public void before() throws URIException {
 
         when(passiveScanData.getUsers()).thenReturn(Arrays.asList(new User(1, "guest")));

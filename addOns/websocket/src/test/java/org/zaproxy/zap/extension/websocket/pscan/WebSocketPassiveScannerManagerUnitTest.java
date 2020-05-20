@@ -19,14 +19,14 @@
  */
 package org.zaproxy.zap.extension.websocket.pscan;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Iterator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.websocket.alerts.AlertManager;
 import org.zaproxy.zap.testutils.WebSocketTestUtils;
 
@@ -34,7 +34,7 @@ public class WebSocketPassiveScannerManagerUnitTest extends WebSocketTestUtils {
 
     private WebSocketPassiveScannerManager wsPscanManager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         wsPscanManager = new WebSocketPassiveScannerManager(mock(AlertManager.class));
         super.setUpLog();

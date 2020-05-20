@@ -20,11 +20,12 @@
 package org.zaproxy.zap.extension.openapi.v2;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -33,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
@@ -189,7 +190,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
         checkPetStoreRequests(accessedUrls, defaultHost);
     }
 
-    @Test(expected = SwaggerException.class)
+    @Test
     public void shouldFailToExplorePetStoreWithoutHost() throws Exception {
         // Given
         String test = "/PetStoreJson/";
@@ -220,9 +221,8 @@ public class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        // When
-        requestor.run(converter.getRequestModels());
-        // Then = SwaggerException
+        // When / Then
+        assertThrows(SwaggerException.class, () -> requestor.run(converter.getRequestModels()));
     }
 
     @Test
@@ -263,7 +263,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
-    @Test(expected = SwaggerException.class)
+    @Test
     public void shouldFailToExplorePetStoreWithoutScheme() throws Exception {
         // Given
         String test = "/PetStoreJson/";
@@ -281,9 +281,8 @@ public class OpenApiUnitTest extends AbstractServerTest {
                         defaultScheme,
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
-        // When
-        converter.getRequestModels();
-        // Then = SwaggerException
+        // When / Then
+        assertThrows(SwaggerException.class, () -> converter.getRequestModels());
     }
 
     @Test

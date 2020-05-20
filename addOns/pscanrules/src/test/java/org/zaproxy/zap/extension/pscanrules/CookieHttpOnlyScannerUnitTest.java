@@ -19,15 +19,15 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -43,7 +43,7 @@ public class CookieHttpOnlyScannerUnitTest extends PassiveScannerTest<CookieHttp
     protected CookieHttpOnlyScanner createScanner() {
         rule = new CookieHttpOnlyScanner();
         // Mock the model and options
-        model = Mockito.mock(Model.class);
+        model = mock(Model.class);
         OptionsParam options = new OptionsParam();
         ZapXmlConfiguration conf = new ZapXmlConfiguration();
         options.load(conf);

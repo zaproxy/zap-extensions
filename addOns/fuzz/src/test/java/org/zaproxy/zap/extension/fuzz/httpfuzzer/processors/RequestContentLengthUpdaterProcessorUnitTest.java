@@ -19,16 +19,18 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -40,10 +42,10 @@ import org.zaproxy.zap.utils.I18N;
 /** Unit test for {@link RequestContentLengthUpdaterProcessor}. */
 public class RequestContentLengthUpdaterProcessorUnitTest {
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        I18N i18n = Mockito.mock(I18N.class);
-        given(i18n.getString(anyString())).willReturn("");
+        I18N i18n = mock(I18N.class);
+        given(i18n.getString(any())).willReturn("");
         Constant.messages = i18n;
     }
 
@@ -81,28 +83,27 @@ public class RequestContentLengthUpdaterProcessorUnitTest {
     public void shouldCreateProcessorWithUndefinedMethod() {
         // Given
         String undefinedMethod = null;
-        // When
-        new RequestContentLengthUpdaterProcessor(undefinedMethod);
-        // Then = No Exception
+        // When / Then
+        assertDoesNotThrow(() -> new RequestContentLengthUpdaterProcessor(undefinedMethod));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldFailToProcessAnUndefinedMessage() {
         // Given
         RequestContentLengthUpdaterProcessor processor = new RequestContentLengthUpdaterProcessor();
         HttpMessage undefinedMessage = null;
-        // When
-        processor.processMessage(createUtils(), undefinedMessage);
-        // Then = NullPointerException
+        // When / Then
+        assertThrows(
+                NullPointerException.class,
+                () -> processor.processMessage(createUtils(), undefinedMessage));
     }
 
     @Test
     public void shouldNotRequireUtilsToProcessMessage() {
         // Given
         RequestContentLengthUpdaterProcessor processor = new RequestContentLengthUpdaterProcessor();
-        // When
-        processor.processMessage(null, new HttpMessage());
-        // Then = No Exception
+        // When / Then
+        assertDoesNotThrow(() -> processor.processMessage(null, new HttpMessage()));
     }
 
     @Test

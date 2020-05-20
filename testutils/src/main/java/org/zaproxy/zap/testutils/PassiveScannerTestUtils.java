@@ -19,16 +19,16 @@
  */
 package org.zaproxy.zap.testutils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
 import net.htmlparser.jericho.Source;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
@@ -55,7 +55,7 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
         super();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUpZap();
 

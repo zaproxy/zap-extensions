@@ -19,14 +19,14 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -217,11 +217,7 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    @Ignore
-    // TODO: The scanHttpResponseReceive() method in this scanner currently does not
-    // look for session IDs in the response embedded in HREFs. As such, this test
-    // case fails so is commented out. When this scanner is enhanced to do this,
-    // enable this test case.
+    @Disabled(value = "Scanner does not look for session IDs in the response embedded in HREFs")
     public void containsSessionIdInResponseHREFParams()
             throws HttpMalformedHeaderException, URIException {
 
@@ -243,11 +239,9 @@ public class TestInfoSessionIdURLUnitTest extends PassiveScannerTest<TestInfoSes
     }
 
     @Test
-    @Ignore
-    // TODO: The scanHttpResponseReceive() method in this scanner currently does not
-    // look for session IDs in the response embedded in HREFs before the parameters.
-    // As such, this test case fails so is commented out. When this scanner is
-    // enhanced to do this, enable this test case.
+    @Disabled(
+            value =
+                    "Scanner does not look for session IDs in the response embedded in HREFs before the parameters")
     public void containsCFIDInResponseHREFBeforeParams()
             throws HttpMalformedHeaderException, URIException {
 

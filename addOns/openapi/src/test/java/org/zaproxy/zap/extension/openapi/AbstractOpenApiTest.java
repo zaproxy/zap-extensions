@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /**
@@ -34,7 +34,7 @@ public abstract class AbstractOpenApiTest extends TestUtils {
         mockMessages(new ExtensionOpenApi());
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         setUpZap();
     }
