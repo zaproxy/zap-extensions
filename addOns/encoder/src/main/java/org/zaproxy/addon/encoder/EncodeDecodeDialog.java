@@ -24,8 +24,8 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 
-public class EncodeDecodeDialog extends AbstractFrame implements WindowListener {
+public class EncodeDecodeDialog extends AbstractFrame {
 
     public static final String ENCODE_DECODE_FIELD = "EncodeDecodeInputField";
     public static final String ENCODE_DECODE_RESULTFIELD = "EncodeDecodeResultField";
@@ -86,6 +86,25 @@ public class EncodeDecodeDialog extends AbstractFrame implements WindowListener 
         initialize();
         setTabs(tabModels);
         defaultTabModels.addAll(tabModels);
+
+        addWindowListener(
+                new WindowAdapter() {
+
+                    @Override
+                    public void windowClosing(WindowEvent e) {
+                        saveSetting();
+                    }
+
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        saveSetting();
+                    }
+
+                    @Override
+                    public void windowIconified(WindowEvent e) {
+                        saveSetting();
+                    }
+                });
     }
 
     public void setTabs(List<TabModel> tabModels) {
@@ -136,7 +155,6 @@ public class EncodeDecodeDialog extends AbstractFrame implements WindowListener 
         this.setAlwaysOnTop(false);
         this.setContentPane(getMainPanel());
         this.setTitle(Constant.messages.getString("encoder.dialog.title"));
-        this.addWindowListener(this);
     }
 
     private javax.swing.JToolBar getPanelToolbar() {
@@ -643,33 +661,6 @@ public class EncodeDecodeDialog extends AbstractFrame implements WindowListener 
             LOGGER.error("Can not store Encoder Config", e);
         }
     }
-
-    @Override
-    public void windowOpened(WindowEvent e) {}
-
-    @Override
-    public void windowClosing(WindowEvent e) {
-        saveSetting();
-    }
-
-    @Override
-    public void windowClosed(WindowEvent e) {
-        saveSetting();
-    }
-
-    @Override
-    public void windowIconified(WindowEvent e) {
-        saveSetting();
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent e) {}
-
-    @Override
-    public void windowActivated(WindowEvent e) {}
-
-    @Override
-    public void windowDeactivated(WindowEvent e) {}
 
     private static class OutputPanelPosition {
         private int tabIndex;
