@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.pscan;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
@@ -35,7 +34,6 @@ public final class PassiveScanTestHelper {
             HttpMessage message,
             PassiveScanData passiveScanData) {
         HistoryReference historyRef = mock(HistoryReference.class);
-        when(historyRef.getHistoryId()).thenReturn(1);
         message.setHistoryRef(historyRef);
         rule.init(parent, message, passiveScanData);
     }

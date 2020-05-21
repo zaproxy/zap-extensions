@@ -20,14 +20,14 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
@@ -40,10 +40,13 @@ import org.zaproxy.zap.model.Context;
 public class CrossDomainScriptInclusionScannerUnitTest
         extends PassiveScannerTest<CrossDomainScriptInclusionScanner> {
 
-    @Mock Model model;
-    @Mock Session session;
+    @Mock(lenient = true)
+    Model model;
 
-    @Before
+    @Mock(lenient = true)
+    Session session;
+
+    @BeforeEach
     public void setup() {
         when(session.getContextsForUrl(anyString())).thenReturn(Collections.emptyList());
         when(model.getSession()).thenReturn(session);

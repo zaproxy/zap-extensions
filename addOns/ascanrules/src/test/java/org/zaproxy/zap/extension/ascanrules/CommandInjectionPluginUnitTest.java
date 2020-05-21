@@ -20,12 +20,14 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -34,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import org.apache.commons.configuration.Configuration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -111,13 +113,12 @@ public class CommandInjectionPluginUnitTest
         assertThat(targets, is(equalTo(false)));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldFailToInitWithoutConfig() throws Exception {
         // Given
         CommandInjectionPlugin scanner = new CommandInjectionPlugin();
-        // When
-        scanner.init(getHttpMessage(""), parent);
-        // Then = NullPointerException
+        // When / Then
+        assertThrows(NullPointerException.class, () -> scanner.init(getHttpMessage(""), parent));
     }
 
     @Test
@@ -125,9 +126,8 @@ public class CommandInjectionPluginUnitTest
         // Given
         CommandInjectionPlugin scanner = new CommandInjectionPlugin();
         scanner.setConfig(new ZapXmlConfiguration());
-        // When
-        scanner.init(getHttpMessage(""), parent);
-        // Then = No exception.
+        // When / Then
+        assertDoesNotThrow(() -> scanner.init(getHttpMessage(""), parent));
     }
 
     @Test

@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.io.Serializable;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {

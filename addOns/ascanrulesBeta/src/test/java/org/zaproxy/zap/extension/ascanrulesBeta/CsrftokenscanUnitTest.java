@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -26,12 +27,13 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import java.util.TreeSet;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -56,18 +58,16 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
         // Given
         Csrftokenscan scanner = new Csrftokenscan();
         scanner.setConfig(new ZapXmlConfiguration());
-        // When
-        scanner.init(getHttpMessage(""), parent);
-        // Then = No exception.
+        // When / Then
+        assertDoesNotThrow(() -> scanner.init(getHttpMessage(""), parent));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldFailToInitWithoutConfig() throws Exception {
         // Given
         Csrftokenscan scanner = new Csrftokenscan();
-        // When
-        scanner.init(getHttpMessage(""), parent);
-        // Then = Exception
+        // When / Then
+        assertThrows(NullPointerException.class, () -> scanner.init(getHttpMessage(""), parent));
     }
 
     @Test

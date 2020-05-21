@@ -20,23 +20,24 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static java.lang.String.format;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.parosproxy.paros.network.HttpStatusCode.*;
+import static org.parosproxy.paros.network.HttpStatusCode.INTERNAL_SERVER_ERROR;
+import static org.parosproxy.paros.network.HttpStatusCode.NOT_FOUND;
+import static org.parosproxy.paros.network.HttpStatusCode.OK;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-@SuppressWarnings("Duplicates")
 public class ApplicationErrorScannerUnitTest extends PassiveScannerTest<ApplicationErrorScanner> {
     private static final String URI = "https://www.example.com/test/";
     private static final String REQUEST_HEADER = format("GET %s HTTP/1.1", URI);

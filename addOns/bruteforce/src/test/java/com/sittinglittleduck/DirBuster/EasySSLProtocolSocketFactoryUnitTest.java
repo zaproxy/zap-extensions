@@ -19,21 +19,23 @@
  */
 package com.sittinglittleduck.DirBuster;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import org.apache.commons.httpclient.params.HttpConnectionParams;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.testutils.HTTPDTestServer;
 
 public class EasySSLProtocolSocketFactoryUnitTest {
@@ -43,19 +45,19 @@ public class EasySSLProtocolSocketFactoryUnitTest {
     private static HTTPDTestServer testServer;
     private static int serverPort;
 
-    @BeforeClass
+    @BeforeAll
     public static void startEmbeddedHttpServers() throws Exception {
         testServer = new HTTPDTestServer(0);
         testServer.start();
         serverPort = testServer.getListeningPort();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopEmbeddedHttpServers() {
         testServer.stop();
     }
 
-    @Before
+    @BeforeEach
     public void resetSocketFactory() throws Exception {
         socketFactory = new EasySSLProtocolSocketFactory();
     }
@@ -74,7 +76,7 @@ public class EasySSLProtocolSocketFactoryUnitTest {
 
     // Note that on some platforms this gives a ConnectionException while on others it give a
     // UnknownHostException
-    @Test(expected = java.io.IOException.class)
+    @Test
     public void shouldFailCreatingSocketForUnknownHost() throws Exception {
         // Given
         String unknownHost = "localhorst";
@@ -82,28 +84,37 @@ public class EasySSLProtocolSocketFactoryUnitTest {
         int localPort = 28080;
         HttpConnectionParams params = new HttpConnectionParams();
         params.setConnectionTimeout(60000);
-        // When
-        socketFactory.createSocket(unknownHost, serverPort, localAddress, localPort, params);
-        // Then = IOException
+        // When / Then
+        assertThrows(
+                IOException.class,
+                () ->
+                        socketFactory.createSocket(
+                                unknownHost, serverPort, localAddress, localPort, params));
     }
 
-    @Test(expected = ConnectException.class)
+    @Test
     public void shouldFailCreatingSocketForUnknownPort() throws Exception {
         // Given
         int unknownPort = 12345;
-        // When
-        socketFactory.createSocket("localhost", unknownPort);
-        // Then = ConnectException
+        // When / Then
+        assertThrows(
+                ConnectException.class, () -> socketFactory.createSocket("localhost", unknownPort));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailCreatingSocketForMissingParameters() throws Exception {
         // Given
         HttpConnectionParams nullParams = null;
-        // When
-        socketFactory.createSocket(
-                "localhost", serverPort, InetAddress.getLoopbackAddress(), 12345, nullParams);
-        // Then = IllegalArgumentException
+        // When / Then
+        assertThrows(
+                IllegalArgumentException.class,
+                () ->
+                        socketFactory.createSocket(
+                                "localhost",
+                                serverPort,
+                                InetAddress.getLoopbackAddress(),
+                                12345,
+                                nullParams));
     }
 
     @Test
@@ -124,16 +135,22 @@ public class EasySSLProtocolSocketFactoryUnitTest {
         assertThat(sslSocket.getLocalPort(), is(equalTo(localPort)));
     }
 
-    @Test(expected = SocketTimeoutException.class)
-    @Ignore // TODO Won't work unless we figure out a way to slow down connect process artificially
+    @Test
+    @Disabled(value = "Requires a way to slow down connect process artificially")
     public void shouldFailCreatingSocketWithInstantTimeout() throws Exception {
         // Given
         HttpConnectionParams params = new HttpConnectionParams();
         params.setConnectionTimeout(1);
-        // When
-        socketFactory.createSocket(
-                "localhost", serverPort, InetAddress.getLoopbackAddress(), 38080, params);
-        // Then = SocketTimeoutException
+        // When / Then
+        assertThrows(
+                SocketTimeoutException.class,
+                () ->
+                        socketFactory.createSocket(
+                                "localhost",
+                                serverPort,
+                                InetAddress.getLoopbackAddress(),
+                                38080,
+                                params));
     }
 
     @Test

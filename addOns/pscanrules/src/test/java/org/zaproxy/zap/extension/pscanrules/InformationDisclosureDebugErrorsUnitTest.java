@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,9 +30,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -51,14 +50,14 @@ public class InformationDisclosureDebugErrorsUnitTest
                     "This error page might contain sensitive information because ASP.NET",
                     "PHP Error");
 
-    @Rule public TemporaryFolder testFolder = new TemporaryFolder();
+    @TempDir Path testFolder;
 
     @Override
     protected InformationDisclosureDebugErrors createScanner() {
         InformationDisclosureDebugErrors scanner = new InformationDisclosureDebugErrors();
 
         try {
-            Path errorFile = testFolder.newFile("debug-error-messages.txt").toPath();
+            Path errorFile = testFolder.resolve("debug-error-messages.txt");
             Files.write(errorFile, DEBUG_ERRORS, Charset.forName("UTF-8"));
             scanner.setDebugErrorFile(errorFile);
         } catch (IOException e) {
@@ -285,7 +284,7 @@ public class InformationDisclosureDebugErrorsUnitTest
 
         // Change debug error definitions for the scanner
         try {
-            Path errorFile = testFolder.newFile("alternative-debug-error-messages.txt").toPath();
+            Path errorFile = testFolder.resolve("alternative-debug-error-messages.txt");
             Files.write(errorFile, alternativeDebugErrors, Charset.forName("UTF-8"));
             rule.setDebugErrorFile(errorFile);
         } catch (IOException e) {

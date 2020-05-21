@@ -19,10 +19,10 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;

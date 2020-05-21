@@ -19,15 +19,17 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link BrowsersComboBoxModel}. */
 public class BrowsersComboBoxModelUnitTest {
@@ -35,7 +37,7 @@ public class BrowsersComboBoxModelUnitTest {
     private static BrowserUI FIREFOX;
     private static List<BrowserUI> browsers;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         FIREFOX = new BrowserUI("Firefox", Browser.FIREFOX);
 
@@ -45,29 +47,25 @@ public class BrowsersComboBoxModelUnitTest {
         browsers.add(new BrowserUI("Safari", Browser.SAFARI));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenCreatingBrowsersComboBoxModelWithNullList() {
         // Given
         List<BrowserUI> browsers = null;
-        // When
-        new BrowsersComboBoxModel(browsers);
-        // Then = Exception
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> new BrowsersComboBoxModel(browsers));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenCreatingBrowsersComboBoxModelWithEmptyList() {
         // Given
         List<BrowserUI> browsers = Collections.emptyList();
-        // When
-        new BrowsersComboBoxModel(browsers);
-        // Then = Exception
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> new BrowsersComboBoxModel(browsers));
     }
 
     @Test
     public void shouldCreateBrowsersComboBoxModelWithNonEmptyList() {
-        // Given / When
-        new BrowsersComboBoxModel(browsers);
-        // Then = No Exception
+        assertDoesNotThrow(() -> new BrowsersComboBoxModel(browsers));
     }
 
     @Test
@@ -116,13 +114,14 @@ public class BrowsersComboBoxModelUnitTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenSelectingItemWithNonBrowserUIObject() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
-        // When
-        browsersComboBoxModel.setSelectedItem("NonBrowserUI");
-        // Then = Exception
+        // When / Then
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> browsersComboBoxModel.setSelectedItem("NonBrowserUI"));
     }
 
     @Test
@@ -146,13 +145,13 @@ public class BrowsersComboBoxModelUnitTest {
         assertThat(browsersComboBoxModel.getSelectedItem(), is(equalTo(FIREFOX)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenSelectingItemWithEmptyBrowserId() {
         // Given
         BrowsersComboBoxModel browsersComboBoxModel = new BrowsersComboBoxModel(browsers);
-        // When
-        browsersComboBoxModel.setSelectedBrowser("");
-        // Then = Exception
+        // When / Then
+        assertThrows(
+                IllegalArgumentException.class, () -> browsersComboBoxModel.setSelectedBrowser(""));
     }
 
     public void shouldSetSelectedItemWithBrowserId() {

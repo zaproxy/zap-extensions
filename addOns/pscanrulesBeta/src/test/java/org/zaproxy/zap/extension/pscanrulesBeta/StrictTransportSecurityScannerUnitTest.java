@@ -19,12 +19,12 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;

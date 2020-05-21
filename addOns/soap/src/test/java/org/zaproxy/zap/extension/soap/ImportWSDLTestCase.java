@@ -19,7 +19,10 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.predic8.wsdl.BindingOperation;
 import com.predic8.wsdl.Definitions;
@@ -27,9 +30,9 @@ import com.predic8.wsdl.Port;
 import java.util.HashMap;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.network.HttpRequestBody;
@@ -44,7 +47,7 @@ public class ImportWSDLTestCase {
     private HttpMessage testRequest;
     private SOAPMsgConfig soapConfig;
 
-    @Before
+    @BeforeEach
     public void setUp() throws URIException, NullPointerException {
         ImportWSDL.destroy();
         /* Retrieves singleton instance. */
@@ -69,7 +72,7 @@ public class ImportWSDLTestCase {
         soapConfig.setBindOp(new BindingOperation());
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         ImportWSDL.destroy();
     }

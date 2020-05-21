@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,7 +29,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;

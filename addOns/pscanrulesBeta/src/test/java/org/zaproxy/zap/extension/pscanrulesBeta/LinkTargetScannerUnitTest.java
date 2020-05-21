@@ -19,15 +19,16 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
@@ -43,10 +44,13 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
     private static final String HTML_CONTENT_TYPE = "text/html;charset=ISO-8859-1";
     private static final String TEXT_CONTENT_TYPE = "text/plain; charset=us-ascii";
 
-    @Mock Model model;
-    @Mock Session session;
+    @Mock(lenient = true)
+    Model model;
 
-    @Before
+    @Mock(lenient = true)
+    Session session;
+
+    @BeforeEach
     public void setup() {
         when(session.getContextsForUrl(anyString())).thenReturn(Collections.emptyList());
         when(model.getSession()).thenReturn(session);
@@ -436,9 +440,8 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         msg.setResponseBody("<html><a>link</a><area>area</area></html>");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then = no exception.
+        // When / Then
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
     }
 
     @Test
@@ -447,11 +450,10 @@ public class LinkTargetScannerUnitTest extends PassiveScannerTest<LinkTargetScan
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         rule.getConfig().setProperty(LinkTargetScanner.TRUSTED_DOMAINS_PROPERTY, "[");
-        // When
         msg.setResponseBody(
                 "<html><a href=\"https://www.example2.com/page1\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
-        scanHttpResponseReceive(msg);
-        // Then = no exception.
+        // When / Then
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
     }
 }

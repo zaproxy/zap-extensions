@@ -19,7 +19,6 @@ dependencies {
     implementation("org.bitbucket.mstrobel:procyon-compilertools:0.5.36")
 
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.commons:commons-lang3:3.9")
 }
 
 spotless {

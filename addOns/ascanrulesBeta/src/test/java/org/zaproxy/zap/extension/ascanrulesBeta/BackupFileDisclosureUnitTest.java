@@ -20,14 +20,14 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.junit.Assert.assertThat;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;

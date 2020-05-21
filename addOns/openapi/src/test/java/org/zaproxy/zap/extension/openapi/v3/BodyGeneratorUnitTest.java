@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.openapi.v3;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
@@ -26,9 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 import org.zaproxy.zap.extension.openapi.converter.swagger.RequestModelConverter;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
@@ -36,7 +38,7 @@ import org.zaproxy.zap.extension.openapi.generators.Generators;
 public class BodyGeneratorUnitTest {
     Generators generators;
 
-    @Before
+    @BeforeEach
     public void init() {
         generators = new Generators(null);
     }
@@ -54,7 +56,7 @@ public class BodyGeneratorUnitTest {
                                         .getParameters()
                                         .get(0)
                                         .getSchema());
-        Assert.assertEquals("[\"John Doe\",\"John Doe\"]", jsonArray);
+        assertEquals("[\"John Doe\",\"John Doe\"]", jsonArray);
     }
 
     @Test
@@ -70,7 +72,7 @@ public class BodyGeneratorUnitTest {
                                         .getParameters()
                                         .get(0)
                                         .getSchema());
-        Assert.assertEquals("[\"available\",\"available\"]", jsonArray);
+        assertEquals("[\"available\",\"available\"]", jsonArray);
     }
 
     @Test
@@ -84,7 +86,7 @@ public class BodyGeneratorUnitTest {
         String output =
                 "{\"id\":10,\"username\":\"John Doe\",\"firstName\":\"John Doe\",\"lastName\":\"John Doe\","
                         + "\"email\":\"John Doe\",\"password\":\"John Doe\",\"phone\":\"John Doe\",\"userStatus\":10}";
-        Assert.assertEquals(output, jsonString);
+        assertEquals(output, jsonString);
     }
 
     @Test
@@ -96,7 +98,7 @@ public class BodyGeneratorUnitTest {
                         .getBodyGenerator()
                         .generate(openAPI.getComponents().getSchemas().get("credentials"));
         String output = "{\"userName\":\"John Doe\",\"password\":\"John Doe\"}";
-        Assert.assertEquals(output, jsonString);
+        assertEquals(output, jsonString);
     }
 
     @Test
@@ -109,7 +111,7 @@ public class BodyGeneratorUnitTest {
                                         null, openAPI.getPaths().get("/pet").getPost(), null),
                                 generators)
                         .getBody();
-        Assert.assertEquals(
+        assertEquals(
                 "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\"}],\"status\":\"available\"}",
                 requestBody);
     }
@@ -126,7 +128,7 @@ public class BodyGeneratorUnitTest {
                                         null),
                                 generators)
                         .getBody();
-        Assert.assertEquals("name=name&status=status", requestBody);
+        assertEquals("name=name&status=status", requestBody);
     }
 
     @Test
@@ -139,7 +141,7 @@ public class BodyGeneratorUnitTest {
                                         "/pet", openAPI.getPaths().get("/pet").getPost(), null),
                                 generators)
                         .getBody();
-        Assert.assertEquals(
+        assertEquals(
                 "p1=p1&p2=%7B%22id%22%3A10%2C%22category%22%3A%7B%22id%22%3A10%2C%22name%22%3A%22John+Doe%22%7D%2C%22name%22%3A%22John+Doe%22%2C%22photoUrls%22%3A%5B%22John+Doe%22%5D%2C%22tags%22%3A%5B%7B%22id%22%3A10%2C%22name%22%3A%22John+Doe%22%7D%5D%7D",
                 requestBody);
     }
@@ -154,7 +156,7 @@ public class BodyGeneratorUnitTest {
                                         "/pet", openAPI.getPaths().get("/pet").getPost(), null),
                                 generators)
                         .getBody();
-        Assert.assertEquals("somearray=%5B1.2%2C1.2%5D", requestBody);
+        assertEquals("somearray=%5B1.2%2C1.2%5D", requestBody);
     }
 
     @Test
@@ -167,7 +169,7 @@ public class BodyGeneratorUnitTest {
                                         "/pets", openAPI.getPaths().get("/pets").getPatch(), null),
                                 generators)
                         .getBody();
-        Assert.assertEquals(
+        assertEquals(
                 "{\"pet_type\":\"John Doe\",\"hunts\":true,\"age\":10,\"bark\":true,\"breed\":\"Dingo\"}",
                 requestBody);
     }
@@ -182,7 +184,7 @@ public class BodyGeneratorUnitTest {
                                         "/pets", openAPI.getPaths().get("/pets").getPatch(), null),
                                 generators)
                         .getBody();
-        Assert.assertEquals("{\"hunts\":true,\"age\":10}", requestBody);
+        assertEquals("{\"hunts\":true,\"age\":10}", requestBody);
     }
 
     @Test
@@ -195,7 +197,7 @@ public class BodyGeneratorUnitTest {
                                         "/pets", openAPI.getPaths().get("/pets").getPatch(), null),
                                 generators)
                         .getBody();
-        Assert.assertEquals("{\"age\":10,\"nickname\":\"John Doe\"}", request);
+        assertEquals("{\"age\":10,\"nickname\":\"John Doe\"}", request);
     }
 
     @Test
@@ -208,8 +210,8 @@ public class BodyGeneratorUnitTest {
                                         "/pets", openAPI.getPaths().get("/pets").getPatch(), null),
                                 generators)
                         .getBody();
-        Assert.assertEquals("{\"pet_type\":\"John Doe\"}", requestType);
-        Assert.assertNotEquals("{\"pet_type\":1}", requestType);
+        assertEquals("{\"pet_type\":\"John Doe\"}", requestType);
+        assertNotEquals("{\"pet_type\":1}", requestType);
         String requestAge =
                 new RequestModelConverter()
                         .convert(
@@ -217,8 +219,8 @@ public class BodyGeneratorUnitTest {
                                         "/pets", openAPI.getPaths().get("/pets").getGet(), null),
                                 generators)
                         .getBody();
-        Assert.assertEquals("{\"age\":10,\"nickname\":\"John Doe\"}", requestAge);
-        Assert.assertNotEquals("{\"age\":\"10\",\"nickname\":\"John Doe\"}", requestAge);
+        assertEquals("{\"age\":10,\"nickname\":\"John Doe\"}", requestAge);
+        assertNotEquals("{\"age\":\"10\",\"nickname\":\"John Doe\"}", requestAge);
     }
 
     @Test
@@ -233,7 +235,7 @@ public class BodyGeneratorUnitTest {
                                         null),
                                 generators)
                         .getBody();
-        Assert.assertEquals(
+        assertEquals(
                 "[{\"type\":\"John Doe\",\"filtered_keys\":[\"John Doe\"]},{\"type\":\"John Doe\",\"filtered_keys\":[\"John Doe\"]}]",
                 request);
     }
@@ -250,8 +252,7 @@ public class BodyGeneratorUnitTest {
                                         null),
                                 generators)
                         .getBody();
-        Assert.assertEquals(
-                "{\"name\":\"John Doe\",\"params\":{\"John Doe\":\"John Doe\"}}", request);
+        assertEquals("{\"name\":\"John Doe\",\"params\":{\"John Doe\":\"John Doe\"}}", request);
     }
 
     @Test
@@ -266,7 +267,7 @@ public class BodyGeneratorUnitTest {
                                         null),
                                 generators)
                         .getBody();
-        Assert.assertEquals("{\"name\":\"John Doe\",\"params\":{\"John Doe\":1.2}}", request);
+        assertEquals("{\"name\":\"John Doe\",\"params\":{\"John Doe\":1.2}}", request);
     }
 
     @Test
@@ -281,7 +282,7 @@ public class BodyGeneratorUnitTest {
                                         null),
                                 generators)
                         .getBody();
-        Assert.assertEquals("{\"name\":\"John Doe\",\"params\":{\"John Doe\":true}}", request);
+        assertEquals("{\"name\":\"John Doe\",\"params\":{\"John Doe\":true}}", request);
     }
 
     @Test
@@ -296,7 +297,7 @@ public class BodyGeneratorUnitTest {
                                         null),
                                 generators)
                         .getBody();
-        Assert.assertEquals(
+        assertEquals(
                 "{\"name\":\"John Doe\",\"params\":{\"John Doe\":{\"name\":\"John Doe\"}}}",
                 request);
     }
