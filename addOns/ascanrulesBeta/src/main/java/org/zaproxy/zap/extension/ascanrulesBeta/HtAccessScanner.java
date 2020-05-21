@@ -22,9 +22,9 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
-import org.zaproxy.zap.sharedutils.AbstractAppFilePlugin;
 
 public class HtAccessScanner extends AbstractAppFilePlugin {
 

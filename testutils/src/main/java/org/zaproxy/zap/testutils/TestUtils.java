@@ -506,12 +506,31 @@ public abstract class TestUtils {
      * @param extension the target extension to mock the messages
      */
     protected static void mockMessages(final Extension extension) {
+        mockMessages(
+                extension.getClass().getPackage().getName()
+                        + ".resources."
+                        + Constant.MESSAGES_PREFIX,
+                extension.getI18nPrefix());
+    }
+
+    /**
+     * Mocks the class variable {@link Constant#messages} using the resource bundle with the given
+     * base name and prefix.
+     *
+     * <p>The messages with the given prefix are asserted that exist before obtaining them.
+     *
+     * <p>Resource messages that do not have the {@code prefix} have an empty {@code String}.
+     *
+     * @param baseName the base name of the resource bundle.
+     * @param prefix the prefix for the resource bundle.
+     */
+    protected static void mockMessages(String baseName, String prefix) {
         I18N i18n = mock(I18N.class, withSettings().lenient());
         Constant.messages = i18n;
 
         given(i18n.getLocal()).willReturn(Locale.getDefault());
 
-        extensionResourceBundle = getExtensionResourceBundle(extension);
+        extensionResourceBundle = getExtensionResourceBundle(baseName);
         when(i18n.getString(anyString()))
                 .thenAnswer(
                         new Answer<String>() {
@@ -519,7 +538,7 @@ public abstract class TestUtils {
                             @Override
                             public String answer(InvocationOnMock invocation) {
                                 String key = (String) invocation.getArguments()[0];
-                                if (key.startsWith(extension.getI18nPrefix())) {
+                                if (key.startsWith(prefix)) {
                                     assertKeyExists(key);
                                     return extensionResourceBundle.getString(key);
                                 }
@@ -536,7 +555,7 @@ public abstract class TestUtils {
                             public String answer(InvocationOnMock invocation) {
                                 Object[] args = invocation.getArguments();
                                 String key = (String) args[0];
-                                if (key.startsWith(extension.getI18nPrefix())) {
+                                if (key.startsWith(prefix)) {
                                     assertKeyExists(key);
                                     return MessageFormat.format(
                                             extensionResourceBundle.getString(key),
@@ -548,11 +567,11 @@ public abstract class TestUtils {
                         });
     }
 
-    private static ResourceBundle getExtensionResourceBundle(Extension ext) {
+    private static ResourceBundle getExtensionResourceBundle(String baseName) {
         return ResourceBundle.getBundle(
-                ext.getClass().getPackage().getName() + ".resources." + Constant.MESSAGES_PREFIX,
+                baseName,
                 Locale.ROOT,
-                ext.getClass().getClassLoader(),
+                TestUtils.class.getClassLoader(),
                 ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES));
     }
 

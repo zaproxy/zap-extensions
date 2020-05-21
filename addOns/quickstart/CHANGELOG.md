@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.9.0.
 - Use appropriate colour in dark mode (Issue 5542).
 
+### Fixed
+- Use AJAX Spider options in Automated Scan (Issue 5981).
+
 ## [28] - 2020-02-04
 ### Added
 - Warning when HUD is enabled only in scope
