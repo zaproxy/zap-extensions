@@ -7,7 +7,7 @@ plugins {
 
 group = "org.zaproxy.addon"
 
-version = "1.0.0"
+version = "1.1.0"
 description = "A common library, for use by other add-ons."
 
 zapAddOn {
