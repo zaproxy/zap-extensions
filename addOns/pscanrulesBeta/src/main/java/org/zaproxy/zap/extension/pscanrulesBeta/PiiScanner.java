@@ -28,10 +28,11 @@ import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.PiiUtils;
+import org.zaproxy.addon.commonlib.binlist.BinList;
+import org.zaproxy.addon.commonlib.binlist.BinRecord;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.sharedutils.PiiUtils;
-import org.zaproxy.zap.sharedutils.binlist.BinRecord;
 
 /**
  * A scanner to passively scan for the presence of PII in response Currently only credit card
@@ -95,7 +96,7 @@ public class PiiScanner extends PluginPassiveScanner {
                 while (matcher.find()) {
                     String evidence = matcher.group();
                     if (PiiUtils.isValidLuhn(evidence) && !isSci(candidate.getContainingString())) {
-                        BinRecord binRec = PiiUtils.getBinRecord(evidence);
+                        BinRecord binRec = BinList.getSingleton().get(evidence);
                         raiseAlert(msg, evidence, cc.name, binRec);
                     }
                 }
