@@ -31,6 +31,7 @@ public class HTTPDTestServer extends NanoHTTPD {
             new NanoServerHandler("") {
                 @Override
                 protected Response serve(IHTTPSession session) {
+                    consumeBody(session);
                     return newFixedLengthResponse(
                             Response.Status.NOT_FOUND,
                             MIME_HTML,
