@@ -154,15 +154,14 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
                 String evidence;
                 if ((evidence = doesResponseContainString(msg.getResponseBody(), attack)) != null) {
                     // Raise an alert
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            null,
-                            param,
-                            attack,
-                            getOtherInfo(),
-                            evidence,
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(param)
+                            .setAttack(attack)
+                            .setOtherInfo(getOtherInfo())
+                            .setEvidence(evidence)
+                            .setMessage(msg)
+                            .raise();
                     return;
                 }
             }

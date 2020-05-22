@@ -220,20 +220,14 @@ public class XSLTInjection extends AbstractAppParamPlugin {
             String attack,
             String evidence,
             String resourceIdentifier) {
-        bingo(
-                getRisk(),
-                Alert.CONFIDENCE_MEDIUM,
-                getName(),
-                getDescription(),
-                msg.getRequestHeader().getURI().toString(),
-                param,
-                attack,
-                getOtherInfo(resourceIdentifier, evidence),
-                getSolution(),
-                evidence,
-                getCweId(),
-                getWascId(),
-                msg);
+        newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(getOtherInfo(resourceIdentifier, evidence))
+                .setEvidence(evidence)
+                .setMessage(msg)
+                .raise();
     }
 
     @Override

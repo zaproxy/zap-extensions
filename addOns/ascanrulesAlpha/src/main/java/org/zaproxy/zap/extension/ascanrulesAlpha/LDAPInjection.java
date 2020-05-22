@@ -412,19 +412,17 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                     String vulnsoln =
                             Constant.messages.getString(I18N_PREFIX + "ldapinjection.soln");
 
-                    // bingo!
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            vulnname,
-                            vulndesc,
-                            getBaseMsg().getRequestHeader().getURI().getURI(),
-                            paramname,
-                            attack,
-                            extraInfo,
-                            vulnsoln,
-                            vulnevidence,
-                            getBaseMsg());
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(vulnname)
+                            .setDescription(vulndesc)
+                            .setParam(paramname)
+                            .setAttack(attack)
+                            .setOtherInfo(extraInfo)
+                            .setSolution(vulnsoln)
+                            .setEvidence(vulnevidence)
+                            .setMessage(getBaseMsg())
+                            .raise();
 
                     logBoolenInjection(
                             getBaseMsg(), paramname, appendTrueAttack, randomparameterAttack);
@@ -517,19 +515,17 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                     String vulnsoln =
                             Constant.messages.getString(I18N_PREFIX + "ldapinjection.soln");
 
-                    // bingo!
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            vulnname,
-                            vulndesc,
-                            getBaseMsg().getRequestHeader().getURI().getURI(),
-                            paramname,
-                            attack,
-                            extraInfo,
-                            vulnsoln,
-                            vulnevidence,
-                            getBaseMsg());
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(vulnname)
+                            .setDescription(vulndesc)
+                            .setParam(paramname)
+                            .setAttack(attack)
+                            .setOtherInfo(extraInfo)
+                            .setSolution(vulnsoln)
+                            .setEvidence(vulnevidence)
+                            .setMessage(getBaseMsg())
+                            .raise();
 
                     logBoolenInjection(
                             getBaseMsg(), paramname, hopefullyTrueAttack, randomparameterAttack);
@@ -660,18 +656,17 @@ public class LDAPInjection extends AbstractAppParamPlugin {
 
                 // we know the LDAP implementation, so put it in the title, where it will be
                 // obvious.
-                bingo(
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        vulnname + " - " + LDAP_ERRORS.get(errorPattern),
-                        vulndesc,
-                        getBaseMsg().getRequestHeader().getURI().getURI(),
-                        parameterName,
-                        attack,
-                        extraInfo,
-                        vulnsoln,
-                        errorPattern.toString(),
-                        attackMessage); // use the attack message, rather than the original message.
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setName(vulnname + " - " + LDAP_ERRORS.get(errorPattern))
+                        .setDescription(vulndesc)
+                        .setParam(parameterName)
+                        .setAttack(attack)
+                        .setOtherInfo(extraInfo)
+                        .setSolution(vulnsoln)
+                        .setEvidence(errorPattern.toString())
+                        .setMessage(attackMessage)
+                        .raise();
 
                 if (log.isDebugEnabled()) {
                     String logMessage =

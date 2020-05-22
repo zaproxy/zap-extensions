@@ -290,17 +290,13 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
                         sendAndReceive(counterProofMsg, false);
                         String bodyCounterProof = counterProofMsg.getResponseBody().toString();
                         if (bodyBase.equals(bodyCounterProof)) {
-                            bingo(
-                                    getRisk(),
-                                    Alert.CONFIDENCE_HIGH,
-                                    getName(),
-                                    getDescription(),
-                                    null,
-                                    param,
-                                    paramInj + valueInj,
-                                    getExtraInfo(ALL_DATA_ATTACK),
-                                    getSolution(),
-                                    msgInjAttack);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_HIGH)
+                                    .setParam(param)
+                                    .setAttack(paramInj + valueInj)
+                                    .setOtherInfo(getExtraInfo(ALL_DATA_ATTACK))
+                                    .setMessage(msgInjAttack)
+                                    .raise();
                             isBingo = true;
                             break;
                         }
@@ -351,17 +347,13 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
                         Matcher matcher =
                                 pattern.matcher(msgInjAttack.getResponseBody().toString());
                         if (matcher.find()) {
-                            bingo(
-                                    getRisk(),
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    getName(),
-                                    getDescription(),
-                                    null,
-                                    param,
-                                    valueInj,
-                                    getExtraInfo(CRASH_ATTACK),
-                                    getSolution(),
-                                    msgInjAttack);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setParam(param)
+                                    .setAttack(valueInj)
+                                    .setOtherInfo(getExtraInfo(CRASH_ATTACK))
+                                    .setMessage(msgInjAttack)
+                                    .raise();
                             isBingo = true;
                             break;
                         }
@@ -432,33 +424,25 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
                         setParameter(msgInjAttack, param, sleepValueToInj);
                         sendAndReceive(msgInjAttack, false);
                         if (msgInjAttack.getTimeElapsedMillis() >= aveRtt + LONG_TRESHOLD) {
-                            bingo(
-                                    getRisk(),
-                                    Alert.CONFIDENCE_HIGH,
-                                    getName(),
-                                    getDescription(),
-                                    null,
-                                    param,
-                                    sleepValueToInj,
-                                    getExtraInfo(SLEEP_ATTACK),
-                                    getSolution(),
-                                    msgInjAttack);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_HIGH)
+                                    .setParam(param)
+                                    .setAttack(sleepValueToInj)
+                                    .setOtherInfo(getExtraInfo(SLEEP_ATTACK))
+                                    .setMessage(msgInjAttack)
+                                    .raise();
                             isBingo = true;
                             break;
                         }
                     }
                     if (hadTimeout) {
-                        bingo(
-                                getRisk(),
-                                Alert.CONFIDENCE_LOW,
-                                getName(),
-                                getDescription(),
-                                null,
-                                param,
-                                sleepValueToInj,
-                                getExtraInfo(SLEEP_ATTACK),
-                                getSolution(),
-                                msgInjAttack);
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_LOW)
+                                .setParam(param)
+                                .setAttack(sleepValueToInj)
+                                .setOtherInfo(getExtraInfo(SLEEP_ATTACK))
+                                .setMessage(msgInjAttack)
+                                .raise();
                         isBingo = true;
                         break;
                     }
@@ -535,32 +519,24 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
                             sendAndReceive(counterProofMsg, false);
                             String bodyCounterProof = counterProofMsg.getResponseBody().toString();
                             if (bodyBase.equals(bodyCounterProof)) {
-                                bingo(
-                                        getRisk(),
-                                        Alert.CONFIDENCE_HIGH,
-                                        getName(),
-                                        getDescription(),
-                                        null,
-                                        param,
-                                        jpv[0] + jpv[1],
-                                        getExtraInfo(JSON_ATTACK),
-                                        getSolution(),
-                                        msgInjAttack);
+                                newAlert()
+                                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                                        .setParam(param)
+                                        .setAttack(jpv[0] + jpv[1])
+                                        .setOtherInfo(getExtraInfo(JSON_ATTACK))
+                                        .setMessage(msgInjAttack)
+                                        .raise();
                                 isBingo = true;
                                 break;
                             }
                         } else {
-                            bingo(
-                                    getRisk(),
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    getName(),
-                                    getDescription(),
-                                    null,
-                                    param,
-                                    jpv[0] + jpv[1],
-                                    getExtraInfo(JSON_ATTACK),
-                                    getSolution(),
-                                    msgInjAttack);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setParam(param)
+                                    .setAttack(jpv[0] + jpv[1])
+                                    .setOtherInfo(getExtraInfo(JSON_ATTACK))
+                                    .setMessage(msgInjAttack)
+                                    .raise();
                             isBingo = true;
                             break;
                         }
@@ -619,17 +595,12 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
                                     && requestUri.getHost().equals(loginUri.getHost())
                                     && requestUri.getPort() == loginUri.getPort()
                                     && requestUri.getPath().equals(loginUri.getPath())) {
-                                bingo(
-                                        getRisk(),
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        getName(),
-                                        getDescription(),
-                                        null,
-                                        param,
-                                        "",
-                                        getExtraInfo(AUTH_BYPASS_ATTACK),
-                                        getSolution(),
-                                        getBaseMsg());
+                                newAlert()
+                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                        .setParam(param)
+                                        .setOtherInfo(getExtraInfo(AUTH_BYPASS_ATTACK))
+                                        .setMessage(getBaseMsg())
+                                        .raise();
                                 break;
                             }
                         }
