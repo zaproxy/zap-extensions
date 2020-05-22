@@ -36,7 +36,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.shapesecurity:salvation:2.7.1")
+    implementation("com.shapesecurity:salvation:2.7.2")
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
