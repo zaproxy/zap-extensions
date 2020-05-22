@@ -53,7 +53,13 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().contentEquals("/1.2.19/angular.min.js"));
+        assertTrue(alertsRaised.get(0).getEvidence().equals("/1.2.19/angular.min.js"));
+        assertTrue(
+                alertsRaised
+                        .get(0)
+                        .getReference()
+                        .equals(
+                                "https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94\n"));
     }
 
     @Test
@@ -65,7 +71,12 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertTrue(alertsRaised.get(0).getEvidence().contentEquals("jquery-3.1.1.min.js"));
+        assertTrue(alertsRaised.get(0).getEvidence().equals("jquery-3.1.1.min.js"));
+        assertTrue(
+                alertsRaised
+                        .get(0)
+                        .getReference()
+                        .equals("https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/\n"));
     }
 
     @Test
@@ -83,6 +94,11 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         // Then
         assertEquals(1, alertsRaised.size());
         assertTrue(alertsRaised.get(0).getEvidence().equals("* Bootstrap v3.3.7"));
+        assertTrue(
+                alertsRaised
+                        .get(0)
+                        .getReference()
+                        .equals("https://github.com/twbs/bootstrap/issues/20184\n"));
     }
 
     @Test
@@ -104,8 +120,16 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
                         .get(0)
                         .getOtherInfo()
                         .equals(
-                                "* http://example.com/hash-test-entry\n"
+                                "CVE-XXXX-XXX2\n"
+                                        + "CVE-XXXX-XXX1\n"
+                                        + "CVE-XXXX-XXX0\n"
                                         + "The library matched the known vulnerable hash e19cea51d7542303f6e8949a0ae27dd3509ea566."));
+        assertTrue(
+                alertsRaised
+                        .get(0)
+                        .getReference()
+                        .equals(
+                                "http://example.com/hash-test-entry\nhttp://example.com/hash-test-entry2\n"));
     }
 
     @Test

@@ -20,6 +20,8 @@
 package org.zaproxy.addon.retire;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -79,13 +81,13 @@ public class RetireScanRule extends PluginPassiveScanner {
                                     + ", more info at:"
                                     + result.getInfo());
                 }
-                StringBuilder formattedInfo = new StringBuilder();
-                for (String info : result.getInfo()) {
-                    formattedInfo.append("* " + info + "\n");
-                }
+
+                String otherInfo = getDetails(Result.CVE, result.getInfo());
+
                 if (result.hasOtherInfo()) {
-                    formattedInfo.append(result.getOtherinfo());
+                    otherInfo = otherInfo + result.getOtherinfo();
                 }
+
                 newAlert()
                         .setRisk(Alert.RISK_MEDIUM)
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -94,7 +96,8 @@ public class RetireScanRule extends PluginPassiveScanner {
                                         "retire.rule.desc",
                                         result.getFilename(),
                                         result.getVersion()))
-                        .setOtherInfo(formattedInfo.toString())
+                        .setOtherInfo(otherInfo)
+                        .setReference(getDetails(Result.INFO, result.getInfo()))
                         .setSolution(
                                 Constant.messages.getString(
                                         "retire.rule.soln", result.getFilename()))
@@ -104,6 +107,17 @@ public class RetireScanRule extends PluginPassiveScanner {
                         .raise();
             }
         }
+    }
+
+    private String getDetails(String key, Map<String, Set<String>> info) {
+        if (info.isEmpty() || !info.containsKey(key)) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String item : info.get(key)) {
+            sb.append(item).append('\n');
+        }
+        return sb.toString();
     }
 
     @Override

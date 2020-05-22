@@ -3,6 +3,11 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+### Changed
+- URLs which were previously included as 'other info' are now properly included as alert 'references'.
+- CVE numbers are now included as part of 'other info'.
+
 ## [0.1.0] - 2020-05-20
 ### Changed
 - First release.
