@@ -598,16 +598,13 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                                         + "]");
                     }
 
-                    // Now create the alert message
-                    this.bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            msg.getRequestHeader().getURI().toString(),
-                            paramName,
-                            paramValue,
-                            null,
-                            matcher.group(),
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(paramName)
+                            .setAttack(paramValue)
+                            .setEvidence(matcher.group())
+                            .setMessage(msg)
+                            .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)
@@ -700,16 +697,12 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                                         + "]");
                     }
 
-                    // Now create the alert message
-                    this.bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            msg.getRequestHeader().getURI().toString(),
-                            paramName,
-                            paramValue,
-                            null,
-                            null,
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(paramName)
+                            .setAttack(paramValue)
+                            .setMessage(msg)
+                            .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)

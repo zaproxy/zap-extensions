@@ -226,14 +226,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                     if (context2.getTagAttribute() != null
                                             && context2.isInScriptAttribute()) {
                                         // Yep, its vulnerable
-                                        bingo(
-                                                Alert.RISK_HIGH,
-                                                Alert.CONFIDENCE_MEDIUM,
-                                                null,
-                                                param,
-                                                context2.getTarget(),
-                                                otherInfo,
-                                                context2.getMsg());
+                                        newAlert()
+                                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                .setParam(param)
+                                                .setAttack(context2.getTarget())
+                                                .setOtherInfo(otherInfo)
+                                                .setMessage(context2.getMsg())
+                                                .raise();
                                         attackWorked = true;
                                         break;
                                     }
@@ -261,15 +260,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                 for (HtmlContext ctx : contexts2) {
                                     if (ctx.isInUrlAttribute()) {
                                         // Yep, its vulnerable
-                                        bingo(
-                                                Alert.RISK_HIGH,
-                                                Alert.CONFIDENCE_MEDIUM,
-                                                null,
-                                                param,
-                                                ctx.getTarget(),
-                                                "",
-                                                ctx.getTarget(),
-                                                ctx.getMsg());
+                                        newAlert()
+                                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                .setParam(param)
+                                                .setAttack(ctx.getTarget())
+                                                .setEvidence(ctx.getTarget())
+                                                .setMessage(ctx.getMsg())
+                                                .raise();
                                         attackWorked = true;
                                         break;
                                     }
@@ -296,14 +293,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                 }
 
                                 if (contexts2.size() > 0) {
-                                    bingo(
-                                            Alert.RISK_HIGH,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            null,
-                                            param,
-                                            contexts2.get(0).getTarget(),
-                                            otherInfo,
-                                            contexts2.get(0).getMsg());
+                                    newAlert()
+                                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                            .setParam(param)
+                                            .setAttack(contexts2.get(0).getTarget())
+                                            .setOtherInfo(otherInfo)
+                                            .setMessage(contexts2.get(0).getMsg())
+                                            .raise();
                                     attackWorked = true;
                                 }
                                 if (!attackWorked) {
@@ -331,14 +327,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 
                                 if (contexts2.size() > 0) {
                                     // Yep, its vulnerable
-                                    bingo(
-                                            Alert.RISK_HIGH,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            null,
-                                            param,
-                                            contexts2.get(0).getTarget(),
-                                            otherInfo,
-                                            contexts2.get(0).getMsg());
+                                    newAlert()
+                                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                            .setParam(param)
+                                            .setAttack(contexts2.get(0).getTarget())
+                                            .setOtherInfo(otherInfo)
+                                            .setMessage(contexts2.get(0).getMsg())
+                                            .raise();
                                     attackWorked = true;
                                 }
                                 if (!attackWorked) {
@@ -366,14 +361,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 
                                 if (contexts2.size() > 0) {
                                     // Yep, its vulnerable
-                                    bingo(
-                                            Alert.RISK_HIGH,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            null,
-                                            param,
-                                            contexts2.get(0).getTarget(),
-                                            otherInfo,
-                                            contexts2.get(0).getMsg());
+                                    newAlert()
+                                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                            .setParam(param)
+                                            .setAttack(contexts2.get(0).getTarget())
+                                            .setOtherInfo(otherInfo)
+                                            .setMessage(contexts2.get(0).getMsg())
+                                            .raise();
                                     attackWorked = true;
                                 }
                                 if (!attackWorked) {
@@ -398,14 +392,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 
                             if (contexts2.size() > 0) {
                                 // Yep, its vulnerable
-                                bingo(
-                                        Alert.RISK_HIGH,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        null,
-                                        param,
-                                        contexts2.get(0).getTarget(),
-                                        otherInfo,
-                                        contexts2.get(0).getMsg());
+                                newAlert()
+                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                        .setParam(param)
+                                        .setAttack(contexts2.get(0).getTarget())
+                                        .setOtherInfo(otherInfo)
+                                        .setMessage(contexts2.get(0).getMsg())
+                                        .raise();
                                 attackWorked = true;
                             } else {
                                 // Maybe they're blocking script tags
@@ -419,14 +412,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                                 HtmlContext.IGNORE_HTML_COMMENT);
                                 if (contexts2 != null && contexts2.size() > 0) {
                                     // Yep, its vulnerable
-                                    bingo(
-                                            Alert.RISK_HIGH,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            null,
-                                            param,
-                                            contexts2.get(0).getTarget(),
-                                            otherInfo,
-                                            contexts2.get(0).getMsg());
+                                    newAlert()
+                                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                            .setParam(param)
+                                            .setAttack(contexts2.get(0).getTarget())
+                                            .setOtherInfo(otherInfo)
+                                            .setMessage(contexts2.get(0).getMsg())
+                                            .raise();
                                     attackWorked = true;
                                 }
                             }
@@ -449,14 +441,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 
                                 if (contexts2.size() > 0) {
                                     // Yep, its vulnerable
-                                    bingo(
-                                            Alert.RISK_HIGH,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            null,
-                                            param,
-                                            contexts2.get(0).getTarget(),
-                                            otherInfo,
-                                            contexts2.get(0).getMsg());
+                                    newAlert()
+                                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                            .setParam(param)
+                                            .setAttack(contexts2.get(0).getTarget())
+                                            .setOtherInfo(otherInfo)
+                                            .setMessage(contexts2.get(0).getMsg())
+                                            .raise();
                                     attackWorked = true;
                                 } else {
                                     // Maybe they're blocking script tags
@@ -476,15 +467,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                                             .equalsIgnoreCase(
                                                                     context2.getParentTag())) {
                                                 // Yep, its vulnerable
-                                                bingo(
-                                                        Alert.RISK_HIGH,
-                                                        Alert.CONFIDENCE_MEDIUM,
-                                                        null,
-                                                        param,
-                                                        contexts2.get(0).getTarget(),
-                                                        "",
-                                                        contexts2.get(0).getTarget(),
-                                                        contexts2.get(0).getMsg());
+                                                newAlert()
+                                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                        .setParam(param)
+                                                        .setAttack(contexts2.get(0).getTarget())
+                                                        .setEvidence(contexts2.get(0).getTarget())
+                                                        .setMessage(contexts2.get(0).getMsg())
+                                                        .raise();
                                                 attackWorked = true;
                                                 break;
                                             }
@@ -504,19 +493,18 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                                             true);
                                             if (contexts3 != null && contexts3.size() > 0) {
                                                 attackWorked = true;
-                                                bingo(
-                                                        Alert.RISK_HIGH,
-                                                        Alert.CONFIDENCE_MEDIUM,
-                                                        null,
-                                                        param,
-                                                        getURLEncode(
+                                                newAlert()
+                                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                        .setParam(param)
+                                                        .setAttack(
                                                                 getURLEncode(
-                                                                        contexts3
-                                                                                .get(0)
-                                                                                .getTarget())),
-                                                        "",
-                                                        GENERIC_SCRIPT_ALERT,
-                                                        contexts3.get(0).getMsg());
+                                                                        getURLEncode(
+                                                                                contexts3
+                                                                                        .get(0)
+                                                                                        .getTarget())))
+                                                        .setEvidence(GENERIC_SCRIPT_ALERT)
+                                                        .setMessage(contexts3.get(0).getMsg())
+                                                        .raise();
                                             }
                                             break;
                                         }
@@ -544,14 +532,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 
                                 if (contexts2.size() > 0) {
                                     // Yep, its vulnerable
-                                    bingo(
-                                            Alert.RISK_HIGH,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            null,
-                                            param,
-                                            contexts2.get(0).getTarget(),
-                                            otherInfo,
-                                            contexts2.get(0).getMsg());
+                                    newAlert()
+                                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                            .setParam(param)
+                                            .setAttack(contexts2.get(0).getTarget())
+                                            .setOtherInfo(otherInfo)
+                                            .setMessage(contexts2.get(0).getMsg())
+                                            .raise();
                                     attackWorked = true;
                                 } else if ("script".equalsIgnoreCase(context.getParentTag())) {
                                     // its in a script tag...
@@ -570,14 +557,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                     }
                                     if (contexts2.size() > 0) {
                                         // Yep, its vulnerable
-                                        bingo(
-                                                Alert.RISK_HIGH,
-                                                Alert.CONFIDENCE_MEDIUM,
-                                                null,
-                                                param,
-                                                contexts2.get(0).getTarget(),
-                                                otherInfo,
-                                                contexts2.get(0).getMsg());
+                                        newAlert()
+                                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                .setParam(param)
+                                                .setAttack(contexts2.get(0).getTarget())
+                                                .setOtherInfo(otherInfo)
+                                                .setMessage(contexts2.get(0).getMsg())
+                                                .raise();
                                         attackWorked = true;
                                     }
                                 } else {
@@ -591,15 +577,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                                     context,
                                                     0);
                                     if (contextsA != null && contextsA.size() > 0) {
-                                        bingo(
-                                                Alert.RISK_HIGH,
-                                                Alert.CONFIDENCE_MEDIUM,
-                                                null,
-                                                param,
-                                                contextsA.get(0).getTarget(),
-                                                "",
-                                                contextsA.get(0).getTarget(),
-                                                contextsA.get(0).getMsg());
+                                        newAlert()
+                                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                .setParam(param)
+                                                .setAttack(contextsA.get(0).getTarget())
+                                                .setEvidence(contextsA.get(0).getTarget())
+                                                .setMessage(contextsA.get(0).getMsg())
+                                                .raise();
                                         attackWorked = true;
                                         break;
                                     }
@@ -625,15 +609,13 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                         if (ctx.getParentTag() != null) {
                                             // Yep, its vulnerable
                                             if (ctx.getMsg().getResponseHeader().isHtml()) {
-                                                bingo(
-                                                        Alert.RISK_HIGH,
-                                                        Alert.CONFIDENCE_MEDIUM,
-                                                        null,
-                                                        param,
-                                                        ctx.getTarget(),
-                                                        "",
-                                                        ctx.getTarget(),
-                                                        contexts2.get(0).getMsg());
+                                                newAlert()
+                                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                        .setParam(param)
+                                                        .setAttack(ctx.getTarget())
+                                                        .setEvidence(ctx.getTarget())
+                                                        .setMessage(contexts2.get(0).getMsg())
+                                                        .raise();
                                             } else {
                                                 HttpMessage ctx2Message = contexts2.get(0).getMsg();
                                                 if (StringUtils.containsIgnoreCase(
@@ -641,37 +623,38 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
                                                                 .getResponseHeader()
                                                                 .getHeader(HttpHeader.CONTENT_TYPE),
                                                         "json")) {
-                                                    bingo(
-                                                            Alert.RISK_LOW,
-                                                            Alert.CONFIDENCE_LOW,
-                                                            Constant.messages.getString(
-                                                                    MESSAGE_PREFIX + "json.name"),
-                                                            Constant.messages.getString(
-                                                                    MESSAGE_PREFIX + "json.desc"),
-                                                            ctx2Message
-                                                                    .getRequestHeader()
-                                                                    .getURI()
-                                                                    .toString(),
-                                                            param,
-                                                            GENERIC_SCRIPT_ALERT,
-                                                            Constant.messages.getString(
-                                                                    MESSAGE_PREFIX
-                                                                            + "otherinfo.nothtml"),
-                                                            getSolution(),
-                                                            "",
-                                                            ctx2Message);
+                                                    newAlert()
+                                                            .setRisk(Alert.RISK_LOW)
+                                                            .setConfidence(Alert.CONFIDENCE_LOW)
+                                                            .setName(
+                                                                    Constant.messages.getString(
+                                                                            MESSAGE_PREFIX
+                                                                                    + "json.name"))
+                                                            .setDescription(
+                                                                    Constant.messages.getString(
+                                                                            MESSAGE_PREFIX
+                                                                                    + "json.desc"))
+                                                            .setParam(param)
+                                                            .setAttack(GENERIC_SCRIPT_ALERT)
+                                                            .setOtherInfo(
+                                                                    Constant.messages.getString(
+                                                                            MESSAGE_PREFIX
+                                                                                    + "otherinfo.nothtml"))
+                                                            .setSolution(getSolution())
+                                                            .setMessage(ctx2Message)
+                                                            .raise();
                                                 } else {
-                                                    bingo(
-                                                            Alert.RISK_HIGH,
-                                                            Alert.CONFIDENCE_LOW,
-                                                            null,
-                                                            param,
-                                                            ctx.getTarget(),
-                                                            Constant.messages.getString(
-                                                                    MESSAGE_PREFIX
-                                                                            + "otherinfo.nothtml"),
-                                                            ctx.getTarget(),
-                                                            ctx2Message);
+                                                    newAlert()
+                                                            .setConfidence(Alert.CONFIDENCE_LOW)
+                                                            .setParam(param)
+                                                            .setAttack(ctx.getTarget())
+                                                            .setOtherInfo(
+                                                                    Constant.messages.getString(
+                                                                            MESSAGE_PREFIX
+                                                                                    + "otherinfo.nothtml"))
+                                                            .setEvidence(ctx.getTarget())
+                                                            .setMessage(ctx2Message)
+                                                            .raise();
                                                 }
                                             }
                                             attackWorked = true;

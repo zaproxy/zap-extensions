@@ -213,7 +213,13 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
         }
 
         if (issueFound) {
-            bingo(Alert.RISK_MEDIUM, confidence, null, param, attack, "", sb.toString(), msg);
+            newAlert()
+                    .setConfidence(confidence)
+                    .setParam(param)
+                    .setAttack(attack)
+                    .setEvidence(sb.toString())
+                    .setMessage(msg)
+                    .raise();
         }
 
         return issueFound;

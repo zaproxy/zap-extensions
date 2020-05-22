@@ -6,7 +6,7 @@ description = "The release quality Active Scanner rules"
 zapAddOn {
     addOnName.set("Active scanner rules")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
