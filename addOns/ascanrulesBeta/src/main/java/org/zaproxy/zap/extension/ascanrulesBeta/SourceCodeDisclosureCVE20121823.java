@@ -176,24 +176,17 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
                     }
 
                     // bingo.
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            Constant.messages.getString(
-                                    "ascanbeta.sourcecodedisclosurecve-2012-1823.name"),
-                            Constant.messages.getString(
-                                    "ascanbeta.sourcecodedisclosurecve-2012-1823.desc"),
-                            null, // originalMessage.getRequestHeader().getURI().getURI(),
-                            null, // parameter being attacked: none.
-                            "", // attack: none (it's not a parameter being attacked)
-                            sourceCode, // extrainfo
-                            Constant.messages.getString(
-                                    "ascanbeta.sourcecodedisclosurecve-2012-1823.soln"),
-                            "", // evidence, highlighted in the message  (cannot use the source code
-                            // here, since it is encoded in the message response, and so will
-                            // not match up)
-                            attackmsg // raise the alert on the attack message
-                            );
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setDescription(
+                                    Constant.messages.getString(
+                                            "ascanbeta.sourcecodedisclosurecve-2012-1823.desc"))
+                            .setOtherInfo(sourceCode)
+                            .setSolution(
+                                    Constant.messages.getString(
+                                            "ascanbeta.sourcecodedisclosurecve-2012-1823.soln"))
+                            .setMessage(attackmsg)
+                            .raise();
                 }
             }
         } catch (Exception e) {

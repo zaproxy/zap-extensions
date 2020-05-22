@@ -437,17 +437,14 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
                                     originalTimeUsed);
 
                     // raise the alert
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            getName(),
-                            getDescription(),
-                            getBaseMsg().getRequestHeader().getURI().getURI(), // url
-                            paramName,
-                            newTimeBasedInjectionValue,
-                            extraInfo,
-                            getSolution(),
-                            msg3);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setParam(paramName)
+                            .setAttack(newTimeBasedInjectionValue)
+                            .setOtherInfo(extraInfo)
+                            .setMessage(msg3)
+                            .raise();
 
                     if (this.debugEnabled)
                         log.debug(

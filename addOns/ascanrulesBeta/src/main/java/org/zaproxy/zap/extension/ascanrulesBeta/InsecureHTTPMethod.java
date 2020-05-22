@@ -194,22 +194,24 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                 enabledMethodsSet.remove(
                         HttpRequestHeader
                                 .DELETE); // We don't actually want to make a DELETE request
-                bingo(
-                        Alert.RISK_MEDIUM,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(
-                                "ascanbeta.insecurehttpmethod.detailed.name",
-                                HttpRequestHeader.DELETE),
-                        Constant.messages.getString(
-                                "ascanbeta.insecurehttpmethod.desc", HttpRequestHeader.DELETE),
-                        null,
-                        null, // parameter being attacked: none.
-                        "", // attack
-                        Constant.messages.getString(
-                                "ascanbeta.insecurehttpmethod.extrainfo", allowedmethods),
-                        Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"),
-                        HttpRequestHeader.DELETE,
-                        optionsmsg);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setName(
+                                Constant.messages.getString(
+                                        "ascanbeta.insecurehttpmethod.detailed.name",
+                                        HttpRequestHeader.DELETE))
+                        .setDescription(
+                                Constant.messages.getString(
+                                        "ascanbeta.insecurehttpmethod.desc",
+                                        HttpRequestHeader.DELETE))
+                        .setOtherInfo(
+                                Constant.messages.getString(
+                                        "ascanbeta.insecurehttpmethod.extrainfo", allowedmethods))
+                        .setSolution(
+                                Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"))
+                        .setEvidence(HttpRequestHeader.DELETE)
+                        .setMessage(optionsmsg)
+                        .raise();
             }
 
             if (attackStrength == AttackStrength.HIGH || attackStrength == AttackStrength.INSANE) {
@@ -307,20 +309,21 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                     if (raiseAlert) {
                         log.debug("Raising alert for Insecure HTTP Method");
 
-                        bingo(
-                                riskLevel,
-                                Alert.CONFIDENCE_MEDIUM,
-                                Constant.messages.getString(
-                                        "ascanbeta.insecurehttpmethod.detailed.name",
-                                        insecureMethod),
-                                description,
-                                null, // originalMessage.getRequestHeader().getURI().getURI(),
-                                null, // parameter being attacked: none.
-                                "", // attack
-                                extraInfo,
-                                Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"),
-                                evidence,
-                                alertMessage);
+                        newAlert()
+                                .setRisk(riskLevel)
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setName(
+                                        Constant.messages.getString(
+                                                "ascanbeta.insecurehttpmethod.detailed.name",
+                                                insecureMethod))
+                                .setDescription(description)
+                                .setOtherInfo(extraInfo)
+                                .setSolution(
+                                        Constant.messages.getString(
+                                                "ascanbeta.insecurehttpmethod.soln"))
+                                .setEvidence(evidence)
+                                .setMessage(alertMessage)
+                                .raise();
                     }
                 }
             }
@@ -374,22 +377,23 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 
         // if the response *body* from the TRACE request contains the cookie,we're in business :)
         if (msg.getResponseBody().toString().contains(randomcookievalue)) {
-            bingo(
-                    Alert.RISK_MEDIUM,
-                    Alert.CONFIDENCE_MEDIUM,
-                    Constant.messages.getString(
-                            "ascanbeta.insecurehttpmethod.detailed.name", method),
-                    Constant.messages.getString(
-                            "ascanbeta.insecurehttpmethod.trace.exploitable.desc", method),
-                    msg.getRequestHeader().getURI().getURI(),
-                    null, // parameter being attacked: none.
-                    "", // attack
-                    Constant.messages.getString(
-                            "ascanbeta.insecurehttpmethod.trace.exploitable.extrainfo",
-                            randomcookievalue),
-                    Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"),
-                    randomcookievalue,
-                    msg);
+            newAlert()
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setName(
+                            Constant.messages.getString(
+                                    "ascanbeta.insecurehttpmethod.detailed.name", method))
+                    .setDescription(
+                            Constant.messages.getString(
+                                    "ascanbeta.insecurehttpmethod.trace.exploitable.desc", method))
+                    .setUri(msg.getRequestHeader().getURI().getURI())
+                    .setOtherInfo(
+                            Constant.messages.getString(
+                                    "ascanbeta.insecurehttpmethod.trace.exploitable.extrainfo",
+                                    randomcookievalue))
+                    .setSolution(Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"))
+                    .setEvidence(randomcookievalue)
+                    .setMessage(msg)
+                    .raise();
         }
     }
 
@@ -469,24 +473,26 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
                 Matcher m = thirdPartyContentPattern.matcher(response);
                 if (m.matches()) {
                     log.debug("Response matches expected third party pattern!");
-                    bingo(
-                            Alert.RISK_MEDIUM,
-                            Alert.CONFIDENCE_MEDIUM,
-                            Constant.messages.getString(
-                                    "ascanbeta.insecurehttpmethod.detailed.name",
-                                    HttpRequestHeader.CONNECT),
-                            Constant.messages.getString(
-                                    "ascanbeta.insecurehttpmethod.connect.exploitable.desc",
-                                    HttpRequestHeader.CONNECT),
-                            null,
-                            null, // parameter being attacked: none.
-                            "", // attack
-                            Constant.messages.getString(
-                                    "ascanbeta.insecurehttpmethod.connect.exploitable.extrainfo",
-                                    thirdpartyHost),
-                            Constant.messages.getString("ascanbeta.insecurehttpmethod.soln"),
-                            response, // evidence,
-                            this.getBaseMsg());
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(
+                                    Constant.messages.getString(
+                                            "ascanbeta.insecurehttpmethod.detailed.name",
+                                            HttpRequestHeader.CONNECT))
+                            .setDescription(
+                                    Constant.messages.getString(
+                                            "ascanbeta.insecurehttpmethod.connect.exploitable.desc",
+                                            HttpRequestHeader.CONNECT))
+                            .setOtherInfo(
+                                    Constant.messages.getString(
+                                            "ascanbeta.insecurehttpmethod.connect.exploitable.extrainfo",
+                                            thirdpartyHost))
+                            .setSolution(
+                                    Constant.messages.getString(
+                                            "ascanbeta.insecurehttpmethod.soln"))
+                            .setEvidence(response)
+                            .setMessage(this.getBaseMsg())
+                            .raise();
                     return;
                 } else {
                     log.debug("Response does *not* match expected third party pattern");
@@ -603,19 +609,17 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
         }
         try {
 
-            bingo(
-                    riskLevel,
-                    Alert.CONFIDENCE_MEDIUM,
-                    Constant.messages.getString(
-                            "ascanbeta.insecurehttpmethod.detailed.name", httpMethod),
-                    exploitableDesc,
-                    msg.getRequestHeader().getURI().getURI(),
-                    null, /* parameter being attacked: none */
-                    "", /* attack */
-                    exploitableExtraInfo, /* extra info */
-                    "", /* solution */
-                    evidence, /* evidence, highlighted in the message */
-                    msg);
+            newAlert()
+                    .setRisk(riskLevel)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setName(
+                            Constant.messages.getString(
+                                    "ascanbeta.insecurehttpmethod.detailed.name", httpMethod))
+                    .setDescription(exploitableDesc)
+                    .setOtherInfo(exploitableExtraInfo)
+                    .setEvidence(evidence)
+                    .setMessage(msg)
+                    .raise();
         } catch (Exception e) {
         }
     }

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -557,8 +556,8 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
                     if (serverHeader == null) serverHeader = "";
 
                     String poweredBy;
-                    Vector<String> poweredByList = responseHeader.getHeaders("X-Powered-By");
-                    if (poweredByList != null)
+                    List<String> poweredByList = responseHeader.getHeaderValues("X-Powered-By");
+                    if (!poweredByList.isEmpty())
                         poweredBy = poweredByList.toString(); // uses format: "[a,b,c]"
                     else poweredBy = "";
                     String serverDetails =
@@ -812,23 +811,20 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
                 // there are multiple messages on which the issue could have been raised, but each
                 // individual atatck message
                 // tells only a small part of the story. Explain it in the "extra info" instead.
-                bingo(
-                        endToEndTraceEnabled || proxyTraceEnabled ? Alert.RISK_HIGH : getRisk(),
-                        Alert.CONFIDENCE_MEDIUM,
-                        getName(),
-                        Constant.messages.getString(
-                                MESSAGE_PREFIX + "desc",
-                                step2numberOfNodes - 1 + silentProxySet.size()),
-                        getBaseMsg().getRequestHeader().getURI().getURI(), // url
-                        "", // there is no parameter of interest
-                        getAttack(), // the attack. who'd have thunk it?
-                        extraInfo, // extra info.. all the detail of the proxy, etc.
-                        getSolution(),
-                        "", // evidence
-                        this.getCweId(),
-                        this.getWascId(),
-                        getBaseMsg() // the message on which we place the alert
-                        );
+                newAlert()
+                        .setRisk(
+                                endToEndTraceEnabled || proxyTraceEnabled
+                                        ? Alert.RISK_HIGH
+                                        : getRisk())
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setDescription(
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "desc",
+                                        step2numberOfNodes - 1 + silentProxySet.size()))
+                        .setAttack(getAttack())
+                        .setOtherInfo(extraInfo)
+                        .setMessage(getBaseMsg())
+                        .raise();
             }
 
         } catch (Exception e) {

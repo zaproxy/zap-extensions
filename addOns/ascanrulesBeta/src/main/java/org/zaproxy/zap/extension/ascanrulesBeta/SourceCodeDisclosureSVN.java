@@ -367,18 +367,14 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                 if (evidence != null) {
                     // if we get to here, is is very likely that we have source file inclusion
                     // attack. alert it.
-                    bingo(
-                            Alert.RISK_MEDIUM,
-                            getConfidence(attackmsgResponseStatusCode),
-                            getName(),
-                            getDescription(),
-                            getBaseMsg().getRequestHeader().getURI().getURI(),
-                            null,
-                            attackFilename,
-                            getExtraInfo(urlfilename, attackFilename),
-                            getSolution(),
-                            evidence,
-                            svnsourcefileattackmsg);
+                    newAlert()
+                            .setConfidence(getConfidence(attackmsgResponseStatusCode))
+                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setAttack(attackFilename)
+                            .setOtherInfo(getExtraInfo(urlfilename, attackFilename))
+                            .setEvidence(evidence)
+                            .setMessage(svnsourcefileattackmsg)
+                            .raise();
                     // if we found one, do not even try the "super" method, which tries each of the
                     // parameters,
                     // since this is slow, and we already found an instance
@@ -651,22 +647,23 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
                                             if (evidence != null) {
                                                 // if we get to here, is is very likely that we have
                                                 // source file inclusion attack. alert it.
-                                                bingo(
-                                                        Alert.RISK_MEDIUM,
-                                                        getConfidence(
-                                                                svnSourceFileAttackMsgStatusCode),
-                                                        getName(),
-                                                        getDescription(),
-                                                        getBaseMsg()
-                                                                .getRequestHeader()
-                                                                .getURI()
-                                                                .getURI(),
-                                                        null,
-                                                        attackFilename,
-                                                        getExtraInfo(urlfilename, attackFilename),
-                                                        getSolution(),
-                                                        evidence,
-                                                        svnSourceFileAttackMsg);
+                                                newAlert()
+                                                        .setConfidence(
+                                                                getConfidence(
+                                                                        svnSourceFileAttackMsgStatusCode))
+                                                        .setUri(
+                                                                getBaseMsg()
+                                                                        .getRequestHeader()
+                                                                        .getURI()
+                                                                        .getURI())
+                                                        .setAttack(attackFilename)
+                                                        .setOtherInfo(
+                                                                getExtraInfo(
+                                                                        urlfilename,
+                                                                        attackFilename))
+                                                        .setEvidence(evidence)
+                                                        .setMessage(svnSourceFileAttackMsg)
+                                                        .raise();
                                                 // do not return.. need to tidy up first
                                             } else {
                                                 if (log.isDebugEnabled())

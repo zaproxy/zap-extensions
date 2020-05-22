@@ -310,16 +310,12 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                         matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
                         if (matcher.find()) {
 
-                            // Alert the vulnerability to the main core
-                            this.bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    null, // URI
-                                    null, // param
-                                    payload, // attack
-                                    null, // otherinfo
-                                    matcher.group(), // evidence
-                                    msg);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setAttack(payload)
+                                    .setEvidence(matcher.group())
+                                    .setMessage(msg)
+                                    .raise();
                         }
                     }
 
@@ -379,16 +375,12 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                         matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
                         if (matcher.find()) {
 
-                            // Alert the vulnerability to the main core
-                            this.bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    null, // URI
-                                    null, // param
-                                    payload, // attack
-                                    null, // otherinfo
-                                    matcher.group(), // evidence
-                                    msg);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setAttack(payload)
+                                    .setEvidence(matcher.group())
+                                    .setMessage(msg)
+                                    .raise();
                         }
                     }
 
@@ -425,16 +417,12 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
 
             String evidence = callbackImplementor.getCallbackUrl(challenge);
 
-            // Alert the vulnerability to the main core
-            this.bingo(
-                    Alert.RISK_HIGH,
-                    Alert.CONFIDENCE_MEDIUM,
-                    null, // URI
-                    null, // param
-                    getCallbackAttackPayload(challenge), // attack
-                    null, // otherinfo
-                    evidence, // evidence
-                    targetMessage);
+            newAlert()
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setAttack(getCallbackAttackPayload(challenge))
+                    .setEvidence(evidence)
+                    .setMessage(targetMessage)
+                    .raise();
         }
     }
 
