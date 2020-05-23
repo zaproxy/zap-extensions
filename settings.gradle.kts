@@ -65,6 +65,7 @@ var addOns = listOf(
     "reveal",
     "revisit",
     "saml",
+    "savehar",
     "saverawmessage",
     "savexmlmessage",
     "scripts",
