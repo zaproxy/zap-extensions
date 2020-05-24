@@ -42,7 +42,7 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
 
     private static final long serialVersionUID = -7217818541206464572L;
 
-    private static final Logger log = Logger.getLogger(PopupMenuItemSaveHarMessage.class);
+    private static final Logger LOG = Logger.getLogger(PopupMenuItemSaveHarMessage.class);
 
     private static final String POPUP_MENU_LABEL =
             Constant.messages.getString("savehar.popup.option");
@@ -69,7 +69,7 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
         } catch (IOException e) {
             View.getSingleton()
                     .showWarningDialog(MessageFormat.format(ERROR_SAVE, file.getAbsolutePath()));
-            log.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
     }
 

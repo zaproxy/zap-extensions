@@ -1,11 +1,11 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "1"
+version = "1.0.0"
 description = "Allows to save content of HTTP messages as HAR archive"
 
 zapAddOn {
-    addOnName.set("Save Har Message")
-    addOnStatus.set(AddOnStatus.RELEASE)
+    addOnName.set("Save HAR Message")
+    addOnStatus.set(AddOnStatus.ALPHA)
     zapVersion.set("2.9.0")
 
     manifest {
