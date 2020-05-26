@@ -718,18 +718,15 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                                 // raise the alert, and save the attack string for the
                                 // "Authentication Bypass" alert, if necessary
                                 sqlInjectionAttack = sqlErrValue;
-                                bingo(
-                                        Alert.RISK_HIGH,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        getName() + " - " + errorPatternRDBMS,
-                                        getDescription(),
-                                        null,
-                                        param,
-                                        sqlInjectionAttack,
-                                        extraInfo,
-                                        getSolution(),
-                                        sb.toString(),
-                                        msg1);
+                                newAlert()
+                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                        .setName(getName() + " - " + errorPatternRDBMS)
+                                        .setParam(param)
+                                        .setAttack(sqlInjectionAttack)
+                                        .setOtherInfo(extraInfo)
+                                        .setEvidence(sb.toString())
+                                        .setMessage(msg1)
+                                        .raise();
 
                                 // log it, as the RDBMS may be useful to know later (in subsequent
                                 // checks, when we need to determine RDBMS specific behaviour, for
@@ -1110,18 +1107,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                             // raise the alert, and save the attack string for the "Authentication
                             // Bypass" alert, if necessary
                             sqlInjectionAttack = sqlBooleanAndTrueValue;
-                            bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    getName(),
-                                    getDescription(),
-                                    null, // url
-                                    param,
-                                    sqlInjectionAttack,
-                                    extraInfo,
-                                    getSolution(),
-                                    "",
-                                    msg2);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setParam(param)
+                                    .setAttack(sqlInjectionAttack)
+                                    .setOtherInfo(extraInfo)
+                                    .setMessage(msg2)
+                                    .raise();
 
                             sqlInjectionFoundForUrl = true;
 
@@ -1237,18 +1229,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                                 // raise the alert, and save the attack string for the
                                 // "Authentication Bypass" alert, if necessary
                                 sqlInjectionAttack = orValue;
-                                bingo(
-                                        Alert.RISK_HIGH,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        getName(),
-                                        getDescription(),
-                                        null, // url
-                                        param,
-                                        sqlInjectionAttack,
-                                        extraInfo,
-                                        getSolution(),
-                                        "",
-                                        msg2);
+                                newAlert()
+                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                        .setParam(param)
+                                        .setAttack(sqlInjectionAttack)
+                                        .setOtherInfo(extraInfo)
+                                        .setMessage(msg2)
+                                        .raise();
 
                                 sqlInjectionFoundForUrl = true;
                                 // booleanBasedSqlInjectionFoundForParam = true;  //causes us to
@@ -1445,18 +1432,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                         // raise the alert, and save the attack string for the "Authentication
                         // Bypass" alert, if necessary
                         sqlInjectionAttack = sqlBooleanOrTrueValue;
-                        bingo(
-                                Alert.RISK_HIGH,
-                                Alert.CONFIDENCE_MEDIUM,
-                                getName(),
-                                getDescription(),
-                                null, // url
-                                param,
-                                sqlInjectionAttack,
-                                extraInfo,
-                                getSolution(),
-                                "",
-                                msg2);
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setParam(param)
+                                .setAttack(sqlInjectionAttack)
+                                .setOtherInfo(extraInfo)
+                                .setMessage(msg2)
+                                .raise();
 
                         sqlInjectionFoundForUrl = true;
 
@@ -1699,18 +1681,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                             // raise the alert, and save the attack string for the "Authentication
                             // Bypass" alert, if necessary
                             sqlInjectionAttack = modifiedParamValue;
-                            bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    getName(),
-                                    getDescription(),
-                                    null, // url
-                                    param,
-                                    sqlInjectionAttack,
-                                    extraInfo,
-                                    getSolution(),
-                                    "",
-                                    msg5);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setParam(param)
+                                    .setAttack(sqlInjectionAttack)
+                                    .setOtherInfo(extraInfo)
+                                    .setMessage(msg5)
+                                    .raise();
 
                             sqlInjectionFoundForUrl = true;
                             break; // No further need to loop
@@ -1778,18 +1755,15 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                             Constant.messages.getString(MESSAGE_PREFIX + "authbypass.desc");
 
                     // raise the alert, using the attack string stored earlier for this purpose
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            vulnname,
-                            vulndesc,
-                            refreshedmessage.getRequestHeader().getURI().getURI(), // url
-                            param,
-                            sqlInjectionAttack,
-                            "",
-                            getSolution(),
-                            "",
-                            getBaseMsg());
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(vulnname)
+                            .setDescription(vulndesc)
+                            .setUri(refreshedmessage.getRequestHeader().getURI().getURI())
+                            .setParam(param)
+                            .setAttack(sqlInjectionAttack)
+                            .setMessage(getBaseMsg())
+                            .raise();
                 } // not a login page
             } // no sql Injection Found For Url
 
@@ -1825,18 +1799,15 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                                 MESSAGE_PREFIX + "alert.errorbased.extrainfo",
                                 rdbms.getName(),
                                 errorPattern.toString());
-                bingo(
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        getName() + " - " + rdbms.getName(),
-                        getDescription(),
-                        null,
-                        parameter,
-                        attack,
-                        extraInfo,
-                        getSolution(),
-                        sb.toString(),
-                        msg1);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setName(getName() + " - " + rdbms.getName())
+                        .setParam(parameter)
+                        .setAttack(attack)
+                        .setOtherInfo(extraInfo)
+                        .setEvidence(sb.toString())
+                        .setMessage(msg1)
+                        .raise();
 
                 // log it, as the RDBMS may be useful to know later (in subsequent checks, when we
                 // need to determine RDBMS specific behaviour, for instance)
@@ -1886,18 +1857,16 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                                 MESSAGE_PREFIX + "alert.unionbased.extrainfo",
                                 rdbms.getName(),
                                 errorPattern.toString());
-                bingo(
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        getName() + " - " + rdbms.getName(),
-                        getDescription(),
-                        uri.getEscapedURI(),
-                        parameter,
-                        attack,
-                        extraInfo,
-                        getSolution(),
-                        matcherSQLUnion.group(),
-                        msg);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setName(getName() + " - " + rdbms.getName())
+                        .setUri(uri.getEscapedURI())
+                        .setParam(parameter)
+                        .setAttack(attack)
+                        .setOtherInfo(extraInfo)
+                        .setEvidence(matcherSQLUnion.group())
+                        .setMessage(msg)
+                        .raise();
 
                 // log it, as the RDBMS may be useful to know later (in subsequent checks, when we
                 // need to determine RDBMS specific behaviour, for instance)
@@ -2003,18 +1972,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
                     // raise the alert, and save the attack string for the "Authentication Bypass"
                     // alert, if necessary
                     sqlInjectionAttack = modifiedParamValue;
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            getName(),
-                            getDescription(),
-                            null, // url
-                            param,
-                            sqlInjectionAttack,
-                            extraInfo,
-                            getSolution(),
-                            "",
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(param)
+                            .setAttack(sqlInjectionAttack)
+                            .setOtherInfo(extraInfo)
+                            .setMessage(msg)
+                            .raise();
                     // SQL Injection has been found
                     sqlInjectionFoundForUrl = true;
                     return;

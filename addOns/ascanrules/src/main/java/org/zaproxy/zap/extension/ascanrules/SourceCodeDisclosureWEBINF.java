@@ -228,25 +228,20 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
                             log.debug("Source Code Disclosure alert for: " + classname);
                         }
 
-                        // bingo.
-                        bingo(
-                                Alert.RISK_HIGH,
-                                Alert.CONFIDENCE_MEDIUM,
-                                Constant.messages.getString(
-                                        "ascanrules.sourcecodedisclosurewebinf.name"),
-                                Constant.messages.getString(
-                                        "ascanrules.sourcecodedisclosurewebinf.desc"),
-                                null, // originalMessage.getRequestHeader().getURI().getURI(),
-                                null, // parameter being attacked: none.
-                                "", // attack
-                                javaSourceCode, // extrainfo
-                                Constant.messages.getString(
-                                        "ascanrules.sourcecodedisclosurewebinf.soln"),
-                                "", // evidence, highlighted in the message
-                                classfilemsg // raise the alert on the classfile, rather than on the
-                                // web.xml (or other file where the class reference was
-                                // found).
-                                );
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setName(
+                                        Constant.messages.getString(
+                                                "ascanrules.sourcecodedisclosurewebinf.name"))
+                                .setDescription(
+                                        Constant.messages.getString(
+                                                "ascanrules.sourcecodedisclosurewebinf.desc"))
+                                .setOtherInfo(javaSourceCode)
+                                .setSolution(
+                                        Constant.messages.getString(
+                                                "ascanrules.sourcecodedisclosurewebinf.soln"))
+                                .setMessage(classfilemsg)
+                                .raise();
 
                         // and add the referenced classes to the list of classes to look for!
                         // so that we catch as much source code as possible.
@@ -277,23 +272,23 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
                             if (propsfilemsg.getResponseHeader().getStatusCode()
                                     == HttpStatus.SC_OK) {
                                 // Holy sheet.. we found a properties file
-                                bingo(
-                                        Alert.RISK_HIGH,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        Constant.messages.getString(
-                                                "ascanrules.sourcecodedisclosurewebinf.propertiesfile.name"),
-                                        Constant.messages.getString(
-                                                "ascanrules.sourcecodedisclosurewebinf.propertiesfile.desc"),
-                                        null, // originalMessage.getRequestHeader().getURI().getURI(),
-                                        null, // parameter being attacked: none.
-                                        "", // attack
-                                        Constant.messages.getString(
-                                                "ascanrules.sourcecodedisclosurewebinf.propertiesfile.extrainfo",
-                                                classURI), // extrainfo
-                                        Constant.messages.getString(
-                                                "ascanrules.sourcecodedisclosurewebinf.propertiesfile.soln"),
-                                        "", // evidence, highlighted in the message
-                                        propsfilemsg);
+                                newAlert()
+                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                        .setName(
+                                                Constant.messages.getString(
+                                                        "ascanrules.sourcecodedisclosurewebinf.propertiesfile.name"))
+                                        .setDescription(
+                                                Constant.messages.getString(
+                                                        "ascanrules.sourcecodedisclosurewebinf.propertiesfile.desc"))
+                                        .setOtherInfo(
+                                                Constant.messages.getString(
+                                                        "ascanrules.sourcecodedisclosurewebinf.propertiesfile.extrainfo",
+                                                        classURI))
+                                        .setSolution(
+                                                Constant.messages.getString(
+                                                        "ascanrules.sourcecodedisclosurewebinf.propertiesfile.soln"))
+                                        .setMessage(propsfilemsg)
+                                        .raise();
                             }
                         }
                         // do not return at this point.. there may be multiple classes referenced.

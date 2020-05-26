@@ -262,18 +262,13 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                                         + "]");
                     }
 
-                    // Now create the alert message
-                    this.bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            Constant.messages.getString(MESSAGE_PREFIX + "name.php"),
-                            getDescription(),
-                            null,
-                            paramName,
-                            phpPayload,
-                            null,
-                            getSolution(),
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.php"))
+                            .setParam(paramName)
+                            .setAttack(phpPayload)
+                            .setMessage(msg)
+                            .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // parameters on the same request (to reduce performance impact)
@@ -356,18 +351,13 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                                         + "]");
                     }
 
-                    // Now create the alert message
-                    this.bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            Constant.messages.getString(MESSAGE_PREFIX + "name.asp"),
-                            getDescription(),
-                            null,
-                            paramName,
-                            aspPayload,
-                            null,
-                            getSolution(),
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.asp"))
+                            .setParam(paramName)
+                            .setAttack(aspPayload)
+                            .setMessage(msg)
+                            .raise();
                     return true;
                 }
 
