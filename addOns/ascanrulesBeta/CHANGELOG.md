@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add links to the code in the help.
 
 ### Changed
+- Update minimum ZAP version to 2.9.0.
 - Backup File Disclosure scan rule - updated CWE to 530, added reference links to alerts, made sure WASC and CWE identifiers are included in alerts.
 - Maintenance changes.
 - Updated owasp.org references (Issue 5962).

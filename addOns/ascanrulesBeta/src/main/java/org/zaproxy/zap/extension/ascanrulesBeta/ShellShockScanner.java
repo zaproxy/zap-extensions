@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import java.util.Vector;
+import java.util.List;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -106,22 +106,20 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
             setParameter(msg1, paramName, attack);
             sendAndReceive(msg1, false); // do not follow redirects
 
-            Vector<String> ssHeaders = msg1.getResponseHeader().getHeaders(attackHeader);
-            if (ssHeaders != null && ssHeaders.size() > 0) {
+            List<String> ssHeaders = msg1.getResponseHeader().getHeaderValues(attackHeader);
+            if (!ssHeaders.isEmpty()) {
                 for (String header : ssHeaders) {
                     if (header.contains(evidence)) {
-                        bingo(
-                                getRisk(),
-                                Alert.CONFIDENCE_MEDIUM,
-                                this.getName(),
-                                this.getDescription(),
-                                null, // originalMessage.getRequestHeader().getURI().getURI(),
-                                paramName, // parameter being attacked
-                                attack,
-                                Constant.messages.getString("ascanbeta.shellshock.extrainfo"),
-                                this.getSolution(),
-                                evidence,
-                                msg1);
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setParam(paramName)
+                                .setAttack(attack)
+                                .setOtherInfo(
+                                        Constant.messages.getString(
+                                                "ascanbeta.shellshock.extrainfo"))
+                                .setEvidence(evidence)
+                                .setMessage(msg1)
+                                .raise();
                         return;
                     }
                 }
@@ -154,19 +152,17 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
                 }
             }
             if (vulnerable) {
-                bingo(
-                        getRisk(),
-                        Alert.CONFIDENCE_MEDIUM,
-                        this.getName(),
-                        this.getDescription(),
-                        null, // originalMessage.getRequestHeader().getURI().getURI(),
-                        paramName, // parameter being attacked
-                        attack,
-                        Constant.messages.getString("ascanbeta.shellshock.extrainfo"),
-                        this.getSolution(),
-                        Constant.messages.getString(
-                                "ascanbeta.shellshock.timingbased.evidence", attackElapsedTime),
-                        msg2);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam(paramName)
+                        .setAttack(attack)
+                        .setOtherInfo(Constant.messages.getString("ascanbeta.shellshock.extrainfo"))
+                        .setEvidence(
+                                Constant.messages.getString(
+                                        "ascanbeta.shellshock.timingbased.evidence",
+                                        attackElapsedTime))
+                        .setMessage(msg2)
+                        .raise();
                 return;
             }
 

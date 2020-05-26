@@ -149,20 +149,13 @@ public class HttpsAsHttpScanner extends AbstractAppPlugin {
 
             String newUri = newRequest.getRequestHeader().getURI().toString();
 
-            bingo(
-                    getRisk(), // Risk
-                    Alert.CONFIDENCE_MEDIUM, // Confidence/Reliability
-                    getName(), // Name
-                    getDescription(), // Description
-                    getBaseMsg().getRequestHeader().getURI().toString(), // Original URI
-                    null, // Param
-                    "", // Attack
-                    Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", newUri), // OtherInfo
-                    getSolution(), // Solution
-                    newUri, // Evidence
-                    getCweId(), // CWE ID
-                    getWascId(), // WASC ID
-                    newRequest); // HTTPMessage
+            newAlert()
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                    .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", newUri))
+                    .setEvidence(newUri)
+                    .setMessage(newRequest)
+                    .raise();
         }
     }
 }

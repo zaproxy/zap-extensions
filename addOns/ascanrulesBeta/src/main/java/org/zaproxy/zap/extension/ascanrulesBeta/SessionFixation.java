@@ -461,21 +461,21 @@ public class SessionFixation extends AbstractAppPlugin {
                                 Constant.messages.getString(
                                         "ascanbeta.sessionidsentinsecurely.soln");
 
-                        // call bingo with some extra info, indicating that the alert is
+                        // raise alert with some extra info, indicating that the alert is
                         // not specific to Session Fixation, but has its own title and description
                         // (etc.)
                         // the alert here is "Session id sent insecurely", or words to that effect.
-                        bingo(
-                                risk,
-                                Alert.CONFIDENCE_MEDIUM,
-                                vulnname,
-                                vulndesc,
-                                getBaseMsg().getRequestHeader().getURI().getURI(),
-                                currentHtmlParameter.getName(),
-                                attack,
-                                extraInfo,
-                                vulnsoln,
-                                getBaseMsg());
+                        newAlert()
+                                .setRisk(risk)
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setName(vulnname)
+                                .setDescription(vulndesc)
+                                .setParam(currentHtmlParameter.getName())
+                                .setAttack(attack)
+                                .setOtherInfo(extraInfo)
+                                .setSolution(vulnsoln)
+                                .setMessage(getBaseMsg())
+                                .raise();
 
                         if (log.isDebugEnabled()) {
                             String logMessage =
@@ -524,22 +524,22 @@ public class SessionFixation extends AbstractAppPlugin {
                                         + Constant.messages.getString(
                                                 "ascanbeta.sessionidaccessiblebyjavascript.alert.extrainfo.loginpage"));
 
-                        // call bingo with some extra info, indicating that the alert is
+                        // raise alert with some extra info, indicating that the alert is
                         // not specific to Session Fixation, but has its own title and description
                         // (etc.)
                         // the alert here is "Session id accessible in Javascript", or words to that
                         // effect.
-                        bingo(
-                                Alert.RISK_LOW,
-                                Alert.CONFIDENCE_MEDIUM,
-                                vulnname,
-                                vulndesc,
-                                getBaseMsg().getRequestHeader().getURI().getURI(),
-                                currentHtmlParameter.getName(),
-                                attack,
-                                extraInfo,
-                                vulnsoln,
-                                getBaseMsg());
+                        newAlert()
+                                .setRisk(Alert.RISK_LOW)
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setName(vulnname)
+                                .setDescription(vulndesc)
+                                .setParam(currentHtmlParameter.getName())
+                                .setAttack(attack)
+                                .setOtherInfo(extraInfo)
+                                .setSolution(vulnsoln)
+                                .setMessage(getBaseMsg())
+                                .raise();
 
                         if (log.isDebugEnabled()) {
                             String logMessage =
@@ -716,22 +716,22 @@ public class SessionFixation extends AbstractAppPlugin {
                                                     "ascanbeta.sessionidexpiry.alert.extrainfo.loginpage"));
                         }
 
-                        // call bingo with some extra info, indicating that the alert is
+                        // raise alert with some extra info, indicating that the alert is
                         // not specific to Session Fixation, but has its own title and description
                         // (etc.)
                         // the alert here is "Session Id Expiry Time is excessive", or words to that
                         // effect.
-                        bingo(
-                                sessionExpiryRiskLevel,
-                                Alert.CONFIDENCE_MEDIUM,
-                                vulnname,
-                                vulndesc,
-                                getBaseMsg().getRequestHeader().getURI().getURI(),
-                                currentHtmlParameter.getName(),
-                                attack,
-                                extraInfo,
-                                vulnsoln,
-                                getBaseMsg());
+                        newAlert()
+                                .setRisk(sessionExpiryRiskLevel)
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setName(vulnname)
+                                .setDescription(vulndesc)
+                                .setParam(currentHtmlParameter.getName())
+                                .setAttack(attack)
+                                .setOtherInfo(extraInfo)
+                                .setSolution(vulnsoln)
+                                .setMessage(getBaseMsg())
+                                .raise();
 
                         if (log.isDebugEnabled()) {
                             String logMessage =
@@ -944,14 +944,14 @@ public class SessionFixation extends AbstractAppPlugin {
                                                     "ascanbeta.sessionfixation.alert.cookie.extrainfo.loginpage"));
                         }
 
-                        bingo(
-                                Alert.RISK_INFO,
-                                Alert.CONFIDENCE_MEDIUM,
-                                msg2Initial.getRequestHeader().getURI().getURI(),
-                                currentHtmlParameter.getName(),
-                                attack,
-                                extraInfo,
-                                msg2Initial);
+                        newAlert()
+                                .setRisk(Alert.RISK_INFO)
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setParam(currentHtmlParameter.getName())
+                                .setAttack(attack)
+                                .setOtherInfo(extraInfo)
+                                .setMessage(msg2Initial)
+                                .raise();
                         logSessionFixation(
                                 msg2Initial,
                                 currentHtmlParameter.getType().toString(),
@@ -1151,17 +1151,17 @@ public class SessionFixation extends AbstractAppPlugin {
                             // description (etc.)
                             // the alert here is "Session id exposed in url", or words to that
                             // effect.
-                            bingo(
-                                    Alert.RISK_MEDIUM,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    vulnname,
-                                    vulndesc,
-                                    getBaseMsg().getRequestHeader().getURI().getURI(),
-                                    currentHtmlParameter.getName(),
-                                    attack,
-                                    extraInfo,
-                                    vulnsoln,
-                                    getBaseMsg());
+                            newAlert()
+                                    .setRisk(Alert.RISK_MEDIUM)
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setName(vulnname)
+                                    .setDescription(vulndesc)
+                                    .setParam(currentHtmlParameter.getName())
+                                    .setAttack(attack)
+                                    .setOtherInfo(extraInfo)
+                                    .setSolution(vulnsoln)
+                                    .setMessage(getBaseMsg())
+                                    .raise();
 
                             if (log.isDebugEnabled()) {
                                 String logMessage =
@@ -1357,14 +1357,14 @@ public class SessionFixation extends AbstractAppPlugin {
                             risk = Alert.RISK_LOW;
                         }
 
-                        bingo(
-                                risk,
-                                Alert.CONFIDENCE_MEDIUM,
-                                getBaseMsg().getRequestHeader().getURI().getURI(),
-                                currentHtmlParameter.getName(),
-                                attack,
-                                extraInfo,
-                                getBaseMsg());
+                        newAlert()
+                                .setRisk(risk)
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setParam(currentHtmlParameter.getName())
+                                .setAttack(attack)
+                                .setOtherInfo(extraInfo)
+                                .setMessage(getBaseMsg())
+                                .raise();
                         logSessionFixation(
                                 getBaseMsg(),
                                 (isPseudoUrlParameter ? "pseudo " : "")

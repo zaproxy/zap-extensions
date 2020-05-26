@@ -167,13 +167,11 @@ public class TestUserAgent extends AbstractAppPlugin {
     }
 
     private void createAlert(HttpMessage newMsg, String userAgent) {
-        bingo(
-                getRisk(),
-                Alert.CONFIDENCE_MEDIUM,
-                getBaseMsg().getRequestHeader().getURI().toString(),
-                USER_AGENT_PARAM_NAME,
-                userAgent,
-                "",
-                newMsg);
+        newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(USER_AGENT_PARAM_NAME)
+                .setAttack(userAgent)
+                .setMessage(newMsg)
+                .raise();
     }
 }

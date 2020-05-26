@@ -400,18 +400,15 @@ public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
                                     paramName,
                                     newTimeBasedInjectionValue);
 
-                    // raise the alert
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            getName() + " - Time Based",
-                            getDescription(),
-                            getBaseMsg().getRequestHeader().getURI().getURI(), // url
-                            paramName,
-                            attack,
-                            extraInfo,
-                            getSolution(),
-                            msgAttack);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(getName() + " - Time Based")
+                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setParam(paramName)
+                            .setAttack(attack)
+                            .setOtherInfo(extraInfo)
+                            .setMessage(msgAttack)
+                            .raise();
 
                     if (log.isDebugEnabled()) {
                         log.debug(

@@ -457,20 +457,15 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
                                             "ascanbeta.sqlinjection.sqlite.alert.errorbased.extrainfo",
                                             errorMessagePattern);
                             // raise the alert
-                            bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    getName(),
-                                    getDescription(),
-                                    getBaseMsg().getRequestHeader().getURI().getURI(), // url
-                                    paramName,
-                                    newTimeBasedInjectionValue,
-                                    extraInfo,
-                                    getSolution(),
-                                    errorMessagePattern.toString(),
-                                    this.getCweId(),
-                                    this.getWascId(),
-                                    msgDelay);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                                    .setParam(paramName)
+                                    .setAttack(newTimeBasedInjectionValue)
+                                    .setOtherInfo(extraInfo)
+                                    .setEvidence(errorMessagePattern.toString())
+                                    .setMessage(msgDelay)
+                                    .raise();
 
                             if (this.debugEnabled)
                                 log.debug(
@@ -625,21 +620,15 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
                                     originalParamValue,
                                     originalTimeUsed);
 
-                    // raise the alert
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            getName(),
-                            getDescription(),
-                            getBaseMsg().getRequestHeader().getURI().getURI(), // url
-                            paramName,
-                            detectableDelayParameter,
-                            extraInfo,
-                            getSolution(),
-                            extraInfo /*as evidence*/,
-                            this.getCweId(),
-                            this.getWascId(),
-                            detectableDelayMessage);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setParam(paramName)
+                            .setAttack(detectableDelayParameter)
+                            .setOtherInfo(extraInfo)
+                            .setEvidence(extraInfo)
+                            .setMessage(detectableDelayMessage)
+                            .raise();
 
                     if (this.debugEnabled)
                         log.debug(
@@ -790,24 +779,23 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
                                                             Constant.messages.getString(
                                                                     "ascanbeta.sqlinjection.sqlite.alert.versionnumber.extrainfo",
                                                                     versionNumber);
-                                                    // raise the alert
-                                                    bingo(
-                                                            Alert.RISK_HIGH,
-                                                            Alert.CONFIDENCE_MEDIUM,
-                                                            getName() + " - " + versionNumber,
-                                                            getDescription(),
-                                                            getBaseMsg()
-                                                                    .getRequestHeader()
-                                                                    .getURI()
-                                                                    .getURI(), // url
-                                                            paramName,
-                                                            unionAttack,
-                                                            extraInfo,
-                                                            getSolution(),
-                                                            versionNumber /*as evidence*/,
-                                                            this.getCweId(),
-                                                            this.getWascId(),
-                                                            unionAttackMessage);
+                                                    newAlert()
+                                                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                                            .setName(
+                                                                    getName()
+                                                                            + " - "
+                                                                            + versionNumber)
+                                                            .setUri(
+                                                                    getBaseMsg()
+                                                                            .getRequestHeader()
+                                                                            .getURI()
+                                                                            .getURI())
+                                                            .setParam(paramName)
+                                                            .setAttack(unionAttack)
+                                                            .setOtherInfo(extraInfo)
+                                                            .setEvidence(versionNumber)
+                                                            .setMessage(unionAttackMessage)
+                                                            .raise();
                                                     break unionLoops;
                                                 }
                                             }

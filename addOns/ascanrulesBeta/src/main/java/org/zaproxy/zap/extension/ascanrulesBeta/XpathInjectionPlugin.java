@@ -269,18 +269,12 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
                                             + "]");
                         }
 
-                        // Now create the alert message
-                        this.bingo(
-                                Alert.RISK_HIGH,
-                                Alert.CONFIDENCE_HIGH,
-                                getName(),
-                                getDescription(),
-                                null,
-                                paramName,
-                                evilPayload,
-                                null,
-                                getSolution(),
-                                msg);
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_HIGH)
+                                .setParam(paramName)
+                                .setAttack(evilPayload)
+                                .setMessage(msg)
+                                .raise();
 
                         // All done. No need to look for vulnerabilities on subsequent
                         // parameters on the same request (to reduce performance impact)

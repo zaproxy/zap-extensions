@@ -196,14 +196,14 @@ public class IntegerOverflow extends AbstractAppParamPlugin {
             sendAndReceive(msg);
             if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR) {
                 log.debug("Found Header");
-                bingo(
-                        getRisk(),
-                        Alert.CONFIDENCE_MEDIUM,
-                        this.getBaseMsg().getRequestHeader().getURI().toString(),
-                        param,
-                        returnAttack,
-                        this.getError(type),
-                        msg);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setUri(this.getBaseMsg().getRequestHeader().getURI().toString())
+                        .setParam(param)
+                        .setAttack(returnAttack)
+                        .setOtherInfo(this.getError(type))
+                        .setMessage(msg)
+                        .raise();
                 return true;
             }
         } catch (IOException e) {

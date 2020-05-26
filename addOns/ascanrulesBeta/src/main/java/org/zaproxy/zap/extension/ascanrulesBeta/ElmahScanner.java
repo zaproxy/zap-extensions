@@ -182,19 +182,12 @@ public class ElmahScanner extends AbstractHostPlugin {
     }
 
     private void raiseAlert(HttpMessage msg, int risk, int confidence, String otherInfo) {
-        bingo(
-                risk, // Risk
-                confidence, // Confidence
-                getName(), // Name
-                getDescription(), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                null, // Param
-                "", // Attack
-                otherInfo, // OtherInfo
-                getSolution(), // Solution
-                msg.getResponseHeader().getPrimeHeader(), // Evidence
-                getCweId(), // CWE ID
-                getWascId(), // WASC ID
-                msg); // HTTPMessage
+        newAlert()
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setOtherInfo(otherInfo)
+                .setEvidence(msg.getResponseHeader().getPrimeHeader())
+                .setMessage(msg)
+                .raise();
     }
 }

@@ -212,16 +212,13 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                                             + "]");
                         }
 
-                        // Now create the alert message
-                        this.bingo(
-                                Alert.RISK_HIGH,
-                                Alert.CONFIDENCE_MEDIUM,
-                                msg.getRequestHeader().getURI().toString(),
-                                paramName,
-                                msg.getRequestHeader().getURI().toString(),
-                                null,
-                                msg.getResponseHeader().getReasonPhrase(),
-                                msg);
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setParam(paramName)
+                                .setAttack(msg.getRequestHeader().getURI().toString())
+                                .setEvidence(msg.getResponseHeader().getReasonPhrase())
+                                .setMessage(msg)
+                                .raise();
                     }
 
                     // Otherwise check the response with the last bit changed
@@ -246,16 +243,13 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                                                 + "]");
                             }
 
-                            // Now create the alert message
-                            this.bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    msg.getRequestHeader().getURI().toString(),
-                                    paramName,
-                                    msg.getRequestHeader().getURI().toString(),
-                                    null,
-                                    pattern,
-                                    msg);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setParam(paramName)
+                                    .setAttack(msg.getRequestHeader().getURI().toString())
+                                    .setEvidence(pattern)
+                                    .setMessage(msg)
+                                    .raise();
 
                             // All done. No need to look for vulnerabilities on subsequent
                             // parameters on the same request (to reduce performance impact)

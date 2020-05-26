@@ -181,25 +181,21 @@ public class CrossDomainScanner extends AbstractHostPlugin {
                 String domain = exprAllowAccessFromDomainNodes.item(i).getNodeValue();
                 if (domain.equals("*")) {
                     // oh dear me.
-                    bingo(
-                            getRisk(),
-                            Alert.CONFIDENCE_MEDIUM,
-                            Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "name"),
-                            Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"),
-                            crossdomainmessage
-                                    .getRequestHeader()
-                                    .getURI()
-                                    .getURI(), // the url field
-                            "", // parameter being attacked: none.
-                            "", // attack
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX_ADOBE_READ + "extrainfo",
-                                    "/" + ADOBE_CROSS_DOMAIN_POLICY_FILE), // extrainfo
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX_ADOBE_READ + "soln"), // solution
-                            "<allow-access-from domain=\"*\"", // evidence
-                            crossdomainmessage // the message on which to place the alert
-                            );
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(
+                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "name"))
+                            .setDescription(
+                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"))
+                            .setOtherInfo(
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX_ADOBE_READ + "extrainfo",
+                                            "/" + ADOBE_CROSS_DOMAIN_POLICY_FILE))
+                            .setSolution(
+                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "soln"))
+                            .setEvidence("<allow-access-from domain=\"*\"")
+                            .setMessage(crossdomainmessage)
+                            .raise();
                 }
             }
             // check for cross domain send (upload) access
@@ -216,25 +212,21 @@ public class CrossDomainScanner extends AbstractHostPlugin {
                 String domain = exprRequestHeadersFromDomainNodes.item(i).getNodeValue();
                 if (domain.equals("*")) {
                     // oh dear, dear me.
-                    bingo(
-                            getRisk(),
-                            Alert.CONFIDENCE_MEDIUM,
-                            Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "name"),
-                            Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"),
-                            crossdomainmessage
-                                    .getRequestHeader()
-                                    .getURI()
-                                    .getURI(), // the url field
-                            "", // parameter being attacked: none.
-                            "", // attack
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX_ADOBE_SEND + "extrainfo",
-                                    "/" + ADOBE_CROSS_DOMAIN_POLICY_FILE), // extrainfo
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX_ADOBE_SEND + "soln"), // solution
-                            "<allow-http-request-headers-from domain=\"*\"", // evidence
-                            crossdomainmessage // the message on which to place the alert
-                            );
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(
+                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "name"))
+                            .setDescription(
+                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"))
+                            .setOtherInfo(
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX_ADOBE_SEND + "extrainfo",
+                                            "/" + ADOBE_CROSS_DOMAIN_POLICY_FILE))
+                            .setSolution(
+                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "soln"))
+                            .setEvidence("<allow-http-request-headers-from domain=\"*\"")
+                            .setMessage(crossdomainmessage)
+                            .raise();
                 }
             }
         } catch (SAXException | IOException e) {
@@ -289,24 +281,23 @@ public class CrossDomainScanner extends AbstractHostPlugin {
                                 "Bingo! "
                                         + SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE
                                         + ", at /access-policy/cross-domain-access/policy/allow-from/domain/@uri");
-                    bingo(
-                            getRisk(),
-                            Alert.CONFIDENCE_MEDIUM,
-                            Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "name"),
-                            Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "desc"),
-                            clientaccesspolicymessage
-                                    .getRequestHeader()
-                                    .getURI()
-                                    .getURI(), // the url field
-                            "", // parameter being attacked: none.
-                            "", // attack
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX_SILVERLIGHT + "extrainfo"), // extrainfo
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX_SILVERLIGHT + "soln"), // solution
-                            "<domain uri=\"*\"", // evidence
-                            clientaccesspolicymessage // the message on which to place the alert
-                            );
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX_SILVERLIGHT + "name"))
+                            .setDescription(
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX_SILVERLIGHT + "desc"))
+                            .setOtherInfo(
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX_SILVERLIGHT + "extrainfo"))
+                            .setSolution(
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX_SILVERLIGHT + "soln"))
+                            .setEvidence("<domain uri=\"*\"")
+                            .setMessage(clientaccesspolicymessage)
+                            .raise();
                 }
             }
 

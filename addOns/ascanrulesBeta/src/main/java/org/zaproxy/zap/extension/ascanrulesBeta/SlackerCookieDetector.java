@@ -106,20 +106,11 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
             sendAndReceive(msg, false);
             if (msg.getResponseBody().length() != baseResponseLength) {
                 sessionNoLongerGood = true;
-                bingo(
-                        Alert.RISK_INFO,
-                        // reliability:
-                        Alert.CONFIDENCE_LOW,
-                        msg.getRequestHeader().getURI().toString(),
-                        // parameter:
-                        null,
-                        // Attack:
-                        null,
-                        // Other info:
-                        getSessionDestroyedText(oneCookie.getName()),
-                        // Evidence:
-                        null,
-                        msg);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_LOW)
+                        .setOtherInfo(getSessionDestroyedText(oneCookie.getName()))
+                        .setMessage(msg)
+                        .raise();
             }
         } catch (IOException io) {
             log.debug("Blew up trying to refresh session with all cookies: " + io.getMessage());
@@ -208,20 +199,12 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 
         int riskLevel = calculateRisk(cookiesThatDoNOTMakeADifference, otherInfoBuff);
 
-        bingo(
-                riskLevel,
-                // reliability:
-                Alert.CONFIDENCE_LOW,
-                msg.getRequestHeader().getURI().toString(),
-                // parameter:
-                null,
-                // Attack:
-                null,
-                // Other info:
-                otherInfoBuff.toString(),
-                // Evidence:
-                null,
-                msg);
+        newAlert()
+                .setRisk(riskLevel)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setOtherInfo(otherInfoBuff.toString())
+                .setMessage(msg)
+                .raise();
     }
 
     private StringBuilder createOtherInfoText(
