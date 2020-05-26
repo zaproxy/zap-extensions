@@ -1,4 +1,4 @@
-version = "0.1.0"
+version = "0.2.0"
 description = "Adds encode/decode/hash dialog and support for scripted processors as well"
 
 zapAddOn {

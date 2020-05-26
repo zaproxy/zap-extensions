@@ -444,8 +444,7 @@ public class EncodeDecodeDialog extends AbstractFrame {
                         title,
                         TitledBorder.DEFAULT_JUSTIFICATION,
                         TitledBorder.DEFAULT_POSITION,
-                        FontUtils.getFont(FontUtils.Size.standard),
-                        java.awt.Color.black));
+                        FontUtils.getFont(FontUtils.Size.standard)));
 
         parent.add(jsp, gbc);
     }
