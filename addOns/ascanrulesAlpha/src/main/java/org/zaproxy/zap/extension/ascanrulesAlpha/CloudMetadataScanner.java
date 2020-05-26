@@ -103,20 +103,12 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
     }
 
     public void raiseAlert(HttpMessage newRequest) {
-        bingo(
-                getRisk(), // Risk
-                Alert.CONFIDENCE_LOW, // Confidence/Reliability
-                getName(), // Name
-                getDescription(), // Description
-                newRequest.getRequestHeader().getURI().toString(), // Original URI
-                null, // Param
-                METADATA_HOST, // Attack
-                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"), // OtherInfo
-                getSolution(), // Solution
-                "", // Evidence
-                getCweId(), // CWE ID
-                getWascId(), // WASC ID
-                newRequest); // HTTPMessage
+        newAlert()
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setAttack(METADATA_HOST)
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
+                .setMessage(newRequest)
+                .raise();
     }
 
     @Override
