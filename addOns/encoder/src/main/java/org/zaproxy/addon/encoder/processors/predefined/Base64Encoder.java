@@ -20,11 +20,13 @@
 package org.zaproxy.addon.encoder.processors.predefined;
 
 import java.io.IOException;
+import java.util.Base64;
 
 public class Base64Encoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) throws IOException {
-        return getEncoder().getBase64Encode(value);
+        // Returns based on StandardCharsets.ISO_8859_1
+        return Base64.getEncoder().encodeToString(value.getBytes());
     }
 }

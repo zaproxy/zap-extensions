@@ -19,20 +19,10 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
-import org.parosproxy.paros.extension.encoder.Encoder;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessor;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
 public abstract class DefaultEncodeDecodeProcessor implements EncodeDecodeProcessor {
-
-    private Encoder encoder;
-
-    protected Encoder getEncoder() {
-        if (encoder == null) {
-            encoder = new Encoder();
-        }
-        return encoder;
-    }
 
     @Override
     public EncodeDecodeResult process(String value) {

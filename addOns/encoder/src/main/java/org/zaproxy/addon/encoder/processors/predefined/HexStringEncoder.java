@@ -23,6 +23,19 @@ public class HexStringEncoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) {
-        return getEncoder().getHexString(value.getBytes());
+        return getHexString(value.getBytes());
+    }
+
+    protected static String getHexString(byte[] buf) {
+        StringBuilder sb = new StringBuilder(20);
+        for (int i = 0; i < buf.length; i++) {
+            int digit = buf[i] & 0xFF;
+            String hexDigit = Integer.toHexString(digit).toUpperCase();
+            if (hexDigit.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hexDigit);
+        }
+        return sb.toString();
     }
 }
