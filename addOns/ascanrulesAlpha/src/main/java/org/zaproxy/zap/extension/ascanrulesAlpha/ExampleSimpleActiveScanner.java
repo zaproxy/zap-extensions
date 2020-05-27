@@ -19,14 +19,19 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
-import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Random;
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.httputils.HtmlContext;
+import org.zaproxy.zap.httputils.HtmlContextAnalyser;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -39,9 +44,9 @@ import org.zaproxy.zap.model.Vulnerability;
  * @author psiinon
  */
 public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
-
+    public static final String NULL_BYTE_CHARACTER = String.valueOf((char) 0);
     // wasc_10 is Denial of Service - well, its just an example ;)
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
+    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_14");
 
     private Random rnd = new Random();
 
@@ -114,35 +119,136 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
      * This method is called by the active scanner for each GET and POST parameter for every page
      * @see org.parosproxy.paros.core.scanner.AbstractAppParamPlugin#scan(org.parosproxy.paros.network.HttpMessage, java.lang.String, java.lang.String)
      */
-    @Override
-    public void scan(HttpMessage msg, String param, String value) {
+
+    public String generateAttackPayload() {
+        // byte[] defaultPayload = "34234df<script>alert(1234)</script>dfsdf".getBytes();
+        String[] prefix = {
+            "", "<%<!--'%>", "sdfdsfg", "-->", "</svg>", "//", ">", "--><!-- --->", "--><!-- -->"
+        };
+        String scriptString = "<script>alert(1234)</script>";
+        String[] suffix = {"", "sdfdsg"};
+        String attackPayload =
+                new StringBuilder()
+                        .append(prefix[new Random().nextInt(prefix.length)])
+                        .append(scriptString)
+                        .append(suffix[new Random().nextInt(suffix.length)])
+                        .toString();
+        return attackPayload;
+    }
+
+    private List<HtmlContext> performAttack(
+            HttpMessage msg,
+            String param,
+            String attack,
+            HtmlContext targetContext,
+            int ignoreFlags,
+            boolean findDecoded,
+            boolean isNullByteSpecialHandling) {
+        if (isStop()) {
+            return null;
+        }
+
+        HttpMessage msg2 = msg.cloneRequest();
+        setParameter(msg2, param, attack);
         try {
-            if (!Constant.isDevBuild()) {
-                // Only run this example scanner in dev mode
-                // Uncomment locally if you want to see these alerts in non dev mode ;)
-                return;
+            sendAndReceive(msg2);
+        } catch (URIException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to send HTTP message, cause: " + e.getMessage());
             }
-            // This is where you change the 'good' request to attack the application
-            // You can make multiple requests if needed
-            String attack = "attack";
-
-            // Always use getNewMsg() for each new request
-            msg = getNewMsg();
-            setParameter(msg, param, attack);
-            sendAndReceive(msg);
-
-            // This is where you detect potential vulnerabilities in the response
-
-            // For this example we're just going to raise the alert at random!
-
-            if (rnd.nextInt(10) == 0) {
-                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, value, null, msg);
-                return;
-            }
-
-        } catch (IOException e) {
+            return null;
+        } catch (InvalidRedirectLocationException | UnknownHostException e) {
+            // Not an error, just means we probably attacked the redirect
+            // location
+            return null;
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+
+        if (isStop()) {
+            return null;
+        }
+        if (isNullByteSpecialHandling) {
+            /* Special handling for case where Attack Vector is reflected outside of html tag.
+             * Removing Null Byte as parser tries to find the enclosing tag on attack vector (e.g.
+             * \0<script>alert(1);</script>) starting from first character
+             * and as null byte is not starting any tag and there is no enclosing tag for null byte
+             * so parent context is null.
+             */
+            attack = attack.replaceFirst(NULL_BYTE_CHARACTER, "");
+        }
+        HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
+        if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
+            // High level, so check all results are in the expected context
+            return hca.getHtmlContexts(
+                    findDecoded ? getURLDecode(attack) : attack, targetContext, ignoreFlags);
+        }
+
+        return hca.getHtmlContexts(findDecoded ? getURLDecode(attack) : attack);
+    }
+
+    @Override
+    public void scan(HttpMessage msg, String param, String value) {
+
+        // if (!Constant.isDevBuild()) {
+        // Only run this example scanner in dev mode
+        // Uncomment locally if you want to see these alerts in non dev mode ;)
+        //  return;
+        // }
+        // This is where you change the 'good' request to attack the application
+        // You can make multiple requests if needed
+        // String attack = "attack";
+        boolean attackWorked = false;
+        int times = 0;
+        while (!attackWorked && times < 5) {
+            String attackString = generateAttackPayload();
+            // Always use getNewMsg() for each new request
+            /*msg = getNewMsg();
+            setParameter(msg, param, attackString);
+            sendAndReceive(msg);*/
+
+            // This is where you detect potential vulnerabilities in the response
+            List<HtmlContext> contexts =
+                    performAttack(msg, param, attackString, null, 0, false, false);
+            String GREP_STRING = "alert(1234)";
+            /*HtmlContextAnalyser hca = new HtmlContextAnalyser(msg);
+            List<HtmlContext> contexts = hca.getHtmlContexts(GREP_STRING, null, 0);*/
+            if (contexts.size() > 0) {
+                /*bingo(
+                int risk,
+                int confidence,
+                String name,
+                String description,
+                String uri,
+                String param,
+                String attack,
+                String otherInfo,
+                String solution,
+                HttpMessage msg);*/
+                bingo(
+                        Alert.RISK_HIGH,
+                        Alert.CONFIDENCE_MEDIUM,
+                        "Extension-XSS",
+                        "XSS found by extension",
+                        null,
+                        param,
+                        contexts.get(0).getTarget(),
+                        contexts.get(0).getTarget(),
+                        "XSS found by extension",
+                        contexts.get(0).getMsg());
+                // bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, value,
+                // "Extension-XSS", msg);
+                attackWorked = true;
+            }
+            times++;
+        }
+        // For this example we're just going to raise the alert at random!
+        // if (rnd.nextInt(10) == 0) {
+        //     bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, value,
+        // "Extension-XSS", msg);
+        //      return;
+        //
+
     }
 
     @Override

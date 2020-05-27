@@ -88,7 +88,8 @@ var addOns = listOf(
     "webdrivers:webdrivermacos",
     "webdrivers:webdriverwindows",
     "websocket",
-    "zest"
+    "zest",
+    "xsszap"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
