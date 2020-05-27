@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Help information.
+- Base64 character set and line break options, including migration of settings from core component.
 
 
 ## [0.1.0] - 2020-05-20

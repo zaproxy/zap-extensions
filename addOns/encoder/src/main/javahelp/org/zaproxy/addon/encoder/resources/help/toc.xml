@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Encode/Decode/Hash" target="encoder"/>
+			<tocitem text="Encode/Decode/Hash" target="encoder">
+				<tocitem text="Options" target="encoder.options" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>
