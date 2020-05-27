@@ -29,6 +29,42 @@ public class IllegalUTF8Encoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) {
-        return getEncoder().getIllegalUTF8Encode(value, bytes);
+        return getIllegalUTF8Encode(value, bytes);
+    }
+
+    private String getIllegalUTF8Encode(String msg, int bytes) {
+        char[] input_array = msg.toCharArray();
+
+        if (bytes != 4 && bytes != 3) {
+            bytes = 2;
+        }
+
+        // numbers of characters * number of bytes * ("%" + Hex + Hex)
+        StringBuilder sbResult = new StringBuilder(input_array.length * bytes * 3);
+        for (char c : input_array) {
+
+            if (bytes == 4) {
+                sbResult.append('%').append(Integer.toHexString(0xff & ((byte) 0xf0)));
+                sbResult.append('%').append(Integer.toHexString(0xff & ((byte) 0x80)));
+                sbResult.append('%')
+                        .append(Integer.toHexString(0xff & ((byte) (0x80 | ((c & 0x7f) >> 6)))));
+                sbResult.append('%')
+                        .append(Integer.toHexString(0xff & ((byte) (0x80 | (c & 0x3f)))));
+
+            } else if (bytes == 3) {
+                sbResult.append('%').append(Integer.toHexString(0xff & ((byte) 0xe0)));
+                sbResult.append('%')
+                        .append(Integer.toHexString(0xff & ((byte) (0x80 | ((c & 0x7f) >> 6)))));
+                sbResult.append('%')
+                        .append(Integer.toHexString(0xff & ((byte) (0x80 | (c & 0x3f)))));
+            } else {
+                sbResult.append('%')
+                        .append(Integer.toHexString(0xff & ((byte) (0xc0 | ((c & 0x7f) >> 6)))));
+                sbResult.append('%')
+                        .append(Integer.toHexString(0xff & ((byte) (0x80 | (c & 0x3f)))));
+            }
+        }
+
+        return sbResult.toString();
     }
 }
