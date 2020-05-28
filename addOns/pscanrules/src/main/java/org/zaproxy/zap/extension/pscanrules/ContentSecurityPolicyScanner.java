@@ -307,7 +307,7 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
             allowedSources.add("frame-src");
         }
         if (pol.allowsFrameAncestor(PARSED_WILDCARD_URI)) {
-            allowedSources.add("frame-ancestor");
+            allowedSources.add("frame-ancestors");
         }
         if (pol.allowsFontFromSource(PARSED_WILDCARD_URI)) {
             allowedSources.add("font-src");

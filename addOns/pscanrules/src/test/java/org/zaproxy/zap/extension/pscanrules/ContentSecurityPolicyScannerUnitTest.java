@@ -76,7 +76,7 @@ public class ContentSecurityPolicyScannerUnitTest
                         "The following directives either allow wildcard sources (or ancestors), are not "
                                 + "defined, or are overly broadly defined: \nscript-src, script-src-elem, script-src-attr"
                                 + ", style-src, style-src-elem, style-src-attr, img-src, connect-src, frame-src, "
-                                + "frame-ancestor, font-src, media-src, object-src, manifest-src, worker-src, prefetch-src"));
+                                + "frame-ancestors, font-src, media-src, object-src, manifest-src, worker-src, prefetch-src"));
         assertThat(
                 alertsRaised.get(1).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
@@ -110,7 +110,7 @@ public class ContentSecurityPolicyScannerUnitTest
                 alertsRaised.get(0).getDescription(),
                 equalTo(
                         "The following directives either allow wildcard sources (or ancestors), "
-                                + "are not defined, or are overly broadly defined: \nframe-ancestor"));
+                                + "are not defined, or are overly broadly defined: \nframe-ancestors"));
 
         assertThat(
                 alertsRaised.get(0).getEvidence(),
@@ -124,5 +124,62 @@ public class ContentSecurityPolicyScannerUnitTest
                                 + "may be inaccurate due to these multiple headers."));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    public void shouldAlertOnWildcardFrameAncestorsDirective() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: frame-ancestors *; default-src 'self'\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP Scanner: Wildcard Directive"));
+        assertThat(
+                alertsRaised.get(0).getDescription(),
+                equalTo(
+                        "The following directives either allow wildcard sources (or ancestors), are not "
+                                + "defined, or are overly broadly defined: \nframe-ancestors"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("frame-ancestors *; default-src 'self'"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    public void shouldNotAlertOnReasonableCsp() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy: default-src 'self'; script-src 'self' "
+                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
+                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
+                        + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 }
