@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated owasp.org references (Issue 5962).
+- Correct spelling of "frame-ancestors" in the alert details of the CSP scan rule wildcard directive check (Issue 6014).
 
 ## [28] - 2020-04-08
 
