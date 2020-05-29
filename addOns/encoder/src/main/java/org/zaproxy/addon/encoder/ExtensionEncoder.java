@@ -66,6 +66,8 @@ public class ExtensionEncoder extends ExtensionAdaptor {
     private PopupEncoderMenu popupEncodeMenu = null;
     private ZapMenuItem toolsMenuEncoder = null;
     private PopupEncoderDeleteOutputPanelMenu popupDeleteOutputMenu;
+    private EncodeDecodeOptionsPanel optionsPanel;
+    private EncodeDecodeOptions options;
 
     public ExtensionEncoder() {
         super(NAME);
@@ -111,6 +113,11 @@ public class ExtensionEncoder extends ExtensionAdaptor {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuEncode());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuDeleteOutputPanel());
             extensionHook.getHookMenu().addToolsMenuItem(getToolsMenuItemEncoder());
+
+            extensionHook.getHookView().addOptionPanel(getOptionsPanel());
+            extensionHook.addOptionsParamSet(getOptions());
+
+            extensionHook.addOptionsChangedListener(encodeDecodeDialog);
         }
 
         ExtensionScript extScript = getExtensionScript();
@@ -225,5 +232,19 @@ public class ExtensionEncoder extends ExtensionAdaptor {
                 keybdExt.setShortcut(ENCODER_MENU_IDENTIFIER, coreKs);
             }
         }
+    }
+
+    private EncodeDecodeOptionsPanel getOptionsPanel() {
+        if (optionsPanel == null) {
+            optionsPanel = new EncodeDecodeOptionsPanel();
+        }
+        return optionsPanel;
+    }
+
+    public EncodeDecodeOptions getOptions() {
+        if (options == null) {
+            options = new EncodeDecodeOptions();
+        }
+        return options;
     }
 }
