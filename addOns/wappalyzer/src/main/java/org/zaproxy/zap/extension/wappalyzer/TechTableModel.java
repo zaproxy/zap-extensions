@@ -204,4 +204,8 @@ public class TechTableModel extends AbstractTableModel {
     public List<ApplicationMatch> getApps() {
         return apps;
     }
+
+    public Application getApp(int row) {
+        return apps.get(row).getApplication();
+    }
 }
