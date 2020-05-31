@@ -258,7 +258,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
                             + "] for MongoDB Injection");
         }
         // injection attack to url-encoded query parameters
-        if (doAllDataScan) {
+        if (doAllDataScan && !isJsonPayload) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Starting with boolean based attack payloads:");
             }
