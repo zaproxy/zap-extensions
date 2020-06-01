@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
@@ -40,6 +41,7 @@ import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsB
 import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsDepthFirstReplacer;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsReplacer;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
+import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.model.TextHttpMessageLocation;
 import org.zaproxy.zap.view.messagecontainer.MessageContainer;
 import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
@@ -135,6 +137,10 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
                 fuzzDialogue.getFuzzerMessageProcessors());
     }
 
+    protected Class<? extends MessageLocation> getMessageLocationClass() {
+        return TextHttpMessageLocation.class;
+    }
+
     @SuppressWarnings("unchecked")
     private HttpFuzzer createFuzzer(
             HttpMessage message,
@@ -147,7 +153,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
 
         MessageLocationReplacer<HttpMessage> replacer =
                 MessageLocationReplacers.getInstance()
-                        .getMLR(HttpMessage.class, TextHttpMessageLocation.class);
+                        .getMLR(HttpMessage.class, this.getMessageLocationClass());
 
         replacer.init(message);
 
@@ -176,7 +182,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
                 processors);
     }
 
-    private String createFuzzerName(HttpMessage message) {
+    protected String createFuzzerName(HttpMessage message) {
         String uri = message.getRequestHeader().getURI().toString();
         if (uri.length() > 30) {
             uri = uri.substring(0, 14) + ".." + uri.substring(uri.length() - 15, uri.length());
