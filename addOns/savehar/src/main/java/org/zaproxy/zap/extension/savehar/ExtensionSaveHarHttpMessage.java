@@ -36,7 +36,7 @@ public class ExtensionSaveHarHttpMessage extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         if (getView() != null) {
-            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuItemSaveHarMessage());
+            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuItemSaveHarMessage(this));
         }
     }
 
