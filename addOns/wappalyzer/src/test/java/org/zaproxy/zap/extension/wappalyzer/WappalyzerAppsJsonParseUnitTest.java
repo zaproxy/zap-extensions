@@ -19,19 +19,25 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class WappalyzerAppsJsonParseUnitTest {
 
     @Test
     public void test() throws IOException {
-        // When - there's a parse exception, fail
+        // Given
+        List<String> errs = new ArrayList<>();
+        // When
         WappalyzerJsonParser parser =
-                new WappalyzerJsonParser(
-                        (pattern, e) -> fail("Regular expression with errors: " + e));
+                new WappalyzerJsonParser((pattern, e) -> errs.add(e.toString()));
         parser.parseDefaultAppsJson();
+        // Then
+        assertEquals(Collections.emptyList(), errs);
     }
 }
