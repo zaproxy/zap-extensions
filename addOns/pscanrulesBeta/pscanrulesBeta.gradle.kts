@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "22"
+version = "23"
 description = "The beta quality Passive Scanner rules"
 
 zapAddOn {
