@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- rot13.js example script.
+- SHA256 predefined processor.
 
 ## [0.2.0] - 2020-06-01
 
