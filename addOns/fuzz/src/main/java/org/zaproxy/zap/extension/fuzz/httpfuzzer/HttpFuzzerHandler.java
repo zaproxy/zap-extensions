@@ -240,7 +240,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
     }
 
     @SuppressWarnings("unchecked")
-    public <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>>
+    protected <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>>
             void addFuzzerMessageProcessorUIHandler(
                     HttpFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
         messageProcessors.add(
@@ -248,7 +248,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
                         processorUIHandler);
     }
 
-    public <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>>
+    protected <T1 extends HttpFuzzerMessageProcessor, T2 extends HttpFuzzerMessageProcessorUI<T1>>
             void removeFuzzerMessageProcessorUIHandler(
                     HttpFuzzerMessageProcessorUIHandler<T1, T2> processorUIHandler) {
         messageProcessors.remove(processorUIHandler);

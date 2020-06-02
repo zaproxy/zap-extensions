@@ -53,6 +53,8 @@ import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.extension.search.HttpSearcher;
 import org.zaproxy.zap.extension.search.SearchResult;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.zap.model.DefaultTextHttpMessageLocation;
+import org.zaproxy.zap.model.MessageLocation;
 
 public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
@@ -102,7 +104,14 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
         httpFuzzerHandler = new HttpFuzzerHandler();
 
         MessageLocationReplacers.getInstance()
-                .addReplacer(HttpMessage.class, new TextHttpMessageLocationReplacerFactory());
+                .addReplacer(
+                        HttpMessage.class,
+                        new TextHttpMessageLocationReplacerFactory() {
+                            @Override
+                            public Class<? extends MessageLocation> getTargetMessageLocation() {
+                                return DefaultTextHttpMessageLocation.class;
+                            }
+                        });
     }
 
     @Override
