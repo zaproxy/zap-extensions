@@ -39,7 +39,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
     private CommandLineArgument[] arguments = new CommandLineArgument[3];
     private static final int ARG_IMPORT_FILE_IDX = 0;
     private static final int ARG_IMPORT_URL_IDX = 1;
-    private static final int ARG_TARGET_URL_IDX = 2;
+    private static final int ARG_END_URL_IDX = 2;
 
     public ExtensionGraphQl() {
         super(NAME);
@@ -65,12 +65,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
             menuImportLocalGraphQl.setToolTipText(
                     Constant.messages.getString("graphql.topmenu.import.importgraphql.tooltip"));
             menuImportLocalGraphQl.addActionListener(
-                    e ->
-                            View.getSingleton()
-                                    .showMessageDialog(
-                                            Constant.messages.getString(
-                                                    "graphql.importfromdialog.message")));
-            ;
+                    e -> new ImportFromFileDialog(View.getSingleton().getMainFrame(), this));
         }
         return menuImportLocalGraphQl;
     }
@@ -84,11 +79,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
                             "graphql.topmenu.import.importremotegraphql.tooltip"));
 
             menuImportUrlGraphQl.addActionListener(
-                    e ->
-                            View.getSingleton()
-                                    .showMessageDialog(
-                                            Constant.messages.getString(
-                                                    "graphql.importfromdialog.message")));
+                    e -> new ImportFromUrlDialog(View.getSingleton().getMainFrame(), this));
         }
         return menuImportUrlGraphQl;
     }
@@ -125,14 +116,14 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
                         "",
                         "-graphqlurl <url>        "
                                 + Constant.messages.getString("graphql.cmdline.url.help"));
-        arguments[ARG_TARGET_URL_IDX] =
+        arguments[ARG_END_URL_IDX] =
                 new CommandLineArgument(
-                        "-graphqltargeturl",
+                        "-graphqlendurl",
                         1,
                         null,
                         "",
-                        "-graphqltargeturl <url>  "
-                                + Constant.messages.getString("graphql.cmdline.targeturl.help"));
+                        "-graphqlendurl <url>  "
+                                + Constant.messages.getString("graphql.cmdline.endurl.help"));
         return arguments;
     }
 
@@ -144,7 +135,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
         if (arguments[ARG_IMPORT_URL_IDX].isEnabled()) {
             System.out.println("Nothing to see here (yet) :)");
         }
-        if (arguments[ARG_TARGET_URL_IDX].isEnabled()) {
+        if (arguments[ARG_END_URL_IDX].isEnabled()) {
             System.out.println("Nothing to see here (yet) :)");
         }
     }
