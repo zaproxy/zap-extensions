@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
+- Wappalyzer's enabled state is now persisted between ZAP sessions.
 
 ### Fixed
 - Fixed the Evidence context menu now functions properly again.

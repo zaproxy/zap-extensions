@@ -70,6 +70,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private ExtensionSearch extSearch = null;
 
     private Map<String, TechTableModel> siteTechMap = new HashMap<String, TechTableModel>();
+    private boolean enabled;
+    private WappalyzerParam wappalyzerParam;
 
     private static final Logger logger = Logger.getLogger(ExtensionWappalyzer.class);
 
@@ -107,6 +109,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     @Override
     public void init() {
         super.init();
+        enabled = true;
+        wappalyzerParam = new WappalyzerParam();
         passiveScanner = new WappalyzerPassiveScanner(this);
     }
 
@@ -130,12 +134,38 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
         this.api = new WappalyzerAPI(this);
         extensionHook.addApiImplementor(this.api);
+        extensionHook.addOptionsParamSet(wappalyzerParam);
 
         ExtensionPassiveScan extPScan =
                 Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionPassiveScan.class);
         extPScan.addPassiveScanner(passiveScanner);
+    }
+
+    @Override
+    public void optionsLoaded() {
+        super.optionsLoaded();
+
+        setWappalyzer(wappalyzerParam.isEnabled());
+    }
+
+    void setWappalyzer(boolean enabled) {
+        if (this.enabled == enabled) {
+            return;
+        }
+        this.enabled = enabled;
+
+        wappalyzerParam.setEnabled(enabled);
+        getPassiveScanner().setEnabled(enabled);
+
+        if (View.isInitialised()) {
+            getTechPanel().getEnableToggleButton().setSelected(enabled);
+        }
+    }
+
+    boolean isWappalyzerEnabled() {
+        return enabled;
     }
 
     private TechPanel getTechPanel() {
