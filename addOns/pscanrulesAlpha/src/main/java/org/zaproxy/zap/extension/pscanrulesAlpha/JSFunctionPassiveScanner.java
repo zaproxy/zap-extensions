@@ -45,7 +45,7 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.jsfunction.";
 
-    public static final String FUNC_LIST_DIR = "xml";
+    public static final String FUNC_LIST_DIR = "txt";
     public static final String FUNC_LIST_FILE = "js-function-list.txt";
     private static final Logger LOGGER = Logger.getLogger(JSFunctionPassiveScanner.class);
     private static final int PLUGIN_ID = 10110;

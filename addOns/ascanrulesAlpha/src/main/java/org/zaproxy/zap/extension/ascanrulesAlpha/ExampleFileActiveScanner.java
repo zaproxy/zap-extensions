@@ -47,7 +47,7 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanalpha.examplefile.";
 
-    private static final String exampleAscanFile = "xml/example-ascan-file.txt";
+    private static final String exampleAscanFile = "txt/example-ascan-file.txt";
     private List<String> strings = null;
     private static Logger log = Logger.getLogger(ExampleFileActiveScanner.class);
 
