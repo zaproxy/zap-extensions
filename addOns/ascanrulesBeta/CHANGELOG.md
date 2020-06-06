@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [28] - 2020-06-01
 ### Added
 - Add info and repo URLs.
 - Add links to the code in the help.
@@ -205,6 +208,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[28]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v25

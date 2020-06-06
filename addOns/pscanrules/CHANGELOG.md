@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [29] - 2020-06-01
 ### Changed
 - Updated owasp.org references (Issue 5962).
 - Correct spelling of "frame-ancestors" in the alert details of the CSP scan rule wildcard directive check (Issue 6014).
@@ -188,6 +191,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[29]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v26

@@ -63,6 +63,10 @@
             <outputpanels>
                 <outputpanel>
                     <name/>
+                    <processorId>encoder.predefined.sha256hash</processorId>
+                </outputpanel>
+                <outputpanel>
+                    <name/>
                     <processorId>encoder.predefined.sha1hash</processorId>
                 </outputpanel>
                 <outputpanel>

@@ -302,7 +302,8 @@ public class TechPanel extends AbstractPanel {
 
     protected String getSelectedApplicationName() {
         if (this.getTechTable().getSelectedRow() >= 0) {
-            return (String) this.getTechTable().getValueAt(this.getTechTable().getSelectedRow(), 1);
+            int modelRow = getTechTable().convertRowIndexToModel(getTechTable().getSelectedRow());
+            return techModel.getApp(modelRow).getName();
         }
         return null;
     }

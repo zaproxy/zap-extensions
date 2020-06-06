@@ -34,7 +34,7 @@ public class GraphQlApi extends ApiImplementor {
     private static final String ACTION_IMPORT_URL = "importUrl";
     private static final String PARAM_URL = "url";
     private static final String PARAM_FILE = "file";
-    private static final String PARAM_TARGET = "target";
+    private static final String PARAM_END = "endurl";
 
     private static final Logger LOGGER = Logger.getLogger(GraphQlApi.class);
     private ExtensionGraphQl extension = null;
@@ -48,9 +48,7 @@ public class GraphQlApi extends ApiImplementor {
         extension = ext;
         this.addApiAction(
                 new ApiAction(
-                        ACTION_IMPORT_FILE,
-                        new String[] {PARAM_FILE},
-                        new String[] {PARAM_TARGET}));
+                        ACTION_IMPORT_FILE, new String[] {PARAM_FILE}, new String[] {PARAM_END}));
         this.addApiAction(new ApiAction(ACTION_IMPORT_URL, new String[] {PARAM_URL}));
     }
 

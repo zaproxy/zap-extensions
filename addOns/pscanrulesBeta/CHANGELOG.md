@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [22] - 2020-06-01
 ### Added
 - Added links to the code in the help.
 - Add info and repo URLs.
@@ -161,6 +164,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[22]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v19

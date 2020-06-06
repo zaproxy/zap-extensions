@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 
+### Fixed
+- Fixed the Evidence context menu now functions properly again.
+
 ## [18] - 2020-04-06
 ### Changed
 - Update minimum ZAP version to 2.9.0.

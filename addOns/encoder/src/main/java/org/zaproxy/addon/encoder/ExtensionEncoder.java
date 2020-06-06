@@ -117,7 +117,7 @@ public class ExtensionEncoder extends ExtensionAdaptor {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
             extensionHook.addOptionsParamSet(getOptions());
 
-            extensionHook.addOptionsChangedListener(encodeDecodeDialog);
+            extensionHook.addOptionsChangedListener(getEncodeDecodeDialog());
         }
 
         ExtensionScript extScript = getExtensionScript();
@@ -160,7 +160,7 @@ public class ExtensionEncoder extends ExtensionAdaptor {
         return popupDeleteOutputMenu;
     }
 
-    private EncodeDecodeDialog showEncodeDecodeDialog(JTextComponent lastInvoker) {
+    private EncodeDecodeDialog getEncodeDecodeDialog() {
         if (encodeDecodeDialog == null) {
             List<TabModel> tabModels;
             try {
@@ -170,11 +170,14 @@ public class ExtensionEncoder extends ExtensionAdaptor {
                 tabModels = new ArrayList<>(0);
             }
             encodeDecodeDialog = new EncodeDecodeDialog(tabModels);
-        } else {
-            if ((encodeDecodeDialog.getState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
-                // bring up to front if iconfied
-                encodeDecodeDialog.setState(Frame.NORMAL);
-            }
+        }
+        return encodeDecodeDialog;
+    }
+
+    private EncodeDecodeDialog showEncodeDecodeDialog(JTextComponent lastInvoker) {
+        if ((encodeDecodeDialog.getState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
+            // bring up to front if iconified
+            encodeDecodeDialog.setState(Frame.NORMAL);
         }
 
         encodeDecodeDialog.setVisible(true);

@@ -19,18 +19,18 @@ The add-on will automatically detect any GraphQL definitions and spider them as 
 <li>Import a GraphQL schema from a URL</li>
 </ul>
 
-<h3>Target URL Format</h3>
-The Target URL has the following format:<br>
+<h3>Endpoint URL Format</h3>
+The Endpoint URL has the following format:<br>
 <code>scheme://authority/path</code><br>
 with all URI components mandatory when not importing from URL.
 
 <H2>API</H2>
 The following operations are added to the API:
 <ul>
-<li>ACTION importFile (file, target)</li>
+<li>ACTION importFile (file, endurl)</li>
 <li>ACTION importUrl (url)</li>
 </ul>
-<code>target</code> supports the <code>Target URL</code> format explained earlier.
+<code>endurl</code> supports the <code>Endpoint URL</code> format explained earlier.
 
 The definitions will be imported synchronously and any warnings will be returned. 
 
@@ -39,7 +39,7 @@ The following Command Line options are added:
 <ul>
 <li>-graphqlfile &lt;filename&gt;  : Imports a GraphQL definition from the specified file name</li>
 <li>-graphqlurl &lt;url&gt;  : Imports a GraphQL definition from the specified URL</li>
-<li>-graphqltargeturl &lt;url&gt;  : The Target URL</li>
+<li>-graphqlendurl &lt;url&gt;  : The Endpoint URL</li>
 </ul>
 
 The definitions will be imported synchronously and any warnings will be displayed on the command line.

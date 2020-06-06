@@ -32,7 +32,7 @@ jobs:
         cd ..
         cp -f retire.js/repository/jsrepository.json zap-extensions/addOns/retire/src/main/resources/org/zaproxy/addon/retire/resources
         cd zap-extensions
-        ./gradlew :addOns:retirejs:updateChangelog --change="- Updated with upstream retire.js pattern changes."
+        ./gradlew :addOns:retire:updateChangelog --change="- Updated with upstream retire.js pattern changes."
         git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
         git add .
         git commit -m "retire.js Update $SHORT_DATE" -m "Updates based on $SRC_BASE"

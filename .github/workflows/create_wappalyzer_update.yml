@@ -31,9 +31,9 @@ jobs:
         git checkout -b $BRANCH_STAMP
         cd ..
         rm -rf zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
-        chmod -R 664 wappalyzer/src/icons/*.*
-        rm -rf wappalyzer/src/icons/converted/
-        cp -R wappalyzer/src/icons/ zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
+        chmod -R 664 wappalyzer/src/drivers/webextension/images/icons/*.*
+        rm -rf wappalyzer/src/drivers/webextension/images/icons/converted/
+        cp -R wappalyzer/src/drivers/webextension/images/icons/ zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
         cp -f wappalyzer/src/apps.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources
         cd zap-extensions
         ./gradlew :addOns:wappalyzer:updateChangelog --change="- Updated with upstream Wappalyzer icon and pattern changes."
