@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.graphql;
 
+import java.io.IOException;
 import javax.swing.JFrame;
 import org.parosproxy.paros.Constant;
 
@@ -27,26 +28,25 @@ public class ImportFromUrlDialog extends ImportFromAbstractDialog {
     private static final long serialVersionUID = 1L;
     private static final String MESSAGE_PREFIX = "graphql.importfromurldialog.";
 
-    public ImportFromUrlDialog(JFrame parent, ExtensionGraphQl caller) {
+    public ImportFromUrlDialog(JFrame parent) {
         super(
                 parent,
-                caller,
                 Constant.messages.getString(MESSAGE_PREFIX + "title"),
                 Constant.messages.getString(MESSAGE_PREFIX + "labelurl"));
     }
 
     @Override
     protected boolean importDefinition() {
-        if (!getFromField().getText().isEmpty()) {
-            if (validateUrl(getFromField())) {
-                /* TO DO:
-                 * Import schema definition from provided url; and
-                 * Send it to the parser.
-                 */
-                showWarningDialog(Constant.messages.getString("graphql.importfromdialog.message"));
-            }
-            return false;
-        } else GraphQlParser.parse(getEndpointUri());
-        return true;
+        try {
+            if (getSchemaField().getText().isEmpty()) {
+                getParser().introspect();
+            } else getParser().importUrl(getSchemaField().getText());
+            return true;
+        } catch (IOException e) {
+            showWarningDialog(
+                    Constant.messages.getString("graphql.error.invalidurl", e.getMessage()));
+            getSchemaField().requestFocusInWindow();
+        }
+        return false;
     }
 }

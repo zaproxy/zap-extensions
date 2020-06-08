@@ -35,18 +35,17 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
 
     private JButton buttonChooseFile;
 
-    public ImportFromFileDialog(JFrame parent, ExtensionGraphQl caller) {
+    public ImportFromFileDialog(JFrame parent) {
         super(
                 parent,
-                caller,
                 Constant.messages.getString(MESSAGE_PREFIX + "title"),
                 Constant.messages.getString(MESSAGE_PREFIX + "labelfile"));
     }
 
     @Override
-    protected void addFromFields(GridBagConstraints constraints) {
+    protected void addSchemaFields(GridBagConstraints constraints) {
         constraints.gridwidth = 2;
-        super.addFromFields(constraints);
+        super.addSchemaFields(constraints);
 
         constraints.gridx = 3;
         constraints.gridwidth = 1;
@@ -66,14 +65,14 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
                         int state = filechooser.showOpenDialog(View.getSingleton().getMainFrame());
                         if (state == JFileChooser.APPROVE_OPTION) {
                             try {
-                                getFromField()
+                                getSchemaField()
                                         .setText(filechooser.getSelectedFile().getCanonicalPath());
                                 Model.getSingleton()
                                         .getOptionsParam()
                                         .setUserDirectory(filechooser.getCurrentDirectory());
-                            } catch (IOException ex) {
+                            } catch (IOException e1) {
                                 showWarningDialog(
-                                        Constant.messages.getString(MESSAGE_PREFIX + "badfile"));
+                                        Constant.messages.getString("graphql.error.filenotfound"));
                             }
                         }
                     });
@@ -83,11 +82,12 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
 
     @Override
     protected boolean importDefinition() {
-        /* TO DO:
-         * Import schema definition from file path; and
-         * Send it to the parser.
-         */
-        showWarningDialog(Constant.messages.getString("graphql.importfromdialog.message"));
+        try {
+            getParser().importFile(getSchemaField().getText());
+            return true;
+        } catch (IOException e) {
+            showWarningDialog(e.getMessage());
+        }
         return false;
     }
 }

@@ -10,25 +10,26 @@ GraphQL Support
 <H1>GraphQL Support</H1>
 This add-on allows you to import GraphQL definitions.
 <br><br>
-The add-on will automatically detect any GraphQL definitions and spider them as long as they are in scope.
+The add-on will automatically detect any GraphQL definitions and spider them as long as they are in scope. <br>
+The spider is supported on ZAP 2.10.0 and later.
 
 <H2>UI</H2>
 2 menu items are added to the Import menu:
 <ul>
-<li>Import a GraphQL schema from the local file system</li>
+<li>Import a GraphQL schema from a File</li>
 <li>Import a GraphQL schema from a URL</li>
 </ul>
 
 <h3>Endpoint URL Format</h3>
 The Endpoint URL has the following format:<br>
 <code>scheme://authority/path</code><br>
-with all URI components mandatory when not importing from URL.
+with all URI components mandatory when importing from file.
 
 <H2>API</H2>
 The following operations are added to the API:
 <ul>
-<li>ACTION importFile (file, endurl)</li>
-<li>ACTION importUrl (url)</li>
+<li>ACTION importFile (endurl*, file*)</li>
+<li>ACTION importUrl (endurl*, url)</li>
 </ul>
 <code>endurl</code> supports the <code>Endpoint URL</code> format explained earlier.
 
@@ -37,9 +38,9 @@ The definitions will be imported synchronously and any warnings will be returned
 <H2>Command Line</H2>
 The following Command Line options are added:
 <ul>
-<li>-graphqlfile &lt;filename&gt;  : Imports a GraphQL definition from the specified file name</li>
-<li>-graphqlurl &lt;url&gt;  : Imports a GraphQL definition from the specified URL</li>
-<li>-graphqlendurl &lt;url&gt;  : The Endpoint URL</li>
+<li>-graphqlfile &lt;filename&gt;  : Imports a GraphQL definition from a File</li>
+<li>-graphqlurl &lt;url&gt;  : Imports a GraphQL definition from a URL</li>
+<li>-graphqlendurl &lt;url&gt;  : Sets the Endpoint URL</li>
 </ul>
 
 The definitions will be imported synchronously and any warnings will be displayed on the command line.
