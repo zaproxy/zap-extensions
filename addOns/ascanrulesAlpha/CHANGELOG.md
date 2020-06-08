@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Fixed Mongo DB Injection false positive (Issue 6025).
 
+### Added
+- 'Hidden File Finder' added more patterns.
+
 ## [28] - 2020-06-01
 ### Added
 - Add repo URL.
