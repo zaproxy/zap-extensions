@@ -62,3 +62,20 @@ boolean processResult(HttpFuzzerTaskProcessorUtils utils, HttpFuzzResult fuzzRes
     return true
 }
 
+/**
+ * This function is called during the script loading to obtain a list of the names of the required configuration parameters,
+ * that will be shown in the Add Message Processor Dialog for configuration. They can be used
+ * to input dynamic data into the script, from the user interface
+*/
+String[] getRequiredParamsNames(){
+	return [];
+}
+
+/**
+ * This function is called during the script loading to obtain a list of the names of the optional configuration parameters,
+ * that will be shown in the Add Message Processor Dialog for configuration. They can be used
+ * to input dynamic data into the script, from the user interface
+*/
+String[] getOptionalParamsNames(){
+	return [];
+}
