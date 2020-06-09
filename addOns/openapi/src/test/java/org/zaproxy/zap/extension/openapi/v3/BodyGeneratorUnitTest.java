@@ -315,7 +315,7 @@ public class BodyGeneratorUnitTest {
                                 generators)
                         .getBody();
 
-        Assert.assertEquals("{\"age\":3,\"name\":\"Fluffy\"}", request);
+        assertEquals("{\"age\":3,\"name\":\"Fluffy\"}", request);
     }
 
     @Test
@@ -333,8 +333,7 @@ public class BodyGeneratorUnitTest {
                                 generators)
                         .getBody();
 
-        Assert.assertEquals(
-                "[{\"age\":3,\"name\":\"Fluffy\"},{\"age\":3,\"name\":\"Fluffy\"}]", request);
+        assertEquals("[{\"age\":3,\"name\":\"Fluffy\"},{\"age\":3,\"name\":\"Fluffy\"}]", request);
     }
 
     @Test
@@ -352,7 +351,7 @@ public class BodyGeneratorUnitTest {
                                 generators)
                         .getBody();
 
-        Assert.assertEquals(
+        assertEquals(
                 "[{\"age\":3,\"name\":\"Fluffy\"},{\"age\":512,\"name\":\"Fawkes\"}]", request);
     }
 
@@ -371,7 +370,7 @@ public class BodyGeneratorUnitTest {
                                 generators)
                         .getBody();
 
-        Assert.assertEquals(
+        assertEquals(
                 "[{\"age\":3,\"name\":\"Fluffy\"},{\"age\":512,\"name\":\"Fawkes\"}]", request);
     }
 

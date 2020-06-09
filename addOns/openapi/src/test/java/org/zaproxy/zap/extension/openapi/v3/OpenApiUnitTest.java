@@ -186,18 +186,18 @@ public class OpenApiUnitTest extends AbstractServerTest {
         requestor.run(converter.getRequestModels());
 
         assertTrue(
-                "Should use OpenAPI Example Values in URL Path when crawling urls",
                 accessedUrls.containsKey(
                         "GET http://localhost:"
                                 + this.nano.getListeningPort()
-                                + "/PetStore/store/order/42424242"));
+                                + "/PetStore/store/order/42424242"),
+                "Should use OpenAPI Example Values in URL Path when crawling urls");
 
         assertTrue(
-                "Should use OpenAPI Example Values in URL Query when crawling urls",
                 accessedUrls.containsKey(
                         "GET http://localhost:"
                                 + this.nano.getListeningPort()
-                                + "/PetStore/user/login?username=kermit&password=thefrog"));
+                                + "/PetStore/user/login?username=kermit&password=thefrog"),
+                "Should use OpenAPI Example Values in URL Query when crawling urls");
     }
 
     @Test
