@@ -46,7 +46,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.examplefile.";
 
-    private static final String examplePscanFile = "xml/example-pscan-file.txt";
+    private static final String examplePscanFile = "txt/example-pscan-file.txt";
     private static final Logger logger = Logger.getLogger(ExampleFilePassiveScanner.class);
     private List<String> strings = null;
 
