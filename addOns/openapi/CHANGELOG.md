@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [16] - 2020-06-09
 ### Added
 - Map Structure support for OpenAPI v3.0 (Issue 5863).
