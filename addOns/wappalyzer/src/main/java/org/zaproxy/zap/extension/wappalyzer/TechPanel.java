@@ -112,6 +112,7 @@ public class TechPanel extends AbstractPanel {
                         false));
         this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
+        this.getEnableToggleButton().setSelected(extension.isWappalyzerEnabled());
     }
 
     /**
@@ -315,7 +316,7 @@ public class TechPanel extends AbstractPanel {
         return exportButton;
     }
 
-    private ZapToggleButton getEnableToggleButton() {
+    ZapToggleButton getEnableToggleButton() {
         if (enableButton == null) {
             enableButton =
                     new ZapToggleButton(
@@ -339,12 +340,12 @@ public class TechPanel extends AbstractPanel {
                             enableButton.setText(
                                     Constant.messages.getString(
                                             "wappalyzer.toolbar.toggle.state.enabled"));
-                            extension.getPassiveScanner().setEnabled(true);
+                            extension.setWappalyzer(true);
                         } else {
                             enableButton.setText(
                                     Constant.messages.getString(
                                             "wappalyzer.toolbar.toggle.state.disabled"));
-                            extension.getPassiveScanner().setEnabled(false);
+                            extension.setWappalyzer(false);
                         }
                     });
         }
