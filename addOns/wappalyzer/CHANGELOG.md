@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [19] - 2020-06-09
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 - Wappalyzer's enabled state is now persisted between ZAP sessions.
@@ -116,6 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v16
