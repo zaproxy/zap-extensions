@@ -32,6 +32,12 @@ void processMessage(HttpFuzzerTaskProcessorUtils utils, HttpMessage message) {
     // To add a message previously sent to results, with custom state:
     //    utils.addMessageToResults("Type Of Message", myMessage, "Key Custom State", "Value Custom State")
     // The states' value is shown in the column 'State' of fuzzer results tab
+    // To get the values of the parameters configured in the Add Message Processor Dialog.
+    //    utils.getParameters() 
+    // A map is returned, having as keys the parameters names (as returned by the getRequiredParamsNames()
+    // and getOptionalParamsNames() functions below)
+    // To get the value of a specific configured script parameter
+    //    utils.getParameters().get("exampleParam1")
 
     // Process fuzzed message...
     message.getRequestHeader().setHeader("X-Unique-Id", count.toString())
