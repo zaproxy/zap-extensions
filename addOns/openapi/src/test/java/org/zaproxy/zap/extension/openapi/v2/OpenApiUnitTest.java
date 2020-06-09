@@ -390,6 +390,51 @@ public class OpenApiUnitTest extends AbstractServerTest {
         checkPetStoreRequestsValGen(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
+    @Test
+    public void shouldExplorePetStoreYamlWithExamples()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/PetStoreYamlExamples/";
+        String defnName = "defn.yaml";
+
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_examples.yaml"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+        // No parsing errors
+        assertThat(converter.getErrorMessages(), is(empty()));
+
+        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        RequesterListener listener =
+                new RequesterListener() {
+                    @Override
+                    public void handleMessage(HttpMessage message, int initiator) {
+                        accessedUrls.put(
+                                message.getRequestHeader().getMethod()
+                                        + " "
+                                        + message.getRequestHeader().getURI().toString(),
+                                message.getRequestBody().toString());
+                    }
+                };
+        requestor.addListener(listener);
+        requestor.run(converter.getRequestModels());
+
+        assertEquals(accessedUrls.size(), 2);
+
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://localhost:"
+                                + nano.getListeningPort()
+                                + "/PetStore/pet/findByStatus?status=available"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://localhost:"
+                                + nano.getListeningPort()
+                                + "/PetStore/pet/42424242"));
+    }
+
     private void checkPetStoreRequestsValGen(Map<String, String> accessedUrls, String host) {
         // Check all of the expected URLs have been accessed and with the right data
         assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet"));

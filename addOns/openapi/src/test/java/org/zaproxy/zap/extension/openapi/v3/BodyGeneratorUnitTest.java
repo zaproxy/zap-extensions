@@ -302,6 +302,79 @@ public class BodyGeneratorUnitTest {
                 request);
     }
 
+    @Test
+    public void shouldUseExample() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/pets-with-example",
+                                        openAPI.getPaths().get("/pets-with-example").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+
+        Assert.assertEquals("{\"age\":3,\"name\":\"Fluffy\"}", request);
+    }
+
+    @Test
+    public void shouldGenerateArraysFromExamples() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/pets-with-array-example",
+                                        openAPI.getPaths()
+                                                .get("/pets-with-array-example")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+
+        Assert.assertEquals(
+                "[{\"age\":3,\"name\":\"Fluffy\"},{\"age\":3,\"name\":\"Fluffy\"}]", request);
+    }
+
+    @Test
+    public void shouldGenerateArraysFromFullArrayExampleFormattedAsString() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/pets-with-array-full-example-string",
+                                        openAPI.getPaths()
+                                                .get("/pets-with-array-full-example-string")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+
+        Assert.assertEquals(
+                "[{\"age\":3,\"name\":\"Fluffy\"},{\"age\":512,\"name\":\"Fawkes\"}]", request);
+    }
+
+    @Test
+    public void shouldGenerateArraysFromFullArrayExampleFormattedAsYAML() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_examples.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/pets-with-array-full-example-yaml",
+                                        openAPI.getPaths()
+                                                .get("/pets-with-array-full-example-yaml")
+                                                .getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+
+        Assert.assertEquals(
+                "[{\"age\":3,\"name\":\"Fluffy\"},{\"age\":512,\"name\":\"Fawkes\"}]", request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);

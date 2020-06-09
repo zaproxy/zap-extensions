@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Map Structure support for OpenAPI v3.0 (Issue 5863).
+- Using OpenAPI Example values for value generation in request bodies and urls (Issue 5168).
 
 ### Changed
 - Improve content checks when spidering for specifications (Issue 5725).

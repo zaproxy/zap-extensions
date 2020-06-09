@@ -66,23 +66,27 @@ public class DataGenerator {
     }
 
     public String generate(String name, Parameter parameter) {
+        String defaultValue = generateDefaultValue(parameter);
+        return generateParam(name, defaultValue, parameter);
+    }
+
+    private static String generateDefaultValue(Parameter parameter) {
         List<String> enumValues = null;
         if (parameter.getSchema() instanceof StringSchema) {
             enumValues = ((StringSchema) (parameter.getSchema())).getEnum();
         }
-        String defaultValue = generateDefaultValue(enumValues, parameter.getSchema().getDefault());
-        return generateParam(name, defaultValue, parameter);
-    }
 
-    private static String generateDefaultValue(List<String> anEnum, Object defaultValue) {
-        if (defaultValue != null) {
-            String strValue = defaultValue.toString();
+        if (parameter.getSchema().getDefault() != null) {
+            String strValue = parameter.getSchema().getDefault().toString();
             if (!strValue.isEmpty()) {
                 return strValue;
             }
         }
-        if (anEnum != null && !anEnum.isEmpty()) {
-            return anEnum.get(0);
+        if (enumValues != null && !enumValues.isEmpty()) {
+            return enumValues.get(0);
+        }
+        if (parameter.getExample() != null) {
+            return parameter.getExample().toString();
         }
         return "";
     }
@@ -136,13 +140,13 @@ public class DataGenerator {
 
     public String generateValue(String name, Schema<?> schema, boolean isPath) {
         String value = "";
-        if (isEnumValue(schema)) {
+        if (schema.getExample() != null) {
+            value = schema.getExample().toString();
+        } else if (isEnumValue(schema)) {
             value = getEnumValue(schema);
-        }
-        if (isDateTime(schema)) {
+        } else if (isDateTime(schema)) {
             value = "1970-01-01T00:00:00.001Z";
-        }
-        if (isDate(schema)) {
+        } else if (isDate(schema)) {
             value = "1970-01-01";
         }
 

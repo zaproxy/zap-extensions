@@ -1,0 +1,163 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a sample server Petstore server.  You can find out more about\
+    \ Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).\
+    \  For this sample, you can use the api key `special-key` to test the authorization\
+    \ filters."
+  version: "1.0.0"
+  title: "Swagger Petstore"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: localhost:@@@PORT@@@
+basePath: /PetStore
+tags:
+- name: "pet"
+  description: "Everything about your Pets"
+  externalDocs:
+    description: "Find out more"
+    url: "http://swagger.io"
+- name: "store"
+  description: "Access to Petstore orders"
+- name: "user"
+  description: "Operations about user"
+  externalDocs:
+    description: "Find out more about our store"
+    url: "http://swagger.io"
+schemes:
+- "http"
+paths:
+  /pet/findByStatus:
+    get:
+      tags:
+      - "pet"
+      summary: "Finds Pets by status"
+      description: "Multiple status values can be provided with comma separated strings"
+      operationId: "findPetsByStatus"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "status"
+        in: "query"
+        description: "Status values that need to be considered for filter"
+        x-example: "available"
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Pet"
+        400:
+          description: "Invalid status value"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /pet/{petId}:
+    get:
+      tags:
+      - "pet"
+      summary: "Find pet by ID"
+      description: "Returns a single pet"
+      operationId: "getPetById"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "petId"
+        in: "path"
+        description: "ID of pet to return"
+        required: true
+        type: "integer"
+        format: "int64"
+        x-example: 42424242
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Pet"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Pet not found"
+      security:
+      - api_key: []
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:pets: "modify pets in your account"
+      read:pets: "read your pets"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  Category:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+    xml:
+      name: "Category"
+  Tag:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+    xml:
+      name: "Tag"
+  Pet:
+    type: "object"
+    required:
+    - "name"
+    - "photoUrls"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      category:
+        $ref: "#/definitions/Category"
+      name:
+        type: "string"
+      photoUrls:
+        type: "array"
+        xml:
+          name: "photoUrl"
+          wrapped: true
+        items:
+          type: "string"
+      tags:
+        type: "array"
+        xml:
+          name: "tag"
+          wrapped: true
+        items:
+          $ref: "#/definitions/Tag"
+      status:
+        type: "string"
+        description: "pet status in the store"
+        enum:
+        - "available"
+        - "pending"
+        - "sold"
+    xml:
+      name: "Pet"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
