@@ -36,7 +36,7 @@ class JRubyPassiveScript
   end
 end
 
-# Required for the scan to be run
+# Tells whether or not the scanner applies to the given history type.
 def appliesToHistoryType(historyType)
   PluginPassiveScanner.getDefaultHistoryTypes().include?(historyType);
 end
