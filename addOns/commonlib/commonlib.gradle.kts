@@ -1,13 +1,16 @@
+import me.champeau.gradle.japicmp.JapicmpTask
 import org.zaproxy.gradle.addon.AddOnStatus
 
 plugins {
     `maven-publish`
     signing
+    id("me.champeau.gradle.japicmp") version "0.2.9"
 }
 
 group = "org.zaproxy.addon"
 
 version = "1.1.0"
+val versionBC = "1.0.0"
 description = "A common library, for use by other add-ons."
 
 zapAddOn {
@@ -31,6 +34,38 @@ dependencies {
     implementation("org.apache.commons:commons-collections4:4.4")
 
     testImplementation(project(":testutils"))
+}
+
+val japicmp by tasks.registering(JapicmpTask::class) {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = "Checks ${project.name}.jar binary compatibility with latest version ($versionBC)."
+
+    oldClasspath = files(addOnJar(versionBC))
+    newClasspath = files(tasks.named<Jar>(JavaPlugin.JAR_TASK_NAME).map { it.archivePath })
+    setIgnoreMissingClasses(true)
+
+    richReport {
+        destinationDir = file("$buildDir/reports/japicmp/")
+        reportName = "japi.html"
+        isAddDefaultRules = true
+    }
+}
+
+fun addOnJar(version: String): File {
+    val oldGroup = group
+    try {
+        // https://discuss.gradle.org/t/is-the-default-configuration-leaking-into-independent-configurations/2088/6
+        group = "virtual_group_for_japicmp"
+        val conf = configurations.detachedConfiguration(dependencies.create("$oldGroup:$name:$version"))
+        conf.isTransitive = false
+        return conf.singleFile
+    } finally {
+        group = oldGroup
+    }
+}
+
+tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
+    dependsOn(japicmp)
 }
 
 val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
