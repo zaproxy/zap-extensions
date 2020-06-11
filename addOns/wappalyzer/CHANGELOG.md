@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update RE2/J library to latest version (1.4).
 
+### Fixed
+- Fixed overly broad Angular detection regex
+
 ## [19] - 2020-06-09
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.

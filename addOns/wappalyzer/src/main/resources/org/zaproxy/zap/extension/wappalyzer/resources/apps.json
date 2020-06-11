@@ -880,7 +880,7 @@
       "script": [
         "angular[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
         "/([\\d.]+(?:-?rc[.\\d]*)*)/angular(?:\\.min)?\\.js\\;version:\\1",
-        "angular.*\\.js"
+        "\\bangular.{0,30}\\.js"
       ],
       "website": "https://angularjs.org"
     },
