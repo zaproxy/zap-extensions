@@ -6,6 +6,7 @@
 require 'java'
 java_package 'org.zaproxy.zap.extension.pscan'
 java_import 'org.zaproxy.zap.extension.pscan.PassiveScript'
+java_import 'org.zaproxy.zap.extension.pscan.PluginPassiveScanner'
 java_import 'org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner'
 java_import 'org.parosproxy.paros.network.HttpMessage'
 java_import 'net.htmlparser.jericho.Source'
@@ -33,6 +34,11 @@ class JRubyPassiveScript
         'The param', 'Your attack', 'Any other info', 'The solution', '', 0, 0, msg);
     end
   end
+end
+
+# Tells whether or not the scanner applies to the given history type.
+def appliesToHistoryType(historyType)
+  PluginPassiveScanner.getDefaultHistoryTypes().include?(historyType);
 end
 
 # This is required - dont delete it or you'll break the script
