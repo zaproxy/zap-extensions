@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Fix link in a script template.
 - Fix exception while uninstalling the add-on with newer Java versions.
+- Fix passive template.
 
 ## 6 - 2017-11-27
 
