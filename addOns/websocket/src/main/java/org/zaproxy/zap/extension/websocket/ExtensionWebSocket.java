@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.websocket;
 
+import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -741,10 +742,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             logger.debug(
                     "Got WebSockets upgrade request. Handle socket connection over to WebSockets extension.");
             if (focusWebSocketsTabOnHandshake) {
-                // Show the tab in case its been closed
-                this.getWebSocketPanel().setTabFocus();
                 // Don't constantly request focus on the tab, once is enough.
                 focusWebSocketsTabOnHandshake = false;
+                EventQueue.invokeLater(
+                        () -> {
+                            // Show the tab in case its been closed
+                            this.getWebSocketPanel().setTabFocus();
+                        });
             }
 
             if (method != null) {

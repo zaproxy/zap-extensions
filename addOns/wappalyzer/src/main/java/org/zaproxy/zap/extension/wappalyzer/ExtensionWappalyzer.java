@@ -379,12 +379,15 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public void postInstall() {
         super.postInstall();
         if (getView() != null) {
-            getTechPanel().setTabFocus();
-            // Un-comment to test icon rendering
-            /*
-             * getApplications() .forEach( app -> addApplicationsToSite( "http://localhost", new
-             * ApplicationMatch(app)));
-             */
+            EventQueue.invokeLater(
+                    () -> {
+                        getTechPanel().setTabFocus();
+                        // Un-comment to test icon rendering
+                        /*
+                         * getApplications() .forEach( app -> addApplicationsToSite( "http://localhost",
+                         * new ApplicationMatch(app)));
+                         */
+                    });
         }
     }
 }
