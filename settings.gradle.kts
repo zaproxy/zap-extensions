@@ -51,6 +51,7 @@ var addOns = listOf(
     "jruby",
     "jsonview",
     "jython",
+    "kotlin",
     "onlineMenu",
     "openapi",
     "plugnhack",
