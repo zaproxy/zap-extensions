@@ -28,7 +28,7 @@ import javax.script.CompiledScript;
 import org.junit.jupiter.api.BeforeAll;
 import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
 
-/** Verifies that the Jython script templates are parsed without errors. */
+/** Verifies that the Kotlin script templates are parsed without errors. */
 public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
     private static Compilable se;
