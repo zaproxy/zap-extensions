@@ -1,4 +1,3 @@
-
 import org.apache.commons.httpclient.URI
 import org.parosproxy.paros.network.HttpHeader
 import org.parosproxy.paros.network.HttpMessage
