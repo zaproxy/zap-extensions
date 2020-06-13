@@ -4,11 +4,12 @@ plugins {
     kotlin("jvm") version "1.3.50"
 }
 
-version = "1"
-description = "Allows Kotlin to be used for ZAP scripting - templates included"
+version = "1.0.0"
+description = "Allows Kotlin to be used for ZAP scripting - (some) templates included"
 
 zapAddOn {
-    addOnName.set("Kotlin Scripting")
+    addOnName.set("Kotlin Support")
+
     addOnStatus.set(AddOnStatus.ALPHA)
     zapVersion.set("2.9.0")
 
