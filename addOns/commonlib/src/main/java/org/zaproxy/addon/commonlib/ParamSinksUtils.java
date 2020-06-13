@@ -17,14 +17,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrules;
+package org.zaproxy.addon.commonlib;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.collections.map.ReferenceMap;
+import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
@@ -32,12 +35,8 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class PersistentXssUtils {
+public class ParamSinksUtils {
 
-    private static int uniqueIndex;
-    public static String PXSS_PREFIX = "zApPX";
-    public static String PXSS_POSTFIX = "sS";
-    private static Map<String, UserDataSource> map;
     private static Map<String, HashSet<Integer>> sourceToSinks;
     /**
      * A {@code Map} to cache the URIs used by source messages ({@code UserDataSource}).
@@ -64,34 +63,16 @@ public class PersistentXssUtils {
      */
     private static Map<String, String> cachedParams;
 
-    private static Logger log = Logger.getLogger(PersistentXssUtils.class);
+    private static MessagesStorage messagesStorage;
+
+    private static Logger log = Logger.getLogger(ParamSinksUtils.class);
 
     static {
         reset();
     }
 
-    public static String getUniqueValue(HttpMessage msg, String param) {
-        String uniqueVal = PXSS_PREFIX + uniqueIndex++ + PXSS_POSTFIX;
-        map.put(uniqueVal, new UserDataSource(msg, param));
-        return uniqueVal;
-    }
-
-    public static void testForSink(HttpMessage msg) {
-        String body = msg.getResponseBody().toString();
-        int start = body.indexOf(PXSS_PREFIX);
-        while (start > 0) {
-            int end = body.indexOf(PXSS_POSTFIX, start);
-            if (end > 0) {
-                String uniqueVal = body.substring(start, end + PXSS_POSTFIX.length());
-                UserDataSource source = map.get(uniqueVal);
-                if (source != null) {
-                    setSinkForSource(source, msg);
-                }
-                start = body.indexOf(PXSS_PREFIX, end);
-            } else {
-                break;
-            }
-        }
+    public static void setMessagesStorage(MessagesStorage storage) {
+        messagesStorage = storage;
     }
 
     public static void setSinkForSource(HttpMessage sourceMsg, String param, HttpMessage sinkMsg) {
@@ -112,17 +93,10 @@ public class PersistentXssUtils {
         if (sinks == null) {
             sinks = new HashSet<>();
         }
-        try {
-            HistoryReference hRef =
-                    new HistoryReference(
-                            Model.getSingleton().getSession(),
-                            HistoryReference.TYPE_SCANNER_TEMPORARY,
-                            sinkMsg);
-            sinks.add(Integer.valueOf(hRef.getHistoryId()));
-            sourceToSinks.put(source.toString(), sinks);
-        } catch (HttpMalformedHeaderException | DatabaseException e) {
-            log.warn("Failed to persist HTTP message to database:", e);
-        }
+
+        int id = messagesStorage.storeMessage(sinkMsg);
+        sinks.add(id);
+        sourceToSinks.put(source.toString(), sinks);
     }
 
     /**
@@ -148,16 +122,15 @@ public class PersistentXssUtils {
         return sourceToSinks.get(source.toString());
     }
 
-    /** Resets the state of {@code PersistentXssUtils}. */
+    /** Resets the state of {@code ParamSinksUtils}. */
     @SuppressWarnings("unchecked")
     public static void reset() {
-        uniqueIndex = 0;
-        map = new HashMap<>();
         sourceToSinks = new HashMap<>();
         cachedUris =
                 Collections.synchronizedMap(new ReferenceMap(ReferenceMap.SOFT, ReferenceMap.SOFT));
         cachedParams =
                 Collections.synchronizedMap(new ReferenceMap(ReferenceMap.SOFT, ReferenceMap.SOFT));
+        messagesStorage = new DatabaseMessagesStorage();
     }
 
     /**
@@ -169,12 +142,7 @@ public class PersistentXssUtils {
      * @see #getSinksIdsForSource(HttpMessage, String)
      */
     public static HttpMessage getMessage(int sinkMsgId) {
-        try {
-            return new HistoryReference(sinkMsgId).getHttpMessage();
-        } catch (HttpMalformedHeaderException | DatabaseException e) {
-            log.warn("Failed to read HTTP message from database:", e);
-        }
-        return null;
+        return messagesStorage.getMessage(sinkMsgId);
     }
 
     private static String getCachedItem(Map<String, String> map, String item) {
@@ -188,15 +156,43 @@ public class PersistentXssUtils {
 
     private static class UserDataSource {
 
+        private static final String GENERIC_STRING = "DYX";
         private final String uri;
         private final String param;
         private final String stringRepresentation;
 
         public UserDataSource(HttpMessage sourceMsg, String param) {
             super();
-            this.uri = getCachedItem(cachedUris, sourceMsg.getRequestHeader().getURI().toString());
+
+            this.uri =
+                    getCachedItem(
+                            cachedUris,
+                            createGenericUri(sourceMsg.getRequestHeader().getURI(), param));
             this.param = getCachedItem(cachedParams, param);
             this.stringRepresentation = uri + "#" + param;
+        }
+
+        String createGenericUri(URI uri, String param) {
+            String uriString = uri.toString();
+            // if the parameter is in the path we need to replace it with something more abstract
+            // otherwise
+            // we will not be able to find sinks when we change the value of the parameter
+            String path = uri.getEscapedPath();
+            if (path != null && path.contains('/' + param)) {
+                String genericPath = path.replace('/' + param, '/' + GENERIC_STRING);
+                uriString = uriString.replace(path, genericPath);
+            }
+            String query = uri.getEscapedQuery();
+            if (query != null && query.contains(param)) {
+                String paramValueRegex = "(&?" + param + "=)[^?&]+";
+                Pattern p = Pattern.compile(paramValueRegex);
+                Matcher m = p.matcher(query);
+                if (m.find()) {
+                    String newQuery = m.replaceAll("$1" + GENERIC_STRING);
+                    uriString = uriString.replace(query, newQuery);
+                }
+            }
+            return uriString;
         }
 
         @Override
@@ -210,6 +206,38 @@ public class PersistentXssUtils {
 
         public String getParam() {
             return param;
+        }
+    }
+
+    public interface MessagesStorage {
+        public int storeMessage(HttpMessage msg);
+
+        public HttpMessage getMessage(int id);
+    }
+
+    private static class DatabaseMessagesStorage implements MessagesStorage {
+
+        public int storeMessage(HttpMessage msg) {
+            try {
+                HistoryReference hRef =
+                        new HistoryReference(
+                                Model.getSingleton().getSession(),
+                                HistoryReference.TYPE_SCANNER_TEMPORARY,
+                                msg);
+                return Integer.valueOf(hRef.getHistoryId());
+            } catch (HttpMalformedHeaderException | DatabaseException e) {
+                log.warn("Failed to persist HTTP message to database:", e);
+                return 0;
+            }
+        }
+
+        public HttpMessage getMessage(int id) {
+            try {
+                return new HistoryReference(id).getHttpMessage();
+            } catch (HttpMalformedHeaderException | DatabaseException e) {
+                log.warn("Failed to read HTTP message from database:", e);
+            }
+            return null;
         }
     }
 }

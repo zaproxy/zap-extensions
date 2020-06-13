@@ -45,10 +45,12 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
+import org.parosproxy.paros.core.scanner.Kb;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.core.scanner.Scanner;
 import org.parosproxy.paros.core.scanner.ScannerParam;
+import org.parosproxy.paros.core.scanner.TestHostProcess;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -109,6 +111,7 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
     protected static final int NUMBER_MSGS_ATTACK_PER_PAGE_INSANE = 500; // whatever
 
     protected T rule;
+    protected Kb kb;
     protected HostProcess parent;
     protected ScannerParam scannerParam;
 
@@ -144,11 +147,12 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         startServer();
         int port = nano.getListeningPort();
 
+        kb = new Kb();
         alertsRaised = new ArrayList<>();
         httpMessagesSent = new ArrayList<>();
         parent =
                 spy(
-                        new HostProcess(
+                        new TestHostProcess(
                                 "localhost:" + port,
                                 parentScanner,
                                 scannerParam,
@@ -158,6 +162,11 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
                             @Override
                             public void alertFound(Alert arg1) {
                                 alertsRaised.add(arg1);
+                            }
+
+                            @Override
+                            public Kb getKb() {
+                                return kb;
                             }
 
                             @Override

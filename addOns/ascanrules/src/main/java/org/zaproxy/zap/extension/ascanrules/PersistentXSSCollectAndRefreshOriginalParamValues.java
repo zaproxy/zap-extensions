@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2013 The ZAP Development Team
+ * Copyright 2020 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,16 +26,20 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
+public class PersistentXSSCollectAndRefreshOriginalParamValues extends AbstractAppParamPlugin {
 
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "ascanrules.persistentxssprime.";
+    private static final String MESSAGE_PREFIX =
+            "ascanrules.persistentxsscollectandrefreshoriginalparamvalues.";
 
-    private static Logger log = Logger.getLogger(PersistentXssPrimeScanRule.class);
+    public static final String XSS_STORAGE = "XSSStorage";
+
+    private static Logger log =
+            Logger.getLogger(PersistentXSSCollectAndRefreshOriginalParamValues.class);
 
     @Override
     public int getId() {
-        return 40016;
+        return 40037;
     }
 
     @Override
@@ -64,17 +68,38 @@ public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
     }
 
     @Override
-    public void scan(HttpMessage msg, String param, String value) {
+    public void scan() {
+        // refresh the state of the website
+        HttpMessage msg = getBaseMsg();
         try {
             HttpMessage msg1 = msg.cloneRequest();
-            this.setParameter(msg1, param, PersistentXssUtils.getUniqueValue(msg1, param));
-            if (log.isDebugEnabled()) {
-                log.debug("Prime msg=" + msg1.getRequestHeader().getURI() + " param=" + param);
-            }
             sendAndReceive(msg1, false);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+        super.scan();
+    }
+
+    @Override
+    public void scan(HttpMessage msg, String param, String value) {
+        // TODO: should collect params only on POST/PUT?
+        if (value.length() > 0) {
+            getStorage().addSeenValue(value);
+        }
+    }
+
+    private PersistentXSSStorage getStorage() {
+        PersistentXSSStorage storage;
+        synchronized (getKb()) {
+            Object obj = getKb().get(XSS_STORAGE);
+            if (obj != null && obj instanceof PersistentXSSStorage) {
+                storage = (PersistentXSSStorage) obj;
+            } else {
+                storage = new PersistentXSSStorage();
+                getKb().add(XSS_STORAGE, storage);
+            }
+        }
+        return storage;
     }
 
     @Override

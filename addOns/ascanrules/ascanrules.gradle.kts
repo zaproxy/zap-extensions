@@ -27,6 +27,7 @@ dependencies {
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
+    compile("com.googlecode.concurrent-trees", "concurrent-trees", "2.6.1")
     testImplementation(project(":testutils"))
 }
 
