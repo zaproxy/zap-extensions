@@ -3,9 +3,10 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [20.0.0] - 2020-06-15
 ### Changed
 - Update RE2/J library to latest version (1.4).
+- Add-on promoted to Beta.
 
 ### Fixed
 - Fixed an exception which was occurring when the tab was shown during install.
@@ -123,6 +124,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[20.0.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v20.0.0
 [19]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v17
