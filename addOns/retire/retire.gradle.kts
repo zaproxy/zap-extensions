@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "0.3.0"
+version = "0.4.0"
 description = "Retire.js"
 
 zapAddOn {
@@ -10,6 +10,7 @@ zapAddOn {
 
     manifest {
         author.set("Nikita Mundhada and the ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/retire.js/")
         bundle {
             baseName.set("org.zaproxy.addon.retire.resources.Messages")
             prefix.set("retire")
