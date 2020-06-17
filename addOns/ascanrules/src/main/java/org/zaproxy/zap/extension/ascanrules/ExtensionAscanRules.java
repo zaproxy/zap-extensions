@@ -34,11 +34,6 @@ import org.parosproxy.paros.model.Session;
 public class ExtensionAscanRules extends ExtensionAdaptor {
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getName() {
         return "ExtensionAscanRules";
     }

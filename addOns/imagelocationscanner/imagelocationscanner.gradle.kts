@@ -9,7 +9,7 @@ zapAddOn {
     zapVersion.set("2.9.0")
 
     manifest {
-        author.set("Veggiespam and the ZAP Dev Team")
+        author.set("Jay Ball (veggiespam) and the ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/image-location-and-privacy-scanner/")
     }
 }

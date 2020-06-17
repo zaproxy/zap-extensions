@@ -139,11 +139,6 @@ public class CodeDxExtension extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.messages.getString("codedx.author");
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("codedx.desc");
     }

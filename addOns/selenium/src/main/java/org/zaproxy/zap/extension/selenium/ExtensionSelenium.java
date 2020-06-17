@@ -135,11 +135,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public int getOrder() {
         return 300;
     }

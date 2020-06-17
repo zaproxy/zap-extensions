@@ -85,11 +85,6 @@ public class ExtensionDiff extends ExtensionAdaptor {
         return popupMenuDiffResponses;
     }
 
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
     private void stringToList(String str, List<String> list) {
         for (String s : str.split("\n")) {
             list.add(s);

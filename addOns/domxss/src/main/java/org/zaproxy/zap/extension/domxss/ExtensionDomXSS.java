@@ -75,11 +75,6 @@ public class ExtensionDomXSS extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return "Aabha Biyani, " + Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getName() {
         return "ExtensionDomXSS";
     }

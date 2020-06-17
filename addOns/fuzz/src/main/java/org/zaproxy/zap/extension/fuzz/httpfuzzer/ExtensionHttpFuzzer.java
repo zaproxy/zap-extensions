@@ -88,11 +88,6 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public boolean supportsDb(String type) {
         return true;
     }

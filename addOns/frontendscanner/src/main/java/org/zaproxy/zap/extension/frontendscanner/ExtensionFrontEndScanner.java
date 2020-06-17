@@ -179,11 +179,6 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
     }

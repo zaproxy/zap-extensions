@@ -239,11 +239,6 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
     }
 
     @Override
-    public String getAuthor() {
-        return "David Vassallo";
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
     }

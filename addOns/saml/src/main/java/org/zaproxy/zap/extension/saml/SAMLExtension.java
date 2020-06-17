@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -34,11 +33,6 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuMessageContainer;
 public class SAMLExtension extends ExtensionAdaptor {
 
     protected static final Logger log = Logger.getLogger(SAMLExtension.class);
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
 
     @SuppressWarnings("deprecation")
     @Override

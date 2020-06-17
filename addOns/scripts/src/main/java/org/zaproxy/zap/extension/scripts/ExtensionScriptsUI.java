@@ -526,11 +526,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("scripts.desc");
     }
