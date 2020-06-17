@@ -29,12 +29,6 @@ public class VulnCheckTopMenu extends ExtensionAdaptor {
 
     private JMenuItem menuExample = null;
     private ResourceBundle messages = null;
-    private String author = "ZAP-TEAM";
-
-    @Override
-    public String getAuthor() {
-        return author;
-    }
 
     public VulnCheckTopMenu() {
         super("VulnCheckTopMenu");

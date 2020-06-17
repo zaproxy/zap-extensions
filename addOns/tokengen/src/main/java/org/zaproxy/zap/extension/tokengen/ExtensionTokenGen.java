@@ -365,11 +365,6 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return getMessages().getString("tokengen.desc");
     }

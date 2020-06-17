@@ -45,11 +45,6 @@ public class ExtensionSQLiPlugin extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return "Andrea Pompili (Yhawke)";
-    }
-
-    @Override
     public boolean canUnload() {
         return true;
     }

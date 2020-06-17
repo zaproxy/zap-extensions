@@ -317,12 +317,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM
-                + " plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak";
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("openapi.desc");
     }

@@ -199,11 +199,6 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
         return alertDetailstab.responseBody();
     }
 
-    @Override
-    public String getAuthor() {
-        return "\n Author: Chienli Ma";
-    }
-
     void dialogClosed() {
         optionDialog = null;
     }

@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.highlighter;
 
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
@@ -58,10 +57,5 @@ public class ExtensionHighlighter extends ExtensionAdaptor {
             highlighterPanel = new HighlighterPanel(this);
         }
         return highlighterPanel;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 }

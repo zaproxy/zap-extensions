@@ -396,12 +396,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return excludeList;
     }
 
-    /** @return the author */
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
     /** @return description of the plugin */
     @Override
     public String getDescription() {

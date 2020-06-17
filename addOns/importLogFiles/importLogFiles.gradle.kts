@@ -6,7 +6,7 @@ zapAddOn {
     zapVersion.set("2.9.0")
 
     manifest {
-        author.set("ZAP Dev Team")
+        author.set("Joseph Kirwin, ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/log-file-importer/")
 
         helpSet {

@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.callgraph;
 
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
@@ -48,10 +47,5 @@ public class ExtensionCallGraph extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 }
