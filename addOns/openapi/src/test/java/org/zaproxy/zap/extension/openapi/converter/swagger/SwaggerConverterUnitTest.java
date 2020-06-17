@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
@@ -28,7 +29,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
@@ -36,7 +38,7 @@ import io.swagger.v3.oas.models.servers.ServerVariables;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.openapi.AbstractOpenApiTest;
 
 /** Unit test for {@link SwaggerConverter}. */
@@ -46,238 +48,246 @@ public class SwaggerConverterUnitTest extends AbstractOpenApiTest {
     private static final String DUMMY_DEFINITION = "{}";
     private static final UriBuilder EMPTY_URI_BUILDER = UriBuilder.parse("");
 
-    @Test(expected = InvalidUrlException.class)
+    @Test
     public void shouldThrowInvalidUrlIfDefinitionUrlHasNoScheme() {
         // Given
         String definitionUrl = "://example.com";
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = InvalidUrlException
+        // When / Then
+        assertThrows(
+                InvalidUrlException.class,
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
-    @Test(expected = InvalidUrlException.class)
+    @Test
     public void shouldThrowInvalidUrlIfDefinitionUrlHasNoAuthority() {
         // Given
         String definitionUrl = "http://";
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = InvalidUrlException
+        // When / Then
+        assertThrows(
+                InvalidUrlException.class,
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
-    @Test(expected = InvalidUrlException.class)
+    @Test
     public void shouldThrowInvalidUrlIfDefinitionUrlHasMalformedScheme() {
         // Given
         String definitionUrl = "notscheme//example.com";
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = InvalidUrlException
+        // When / Then
+        assertThrows(
+                InvalidUrlException.class,
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
-    @Test(expected = InvalidUrlException.class)
+    @Test
     public void shouldThrowInvalidUrlIfDefinitionUrlIsJustPath() {
         // Given
         String definitionUrl = "path";
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = InvalidUrlException
+        // When / Then
+        assertThrows(
+                InvalidUrlException.class,
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfDefinitionUrlIsNull() {
         // Given
         String definitionUrl = null;
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfDefinitionUrlIsEmpty() {
         // Given
         String definitionUrl = "";
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfDefinitionUrlHasHttpSchemeAndAuthority() {
         // Given
         String definitionUrl = "http://example.com";
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfDefinitionUrlHasHttpsSchemeAndAuthority() {
         // Given
         String definitionUrl = "https://example.com";
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
-    @Test(expected = InvalidUrlException.class)
+    @Test
     public void shouldThrowInvalidUrlIfDefinitionUrlHasUnsupportedScheme() {
         // Given
         String definitionUrl = "ws://example.com";
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = InvalidUrlException
+        // When / Then
+        assertThrows(
+                InvalidUrlException.class,
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfDefinitionUrlHasSupportedSchemeAuthorityAndPath() {
         // Given
         String definitionUrl = "http://example.com/path";
-        // When
-        new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(WELLFORMED_URL, definitionUrl, DUMMY_DEFINITION, null));
     }
 
-    @Test(expected = InvalidUrlException.class)
+    @Test
     public void shouldThrowInvalidUrlIfTargetUrlHasNoScheme() {
         // Given
         String targetUrl = "://example.com";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = InvalidUrlException
+        // When / Then
+        assertThrows(
+                InvalidUrlException.class,
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfTargetIsJustHttpScheme() {
         // Given
         String targetUrl = "http://";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = No Exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfTargetIsJustHttpsScheme() {
         // Given
         String targetUrl = "https://";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = No Exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
-    @Test(expected = InvalidUrlException.class)
+    @Test
     public void shouldThrowInvalidUrlIfTargetUrlHasMalformedScheme() {
         // Given
         String targetUrl = "notscheme//example.com";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = InvalidUrlException
+        // When / Then
+        assertThrows(
+                InvalidUrlException.class,
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfTargetUrlIsJustAuthority() {
         // Given
         String targetUrl = "example.com";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = No Exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfTargetUrlIsJustAbsolutePath() {
         // Given
         String targetUrl = "/path";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = No Exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfTargetUrlIsNull() {
         // Given
         String targetUrl = null;
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfTargetUrlIsEmpty() {
         // Given
         String targetUrl = "";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfTargetUrlHasHttpSchemeAndAuthority() {
         // Given
         String targetUrl = "http://example.com";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfTargetUrlHasHttpsSchemeAndAuthority() {
         // Given
         String targetUrl = "https://example.com";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
-    @Test(expected = InvalidUrlException.class)
+    @Test
     public void shouldThrowInvalidUrlIfTargetUrlHasUnsupportedScheme() {
         // Given
         String targetUrl = "ws://example.com";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = InvalidUrlException
+        // When / Then
+        assertThrows(
+                InvalidUrlException.class,
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
     @Test
     public void shouldNotThrowInvalidUrlIfTargetUrlHasSupportedSchemeAuthorityAndPath() {
         // Given
         String targetUrl = "http://example.com/path";
-        // When
-        new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null);
-        // Then = No exception
+        // When / Then
+        assertDoesNotThrow(
+                () -> new SwaggerConverter(targetUrl, WELLFORMED_URL, DUMMY_DEFINITION, null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowIllegalArgumentWith2ArgIfDefinitionIsNull() {
         // Given
         String definition = null;
-        // When
-        new SwaggerConverter(definition, null);
-        // Then = IllegalArgumentException
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> new SwaggerConverter(definition, null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowIllegalArgumentWith4ArgIfDefinitionIsNull() {
         // Given
         String definition = null;
-        // When
-        new SwaggerConverter(null, null, definition, null);
-        // Then = IllegalArgumentException
+        // When / Then
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new SwaggerConverter(null, null, definition, null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowIllegalArgumentWith2ArgIfDefinitionIsEmpty() {
         // Given
         String definition = "";
-        // When
-        new SwaggerConverter(definition, null);
-        // Then = IllegalArgumentException
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> new SwaggerConverter(definition, null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowIllegalArgumentWith4ArgIfDefinitionIsEmpty() {
         // Given
         String definition = "";
-        // When
-        new SwaggerConverter(null, null, definition, null);
-        // Then = IllegalArgumentException
+        // When / Then
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new SwaggerConverter(null, null, definition, null));
     }
 
     @Test
@@ -298,13 +308,14 @@ public class SwaggerConverterUnitTest extends AbstractOpenApiTest {
         // Then = No Exception
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNullPointerWhenCreateUriBuildersFromNullServersList() {
         // Given
         List<Server> servers = null;
-        // When
-        SwaggerConverter.createUriBuilders(servers, EMPTY_URI_BUILDER);
-        // Then = NullPointerException
+        // When / Then
+        assertThrows(
+                NullPointerException.class,
+                () -> SwaggerConverter.createUriBuilders(servers, EMPTY_URI_BUILDER));
     }
 
     @Test

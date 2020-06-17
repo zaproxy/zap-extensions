@@ -84,11 +84,6 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public void init() {
         websocketFuzzerHandler = new WebSocketFuzzerHandler();
         replacer = new TextWebSocketMessageLocationReplacerFactory();

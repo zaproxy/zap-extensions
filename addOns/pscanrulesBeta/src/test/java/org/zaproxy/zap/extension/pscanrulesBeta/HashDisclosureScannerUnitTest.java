@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -37,7 +37,7 @@ public class HashDisclosureScannerUnitTest extends PassiveScannerTest<HashDisclo
         return new HashDisclosureScanner();
     }
 
-    @Before
+    @BeforeEach
     public void before() throws HttpMalformedHeaderException {
         rule.setAlertThreshold(AlertThreshold.LOW); // Required by MD4/MD5 tests
     }

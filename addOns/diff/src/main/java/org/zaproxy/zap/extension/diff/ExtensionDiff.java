@@ -58,6 +58,7 @@ public class ExtensionDiff extends ExtensionAdaptor {
         super.unload();
     }
 
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
@@ -83,11 +84,6 @@ public class ExtensionDiff extends ExtensionAdaptor {
                             Constant.messages.getString("diff.diff.resp.popup"), this, false);
         }
         return popupMenuDiffResponses;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     private void stringToList(String str, List<String> list) {

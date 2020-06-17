@@ -88,11 +88,6 @@ public class ExtensionGroovy extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getUIName() {
         return Constant.messages.getString("groovy.name");
     }

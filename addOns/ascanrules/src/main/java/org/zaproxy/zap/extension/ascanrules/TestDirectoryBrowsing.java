@@ -135,14 +135,11 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
         }
 
         if (result) {
-            bingo(
-                    Alert.RISK_MEDIUM,
-                    reliability,
-                    msg.getRequestHeader().getURI().toString(),
-                    "",
-                    evidence.toString(),
-                    "",
-                    msg);
+            newAlert()
+                    .setConfidence(reliability)
+                    .setAttack(evidence.toString())
+                    .setMessage(msg)
+                    .raise();
         }
     }
 

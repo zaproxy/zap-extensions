@@ -6,4 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+
+## [1.0.0] - 2020-05-21
+
 First version.
+
+[1.0.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.0.0

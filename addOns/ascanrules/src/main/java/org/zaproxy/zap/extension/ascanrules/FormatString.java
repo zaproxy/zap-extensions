@@ -222,23 +222,21 @@ public class FormatString extends AbstractAppParamPlugin {
                 HttpResponseBody secondAttackResponseBody = msg.getResponseBody();
                 if (secondAttackResponseBody.length() > initialResponseLength + 20
                         && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
-                    bingo(
-                            getRisk(),
-                            Alert.CONFIDENCE_MEDIUM,
-                            null,
-                            param,
-                            secondAttackPayload,
-                            getError('2'),
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(param)
+                            .setAttack(secondAttackPayload)
+                            .setOtherInfo(getError('2'))
+                            .setMessage(msg)
+                            .raise();
                 } else {
-                    bingo(
-                            getRisk(),
-                            Alert.CONFIDENCE_MEDIUM,
-                            null,
-                            param,
-                            initialAttackPayload,
-                            getError('1'),
-                            intialAttackMsg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(param)
+                            .setAttack(initialAttackPayload)
+                            .setOtherInfo(getError('1'))
+                            .setMessage(intialAttackMsg)
+                            .raise();
                 }
                 return;
             }
@@ -283,14 +281,13 @@ public class FormatString extends AbstractAppParamPlugin {
                 return; // Something went wrong, no point continuing
             }
             if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR) {
-                bingo(
-                        getRisk(),
-                        Alert.CONFIDENCE_MEDIUM,
-                        null,
-                        param,
-                        microsoftAttackMessage,
-                        getError('3'),
-                        msg);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam(param)
+                        .setAttack(microsoftAttackMessage)
+                        .setOtherInfo(getError('3'))
+                        .setMessage(msg)
+                        .raise();
             }
             return;
 

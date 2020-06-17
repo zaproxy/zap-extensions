@@ -62,6 +62,7 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
         }
     }
 
+    @Override
     public boolean isHudEnabled() {
         try {
             if (isEnabledMethod == null) {
@@ -79,6 +80,7 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
         return false;
     }
 
+    @Override
     public void setHudEnabledForDesktop(boolean enabled) {
         try {
             Method methodSetEnabled =
@@ -89,6 +91,7 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
         }
     }
 
+    @Override
     public boolean isInScopeOnly() {
         try {
             Method methodGetHudParam = getExtHudClass().getMethod("getHudParam");
@@ -113,11 +116,6 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
         if (getView() != null) {
             this.getExtQuickStart().setHudProvider(null);
         }
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override
@@ -150,6 +148,7 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
                 .getExtensionByClassName(EXTENSION_HUD_CLASSNAME);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<String> getSupportedBrowserIds() {
         try {

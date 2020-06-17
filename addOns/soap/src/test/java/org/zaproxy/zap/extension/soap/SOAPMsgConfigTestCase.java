@@ -19,14 +19,15 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.predic8.wsdl.BindingOperation;
 import com.predic8.wsdl.Definitions;
 import com.predic8.wsdl.Port;
 import java.util.HashMap;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SOAPMsgConfigTestCase {
 
@@ -37,7 +38,7 @@ public class SOAPMsgConfigTestCase {
 
     private SOAPMsgConfig soapConfig;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         /* Empty configuration object. */
         soapConfig = new SOAPMsgConfig();

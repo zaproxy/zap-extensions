@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.9.0.
 - Maintenance changes.
 
+### Fixed
+- Show correct help page for the options panel.
+- Remove the options panels when the add-on is uninstalled.
+
 ### Removed
 - Remove unused resource message.
 

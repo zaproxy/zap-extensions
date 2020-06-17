@@ -25,7 +25,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 public class ExtensionSaveXMLHttpMessage extends ExtensionAdaptor {
 
     private static final String NAME = "ExtensionSaveXMLHttpMessage";
-    private static final String AUTHOR = "thatsn0tmysite";
 
     public ExtensionSaveXMLHttpMessage() {
         super(NAME);
@@ -44,10 +43,5 @@ public class ExtensionSaveXMLHttpMessage extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    @Override
-    public String getAuthor() {
-        return AUTHOR;
     }
 }

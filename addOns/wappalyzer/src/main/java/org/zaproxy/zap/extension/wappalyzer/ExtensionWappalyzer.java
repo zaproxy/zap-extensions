@@ -70,6 +70,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private ExtensionSearch extSearch = null;
 
     private Map<String, TechTableModel> siteTechMap = new HashMap<String, TechTableModel>();
+    private boolean enabled;
+    private WappalyzerParam wappalyzerParam;
 
     private static final Logger logger = Logger.getLogger(ExtensionWappalyzer.class);
 
@@ -107,6 +109,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     @Override
     public void init() {
         super.init();
+        enabled = true;
+        wappalyzerParam = new WappalyzerParam();
         passiveScanner = new WappalyzerPassiveScanner(this);
     }
 
@@ -130,12 +134,38 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
         this.api = new WappalyzerAPI(this);
         extensionHook.addApiImplementor(this.api);
+        extensionHook.addOptionsParamSet(wappalyzerParam);
 
         ExtensionPassiveScan extPScan =
                 Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionPassiveScan.class);
         extPScan.addPassiveScanner(passiveScanner);
+    }
+
+    @Override
+    public void optionsLoaded() {
+        super.optionsLoaded();
+
+        setWappalyzer(wappalyzerParam.isEnabled());
+    }
+
+    void setWappalyzer(boolean enabled) {
+        if (this.enabled == enabled) {
+            return;
+        }
+        this.enabled = enabled;
+
+        wappalyzerParam.setEnabled(enabled);
+        getPassiveScanner().setEnabled(enabled);
+
+        if (View.isInitialised()) {
+            getTechPanel().getEnableToggleButton().setSelected(enabled);
+        }
+    }
+
+    boolean isWappalyzerEnabled() {
+        return enabled;
     }
 
     private TechPanel getTechPanel() {
@@ -174,11 +204,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("wappalyzer.desc");
     }
@@ -188,6 +213,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         return Constant.messages.getString("wappalyzer.name");
     }
 
+    @Override
     public List<Application> getApplications() {
         return this.applications;
     }
@@ -205,6 +231,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         return model;
     }
 
+    @Override
     public void addApplicationsToSite(String site, ApplicationMatch applicationMatch) {
 
         this.getTechModelForSite(site).addApplication(applicationMatch);
@@ -349,12 +376,15 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public void postInstall() {
         super.postInstall();
         if (getView() != null) {
-            getTechPanel().setTabFocus();
-            // Un-comment to test icon rendering
-            /*
-             * getApplications() .forEach( app -> addApplicationsToSite( "http://localhost", new
-             * ApplicationMatch(app)));
-             */
+            EventQueue.invokeLater(
+                    () -> {
+                        getTechPanel().setTabFocus();
+                        // Un-comment to test icon rendering
+                        /*
+                         * getApplications() .forEach( app -> addApplicationsToSite( "http://localhost",
+                         * new ApplicationMatch(app)));
+                         */
+                    });
         }
     }
 }

@@ -62,11 +62,6 @@ public class ExtensionTlsDebug extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("tlsdebug.desc");
     }

@@ -20,11 +20,12 @@
 package org.zaproxy.zap.extension.openapi.v3;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -33,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
@@ -153,6 +154,53 @@ public class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
+    public void shouldExplorePetStoreYamlWithExamples()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/PetStoreYamlExamples/";
+        String defnName = "defn.yaml";
+
+        this.nano.addHandler(
+                new DefnServerHandler(test, defnName, "PetStore_defn_with_examples.yaml"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+        // No parsing errors
+        assertThat(converter.getErrorMessages(), is(empty()));
+
+        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        RequesterListener listener =
+                new RequesterListener() {
+                    @Override
+                    public void handleMessage(HttpMessage message, int initiator) {
+                        accessedUrls.put(
+                                message.getRequestHeader().getMethod()
+                                        + " "
+                                        + message.getRequestHeader().getURI().toString(),
+                                message.getRequestBody().toString());
+                    }
+                };
+        requestor.addListener(listener);
+        requestor.run(converter.getRequestModels());
+
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://localhost:"
+                                + this.nano.getListeningPort()
+                                + "/PetStore/store/order/42424242"),
+                "Should use OpenAPI Example Values in URL Path when crawling urls");
+
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://localhost:"
+                                + this.nano.getListeningPort()
+                                + "/PetStore/user/login?username=kermit&password=thefrog"),
+                "Should use OpenAPI Example Values in URL Query when crawling urls");
+    }
+
+    @Test
     public void shouldExplorePetStoreWithDefaultUrl()
             throws NullPointerException, IOException, SwaggerException {
         // Given
@@ -192,7 +240,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
         checkPetStoreRequests(accessedUrls, "http", defaultHost, "");
     }
 
-    @Test(expected = SwaggerException.class)
+    @Test
     public void shouldFailToExplorePetStoreWithoutHost() throws Exception {
         // Given
         String test = "/PetStoreJson/";
@@ -209,12 +257,11 @@ public class OpenApiUnitTest extends AbstractServerTest {
                         null,
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
-        // When
-        converter.getRequestModels();
-        // Then = SwaggerException
+        // When / Then
+        assertThrows(SwaggerException.class, () -> converter.getRequestModels());
     }
 
-    @Test(expected = SwaggerException.class)
+    @Test
     public void shouldFailToExplorePetStoreWithoutFullURL() throws Exception {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
@@ -230,10 +277,8 @@ public class OpenApiUnitTest extends AbstractServerTest {
                         null,
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
-        // When
-        converter.getRequestModels();
-
-        // Then = SwaggerException
+        // When / Then
+        assertThrows(SwaggerException.class, () -> converter.getRequestModels());
     }
 
     @Test

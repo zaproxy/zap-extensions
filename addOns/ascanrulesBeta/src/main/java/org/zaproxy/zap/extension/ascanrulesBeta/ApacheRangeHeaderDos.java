@@ -130,20 +130,11 @@ public class ApacheRangeHeaderDos extends AbstractAppPlugin {
             }
 
             if (newRequest.getResponseHeader().getStatusCode() == HttpStatusCode.PARTIAL_CONTENT) {
-                bingo(
-                        getRisk(), // Risk
-                        Alert.CONFIDENCE_MEDIUM, // Confidence/Reliability
-                        getName(), // Name
-                        getDescription(), // Description
-                        newRequest.getRequestHeader().getURI().toString(), // URI
-                        null, // Param
-                        "", // Attack
-                        "", // OtherInfo
-                        getSolution(), // Solution
-                        newRequest.getResponseHeader().getPrimeHeader(), // Evidence
-                        getCweId(), // CWE ID
-                        getWascId(), // WASC ID
-                        newRequest); // HTTPMessage
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setEvidence(newRequest.getResponseHeader().getPrimeHeader())
+                        .setMessage(newRequest)
+                        .raise();
             }
         }
     }

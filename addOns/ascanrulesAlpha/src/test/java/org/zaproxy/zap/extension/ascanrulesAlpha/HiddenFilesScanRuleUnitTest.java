@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -30,8 +30,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -53,7 +53,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         return new HiddenFilesScanRule();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         HiddenFilesScanRule.setPayloadProvider(null);
     }

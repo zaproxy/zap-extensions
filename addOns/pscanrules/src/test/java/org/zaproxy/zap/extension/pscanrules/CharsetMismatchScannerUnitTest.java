@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -44,7 +44,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest<CharsetMi
 
     private HttpMessage msg;
 
-    @Before
+    @BeforeEach
     public void before() throws HttpMalformedHeaderException {
         rule.setAlertThreshold(AlertThreshold.LOW);
 

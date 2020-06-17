@@ -121,6 +121,12 @@
       "source":"snallygaster"
     },
     {
+      "path":".php_cs.cache",
+      "content":["{\"php\":\""],
+      "type":"php_cs_cache",
+      "source":"snallygaster"
+    },
+    {
       "path":"DEADJOE",
       "content":["in JOE when it aborted"],
       "type":"deadjoe",
@@ -202,6 +208,18 @@
       "path":"sites/default/files/.ht.sqlite",
       "binary":"SQLite format",
       "type":"drupaldb",
+      "source":"snallygaster"
+    },
+    {
+      "path":"composer.json",
+      "content":["\"require\":","\"packages\":"],
+      "type":"composer",
+      "source":"snallygaster"
+    },
+    {
+      "path":"composer.lock",
+      "content":["\"require\":","\"packages\":"],
+      "type":"composer",
       "source":"snallygaster"
     },
     {

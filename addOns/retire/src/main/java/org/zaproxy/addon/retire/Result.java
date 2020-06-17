@@ -19,10 +19,15 @@
  */
 package org.zaproxy.addon.retire;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class Result {
-    HashSet<String> info = new HashSet<String>();
+    public static final String INFO = "info";
+    public static final String CVE = "CVE";
+
+    Map<String, Set<String>> info = new HashMap<>();
     String version;
     String filename;
     String evidence;
@@ -31,7 +36,7 @@ public class Result {
     public Result(
             final String filename,
             final String version,
-            final HashSet<String> info,
+            final Map<String, Set<String>> info,
             String evidence) {
         this.filename = filename;
         this.version = version;
@@ -39,7 +44,7 @@ public class Result {
         this.evidence = evidence;
     }
 
-    public HashSet<String> getInfo() {
+    public Map<String, Set<String>> getInfo() {
         return info;
     }
 

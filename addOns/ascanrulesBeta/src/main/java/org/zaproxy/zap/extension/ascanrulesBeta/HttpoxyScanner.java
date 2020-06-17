@@ -116,22 +116,15 @@ public class HttpoxyScanner extends AbstractAppPlugin {
 
                     if (listener.isMsgReceived()) {
                         // the server is vulnerable
-                        bingo(
-                                getRisk(), // Risk
-                                Alert.CONFIDENCE_HIGH, // Confidence/Reliability
-                                getName(), // Name
-                                getDescription(), // Description
-                                getBaseMsg().getRequestHeader().getURI().toString(), // Original URI
-                                null, // Param
-                                "Proxy: " + hostPort, // Attack
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "otherinfo",
-                                        listener.getMsgUrl()), // OtherInfo
-                                getSolution(), // Solution
-                                "", // Evidence
-                                getCweId(), // CWE ID
-                                getWascId(), // WASC ID
-                                newRequest); // HTTPMessage
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_HIGH)
+                                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                                .setAttack("Proxy: " + hostPort)
+                                .setOtherInfo(
+                                        Constant.messages.getString(
+                                                MESSAGE_PREFIX + "otherinfo", listener.getMsgUrl()))
+                                .setMessage(newRequest)
+                                .raise();
 
                         // no point in continuing
                         return;

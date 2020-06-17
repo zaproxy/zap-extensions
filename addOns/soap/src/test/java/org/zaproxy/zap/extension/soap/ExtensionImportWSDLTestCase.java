@@ -19,17 +19,17 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.testutils.TestUtils;
 
 public class ExtensionImportWSDLTestCase extends TestUtils {
 
     ExtensionImportWSDL extension;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         extension = new ExtensionImportWSDL();
         mockMessages(extension);

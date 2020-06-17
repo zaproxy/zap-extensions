@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.testutils;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -27,10 +27,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -50,7 +48,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import net.htmlparser.jericho.Config;
-import net.htmlparser.jericho.LoggerProvider;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -59,13 +56,12 @@ import org.apache.log4j.PatternLayout;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -86,7 +82,7 @@ import org.zaproxy.zap.utils.I18N;
  * <p>Among other helper methods it allows to {@link #setUpZap() set up ZAP} and provides a {@link
  * #nano HTTP test server}.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public abstract class TestUtils {
 
     public static final String DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1";
@@ -96,15 +92,10 @@ public abstract class TestUtils {
      *
      * <p>Can be used for other temporary files/dirs.
      */
-    @ClassRule public static TemporaryFolder tempDir = new TemporaryFolder();
+    @TempDir protected static Path tempDir;
 
     static {
-        try {
-            Field loggerProvider = ZAP.class.getField("JERICHO_LOGGER_PROVIDER");
-            Config.LoggerProvider = (LoggerProvider) loggerProvider.get(null);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            // Nothing to do, older ZAP version.
-        }
+        Config.LoggerProvider = ZAP.JERICHO_LOGGER_PROVIDER;
     }
 
     private static String zapInstallDir;
@@ -126,21 +117,14 @@ public abstract class TestUtils {
      */
     protected HTTPDTestServer nano;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
-        File installDir = tempDir.newFolder("install");
-        Path langDir = Files.createDirectory(installDir.toPath().resolve("lang"));
-        Files.createFile(langDir.resolve("Messages.properties"));
-        Path xmlDir = Files.createDirectory(installDir.toPath().resolve("xml"));
+        Path installDir = Files.createDirectory(tempDir.resolve("install"));
+        Path xmlDir = Files.createDirectory(installDir.resolve("xml"));
         Files.createFile(xmlDir.resolve("log4j.properties"));
-        Path configXmlPath = Files.createFile(xmlDir.resolve("config.xml"));
-        Files.write(
-                configXmlPath,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><config></config>"
-                        .getBytes(StandardCharsets.UTF_8));
 
-        zapInstallDir = installDir.getAbsolutePath();
-        zapHomeDir = tempDir.newFolder("home").getAbsolutePath();
+        zapInstallDir = installDir.toAbsolutePath().toString();
+        zapHomeDir = Files.createDirectory(tempDir.resolve("home")).toAbsolutePath().toString();
     }
 
     /** Sets up the log to ease debugging. */
@@ -161,13 +145,9 @@ public abstract class TestUtils {
      * @throws Exception if an error occurred while setting up the dirs or core classes.
      * @see #setUpMessages()
      */
-    @SuppressWarnings("deprecation")
     protected void setUpZap() throws Exception {
         Constant.setZapInstall(zapInstallDir);
         Constant.setZapHome(zapHomeDir);
-
-        File langDir = new File(Constant.getZapInstall(), "lang");
-        org.zaproxy.zap.utils.ClassLoaderUtil.addFile(langDir.getAbsolutePath());
 
         Control control = mock(Control.class, withSettings().lenient());
         when(control.getExtensionLoader()).thenReturn(mock(ExtensionLoader.class));
@@ -240,7 +220,7 @@ public abstract class TestUtils {
      *
      * @throws Exception if an error occurred while deleting the home directory.
      */
-    @After
+    @AfterEach
     public void shutDown() throws Exception {
         deleteDir(Paths.get(zapHomeDir));
     }
@@ -577,9 +557,9 @@ public abstract class TestUtils {
 
     private static void assertKeyExists(String key) {
         assertTrue(
-                "The extension's ResourceBundle was not intialiased.",
-                extensionResourceBundle != null);
-        assertTrue("No resource message for: " + key, extensionResourceBundle.containsKey(key));
+                extensionResourceBundle != null,
+                "The extension's ResourceBundle was not intialiased.");
+        assertTrue(extensionResourceBundle.containsKey(key), "No resource message for: " + key);
     }
 
     /**

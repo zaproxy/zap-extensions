@@ -20,26 +20,31 @@
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.google.gson.*;
-import java.util.*;
-import org.junit.*;
-import org.zaproxy.zap.extension.fuzz.payloads.*;
-import org.zaproxy.zap.utils.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 public class JsonPayloadGeneratorUnitTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldRejectMissingJsonBase() {
-        new JsonPayloadGenerator(null, 1);
+        assertThrows(IllegalArgumentException.class, () -> new JsonPayloadGenerator(null, 1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldRejectInvalidJsonBase() {
-        new JsonPayloadGenerator("'an invalid value", 1);
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new JsonPayloadGenerator("'an invalid value", 1));
     }
 
     @Test

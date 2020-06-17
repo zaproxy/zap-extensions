@@ -69,7 +69,7 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
         RESPONSE,
         RESPONSE_HEADER,
         RESPONSE_BODY
-    };
+    }
 
     public PopupMenuSaveRawMessage() {
         super(POPUP_MENU_LABEL);

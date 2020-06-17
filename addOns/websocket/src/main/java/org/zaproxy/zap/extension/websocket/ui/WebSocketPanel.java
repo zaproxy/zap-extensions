@@ -115,7 +115,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                         new ImageIcon(
                                 WebSocketPanel.class.getResource(
                                         "/resource/icon/fugue/plug-connect-target.png")));
-    };
+    }
 
     private JToolBar panelToolbar = null;
 

@@ -407,11 +407,6 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return "Joseph Kirwin";
-    }
-
-    @Override
     public String getDescription() {
         return getMessages().getString("importLogFiles.desc");
     }

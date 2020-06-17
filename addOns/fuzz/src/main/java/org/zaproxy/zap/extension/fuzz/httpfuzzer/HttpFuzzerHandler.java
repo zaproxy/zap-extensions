@@ -40,7 +40,6 @@ import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsB
 import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsDepthFirstReplacer;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsReplacer;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
-import org.zaproxy.zap.model.TextHttpMessageLocation;
 import org.zaproxy.zap.view.messagecontainer.MessageContainer;
 import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
@@ -147,7 +146,9 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
 
         MessageLocationReplacer<HttpMessage> replacer =
                 MessageLocationReplacers.getInstance()
-                        .getMLR(HttpMessage.class, TextHttpMessageLocation.class);
+                        .getMLR(
+                                HttpMessage.class,
+                                fuzzLocations.get(0).getMessageLocation().getClass());
 
         replacer.init(message);
 

@@ -19,31 +19,30 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link Browser}. */
 public class BrowserUnitTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenGettingBrowserWithNullId() {
         // Given
         String id = null;
-        // When
-        Browser.getBrowserWithId(id);
-        // Then = Exception
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> Browser.getBrowserWithId(id));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenGettingBrowserWithEmptyId() {
         // Given
         String id = "";
-        // When
-        Browser.getBrowserWithId(id);
-        // Then = Exception
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> Browser.getBrowserWithId(id));
     }
 
     @Test

@@ -32,11 +32,6 @@ import org.zaproxy.zap.extension.lang.LangImporter;
 public class ExtensionCoreLanguages extends ExtensionAdaptor {
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getName() {
         return "ExtensionCoreLang";
     }

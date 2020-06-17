@@ -1,12 +1,12 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "35"
+version = "36"
 description = "The release quality Active Scanner rules"
 
 zapAddOn {
     addOnName.set("Active scanner rules")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.7.0")
+    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -19,7 +19,6 @@ dependencies {
     implementation("org.bitbucket.mstrobel:procyon-compilertools:0.5.36")
 
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.commons:commons-lang3:3.9")
 }
 
 spotless {

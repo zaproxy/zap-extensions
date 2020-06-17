@@ -45,7 +45,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
         XFO_MULTIPLE_HEADERS,
         XFO_META,
         XFO_MALFORMED_SETTING
-    };
+    }
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {}

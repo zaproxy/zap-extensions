@@ -263,10 +263,13 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                                 } else {
                                     exMsg = "";
                                 }
+                                String baseMessage =
+                                        Constant.messages.getString("openapi.parse.error", exMsg);
+                                View.getSingleton().getOutputPanel().append(baseMessage);
+                                View.getSingleton().getOutputPanel().append(e);
                                 View.getSingleton()
                                         .showWarningDialog(
-                                                Constant.messages.getString(
-                                                                "openapi.parse.error", exMsg)
+                                                baseMessage
                                                         + "\n\n"
                                                         + Constant.messages.getString(
                                                                 "openapi.parse.trailer"));
@@ -314,12 +317,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM
-                + " plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak";
     }
 
     @Override

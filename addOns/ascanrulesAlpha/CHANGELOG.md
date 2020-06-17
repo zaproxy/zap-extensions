@@ -4,6 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Fixed Mongo DB Injection false positive (Issue 6025).
+
+### Added
+- 'Hidden File Finder' added more patterns.
+
+## [28] - 2020-06-01
 ### Added
 - Add repo URL.
 - Add links to the code in the help.
@@ -11,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - 'Hidden File Finder' add pattern for vim_settings.xml (CVE-2019-14957).
 
 ### Changed
+- Update minimum ZAP version to 2.9.0.
 - Change info URL to link to the site.
 - Update ZAP blog links.
 - Updated owasp.org references (Issue 5962).
@@ -194,6 +205,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[28]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v25

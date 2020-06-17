@@ -19,12 +19,12 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -44,7 +44,7 @@ public class SourceCodeDisclosureScannerUnitTest
         return new SourceCodeDisclosureScanner();
     }
 
-    @Before
+    @BeforeEach
     public void createHttpMessage() throws IOException {
         msg = new HttpMessage();
         msg.setRequestHeader("GET " + URI + " HTTP/1.1");

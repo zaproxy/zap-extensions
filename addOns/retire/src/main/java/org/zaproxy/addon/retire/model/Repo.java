@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.parosproxy.paros.Constant;
@@ -135,7 +136,7 @@ public class Repo {
      */
     private Result scanHash(String hash) {
         // Testable URL: https://ajax.googleapis.com/ajax/libs/dojo/1.1.1/dojo/dojo.js
-        HashSet<String> results = new HashSet<String>();
+        Map<String, Set<String>> results = new HashMap<>();
         for (Map.Entry<String, RepoEntry> repoEntry : entries.entrySet()) {
             Map<String, String> hashes = repoEntry.getValue().getExtractors().getHashes();
 
@@ -165,7 +166,7 @@ public class Repo {
      * FileName OR FileURL OR FileContent
      */
     private Result scan(String extractorType, String input) {
-        HashSet<String> results = new HashSet<String>();
+        Map<String, Set<String>> results = new HashMap<>();
         // reading each entry for JS libraries in repo
         for (Map.Entry<String, RepoEntry> repoEntry : entries.entrySet()) {
             List<String> extractors = repoEntry.getValue().getExtractors().get(extractorType);
@@ -239,11 +240,13 @@ public class Repo {
      * If YES returns the HashSet of vulnerability info.
      * else returns an empty HashSet.
      */
-    private static HashSet<String> isVersionVulnerable(
+    private static Map<String, Set<String>> isVersionVulnerable(
             List<Vulnerability> vulnerabilities, String versionString) {
         // Do a match for each of the above vulnerabilities
-        HashSet<String> results = new HashSet<String>();
+        Map<String, Set<String>> results = new HashMap<>();
         ListIterator<Vulnerability> viterator = vulnerabilities.listIterator();
+        Set<String> cve = new HashSet<>();
+        Set<String> info = new HashSet<>();
 
         while (viterator.hasNext()) {
             boolean isVulnerable = false;
@@ -264,10 +267,10 @@ public class Repo {
                 }
             }
             if (isVulnerable) {
-                List<String> infoList = vnext.getInfo();
-                for (String info : infoList) {
-                    results.add(info);
-                }
+                cve.addAll(vnext.getIdentifiers().getCve());
+                results.put(Result.CVE, cve);
+                info.addAll(vnext.getInfo());
+                results.put(Result.INFO, info);
             }
         }
         return results;

@@ -43,6 +43,7 @@ public class AlertReport implements IAlertReport {
         site = siteMap.getRoot();
     }
 
+    @Override
     public AlertReport getAlertsReport() {
         AlertReport report = new AlertReport();
         this.alerts = site.getAlerts();

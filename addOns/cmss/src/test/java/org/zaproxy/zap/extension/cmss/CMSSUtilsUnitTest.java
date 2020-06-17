@@ -19,11 +19,12 @@
  */
 package org.zaproxy.zap.extension.cmss;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zaproxy.zap.extension.cmss.CMSSUtils.checksum;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CMSSUtilsUnitTest {
 
@@ -36,9 +37,9 @@ public class CMSSUtilsUnitTest {
         assertThat(checksum("test2".getBytes()), is("ad0234829205b9033196ba818f7a872b"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void checksumOfNullShouldThrowException() throws Exception {
-        checksum(null);
+        assertThrows(NullPointerException.class, () -> checksum(null));
     }
 
     @Test

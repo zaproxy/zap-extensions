@@ -282,16 +282,14 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
                                         + "]");
                     }
 
-                    // Now create the alert message
-                    this.bingo(
-                            getRisk(),
-                            Alert.CONFIDENCE_MEDIUM,
-                            null,
-                            param,
-                            payload,
-                            getRedirectionReason(redirectType),
-                            redirectUrl,
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(param)
+                            .setAttack(payload)
+                            .setOtherInfo(getRedirectionReason(redirectType))
+                            .setEvidence(redirectUrl)
+                            .setMessage(msg)
+                            .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // parameters on the same request (to reduce performance impact)

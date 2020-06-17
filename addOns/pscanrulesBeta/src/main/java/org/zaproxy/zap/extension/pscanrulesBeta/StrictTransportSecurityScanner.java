@@ -76,7 +76,7 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner {
         HSTS_META,
         HSTS_MALFORMED_MAX_AGE,
         HSTS_MALFORMED_CONTENT
-    };
+    }
 
     private static final Logger logger = Logger.getLogger(StrictTransportSecurityScanner.class);
 

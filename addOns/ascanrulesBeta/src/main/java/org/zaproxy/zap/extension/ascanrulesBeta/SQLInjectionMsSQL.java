@@ -250,18 +250,14 @@ public class SQLInjectionMsSQL extends AbstractAppParamPlugin {
                                     paramValue,
                                     originalTimeUsed);
 
-                    // raise the alert
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            getName(),
-                            getDescription(),
-                            getBaseMsg().getRequestHeader().getURI().toString(),
-                            paramName,
-                            newTimeBasedInjectionValue,
-                            extraInfo,
-                            getSolution(),
-                            msgAttack);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                            .setParam(paramName)
+                            .setAttack(newTimeBasedInjectionValue)
+                            .setOtherInfo(extraInfo)
+                            .setMessage(msgAttack)
+                            .raise();
 
                     if (log.isDebugEnabled()) {
                         log.debug(
