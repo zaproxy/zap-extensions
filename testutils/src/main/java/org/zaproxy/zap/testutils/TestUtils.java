@@ -27,10 +27,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -50,7 +48,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import net.htmlparser.jericho.Config;
-import net.htmlparser.jericho.LoggerProvider;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -98,12 +95,7 @@ public abstract class TestUtils {
     @TempDir protected static Path tempDir;
 
     static {
-        try {
-            Field loggerProvider = ZAP.class.getField("JERICHO_LOGGER_PROVIDER");
-            Config.LoggerProvider = (LoggerProvider) loggerProvider.get(null);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            // Nothing to do, older ZAP version.
-        }
+        Config.LoggerProvider = ZAP.JERICHO_LOGGER_PROVIDER;
     }
 
     private static String zapInstallDir;
@@ -127,18 +119,8 @@ public abstract class TestUtils {
 
     @BeforeAll
     public static void beforeClass() throws Exception {
-        Path installDir = Files.createDirectory(tempDir.resolve("install"));
-        Path langDir = Files.createDirectory(installDir.resolve("lang"));
-        Files.createFile(langDir.resolve("Messages.properties"));
-        Path xmlDir = Files.createDirectory(installDir.resolve("xml"));
-        Files.createFile(xmlDir.resolve("log4j.properties"));
-        Path configXmlPath = Files.createFile(xmlDir.resolve("config.xml"));
-        Files.write(
-                configXmlPath,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><config></config>"
-                        .getBytes(StandardCharsets.UTF_8));
-
-        zapInstallDir = installDir.toAbsolutePath().toString();
+        zapInstallDir =
+                Files.createDirectory(tempDir.resolve("install")).toAbsolutePath().toString();
         zapHomeDir = Files.createDirectory(tempDir.resolve("home")).toAbsolutePath().toString();
     }
 
@@ -160,13 +142,9 @@ public abstract class TestUtils {
      * @throws Exception if an error occurred while setting up the dirs or core classes.
      * @see #setUpMessages()
      */
-    @SuppressWarnings("deprecation")
     protected void setUpZap() throws Exception {
         Constant.setZapInstall(zapInstallDir);
         Constant.setZapHome(zapHomeDir);
-
-        File langDir = new File(Constant.getZapInstall(), "lang");
-        org.zaproxy.zap.utils.ClassLoaderUtil.addFile(langDir.getAbsolutePath());
 
         Control control = mock(Control.class, withSettings().lenient());
         when(control.getExtensionLoader()).thenReturn(mock(ExtensionLoader.class));
