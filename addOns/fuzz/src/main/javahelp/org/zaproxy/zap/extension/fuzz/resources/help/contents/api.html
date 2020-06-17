@@ -21,9 +21,63 @@
 </p>
 <h3>Message Processors</h3>
 <p>
-    The requisite processor enabled by default for all requests is “Request Content-Length Updater”
-    which updates the content-length field according to the attack payload. Option to add more
-    or change the processors will be added in future releases.
+    The message processors enabled by default for all requests are:
+</p>
+<ol>
+    <li>"Request Content-Length Updater": updates the content-length field according to
+        the attack payload.</li>
+    <li>"Payload Reflection Detector": reports if the payload appears in the response.</li>
+</ol>
+<p>
+    Additional script-based message processors can be added or removed through the
+    FuzzAPI. The API requires that a script has been loaded and enabled by zaproxy
+    prior to specifying it.
+</p>
+<p>
+    The default (non-script) message processors can be deleted by name using the
+    FuzzAPI, if they are not desired. Once deleted, they cannot be re-added without
+    resetting the message processor list.
+</p>
+<p>
+    The addMessageProcessor call requires three parameters, as depicted below:
+</p>
+<table border="1px solid black" border-collapse="collapse">
+    <tr>
+        <th>Parameter</th>
+        <th>Type</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td>scriptName</td>
+        <td>string</td>
+        <td>unexpected_responses.js</td>
+    </tr>
+    <tr>
+        <td>scriptParameters</td>
+        <td>JSON-formatted string</td>
+        <td>{"pattern": "5..", "sense": "fail"}</td>
+    </tr>
+    <tr>
+        <td>insertAt</td>
+        <td>int</td>
+        <td>-1</td>
+    </tr>
+</table>
+<p>
+    scriptParameters is used to specify all required (and any optional) parameters
+    required by the script. These will vary by script. If no parameters will be
+    supplied, use an empty string.
+</p>
+<p>
+    insertAt indicates where in the processor list the new script will be placed.
+    All processors are executed in order, sequentially. "0" means "insert at the
+    front of the list". "-1" means "insert at the end of the list". Using "1"
+    would insert the new script after the first entry but before the second (now
+    third) entry.
+</p>
+<p>
+    Note: processors changed after a fuzzer has been initialized will remain the
+    same for that fuzzer.
 </p>
 <h3>Fuzzer Options</h3>
 <p>
