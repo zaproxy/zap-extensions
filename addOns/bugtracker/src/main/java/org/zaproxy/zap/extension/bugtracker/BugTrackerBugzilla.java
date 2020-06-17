@@ -486,6 +486,7 @@ public class BugTrackerBugzilla extends BugTracker {
 
     private BugTrackerBugzillaOptionsPanel optionsPanel;
 
+    @Override
     public BugTrackerBugzillaOptionsPanel getOptionsPanel() {
         if (optionsPanel == null) {
             optionsPanel = new BugTrackerBugzillaOptionsPanel();

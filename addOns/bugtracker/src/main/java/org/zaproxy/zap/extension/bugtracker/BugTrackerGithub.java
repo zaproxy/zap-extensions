@@ -544,6 +544,7 @@ public class BugTrackerGithub extends BugTracker {
 
     private BugTrackerGithubOptionsPanel optionsPanel;
 
+    @Override
     public BugTrackerGithubOptionsPanel getOptionsPanel() {
         if (optionsPanel == null) {
             optionsPanel = new BugTrackerGithubOptionsPanel();
