@@ -89,7 +89,7 @@ public class AccessControlScannerThread
         public String toString() {
             return localizedName;
         }
-    };
+    }
 
     private static final Logger log = Logger.getLogger(AccessControlScannerThread.class);
 

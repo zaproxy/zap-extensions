@@ -19,10 +19,10 @@
  */
 package org.zaproxy.zap.extension.replacer;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
-import javax.swing.*;
+import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;

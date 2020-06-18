@@ -333,7 +333,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
         extension.showScanOptionsDialog(context);
     }
 
-    // @Override
+    @Override
     protected boolean hasOptions() {
         // We don't have options for the Access Control extension so remove them.
         return false;

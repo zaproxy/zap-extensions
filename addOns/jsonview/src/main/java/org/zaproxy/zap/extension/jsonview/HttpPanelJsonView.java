@@ -24,13 +24,21 @@ import java.awt.Component;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import net.sf.json.*;
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONNull;
+import net.sf.json.JSONObject;
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.httppanel.view.*;
+import org.zaproxy.zap.extension.httppanel.view.AbstractStringHttpPanelViewModel;
+import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
+import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModel;
+import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelEvent;
+import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelListener;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.request.RequestBodyStringHttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyStringHttpPanelViewModel;
 
@@ -70,7 +78,7 @@ public class HttpPanelJsonView implements HttpPanelView, HttpPanelViewModelListe
                             httpPanelJsonArea.requestFocusInWindow();
                         }
                         View.getSingleton().getPopupMenu().show(httpPanelJsonArea, x, y);
-                    };
+                    }
                 });
     }
 

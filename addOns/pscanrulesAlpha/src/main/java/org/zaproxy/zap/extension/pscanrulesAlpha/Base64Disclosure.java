@@ -59,7 +59,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
         // base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\-_]{30,}={0,2}"));  //used in JWT - file
         // and URL safe variant of Base64 alphabet
         base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\+\\\\/\\-_]{30,}={0,2}"));
-    };
+    }
 
     /**
      * patterns used to identify strings withut each of the given character sets which is used to

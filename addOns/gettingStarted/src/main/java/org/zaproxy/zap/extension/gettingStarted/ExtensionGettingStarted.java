@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.gettingStarted;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;

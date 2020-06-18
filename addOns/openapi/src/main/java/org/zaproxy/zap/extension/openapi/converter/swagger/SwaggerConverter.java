@@ -153,6 +153,7 @@ public class SwaggerConverter implements Converter {
                 || "https".equalsIgnoreCase(scheme);
     }
 
+    @Override
     public List<RequestModel> getRequestModels() throws SwaggerException {
         List<OperationModel> operations = readOpenAPISpec();
         return convertToRequest(operations);

@@ -708,7 +708,6 @@ public class TestCrossSiteScriptV2UnitTest
                                             .replaceAll("&", "")
                                             .replaceAll("#", "")
                                             .replaceAll("\"", "");
-                            ;
                             response =
                                     getHtml(
                                             "InputInAttribute.html",

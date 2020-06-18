@@ -194,7 +194,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // Special payloads
         NIX_OS_PAYLOADS.put("||" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("&&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
-    };
+    }
 
     // Coefficient used for a time-based query delay checking (must be >= 7)
     private static final int TIME_STDEV_COEFF = 7;
@@ -264,7 +264,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         NIX_BLIND_OS_PAYLOADS.add("||" + insertedCMD);
         NIX_BLIND_OS_PAYLOADS.add("&&" + insertedCMD);
         NIX_BLIND_OS_PAYLOADS.add("|" + insertedCMD + "#");
-    };
+    }
 
     // Logger instance
     private static final Logger log = Logger.getLogger(CommandInjectionPlugin.class);

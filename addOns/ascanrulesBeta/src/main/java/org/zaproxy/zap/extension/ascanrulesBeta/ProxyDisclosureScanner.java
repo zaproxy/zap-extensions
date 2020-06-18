@@ -158,7 +158,7 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
                         "^(Cache-Control):\\s*(.+)\\s*$",
                         Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
                 "");
-    };
+    }
 
     /** the number of Max-Forwards to apply. Set depending on the Attack strength. */
     private int MAX_FORWARDS_MAXIMUM = 0;

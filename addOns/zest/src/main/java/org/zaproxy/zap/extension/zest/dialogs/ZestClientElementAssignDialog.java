@@ -30,7 +30,7 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
-public class ZestClientElementAssignDialog extends ZestClientElementDialog implements ZestDialog {
+public class ZestClientElementAssignDialog extends ZestClientElementDialog {
 
     private static final String FIELD_VARIABLE = "zest.dialog.assign.label.variable";
     private static final long serialVersionUID = 1L;

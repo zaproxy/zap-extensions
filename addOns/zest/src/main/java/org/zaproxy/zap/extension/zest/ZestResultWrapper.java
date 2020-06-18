@@ -30,7 +30,7 @@ public class ZestResultWrapper extends HistoryReference {
     public enum Type {
         request,
         scanAction
-    };
+    }
 
     private boolean passed = false;
     private String message = "";

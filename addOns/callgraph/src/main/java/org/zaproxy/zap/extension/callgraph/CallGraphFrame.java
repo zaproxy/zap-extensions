@@ -71,6 +71,7 @@ public class CallGraphFrame extends AbstractFrame {
     private FontMetrics fontmetrics = null;
     private mxGraph graph =
             new mxGraph() {
+                @Override
                 public String getToolTipForCell(Object cell) {
                     if (model.isEdge(cell)) {
                         // the value is truncated, so get the id, which is the full URL instead
@@ -369,6 +370,7 @@ public class CallGraphFrame extends AbstractFrame {
         // add a rubberband zoom on the mouse selection event
         new mxRubberband(graphComponent) {
 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 // get bounds before they are reset
                 Rectangle rect = bounds;

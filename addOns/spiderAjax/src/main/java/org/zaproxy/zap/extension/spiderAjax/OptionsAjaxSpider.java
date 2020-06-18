@@ -196,7 +196,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 
     @Override
     public void saveParam(Object obj) throws Exception {
-        ;
         OptionsParam optionsParam = (OptionsParam) obj;
         AjaxSpiderParam ajaxSpiderParam = optionsParam.getParamSet(AjaxSpiderParam.class);
 

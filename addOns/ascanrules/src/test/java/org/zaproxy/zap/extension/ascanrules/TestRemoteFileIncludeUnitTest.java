@@ -47,6 +47,7 @@ public class TestRemoteFileIncludeUnitTest
         // Given
         NullByteVulnerableServerHandler vulnServerHandler =
                 new NullByteVulnerableServerHandler("/", "p", Tech.Linux) {
+                    @Override
                     protected String getContent(IHTTPSession session) {
                         String value = getFirstParamValue(session, "p");
                         if (value.contains(NULL_BYTE_CHARACTER)) {

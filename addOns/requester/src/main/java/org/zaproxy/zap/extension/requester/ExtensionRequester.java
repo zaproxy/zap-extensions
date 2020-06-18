@@ -129,7 +129,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
         if (getOptionsParam().isAutoFocus() == true) {
             getRequesterPanel().setTabFocus();
         }
-    };
+    }
 
     @Override
     public boolean canUnload() {

@@ -61,7 +61,7 @@ public abstract class NumberedTabbedPane extends JTabbedPane {
 
     private String nextTabName() {
         return String.valueOf(nextTabNumber++);
-    };
+    }
 
     public abstract void addDefaultTab();
 
@@ -79,4 +79,4 @@ public abstract class NumberedTabbedPane extends JTabbedPane {
             ((ManualHttpRequestEditorPanel) getComponentAt(i)).beforeClose();
         }
     }
-};
+}

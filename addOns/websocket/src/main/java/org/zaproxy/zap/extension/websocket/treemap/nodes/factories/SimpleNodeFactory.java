@@ -25,7 +25,9 @@ import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.NodesUtilities;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.WebSocketNode;
-import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.*;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderContent;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.MessageContent;
+import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.RootContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.namers.WebSocketNodeNamer;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 

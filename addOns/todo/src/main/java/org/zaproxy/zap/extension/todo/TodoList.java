@@ -37,7 +37,7 @@ import javax.swing.JScrollPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.*;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
