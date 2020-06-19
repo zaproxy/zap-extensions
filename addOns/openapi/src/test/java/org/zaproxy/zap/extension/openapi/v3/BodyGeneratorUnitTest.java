@@ -374,6 +374,22 @@ public class BodyGeneratorUnitTest {
                 "[{\"age\":3,\"name\":\"Fluffy\"},{\"age\":512,\"name\":\"Fawkes\"}]", request);
     }
 
+    @Test
+    public void shouldGenerateBodyWithNoSchema() throws IOException {
+        OpenAPI openAPI = parseResource("OpenApi_defn_no_schema.yaml");
+        String request =
+                new RequestModelConverter()
+                        .convert(
+                                new OperationModel(
+                                        "/media-type-no-schema",
+                                        openAPI.getPaths().get("/media-type-no-schema").getPost(),
+                                        null),
+                                generators)
+                        .getBody();
+
+        assertEquals("", request);
+    }
+
     private OpenAPI parseResource(String fileName) throws IOException {
         ParseOptions options = new ParseOptions();
         options.setResolveFully(true);

@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Show import exceptions in the Output tab (Issue 6042).
 
+### Fixed
+- Correct parent dialogue when choosing the file to import (Issue 6041).
+- Properly handle no schema when generating the request body (Issue 6042).
 
 ## [16] - 2020-06-09
 ### Added

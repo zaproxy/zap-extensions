@@ -69,6 +69,10 @@ public class BodyGenerator {
                     });
 
     public String generate(Schema<?> schema) {
+        if (schema == null) {
+            return "";
+        }
+
         boolean isArray = schema instanceof ArraySchema;
         if (LOG.isDebugEnabled()) {
             LOG.debug("Generate body for object " + schema.getName());
