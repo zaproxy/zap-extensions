@@ -25,9 +25,11 @@ import com.shapesecurity.salvation.data.Origin;
 import com.shapesecurity.salvation.data.Policy;
 import com.shapesecurity.salvation.data.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -59,6 +61,17 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 
     private static final String WILDCARD_URI = "http://*";
     private static final URI PARSED_WILDCARD_URI = URI.parse(WILDCARD_URI);
+
+    // Per:
+    // https://developers.google.com/web/fundamentals/security/csp#policy_applies_to_a_wide_variety_of_resources as of 20200618
+    private static final List<String> DIRECTIVES_WITHOUT_FALLBACK =
+            Arrays.asList(
+                    "base-uri",
+                    "form-action",
+                    "frame-ancestors",
+                    "plugin-types",
+                    "report-uri",
+                    "sandbox");
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -168,11 +181,21 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
             List<String> allowedWildcardSources =
                     getAllowedWildcardSources(unifiedPolicyText, origin);
             if (!allowedWildcardSources.isEmpty()) {
-                String allowedWildcardSrcs =
-                        allowedWildcardSources.toString().replace("[", "").replace("]", "");
+                List<String> allowedDirectivesWithoutFallback =
+                        allowedWildcardSources.stream()
+                                .distinct()
+                                .filter(DIRECTIVES_WITHOUT_FALLBACK::contains)
+                                .collect(Collectors.toList());
+                String allowedWildcardSrcs = String.join(", ", allowedWildcardSources);
                 String wildcardSrcDesc =
                         Constant.messages.getString(
                                 MESSAGE_PREFIX + "wildcard.desc", allowedWildcardSrcs);
+                if (!allowedDirectivesWithoutFallback.isEmpty()) {
+                    wildcardSrcDesc +=
+                            Constant.messages.getString(
+                                    "pscanrules.cspscanner.desc.extended",
+                                    String.join(", ", allowedDirectivesWithoutFallback));
+                }
                 raiseAlert(
                         msg,
                         Constant.messages.getString(MESSAGE_PREFIX + "wildcard.name"),
@@ -326,6 +349,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
         }
         if (pol.allowsPrefetchFromSource(PARSED_WILDCARD_URI)) {
             allowedSources.add("prefetch-src");
+        }
+        if (pol.allowsFormAction(PARSED_WILDCARD_URI)) {
+            allowedSources.add("form-action");
         }
         return allowedSources;
     }
