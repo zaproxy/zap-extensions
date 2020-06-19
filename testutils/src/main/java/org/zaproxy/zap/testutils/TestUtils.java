@@ -119,8 +119,11 @@ public abstract class TestUtils {
 
     @BeforeAll
     public static void beforeClass() throws Exception {
-        zapInstallDir =
-                Files.createDirectory(tempDir.resolve("install")).toAbsolutePath().toString();
+        Path installDir = Files.createDirectory(tempDir.resolve("install"));
+        Path xmlDir = Files.createDirectory(installDir.resolve("xml"));
+        Files.createFile(xmlDir.resolve("log4j.properties"));
+
+        zapInstallDir = installDir.toAbsolutePath().toString();
         zapHomeDir = Files.createDirectory(tempDir.resolve("home")).toAbsolutePath().toString();
     }
 
