@@ -58,6 +58,7 @@ public class ExtensionDiff extends ExtensionAdaptor {
         super.unload();
     }
 
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 

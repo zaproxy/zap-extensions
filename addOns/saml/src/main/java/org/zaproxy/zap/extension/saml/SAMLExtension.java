@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.saml;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+import javax.swing.JMenuItem;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;

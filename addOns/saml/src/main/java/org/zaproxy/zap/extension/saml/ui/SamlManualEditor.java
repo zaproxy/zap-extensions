@@ -19,16 +19,31 @@
  */
 package org.zaproxy.zap.extension.saml.ui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.saml.*;
+import org.zaproxy.zap.extension.saml.Attribute;
+import org.zaproxy.zap.extension.saml.SAMLException;
+import org.zaproxy.zap.extension.saml.SAMLMessage;
+import org.zaproxy.zap.extension.saml.SAMLResender;
+import org.zaproxy.zap.extension.saml.SamlI18n;
 
 public class SamlManualEditor extends JFrame {
 

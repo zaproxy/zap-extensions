@@ -56,7 +56,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     private GenerateTokensDialog genTokensDialog = null;
     private AnalyseTokensDialog analyseTokensDialog = null;
 
-    private TokenParam tokenParam = null;;
+    private TokenParam tokenParam = null;
     private TokenOptionsPanel tokenOptionsPanel;
 
     private List<TokenGenerator> generators = Collections.emptyList();

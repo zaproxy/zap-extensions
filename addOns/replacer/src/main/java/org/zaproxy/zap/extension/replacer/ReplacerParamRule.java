@@ -32,7 +32,7 @@ class ReplacerParamRule extends Enableable {
         RESP_HEADER,
         RESP_HEADER_STR,
         RESP_BODY_STR
-    };
+    }
 
     private String description;
     private String matchString;

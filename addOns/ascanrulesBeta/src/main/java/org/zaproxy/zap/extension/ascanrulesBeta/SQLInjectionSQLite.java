@@ -694,7 +694,6 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
                                             if (unionRequests > doUnionMaxRequests) {
                                                 break unionLoops;
                                             }
-                                            ;
 
                                             String unionAttack = UNION_ATTACK_TEMPLATE;
                                             unionAttack =

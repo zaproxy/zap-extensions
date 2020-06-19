@@ -52,6 +52,7 @@ public class WebSocketNode extends TreeNode {
         return this;
     }
 
+    @Override
     public WebSocketMessageDTO getMessage() {
         return content.getMessage();
     }
@@ -60,6 +61,7 @@ public class WebSocketNode extends TreeNode {
         return iterateOverLeaf(this, TreeNode::getMessage, new ArrayList<>());
     }
 
+    @Override
     public String getHost() {
         return content.getHost();
     }

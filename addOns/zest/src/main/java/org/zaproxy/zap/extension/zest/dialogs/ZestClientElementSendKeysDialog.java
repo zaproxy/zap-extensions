@@ -29,7 +29,7 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
-public class ZestClientElementSendKeysDialog extends ZestClientElementDialog implements ZestDialog {
+public class ZestClientElementSendKeysDialog extends ZestClientElementDialog {
 
     private static final String FIELD_VALUE = "zest.dialog.client.label.value";
 

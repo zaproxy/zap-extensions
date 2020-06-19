@@ -88,7 +88,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
                 new ImageIcon(
                         ExtensionServerSentEvents.class.getResource(
                                 "resources/download-cloud.png"));
-    };
+    }
 
     private JToolBar panelToolbar = null;
 

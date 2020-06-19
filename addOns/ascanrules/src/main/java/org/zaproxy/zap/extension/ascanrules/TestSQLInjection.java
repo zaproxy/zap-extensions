@@ -2007,6 +2007,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
      * @param pattern
      * @return
      */
+    @Override
     protected String stripOff(String body, String pattern) {
         if (pattern == null) {
             return body;

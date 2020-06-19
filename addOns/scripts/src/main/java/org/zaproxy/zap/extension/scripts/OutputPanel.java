@@ -109,7 +109,7 @@ public class OutputPanel extends AbstractPanel {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent e) {
                             getTxtOutput().setText("");
-                        };
+                        }
                     });
 
             final ZapToggleButton clearOnRunButton = new ZapToggleButton();
@@ -126,7 +126,7 @@ public class OutputPanel extends AbstractPanel {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent e) {
                             clearOnRun = clearOnRunButton.isSelected();
-                        };
+                        }
                     });
 
             final ZapToggleButton scrollLockButton = new ZapToggleButton();
@@ -151,7 +151,7 @@ public class OutputPanel extends AbstractPanel {
                                 getTxtOutput()
                                         .setCaretPosition(getTxtOutput().getDocument().getLength());
                             }
-                        };
+                        }
                     });
 
             final ZapToggleButton scriptLockButton = new ZapToggleButton();
@@ -167,7 +167,7 @@ public class OutputPanel extends AbstractPanel {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent e) {
                             extension.setLockOutputToDisplayedScript(scriptLockButton.isSelected());
-                        };
+                        }
                     });
 
             mainToolBar.add(clearButton);

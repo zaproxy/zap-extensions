@@ -159,6 +159,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
         }
 
         class SendPing extends TimerTask {
+            @Override
             public void run() {
                 if (!ping()) {
                     pingTimer.cancel();
@@ -167,6 +168,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
         }
 
         class SendMessage extends TimerTask {
+            @Override
             public void run() {
                 synchronized (outgoingMessages) {
                     try {

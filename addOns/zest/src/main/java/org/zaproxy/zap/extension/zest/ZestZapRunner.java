@@ -81,7 +81,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     private boolean scanning = false;
 
-    private List<Alert> alerts = new ArrayList<Alert>();;
+    private List<Alert> alerts = new ArrayList<Alert>();
 
     private ScriptUI scriptUI;
 
