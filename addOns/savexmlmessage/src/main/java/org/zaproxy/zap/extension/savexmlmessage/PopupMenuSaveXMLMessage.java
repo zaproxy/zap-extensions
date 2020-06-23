@@ -75,7 +75,7 @@ class PopupMenuSaveXMLMessage extends PopupMenuHttpMessageContainer {
         RESPONSE,
         RESPONSE_HEADER,
         RESPONSE_BODY
-    };
+    }
 
     public PopupMenuSaveXMLMessage() {
         super(POPUP_MENU_LABEL);

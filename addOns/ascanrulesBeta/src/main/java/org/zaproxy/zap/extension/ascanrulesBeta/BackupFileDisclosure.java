@@ -743,31 +743,20 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
                                         && nonexistfilemsg.getResponseHeader().getStatusCode()
                                                 != requestStatusCode
                                         && (!Arrays.equals(disclosedData, nonexistfilemsgdata))))) {
-                    bingo(
-                            Alert.RISK_MEDIUM,
-                            Alert.CONFIDENCE_MEDIUM,
-                            Constant.messages.getString("ascanbeta.backupfiledisclosure.name"),
-                            getDescription(),
-                            requestmsg
-                                    .getRequestHeader()
-                                    .getURI()
-                                    .getURI(), // originalMessage.getRequestHeader().getURI().getURI(),
-                            null, // parameter being attacked: none.
-                            candidateBackupFileURI.getURI(), // attack
-                            originalMessage
-                                    .getRequestHeader()
-                                    .getURI()
-                                    .getURI(), // new String (disclosedData),  //extrainfo
-                            Constant.messages.getString("ascanbeta.backupfiledisclosure.soln"),
-                            Constant.messages.getString(
-                                    "ascanbeta.backupfiledisclosure.evidence",
-                                    originalURI,
-                                    candidateBackupFileURI.getURI()),
-                            getReference(),
-                            getCweId(),
-                            getWascId(),
-                            requestmsg // originalMessage
-                            );
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setAttack(candidateBackupFileURI.getURI())
+                            .setOtherInfo(originalMessage.getRequestHeader().getURI().getURI())
+                            .setSolution(
+                                    Constant.messages.getString(
+                                            "ascanbeta.backupfiledisclosure.soln"))
+                            .setEvidence(
+                                    Constant.messages.getString(
+                                            "ascanbeta.backupfiledisclosure.evidence",
+                                            originalURI,
+                                            candidateBackupFileURI.getURI()))
+                            .setMessage(requestmsg)
+                            .raise();
                 }
 
                 if (isStop()) {
@@ -806,31 +795,23 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
                                                 != requestStatusCode
                                         && (!Arrays.equals(
                                                 disclosedData, nonexistparentmsgdata))))) {
-                    bingo(
-                            Alert.RISK_MEDIUM,
-                            Alert.CONFIDENCE_MEDIUM,
-                            Constant.messages.getString("ascanbeta.backupfiledisclosure.name"),
-                            getDescription(),
-                            requestmsg
-                                    .getRequestHeader()
-                                    .getURI()
-                                    .getURI(), // originalMessage.getRequestHeader().getURI().getURI(),
-                            null, // parameter being attacked: none.
-                            candidateBackupFileURI.getURI(), // attack
-                            originalMessage
-                                    .getRequestHeader()
-                                    .getURI()
-                                    .getURI(), // new String (disclosedData),  //extrainfo
-                            Constant.messages.getString("ascanbeta.backupfiledisclosure.soln"),
-                            Constant.messages.getString(
-                                    "ascanbeta.backupfiledisclosure.evidence",
-                                    originalURI,
-                                    candidateBackupFileURI.getURI()),
-                            getReference(),
-                            getCweId(),
-                            getWascId(),
-                            requestmsg // originalMessage
-                            );
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setName(
+                                    Constant.messages.getString(
+                                            "ascanbeta.backupfiledisclosure.name"))
+                            .setAttack(candidateBackupFileURI.getURI())
+                            .setOtherInfo(originalMessage.getRequestHeader().getURI().getURI())
+                            .setSolution(
+                                    Constant.messages.getString(
+                                            "ascanbeta.backupfiledisclosure.soln"))
+                            .setEvidence(
+                                    Constant.messages.getString(
+                                            "ascanbeta.backupfiledisclosure.evidence",
+                                            originalURI,
+                                            candidateBackupFileURI.getURI()))
+                            .setMessage(requestmsg)
+                            .raise();
                 }
 
                 if (isStop()) {

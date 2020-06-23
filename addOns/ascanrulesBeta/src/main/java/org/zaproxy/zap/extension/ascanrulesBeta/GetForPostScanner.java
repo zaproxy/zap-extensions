@@ -116,20 +116,12 @@ public class GetForPostScanner extends AbstractAppPlugin {
         }
 
         if (newRequest.getResponseBody().equals(baseMsg.getResponseBody())) {
-            bingo(
-                    getRisk(), // Risk
-                    Alert.CONFIDENCE_HIGH, // Confidence
-                    getName(), // Name
-                    getDescription(), // Description
-                    baseMsg.getRequestHeader().getURI().toString(), // URI
-                    null, // Param
-                    "", // Attack
-                    "", // OtherInfo
-                    getSolution(), // Solution
-                    newRequest.getRequestHeader().getPrimeHeader(), // Evidence
-                    getCweId(), // CWE ID
-                    getWascId(), // WASC ID
-                    newRequest); // HTTPMessage
+            newAlert()
+                    .setConfidence(Alert.CONFIDENCE_HIGH)
+                    .setUri(baseMsg.getRequestHeader().getURI().toString())
+                    .setEvidence(newRequest.getRequestHeader().getPrimeHeader())
+                    .setMessage(newRequest)
+                    .raise();
         }
     }
 

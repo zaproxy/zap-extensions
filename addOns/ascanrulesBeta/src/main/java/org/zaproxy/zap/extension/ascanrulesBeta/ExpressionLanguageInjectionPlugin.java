@@ -199,16 +199,13 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
                                 + payload
                                 + "]");
 
-                // Now create the alert message
-                this.bingo(
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        msg.getRequestHeader().getURI().toString(),
-                        paramName,
-                        payload,
-                        null,
-                        addedString,
-                        msg);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam(paramName)
+                        .setAttack(payload)
+                        .setEvidence(addedString)
+                        .setMessage(msg)
+                        .raise();
             }
 
         } catch (IOException ex) {

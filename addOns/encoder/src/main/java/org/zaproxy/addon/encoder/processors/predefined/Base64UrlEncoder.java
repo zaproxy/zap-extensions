@@ -20,11 +20,22 @@
 package org.zaproxy.addon.encoder.processors.predefined;
 
 import java.io.IOException;
+import java.util.Base64;
+import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.encoder.EncodeDecodeOptions;
+import org.zaproxy.addon.encoder.ExtensionEncoder;
 
 public class Base64UrlEncoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) throws IOException {
-        return getEncoder().getBase64urlEncode(value);
+        EncodeDecodeOptions encDecOpts =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionEncoder.class)
+                        .getOptions();
+        return new String(
+                Base64.getUrlEncoder().encode(value.getBytes(encDecOpts.getBase64Charset())),
+                encDecOpts.getBase64Charset());
     }
 }

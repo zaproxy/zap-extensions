@@ -19,11 +19,12 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Base class for OpenAPI tests that require a server.
@@ -33,13 +34,12 @@ import org.junit.After;
  */
 public abstract class AbstractServerTest extends AbstractOpenApiTest {
 
-    @Override
-    public void setup() throws Exception {
-        super.setup();
+    @BeforeEach
+    public void init() throws Exception {
         startServer();
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         stopServer();
     }

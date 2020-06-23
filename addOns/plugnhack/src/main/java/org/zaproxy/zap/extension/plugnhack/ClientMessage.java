@@ -96,6 +96,7 @@ public class ClientMessage implements Message {
         this.json.put("to", to);
     }
 
+    @Override
     public String getType() {
         return this.json.optString("type", null);
     }

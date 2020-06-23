@@ -428,19 +428,13 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
                     // we cannot meaningfully raise an alert on any one file, except perhaps the
                     // file on which the attack was launched.
                     // it's the least worst way of doing it, IMHO.
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            getName(),
-                            getDescription(),
-                            getBaseMsg().getRequestHeader().getURI().getURI(),
-                            null, // parameter being attacked: none.
-                            null, // attack
-                            new String(
-                                    disclosedData), // Constant.messages.getString("ascanbeta.sourcecodedisclosure.gitbased.extrainfo", filename, StringUtils.join(gitURIs,", ")),  	//extraInfo
-                            getSolution(),
-                            getEvidence(filename, gitURIs),
-                            originalMessage);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                            .setOtherInfo(new String(disclosedData))
+                            .setEvidence(getEvidence(filename, gitURIs))
+                            .setMessage(originalMessage)
+                            .raise();
                     return true;
                 }
                 // does not match the extension

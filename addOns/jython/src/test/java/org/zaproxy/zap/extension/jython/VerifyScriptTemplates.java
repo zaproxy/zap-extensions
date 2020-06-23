@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.script.Compilable;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.python.core.Options;
 import org.python.jsr223.PyScriptEngineFactory;
 import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
@@ -34,7 +34,7 @@ public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
     private static Compilable se;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         Options.importSite = false;
         se = (Compilable) new PyScriptEngineFactory().getScriptEngine();

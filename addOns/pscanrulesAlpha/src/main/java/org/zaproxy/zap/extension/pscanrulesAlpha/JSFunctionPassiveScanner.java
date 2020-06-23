@@ -45,12 +45,12 @@ public class JSFunctionPassiveScanner extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.jsfunction.";
 
-    public static final String FUNC_LIST_DIR = "xml";
+    public static final String FUNC_LIST_DIR = "txt";
     public static final String FUNC_LIST_FILE = "js-function-list.txt";
     private static final Logger LOGGER = Logger.getLogger(JSFunctionPassiveScanner.class);
     private static final int PLUGIN_ID = 10110;
 
-    public static final List<String> DEFAULT_FUNCTIONS = Collections.emptyList();;
+    public static final List<String> DEFAULT_FUNCTIONS = Collections.emptyList();
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
             () -> DEFAULT_FUNCTIONS;
     public static final String JS_FUNCTION_PAYLOAD_CATEGORY = "JS-Function";

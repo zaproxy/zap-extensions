@@ -66,12 +66,14 @@ public class BugTrackerGithub extends BugTracker {
         initializeConfigTable();
     }
 
+    @Override
     public void setDetails(Set<Alert> alerts) {
         setTitle(alerts);
         setBody(alerts);
         setLabels(alerts);
     }
 
+    @Override
     public void setDialog(RaiseSemiAutoIssueDialog dialog) {
         this.dialog = dialog;
     }
@@ -80,10 +82,12 @@ public class BugTrackerGithub extends BugTracker {
         githubPanel = new BugTrackerGithubMultipleOptionsPanel(getGithubModel());
     }
 
+    @Override
     public JPanel getConfigPanel() {
         return githubPanel;
     }
 
+    @Override
     public void createDialogs() {
         List<BugTrackerGithubConfigParams> configs = getOptions().getConfigs();
         Set<String> collaborators = new HashSet<String>();
@@ -357,6 +361,7 @@ public class BugTrackerGithub extends BugTracker {
         }
     }
 
+    @Override
     public String raise(RaiseSemiAutoIssueDialog dialog) {
         String repo, title, body, labels, assignee, username, password, configGithub;
         repo = dialog.getStringValue(FIELD_REPO);
@@ -412,10 +417,12 @@ public class BugTrackerGithub extends BugTracker {
         }
     }
 
+    @Override
     public String getName() {
         return NAME;
     }
 
+    @Override
     public String getId() {
         return NAME.toLowerCase();
     }
@@ -544,6 +551,7 @@ public class BugTrackerGithub extends BugTracker {
 
     private BugTrackerGithubOptionsPanel optionsPanel;
 
+    @Override
     public BugTrackerGithubOptionsPanel getOptionsPanel() {
         if (optionsPanel == null) {
             optionsPanel = new BugTrackerGithubOptionsPanel();

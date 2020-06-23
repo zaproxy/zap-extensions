@@ -1016,18 +1016,11 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
                         String extraInfo =
                                 Constant.messages.getString(
                                         MESSAGE_PREFIX + "extrainfo", tlsNames[tlsIndex]);
-                        bingo(
-                                getRisk(),
-                                Alert.CONFIDENCE_MEDIUM,
-                                getName(),
-                                getDescription(),
-                                getBaseMsg().getRequestHeader().getURI().getURI(),
-                                "", // param
-                                "", // attack
-                                extraInfo,
-                                getSolution(),
-                                "", // evidence
-                                getBaseMsg());
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setOtherInfo(extraInfo)
+                                .setMessage(getBaseMsg())
+                                .raise();
                     }
                     if (is != null) is.close();
                     if (os != null) os.close();

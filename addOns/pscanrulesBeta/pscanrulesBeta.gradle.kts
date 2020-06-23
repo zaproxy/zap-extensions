@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "22"
+version = "23"
 description = "The beta quality Passive Scanner rules"
 
 zapAddOn {
@@ -21,7 +21,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.3")
+    implementation("com.google.re2j:re2j:1.4")
 
     compileOnly(parent!!.childProjects.get("commonlib")!!)
 

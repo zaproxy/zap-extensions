@@ -76,6 +76,31 @@ public class MessageLocationReplacers {
         }
     }
 
+    private static <T> T getFactory(
+            Map<Class<? extends MessageLocation>, T> factories, Class<?> clazz) {
+        if (!MessageLocation.class.isAssignableFrom(clazz)) {
+            return null;
+        }
+
+        T factory = factories.get(clazz);
+        if (factory != null) {
+            return factory;
+        }
+
+        factory = getFactory(factories, clazz.getSuperclass());
+        if (factory != null) {
+            return factory;
+        }
+
+        for (Class<?> interfaceClazz : clazz.getInterfaces()) {
+            factory = getFactory(factories, interfaceClazz);
+            if (factory != null) {
+                return factory;
+            }
+        }
+        return null;
+    }
+
     public <T extends Message, T1 extends MessageLocation> MessageLocationReplacer<T> getMLR(
             Class<T> messageClass, Class<T1> messageLocationClass) {
 
@@ -84,7 +109,7 @@ public class MessageLocationReplacers {
         if (replacers != null) {
             @SuppressWarnings("unchecked")
             MessageLocationReplacerFactory<T> replacerFactory =
-                    (MessageLocationReplacerFactory<T>) replacers.get(messageLocationClass);
+                    (MessageLocationReplacerFactory<T>) getFactory(replacers, messageLocationClass);
             return replacerFactory.createReplacer();
         }
 

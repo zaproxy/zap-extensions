@@ -61,7 +61,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
     private javax.swing.JToolBar panelToolbar = null;
     private JLabel filterStatus = null;
     private int foundCount = 0;
-    private JLabel foundLabel = new JLabel();;
+    private JLabel foundLabel = new JLabel();
     private ExtensionAjax extension = null;
     private SpiderThread runnable = null;
     private JButton stopScanButton;

@@ -19,12 +19,12 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.commons.httpclient.URI;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -35,7 +35,7 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
     private static final String MESSAGE_PREFIX = "pscanalpha.featurepolicymissing.";
     private HttpMessage msg;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));

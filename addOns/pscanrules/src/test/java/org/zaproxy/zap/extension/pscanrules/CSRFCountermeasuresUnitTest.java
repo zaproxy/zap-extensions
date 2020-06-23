@@ -19,16 +19,16 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
@@ -42,14 +42,16 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest<CSRFCounterm
     private List<String> antiCsrfTokenNames;
     private HttpMessage msg;
 
-    @Before
+    @BeforeEach
     public void before() throws URIException {
         antiCsrfTokenNames = new ArrayList<>();
         antiCsrfTokenNames.add("token");
         antiCsrfTokenNames.add("csrfToken");
 
         extensionAntiCSRFMock = mock(ExtensionAntiCSRF.class);
-        when(extensionAntiCSRFMock.getAntiCsrfTokenNames()).thenReturn(antiCsrfTokenNames);
+        Mockito.lenient()
+                .when(extensionAntiCSRFMock.getAntiCsrfTokenNames())
+                .thenReturn(antiCsrfTokenNames);
 
         rule.setExtensionAntiCSRF(extensionAntiCSRFMock);
         rule.setCsrfIgnoreList("");

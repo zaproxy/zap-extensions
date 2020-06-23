@@ -62,11 +62,13 @@ public class BugTrackerBugzilla extends BugTracker {
 
     private static final Logger log = Logger.getLogger(BugTrackerBugzilla.class);
 
+    @Override
     public void setDetails(Set<Alert> alerts) {
         setSummary(alerts);
         setDesc(alerts);
     }
 
+    @Override
     public void setDialog(RaiseSemiAutoIssueDialog dialog) {
         this.dialog = dialog;
     }
@@ -79,10 +81,12 @@ public class BugTrackerBugzilla extends BugTracker {
         bugzillaPanel = new BugTrackerBugzillaMultipleOptionsPanel(getBugzillaModel());
     }
 
+    @Override
     public JPanel getConfigPanel() {
         return bugzillaPanel;
     }
 
+    @Override
     public void createDialogs() {
         dialog.setXWeights(0.1D, 0.9D);
         List<BugTrackerBugzillaConfigParams> configs = getOptions().getConfigs();
@@ -292,6 +296,7 @@ public class BugTrackerBugzilla extends BugTracker {
         }
     }
 
+    @Override
     public String raise(RaiseSemiAutoIssueDialog dialog) {
         String url,
                 summary,
@@ -353,10 +358,12 @@ public class BugTrackerBugzilla extends BugTracker {
         }
     }
 
+    @Override
     public String getName() {
         return NAME;
     }
 
+    @Override
     public String getId() {
         return NAME.toLowerCase();
     }
@@ -486,6 +493,7 @@ public class BugTrackerBugzilla extends BugTracker {
 
     private BugTrackerBugzillaOptionsPanel optionsPanel;
 
+    @Override
     public BugTrackerBugzillaOptionsPanel getOptionsPanel() {
         if (optionsPanel == null) {
             optionsPanel = new BugTrackerBugzillaOptionsPanel();

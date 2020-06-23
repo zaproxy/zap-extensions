@@ -235,15 +235,13 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
                                     "Not reporting alert - same title as original: "
                                             + matcher.group());
                         } else {
-                            bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    null,
-                                    param,
-                                    prefix + target,
-                                    null,
-                                    matcher.group(),
-                                    msg);
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setParam(param)
+                                    .setAttack(prefix + target)
+                                    .setEvidence(matcher.group())
+                                    .setMessage(msg)
+                                    .raise();
                             // All done. No need to look for vulnerabilities on subsequent
                             // parameters on the same request (to reduce performance impact)
                             return;

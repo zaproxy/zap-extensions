@@ -59,7 +59,7 @@ public class ReportExportPDF {
         LEFT,
         RIGHT,
         CENTRE
-    };
+    }
 
     private static final PDRectangle pageSize = PDPage.PAGE_SIZE_A4;
 

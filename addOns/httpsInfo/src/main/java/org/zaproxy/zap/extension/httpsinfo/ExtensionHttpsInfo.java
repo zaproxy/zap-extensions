@@ -130,11 +130,6 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("httpsinfo.desc");
     }

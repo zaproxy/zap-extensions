@@ -120,6 +120,7 @@ public class AddAttributeUI extends JFrame {
         JButton btnNewButton = new JButton(SamlI18n.getMessage("saml.addattrib.button.saveexit"));
         btnNewButton.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         String error = "";
                         if (textFieldAttributeName.getText().equals("")) {
@@ -172,6 +173,7 @@ public class AddAttributeUI extends JFrame {
         JButton btnCancel = new JButton(SamlI18n.getMessage("saml.addattrib.button.cancel"));
         btnCancel.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         int response =
                                 JOptionPane.showConfirmDialog(

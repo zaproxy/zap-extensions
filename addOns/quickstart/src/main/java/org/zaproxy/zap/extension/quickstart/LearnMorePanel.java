@@ -132,6 +132,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
                     qsLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     qsLabel.addMouseListener(
                             new MouseAdapter() {
+                                @Override
                                 public void mouseClicked(MouseEvent e) {
                                     try {
                                         Desktop.getDesktop().open(finalGuide);
@@ -162,6 +163,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
                     helpLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     helpLabel.addMouseListener(
                             new MouseAdapter() {
+                                @Override
                                 public void mouseClicked(MouseEvent e) {
                                     ExtensionHelp.showHelp();
                                 }
@@ -246,6 +248,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         label.addMouseListener(
                 new MouseAdapter() {
+                    @Override
                     public void mouseClicked(MouseEvent e) {
                         DesktopUtils.openUrlInBrowser(url);
                     }

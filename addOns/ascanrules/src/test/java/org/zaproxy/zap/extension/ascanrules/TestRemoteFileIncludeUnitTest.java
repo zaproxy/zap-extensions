@@ -19,12 +19,12 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
 import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.model.Tech;
@@ -47,6 +47,7 @@ public class TestRemoteFileIncludeUnitTest
         // Given
         NullByteVulnerableServerHandler vulnServerHandler =
                 new NullByteVulnerableServerHandler("/", "p", Tech.Linux) {
+                    @Override
                     protected String getContent(IHTTPSession session) {
                         String value = getFirstParamValue(session, "p");
                         if (value.contains(NULL_BYTE_CHARACTER)) {

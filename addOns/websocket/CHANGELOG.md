@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Correctly handle API request without parameters.
+- Fixed an exception which was occurring when the tab was shown when a handshake response was first encountered during a ZAP session.
 
 ## [21] - 2020-01-17
 ### Added

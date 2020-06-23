@@ -171,22 +171,19 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
                 }
 
                 // bingo.
-                bingo(
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        Constant.messages.getString(
-                                "ascanbeta.remotecodeexecution.cve-2012-1823.name"),
-                        Constant.messages.getString(
-                                "ascanbeta.remotecodeexecution.cve-2012-1823.desc"),
-                        null, // originalMessage.getRequestHeader().getURI().getURI(),
-                        null, // parameter being attacked: none.
-                        payload, // attack: none (it's not a parameter being attacked)
-                        responseBody, // extrainfo
-                        Constant.messages.getString(
-                                "ascanbeta.remotecodeexecution.cve-2012-1823.soln"),
-                        responseBody, // evidence, highlighted in the message
-                        attackmsg // raise the alert on the attack message
-                        );
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setDescription(
+                                Constant.messages.getString(
+                                        "ascanbeta.remotecodeexecution.cve-2012-1823.desc"))
+                        .setAttack(payload)
+                        .setOtherInfo(responseBody)
+                        .setSolution(
+                                Constant.messages.getString(
+                                        "ascanbeta.remotecodeexecution.cve-2012-1823.soln"))
+                        .setEvidence(responseBody)
+                        .setMessage(attackmsg)
+                        .raise();
                 return true;
             }
         } catch (Exception e) {

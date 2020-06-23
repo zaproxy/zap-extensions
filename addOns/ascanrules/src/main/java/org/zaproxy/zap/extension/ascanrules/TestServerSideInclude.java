@@ -150,15 +150,13 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
             StringBuilder evidence = new StringBuilder();
             if (matchBodyPattern(message, testEvidence, evidence)) {
-                bingo(
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        null,
-                        parameter,
-                        value,
-                        null,
-                        evidence.toString(),
-                        message);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam(parameter)
+                        .setAttack(value)
+                        .setEvidence(evidence.toString())
+                        .setMessage(message)
+                        .raise();
                 return true;
             }
         } catch (IOException e) {

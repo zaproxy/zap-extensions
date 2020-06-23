@@ -19,10 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -182,10 +183,8 @@ public class CookieLooselyScopedScannerUnitTest
         msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=com");
 
-        // When
-        scanHttpResponseReceive(msg);
-
-        // Then = No exception.
+        // When / Then
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
     }
 
     @Test
@@ -196,9 +195,7 @@ public class CookieLooselyScopedScannerUnitTest
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=subdomain.intranet");
 
-        // When
-        scanHttpResponseReceive(msg);
-
-        // Then = No exception.
+        // When / Then
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
     }
 }

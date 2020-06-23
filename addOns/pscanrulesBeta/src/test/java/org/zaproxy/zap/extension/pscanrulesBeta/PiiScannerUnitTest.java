@@ -19,23 +19,59 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-import org.junit.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-/**
- * Unit test for {@link PiiScanner}.
- *
- * @see PiiScannerCreditCardUnitTest
- */
+/** Unit test for {@link PiiScanner}. */
 public class PiiScannerUnitTest extends PassiveScannerTest<PiiScanner> {
 
     @Override
     protected PiiScanner createScanner() {
         return new PiiScanner();
+    }
+
+    private static Stream<Arguments> cardData() {
+        return Stream.of(
+                arguments("AmericanExpress", "370695954010459"),
+                arguments("AmericanExpress with spaces", "370 6959 5401 0459"),
+                arguments("DinersClub", "30538761461899"),
+                arguments("Discover", "6011377412263580"),
+                arguments("Jcb", "3589738566381370"),
+                arguments("Maestro", "6762355337694692"),
+                arguments("Mastercard", "5264810966944441"),
+                arguments("Mastercard with spaces", "5264 8109 66944441"),
+                arguments("Visa", "4716186978544330"),
+                arguments("Visa with spaces", "4716 1869 7854 4330"));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("cardData")
+    public void shouldRaiseAlertWhenCreditCardIsDetected(String cardName, String cardNumber)
+            throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
+        msg.setResponseBody("{\"cc\": \"" + cardNumber + "\"}");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getName(), equalTo("PII Disclosure"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(cardNumber.replaceAll("\\s+", "")));
     }
 
     @Test
@@ -45,9 +81,8 @@ public class PiiScannerUnitTest extends PassiveScannerTest<PiiScanner> {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseBody(numbers(15000));
-        // When
-        scanHttpResponseReceive(msg);
-        // Then = No StackOverflowError
+        // When / Then
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
     }
 
     @Test

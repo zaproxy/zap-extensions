@@ -355,7 +355,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         if (this.newsPanel != null) {
             this.showNews(newsItem);
         }
-    };
+    }
 
     class CloseButton extends JButton {
         private static final long serialVersionUID = 1L;

@@ -58,7 +58,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         PAUSED,
         STOPPED,
         FINISHED
-    };
+    }
 
     protected final Logger logger = Logger.getLogger(getClass());
 

@@ -46,6 +46,8 @@ import javax.swing.text.JTextComponent;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.OptionsChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractFrame;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessors;
@@ -54,7 +56,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 
-public class EncodeDecodeDialog extends AbstractFrame {
+public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedListener {
 
     public static final String ENCODE_DECODE_FIELD = "EncodeDecodeInputField";
     public static final String ENCODE_DECODE_RESULTFIELD = "EncodeDecodeResultField";
@@ -444,8 +446,7 @@ public class EncodeDecodeDialog extends AbstractFrame {
                         title,
                         TitledBorder.DEFAULT_JUSTIFICATION,
                         TitledBorder.DEFAULT_POSITION,
-                        FontUtils.getFont(FontUtils.Size.standard),
-                        java.awt.Color.black));
+                        FontUtils.getFont(FontUtils.Size.standard)));
 
         parent.add(jsp, gbc);
     }
@@ -649,6 +650,11 @@ public class EncodeDecodeDialog extends AbstractFrame {
         } catch (Exception e) {
             LOGGER.error("Can not store Encoder Config", e);
         }
+    }
+
+    @Override
+    public void optionsChanged(OptionsParam optionsParam) {
+        updateEncodeDecodeFields();
     }
 
     private static class OutputPanelPosition {

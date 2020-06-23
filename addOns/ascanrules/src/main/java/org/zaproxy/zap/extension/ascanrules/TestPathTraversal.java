@@ -544,14 +544,12 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         // raise an alert
                         // since the filename has likely been picked up and used as a file name from
                         // the parameter
-                        bingo(
-                                Alert.RISK_HIGH,
-                                Alert.CONFIDENCE_MEDIUM,
-                                null,
-                                param,
-                                prefixedUrlfilename,
-                                null,
-                                msg);
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setParam(param)
+                                .setAttack(prefixedUrlfilename)
+                                .setMessage(msg)
+                                .raise();
 
                         // All done. No need to look for vulnerabilities on subsequent parameters
                         // on the same request (to reduce performance impact)
@@ -674,15 +672,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
         // if the output matches, and we get a 200
         if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) && match != null) {
-            bingo(
-                    Alert.RISK_HIGH,
-                    Alert.CONFIDENCE_MEDIUM,
-                    null,
-                    param,
-                    newValue,
-                    null,
-                    match,
-                    msg);
+            newAlert()
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setParam(param)
+                    .setAttack(newValue)
+                    .setEvidence(match)
+                    .setMessage(msg)
+                    .raise();
 
             // All done. No need to look for vulnerabilities on subsequent parameters
             // on the same request (to reduce performance impact)

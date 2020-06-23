@@ -180,21 +180,15 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     }
 
     private void raiseAlert(HttpMessage msg, int confidence, int risk, HiddenFile file) {
-        bingo(
-                risk, // Risk
-                confidence, // Confidence
-                getAlertName(), // Name
-                getDescription(), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                null, // Param
-                "", // Attack
-                getOtherInfo(file.getType()), // OtherInfo
-                getSolution(), // Solution
-                msg.getResponseHeader().getPrimeHeader(), // Evidence
-                getReferences(file), // References
-                getCweId(), // CWE ID
-                getWascId(), // WASC ID
-                msg); // HTTPMessage
+        newAlert()
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setName(getAlertName())
+                .setOtherInfo(getOtherInfo(file.getType()))
+                .setEvidence(msg.getResponseHeader().getPrimeHeader())
+                .setReference(getReferences(file))
+                .setMessage(msg)
+                .raise();
     }
 
     @Override

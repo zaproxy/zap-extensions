@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import org.apache.commons.httpclient.URI;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -39,7 +39,7 @@ public class BigRedirectsScannerUnitTest extends PassiveScannerTest<BigRedirects
 
     private HttpMessage msg;
 
-    @Before
+    @BeforeEach
     public void createHttpMessage() throws IOException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI(URI, false));

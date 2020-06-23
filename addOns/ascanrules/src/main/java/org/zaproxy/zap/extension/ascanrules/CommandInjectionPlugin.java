@@ -194,7 +194,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // Special payloads
         NIX_OS_PAYLOADS.put("||" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("&&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
-    };
+    }
 
     // Coefficient used for a time-based query delay checking (must be >= 7)
     private static final int TIME_STDEV_COEFF = 7;
@@ -264,7 +264,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         NIX_BLIND_OS_PAYLOADS.add("||" + insertedCMD);
         NIX_BLIND_OS_PAYLOADS.add("&&" + insertedCMD);
         NIX_BLIND_OS_PAYLOADS.add("|" + insertedCMD + "#");
-    };
+    }
 
     // Logger instance
     private static final Logger log = Logger.getLogger(CommandInjectionPlugin.class);
@@ -598,16 +598,13 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                                         + "]");
                     }
 
-                    // Now create the alert message
-                    this.bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            msg.getRequestHeader().getURI().toString(),
-                            paramName,
-                            paramValue,
-                            null,
-                            matcher.group(),
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(paramName)
+                            .setAttack(paramValue)
+                            .setEvidence(matcher.group())
+                            .setMessage(msg)
+                            .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)
@@ -700,16 +697,12 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                                         + "]");
                     }
 
-                    // Now create the alert message
-                    this.bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            msg.getRequestHeader().getURI().toString(),
-                            paramName,
-                            paramValue,
-                            null,
-                            null,
-                            msg);
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(paramName)
+                            .setAttack(paramValue)
+                            .setMessage(msg)
+                            .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)

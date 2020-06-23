@@ -99,21 +99,14 @@ public class HttpOnlySite extends AbstractHostPlugin {
         String newUri = newRequest.getRequestHeader().getURI().toString();
         String otherInfoDetail =
                 Constant.messages.getString(MESSAGE_PREFIX + "otherinfo." + message);
-        bingo(
-                getRisk(), // Risk
-                Alert.CONFIDENCE_MEDIUM, // Confidence/Reliability
-                getName(), // Name
-                getDescription(), // Description
-                getBaseMsg().getRequestHeader().getURI().toString(), // Original URI
-                null, // Param
-                "", // Attack
-                Constant.messages.getString(
-                        MESSAGE_PREFIX + "otherinfo", otherInfoDetail, newUri), // OtherInfo
-                getSolution(), // Solution
-                "", // Evidence
-                getCweId(), // CWE ID
-                getWascId(), // WASC ID
-                newRequest); // HTTPMessage
+        newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "otherinfo", otherInfoDetail, newUri))
+                .setMessage(newRequest)
+                .raise();
     }
 
     public URI constructURI(String redirect, URI oldURI) {

@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
@@ -67,6 +69,10 @@ public class BodyGenerator {
                     });
 
     public String generate(Schema<?> schema) {
+        if (schema == null) {
+            return "";
+        }
+
         boolean isArray = schema instanceof ArraySchema;
         if (LOG.isDebugEnabled()) {
             LOG.debug("Generate body for object " + schema.getName());
@@ -100,9 +106,21 @@ public class BodyGenerator {
     }
 
     private String generateFromArraySchema(ArraySchema schema) {
-        StringBuilder json = new StringBuilder();
-        json.append(generate(schema.getItems()));
-        return createJsonArrayWith(json.toString());
+        if (schema.getExample() instanceof String) {
+            return (String) schema.getExample();
+        }
+
+        if (schema.getExample() instanceof Iterable) {
+            try {
+                return Json.mapper().writeValueAsString(schema.getExample());
+            } catch (JsonProcessingException e) {
+                LOG.warn(
+                        "Failed to encode Example Object. Falling back to default example generation",
+                        e);
+            }
+        }
+
+        return createJsonArrayWith(generate(schema.getItems()));
     }
 
     @SuppressWarnings("rawtypes")

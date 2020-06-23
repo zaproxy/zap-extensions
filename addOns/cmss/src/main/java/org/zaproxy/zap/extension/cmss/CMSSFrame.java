@@ -117,6 +117,7 @@ public class CMSSFrame extends JFrame {
         final JCheckBox chckbxGetVersion = new JCheckBox("Get version");
         chckbxGetVersion.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
 
                         if (textField_1.isEnabled() && !chckbxGetVersion.isSelected())
@@ -131,6 +132,7 @@ public class CMSSFrame extends JFrame {
         final JCheckBox chckbxPassiveFingerprinting = new JCheckBox("Passive");
         chckbxPassiveFingerprinting.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {}
                 });
         chckbxPassiveFingerprinting.setBounds(35, 107, 195, 23);
@@ -177,6 +179,7 @@ public class CMSSFrame extends JFrame {
         JButton btnMore = new JButton("More");
         btnMore.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         wtfpFrame = new WhatToFingerPrintFrame();
                         wtfpFrame.setLocationRelativeTo(null);
@@ -193,6 +196,7 @@ public class CMSSFrame extends JFrame {
         JButton btnFingerprint = new JButton("Fingerprint");
         btnFingerprint.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         if (!chckbxPassiveFingerprinting.isSelected()
                                 && !chckbxAgressive.isSelected())
@@ -278,6 +282,7 @@ public class CMSSFrame extends JFrame {
         JButton btnDetailedView = new JButton("Detailed view ");
         btnDetailedView.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {}
                 });
         btnDetailedView.setBounds(35, 259, 195, 23);

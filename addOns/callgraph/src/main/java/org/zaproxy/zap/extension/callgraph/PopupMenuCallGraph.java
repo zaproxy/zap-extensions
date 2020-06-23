@@ -50,7 +50,7 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
     private static enum NodeType {
         ALL_SITES,
         ONE_SITE
-    };
+    }
 
     public PopupMenuCallGraph() {
         super(POPUP_MENU_LABEL);

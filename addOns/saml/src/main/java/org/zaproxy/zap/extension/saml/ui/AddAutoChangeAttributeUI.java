@@ -19,13 +19,26 @@
  */
 package org.zaproxy.zap.extension.saml.ui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.saml.*;
+import org.zaproxy.zap.extension.saml.Attribute;
+import org.zaproxy.zap.extension.saml.PassiveAttributeChangeListener;
+import org.zaproxy.zap.extension.saml.SAMLConfiguration;
+import org.zaproxy.zap.extension.saml.SamlI18n;
 
 public class AddAutoChangeAttributeUI extends JDialog {
 

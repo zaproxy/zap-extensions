@@ -240,15 +240,13 @@ public class Csrftokenscan extends AbstractAppPlugin {
                                     Constant.messages.getString(
                                             MESSAGE_PREFIX + "extrainfo.annotation");
                         }
-                        bingo(
-                                risk,
-                                Alert.CONFIDENCE_MEDIUM,
-                                getBaseMsg().getRequestHeader().getURI().toString(),
-                                "", // No param
-                                "", // No attack
-                                otherInfo,
-                                evidence,
-                                getBaseMsg());
+                        newAlert()
+                                .setRisk(risk)
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setOtherInfo(otherInfo)
+                                .setEvidence(evidence)
+                                .setMessage(getBaseMsg())
+                                .raise();
                     }
                 }
 

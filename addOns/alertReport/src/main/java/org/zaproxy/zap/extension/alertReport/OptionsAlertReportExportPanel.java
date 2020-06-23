@@ -265,7 +265,6 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 0, 0, 0);
-        ;
         gbc.gridwidth = 2;
         gbc.gridheight = 4;
         return gbc;

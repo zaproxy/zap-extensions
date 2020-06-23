@@ -134,14 +134,14 @@ public class BufferOverflow extends AbstractAppParamPlugin {
             if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR
                     && chkerrorheader.contains(checkStringHeader1)) {
                 log.debug("Found Header");
-                bingo(
-                        getRisk(),
-                        Alert.CONFIDENCE_MEDIUM,
-                        this.getBaseMsg().getRequestHeader().getURI().toString(),
-                        param,
-                        msg.getRequestHeader().toString(),
-                        this.getOther(),
-                        msg);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setUri(this.getBaseMsg().getRequestHeader().getURI().toString())
+                        .setParam(param)
+                        .setEvidence(msg.getRequestHeader().toString())
+                        .setOtherInfo(getOther())
+                        .setMessage(msg)
+                        .raise();
                 return;
             }
 

@@ -646,20 +646,14 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
                 }
 
                 // alert it..
-                bingo(
-                        getRisk(),
-                        Alert.CONFIDENCE_MEDIUM,
-                        getName(),
-                        getDescription(),
-                        getBaseMsg().getRequestHeader().getURI().getURI(),
-                        null, // parameter being attacked: none.
-                        hackedUri.getURI(), // the attack is the URL itself
-                        extraInfo,
-                        getSolution(),
-                        relativeReferenceEvidence,
-                        this.getCweId(),
-                        this.getWascId(),
-                        hackedMessage);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
+                        .setAttack(hackedUri.getURI())
+                        .setOtherInfo(extraInfo)
+                        .setEvidence(relativeReferenceEvidence)
+                        .setMessage(hackedMessage)
+                        .raise();
 
                 if (log.isDebugEnabled()) {
                     log.debug(

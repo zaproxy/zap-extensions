@@ -49,7 +49,7 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
         HEADER_METACHARSET_MISMATCH,
         METACONTENTTYPE_METACHARSET_MISMATCH,
         XML_MISMATCH
-    };
+    }
 
     @Override
     public String getName() {

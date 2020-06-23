@@ -19,17 +19,18 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class WSDLFilePassiveScannerTestCase {
     private HttpMessage wsdlMsg = new HttpMessage();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         try {
             wsdlMsg = Sample.setRequestHeaderContent(wsdlMsg);

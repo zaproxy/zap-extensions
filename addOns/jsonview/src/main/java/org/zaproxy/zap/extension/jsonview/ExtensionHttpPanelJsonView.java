@@ -39,11 +39,6 @@ public class ExtensionHttpPanelJsonView extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionHttpPanelJsonView";
 
-    @Override
-    public String getAuthor() {
-        return "Juha Kivekäs";
-    }
-
     public ExtensionHttpPanelJsonView() {
         super(NAME);
     }

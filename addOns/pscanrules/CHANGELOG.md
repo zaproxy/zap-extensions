@@ -4,13 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [29] - 2020-06-01
 ### Changed
 - Updated owasp.org references (Issue 5962).
+- Correct spelling of "frame-ancestors" in the alert details of the CSP scan rule wildcard directive check (Issue 6014).
 
 ## [28] - 2020-04-08
 
 ### Changed
-- 'CSP Scanner' rule upgrade salvation library to v2.7.1.
+- 'CSP Scanner' rule upgrade salvation library to v2.7.2.
 - 'CSP Scanner' rule now merges (intersects) multiple CSP header fields to more accurately evaluate policies and prevent parsing issues (Issue 5931).
 - 'X-Frame-Options Header Scanner' replace now invalid MSDN reference link with MDN link on X-Frame-Options (Issue 5867).
 - 'Information Disclosure Referrer' scan rule added support for looking up evidence against an Open Source Bank Identification Number List. Confidence is now modified based on whether the lookup is successful or not. Additional details are added to 'Other Info' if available (Issue 5842).
@@ -187,6 +191,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[29]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v26

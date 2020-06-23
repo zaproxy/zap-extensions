@@ -136,7 +136,12 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
             // For this example we're just going to raise the alert at random!
 
             if (rnd.nextInt(10) == 0) {
-                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, value, null, msg);
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam(param)
+                        .setAttack(value)
+                        .setMessage(msg)
+                        .raise();
                 return;
             }
 

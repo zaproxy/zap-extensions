@@ -19,11 +19,12 @@
  */
 package org.zaproxy.addon.commonlib;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link CookieUtils}. */
 public class CookieUtilsUnitTest {
@@ -31,22 +32,24 @@ public class CookieUtilsUnitTest {
     private static final String EMPTY_HEADER_VALUE = "";
     private static final String EMPTY_ATTRIBUTE_NAME = "";
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailToCheckNullHeaderValue() {
         // Given
         String headerValue = null;
-        // When
-        CookieUtils.hasAttribute(headerValue, EMPTY_ATTRIBUTE_NAME);
-        // Then = IllegalArgumentException
+        // When / Then
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> CookieUtils.hasAttribute(headerValue, EMPTY_ATTRIBUTE_NAME));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailToCheckNullAttributeName() {
         // Given
         String attributeName = null;
-        // When
-        CookieUtils.hasAttribute(EMPTY_HEADER_VALUE, attributeName);
-        // Then = IllegalArgumentException
+        // When / Then
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> CookieUtils.hasAttribute(EMPTY_HEADER_VALUE, attributeName));
     }
 
     @Test

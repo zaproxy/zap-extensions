@@ -19,14 +19,15 @@
  */
 package org.zaproxy.zap.extension.websocket.treemap.nodes;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
@@ -46,7 +47,7 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
     private WebSocketSimpleNodeNamer namer;
     private static URI defaultHostName;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUpMessages();
 
@@ -76,9 +77,9 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
                         hostNode, new MessageContent(namer, getTextOutgoingMessage("TestMessage")));
 
         // Then
-        Assert.assertEquals(rootFolder.getChildren().get(0), hostNode);
-        Assert.assertEquals(hostNode.getParent(), rootFolder);
-        Assert.assertEquals(hostNode.getChildren().get(0), messageNode);
+        assertEquals(rootFolder.getChildren().get(0), hostNode);
+        assertEquals(hostNode.getParent(), rootFolder);
+        assertEquals(hostNode.getChildren().get(0), messageNode);
     }
 
     @Test
@@ -94,7 +95,7 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
         WebSocketNode messageNode = new WebSocketNode(hostNode, new MessageContent(namer, message));
 
         // Then
-        Assert.assertEquals(messageNode.getMessage().id, message.id);
+        assertEquals(messageNode.getMessage().id, message.id);
     }
 
     @Test
@@ -124,8 +125,8 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
 
         // Then
         for (int i = 0; i < expectedMessages.size(); i++) {
-            Assert.assertEquals(expectedMessages.get(i).id, messagesFromRoot.get(i).id);
-            Assert.assertEquals(expectedMessages.get(i).id, messagesFromHost.get(i).id);
+            assertEquals(expectedMessages.get(i).id, messagesFromRoot.get(i).id);
+            assertEquals(expectedMessages.get(i).id, messagesFromHost.get(i).id);
         }
     }
 
@@ -144,6 +145,6 @@ public class WebSocketNodesUnitTest extends WebSocketAddonTestUtils {
         }
 
         // Then
-        Assert.assertThat(rootFolder.getHostNodes(new ArrayList<>()), is(expectedHostNodes));
+        assertThat(rootFolder.getHostNodes(new ArrayList<>()), is(expectedHostNodes));
     }
 }
