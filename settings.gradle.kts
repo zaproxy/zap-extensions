@@ -3,7 +3,6 @@ rootProject.name = "zap-extensions"
 val addOnsProjectName = "addOns"
 include(addOnsProjectName)
 include("testutils")
-include("sharedutils")
 
 // Keep the add-ons in alphabetic order.
 var addOns = listOf(
@@ -24,6 +23,7 @@ var addOns = listOf(
     "callgraph",
     "cmss",
     "codedx",
+    "commonlib",
     "coreLang",
     "custompayloads",
     "customreport",
@@ -32,6 +32,7 @@ var addOns = listOf(
     "directorylistv2_3",
     "directorylistv2_3_lc",
     "domxss",
+    "encoder",
     "exportreport",
     "formhandler",
     "frontendscanner",
@@ -60,6 +61,7 @@ var addOns = listOf(
     "regextester",
     "replacer",
     "requester",
+    "retire",
     "reveal",
     "revisit",
     "saml",

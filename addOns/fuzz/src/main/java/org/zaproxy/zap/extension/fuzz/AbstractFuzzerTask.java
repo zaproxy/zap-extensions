@@ -36,7 +36,7 @@ public abstract class AbstractFuzzerTask<M extends Message> implements Runnable 
         this.payloads = payloads;
     }
 
-    public long getIndex() {
+    public long getId() {
         return id;
     }
 

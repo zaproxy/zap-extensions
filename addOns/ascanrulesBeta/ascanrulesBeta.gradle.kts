@@ -11,6 +11,13 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/active-scan-rules-beta/")
+
+        dependencies {
+            addOns {
+                register("commonlib")
+            }
+        }
+
         extensions {
             register("org.zaproxy.zap.extension.ascanrulesBeta.payloader.ExtensionPayloader") {
                 classnames {
@@ -29,12 +36,13 @@ zapAddOn {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     implementation("org.jsoup:jsoup:1.13.1")
-    implementation(project(":sharedutils"))
 
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
     testImplementation("org.apache.commons:commons-lang3:3.9")

@@ -221,7 +221,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
             fuzzerTaskExecutor.execute(task);
             return true;
         } catch (RejectedExecutionException e) {
-            postTaskExecution(task.getIndex(), false);
+            postTaskExecution(task.getId(), false);
             logger.warn(
                     "Submitted task was rejected, fuzzer state: [stopped="
                             + isStopped()

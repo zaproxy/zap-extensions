@@ -25,10 +25,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CookieUtils;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.sharedutils.CookieUtils;
-import org.zaproxy.zap.sharedutils.SetCookieUtils;
 
 public class CookieSameSiteScanner extends PluginPassiveScanner {
 
@@ -67,8 +66,7 @@ public class CookieSameSiteScanner extends PluginPassiveScanner {
             if (CookieUtils.isExpired(cookie)) {
                 continue;
             }
-            String sameSiteVal =
-                    SetCookieUtils.getAttributeValue(cookie, SAME_SITE_COOKIE_ATTRIBUTE);
+            String sameSiteVal = CookieUtils.getAttributeValue(cookie, SAME_SITE_COOKIE_ATTRIBUTE);
             if (sameSiteVal == null) {
                 // Its missing
                 this.raiseAlert(msg, id, cookie, this.getDescription());
@@ -86,11 +84,11 @@ public class CookieSameSiteScanner extends PluginPassiveScanner {
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(description)
-                .setParam(SetCookieUtils.getCookieName(cookieHeaderValue))
+                .setParam(CookieUtils.getCookieName(cookieHeaderValue))
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(
-                        SetCookieUtils.getSetCookiePlusName(
+                        CookieUtils.getSetCookiePlusName(
                                 msg.getResponseHeader().toString(), cookieHeaderValue))
                 .setCweId(16) // CWE Id 16 - Configuration
                 .setWascId(13) // WASC Id - Info leakage
