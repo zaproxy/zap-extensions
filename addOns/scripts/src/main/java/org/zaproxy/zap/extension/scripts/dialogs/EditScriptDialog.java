@@ -19,13 +19,11 @@
  */
 package org.zaproxy.zap.extension.scripts.dialogs;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -33,6 +31,7 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 public class EditScriptDialog extends StandardFieldsDialog {
 
     private static final String FIELD_NAME = "scripts.dialog.script.label.name";
+    private static final String FIELD_ENGINE = "scripts.dialog.script.label.engine";
     private static final String FIELD_FILE = "scripts.dialog.script.label.file";
     private static final String FIELD_DESC = "scripts.dialog.script.label.desc";
     private static final String FIELD_LOAD = "scripts.dialog.script.label.load";
@@ -53,7 +52,8 @@ public class EditScriptDialog extends StandardFieldsDialog {
         if (script != null) {
             this.removeAllFields();
             this.addTextField(FIELD_NAME, script.getName());
-            this.addReadOnlyTextField(FIELD_FILE, "");
+            this.addTextFieldReadOnly(FIELD_ENGINE, getScriptEngineName());
+            this.addTextFieldReadOnly(FIELD_FILE, "");
             this.addMultilineField(FIELD_DESC, script.getDescription());
             this.addCheckBoxField(FIELD_LOAD, script.isLoadOnStart());
             if (script.getFile() != null) {
@@ -67,24 +67,12 @@ public class EditScriptDialog extends StandardFieldsDialog {
         this.addPadding();
     }
 
-    private void addReadOnlyTextField(String fieldLabel, String value) {
-        addTextField(fieldLabel, value);
-        JTextField textField = (JTextField) getField(FIELD_FILE);
-        textField.setEditable(false);
-        textField.setCursor(null);
-        textField.setBorder(null);
-        textField.setBackground(
-                new Color(
-                        UIManager.getLookAndFeel()
-                                .getDefaults()
-                                .getColor("Label.background")
-                                .getRGB()));
-        textField.setForeground(
-                new Color(
-                        UIManager.getLookAndFeel()
-                                .getDefaults()
-                                .getColor("Label.foreground")
-                                .getRGB()));
+    private String getScriptEngineName() {
+        ScriptEngineWrapper engine = script.getEngine();
+        if (engine != null) {
+            return engine.getLanguageName() + " : " + engine.getEngineName();
+        }
+        return script.getEngineName();
     }
 
     @Override
