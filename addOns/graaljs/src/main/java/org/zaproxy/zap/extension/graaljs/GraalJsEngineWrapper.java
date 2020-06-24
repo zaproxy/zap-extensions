@@ -25,10 +25,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 import javax.swing.ImageIcon;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.HostAccess;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -63,17 +63,21 @@ public class GraalJsEngineWrapper extends DefaultEngineWrapper {
                         .option("js.load", "true")
                         .option("js.print", "true")
                         .option("js.nashorn-compat", "true")
-                        .allowAllAccess(true)
-                        .allowHostAccess(
-                                HostAccess.newBuilder(HostAccess.ALL)
-                                        .targetTypeMapping(
-                                                Object.class,
-                                                String.class,
-                                                Objects::nonNull,
-                                                String::valueOf)
-                                        .build());
+                        .allowAllAccess(true);
 
-        return GraalJSScriptEngine.create(null, contextBuilder);
+        ScriptEngine se = GraalJSScriptEngine.create(null, contextBuilder);
+
+        // Force use of own (add-on) class loader
+        // https://github.com/graalvm/graaljs/issues/182
+        ClassLoader previousContextClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            se.eval("");
+        } catch (ScriptException ignore) {
+        } finally {
+            Thread.currentThread().setContextClassLoader(previousContextClassLoader);
+        }
+        return se;
     }
 
     @Override

@@ -23,7 +23,7 @@ zapAddOn {
 }
 
 dependencies {
-    val graalJsVersion = "19.3.1"
+    val graalJsVersion = "20.1.0"
     implementation("org.graalvm.js:js:$graalJsVersion")
     implementation("org.graalvm.js:js-scriptengine:$graalJsVersion")
 }
