@@ -41,13 +41,13 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /**
- * Active Plugin for SQL injection testing and verification.
+ * Active scan rule for SQL injection testing and verification.
  *
  * @author yhawke (2013)
  */
-public class SQLInjectionPlugin extends AbstractAppParamPlugin {
+public class SQLInjectionScanRule extends AbstractAppParamPlugin {
 
-    private static final String SCANNER_MESSAGE_PREFIX = "sqliplugin.scanner.";
+    private static final String SCANNER_MESSAGE_PREFIX = "sqliplugin.";
     private static final String ALERT_MESSAGE_PREFIX = SCANNER_MESSAGE_PREFIX + "alert.";
 
     // ------------------------------------------------------------------
@@ -97,7 +97,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     // Plugin internal properties
     // ---------------------------------------------------------
     // Logger instance
-    private static final Logger log = Logger.getLogger(SQLInjectionPlugin.class);
+    private static final Logger log = Logger.getLogger(SQLInjectionScanRule.class);
 
     // Generic SQL error pattern (used for boolean based checks)
     private static final Pattern errorPattern =
@@ -125,7 +125,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      * Create an empty plugin for SQLinjection active testing. Should be called by each constructor
      * for initial parameter setting.
      */
-    public SQLInjectionPlugin() {
+    public SQLInjectionScanRule() {
         responseTimes = new ArrayList<>();
         responseMatcher = new ResponseMatcher();
         lastRequestUID = 0;
@@ -247,8 +247,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     /**
      * Initialise the plugin according to general configuration settings. Note that this method gets
-     * called each time the scanner is called. TODO: set all parametres through interface plugin or
-     * a configuration file e.g. prefixes/suffixes or forced DBMS, etc.
+     * called each time the rule is called. TODO: set all parameters through interface plugin or a
+     * configuration file e.g. prefixes/suffixes or forced DBMS, etc.
      */
     @Override
     public void init() {
@@ -288,7 +288,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         }
 
         // Set plugin risk constraint:
-        // it's an active scanner so set it to the safest one
+        // it's an active scan rule so set it to the safest one
         // --------------------------
         // 0: No risk
         // 1: Low risk
