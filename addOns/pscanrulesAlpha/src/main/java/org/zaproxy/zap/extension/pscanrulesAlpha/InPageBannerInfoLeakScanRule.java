@@ -36,9 +36,9 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author kingthorin+owaspzap@gmail.com
  */
-public class InPageBannerInfoLeakScanner extends PluginPassiveScanner {
+public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
 
-    private static final Logger LOGGER = Logger.getLogger(InPageBannerInfoLeakScanner.class);
+    private static final Logger LOGGER = Logger.getLogger(InPageBannerInfoLeakScanRule.class);
     private static final int PLUGIN_ID = 10009;
     private static final String MESSAGE_PREFIX = "pscanalpha.inpagebanner.";
 
@@ -49,7 +49,7 @@ public class InPageBannerInfoLeakScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Only checking the response for this plugin
+        // Only checking the response for this scan rule
     }
 
     @Override

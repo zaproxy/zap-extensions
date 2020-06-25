@@ -33,7 +33,7 @@ import java.util.Base64;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
+public class JsoScanRuleUnitTest extends PassiveScannerTest<JsoScanRule> {
 
     /* Testing JSO in response */
     @Test
@@ -290,8 +290,8 @@ public class JsoScannerUnitTest extends PassiveScannerTest<JsoScanner> {
     }
 
     @Override
-    protected JsoScanner createScanner() {
-        return new JsoScanner();
+    protected JsoScanRule createScanner() {
+        return new JsoScanRule();
     }
 
     private static class AnObject implements Serializable {

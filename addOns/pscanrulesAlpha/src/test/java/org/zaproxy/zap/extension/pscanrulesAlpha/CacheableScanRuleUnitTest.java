@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 /* All test-cases should raise storeable and cacheable alerts
  * or should verfiy the absence of exceptions.
  */
-public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanner> {
+public class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
 
     private HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
@@ -68,17 +68,17 @@ public class CacheableScannerUnitTest extends PassiveScannerTest<CacheableScanne
     }
 
     @Override
-    protected CacheableScanner createScanner() {
-        return new CacheableScanner();
+    protected CacheableScanRule createScanner() {
+        return new CacheableScanRule();
     }
 
     @Test
     public void scannerNameShouldMatch() {
-        // Quick test to verify scanner name which is used in the policy dialog but not
+        // Quick test to verify scan rule name which is used in the policy dialog but not
         // alerts
 
         // Given
-        CacheableScanner thisScanner = createScanner();
+        CacheableScanRule thisScanner = createScanner();
         // Then
         assertThat(thisScanner.getName(), equalTo("Content Cacheability"));
     }

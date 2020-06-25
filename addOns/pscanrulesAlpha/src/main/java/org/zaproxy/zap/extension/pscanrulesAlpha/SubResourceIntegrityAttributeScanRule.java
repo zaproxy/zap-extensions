@@ -36,7 +36,7 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Detect missing attribute integrity in supported elements */
-public class SubResourceIntegrityAttributeScanner extends PluginPassiveScanner {
+public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner {
 
     private enum SupportedElements {
         // From

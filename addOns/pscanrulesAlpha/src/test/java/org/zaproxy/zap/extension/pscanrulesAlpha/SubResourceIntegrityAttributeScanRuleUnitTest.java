@@ -27,14 +27,14 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class SubResourceIntegrityAttributeScannerTest
-        extends PassiveScannerTest<SubResourceIntegrityAttributeScanner> {
+public class SubResourceIntegrityAttributeScanRuleUnitTest
+        extends PassiveScannerTest<SubResourceIntegrityAttributeScanRule> {
 
     @Override
-    protected SubResourceIntegrityAttributeScanner createScanner() {
-        SubResourceIntegrityAttributeScanner scanner = new SubResourceIntegrityAttributeScanner();
-        scanner.setConfig(new ZapXmlConfiguration());
-        return scanner;
+    protected SubResourceIntegrityAttributeScanRule createScanner() {
+        SubResourceIntegrityAttributeScanRule rule = new SubResourceIntegrityAttributeScanRule();
+        rule.setConfig(new ZapXmlConfiguration());
+        return rule;
     }
 
     @Test

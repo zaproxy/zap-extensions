@@ -31,8 +31,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-/** Java Serialized Objects (JSO) scanner. Detect the magic sequence and generate an alert */
-public class JsoScanner extends PluginPassiveScanner {
+/** Java Serialized Objects (JSO) scan rule. Detect the magic sequence and generate an alert */
+public class JsoScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.jso.";

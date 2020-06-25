@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 /* All test-cases should raise either non-storeable alerts
  * or storeable and non-cacheable alerts.
  */
-public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<CacheableScanner> {
+public class AlertsCacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
 
     private void assertNonStoreable(String expectedEvidence) {
         assertThat(alertsRaised.size(), equalTo(1));
@@ -50,8 +50,8 @@ public class AlertsCacheableScannerUnitTest extends PassiveScannerTest<Cacheable
     }
 
     @Override
-    protected CacheableScanner createScanner() {
-        return new CacheableScanner();
+    protected CacheableScanRule createScanner() {
+        return new CacheableScanRule();
     }
 
     @Test

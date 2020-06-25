@@ -38,11 +38,11 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunctionPassiveScanner> {
+public class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> {
 
     @Override
-    protected JSFunctionPassiveScanner createScanner() {
-        return new JSFunctionPassiveScanner();
+    protected JsFunctionScanRule createScanner() {
+        return new JsFunctionScanRule();
     }
 
     @Override
@@ -51,8 +51,8 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
 
         Path xmlDir =
                 Files.createDirectories(
-                        Paths.get(Constant.getZapHome(), JSFunctionPassiveScanner.FUNC_LIST_DIR));
-        Path testFile = xmlDir.resolve(JSFunctionPassiveScanner.FUNC_LIST_FILE);
+                        Paths.get(Constant.getZapHome(), JsFunctionScanRule.FUNC_LIST_DIR));
+        Path testFile = xmlDir.resolve(JsFunctionScanRule.FUNC_LIST_FILE);
         Files.write(testFile, Arrays.asList("# Test File", "bypassSecurityTrustHtml", "eval"));
     }
 
@@ -123,7 +123,7 @@ public class JSFunctionPassiveScannerUnitTest extends PassiveScannerTest<JSFunct
         String body = "Some text <script>$badFunction()</script>\nLine 2\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
         List<String> functions = Collections.singletonList("$badFunction");
-        JSFunctionPassiveScanner.setPayloadProvider(() -> functions);
+        JsFunctionScanRule.setPayloadProvider(() -> functions);
 
         // When
         scanHttpResponseReceive(msg);

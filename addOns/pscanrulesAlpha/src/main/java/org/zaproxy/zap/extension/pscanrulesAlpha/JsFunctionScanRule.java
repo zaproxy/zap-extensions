@@ -40,14 +40,14 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Passive Scan Rule for Dangerous JS Functions https://github.com/zaproxy/zaproxy/issues/5673 */
-public class JSFunctionPassiveScanner extends PluginPassiveScanner {
+public class JsFunctionScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.jsfunction.";
 
     public static final String FUNC_LIST_DIR = "txt";
     public static final String FUNC_LIST_FILE = "js-function-list.txt";
-    private static final Logger LOGGER = Logger.getLogger(JSFunctionPassiveScanner.class);
+    private static final Logger LOGGER = Logger.getLogger(JsFunctionScanRule.class);
     private static final int PLUGIN_ID = 10110;
 
     public static final List<String> DEFAULT_FUNCTIONS = Collections.emptyList();

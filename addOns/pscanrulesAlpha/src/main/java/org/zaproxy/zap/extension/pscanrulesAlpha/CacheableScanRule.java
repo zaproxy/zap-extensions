@@ -38,7 +38,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Detect "storable" and "cacheable" reponses. "Storable" implies that the response can be stored in
  * some manner by the caching server, even if it is not served in response to any requests.
  * "Cacheable" responses are responses that are served by the caching server in response to some
- * request. Unlike "CacheControlScanner", this scanner does not attempt to determine if the various
+ * request. Unlike "CacheControlScanner", this rule does not attempt to determine if the various
  * cache settings are "incorrectly" set (since that depends on the response contents, and on the
  * context), but instead, looks at the conditions defined in rfc7234 to determine if a given request
  * and response are storable by rfc7234 compliant cache servers, and subsequently retrievable from
@@ -72,7 +72,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class CacheableScanner extends PluginPassiveScanner {
+public class CacheableScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX_STORABILITY_CACHEABILITY =
             "pscanalpha.storabilitycacheability.";
@@ -82,7 +82,7 @@ public class CacheableScanner extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX_STORABLE_CACHEABLE = "pscanalpha.storablecacheable.";
     private static final int PLUGIN_ID = 10049;
 
-    private static final Logger logger = Logger.getLogger(CacheableScanner.class);
+    private static final Logger logger = Logger.getLogger(CacheableScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -91,7 +91,7 @@ public class CacheableScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
-        // Only checking the response for this plugin
+        // Only checking the response for this scan rule
     }
 
     @Override
