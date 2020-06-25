@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class SOAPActionSpoofingActiveScannerTestCase {
+public class SOAPActionSpoofingActiveScanRuleTestCase {
 
     private HttpMessage originalMsg = new HttpMessage();
     private HttpMessage modifiedMsg = new HttpMessage();
@@ -44,26 +44,26 @@ public class SOAPActionSpoofingActiveScannerTestCase {
 
     @Test
     public void scanResponseTest() throws Exception {
-        SOAPActionSpoofingActiveScanner scanner = new SOAPActionSpoofingActiveScanner();
+        SOAPActionSpoofingActiveScanRule scanner = new SOAPActionSpoofingActiveScanRule();
 
         /* Positive cases. */
         int result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanner.SOAPACTION_EXECUTED);
+        assertTrue(result == SOAPActionSpoofingActiveScanRule.SOAPACTION_EXECUTED);
 
         Sample.setOriginalResponse(modifiedMsg);
         result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanner.SOAPACTION_IGNORED);
+        assertTrue(result == SOAPActionSpoofingActiveScanRule.SOAPACTION_IGNORED);
 
         /* Negative cases. */
         result = scanner.scanResponse(new HttpMessage(), originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanner.EMPTY_RESPONSE);
+        assertTrue(result == SOAPActionSpoofingActiveScanRule.EMPTY_RESPONSE);
 
         Sample.setEmptyBodyResponse(modifiedMsg);
         result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanner.EMPTY_RESPONSE);
+        assertTrue(result == SOAPActionSpoofingActiveScanRule.EMPTY_RESPONSE);
 
         Sample.setInvalidFormatResponse(modifiedMsg);
         result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanner.INVALID_FORMAT);
+        assertTrue(result == SOAPActionSpoofingActiveScanRule.INVALID_FORMAT);
     }
 }

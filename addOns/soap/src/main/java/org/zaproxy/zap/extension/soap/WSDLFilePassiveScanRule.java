@@ -29,7 +29,7 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** @author albertov91 */
-public class WSDLFilePassiveScanner extends PluginPassiveScanner {
+public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "soap.wsdlfilepscan.";

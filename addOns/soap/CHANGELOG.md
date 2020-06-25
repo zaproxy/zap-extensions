@@ -4,15 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
 - Internationalise file filter description.
 - Dynamically unload the add-on.
-- Various fixes (related to Issue 4832 and other testing).
 - Change default accelerator for "Import a WSDL file from local file system".
-- Fix exception with Java 9+ (Issue 4037).
 - Update minimum ZAP version to 2.9.0.
 - Add import menus to (new) top level Import menu instead of Tools menu.
 - Maintenance changes.
+
+### Fixed
+- Various fixes (related to Issue 4832 and other testing).
+- Fix exception with Java 9+ (Issue 4037).
 
 ## 3 - 2017-03-31
 

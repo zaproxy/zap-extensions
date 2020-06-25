@@ -39,15 +39,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * SOAP Action Spoofing Active Scanner
+ * SOAP Action Spoofing Active scan rule
  *
  * @author Albertov91
  */
-public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
+public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
 
     private static final String MESSAGE_PREFIX = "soap.soapactionspoofing.";
 
-    private static final Logger LOG = Logger.getLogger(SOAPActionSpoofingActiveScanner.class);
+    private static final Logger LOG = Logger.getLogger(SOAPActionSpoofingActiveScanRule.class);
 
     public static final int INVALID_FORMAT = -3;
     public static final int FAULT_CODE = -2;

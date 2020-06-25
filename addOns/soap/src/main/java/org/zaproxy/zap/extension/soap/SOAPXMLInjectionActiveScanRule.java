@@ -33,15 +33,15 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
- * SOAP XML Injection Active Scanner
+ * SOAP XML Injection Active scan rule
  *
  * @author Albertov91
  */
-public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
+public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
 
     private static final String MESSAGE_PREFIX = "soap.soapxmlinjection.";
 
-    private static final Logger LOG = Logger.getLogger(SOAPXMLInjectionActiveScanner.class);
+    private static final Logger LOG = Logger.getLogger(SOAPXMLInjectionActiveScanRule.class);
 
     @Override
     public int getId() {
