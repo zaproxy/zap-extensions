@@ -31,8 +31,6 @@ import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.TreeSet;
@@ -871,13 +869,7 @@ public class TestCrossSiteScriptV2UnitTest
 
         this.nano.addHandler(handler);
         this.nano.setHandler404(handler);
-        try {
-            // TODO Call the method directly when targeting newer ZAP version.
-            Method method = ScannerParam.class.getDeclaredMethod("setAddQueryParam", boolean.class);
-            method.invoke(this.scannerParam, true);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            // Ignore, method not available.
-        }
+        this.scannerParam.setAddQueryParam(true);
 
         HttpMessage msg = this.getHttpMessage(test);
 

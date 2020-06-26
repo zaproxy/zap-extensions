@@ -48,10 +48,11 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 
     private HttpSender getHttpSender() {
         if (httpSender == null) {
-            // TODO Replace with HttpSender.TOKEN_GENERATOR_INITIATOR when available.
             httpSender =
                     new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(), true, 12);
+                            Model.getSingleton().getOptionsParam().getConnectionParam(),
+                            true,
+                            HttpSender.TOKEN_GENERATOR_INITIATOR);
         }
         return httpSender;
     }

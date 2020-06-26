@@ -19,10 +19,8 @@
  */
 package org.zaproxy.zap.extension.replacer;
 
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
-import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -107,18 +105,12 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
         return 0;
     }
 
-    @SuppressWarnings("deprecation")
     private ZapMenuItem getReplacerMenuItem() {
         if (replacerMenuItem == null) {
             replacerMenuItem =
                     new ZapMenuItem(
                             PREFIX + ".topmenu.tools.shortcut",
-                            // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke
-                            // with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_R,
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
-                                    false));
+                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_R, 0, false));
 
             replacerMenuItem.addActionListener(
                     new java.awt.event.ActionListener() {

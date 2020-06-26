@@ -19,12 +19,10 @@
  */
 package org.zaproxy.zap.extension.portscan;
 
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
 import org.zaproxy.zap.model.GenericScanner;
@@ -54,7 +52,6 @@ public class PortScanPanel extends ScanPanel implements ScanListenner {
     private PortScanResultsTable portScanResultsTable;
 
     /** @param portScanParam */
-    @SuppressWarnings("deprecation")
     public PortScanPanel(ExtensionPortScan extension, PortScanParam portScanParam) {
         // 'picture list' icon
         super(
@@ -64,14 +61,12 @@ public class PortScanPanel extends ScanPanel implements ScanListenner {
                 portScanParam);
 
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        KeyEvent.VK_P,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.ALT_DOWN_MASK
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(
+                                KeyEvent.VK_P,
+                                KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
+                                false));
         this.setMnemonic(Constant.messages.getChar("ports.panel.mnemonic"));
     }
 
