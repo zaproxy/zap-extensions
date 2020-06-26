@@ -65,7 +65,7 @@ public class SQLiUnionEngine {
     private int uColsStop;
     private String uChars;
 
-    private SQLInjectionPlugin plugin;
+    private SQLInjectionScanRule plugin;
     private SQLiTest test;
     private int where;
 
@@ -77,7 +77,7 @@ public class SQLiUnionEngine {
     private static final Logger log = Logger.getLogger(SQLiUnionEngine.class);
 
     /** @param plugin */
-    public SQLiUnionEngine(SQLInjectionPlugin plugin) {
+    public SQLiUnionEngine(SQLInjectionScanRule plugin) {
         this.plugin = plugin;
         this.where = SQLiPayloadManager.WHERE_ORIGINAL;
     }
