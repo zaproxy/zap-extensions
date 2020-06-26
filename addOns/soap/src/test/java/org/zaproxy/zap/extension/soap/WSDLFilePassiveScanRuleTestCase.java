@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class WSDLFilePassiveScannerTestCase {
+public class WSDLFilePassiveScanRuleTestCase {
     private HttpMessage wsdlMsg = new HttpMessage();
 
     @BeforeEach
@@ -46,7 +46,7 @@ public class WSDLFilePassiveScannerTestCase {
     public void isWsdlTest()
             throws NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
-        WSDLFilePassiveScanner scanner = new WSDLFilePassiveScanner();
+        WSDLFilePassiveScanRule scanner = new WSDLFilePassiveScanRule();
         /* Positive case. */
         boolean result = scanner.isWsdl(wsdlMsg);
         assertTrue(result);
