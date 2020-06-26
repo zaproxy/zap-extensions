@@ -37,9 +37,9 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
+public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
 
-    private static final Logger log = Logger.getLogger(SourceCodeDisclosureScanner.class);
+    private static final Logger log = Logger.getLogger(SourceCodeDisclosureScanRule.class);
 
     /**
      * a consistently ordered map of: a regular expression pattern to the Programming language
@@ -629,23 +629,11 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.sourcecodedisclosure.";
 
-    /** construct the class, and register for i18n */
-    /**
-     * gets the name of the scanner
-     *
-     * @return
-     */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /**
-     * scans the HTTP request sent (in fact, does nothing)
-     *
-     * @param msg
-     * @param id
-     */
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
         // do nothing
@@ -701,59 +689,28 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
         }
     }
 
-    /**
-     * sets the parent
-     *
-     * @param parent
-     */
     @Override
     public void setParent(PassiveScanThread parent) {
         // Nothing to do.
     }
 
-    /**
-     * get the id of the scanner
-     *
-     * @return
-     */
     @Override
     public int getPluginId() {
         return 10099;
     }
 
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
     private String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    /**
-     * get the solution for the alert
-     *
-     * @return
-     */
     private String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    /**
-     * gets references for the alert
-     *
-     * @return
-     */
     private String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    /**
-     * gets extra information associated with the alert
-     *
-     * @param evidence
-     * @return
-     */
     private String getExtraInfo(String evidence) {
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", evidence);
     }

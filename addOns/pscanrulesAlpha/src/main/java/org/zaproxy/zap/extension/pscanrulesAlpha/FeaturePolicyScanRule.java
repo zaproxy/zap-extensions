@@ -33,15 +33,15 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /**
  * Feature Policy Header Missing passive scan rule https://github.com/zaproxy/zaproxy/issues/4885
  */
-public class FeaturePolicyScanner extends PluginPassiveScanner {
+public class FeaturePolicyScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanalpha.featurepolicymissing.";
-    private static final Logger LOGGER = Logger.getLogger(FeaturePolicyScanner.class);
+    private static final Logger LOGGER = Logger.getLogger(FeaturePolicyScanRule.class);
     private static final int PLUGIN_ID = 10063;
 
     @Override
     public void scanHttpRequestSend(HttpMessage httpMessage, int id) {
-        // Only checking the response for this plugin
+        // Only checking the response for this scan rule
     }
 
     @Override

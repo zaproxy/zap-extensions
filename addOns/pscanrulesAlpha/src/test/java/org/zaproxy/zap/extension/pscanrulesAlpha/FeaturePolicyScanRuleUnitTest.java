@@ -30,7 +30,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePolicyScanner> {
+public class FeaturePolicyScanRuleUnitTest extends PassiveScannerTest<FeaturePolicyScanRule> {
 
     private static final String MESSAGE_PREFIX = "pscanalpha.featurepolicymissing.";
     private HttpMessage msg;
@@ -46,8 +46,8 @@ public class FeaturePolicyScannerUnitTest extends PassiveScannerTest<FeaturePoli
     }
 
     @Override
-    protected FeaturePolicyScanner createScanner() {
-        return new FeaturePolicyScanner();
+    protected FeaturePolicyScanRule createScanner() {
+        return new FeaturePolicyScanRule();
     }
 
     @Test

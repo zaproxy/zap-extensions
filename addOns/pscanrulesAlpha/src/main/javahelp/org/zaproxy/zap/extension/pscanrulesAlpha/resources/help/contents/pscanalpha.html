@@ -13,7 +13,7 @@ The following alpha quality passive scan rules are included in this add-on:
 This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
 For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanner.java">ExampleFilePassiveScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanRule.java">ExampleFilePassiveScanRule.java</a>
 
 <H2>Base64 Disclosure</H2>
 <ul>
@@ -26,7 +26,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
 
 <H2>Content Cacheability</H2>
-This scanner analyzes the cache control and pragma headers in HTTP traffic and resports on the cacheability of the requests from a RFC7234 point of view.
+This scan rule analyzes the cache control and pragma headers in HTTP traffic and resports on the cacheability of the requests from a RFC7234 point of view.
 <p>
 Alerts generated:
 <ul>
@@ -35,27 +35,27 @@ Alerts generated:
  <li><b>Storable and Cacheable Content</b></li>
 </ul>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/CacheableScanner.java">CacheableScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/CacheableScanRule.java">CacheableScanRule.java</a>
 
-<H2>Example Passive Scanner: Denial of Service</H2>
+<H2>Example Passive Scan Rule: Denial of Service</H2>
 This implements a very simple example passive scan rule.<br>
 For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanner.java">ExampleSimplePassiveScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
 
 <H2>Feature Policy Header Not Set</H2>
-This scanner checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Feature-Policy" header, 
+This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Feature-Policy" header, 
 and alerts if one is not found.<br>
 Redirects are ignored except at the Low threshold.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FeaturePolicyScanner.java">FeaturePolicyScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FeaturePolicyScanRule.java">FeaturePolicyScanRule.java</a>
 
 <H2>In Page Banner Information Leak</H2>
 Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
 If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
 The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/InPageBannerInfoLeakScanner.java">InPageBannerInfoLeakScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a>
 
 <H2>Java Serialization Object</H2>
 Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
@@ -64,25 +64,25 @@ An attacker can also modify the data and exploit JSO to do a Remote Code Executi
 JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
 JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanner.java">JsoScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanRule.java">JsoScanRule.java</a>
 
 <H2>Source Code Disclosure</H2>
-Application Source Code was disclosed by the web server
+Application Source Code was disclosed by the web server.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanner.java">SourceCodeDisclosureScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a>
 
 <H2>Sub Resource Integrity Attribute Missing</H2>
-This scanner checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
+This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
 It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanner.java">SubResourceIntegrityAttributeScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
 
 <H2>Dangerous JS Functions</H2>
-This scanner checks for any dangerous JS functions present in a site response.<br>
+This scan rule checks for any dangerous JS functions present in a site response.<br>
 <strong>Note:</strong> If the Custom Payloads addon is installed you can add your own function names (payloads) in the Custom Payloads options panel.
 They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the amount of time needed to passively scan.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JSFunctionPassiveScanner.java">JSFunctionPassiveScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsFunctionScanRule.java">JsFunctionScanRule.java</a>
 
 </BODY>
 </HTML>

@@ -29,8 +29,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class SourceCodeDisclosureScannerUnitTest
-        extends PassiveScannerTest<SourceCodeDisclosureScanner> {
+public class SourceCodeDisclosureScanRuleUnitTest
+        extends PassiveScannerTest<SourceCodeDisclosureScanRule> {
 
     private static final String CODE_SQL = "insert into vulnerabilities values(";
     private static final String CODE_PHP = "<?php echo 'evils'; ?>";
@@ -40,8 +40,8 @@ public class SourceCodeDisclosureScannerUnitTest
     private HttpMessage msg;
 
     @Override
-    protected SourceCodeDisclosureScanner createScanner() {
-        return new SourceCodeDisclosureScanner();
+    protected SourceCodeDisclosureScanRule createScanner() {
+        return new SourceCodeDisclosureScanRule();
     }
 
     @BeforeEach
@@ -52,7 +52,7 @@ public class SourceCodeDisclosureScannerUnitTest
 
     @Test
     public void scannerNameShouldMatch() {
-        // Quick test to verify scanner name which is used in the policy dialog but not
+        // Quick test to verify scan rule name which is used in the policy dialog but not
         // alone in alerts
         assertThat(rule.getName(), is(getLocalisedString("name")));
     }

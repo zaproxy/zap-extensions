@@ -32,15 +32,15 @@ import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * An example passive scan rule, for more details see
- * http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+ * https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/
  *
  * @author psiinon
  */
-public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
+public class ExampleSimplePassiveScanRule extends PluginPassiveScanner {
 
     // wasc_10 is Denial of Service - well, its just an example ;)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
-    private static final Logger logger = Logger.getLogger(ExampleSimplePassiveScanner.class);
+    private static final Logger logger = Logger.getLogger(ExampleSimplePassiveScanRule.class);
 
     private Random rnd = new Random();
 
@@ -66,7 +66,7 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (!Constant.isDevBuild()) {
-            // Only run this example scanner in dev mode
+            // Only run this example scan rule in dev mode
             // Uncomment locally if you want to see these alerts in non dev mode ;)
             return;
         }
@@ -100,11 +100,11 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 
     @Override
     public String getName() {
-        // Strip off the "Example Passive Scanner: " part if implementing a real one ;)
+        // Strip off the "Example Passive Scan Rule: " part if implementing a real one ;)
         if (vuln != null) {
-            return "Example Passive Scanner: " + vuln.getAlert();
+            return "Example Passive Scan Rule: " + vuln.getAlert();
         }
-        return "Example Passive Scanner: Denial of Service";
+        return "Example Passive Scan Rule: Denial of Service";
     }
 
     public String getDescription() {

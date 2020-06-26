@@ -30,8 +30,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-public class InPageBannerInfoLeakScannerUnitTest
-        extends PassiveScannerTest<InPageBannerInfoLeakScanner> {
+public class InPageBannerInfoLeakScanRuleUnitTest
+        extends PassiveScannerTest<InPageBannerInfoLeakScanRule> {
 
     private HttpMessage createMessage(String banner) throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
@@ -45,8 +45,8 @@ public class InPageBannerInfoLeakScannerUnitTest
     }
 
     @Override
-    protected InPageBannerInfoLeakScanner createScanner() {
-        return new InPageBannerInfoLeakScanner();
+    protected InPageBannerInfoLeakScanRule createScanner() {
+        return new InPageBannerInfoLeakScanRule();
     }
 
     @Test

@@ -37,17 +37,17 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
  * An example passive scan rule, for more details see
- * http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+ * https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/
  *
  * @author psiinon
  */
-public class ExampleFilePassiveScanner extends PluginPassiveScanner {
+public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.examplefile.";
 
     private static final String examplePscanFile = "txt/example-pscan-file.txt";
-    private static final Logger logger = Logger.getLogger(ExampleFilePassiveScanner.class);
+    private static final Logger logger = Logger.getLogger(ExampleFilePassiveScanRule.class);
     private List<String> strings = null;
 
     @Override
@@ -58,7 +58,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (!Constant.isDevBuild()) {
-            // Only run this example scanner in dev mode
+            // Only run this example scan rule in dev mode
             // Uncomment locally if you want to see these alerts in non dev mode ;)
             return;
         }
