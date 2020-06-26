@@ -29,14 +29,14 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanner> {
+public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
 
     private static final String URI = "https://www.example.com/test/";
     private static final String SAFE_OPENSSL_VERSION = "OpenSSL/1.1.1";
 
     @Override
-    protected HeartBleedScanner createScanner() {
-        return new HeartBleedScanner();
+    protected HeartBleedScanRule createScanner() {
+        return new HeartBleedScanRule();
     }
 
     @Test
@@ -92,7 +92,7 @@ public class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScan
 
     @Test
     public void givenServerHeaderWithVulnerableOpenSSLThenAlertRaised() throws IOException {
-        for (String version : HeartBleedScanner.openSSLvulnerableVersions) {
+        for (String version : HeartBleedScanRule.openSSLvulnerableVersions) {
             // Given
             alertsRaised.clear();
             HttpMessage msg = createMsg(String.format("Apache-Coyote/1.1 (OpenSSL/%s)", version));

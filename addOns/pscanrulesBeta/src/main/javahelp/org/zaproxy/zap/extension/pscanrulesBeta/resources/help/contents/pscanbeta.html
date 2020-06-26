@@ -14,13 +14,13 @@ The following beta quality passive scan rules are included in this add-on:
 This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
 A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc.).
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/BigRedirectsScanner.java">BigRedirectsScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/BigRedirectsScanRule.java">BigRedirectsScanRule.java</a>
 
 <H2>Cookie Poisoning</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. 
 This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledCookieScanner.java">UserControlledCookieScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledCookieScanRule.java">UserControlledCookieScanRule.java</a>
 
 <H2>Content Security Policy (CSP) Header Not Set</H2>
 This checks HTML response headers for the presence of a Content Security Policy header.<br>
@@ -31,50 +31,50 @@ Redirects and non HTML responses are ignored except at the Low threshold.
 If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
 that is actively being refined or developed, or one which is only partially implemented.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ContentSecurityPolicyMissingScanner.java">ContentSecurityPolicyMissingScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ContentSecurityPolicyMissingScanRule.java">ContentSecurityPolicyMissingScanRule.java</a>
 
 <H2>Directory Browsing</H2>
-Passively scan responses for signatures that are indicative that Directory Browsing is possible.
+Passively scans responses for signatures that are indicative that Directory Browsing is possible.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/DirectoryBrowsingScanner.java">DirectoryBrowsingScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/DirectoryBrowsingScanRule.java">DirectoryBrowsingScanRule.java</a>
 
 <H2>Hash Disclosure</H2>
-Passively scan for password hashes disclosed by the web server. <br>
+Passively scans for password hashes disclosed by the web server. <br>
 Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/HashDisclosureScanner.java">HashDisclosureScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/HashDisclosureScanRule.java">HashDisclosureScanRule.java</a>
 
 <H2>Heartbleed OpenSSL Vulnerability (Indicative)</H2>
 Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/HeartBleedScanner.java">HeartBleedScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/HeartBleedScanRule.java">HeartBleedScanRule.java</a>
 
-<H2>HTTP Server Response Header Scanner</H2>
+<H2>HTTP Server Response Header</H2>
 This checks response headers for the presence of a server header that contains version details.
 At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServerHeaderInfoLeakScanner.java">ServerHeaderInfoLeakScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServerHeaderInfoLeakScanRule.java">ServerHeaderInfoLeakScanRule.java</a>
 
 <H2>HTTP to HTTPS Insecure Transition in Form Post</H2>
 This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InsecureFormLoadScanner.java">InsecureFormLoadScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InsecureFormLoadScanRule.java">InsecureFormLoadScanRule.java</a>
 
 <H2>HTTPS to HTTP Insecure Transition in Form Post</H2>
 This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InsecureFormPostScanner.java">InsecureFormPostScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InsecureFormPostScanRule.java">InsecureFormPostScanRule.java</a>
 
 <H2>Modern Web Application</H2>
 This raises an informational alert if a site appears to be a modern web application.<br>
 It does not indicate any potential vulnerabilities but it could indicate that the ajax spider might be more effective at exploring this site compared to the traditional spider.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ModernAppDetectionScanner.java">ModernAppDetectionScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ModernAppDetectionScanRule.java">ModernAppDetectionScanRule.java</a>
 
 <H2>Open Redirect</H2>
-Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks.
+This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledOpenRedirectScanner.java">UserControlledOpenRedirectScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledOpenRedirectScanRule.java">UserControlledOpenRedirectScanRule.java</a>
 
 <H2>PII Disclosure</H2>
 PII is information like credit card number, SSN etc. This check currently reports only numbers which match credit card numbers and pass Luhn checksum, which gives high confidence, that this is a credit card number.
@@ -84,12 +84,12 @@ Note: In the case of suspected credit card values, the potential credit card num
 alert, otherwise the alerts will have Medium confidence.
 See: <a href="https://github.com/iannuttall/binlist-data">binlist-data</a> for more information.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PiiScanner.java">PiiScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PiiScanRule.java">PiiScanRule.java</a>
 
 <H2>Retrieved from Cache</H2>
-This scanner detect content that has been served from a shared cache.
+This scan rule detects content that has been served from a shared cache.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/RetrievedFromCacheScanner.java">RetrievedFromCacheScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/RetrievedFromCacheScanRule.java">RetrievedFromCacheScanRule.java</a>
 
 <H2>Reverse Tabnabbing</H2>
 This checks to see if any links use a target attribute without using both of the "noopener" and "noreferrer" keywords in the "rel" attribute, as this will allow target pages to take over the page that opens them.<br>
@@ -98,7 +98,7 @@ At HIGH threshold it will only report links that use the "_blank" target.<br>
 You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
 Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/LinkTargetScanner.java">LinkTargetScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/LinkTargetScanRule.java">LinkTargetScanRule.java</a>
 
 <H2>Servlet Parameter Pollution</H2>
 Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
@@ -106,10 +106,10 @@ Java Servlet spec calls for aggregation of query string and post data elements w
 unintended handling of user controlled data. This may impact other frameworks and technologies as well.
 <strong>Note:</strong> This scan rule will only analyze responses on LOW Threshold, and in Context URLs for which the Tech JSP/Servlet is applicable.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServletParameterPollutionScanner.java">ServletParameterPollutionScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServletParameterPollutionScanRule.java">ServletParameterPollutionScanRule.java</a>
 
-<H2>Strict Transport Security Header Scanner</H2>
-This scanner checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
+<H2>Strict Transport Security Header</H2>
+This rule checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
 alerting if they're found.
 
 Alerts generated:
@@ -126,22 +126,22 @@ Alerts generated:
 
 Redirects to HTTPS URLs on the same domain will only be reported at Low threshold.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/StrictTransportSecurityScanner.java">StrictTransportSecurityScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/StrictTransportSecurityScanRule.java">StrictTransportSecurityScanRule.java</a>
 
 <H2>User Controllable Charset</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledCharsetScanner.java">UserControlledCharsetScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledCharsetScanRule.java">UserControlledCharsetScanRule.java</a>
 
 <H2>User Controllable HTML Element Attribute (Potential XSS)</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledHTMLAttributesScanner.java">UserControlledHTMLAttributesScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledHTMLAttributesScanRule.java">UserControlledHTMLAttributesScanRule.java</a>
 
 <H2>User Controllable Javascript Event (XSS)</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledJavascriptEventScanner.java">UserControlledJavascriptEventScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/UserControlledJavascriptEventScanRule.java">UserControlledJavascriptEventScanRule.java</a>
 
 <H2>X-Backend-Server Header Information Leak</H2>
 This checks response headers for the presence of X-Backend-Server details.
@@ -151,7 +151,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 <H2>X-ChromeLogger-Data Header Information Leak</H2>
 This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/XChromeLoggerDataInfoLeakScanner.java">XChromeLoggerDataInfoLeakScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/XChromeLoggerDataInfoLeakScanRule.java">XChromeLoggerDataInfoLeakScanRule.java</a>
 
 </BODY>
 </HTML>
