@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -42,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.owasp.jbrofuzz.core.Database;
 import org.owasp.jbrofuzz.version.JBroFuzzPrefs;
@@ -405,19 +403,14 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         fuzzersController.stopAllScans();
     }
 
-    @SuppressWarnings("deprecation")
     private ZapMenuItem getMenuItemCustomScan() {
         if (menuItemCustomScan == null) {
             menuItemCustomScan =
                     new ZapMenuItem(
                             "fuzz.menu.tools.fuzz",
-                            // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke
-                            // with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_F,
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                            | KeyEvent.ALT_DOWN_MASK,
-                                    false));
+                            getView()
+                                    .getMenuShortcutKeyStroke(
+                                            KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false));
 
             menuItemCustomScan.addActionListener(
                     new java.awt.event.ActionListener() {

@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.tokengen;
 import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -37,7 +36,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -90,24 +88,14 @@ public class TokenPanel extends AbstractPanel {
     public TokenPanel(ExtensionTokenGen extension, TokenParam tokenParam) {
         super();
         this.extension = extension;
-        initialize();
-    }
-
-    /** This method initializes this */
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName(extension.getMessages().getString("tokengen.panel.title"));
         this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/fugue/barcode.png")));
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        KeyEvent.VK_T,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                this.extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_T, KeyEvent.SHIFT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("tokengen.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
 

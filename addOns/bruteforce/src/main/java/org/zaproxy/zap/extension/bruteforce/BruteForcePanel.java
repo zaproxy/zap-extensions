@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.bruteforce;
 import com.sittinglittleduck.DirBuster.BaseCase;
 import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -41,7 +40,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
@@ -120,12 +118,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         this.fileSelectModel = new DefaultComboBoxModel<>();
         this.noSelectionScanTarget =
                 new DummyScanTarget(Constant.messages.getString("bruteforce.toolbar.site.select"));
-        initialize();
-    }
-
-    /** This method initializes this */
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName(Constant.messages.getString("bruteforce.panel.title"));
@@ -134,14 +126,12 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                         BruteForcePanel.class.getResource(
                                 ExtensionBruteForce.HAMMER_ICON_RESOURCE)));
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        KeyEvent.VK_F,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.ALT_DOWN_MASK
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(
+                                KeyEvent.VK_F,
+                                KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
+                                false));
         this.setMnemonic(Constant.messages.getChar("bruteforce.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
 

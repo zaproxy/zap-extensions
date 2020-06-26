@@ -35,13 +35,12 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Context;
 
 public class LinkTargetScanRule extends PluginPassiveScanner {
 
-    // TODO Replace "rules.domains.trusted" with RuleConfigParam.RULE_DOMAINS_TRUSTED once
-    // available.
-    public static final String TRUSTED_DOMAINS_PROPERTY = "rules.domains.trusted";
+    public static final String TRUSTED_DOMAINS_PROPERTY = RuleConfigParam.RULE_DOMAINS_TRUSTED;
     private static final String MESSAGE_PREFIX = "pscanbeta.linktarget.";
 
     private static final String REL_ATTRIBUTE = "rel";

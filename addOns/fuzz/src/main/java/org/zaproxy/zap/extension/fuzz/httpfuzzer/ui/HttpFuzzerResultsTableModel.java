@@ -95,9 +95,7 @@ public class HttpFuzzerResultsTableModel
                             ? result.getHttpMessage().getHistoryRef()
                             : new HistoryReference(
                                     Model.getSingleton().getSession(),
-                                    // TODO Replace 20 with HistoryReference.TYPE_FUZZER_TEMPORARY
-                                    // once available.
-                                    20,
+                                    HistoryReference.TYPE_FUZZER_TEMPORARY,
                                     result.getHttpMessage());
 
             EventQueue.invokeLater(
