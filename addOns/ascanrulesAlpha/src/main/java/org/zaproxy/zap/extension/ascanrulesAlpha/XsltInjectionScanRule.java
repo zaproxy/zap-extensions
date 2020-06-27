@@ -38,7 +38,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * @author CaptainFreak
  * @author ZainabAlShowely
  */
-public class XSLTInjection extends AbstractAppParamPlugin {
+public class XsltInjectionScanRule extends AbstractAppParamPlugin {
     private static final String MESSAGE_PREFIX = "ascanalpha.xsltinjection.";
 
     private enum XSLTInjectionType {
@@ -103,7 +103,7 @@ public class XSLTInjection extends AbstractAppParamPlugin {
         }
     }
 
-    private static final Logger LOG = Logger.getLogger(XSLTInjection.class);
+    private static final Logger LOG = Logger.getLogger(XsltInjectionScanRule.class);
 
     // used to check against the attack strength
     private int requestsSent = 0;
@@ -143,7 +143,7 @@ public class XSLTInjection extends AbstractAppParamPlugin {
             try {
                 if (isStop() || requestsLimitReached()) { // stop before sending request
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Scanner " + getName() + " Stopping.");
+                        LOG.debug("Scan rule " + getName() + " Stopping.");
                     }
                     return true;
                 }

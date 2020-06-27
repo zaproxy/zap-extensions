@@ -46,7 +46,7 @@ import org.zaproxy.zap.users.User;
  * Attempts to retrieve cloud metadata by forging the host header and requesting a specific URL. See
  * https://www.nginx.com/blog/trust-no-one-perils-of-trusting-user-input/ for more details
  */
-public class CloudMetadataScanner extends AbstractHostPlugin {
+public class CloudMetadataScanRule extends AbstractHostPlugin {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanalpha.cloudmetadata.";
@@ -55,7 +55,7 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
     private static final String METADATA_PATH = "/latest/meta-data/";
     private static final String METADATA_HOST = "169.154.169.254";
 
-    private static final Logger LOG = Logger.getLogger(CloudMetadataScanner.class);
+    private static final Logger LOG = Logger.getLogger(CloudMetadataScanRule.class);
 
     @Override
     public int getId() {

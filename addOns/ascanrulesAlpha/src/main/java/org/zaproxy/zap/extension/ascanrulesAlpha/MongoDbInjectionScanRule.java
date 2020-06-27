@@ -43,11 +43,11 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /**
- * The MongoInjection plugin identifies MongoDB injection vulnerabilities
+ * The MongoInjection scan rule identifies MongoDB injection vulnerabilities
  *
  * @author l.casciaro
  */
-public class MongoDbInjection extends AbstractAppParamPlugin {
+public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
 
     // Prefix for internationalised messages used by this rule
     private static final String MESSAGE_PREFIX = "ascanalpha.mongodb.";
@@ -131,7 +131,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
     private static final String IO_EX_LOG = "trying to send an http message";
     private static final String URI_EX_LOG = "trying to get the message's Uri";
     private static final String STOP_LOG = "Stopping the scan due to a user request";
-    private static final Logger LOG = Logger.getLogger(MongoDbInjection.class);
+    private static final Logger LOG = Logger.getLogger(MongoDbInjectionScanRule.class);
     // Error messages that addressing to a well-known vulnerability
     private final Pattern[] errorPatterns = {
         Pattern.compile(

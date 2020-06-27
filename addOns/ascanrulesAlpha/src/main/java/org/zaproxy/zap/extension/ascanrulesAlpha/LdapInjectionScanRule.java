@@ -39,15 +39,15 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.utils.HirshbergMatcher;
 
 /**
- * The LDAPInjection plugin identifies LDAP injection vulnerabilities with LDAP based login pages,
- * and LDAP searches
+ * The LdapInjectionScanRule scan rule identifies LDAP injection vulnerabilities with LDAP based
+ * login pages, and LDAP searches
  *
  * @author 70pointer
  */
-public class LDAPInjection extends AbstractAppParamPlugin {
+public class LdapInjectionScanRule extends AbstractAppParamPlugin {
 
     /** for logging. */
-    private static Logger log = Logger.getLogger(LDAPInjection.class);
+    private static Logger log = Logger.getLogger(LdapInjectionScanRule.class);
 
     private static final String I18N_PREFIX = "ascanalpha.";
     /** determines if we should output Debug level logging */
@@ -72,7 +72,8 @@ public class LDAPInjection extends AbstractAppParamPlugin {
     static {
         ResourceBundle resourceBundle =
                 ResourceBundle.getBundle(
-                        LDAPInjection.class.getPackage().getName() + ".resources.LdapErrors",
+                        LdapInjectionScanRule.class.getPackage().getName()
+                                + ".resources.LdapErrors",
                         Constant.getLocale(),
                         ResourceBundle.Control.getControl(
                                 ResourceBundle.Control.FORMAT_PROPERTIES));
