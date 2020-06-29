@@ -208,6 +208,23 @@ public class SubResourceIntegrityAttributeScanRuleUnitTest
         assertThat(alertsRaised.size(), equalTo(1));
     }
 
+    @Test
+    public void shouldNotRaiseAlertGivenHtmlAssetIsInline() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head>"
+                                + "<script src=\"data:,\"></script>"
+                                + "<link href=\"data:,\">"
+                                + "</head><body></body></html>");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
     private static HttpMessage buildMessage(String body) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
