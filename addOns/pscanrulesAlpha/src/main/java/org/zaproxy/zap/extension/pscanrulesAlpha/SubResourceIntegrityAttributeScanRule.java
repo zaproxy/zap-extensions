@@ -69,7 +69,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
                     element.getAttributeValue(
                             SupportedElements.valueOf(element.getName().toUpperCase(Locale.ROOT))
                                     .attribute);
-            if (url == null) {
+            if (url == null || url.startsWith("data:")) {
                 return Optional.of(origin);
             }
             URI uri = null;
