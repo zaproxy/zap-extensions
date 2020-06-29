@@ -3,10 +3,16 @@ name: Create Retirejs Update PR
 on:
   schedule:
     - cron:  '0 4 2 * *'
+  repository_dispatch:
+    types: retirejs
+  # Trigger using CURL or similar such as:
+  # curl -XPOST -u "<replace_username>:<replace_personal_access_token>" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/zaproxy/zap-extensions/dispatches --data '{"event_type": "retirejs"}'
+  # Replace the username and personal access token, including angled brackets
 
 jobs:
   create_pr:
     name: Create Pull Request
+    if: github.actor == 'kingthorin' || github.actor == 'psiinon' || github.actor == 'thc202'
     runs-on: ubuntu-latest
     steps:
     - name: Build Feature Branch and Raise PR
