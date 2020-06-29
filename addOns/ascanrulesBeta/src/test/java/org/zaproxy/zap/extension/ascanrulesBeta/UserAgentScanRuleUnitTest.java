@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2014 The ZAP Development Team
+ * Copyright 2020 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,38 +19,26 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.ExtensionAdaptor;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
-/**
- * A null extension just to cause the message bundle and help file to get loaded
- *
- * @author psiinon
- */
-public class ExtensionAscanRulesBeta extends ExtensionAdaptor {
+import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 
-    public ExtensionAscanRulesBeta() {
-        super();
-        this.setI18nPrefix("ascanbeta");
-    }
+/** Unit test for {@link UserAgentScanRule}. */
+public class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
 
     @Override
-    public String getName() {
-        return "ExtensionAscanRulesBeta";
+    protected UserAgentScanRule createScanner() {
+        return new UserAgentScanRule();
     }
 
-    @Override
-    public String getDescription() {
-        return Constant.messages.getString("ascanbeta.desc");
-    }
-
-    @Override
-    public boolean canUnload() {
-        return true;
-    }
-
-    @Override
-    public void unload() {
-        XxeScanRule.unload();
+    @Test
+    public void shouldHaveInfoRisk() {
+        // Given / When
+        int risk = rule.getRisk();
+        // Then
+        assertThat(risk, is(equalTo(Alert.RISK_INFO)));
     }
 }

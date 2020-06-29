@@ -49,5 +49,5 @@ dependencies {
 }
 
 spotless {
-    javaWith3rdPartyFormatted(project, listOf("**/IntegerOverflow.java"))
+    javaWith3rdPartyFormatted(project, listOf("**/IntegerOverflowScanRule.java"))
 }
