@@ -82,18 +82,35 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
-    public void testModernizr() throws HttpMalformedHeaderException {
+    public void shouldMatchScriptElement() throws HttpMalformedHeaderException {
+        // Given
         HttpMessage msg = makeHttpMessage();
-
         msg.setResponseBody(
                 "<html>"
                         + "<script type='text/javascript' src='libs/modernizr.min.js?ver=4.1.1'>"
                         + "</script>"
                         + "</html>");
+
+        // When
         scan(msg);
 
+        // Then
         assertFoundAppCount("https://www.example.com", 1);
         assertFoundApp("https://www.example.com", "Modernizr");
+    }
+
+    @Test
+    public void shouldNotMatchScriptElementContentIfNotOnScriptElement()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody("<html><body>libs/modernizr.min.js?ver=4.1.1</body></html>");
+
+        // When
+        scan(msg);
+
+        // Then
+        assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
     }
 
     @Test

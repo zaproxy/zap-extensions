@@ -122,13 +122,17 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         }
         checkBodyMatches(msg);
         checkMetaElementsMatches(source);
-        checkScriptMatches(msg);
+        checkScriptElementsMatches(source);
     }
 
-    private void checkScriptMatches(HttpMessage msg) {
-        String body = msg.getResponseBody().toString();
-        for (AppPattern p : currentApp.getScript()) {
-            addIfMatches(p, body);
+    private void checkScriptElementsMatches(Source source) {
+        for (Element scriptElement : source.getAllElements(HTMLElementName.SCRIPT)) {
+            for (AppPattern appPattern : currentApp.getScript()) {
+                String src = scriptElement.getAttributeValue("src");
+                if (src != null && !src.isEmpty()) {
+                    addIfMatches(appPattern, src);
+                }
+            }
         }
     }
 
