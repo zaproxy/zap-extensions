@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Correct script matching, check only script elements (Issue 6054).
 
 ## [20.0.0] - 2020-06-15
 ### Changed
