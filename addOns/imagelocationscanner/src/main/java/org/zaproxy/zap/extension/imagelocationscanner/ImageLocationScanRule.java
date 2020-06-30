@@ -48,9 +48,9 @@ import com.veggiespam.imagelocationscanner.ILS;
  * @version 1.1
  * @see https://www.veggiespam.com/ils/
  */
-public class ImageLocationScanner extends PluginPassiveScanner {
+public class ImageLocationScanRule extends PluginPassiveScanner {
 	private PassiveScanThread parent = null;
-	private static final Logger logger = Logger.getLogger(ImageLocationScanner.class);
+	private static final Logger logger = Logger.getLogger(ImageLocationScanRule.class);
 	private static final String MESSAGE_PREFIX = "imagelocationscanner.";
 	public static final int PLUGIN_ID = 10103;
 	
