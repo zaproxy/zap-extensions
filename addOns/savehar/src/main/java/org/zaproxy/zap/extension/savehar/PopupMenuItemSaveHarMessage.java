@@ -20,11 +20,7 @@
 package org.zaproxy.zap.extension.savehar;
 
 import edu.umass.cs.benchlab.har.HarEntries;
-import edu.umass.cs.benchlab.har.HarEntry;
 import edu.umass.cs.benchlab.har.HarLog;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,28 +29,19 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.List;
 import javax.swing.JFileChooser;
-import javax.swing.JTree;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.tree.TreePath;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.db.DatabaseException;
-import org.parosproxy.paros.extension.Extension;
-import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.HarUtils;
+import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
-public class PopupMenuItemSaveHarMessage extends ExtensionPopupMenuItem {
+public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = -7217818541206464572L;
-
-    private final Extension extension;
 
     private static final Logger LOG = Logger.getLogger(PopupMenuItemSaveHarMessage.class);
 
@@ -80,7 +67,7 @@ public class PopupMenuItemSaveHarMessage extends ExtensionPopupMenuItem {
             os.write(packRequestInHarArchive(httpMessages));
             os.flush();
             os.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             View.getSingleton()
                     .showWarningDialog(MessageFormat.format(ERROR_SAVE, file.getAbsolutePath()));
             LOG.error(e.getMessage(), e);
@@ -108,40 +95,6 @@ public class PopupMenuItemSaveHarMessage extends ExtensionPopupMenuItem {
                 });
         harLog.setEntries(entries);
         return HarUtils.harLogToByteArray(harLog);
-    }
-
-    private List<HarEntry> getHarEntries() throws HttpMalformedHeaderException, DatabaseException {
-        List<HarEntry> result = new ArrayList<HarEntry>();
-
-        for (TreePath path : getStartingPoints()) {
-            Enumeration<?> en = ((SiteNode) path.getLastPathComponent()).preorderEnumeration();
-            while (en.hasMoreElements()) {
-                SiteNode node = (SiteNode) en.nextElement();
-                if (node.isRoot()) {
-                    continue;
-                }
-                HistoryReference historyRef = node.getHistoryReference();
-                result.add(
-                        HarUtils.createHarEntry(
-                                historyRef.getHistoryId(),
-                                historyRef.getHistoryType(),
-                                historyRef.getHttpMessage()));
-            }
-        }
-        return result;
-    }
-
-    private List<TreePath> getStartingPoints() {
-        List<TreePath> result = new ArrayList<TreePath>();
-
-        JTree siteTree = extension.getView().getSiteTreePanel().getTreeSite();
-        TreePath paths[] = siteTree.getSelectionPaths();
-        if (ArrayUtils.isEmpty(paths)) {
-            result.add(new TreePath(siteTree.getModel().getRoot()));
-        } else {
-            result.addAll(Arrays.asList(paths));
-        }
-        return result;
     }
 
     private static File getOutputFile() {
