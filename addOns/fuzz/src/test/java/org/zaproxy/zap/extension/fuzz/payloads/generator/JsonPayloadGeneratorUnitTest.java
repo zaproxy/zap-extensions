@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -27,8 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
@@ -55,12 +60,18 @@ public class JsonPayloadGeneratorUnitTest {
     }
 
     @Test
-    public void shouldGenerateOneFuzzedPayload() {
+    public void shouldGenerateAtLeastOneFuzzedPayload() {
+        // Given
         String originalJson = "{\"x\": \"hello\"}";
-        JsonPayloadGenerator generator = new JsonPayloadGenerator(originalJson, 1);
-        DefaultPayload next = generator.iterator().next();
-        JsonElement json = toGson(next.getValue());
-        assertThat(json, is(not(toGson(originalJson))));
+        JsonPayloadGenerator generator = new JsonPayloadGenerator(originalJson, 2);
+        List<String> payloads = new ArrayList<>();
+        // When
+        Iterator<DefaultPayload> iterator = generator.iterator();
+        while (iterator.hasNext()) {
+            payloads.add(iterator.next().getValue());
+        }
+        // Then
+        assertThat(payloads, hasAtLeastOneDifferentThan(originalJson));
     }
 
     @Test
@@ -89,5 +100,43 @@ public class JsonPayloadGeneratorUnitTest {
 
     private static JsonElement toGson(String originalJson) {
         return new JsonParser().parse(originalJson);
+    }
+
+    private static Matcher<List<String>> hasAtLeastOneDifferentThan(String value) {
+        JsonElement jsonElement = toGson(value);
+        return new BaseMatcher<List<String>>() {
+
+            @Override
+            public boolean matches(Object actualValue) {
+                @SuppressWarnings("unchecked")
+                List<String> values = (List<String>) actualValue;
+                if (values.isEmpty()) {
+                    return false;
+                }
+
+                for (String value : values) {
+                    if (!toGson(value).equals(jsonElement)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("at least one value different than ").appendValue(value);
+            }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                @SuppressWarnings("unchecked")
+                List<String> values = (List<String>) item;
+                if (values.isEmpty()) {
+                    description.appendText("has no values");
+                } else {
+                    description.appendText("had ").appendValue(values);
+                }
+            }
+        };
     }
 }
