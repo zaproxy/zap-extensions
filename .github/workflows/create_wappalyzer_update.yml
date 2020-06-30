@@ -45,7 +45,7 @@ jobs:
         ./gradlew :addOns:wappalyzer:updateChangelog --change="- Updated with upstream Wappalyzer icon and pattern changes."
         git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
         git add .
-        git commit -m "Wappalyzer Update $SHORT_DATE" -m "Updates based on $SRC_BASE"
+        git commit -m "Wappalyzer Update $SHORT_DATE" -m "Updates based on $SRC_BASE" --signoff
         git push --set-upstream origin $BRANCH_STAMP
         # Open the PR
         hub pull-request --no-edit
