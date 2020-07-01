@@ -20,23 +20,34 @@
 package org.zaproxy.addon.graphql;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import org.apache.commons.httpclient.URIException;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.spider.filters.ParseFilter;
+import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineListener {
 
     public static final String NAME = "ExtensionGraphQl";
+    private static final Logger LOG = Logger.getLogger(ExtensionGraphQl.class);
 
     private ZapMenuItem menuImportLocalGraphQl = null;
     private ZapMenuItem menuImportUrlGraphQl = null;
+    private SpiderParser graphQlSpider;
+    private ParseFilter graphQlParseFilter;
 
-    private CommandLineArgument[] arguments = new CommandLineArgument[3];
     private static final int ARG_IMPORT_FILE_IDX = 0;
     private static final int ARG_IMPORT_URL_IDX = 1;
     private static final int ARG_END_URL_IDX = 2;
@@ -48,14 +59,42 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+        if (!"2.9.0".equals(Constant.PROGRAM_VERSION)) {
+            /* Custom spider is added in order to explore GraphQl schemas. */
+            ExtensionSpider spider =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
+            graphQlSpider = new GraphQlSpider();
+            graphQlParseFilter = new GraphQlParseFilter();
+            if (spider != null) {
+                spider.addCustomParseFilter(graphQlParseFilter);
+                spider.addCustomParser(graphQlSpider);
+                LOG.debug("Added GraphQl spider.");
+            } else {
+                LOG.debug("Could not add GraphQl spider.");
+            }
+        }
 
         if (getView() != null) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalGraphQl());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlGraphQl());
         }
 
-        extensionHook.addApiImplementor(new GraphQlApi(this));
+        extensionHook.addApiImplementor(new GraphQlApi());
         extensionHook.addCommandLine(getCommandLineArguments());
+    }
+
+    @Override
+    public void unload() {
+        super.unload();
+        if (!"2.9.0".equals(Constant.PROGRAM_VERSION)) {
+            ExtensionSpider spider =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
+            if (spider != null) {
+                spider.removeCustomParseFilter(graphQlParseFilter);
+                spider.removeCustomParser(graphQlSpider);
+                LOG.debug("Removed GraphQl spider.");
+            }
+        }
     }
 
     /* Menu option to import a local GraphQl file. */
@@ -65,7 +104,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
             menuImportLocalGraphQl.setToolTipText(
                     Constant.messages.getString("graphql.topmenu.import.importgraphql.tooltip"));
             menuImportLocalGraphQl.addActionListener(
-                    e -> new ImportFromFileDialog(View.getSingleton().getMainFrame(), this));
+                    e -> new ImportFromFileDialog(View.getSingleton().getMainFrame()));
         }
         return menuImportLocalGraphQl;
     }
@@ -79,7 +118,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
                             "graphql.topmenu.import.importremotegraphql.tooltip"));
 
             menuImportUrlGraphQl.addActionListener(
-                    e -> new ImportFromUrlDialog(View.getSingleton().getMainFrame(), this));
+                    e -> new ImportFromUrlDialog(View.getSingleton().getMainFrame()));
         }
         return menuImportUrlGraphQl;
     }
@@ -100,43 +139,82 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
     }
 
     private CommandLineArgument[] getCommandLineArguments() {
-        arguments[ARG_IMPORT_FILE_IDX] =
+        CommandLineArgument[] args = new CommandLineArgument[3];
+        args[ARG_IMPORT_FILE_IDX] =
                 new CommandLineArgument(
                         "-graphqlfile",
                         1,
                         null,
                         "",
-                        "-graphqlfile <path>      "
+                        "-graphqlfile <path>       "
                                 + Constant.messages.getString("graphql.cmdline.file.help"));
-        arguments[ARG_IMPORT_URL_IDX] =
+        args[ARG_IMPORT_URL_IDX] =
                 new CommandLineArgument(
                         "-graphqlurl",
                         1,
                         null,
                         "",
-                        "-graphqlurl <url>        "
+                        "-graphqlurl <url>         "
                                 + Constant.messages.getString("graphql.cmdline.url.help"));
-        arguments[ARG_END_URL_IDX] =
+        args[ARG_END_URL_IDX] =
                 new CommandLineArgument(
                         "-graphqlendurl",
                         1,
                         null,
                         "",
-                        "-graphqlendurl <url>  "
+                        "-graphqlendurl <url>      "
                                 + Constant.messages.getString("graphql.cmdline.endurl.help"));
-        return arguments;
+        return args;
     }
 
     @Override
     public void execute(CommandLineArgument[] args) {
-        if (arguments[ARG_IMPORT_FILE_IDX].isEnabled()) {
-            System.out.println("Nothing to see here (yet) :)");
-        }
-        if (arguments[ARG_IMPORT_URL_IDX].isEnabled()) {
-            System.out.println("Nothing to see here (yet) :)");
-        }
-        if (arguments[ARG_END_URL_IDX].isEnabled()) {
-            System.out.println("Nothing to see here (yet) :)");
+        if (args[ARG_IMPORT_FILE_IDX].isEnabled() || args[ARG_IMPORT_URL_IDX].isEnabled()) {
+            if (!args[ARG_END_URL_IDX].isEnabled()) {
+                CommandLine.error(Constant.messages.getString("graphql.error.emptyendurl"));
+                return;
+            }
+
+            GraphQlParser parser;
+            try {
+                parser =
+                        new GraphQlParser(
+                                args[ARG_END_URL_IDX].getArguments().firstElement(),
+                                HttpSender.MANUAL_REQUEST_INITIATOR);
+                parser.addRequesterListener(new HistoryPersister());
+            } catch (URIException e) {
+                CommandLine.error(
+                        Constant.messages.getString("graphql.error.invalidurl", e.getMessage()));
+                return;
+            }
+
+            if (args[ARG_IMPORT_FILE_IDX].isEnabled()) {
+                try {
+                    parser.importFile(args[ARG_IMPORT_FILE_IDX].getArguments().firstElement());
+                } catch (IOException e) {
+                    CommandLine.error(e.getMessage());
+                }
+            } else if (args[ARG_IMPORT_URL_IDX].isEnabled()) {
+                try {
+                    parser.importUrl(args[ARG_IMPORT_URL_IDX].getArguments().firstElement());
+                } catch (IOException e) {
+                    CommandLine.error(
+                            Constant.messages.getString(
+                                    "graphql.error.invalidurl", e.getMessage()));
+                }
+            }
+        } else if (args[ARG_END_URL_IDX].isEnabled()) {
+            try {
+                GraphQlParser parser =
+                        new GraphQlParser(
+                                args[ARG_END_URL_IDX].getArguments().firstElement(),
+                                HttpSender.MANUAL_REQUEST_INITIATOR);
+                parser.addRequesterListener(new HistoryPersister());
+                parser.introspect();
+            } catch (IOException e) {
+                CommandLine.error(
+                        Constant.messages.getString("graphql.error.invalidurl", e.getMessage()));
+            }
         }
     }
 

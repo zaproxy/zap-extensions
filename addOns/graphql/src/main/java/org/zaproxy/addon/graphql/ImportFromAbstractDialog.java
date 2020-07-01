@@ -22,17 +22,16 @@ package org.zaproxy.addon.graphql;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
-import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 
 abstract class ImportFromAbstractDialog extends AbstractDialog {
@@ -40,16 +39,13 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
     private static final String MESSAGE_PREFIX = "graphql.importfromdialog.";
 
-    private final JTextField fieldFrom = new JTextField(35);
+    private final JTextField fieldSchema = new JTextField(35);
     private final JTextField fieldEndpoint = new JTextField(35);
+    private GraphQlParser parser;
 
-    protected final ExtensionGraphQl caller;
-
-    public ImportFromAbstractDialog(
-            JFrame parent, ExtensionGraphQl caller, String title, String fromFieldLabel) {
+    public ImportFromAbstractDialog(JFrame parent, String title, String schemaFieldLabel) {
         super(parent, true);
         this.setTitle(title);
-        this.caller = caller;
         centreDialog();
 
         setLayout(new GridBagLayout());
@@ -61,7 +57,7 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
                 new JButton(Constant.messages.getString(MESSAGE_PREFIX + "importbutton"));
         buttonImport.addActionListener(
                 e -> {
-                    if (validateUrl(fieldEndpoint) && importDefinition()) {
+                    if (validateEndpointUrl() && importDefinition()) {
                         setVisible(false);
                         dispose();
                     }
@@ -75,14 +71,14 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
 
         constraints.gridx = 0;
         constraints.gridy = 0;
-        add(new JLabel(fromFieldLabel), constraints);
+        add(new JLabel(schemaFieldLabel), constraints);
 
         constraints.gridx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         constraints.gridwidth = 3;
-        setContextMenu(fieldFrom);
-        addFromFields(constraints);
+        setContextMenu(fieldSchema);
+        addSchemaFields(constraints);
 
         constraints.weightx = 0;
         constraints.gridwidth = 1;
@@ -111,63 +107,22 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
         setVisible(true);
     }
 
-    public boolean validateUrl(JTextField field) {
-        String urlStr = field.getText();
-        if (urlStr.isEmpty()) {
-            showWarningDialog(Constant.messages.getString(MESSAGE_PREFIX + "url.empty"));
-            field.requestFocusInWindow();
-            return false;
-        } else if ("http://".equals(urlStr) || "https://".equals(urlStr)) {
-            showWarningDialog(
-                    Constant.messages.getString(MESSAGE_PREFIX + "url.invalid", urlStr, ""));
-            field.requestFocusInWindow();
-            return false;
-        }
+    protected boolean validateEndpointUrl() {
         try {
-            new URL(urlStr);
-            new URI(urlStr, true);
-        } catch (Exception e) {
-            showWarningDialog(
-                    Constant.messages.getString(
-                            MESSAGE_PREFIX + "url.invalid", urlStr, e.getMessage()));
-            field.requestFocusInWindow();
-            return false;
-        }
-        return true;
-    }
-
-    protected JTextField getFromField() {
-        return fieldFrom;
-    }
-
-    /** @return the Schema Uri, might be {@code null} */
-    protected URI getSchemaUri() {
-        try {
-            return new URI(fieldFrom.getText(), true);
+            parser =
+                    new GraphQlParser(fieldEndpoint.getText(), HttpSender.MANUAL_REQUEST_INITIATOR);
+            parser.addRequesterListener(new HistoryPersister());
+            return true;
         } catch (URIException e) {
             showWarningDialog(
-                    Constant.messages.getString(
-                            MESSAGE_PREFIX + "url.invalid", fieldFrom.getText(), e.getMessage()));
-            return null;
+                    Constant.messages.getString("graphql.error.invalidurl", e.getMessage()));
+            fieldEndpoint.requestFocusInWindow();
         }
+        return false;
     }
 
-    /** @return the Endpoint Uri, might be {@code null} */
-    protected URI getEndpointUri() {
-        try {
-            return new URI(fieldEndpoint.getText(), true);
-        } catch (URIException e) {
-            showWarningDialog(
-                    Constant.messages.getString(
-                            MESSAGE_PREFIX + "url.invalid",
-                            fieldEndpoint.getText(),
-                            e.getMessage()));
-            return null;
-        }
-    }
-
-    protected void addFromFields(GridBagConstraints constraints) {
-        add(fieldFrom, constraints);
+    protected void addSchemaFields(GridBagConstraints constraints) {
+        add(fieldSchema, constraints);
     }
 
     protected abstract boolean importDefinition();
@@ -176,8 +131,16 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
         View.getSingleton().showWarningDialog(this, message);
     }
 
-    protected void showWarningInvalidUrl(String url) {
-        showWarningDialog(Constant.messages.getString(MESSAGE_PREFIX + "invalidurl", url));
+    protected JTextField getSchemaField() {
+        return fieldSchema;
+    }
+
+    protected JTextField getEndpointField() {
+        return fieldEndpoint;
+    }
+
+    protected GraphQlParser getParser() {
+        return parser;
     }
 
     private static void setContextMenu(JTextField field) {

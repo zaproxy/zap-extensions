@@ -19,8 +19,12 @@
  */
 package org.zaproxy.addon.graphql;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import net.sf.json.JSONObject;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
@@ -32,24 +36,20 @@ public class GraphQlApi extends ApiImplementor {
     private static final String PREFIX = "graphql";
     private static final String ACTION_IMPORT_FILE = "importFile";
     private static final String ACTION_IMPORT_URL = "importUrl";
-    private static final String PARAM_URL = "url";
     private static final String PARAM_FILE = "file";
-    private static final String PARAM_END = "endurl";
+    private static final String PARAM_URL = "url";
+    private static final String PARAM_ENDPOINT = "endurl";
 
-    private static final Logger LOGGER = Logger.getLogger(GraphQlApi.class);
-    private ExtensionGraphQl extension = null;
+    private static final Logger LOG = Logger.getLogger(GraphQlApi.class);
 
-    /** Provided only for API client generator usage. */
     public GraphQlApi() {
-        this(null);
-    }
-
-    public GraphQlApi(ExtensionGraphQl ext) {
-        extension = ext;
+        this.addApiAction(
+                new ApiAction(ACTION_IMPORT_FILE, new String[] {PARAM_ENDPOINT, PARAM_FILE}));
         this.addApiAction(
                 new ApiAction(
-                        ACTION_IMPORT_FILE, new String[] {PARAM_FILE}, new String[] {PARAM_END}));
-        this.addApiAction(new ApiAction(ACTION_IMPORT_URL, new String[] {PARAM_URL}));
+                        ACTION_IMPORT_URL,
+                        new String[] {PARAM_ENDPOINT},
+                        new String[] {PARAM_URL}));
     }
 
     @Override
@@ -61,14 +61,46 @@ public class GraphQlApi extends ApiImplementor {
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         switch (name) {
             case ACTION_IMPORT_FILE:
-            case ACTION_IMPORT_URL:
-                LOGGER.debug("Nothing to see here (yet) :)");
+                importFile(params);
                 break;
-
+            case ACTION_IMPORT_URL:
+                importUrl(params);
+                break;
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
         }
 
         return ApiResponseElement.OK;
+    }
+
+    private void importFile(JSONObject params) throws ApiException {
+        try {
+            GraphQlParser parser =
+                    new GraphQlParser(
+                            params.getString(PARAM_ENDPOINT), HttpSender.MANUAL_REQUEST_INITIATOR);
+            parser.importFile(params.getString(PARAM_FILE));
+        } catch (URIException e) {
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
+        } catch (FileNotFoundException e) {
+            throw new ApiException(ApiException.Type.DOES_NOT_EXIST, e.getMessage());
+        } catch (IOException e) {
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
+        }
+    }
+
+    private void importUrl(JSONObject params) throws ApiException {
+        try {
+            GraphQlParser parser =
+                    new GraphQlParser(
+                            params.getString(PARAM_ENDPOINT), HttpSender.MANUAL_REQUEST_INITIATOR);
+            parser.addRequesterListener(new HistoryPersister());
+            if (params.optString(PARAM_URL, "").isEmpty()) {
+                parser.introspect();
+            } else {
+                parser.importUrl(params.optString(PARAM_URL));
+            }
+        } catch (IOException e) {
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
+        }
     }
 }
