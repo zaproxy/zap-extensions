@@ -95,7 +95,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
             if (isStop()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scanner " + getName() + " stopping.");
+                    LOG.debug("Scan rule " + getName() + " stopping.");
                 }
                 return;
             }
@@ -159,7 +159,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                 LOG.debug(
                         "An error occurred creating or setting a URI for the: "
                                 + getName()
-                                + " scanner. "
+                                + " scan rule. "
                                 + uEx.getMessage(),
                         uEx);
             }

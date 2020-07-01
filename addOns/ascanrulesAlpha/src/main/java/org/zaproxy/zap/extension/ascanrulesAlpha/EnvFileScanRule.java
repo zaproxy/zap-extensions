@@ -21,12 +21,12 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
 
-public class EnvFileScanner extends AbstractAppFilePlugin {
+public class EnvFileScanRule extends AbstractAppFilePlugin {
 
-    private static final String MESSAGE_PREFIX = "ascanalpha.envfilescanner.";
+    private static final String MESSAGE_PREFIX = "ascanalpha.envfiles.";
     private static final int PLUGIN_ID = 40034;
 
-    public EnvFileScanner() {
+    public EnvFileScanRule() {
         super(".env", MESSAGE_PREFIX);
     }
 

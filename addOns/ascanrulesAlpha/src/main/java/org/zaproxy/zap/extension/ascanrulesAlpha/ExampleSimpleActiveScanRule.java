@@ -34,18 +34,18 @@ import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * An example active scan rule, for more details see
- * http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+ * https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/
  *
  * @author psiinon
  */
-public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
+public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
 
     // wasc_10 is Denial of Service - well, its just an example ;)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
 
     private Random rnd = new Random();
 
-    private static Logger log = Logger.getLogger(ExampleSimpleActiveScanner.class);
+    private static Logger log = Logger.getLogger(ExampleSimpleActiveScanRule.class);
 
     @Override
     public int getId() {
@@ -58,11 +58,11 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        // Strip off the "Example Active Scanner: " part if implementing a real one ;)
+        // Strip off the "Example Active Scan Rule: " part if implementing a real one ;)
         if (vuln != null) {
-            return "Example Active Scanner: " + vuln.getAlert();
+            return "Example Active Scan Rule: " + vuln.getAlert();
         }
-        return "Example Active Scanner: Denial of Service";
+        return "Example Active Scan Rule: Denial of Service";
     }
 
     @Override
@@ -118,7 +118,7 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String param, String value) {
         try {
             if (!Constant.isDevBuild()) {
-                // Only run this example scanner in dev mode
+                // Only run this example scan rule in dev mode
                 // Uncomment locally if you want to see these alerts in non dev mode ;)
                 return;
             }

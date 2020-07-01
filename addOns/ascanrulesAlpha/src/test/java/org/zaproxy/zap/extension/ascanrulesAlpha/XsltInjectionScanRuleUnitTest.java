@@ -29,12 +29,13 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
 
-/** Unit test for {@link XSLTInjection}. */
-public class XSLTInjectionUnitTest extends ActiveScannerAppParamTest<XSLTInjection> {
+/** Unit test for {@link XsltInjectionScanRule}. */
+public class XsltInjectionScanRuleUnitTest
+        extends ActiveScannerAppParamTest<XsltInjectionScanRule> {
 
     @Override
-    protected XSLTInjection createScanner() {
-        return new XSLTInjection();
+    protected XsltInjectionScanRule createScanner() {
+        return new XsltInjectionScanRule();
     }
 
     @Test

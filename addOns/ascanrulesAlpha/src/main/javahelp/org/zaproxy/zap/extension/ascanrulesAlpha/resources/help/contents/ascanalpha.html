@@ -14,26 +14,26 @@ This implements an example active scan rule that loads strings from a file that 
 For more details see: 
 <a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanner.java">ExampleFileActiveScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java">ExampleFileActiveScanRule.java</a>
 
 <H2>Cloud Metadata Attack</H2>
 Attempts to abuse a misconfigured NGINX server in order to access the instance metadata maintained by cloud service providers such as AWS, GCP and Azure.<br>
 All of these providers provide metadata via an internal unroutable IP address '169.254.169.254' - this can be exposed by incorrectly configured NGINX servers and accessed by using this IP address in the Host header field.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CloudMetadataScanner.java">CloudMetadataScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CloudMetadataScanRule.java">CloudMetadataScanRule.java</a>
 
 <H2>.env Information Leak</H2>
 Checks for web accessible .env files which may leak sensitive information 
 (such as usernames, passwords, API or APP keys, etc.).
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/EnvFileScanner.java">EnvFileScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/EnvFileScanRule.java">EnvFileScanRule.java</a>
 
-<H2>Example Active Scanner: Denial of Service</H2>
+<H2>Example Active Scan Rule: Denial of Service</H2>
 This implements a very simple example active scan rule.<br>
 For more details see: 
 <a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanner.java">ExampleSimpleActiveScanner.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
 
 <H2>Hidden File Finder</H2>
 This scan rule checks for various web accessible files which may leak administrative, configuration, or credential information.
@@ -80,18 +80,18 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 <H2>LDAP Injection</H2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LDAPInjection.java">LDAPInjection.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
 
 <H2>NoSQL Injection - MongoDB</H2>
 This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. It attempts various types of attacks including: boolean based, error based, time based, and authentication bypass. 
 It will also attempt JSON parameter specific payloads if the scan is configured to include JSON parameter variants.
 
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjection.java">MongoDbInjection.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
 
-<H2>XSLT Injection Scanner</H2>
-This active scanner checks for certain responses induced by injecting XSL transformations. <br/>
+<H2>XSLT Injection</H2>
+This scan rule checks for certain responses induced by injecting XSL transformations. <br/>
 It attempts to obtain those responses with payloads which may induce: error responses, disclosure of library/framework vendor name, remote port scanning, or command execution.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/XSLTInjection.java">XSLTInjection.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/XsltInjectionScanRule.java">XsltInjectionScanRule.java</a>
 </BODY>
 </HTML>

@@ -38,18 +38,18 @@ import org.zaproxy.zap.model.TechSet;
 
 /**
  * An example active scan rule, for more details see
- * http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+ * https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/
  *
  * @author psiinon
  */
-public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
+public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanalpha.examplefile.";
 
     private static final String exampleAscanFile = "txt/example-ascan-file.txt";
     private List<String> strings = null;
-    private static Logger log = Logger.getLogger(ExampleFileActiveScanner.class);
+    private static Logger log = Logger.getLogger(ExampleFileActiveScanRule.class);
 
     @Override
     public int getId() {
@@ -106,7 +106,7 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String param, String value) {
         try {
             if (!Constant.isDevBuild()) {
-                // Only run this example scanner in dev mode
+                // Only run this example scan rule in dev mode
                 // Uncomment locally if you want to see these alerts in non dev mode ;)
                 return;
             }
