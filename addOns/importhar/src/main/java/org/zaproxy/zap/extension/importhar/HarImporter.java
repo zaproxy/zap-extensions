@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.savehar;
+package org.zaproxy.zap.extension.importhar;
 
 import edu.umass.cs.benchlab.har.HarContent;
 import edu.umass.cs.benchlab.har.HarEntries;
@@ -55,8 +55,7 @@ public class HarImporter {
         return result;
     }
 
-    private static void setHistoryReference(HarEntry harEntry, HttpMessage httpMessage)
-            throws HttpMalformedHeaderException {
+    private static void setHistoryReference(HarEntry harEntry, HttpMessage httpMessage) {
         if (harEntry.getCustomFields().getCustomFieldValue(HarUtils.MESSAGE_ID_CUSTOM_FIELD)
                 == null) return;
 
@@ -68,12 +67,17 @@ public class HarImporter {
             httpMessage.setHistoryRef(new HistoryReference(historyId.intValue()));
         } catch (DatabaseException e) {
             /*no handler*/
+        } catch (HttpMalformedHeaderException e) {
+            /*no handler*/
         }
     }
 
     private static void setHttpResponse(HarResponse harResponse, HttpMessage message)
             throws HttpMalformedHeaderException {
         StringBuilder strBuilderResHeader = new StringBuilder();
+
+        // empty responses without status code are possible
+        if (harResponse.getStatus() == 0) return;
 
         strBuilderResHeader
                 .append(harResponse.getHttpVersion())

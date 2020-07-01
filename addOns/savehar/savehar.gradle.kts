@@ -13,7 +13,3 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/save-har-message/")
     }
 }
-
-dependencies {
-    testImplementation(project(":testutils"))
-}

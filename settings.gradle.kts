@@ -44,6 +44,7 @@ var addOns = listOf(
     "highlighter",
     "httpsInfo",
     "imagelocationscanner",
+    "importhar",
     "importLogFiles",
     "importurls",
     "invoke",
