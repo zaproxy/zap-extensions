@@ -32,8 +32,8 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-public class ImageLocationScannerUnitTest extends PassiveScannerTestUtils<ImageLocationScanner> {
-    private static final int PLUGIN_ID = ImageLocationScanner.PLUGIN_ID;
+public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<ImageLocationScanRule> {
+    private static final int PLUGIN_ID = ImageLocationScanRule.PLUGIN_ID;
     private static final String URI = "https://www.example.com/";
 
     @Override
@@ -42,8 +42,8 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTestUtils<ImageL
     }
 
     @Override
-    protected ImageLocationScanner createScanner() {
-        return new ImageLocationScanner();
+    protected ImageLocationScanRule createScanner() {
+        return new ImageLocationScanRule();
     }
 
     @Test
