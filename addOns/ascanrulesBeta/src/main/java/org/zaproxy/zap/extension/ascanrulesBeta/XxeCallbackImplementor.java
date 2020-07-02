@@ -19,38 +19,19 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.ExtensionAdaptor;
-
 /**
- * A null extension just to cause the message bundle and help file to get loaded
+ * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
  *
- * @author psiinon
+ * @author yhawke (2014)
  */
-public class ExtensionAscanRulesBeta extends ExtensionAdaptor {
+public class XxeCallbackImplementor extends ChallengeCallbackImplementor {
 
-    public ExtensionAscanRulesBeta() {
-        super();
-        this.setI18nPrefix("ascanbeta");
-    }
+    // This is the default component name (common for all)
+    private static final String PREFIX = "xxe";
 
+    /** @return */
     @Override
-    public String getName() {
-        return "ExtensionAscanRulesBeta";
-    }
-
-    @Override
-    public String getDescription() {
-        return Constant.messages.getString("ascanbeta.desc");
-    }
-
-    @Override
-    public boolean canUnload() {
-        return true;
-    }
-
-    @Override
-    public void unload() {
-        XxeScanRule.unload();
+    public String getPrefix() {
+        return PREFIX;
     }
 }
