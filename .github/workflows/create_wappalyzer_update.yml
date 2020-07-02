@@ -42,10 +42,15 @@ jobs:
         cp -R wappalyzer/src/drivers/webextension/images/icons/ zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
         cp -f wappalyzer/src/apps.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources
         cd zap-extensions
-        ./gradlew :addOns:wappalyzer:updateChangelog --change="- Updated with upstream Wappalyzer icon and pattern changes."
-        git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
-        git add .
-        git commit -m "Wappalyzer Update $SHORT_DATE" -m "Updates based on $SRC_BASE" --signoff
-        git push --set-upstream origin $BRANCH_STAMP
-        # Open the PR
-        hub pull-request --no-edit
+        ## Update the index to be sure git is aware of changes
+        git update-index -q --refresh
+        ## If there are changes: comment, commit, PR
+        if ! git diff-index --quiet HEAD --; then
+          ./gradlew :addOns:wappalyzer:updateChangelog --change="- Updated with upstream Wappalyzer icon and pattern changes."
+          git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
+          git add .
+          git commit -m "Wappalyzer Update $SHORT_DATE" -m "Updates based on $SRC_BASE" --signoff
+          git push --set-upstream origin $BRANCH_STAMP
+          # Open the PR
+          hub pull-request --no-edit
+        fi
