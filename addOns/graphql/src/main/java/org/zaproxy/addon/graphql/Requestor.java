@@ -20,25 +20,34 @@
 package org.zaproxy.addon.graphql;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
+import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpRequestConfig;
 
 public class Requestor {
 
     private final int initiator;
+    private final URI endpointUrl;
     private List<RequesterListener> listeners = new ArrayList<RequesterListener>();
     private HttpSender sender;
     private final HttpRequestConfig requestConfig;
     private static final Logger LOG = Logger.getLogger(Requestor.class);
+    private static final String GRAPHQL_CONTENT_TYPE = "application/graphql";
 
-    public Requestor(int initiator) {
+    public Requestor(URI endpointUrl, int initiator) {
+        this.endpointUrl = endpointUrl;
         this.initiator = initiator;
         sender =
                 new HttpSender(
@@ -47,6 +56,73 @@ public class Requestor {
                         initiator);
         requestConfig =
                 HttpRequestConfig.builder().setRedirectionValidator(new MessageHandler()).build();
+    }
+
+    private HttpMessage sendQueryByGet(String query) {
+        try {
+            URI url =
+                    UrlBuilder.build(
+                            endpointUrl
+                                    + "?query="
+                                    + URLEncoder.encode(query, StandardCharsets.UTF_8.toString()));
+            HttpMessage message = new HttpMessage(url);
+            send(message);
+            return message;
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
+        }
+        return null;
+    }
+
+    private HttpMessage sendQueryByGraphQlPost(String query) {
+        try {
+            HttpRequestBody msgBody = new HttpRequestBody(query);
+            HttpRequestHeader msgHeader =
+                    new HttpRequestHeader(HttpRequestHeader.POST, endpointUrl, HttpHeader.HTTP11);
+            msgHeader.setHeader("Accept", HttpHeader.JSON_CONTENT_TYPE);
+            msgHeader.setHeader(HttpHeader.CONTENT_TYPE, GRAPHQL_CONTENT_TYPE);
+            msgHeader.setContentLength(msgBody.length());
+
+            HttpMessage message = new HttpMessage(msgHeader, msgBody);
+            send(message);
+            return message;
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
+        }
+        return null;
+    }
+
+    private HttpMessage sendQueryByJsonPost(String query) {
+        try {
+            JSONObject msgBodyJson = new JSONObject();
+            msgBodyJson.put("query", query);
+            HttpRequestBody msgBody = new HttpRequestBody(msgBodyJson.toString());
+
+            HttpRequestHeader msgHeader =
+                    new HttpRequestHeader(HttpRequestHeader.POST, endpointUrl, HttpHeader.HTTP11);
+            msgHeader.setHeader("Accept", HttpHeader.JSON_CONTENT_TYPE);
+            msgHeader.setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.JSON_CONTENT_TYPE);
+            msgHeader.setContentLength(msgBody.length());
+
+            HttpMessage message = new HttpMessage(msgHeader, msgBody);
+            send(message);
+            return message;
+        } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public HttpMessage sendQuery(String query, GraphQlParam.RequestMethodOption method) {
+        switch (method) {
+            case GET:
+                return sendQueryByGet(query);
+            case POST_GRAPHQL:
+                return sendQueryByGraphQlPost(query);
+            case POST_JSON:
+            default:
+                return sendQueryByJsonPost(query);
+        }
     }
 
     public void send(HttpMessage message) {

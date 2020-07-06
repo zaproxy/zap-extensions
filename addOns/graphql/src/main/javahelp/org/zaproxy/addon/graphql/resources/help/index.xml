@@ -4,5 +4,6 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="graphql" target="graphql" />
+	<indexitem text="GraphQL" target="graphql" />
+  <indexitem text="GraphQL Options" target="graphql.options" />
 </index>

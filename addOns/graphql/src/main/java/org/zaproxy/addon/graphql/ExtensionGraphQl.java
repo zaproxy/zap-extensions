@@ -47,6 +47,8 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
     private ZapMenuItem menuImportUrlGraphQl = null;
     private SpiderParser graphQlSpider;
     private ParseFilter graphQlParseFilter;
+    private GraphQlOptionsPanel graphQlOptionsPanel;
+    private GraphQlParam param;
 
     private static final int ARG_IMPORT_FILE_IDX = 0;
     private static final int ARG_IMPORT_URL_IDX = 1;
@@ -77,9 +79,11 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
         if (getView() != null) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalGraphQl());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlGraphQl());
+            extensionHook.getHookView().addOptionPanel(getGraphQlOptionsPanel());
         }
 
         extensionHook.addApiImplementor(new GraphQlApi());
+        extensionHook.addOptionsParamSet(getParam());
         extensionHook.addCommandLine(getCommandLineArguments());
     }
 
@@ -121,6 +125,20 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
                     e -> new ImportFromUrlDialog(View.getSingleton().getMainFrame()));
         }
         return menuImportUrlGraphQl;
+    }
+
+    private GraphQlOptionsPanel getGraphQlOptionsPanel() {
+        if (graphQlOptionsPanel == null) {
+            graphQlOptionsPanel = new GraphQlOptionsPanel();
+        }
+        return graphQlOptionsPanel;
+    }
+
+    protected GraphQlParam getParam() {
+        if (param == null) {
+            param = new GraphQlParam();
+        }
+        return param;
     }
 
     @Override

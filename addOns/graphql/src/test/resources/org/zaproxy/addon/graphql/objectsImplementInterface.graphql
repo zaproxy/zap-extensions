@@ -1,0 +1,22 @@
+type Query {
+    character: Character
+}
+
+interface Character {
+    id: ID
+    name: String
+}
+
+type Hero implements Character {
+    id: ID
+    name: String
+    superPower: String
+    weakness: String
+}
+
+type Villain implements Character {
+    id: ID
+    name: String
+    grudge: String
+    origin: String
+}

@@ -20,6 +20,8 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("com.graphql-java:graphql-java:15.0")
+
+    testImplementation(project(":testutils"))
 }
 
 repositories {
