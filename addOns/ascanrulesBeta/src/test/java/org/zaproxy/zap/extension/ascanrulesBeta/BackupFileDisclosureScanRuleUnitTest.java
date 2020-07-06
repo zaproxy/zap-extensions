@@ -28,7 +28,10 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -153,6 +156,176 @@ public class BackupFileDisclosureScanRuleUnitTest
                 });
         HttpMessage message = getHttpMessage(test + "sitemap.xml");
         rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {301, 403, 500})
+    public void shouldNotAlertIfBackupResponseIsNonSuccessStdThreshold(int status)
+            throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(
+                new NanoServerHandler(test) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        boolean isAlertUrl = session.getUri().contains("sitemap.xml.bak");
+                        String content = isAlertUrl ? "<html></html>" : "";
+                        Response.Status rs =
+                                isAlertUrl
+                                        ? Response.Status.lookup(status)
+                                        : Response.Status.NOT_FOUND;
+                        return newFixedLengthResponse(rs, NanoHTTPD.MIME_HTML, content);
+                    }
+                });
+        HttpMessage message = getHttpMessage(test + "sitemap.xml");
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {301, 403, 500})
+    public void shouldAlertIfBackupResponseIsNonSuccessLowThreshold(int status) throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(
+                new NanoServerHandler(test) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        boolean isAlertUrl = session.getUri().contains("sitemap.xml.bak");
+                        String content = isAlertUrl ? "<html></html>" : "";
+                        Response.Status rs =
+                                isAlertUrl
+                                        ? Response.Status.lookup(status)
+                                        : Response.Status.NOT_FOUND;
+                        return newFixedLengthResponse(rs, NanoHTTPD.MIME_HTML, content);
+                    }
+                });
+        HttpMessage message = getHttpMessage(test + "sitemap.xml");
+        rule.init(message, parent);
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {301, 403, 500})
+    public void shouldAlertIfOldBackupResponseAfterNonSuccess(int status) throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(
+                new NanoServerHandler(test) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        boolean isAlertUrl = session.getUri().contains("sitemap.xml.old");
+                        String content = isAlertUrl ? "<html></html>" : "";
+                        Response.Status rs;
+                        if (isAlertUrl) {
+                            rs = Response.Status.OK;
+                        } else if (session.getUri().contains("sitemap.xml.bak")) {
+                            rs = Response.Status.lookup(status);
+                        } else {
+                            rs = Response.Status.NOT_FOUND;
+                        }
+                        return newFixedLengthResponse(rs, NanoHTTPD.MIME_HTML, content);
+                    }
+                });
+        HttpMessage message = getHttpMessage(test + "sitemap.xml");
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    public void shouldAlertIfBackupDir() throws Exception {
+        // Given
+        String test = "/dirbackup/";
+        nano.addHandler(
+                new NanoServerHandler(test) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        boolean isAlertUrl =
+                                session.getUri().contains("dirbackup/index.html")
+                                        || session.getUri().contains("dirbackup/sitemap.xml");
+                        String content = isAlertUrl ? "<html></html>" : "";
+                        Response.Status rs =
+                                isAlertUrl ? Response.Status.OK : Response.Status.NOT_FOUND;
+                        return newFixedLengthResponse(rs, NanoHTTPD.MIME_HTML, content);
+                    }
+                });
+        HttpMessage message = getHttpMessage("/dir/sitemap.xml");
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {301, 403, 500})
+    public void shouldNotAlertIfBackupDirResponseIsNonSuccessStdThreshold(int status)
+            throws Exception {
+        // Given
+        String test = "/dirbackup/";
+        nano.addHandler(
+                new NanoServerHandler(test) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        boolean isAlertUrl = session.getUri().contains("sitemap.xml");
+                        String content = isAlertUrl ? "<html></html>" : "";
+                        Response.Status rs =
+                                isAlertUrl
+                                        ? Response.Status.lookup(status)
+                                        : Response.Status.NOT_FOUND;
+                        return newFixedLengthResponse(rs, NanoHTTPD.MIME_HTML, content);
+                    }
+                });
+        HttpMessage message = getHttpMessage("/dir/sitemap.xml");
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {301, 403, 500})
+    public void shouldAlertIfBackupDirResponseIsNonSuccessLowThreshold(int status)
+            throws Exception {
+        // Given
+        String test = "/dirbackup/";
+        nano.addHandler(
+                new NanoServerHandler(test) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        boolean isAlertUrl = session.getUri().contains("sitemap.xml");
+                        String content = isAlertUrl ? "<html></html>" : "";
+                        Response.Status rs =
+                                isAlertUrl
+                                        ? Response.Status.lookup(status)
+                                        : Response.Status.NOT_FOUND;
+                        return newFixedLengthResponse(rs, NanoHTTPD.MIME_HTML, content);
+                    }
+                });
+        HttpMessage message = getHttpMessage("/dir/sitemap.xml");
+        rule.init(message, parent);
+        rule.setAlertThreshold(AlertThreshold.LOW);
         // When
         rule.scan();
         // Then

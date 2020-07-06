@@ -32,6 +32,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -721,6 +722,9 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 }
                 // Do not follow redirects. They're evil. Yep.
                 sendAndReceive(requestmsg, false);
+                if (!isWithinThreshold(requestmsg)) {
+                    continue;
+                }
                 disclosedData = requestmsg.getResponseBody().getBytes();
                 int requestStatusCode = requestmsg.getResponseHeader().getStatusCode();
 
@@ -775,6 +779,9 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 }
                 // Do not follow redirects. They're evil. Yep.
                 sendAndReceive(requestmsg, false);
+                if (!isWithinThreshold(requestmsg)) {
+                    continue;
+                }
                 disclosedData = requestmsg.getResponseBody().getBytes();
                 int requestStatusCode = requestmsg.getResponseHeader().getStatusCode();
                 // If the response is empty it's probably not really a backup
@@ -819,5 +826,11 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                     e);
             return;
         }
+    }
+
+    private boolean isWithinThreshold(HttpMessage msg) {
+        // Ignore messages with non-success codes unless at LOW threshold
+        return this.getAlertThreshold().equals(AlertThreshold.LOW)
+                || HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode());
     }
 }
