@@ -20,28 +20,37 @@
 package org.zaproxy.zap.extension.requester;
 
 import java.awt.EventQueue;
+import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.net.ssl.SSLException;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
+import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.model.SessionStructure;
+import org.zaproxy.zap.network.HttpRedirectionValidator;
+import org.zaproxy.zap.network.HttpRequestConfig;
 
 /** Knows how to send {@link HttpMessage} objects. */
 public class HttpPanelSender implements MessageSender {
@@ -55,6 +64,7 @@ public class HttpPanelSender implements MessageSender {
 
     private JToggleButton followRedirect = null;
     private JToggleButton useTrackingSessionState = null;
+    private JToggleButton useCookies = null;
 
     private List<PersistentConnectionListener> persistentConnectionListener = new ArrayList<>();
 
@@ -63,6 +73,7 @@ public class HttpPanelSender implements MessageSender {
 
         requestPanel.addOptions(
                 getButtonUseTrackingSessionState(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+        requestPanel.addOptions(getButtonUseCookies(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(
                 getButtonFollowRedirects(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
 
@@ -74,8 +85,22 @@ public class HttpPanelSender implements MessageSender {
     @Override
     public void handleSendMessage(Message aMessage) throws IllegalArgumentException, IOException {
         final HttpMessage httpMessage = (HttpMessage) aMessage;
+        // Reset the user before sending (e.g. Forced User mode sets the user, if needed).
+        httpMessage.setRequestingUser(null);
         try {
-            getDelegate().sendAndReceive(httpMessage, getButtonFollowRedirects().isSelected());
+            final ModeRedirectionValidator redirectionValidator = new ModeRedirectionValidator();
+            boolean followRedirects = getButtonFollowRedirects().isSelected();
+
+            if (followRedirects) {
+                getDelegate()
+                        .sendAndReceive(
+                                httpMessage,
+                                HttpRequestConfig.builder()
+                                        .setRedirectionValidator(redirectionValidator)
+                                        .build());
+            } else {
+                getDelegate().sendAndReceive(httpMessage, false);
+            }
 
             EventQueue.invokeAndWait(
                     new Runnable() {
@@ -85,21 +110,16 @@ public class HttpPanelSender implements MessageSender {
                                 // Indicate UI new response arrived
                                 responsePanel.updateContent();
 
-                                final int finalType = HistoryReference.TYPE_ZAP_USER;
-                                final Thread t =
-                                        new Thread(
-                                                new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        final ExtensionHistory extHistory =
-                                                                getHistoryExtension();
-                                                        if (extHistory != null) {
-                                                            extHistory.addHistory(
-                                                                    httpMessage, finalType);
-                                                        }
-                                                    }
-                                                });
-                                t.start();
+                                if (!followRedirects) {
+                                    persistAndShowMessage(httpMessage);
+                                } else if (!redirectionValidator.isRequestValid()) {
+                                    View.getSingleton()
+                                            .showWarningDialog(
+                                                    Constant.messages.getString(
+                                                            "manReq.outofscope.redirection.warning",
+                                                            redirectionValidator
+                                                                    .getInvalidRedirection()));
+                                }
                             }
                         }
                     });
@@ -113,6 +133,8 @@ public class HttpPanelSender implements MessageSender {
         } catch (final UnknownHostException uhe) {
             throw new IOException("Error forwarding to an Unknown host: " + uhe.getMessage(), uhe);
 
+        } catch (final SSLException sslEx) {
+            throw sslEx;
         } catch (final IOException ioe) {
             throw new IOException(
                     "IO error in sending request: " + ioe.getClass() + ": " + ioe.getMessage(),
@@ -120,6 +142,26 @@ public class HttpPanelSender implements MessageSender {
 
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    private void persistAndShowMessage(HttpMessage httpMessage) {
+        if (!EventQueue.isDispatchThread()) {
+            EventQueue.invokeLater(() -> persistAndShowMessage(httpMessage));
+            return;
+        }
+
+        try {
+            Session session = Model.getSingleton().getSession();
+            HistoryReference ref =
+                    new HistoryReference(session, HistoryReference.TYPE_ZAP_USER, httpMessage);
+            final ExtensionHistory extHistory = getHistoryExtension();
+            if (extHistory != null) {
+                extHistory.addHistory(ref);
+            }
+            SessionStructure.addPath(Model.getSingleton().getSession(), ref, httpMessage);
+        } catch (HttpMalformedHeaderException | DatabaseException e) {
+            logger.warn("Failed to persist message sent:", e);
         }
     }
 
@@ -157,10 +199,9 @@ public class HttpPanelSender implements MessageSender {
     protected ExtensionHistory getHistoryExtension() {
         if (extension == null) {
             extension =
-                    ((ExtensionHistory)
-                            Control.getSingleton()
-                                    .getExtensionLoader()
-                                    .getExtension(ExtensionHistory.NAME));
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionHistory.class);
         }
         return extension;
     }
@@ -171,10 +212,6 @@ public class HttpPanelSender implements MessageSender {
             delegate.shutdown();
             delegate = null;
         }
-
-        final boolean isSessionTrackingEnabled =
-                Model.getSingleton().getOptionsParam().getConnectionParam().isHttpStateEnabled();
-        getButtonUseTrackingSessionState().setEnabled(isSessionTrackingEnabled);
     }
 
     private HttpSender getDelegate() {
@@ -184,6 +221,7 @@ public class HttpPanelSender implements MessageSender {
                             Model.getSingleton().getOptionsParam().getConnectionParam(),
                             getButtonUseTrackingSessionState().isSelected(),
                             HttpSender.MANUAL_REQUEST_INITIATOR);
+            delegate.setUseCookies(getButtonUseCookies().isSelected());
         }
         return delegate;
     }
@@ -208,11 +246,28 @@ public class HttpPanelSender implements MessageSender {
                     new JToggleButton(
                             new ImageIcon(
                                     HttpPanelSender.class.getResource(
-                                            "/resource/icon/fugue/cookie.png"))); // Cookie
+                                            "/resource/icon/fugue/globe-green.png")));
             useTrackingSessionState.setToolTipText(
                     Constant.messages.getString("manReq.checkBox.useSession"));
+            useTrackingSessionState.addItemListener(
+                    e -> setUseTrackingSessionState(e.getStateChange() == ItemEvent.SELECTED));
         }
         return useTrackingSessionState;
+    }
+
+    private JToggleButton getButtonUseCookies() {
+        if (useCookies == null) {
+            useCookies =
+                    new JToggleButton(
+                            new ImageIcon(
+                                    HttpPanelSender.class.getResource(
+                                            "/resource/icon/fugue/cookie.png")),
+                            true);
+            useCookies.setToolTipText(Constant.messages.getString("manReq.checkBox.useCookies"));
+            useCookies.addItemListener(
+                    e -> setUseCookies(e.getStateChange() == ItemEvent.SELECTED));
+        }
+        return useCookies;
     }
 
     public void addPersistentConnectionListener(PersistentConnectionListener listener) {
@@ -221,5 +276,86 @@ public class HttpPanelSender implements MessageSender {
 
     public void removePersistentConnectionListener(PersistentConnectionListener listener) {
         persistentConnectionListener.remove(listener);
+    }
+
+    /**
+     * A {@link HttpRedirectionValidator} that enforces the {@link
+     * org.parosproxy.paros.control.Control.Mode Mode} when validating the {@code URI} of
+     * redirections.
+     *
+     * @see #isRequestValid()
+     */
+    private class ModeRedirectionValidator implements HttpRedirectionValidator {
+
+        private boolean isRequestValid;
+        private URI invalidRedirection;
+
+        public ModeRedirectionValidator() {
+            isRequestValid = true;
+        }
+
+        @Override
+        public void notifyMessageReceived(HttpMessage message) {
+            persistAndShowMessage(message);
+        }
+
+        @Override
+        public boolean isValid(URI redirection) {
+            if (!isValidForCurrentMode(redirection)) {
+                isRequestValid = false;
+                invalidRedirection = redirection;
+                return false;
+            }
+            return true;
+        }
+
+        private boolean isValidForCurrentMode(URI uri) {
+            switch (Control.getSingleton().getMode()) {
+                case safe:
+                    return false;
+                case protect:
+                    return Model.getSingleton().getSession().isInScope(uri.toString());
+                default:
+                    return true;
+            }
+        }
+
+        /**
+         * Tells whether or not the request is valid, that is, all redirections were valid for the
+         * current {@code Mode}.
+         *
+         * @return {@code true} is the request is valid, {@code false} otherwise.
+         * @see #getInvalidRedirection()
+         */
+        public boolean isRequestValid() {
+            return isRequestValid;
+        }
+
+        /**
+         * Gets the invalid redirection, if any.
+         *
+         * @return the invalid redirection, {@code null} if there was none.
+         * @see #isRequestValid()
+         */
+        public URI getInvalidRedirection() {
+            return invalidRedirection;
+        }
+    }
+
+    private void setUseTrackingSessionState(boolean shouldUseTrackingSessionState) {
+        if (delegate != null) {
+            delegate.setUseGlobalState(shouldUseTrackingSessionState);
+        }
+    }
+
+    private void setUseCookies(boolean shouldUseCookies) {
+        if (delegate != null) {
+            delegate.setUseCookies(shouldUseCookies);
+        }
+    }
+
+    void setButtonTrackingSessionStateEnabled(boolean enabled) {
+        getButtonUseTrackingSessionState().setEnabled(enabled);
+        getButtonUseTrackingSessionState().setSelected(enabled);
     }
 }
