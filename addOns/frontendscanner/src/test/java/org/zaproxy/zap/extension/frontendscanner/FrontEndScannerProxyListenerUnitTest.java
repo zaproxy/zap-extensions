@@ -76,4 +76,43 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
 
         assertTrue(result.matches(expectedHtmlFormat));
     }
+
+    @Test
+    public void testInjectAfterMetaTagInHeadTag() {
+        // Given
+        String htmlBody = "<!doctype html><html lang='en'><head><meta></head><body></body></html>";
+        msg.setResponseBody(htmlBody);
+
+        // When
+        frontEndScannerProxyListener.onHttpResponseReceive(msg);
+
+        // Then
+        String expectedHtmlFormat =
+                "<!doctype html><html lang='en'><head><meta><script src='https:\\/\\/"
+                        + HOSTNAME
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></html>";
+        String result = msg.getResponseBody().toString();
+
+        assertTrue(result.matches(expectedHtmlFormat));
+    }
+
+    @Test
+    public void testInjectAfterAllMetaTagsInHeadTag() {
+        // Given
+        String htmlBody =
+                "<!doctype html><html lang='en'><head><meta><meta></head><body></body></html>";
+        msg.setResponseBody(htmlBody);
+
+        // When
+        frontEndScannerProxyListener.onHttpResponseReceive(msg);
+
+        // Then
+        String expectedHtmlFormat =
+                "<!doctype html><html lang='en'><head><meta><meta><script src='https:\\/\\/"
+                        + HOSTNAME
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></html>";
+        String result = msg.getResponseBody().toString();
+
+        assertTrue(result.matches(expectedHtmlFormat));
+    }
 }

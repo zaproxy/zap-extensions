@@ -76,7 +76,7 @@ public class FrontEndScannerProxyListener implements ProxyListener {
                     String injectedContent = injectedContentBuilder.toString();
 
                     OutputDocument newResponseBody = new OutputDocument(document);
-                    int insertPosition = head.getChildElements().get(0).getBegin();
+                    int insertPosition = getInsertPosition(head);
                     newResponseBody.insert(insertPosition, injectedContent);
 
                     msg.getResponseBody().setBody(newResponseBody.toString());
@@ -91,6 +91,20 @@ public class FrontEndScannerProxyListener implements ProxyListener {
             }
         }
         return true;
+    }
+
+    private static int getInsertPosition(Element head) {
+        // The payload needs to be inserted in front of as many elements as possible;
+        // But still after the `<meta>` tag (if there is any).
+
+        List<Element> metaElements = head.getAllElements("meta");
+        int size = metaElements.size();
+
+        if (size == 0) {
+            return head.getChildElements().get(0).getBegin();
+        } else {
+            return metaElements.get(size - 1).getEnd();
+        }
     }
 
     @Override
