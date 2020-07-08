@@ -136,4 +136,80 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
 
         assertTrue(result.matches(expectedHtmlFormat));
     }
+
+    @Test
+    public void testInjectionShouldBeSuccessfulWithoutHead() {
+        // Given
+        String htmlBody = "<!doctype html><html lang='en'><body></body></head></html>";
+        msg.setResponseBody(htmlBody);
+
+        // When
+        frontEndScannerProxyListener.onHttpResponseReceive(msg);
+
+        // Then
+        String expectedHtmlFormat =
+                "<!doctype html><html lang='en'><head><script src='https:\\/\\/"
+                        + HOSTNAME
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></head></html>";
+        String result = msg.getResponseBody().toString();
+
+        assertTrue(result.matches(expectedHtmlFormat));
+    }
+
+    @Test
+    public void testInjectionShouldBeSuccessfulWithEmptyHead() {
+        // Given
+        String htmlBody = "<!doctype html><html lang='en'><head></head><body></body></html>";
+        msg.setResponseBody(htmlBody);
+
+        // When
+        frontEndScannerProxyListener.onHttpResponseReceive(msg);
+
+        // Then
+        String expectedHtmlFormat =
+                "<!doctype html><html lang='en'><head><script src='https:\\/\\/"
+                        + HOSTNAME
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></html>";
+        String result = msg.getResponseBody().toString();
+
+        assertTrue(result.matches(expectedHtmlFormat));
+    }
+
+    @Test
+    public void testInjectionShouldBeSuccessfulWithoutHtmlTag() {
+        // Given
+        String htmlBody = "<head></head><body></body>";
+        msg.setResponseBody(htmlBody);
+
+        // When
+        frontEndScannerProxyListener.onHttpResponseReceive(msg);
+
+        // Then
+        String expectedHtmlFormat =
+                "<head><script src='https:\\/\\/"
+                        + HOSTNAME
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body>";
+        String result = msg.getResponseBody().toString();
+
+        assertTrue(result.matches(expectedHtmlFormat));
+    }
+
+    @Test
+    public void testInjectionShouldBeSuccessfulWithoutHtmlNorHeadTag() {
+        // Given
+        String htmlBody = "<body></body>";
+        msg.setResponseBody(htmlBody);
+
+        // When
+        frontEndScannerProxyListener.onHttpResponseReceive(msg);
+
+        // Then
+        String expectedHtmlFormat =
+                "<head><script src='https:\\/\\/"
+                        + HOSTNAME
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body>";
+        String result = msg.getResponseBody().toString();
+
+        assertTrue(result.matches(expectedHtmlFormat));
+    }
 }
