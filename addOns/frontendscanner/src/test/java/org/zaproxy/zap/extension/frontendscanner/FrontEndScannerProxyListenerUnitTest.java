@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.frontendscanner;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -27,6 +28,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -55,6 +58,24 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
         msg = new HttpMessage(new URI("https", HOSTNAME, "/", ""));
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
         msg.setHistoryRef(ref);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Content-Security-Policy", "X-Content-Security-Policy", "X-WebKit-CSP"})
+    public void testRemovesCSPFromHttpResponsesIfInjecting(String header) {
+        // Given
+        String htmlBody =
+                "<!doctype html><html lang='en'><head><script></script></head><body></body></html>";
+        msg.setResponseBody(htmlBody);
+
+        msg.getResponseHeader().setHeader(header, "value");
+
+        // When
+        frontEndScannerProxyListener.onHttpResponseReceive(msg);
+
+        // Then
+        String result = msg.getResponseHeader().getHeader(header);
+        assertNull(result);
     }
 
     @Test

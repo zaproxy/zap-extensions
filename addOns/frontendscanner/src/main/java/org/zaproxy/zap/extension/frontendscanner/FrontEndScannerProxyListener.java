@@ -36,6 +36,10 @@ public class FrontEndScannerProxyListener implements ProxyListener {
     private final FrontEndScannerAPI api;
     private final FrontEndScannerOptions options;
 
+    private static final String[] CSP_HEADERS = {
+        "Content-Security-Policy", "X-Content-Security-Policy", "X-WebKit-CSP"
+    };
+
     public FrontEndScannerProxyListener(FrontEndScannerAPI api, FrontEndScannerOptions options) {
         this.api = api;
         this.options = options;
@@ -83,6 +87,10 @@ public class FrontEndScannerProxyListener implements ProxyListener {
 
                     int newLength = msg.getResponseBody().length();
                     msg.getResponseHeader().setContentLength(newLength);
+
+                    for (String header : CSP_HEADERS) {
+                        msg.getResponseHeader().setHeader(header, null);
+                    }
                 } else {
                     LOGGER.debug("<head></head> is missing in the response");
                 }
