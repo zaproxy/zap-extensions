@@ -23,7 +23,6 @@ import edu.umass.cs.benchlab.har.tools.HarFileReader;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.List;
 import javax.swing.JFileChooser;
 import org.apache.log4j.Logger;
@@ -41,10 +40,9 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ExtensionImportHarHttpMessage extends ExtensionAdaptor {
 
     private static final String NAME = "ExtensionImportHarHttpMessage";
-
     private static final String THREAD_PREFIX = "ZAP-Import-Har-";
+    private static final Logger LOG = Logger.getLogger(ExtensionImportHarHttpMessage.class);
 
-    private static Logger log = Logger.getLogger(ExtensionImportHarHttpMessage.class);
     private int threadId = 1;
 
     public ExtensionImportHarHttpMessage() {
@@ -64,9 +62,9 @@ public class ExtensionImportHarHttpMessage extends ExtensionAdaptor {
     }
 
     private ZapMenuItem getMenuImportHar() {
-        ZapMenuItem result = new ZapMenuItem("savehar.topmenu.import.importhar");
+        ZapMenuItem result = new ZapMenuItem("importhar.topmenu.import.importhar");
         result.setToolTipText(
-                Constant.messages.getString("savehar.topmenu.import.importhar.tooltip"));
+                Constant.messages.getString("importhar.topmenu.import.importhar.tooltip"));
         result.addActionListener(
                 new java.awt.event.ActionListener() {
                     @Override
@@ -94,13 +92,14 @@ public class ExtensionImportHarHttpMessage extends ExtensionAdaptor {
     }
 
     private void _importHarFile(File file) {
-        String ERROR_IMPORT = Constant.messages.getString("importhar.file.import.error");
         try {
             importHarFile(file);
         } catch (IOException e) {
-            log.error(e);
+            LOG.error(e);
             View.getSingleton()
-                    .showWarningDialog(MessageFormat.format(ERROR_IMPORT, file.getAbsolutePath()));
+                    .showWarningDialog(
+                            Constant.messages.getString(
+                                    "importhar.file.import.error", file.getAbsolutePath()));
         }
     }
 
@@ -122,7 +121,7 @@ public class ExtensionImportHarHttpMessage extends ExtensionAdaptor {
                                 HistoryReference.TYPE_ZAP_USER,
                                 message);
             } catch (Exception e) {
-                log.warn(e.getMessage(), e);
+                LOG.warn(e.getMessage(), e);
                 return;
             }
         } else {
