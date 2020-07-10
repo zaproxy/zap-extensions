@@ -157,7 +157,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
      * @param initViaUi {@code true} if the import is being done through the GUI, {@code false}
      *     otherwise.
      * @return the list of errors, if any. Returns {@code null} if the import is being done through
-     *     the GUI.
+     *     the GUI, or, if not done through the GUI the target was not accessed (caused by an {@code
+     *     IOException}).
      * @throws InvalidUrlException if the target URL is not valid.
      */
     public List<String> importOpenApiDefinition(

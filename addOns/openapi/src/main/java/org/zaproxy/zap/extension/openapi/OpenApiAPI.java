@@ -108,6 +108,11 @@ public class OpenApiAPI extends ApiImplementor {
                         extension.importOpenApiDefinition(
                                 new URI(params.getString(PARAM_URL), false), override, false);
 
+                if (errors == null) {
+                    throw new ApiException(
+                            ApiException.Type.ILLEGAL_PARAMETER, "Failed to access the target.");
+                }
+
                 ApiResponseList result = new ApiResponseList(name);
                 for (String error : errors) {
                     result.addItem(new ApiResponseElement("warning", error));
