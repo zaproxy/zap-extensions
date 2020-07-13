@@ -134,6 +134,12 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         return PREFIX;
     }
 
+    // TODO Uncomment when targeting newer ZAP version.
+    // @Override
+    protected String getI18nPrefix() {
+        return "spiderajax";
+    }
+
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         Context context = null;
