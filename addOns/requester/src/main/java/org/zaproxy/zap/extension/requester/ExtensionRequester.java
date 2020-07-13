@@ -57,6 +57,8 @@ public class ExtensionRequester extends ExtensionAdaptor {
         super.hook(extensionHook);
         extensionHook.addOptionsParamSet(getOptionsParam());
         if (getView() != null) {
+            extensionHook.addOptionsChangedListener(getRequesterPanel());
+
             ExtensionHookView hookView = extensionHook.getHookView();
             hookView.addWorkPanel(getRequesterPanel());
             hookView.addOptionPanel(getOptionsPanel());

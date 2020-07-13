@@ -23,9 +23,11 @@ import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.extension.OptionsChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class RequesterPanel extends AbstractPanel {
+public class RequesterPanel extends AbstractPanel implements OptionsChangedListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -62,5 +64,10 @@ public class RequesterPanel extends AbstractPanel {
 
     void unload() {
         getRequesterNumberedTabbedPane().unload();
+    }
+
+    @Override
+    public void optionsChanged(OptionsParam optionsParam) {
+        getRequesterNumberedTabbedPane().optionsChanged(optionsParam);
     }
 }

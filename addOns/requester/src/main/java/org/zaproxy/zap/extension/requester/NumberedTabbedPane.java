@@ -20,12 +20,14 @@
 package org.zaproxy.zap.extension.requester;
 
 import java.awt.Component;
+import java.util.function.Consumer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.parosproxy.paros.model.OptionsParam;
 
 public abstract class NumberedTabbedPane extends JTabbedPane {
 
@@ -74,9 +76,17 @@ public abstract class NumberedTabbedPane extends JTabbedPane {
     }
 
     void unload() {
+        processEditorPanels(ManualHttpRequestEditorPanel::beforeClose);
+    }
+
+    private void processEditorPanels(Consumer<ManualHttpRequestEditorPanel> consumer) {
         int editorPanels = getTabCount() - 1;
         for (int i = 0; i < editorPanels; i++) {
-            ((ManualHttpRequestEditorPanel) getComponentAt(i)).beforeClose();
+            consumer.accept((ManualHttpRequestEditorPanel) getComponentAt(i));
         }
+    }
+
+    void optionsChanged(OptionsParam optionsParam) {
+        processEditorPanels(panel -> panel.optionsChanged(optionsParam));
     }
 }
