@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Change
 - Maintenance Changes.
 - Backup File Disclosure: don't raise issues for non-success codes unless at LOW threshold (Issue 6059).
+- ELMAH Information Leak: don't raise issues unless content looks good unless at LOW threshold (Issue 6076).
 
 ## [28] - 2020-06-01
 ### Added

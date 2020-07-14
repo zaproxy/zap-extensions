@@ -54,7 +54,9 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 Tests to see if the Error Logging Modules and Handlers (elmah.axd) HTTP Module is available. Although this module is handy for
 developers and other stakeholders it can also leak a significant amount of information which a security analyst or malicious individual
 may be interested in.<br><br>
-The ELMAH scan rule targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
+The ELMAH scan rule targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.<br>
+Files are only reported if they contain the text "Error Log for" unless a LOW alert threshold is set.
+
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ElmahScanRule.java">ElmahScanRule.java</a>
 
