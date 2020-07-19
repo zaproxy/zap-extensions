@@ -19,10 +19,12 @@
  */
 package org.zaproxy.zap.extension.frontendscanner;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -42,15 +44,15 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     private static final String HOSTNAME = "example.com";
 
     private FrontEndScannerProxyListener frontEndScannerProxyListener;
+    private FrontEndScannerOptions options;
     private HttpMessage msg;
 
     @BeforeEach
     public void setUp() throws URIException, HttpMalformedHeaderException {
         FrontEndScannerAPI api = mock(FrontEndScannerAPI.class);
-        FrontEndScannerOptions options = mock(FrontEndScannerOptions.class);
-        when(options.isEnabled()).thenReturn(true);
+        options = mock(FrontEndScannerOptions.class);
 
-        HistoryReference ref = mock(HistoryReference.class);
+        HistoryReference ref = mock(HistoryReference.class, withSettings().lenient());
         when(ref.getHistoryId()).thenReturn(42);
 
         frontEndScannerProxyListener = new FrontEndScannerProxyListener(api, options);
@@ -64,6 +66,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     @ValueSource(strings = {"Content-Security-Policy", "X-Content-Security-Policy", "X-WebKit-CSP"})
     public void testRemovesCSPFromHttpResponsesIfInjecting(String header) {
         // Given
+        when(options.isEnabled()).thenReturn(true);
         String htmlBody =
                 "<!doctype html><html lang='en'><head><script></script></head><body></body></html>";
         msg.setResponseBody(htmlBody);
@@ -81,6 +84,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     @Test
     public void testInjectTheFrontEndTrackerBeforeOtherScriptsInHeadTag() {
         // Given
+        when(options.isEnabled()).thenReturn(true);
         String htmlBody =
                 "<!doctype html><html lang='en'><head><script></script></head><body></body></html>";
         msg.setResponseBody(htmlBody);
@@ -101,6 +105,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     @Test
     public void testInjectAfterMetaTagInHeadTag() {
         // Given
+        when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<!doctype html><html lang='en'><head><meta></head><body></body></html>";
         msg.setResponseBody(htmlBody);
 
@@ -120,6 +125,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     @Test
     public void testInjectAfterAllMetaTagsInHeadTag() {
         // Given
+        when(options.isEnabled()).thenReturn(true);
         String htmlBody =
                 "<!doctype html><html lang='en'><head><meta><meta></head><body></body></html>";
         msg.setResponseBody(htmlBody);
@@ -140,6 +146,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     @Test
     public void testInjectionShouldBeSuccessfulWithoutHead() {
         // Given
+        when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<!doctype html><html lang='en'><body></body></head></html>";
         msg.setResponseBody(htmlBody);
 
@@ -159,6 +166,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     @Test
     public void testInjectionShouldBeSuccessfulWithEmptyHead() {
         // Given
+        when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<!doctype html><html lang='en'><head></head><body></body></html>";
         msg.setResponseBody(htmlBody);
 
@@ -178,6 +186,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     @Test
     public void testInjectionShouldBeSuccessfulWithoutHtmlTag() {
         // Given
+        when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<head></head><body></body>";
         msg.setResponseBody(htmlBody);
 
@@ -197,6 +206,7 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
     @Test
     public void testInjectionShouldBeSuccessfulWithoutHtmlNorHeadTag() {
         // Given
+        when(options.isEnabled()).thenReturn(true);
         String htmlBody = "<body></body>";
         msg.setResponseBody(htmlBody);
 
@@ -208,6 +218,42 @@ public class FrontEndScannerProxyListenerUnitTest extends TestUtils {
                 "<head><script src='https:\\/\\/"
                         + HOSTNAME
                         + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body>";
+        String result = msg.getResponseBody().toString();
+
+        assertTrue(result.matches(expectedHtmlFormat));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Content-Security-Policy", "X-Content-Security-Policy", "X-WebKit-CSP"})
+    public void testCSPisNotRemovedIfNotEnabledInOptions(String header) {
+        // Given
+        when(options.isEnabled()).thenReturn(false);
+        String htmlBody = "<!doctype html><html lang='en'><head></head><body></body></html>";
+        msg.setResponseBody(htmlBody);
+
+        msg.getResponseHeader().setHeader(header, "value");
+
+        // When
+        frontEndScannerProxyListener.onHttpResponseReceive(msg);
+
+        // Then
+        String result = msg.getResponseHeader().getHeader(header);
+        assertNotNull(result);
+    }
+
+    @Test
+    public void testNothingIsInjectedIfNotEnabledInOptions() {
+        // Given
+        when(options.isEnabled()).thenReturn(false);
+        String htmlBody = "<!doctype html><html lang='en'><head></head><body></body></html>";
+        msg.setResponseBody(htmlBody);
+
+        // When
+        frontEndScannerProxyListener.onHttpResponseReceive(msg);
+
+        // Then
+        String expectedHtmlFormat =
+                "<!doctype html><html lang='en'><head><\\/head><body><\\/body></html>";
         String result = msg.getResponseBody().toString();
 
         assertTrue(result.matches(expectedHtmlFormat));
