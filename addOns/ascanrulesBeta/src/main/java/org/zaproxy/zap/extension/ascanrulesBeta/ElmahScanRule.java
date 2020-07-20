@@ -170,13 +170,16 @@ public class ElmahScanRule extends AbstractHostPlugin {
         int statusCode = newRequest.getResponseHeader().getStatusCode();
         if (statusCode == HttpStatusCode.OK) {
             boolean hasContent = newRequest.getResponseBody().toString().contains("Error Log for");
-            raiseAlert(
-                    newRequest,
-                    getRisk(),
-                    hasContent ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM,
-                    "");
-        } else if (statusCode == HttpStatusCode.UNAUTHORIZED
-                || statusCode == HttpStatusCode.FORBIDDEN) {
+            if (this.getAlertThreshold().equals(AlertThreshold.LOW) || hasContent) {
+                raiseAlert(
+                        newRequest,
+                        getRisk(),
+                        hasContent ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_LOW,
+                        "");
+            }
+        } else if (this.getAlertThreshold().equals(AlertThreshold.LOW)
+                && (statusCode == HttpStatusCode.UNAUTHORIZED
+                        || statusCode == HttpStatusCode.FORBIDDEN)) {
             raiseAlert(newRequest, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getOtherInfo());
         }
     }
