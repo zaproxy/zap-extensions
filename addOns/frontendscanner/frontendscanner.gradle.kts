@@ -10,3 +10,7 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/front-end-scanner/")
     }
 }
+
+dependencies {
+    testImplementation(project(":testutils"))
+}

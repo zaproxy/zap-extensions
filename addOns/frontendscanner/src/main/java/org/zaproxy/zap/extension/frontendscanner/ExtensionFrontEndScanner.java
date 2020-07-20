@@ -32,20 +32,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.swing.ImageIcon;
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.OutputDocument;
-import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.history.ProxyListenerLog;
-import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -55,7 +48,7 @@ import org.zaproxy.zap.view.ZapToggleButton;
  * A ZAP extension which allow to run scripts in the browser to detect vulnerabilities in web
  * applications relying heavily on Javascript.
  */
-public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyListener {
+public class ExtensionFrontEndScanner extends ExtensionAdaptor {
 
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionFrontEndScanner";
@@ -77,8 +70,9 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     private ScriptType passiveScriptType;
     private ExtensionScript extensionScript;
 
-    private FrontEndScannerOptions options;
     private FrontEndScannerAPI api;
+    private FrontEndScannerOptions options;
+    private FrontEndScannerProxyListener proxyListener;
 
     private static final Logger LOGGER = Logger.getLogger(ExtensionFrontEndScanner.class);
 
@@ -105,6 +99,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
         this.api = new FrontEndScannerAPI(this);
         this.api.addApiOptions(options);
 
+        this.proxyListener = new FrontEndScannerProxyListener(api, options);
+
         this.extensionScript =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
     }
@@ -113,7 +109,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        extensionHook.addProxyListener(this);
+        extensionHook.addProxyListener(this.proxyListener);
 
         extensionHook.addOptionsParamSet(options);
         extensionHook.addApiImplementor(api);
@@ -181,64 +177,6 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor implements ProxyL
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public boolean onHttpRequestSend(HttpMessage msg) {
-        return true;
-    }
-
-    @Override
-    public boolean onHttpResponseReceive(HttpMessage msg) {
-        if (options.isEnabled() && msg.getResponseHeader().isHtml()) {
-            try {
-                String html = msg.getResponseBody().toString();
-
-                Source document = new Source(html);
-                List<Element> heads = document.getAllElements("head");
-                Element head = heads.isEmpty() ? null : heads.get(0);
-
-                if (head != null && msg.getHistoryRef() != null) {
-                    String host = msg.getRequestHeader().getHeader("host");
-                    String frontEndApiUrl =
-                            API.getInstance().getCallBackUrl(this.api, "https://" + host);
-
-                    int historyReferenceId = msg.getHistoryRef().getHistoryId();
-
-                    StringBuilder injectedContentBuilder =
-                            new StringBuilder(200)
-                                    .append("<script src='")
-                                    .append(frontEndApiUrl)
-                                    .append("?action=getFile")
-                                    .append("&filename=front-end-scanner.js")
-                                    .append("&historyReferenceId=")
-                                    .append(historyReferenceId)
-                                    .append("'></script>");
-
-                    String injectedContent = injectedContentBuilder.toString();
-
-                    OutputDocument newResponseBody = new OutputDocument(document);
-                    int insertPosition = head.getChildElements().get(0).getBegin();
-                    newResponseBody.insert(insertPosition, injectedContent);
-
-                    msg.getResponseBody().setBody(newResponseBody.toString());
-
-                    int newLength = msg.getResponseBody().length();
-                    msg.getResponseHeader().setContentLength(newLength);
-                } else {
-                    LOGGER.debug("<head></head> is missing in the response");
-                }
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int getArrangeableListenerOrder() {
-        // Need to run after the HistoryReference has been saved to the database
-        return ProxyListenerLog.PROXY_LISTENER_ORDER + 42;
     }
 
     @Override
