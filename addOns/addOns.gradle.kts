@@ -42,6 +42,12 @@ subprojects {
         toolVersion = jacocoToolVersion
     }
 
+    tasks.named<JacocoReport>("jacocoTestReport") {
+        reports {
+            xml.isEnabled = true
+        }
+    }
+
     val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.9.0"))
 
     zapAddOn {
