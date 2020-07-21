@@ -417,7 +417,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     // Check 1: was the session cookie sent and received securely by the server?
                     // If not, alert this fact
                     if ((!msg1Final.getRequestHeader().isSecure())
-                            || (!cookieBack1.getFlags().contains("secure"))) {
+                            || (!containsIgnoreCase(cookieBack1.getFlags(), "secure"))) {
                         // pass the original param value here, not the new value, since we're
                         // displaying the session id exposed in the original message
                         String extraInfo =
@@ -496,7 +496,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     //////////////////////////////////////////////////////////////////////
                     // Check 2: is the session cookie that was set accessible to Javascript?
                     // If so, alert this fact too
-                    if (!cookieBack1.getFlags().contains("httponly") && loginUrl) {
+                    if (!containsIgnoreCase(cookieBack1.getFlags(), "httponly") && loginUrl) {
                         // pass the original param value here, not the new value, since we're
                         // displaying the session id exposed in the original message
                         String extraInfo =
@@ -1570,6 +1570,15 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
         }
         // return them
         return pseudoUrlParams;
+    }
+
+    private static boolean containsIgnoreCase(Set<String> setToCheck, String strToFind) {
+        for (String item : setToCheck) {
+            if (item.equalsIgnoreCase(strToFind)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
