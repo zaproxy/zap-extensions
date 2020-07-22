@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [29] - 2020-07-22
 ### Change
 - Maintenance Changes.
 - Backup File Disclosure: don't raise issues for non-success codes unless at LOW threshold (Issue 6059).
@@ -212,6 +212,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[29]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v26
