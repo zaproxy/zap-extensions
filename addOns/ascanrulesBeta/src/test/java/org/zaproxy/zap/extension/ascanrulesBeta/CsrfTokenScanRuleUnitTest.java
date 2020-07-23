@@ -38,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
@@ -95,6 +96,27 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
         // When
         rule.scan();
         // Then the message is not processed, no need to check antiCSRF without a form
+        assertThat(httpMessagesSent, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotProcessNonHtml() throws Exception {
+        // Given
+        HttpMessage msg =
+                getHttpMessage(
+                        "GET",
+                        "/",
+                        "function miscFunc() {\n"
+                                + "\n"
+                                + "YF = '<form method=\"POST\" action=\"miscEndPt\">\\n <input type=\"text\"></form>'\n"
+                                + "\n"
+                                + "return YF\n"
+                                + "}");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/javascript");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then the message is not processed, no need to check antiCSRF if not HTML
         assertThat(httpMessagesSent, hasSize(0));
     }
 
@@ -296,6 +318,7 @@ public class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRu
         msg.setRequestHeader(compatMsg.getRequestHeader());
         msg.setRequestBody(compatMsg.getRequestBody());
         msg.setResponseHeader(compatMsg.getResponseHeader());
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         msg.setResponseBody(compatMsg.getResponseBody());
 
         return msg;

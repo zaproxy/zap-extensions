@@ -131,8 +131,9 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
      */
     @Override
     public void scan() {
-        if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !getBaseMsg().isInScope()) {
-            return; // At HIGH threshold return if the msg isn't in scope
+        if ((AlertThreshold.HIGH.equals(getAlertThreshold()) && !getBaseMsg().isInScope())
+                || !getBaseMsg().getResponseHeader().isHtml()) {
+            return;
         }
 
         boolean vuln = false;
