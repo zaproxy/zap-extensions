@@ -7,10 +7,12 @@ repositories {
     maven(url = uri("https://oss.sonatype.org/content/repositories/snapshots/"))
 }
 
+val minimumZapVersion = "2.9.0"
+
 zapAddOn {
     addOnName.set("Ajax Spider")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.9.0")
+    zapVersion.set(minimumZapVersion)
 
     manifest {
         author.set("ZAP Dev Team")
@@ -25,7 +27,7 @@ zapAddOn {
     }
 
     val apiGenClasspath = configurations.detachedConfiguration(
-        dependencies.create("org.zaproxy:zap:2.8.0"),
+        dependencies.create("org.zaproxy:zap:$minimumZapVersion"),
         dependencies.create(parent!!.childProjects.get("selenium")!!)
     )
 
