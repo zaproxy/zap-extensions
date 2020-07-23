@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [30] - 2020-07-23
 ### Changed
 - Anti-CSRF Tokens Check address potential false positives by only analyzing HTML responses (Issue 6089).
