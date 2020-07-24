@@ -23,11 +23,10 @@ dependencies {
 
 spotless {
     javaWith3rdPartyFormatted(project, listOf(
-        "**/BufferOverflow.java",
-        "**/FormatString.java",
-        "**/TestServerSideInclude.java",
-        "**/TestInjectionCRLF.java",
-        "**/TestParameterTamper.java",
-        "**/TestServerSideInclude.java",
-        "**/TestDirectoryBrowsing.java"))
+        "**/BufferOverflowScanRule.java",
+        "**/CrlfInjectionScanRule.java",
+        "**/DirectoryBrowsingScanRule.java",
+        "**/FormatStringScanRule.java",
+        "**/ParameterTamperScanRule.java",
+        "**/ServerSideIncludeScanRule.java"))
 }
