@@ -228,6 +228,13 @@
       "links":["https://blog.jetbrains.com/blog/2019/09/26/jetbrains-security-bulletin-q2-2019/","https://nvd.nist.gov/vuln/detail/CVE-2019-14957"],
       "type":"jetbrains_vim_settings",
       "source":"misc"
+    },
+    {
+      "path":"server-info",
+      "content":["Apache Server Information"],
+      "links":["https://twitter.com/jae_hak99/status/1286605139042643974","https://httpd.apache.org/docs/current/mod/mod_info.html"],
+      "type":"apache_server_info",
+      "source":"twitter"	
     }
   ]
 } 
