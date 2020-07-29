@@ -4,8 +4,8 @@ import org.zaproxy.gradle.tasks.DownloadWebDriver
 
 description = "Common configuration of the WebDriver add-ons."
 
-val geckodriverVersion = "0.26.0"
-val chromeDriverVersion = "83.0.4103.39"
+val geckodriverVersion = "0.27.0"
+val chromeDriverVersion = "84.0.4147.30"
 
 fun configureDownloadTask(outputDir: File, targetOs: DownloadWebDriver.OS, task: DownloadWebDriver) {
     val geckodriver = task.browser.get() == DownloadWebDriver.Browser.FIREFOX
