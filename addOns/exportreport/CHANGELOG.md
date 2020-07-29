@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added option to specify active scan id in API.
 - Added option to specify inclusion of passive alerts in API and command line.
 - Add info and repo URLs.
+- Maintenance changes.
 
 ### Changed
 - Update minimum ZAP version to 2.9.0.

@@ -512,7 +512,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             return Constant.messages.getString("spiderajax.scandialog.nobrowser.error");
         }
 
-        if (Browser.PHANTOM_JS.getId() == selectedBrowser) {
+        if (Browser.PHANTOM_JS.getId().equals(selectedBrowser)) {
             String host = startUri.getHost();
             if ("localhost".equalsIgnoreCase(host)
                     || "127.0.0.1".equals(host)
