@@ -62,17 +62,13 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
 
         // Check "Link" variant first as it's of greater concern/convenience.
         if (responseHasHeader(msg, X_DEBUG_TOKEN_LINK_HEADER)) {
-            for (String xdtl : getHeaders(msg, X_DEBUG_TOKEN_LINK_HEADER)) {
-                raiseAlert(msg, xdtl);
-                return; // No need to continue
-            }
+            raiseAlert(msg, getHeaders(msg, X_DEBUG_TOKEN_LINK_HEADER).get(0));
+            return;
         }
         // Check non-Link variant
         if (responseHasHeader(msg, X_DEBUG_TOKEN_HEADER)) {
-            for (String xdt : getHeaders(msg, X_DEBUG_TOKEN_HEADER)) {
-                raiseAlert(msg, xdt);
-                return; // No need to continue
-            }
+            raiseAlert(msg, getHeaders(msg, X_DEBUG_TOKEN_HEADER).get(0));
+            return;
         }
 
         if (LOGGER.isDebugEnabled()) {

@@ -48,7 +48,7 @@ public class ReportFilter extends FileFilter {
         if (f.isFile()) {
             String ext = Utils.getExtension(f);
             if (ext != null) {
-                if (search != Utils.ALL) {
+                if (!Utils.ALL.equals(search)) {
                     if (ext.equalsIgnoreCase(list.getExtension(search))) {
                         return true;
                     }
@@ -71,7 +71,7 @@ public class ReportFilter extends FileFilter {
     @Override
     public String getDescription() {
         String strExtension = "";
-        if (search != Utils.ALL) {
+        if (!Utils.ALL.equals(search)) {
             strExtension = String.format(" (*%s)", list.getExtension(search));
         } else {
             strExtension = Constant.messages.getString("exportreport.message.notice.all") + " (";

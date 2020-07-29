@@ -288,7 +288,7 @@ public class ReportLastScan {
         for (int i = 0; i < extensionCount; i++) {
             Extension extension = loader.getExtension(i);
             if (extension instanceof XmlReporterExtension
-                    && extension.getName() != "ExtensionAlert") {
+                    && !extension.getName().equals("ExtensionAlert")) {
                 String xml_temp = ((XmlReporterExtension) extension).getXml(site);
                 extensionXml.append(xml_temp);
             }

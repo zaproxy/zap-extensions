@@ -449,7 +449,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                     index++;
                 } catch (SocketTimeoutException ex) {
                     hadTimeout = true;
-                    if (phase == INSERT_LONG_TIME) {
+                    if (INSERT_LONG_TIME.equals(phase)) {
                         // Timeout: 40s --> 14 <= n. tuples < 40
                         timeShort /= 3;
                         timeLong /= 3;

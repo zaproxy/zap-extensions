@@ -346,7 +346,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
         if (msg2 == null) {
             return false;
         }
-        if (!msg.getRequestHeader().getMethod().equals(msg.getRequestHeader().getMethod())) {
+        if (!msg.getRequestHeader().getMethod().equals(msg2.getRequestHeader().getMethod())) {
             // Different methods
             return false;
         }
