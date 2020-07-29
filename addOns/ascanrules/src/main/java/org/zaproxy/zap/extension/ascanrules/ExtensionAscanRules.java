@@ -68,7 +68,7 @@ public class ExtensionAscanRules extends ExtensionAdaptor {
 
         @Override
         public void sessionAboutToChange(Session session) {
-            PersistentXSSUtils.reset();
+            PersistentXssUtils.reset();
         }
     }
 }
