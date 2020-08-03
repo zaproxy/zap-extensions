@@ -39,6 +39,16 @@
       "script": "https\\:\\/\\/track\\.91app\\.io\\/track\\.js\\?",
       "website": "https://www.91app.com/"
     },
+    "@sulu/web": {
+      "cats": [
+        59
+      ],
+      "icon": "Sulu.svg",
+      "js": {
+        "web.startComponents": ""
+      },
+      "website": "https://github.com/sulu/web-js"
+    },
     "A-Frame": {
       "cats": [
         25
@@ -80,7 +90,10 @@
       "cats": [
         12
       ],
-      "html": "<html[^>]* (?:amp|⚡)[^-]",
+      "html": [
+        "<html[^>]* (?:amp|⚡)[^-]",
+        "<link rel=\"amphtml\""
+      ],
       "icon": "Accelerated-Mobile-Pages.svg",
       "website": "https://www.amp.dev"
     },
@@ -140,6 +153,14 @@
         "generator": "AWStats ([\\d.]+(?: \\(build [\\d.]+\\))?)\\;version:\\1"
       },
       "website": "http://awstats.sourceforge.net"
+    },
+    "AccessiBe": {
+      "cats": [
+        68
+      ],
+      "icon": "Accessibe.png",
+      "script": "acsbap\\.com/.*/acsb\\.js",
+      "website": "https://accessibe.com/"
     },
     "Acquia Cloud": {
       "cats": [
@@ -215,6 +236,14 @@
       },
       "script": "(?:a|s)\\.adroll\\.com",
       "website": "http://adroll.com"
+    },
+    "Adally": {
+      "cats": [
+        68
+      ],
+      "icon": "Adally.png",
+      "script": "cloudfront\\.net/.*/adally\\.js",
+      "website": "https://adally.com/"
     },
     "Adcash": {
       "cats": [
@@ -310,7 +339,7 @@
       "cats": [
         42
       ],
-      "icon": "adobedmt.png",
+      "icon": "adobedtm.png",
       "js": {
         "_satellite": ""
       },
@@ -364,6 +393,17 @@
       },
       "script": "(?:wh(?:utils|ver|proxy|lang|topic|msg)|ehlpdhtm)\\.js",
       "website": "http://adobe.com/products/robohelp.html"
+    },
+    "AdonisJS": {
+      "cats": [
+        18
+      ],
+      "cookies": {
+        "cookie_name": "adonis-session"
+      },
+      "icon": "AdonisJS.png",
+      "implies": "Node.js",
+      "website": "https://adonisjs.com"
     },
     "Advanced Web Stats": {
       "cats": [
@@ -452,6 +492,18 @@
       "script": "shop-static\\.afterbuy\\.de",
       "website": "http://www.afterbuy.de"
     },
+    "Afterpay": {
+      "cats": [
+        41
+      ],
+      "cpe": "cpe:/a:afterpay:afterpay",
+      "icon": "afterpay.png",
+      "script": [
+        "portal\\.afterpay\\.com",
+        "static\\.afterpay\\.com"
+      ],
+      "website": "https://www.afterpay.com/"
+    },
     "Ahoy": {
       "cats": [
         10
@@ -503,6 +555,18 @@
       },
       "icon": "akamai.svg",
       "website": "http://akamai.com"
+    },
+    "Akamai Bot Manager": {
+      "cats": [
+        16
+      ],
+      "cookies": {
+        "ak_bmsc": "",
+        "bm_sv": "",
+        "bm_sz": ""
+      },
+      "icon": "akamai.svg",
+      "website": "http://akamai.com/bot-manager"
     },
     "Akaunting": {
       "cats": [
@@ -661,6 +725,18 @@
       "implies": "Amazon Web Services",
       "website": "https://aws.amazon.com/elasticloadbalancing/"
     },
+    "Amazon Pay": {
+      "cats": [
+        41
+      ],
+      "html": "<meta id=\"amazon-payments",
+      "icon": "Amazon Pay.svg",
+      "js": {
+        "AmazonPayments": ""
+      },
+      "script": "/amazonpayments(?:\\.min)?\\.js",
+      "website": "https://pay.amazon.com"
+    },
     "Amazon S3": {
       "cats": [
         19
@@ -690,6 +766,14 @@
       "icon": "amber.png",
       "website": "https://amberframework.org"
     },
+    "American Express": {
+      "cats": [
+        41
+      ],
+      "html": "<[^>]+aria-labelledby=\"pi-american_express",
+      "icon": "Amex.svg",
+      "website": "https://www.americanexpress.com"
+    },
     "Ametys": {
       "cats": [
         1
@@ -701,6 +785,14 @@
       },
       "script": "ametys\\.js",
       "website": "http://ametys.org"
+    },
+    "Amex Checkout": {
+      "cats": [
+        41
+      ],
+      "icon": "amex.png",
+      "script": "aexp-static\\.com",
+      "website": "https://www.americanexpress.com/us/express-checkout/"
     },
     "Amiro.CMS": {
       "cats": [
@@ -942,6 +1034,29 @@
       "script": "adnxs\\.(?:net|com)",
       "website": "http://appnexus.com"
     },
+    "Apple Pay": {
+      "cats": [
+        41
+      ],
+      "html": [
+        "<[^>]+aria-labelledby=\"pi-apple_pay",
+        "<script id=\"apple-pay"
+      ],
+      "icon": "Apple.svg",
+      "website": "https://www.apple.com/apple-pay"
+    },
+    "Apple Sign-in": {
+      "cats": [
+        69
+      ],
+      "html": [
+        "<meta[ˆ>]*appleid-signin-client-id",
+        "<a[ˆ>]*appleid\\.apple\\.com/auth/authorize"
+      ],
+      "icon": "Apple.svg",
+      "script": "appleid.auth.js",
+      "website": "https://developer.apple.com/sign-in-with-apple/"
+    },
     "Arastta": {
       "cats": [
         6
@@ -1134,6 +1249,15 @@
       "html": "<a[^>]*href=\"https?://(?:www\\.)?statuspage\\.io/powered-by[^>]+>",
       "icon": "Atlassian Statuspage.svg",
       "website": "https://www.statuspage.io/"
+    },
+    "AudioEye": {
+      "cats": [
+        68
+      ],
+      "html": "<iframe[^>]*audioeye\\.com/frame/cookieStorage",
+      "icon": "AudioEye.png",
+      "script": "audioeye\\.com/ae\\.js",
+      "website": "https://www.audioeye.com/"
     },
     "Aurelia": {
       "cats": [
@@ -1639,6 +1763,7 @@
         "Braintree": "",
         "Braintree.version": "^(.+)$\\;version:\\1"
       },
+      "script": "js\\.braintreegateway\\.com",
       "website": "https://www.braintreepayments.com"
     },
     "Brightspot": {
@@ -1786,6 +1911,14 @@
       ],
       "icon": "CFML.png",
       "website": "http://adobe.com/products/coldfusion-family.html"
+    },
+    "CIVIC": {
+      "cats": [
+        67
+      ],
+      "icon": "civic.png",
+      "script": "cc\\.cdn\\.civiccomputing\\.com",
+      "website": "https://www.civicuk.com/cookie-control"
     },
     "CKEditor": {
       "cats": [
@@ -1952,6 +2085,21 @@
       "script": "/cargo\\.",
       "website": "http://cargocollective.com"
     },
+    "Cart Functionality": {
+      "cats": [
+        6
+      ],
+      "html": [
+        "<a[^>]*href=[^>]*/Cart",
+        "<a[^>]*href=[^>]*/Basket",
+        "<a[^>]*href=[^>]*/Trolley",
+        "<a[^>]*href=[^>]*/Bag",
+        "<a[^>]*href=[^>]*/ShoppingBag",
+        "<a[^>]*href=[^>]*/Checkout"
+      ],
+      "icon": "Cart-generic.svg",
+      "website": "https://www.wappalyzer.com/technologies/ecommerce/cart-functionality"
+    },
     "Catberry.js": {
       "cats": [
         12,
@@ -1989,6 +2137,21 @@
       },
       "icon": "CentOS.png",
       "website": "http://centos.org"
+    },
+    "Centminmod": {
+      "cats": [
+        22
+      ],
+      "headers": {
+        "X-Powered-By": "centminmod"
+      },
+      "icon": "centminmod.png",
+      "implies": [
+        "CentOS",
+        "Nginx",
+        "PHP"
+      ],
+      "website": "https://centminmod.com"
     },
     "Ceres": {
       "cats": [
@@ -2469,6 +2632,40 @@
       "script": "conversionlab\\.trackset\\.com/track/tsend\\.js",
       "website": "http://www.trackset.it/conversionlab"
     },
+    "Cookie Script": {
+      "cats": [
+        67
+      ],
+      "icon": "CookieScript.png",
+      "script": "//cookie-script\\.com/s/",
+      "website": "https://cookie-script.com/"
+    },
+    "CookieHub": {
+      "cats": [
+        67
+      ],
+      "icon": "CookieHub.png",
+      "script": [
+        "cookiehub\\.net/.*\\.js"
+      ],
+      "website": "https://www.cookiehub.com"
+    },
+    "CookieYes": {
+      "cats": [
+        67
+      ],
+      "icon": "cookieyes.png",
+      "script": "app\\.cookieyes\\.com/client_data/",
+      "website": "https://www.cookieyes.com/"
+    },
+    "Cookiebot": {
+      "cats": [
+        67
+      ],
+      "icon": "Cookiebot.svg",
+      "script": "consent\\.cookiebot\\.com",
+      "website": "http://www.cookiebot.com"
+    },
     "Coppermine": {
       "cats": [
         7
@@ -2615,6 +2812,14 @@
       "icon": "CrossBox.png",
       "website": "https://crossbox.io"
     },
+    "Crownpeak": {
+      "cats": [
+        67
+      ],
+      "icon": "Crownpeak.png",
+      "script": "c\\.evidon\\.com",
+      "website": "http://www.crownpeak.com"
+    },
     "Crypto-Loot": {
       "cats": [
         56
@@ -2655,6 +2860,14 @@
       },
       "script": "cufon-yui\\.js",
       "website": "http://cufon.shoqolate.com"
+    },
+    "Cybersource": {
+      "cats": [
+        41
+      ],
+      "icon": "cybersource.png",
+      "script": "cybersource\\..+\\.js",
+      "website": "https://www.cybersource.com/"
     },
     "D3": {
       "cats": [
@@ -2836,10 +3049,12 @@
     },
     "Datadome": {
       "cats": [
-        19
+        16
       ],
       "cookies": {
-        "datadome": ""
+        "datadome": "",
+        "datadome-_zldp": "",
+        "datadome-_zldt": ""
       },
       "headers": {
         "Server": "^DataDome$",
@@ -2892,6 +3107,14 @@
       },
       "script": "dedeajax",
       "website": "http://dedecms.com"
+    },
+    "Didomi": {
+      "cats": [
+        67
+      ],
+      "icon": "didomi.png",
+      "script": "sdk\\.privacy-center\\.org/.*/loader\\.js",
+      "website": "https://www.didomi.io/en/consent-preference-management"
     },
     "DirectAdmin": {
       "cats": [
@@ -3494,6 +3717,14 @@
       "url": "^https?://(?:[^/]+\\.)?ad(?:op)?shost1\\.com/",
       "website": "http://epom.com"
     },
+    "EqualWeb": {
+      "cats": [
+        68
+      ],
+      "icon": "EqualWeb.png",
+      "script": "cdn\\.equalweb\\.com.*\\.js",
+      "website": "https://www.equalweb.com/"
+    },
     "Erlang": {
       "cats": [
         27
@@ -3642,6 +3873,24 @@
       "script": "//connect\\.facebook\\.net/[^/]*/[a-z]*\\.js",
       "website": "http://facebook.com"
     },
+    "Facebook Sign-in": {
+      "cats": [
+        69
+      ],
+      "icon": "Facebook.svg",
+      "js": {
+        "FB.getLoginStatus": ""
+      },
+      "website": "https://developers.facebook.com/docs/facebook-login/"
+    },
+    "Facil-iti": {
+      "cats": [
+        68
+      ],
+      "icon": "Facil-iti.png",
+      "script": "ws\\.facil-iti\\.com/tag/faciliti-tag\\.min\\.js",
+      "website": "https://www.facil-iti.com/"
+    },
     "Fact Finder": {
       "cats": [
         29
@@ -3670,6 +3919,7 @@
       ],
       "html": "<!-- Powered by FaraPy.",
       "icon": "FaraPy.png",
+      "implies": "Python",
       "website": "https://faral.tech"
     },
     "Fastcommerce": {
@@ -3705,6 +3955,18 @@
       ],
       "icon": "fastspring.png",
       "website": "https://fastspring.com"
+    },
+    "Fat Zebra": {
+      "cats": [
+        41
+      ],
+      "html": [
+        "<(?:iframe|img|form)[^>]+paynow\\.pmnts\\.io",
+        "<(?:iframe)[^>]+FatZebraFrame"
+      ],
+      "icon": "fatzebra.png",
+      "script": "paynow\\.pmnts\\.io",
+      "website": "https://www.fatzebra.com/"
     },
     "Fat-Free Framework": {
       "cats": [
@@ -3845,6 +4107,17 @@
       "script": "/flickity(?:\\.pkgd)?(?:\\.min)?\\.js",
       "website": "https://flickity.metafizzy.co/"
     },
+    "Flow": {
+      "cats": [
+        6
+      ],
+      "icon": "flow.png",
+      "script": [
+        "shopify-cdn\\.flow\\.io",
+        "flow\\.min\\.js"
+      ],
+      "website": "https://www.flow.io/"
+    },
     "FluxBB": {
       "cats": [
         2
@@ -3905,6 +4178,20 @@
         "generator": "^Fork CMS$"
       },
       "website": "http://www.fork-cms.com/"
+    },
+    "ForoshGostar": {
+      "cats": [
+        6
+      ],
+      "cookies": {
+        "Aws.customer": ""
+      },
+      "icon": "ForoshGostar.svg",
+      "implies": "Microsoft ASP.NET",
+      "meta": {
+        "generator": "^Forosh\\s?Gostar.*|Arsina Webshop.*$"
+      },
+      "website": "https://www.foroshgostar.com"
     },
     "Fortune3": {
       "cats": [
@@ -4346,6 +4633,16 @@
       "implies": "Java",
       "website": "http://glassfish.java.net"
     },
+    "Global-e": {
+      "cats": [
+        6
+      ],
+      "icon": "Globale.png",
+      "script": [
+        "web\\.global-e\\.com"
+      ],
+      "website": "https://www.global-e.com/"
+    },
     "Glyphicons": {
       "cats": [
         17
@@ -4477,6 +4774,7 @@
     },
     "Google Analytics Enhanced eCommerce": {
       "cats": [
+        6,
         10
       ],
       "icon": "Google Analytics.svg",
@@ -4564,6 +4862,14 @@
       "icon": "Google PageSpeed.png",
       "website": "http://developers.google.com/speed/pagespeed/mod"
     },
+    "Google Pay": {
+      "cats": [
+        41
+      ],
+      "html": "<[^>]+aria-labelledby=\"pi-google_pay",
+      "icon": "Google.svg",
+      "website": "https://pay.google.com"
+    },
     "Google Plus": {
       "cats": [
         5
@@ -4571,6 +4877,23 @@
       "icon": "Google Plus.svg",
       "script": "apis\\.google\\.com/js/[a-z]*\\.js",
       "website": "http://plus.google.com"
+    },
+    "Google Sign-in": {
+      "cats": [
+        69
+      ],
+      "html": [
+        "<meta[^>]*google-signin-client_id",
+        "<meta[^>]*google-signin-scope",
+        "<iframe[^>]*accounts\\.google\\.com/o/oauth2",
+        "<a[^>]*accounts\\.google\\.com/o/oauth2"
+      ],
+      "icon": "Google.svg",
+      "script": [
+        "apis\\.google\\.com/js/platform\\.js",
+        "accounts\\.google\\.com/gsi/client"
+      ],
+      "website": "https://developers.google.com/identity/sign-in/web"
     },
     "Google Sites": {
       "cats": [
@@ -4739,6 +5062,20 @@
       "script": "assets\\.growingio\\.com/([\\d.]+)/gio\\.js\\;version:\\1",
       "website": "https://www.growingio.com/"
     },
+    "HCL Digital Experience": {
+      "cats": [
+        1
+      ],
+      "cpe": "cpe:/a:ibm:websphere_portal",
+      "headers": {
+        "IBM-Web2-Location": "",
+        "Itx-Generated-Timestamp": ""
+      },
+      "icon": "IBM.svg",
+      "implies": "Java",
+      "url": "/wps/",
+      "website": "https://www.hcltechsw.com/products/dx"
+    },
     "HERE": {
       "cats": [
         35
@@ -4904,12 +5241,13 @@
         62
       ],
       "headers": {
-        "Via": "/[\\d.-]+ vegur$"
+        "Via": "[\\d.-]+ vegur$"
       },
       "icon": "heroku.svg",
       "implies": [
         "Amazon Web Services"
       ],
+      "url": "\\.herokuapp\\.com",
       "website": "https://www.heroku.com/"
     },
     "Hexo": {
@@ -4968,6 +5306,14 @@
       "icon": "Highcharts.png",
       "script": "highstock[.-]?([\\d\\.]*\\d).*\\.js\\;version:\\1",
       "website": "http://highcharts.com/products/highstock"
+    },
+    "HikeOrders": {
+      "cats": [
+        68
+      ],
+      "icon": "HikeOrders.png",
+      "script": "hikeorders\\.com/main/assets/js/hko-accessibility\\.min\\.js",
+      "website": "https://hikeorders.com/"
     },
     "Hinza Advanced CMS": {
       "cats": [
@@ -5081,25 +5427,11 @@
         6
       ],
       "cpe": "cpe:/a:ibm:websphere_commerce_suite",
-      "html": "href=\"(?:\\/|[^>]+)webapp\\/wcs\\/",
+      "html": "<(?:a|link|script)[^>]*(?:href|src)=\".*(/wcsstore/|webapp\\/wcs)",
       "icon": "IBM.svg",
       "implies": "Java",
       "url": "/wcs/",
       "website": "http://ibm.com/software/genservers/commerceproductline"
-    },
-    "IBM WebSphere Portal": {
-      "cats": [
-        1
-      ],
-      "cpe": "cpe:/a:ibm:websphere_portal",
-      "headers": {
-        "IBM-Web2-Location": "",
-        "Itx-Generated-Timestamp": ""
-      },
-      "icon": "IBM.svg",
-      "implies": "Java",
-      "url": "/wps/",
-      "website": "http://ibm.com/software/websphere/portal"
     },
     "IIS": {
       "cats": [
@@ -5187,6 +5519,16 @@
       },
       "script": "^immutable\\.(?:min\\.)?js$",
       "website": "https://facebook.github.io/immutable-js/"
+    },
+    "Imperva": {
+      "cats": [
+        16
+      ],
+      "icon": "Imperva.svg",
+      "script": [
+        "/_Incapsula_Resource"
+      ],
+      "website": "https://www.imperva.com/"
     },
     "ImpressCMS": {
       "cats": [
@@ -5374,6 +5716,14 @@
       "script": "(?:api\\.intercom\\.io/api|static\\.intercomcdn\\.com/intercom\\.v1)",
       "website": "https://www.intercom.com"
     },
+    "Intercom Articles": {
+      "cats": [
+        4
+      ],
+      "html": "<a href=\"https://www.intercom.com/intercom-link[^\"]+solution=customer-support[^>]+>We run on Intercom",
+      "icon": "Intercom.svg",
+      "website": "https://www.intercom.com/articles"
+    },
     "Intershop": {
       "cats": [
         6
@@ -5420,6 +5770,16 @@
       "html": "<a[^>]*href=\"https://www\\.irroba\\.com\\.br",
       "icon": "irroba.svg",
       "website": "https://www.irroba.com.br/"
+    },
+    "Iubenda": {
+      "cats": [
+        67
+      ],
+      "icon": "iubenda.png",
+      "script": [
+        "iubenda\\.com/cookie-solution/confs/js/"
+      ],
+      "website": "https://www.iubenda.com/"
     },
     "J2Store": {
       "cats": [
@@ -5827,10 +6187,10 @@
       "js": {
         "CMS.Application": ""
       },
-      "script": "/CMSPages/GetResource\\.ashx",
       "meta": {
         "generator": "Kentico CMS ([\\d.R]+ \\(build [\\d.]+\\))\\;version:\\1"
       },
+      "script": "/CMSPages/GetResource\\.ashx",
       "website": "http://www.kentico.com"
     },
     "Kestrel": {
@@ -6413,17 +6773,17 @@
       ],
       "website": "https://www.localfocus.nl/en/"
     },
-    "Locomotive": {
+    "LocomotiveCMS": {
       "cats": [
         1
       ],
       "html": "<link[^>]*/sites/[a-z\\d]{24}/theme/stylesheets",
-      "icon": "Locomotive.png",
+      "icon": "LocomotiveCMS.png",
       "implies": [
         "Ruby on Rails",
         "MongoDB"
       ],
-      "website": "http://www.locomotivecms.com"
+      "website": "https://www.locomotivecms.com"
     },
     "Lodash": {
       "cats": [
@@ -6592,6 +6952,14 @@
       ],
       "website": "http://mailchimp.com"
     },
+    "Make-Sense": {
+      "cats": [
+        68
+      ],
+      "icon": "Make-Sense.png",
+      "script": "mk-sense\\.com/aweb\\?license",
+      "website": "https://mk-sense.com/"
+    },
     "MakeShopKorea": {
       "cats": [
         6
@@ -6679,6 +7047,14 @@
       "script": "munchkin\\.marketo\\.net/munchkin\\.js",
       "website": "https://www.marketo.com"
     },
+    "Mastercard": {
+      "cats": [
+        41
+      ],
+      "html": "<[^>]+aria-labelledby=\"pi-mastercard",
+      "icon": "Mastercard.svg",
+      "website": "https://www.mastercard.com"
+    },
     "Material Design Lite": {
       "cats": [
         66
@@ -6712,7 +7088,7 @@
       "script": "([\\d.]+)?/mathjax\\.js\\;version:\\1",
       "website": "https://www.mathjax.org"
     },
-    "Matomo": {
+    "Matomo Analytics": {
       "cats": [
         10
       ],
@@ -6733,6 +7109,16 @@
       },
       "script": "piwik\\.js|piwik\\.php",
       "website": "https://matomo.org"
+    },
+    "Matomo Tag Manager": {
+      "cats": [
+        42
+      ],
+      "icon": "Matomo.png",
+      "js": {
+        "window.MatomoTagManager": ""
+      },
+      "website": "https://developer.matomo.org/guides/tagmanager/introduction"
     },
     "Mattermost": {
       "cats": [
@@ -6936,6 +7322,16 @@
         "eomportal-uuid": "[a-f\\d]+"
       },
       "website": "https://www.eidosmedia.com/"
+    },
+    "Metomic": {
+      "cats": [
+        67
+      ],
+      "icon": "metomic.png",
+      "script": [
+        "metomic\\.js"
+      ],
+      "website": "https://metomic.io"
     },
     "Microsoft ASP.NET": {
       "cats": [
@@ -7144,13 +7540,20 @@
     },
     "Mobify": {
       "cats": [
+        6,
         26
       ],
+      "headers": {
+        "X-Powered-By": "Mobify"
+      },
       "icon": "Mobify.png",
       "js": {
         "Mobify": ""
       },
-      "script": "//cdn\\.mobify\\.com/",
+      "script": [
+        "//cdn\\.mobify\\.com/",
+        "//a\\.mobify\\.com/"
+      ],
       "website": "https://www.mobify.com"
     },
     "Mobirise": {
@@ -7456,6 +7859,17 @@
       },
       "script": "mustache(?:\\.min)?\\.js",
       "website": "https://mustache.github.io"
+    },
+    "My Food Link": {
+      "cats": [
+        6
+      ],
+      "html": [
+        "<div class='mfl-made-by-myfoodlink'>",
+        "<a href=\"https://www.myfoodlink.com.au"
+      ],
+      "icon": "myfoodlink.png",
+      "website": "https://www.myfoodlink.com.au/"
     },
     "MyBB": {
       "cats": [
@@ -7872,6 +8286,23 @@
       },
       "website": "http://www.onestat.com"
     },
+    "OneTrust": {
+      "cats": [
+        67
+      ],
+      "cookies": {
+        "OptanonConsent": ""
+      },
+      "icon": "OneTrust.png",
+      "script": [
+        "cdn\\.cookielaw\\.org",
+        "optanon\\.blob\\.core\\.windows\\.net",
+        "otSDKStub\\.js",
+        "cdn\\.cookielaw\\.org",
+        "optanon\\.blob\\.core\\.windows\\.net"
+      ],
+      "website": "http://www.onetrust.com"
+    },
     "Onshop": {
       "cats": [
         6
@@ -8032,6 +8463,14 @@
         "generator": "OpenNemas"
       },
       "website": "http://www.opennemas.com"
+    },
+    "OpenPay": {
+      "cats": [
+        41
+      ],
+      "icon": "openpay.png",
+      "script": "openpay\\.com.\\au",
+      "website": "https://www.openpay.com.au/"
     },
     "OpenResty": {
       "cats": [
@@ -8203,6 +8642,14 @@
         "oro\\.min\\.js\\?version=([\\d.]+)\\;version:\\1"
       ],
       "website": "https://oroinc.com"
+    },
+    "Osano": {
+      "cats": [
+        67
+      ],
+      "icon": "osano.png",
+      "script": "cookieconsent\\.min\\.js",
+      "website": "https://www.osano.com/"
     },
     "Outbrain": {
       "cats": [
@@ -8426,12 +8873,17 @@
         41
       ],
       "cpe": "cpe:/a:paypal:paypal",
-      "html": "<input[^>]+_s-xclick",
+      "html": [
+        "<input[^>]+_s-xclick",
+        "<img [^>]*src=\"[^/]*//[^/]*paypal\\.com",
+        "<img [^>]*src=\"[^/]*//[^/]*paypalobjects\\.com"
+      ],
       "icon": "PayPal.svg",
       "js": {
         "PAYPAL": ""
       },
-      "script": "paypalobjects\\.com/js",
+      "script": "paypalobjects\\.com",
+      "url": "paypal\\.com",
       "website": "https://paypal.com"
     },
     "Pelican": {
@@ -8475,6 +8927,19 @@
         "generator": "(?:Percussion|Rhythmyx)"
       },
       "website": "http://percussion.com"
+    },
+    "PerimeterX": {
+      "cats": [
+        16
+      ],
+      "cookies": {
+        "_px3": "",
+        "_pxff_cc": "",
+        "_pxhd": "",
+        "_pxvid": ""
+      },
+      "icon": "perimeterx.svg",
+      "website": "https://www.perimeterx.com/"
     },
     "Perl": {
       "cats": [
@@ -8583,6 +9048,14 @@
       "icon": "pimcore.svg",
       "implies": "PHP",
       "website": "http://pimcore.org"
+    },
+    "Pin Payments": {
+      "cats": [
+        41
+      ],
+      "icon": "pinpayments.png",
+      "script": "api\\.pinpayments\\.com",
+      "website": "https://www.pinpayments.com/"
     },
     "Pingoteam": {
       "cats": [
@@ -8997,7 +9470,18 @@
       "icon": "Python.png",
       "website": "http://python.org"
     },
-    "Quantcast": {
+    "Quantcast Choice": {
+      "cats": [
+        67
+      ],
+      "icon": "Quantcast.png",
+      "js": {
+        "quantserve": ""
+      },
+      "script": "quantcast\\.mgr\\.consensu\\.org",
+      "website": "https://www.quantcast.com/gdpr/consent-management-solution/"
+    },
+    "Quantcast Measure": {
       "cats": [
         10
       ],
@@ -9006,7 +9490,7 @@
         "quantserve": ""
       },
       "script": "\\.quantserve\\.com/quant\\.js",
-      "website": "http://www.quantcast.com"
+      "website": "https://www.quantcast.com/products/measure-audience-insights/"
     },
     "Question2Answer": {
       "cats": [
@@ -9092,7 +9576,7 @@
       "cpe": "cpe:/a:dave_thomas:rdoc",
       "html": [
         "<link[^>]+href=\"[^\"]*rdoc-style\\.css",
-        "Generated by <a[^>]+href=\"https?://rdoc\\.rubyforge\\.org[^>]+>RDoc</a> ([\\d.]*\\d)\\;version:\\1",
+        "Generated by <a[^>]+href=\"https?://rdoc\\.rubyforge\\.org[^>]+>RDoc</a> ([\\d.]*\\d)\\;version:\\1"
       ],
       "icon": "RDoc.png",
       "implies": "Ruby",
@@ -9254,6 +9738,26 @@
       "html": "<!-- Powered by RebelMouse\\.",
       "icon": "RebelMouse.svg",
       "website": "https://www.rebelmouse.com/"
+    },
+    "Recite Me": {
+      "cats": [
+        68
+      ],
+      "html": "api\\.reciteme\\.com/asset/js",
+      "icon": "Recite Me.png",
+      "website": "https://reciteme.com/"
+    },
+    "Recurly": {
+      "cats": [
+        41
+      ],
+      "html": "<input[^>]+data-recurly",
+      "icon": "Recurly.png",
+      "js": {
+        "recurly.version": "^(.+)$\\;version:\\1"
+      },
+      "script": "js\\.recurly\\.com",
+      "website": "https://recurly.com"
     },
     "Red Hat": {
       "cats": [
@@ -9607,10 +10111,21 @@
         "_hybris": ""
       },
       "cpe": "cpe:/a:sap:commerce_cloud",
-      "html": "<[^>]+/(?:sys_master|hybr|_ui/(?:responsive/)?(?:desktop|common(?:/images|/img)?))/",
+      "html": [
+        "<[^>]+/(?:sys_master|hybr|_ui/(?:.*responsive/)?(?:desktop|common(?:/images|/img|/css|ico)?))/",
+        "<script[^>].*hybris.*.js"
+      ],
       "icon": "SAP.png",
       "implies": "Java",
       "website": "https://www.sap.com/products/crm/e-commerce-platforms.html"
+    },
+    "SAP Customer Data Cloud Sign-in": {
+      "cats": [
+        69
+      ],
+      "icon": "SAP.png",
+      "script": "\\.gigya\\.com/JS/gigya\\.js",
+      "website": "https://www.sap.com/uk/acquired-brands/what-is-gigya.html"
     },
     "SDL Tridion": {
       "cats": [
@@ -9744,6 +10259,24 @@
       "implies": "Express",
       "website": "http://sailsjs.org"
     },
+    "SaleCycle": {
+      "cats": [
+        6
+      ],
+      "html": "<iframe[^>]+title=\"SaleCycle\"[^>]+src=\"[^>]+salecycle\\.com",
+      "icon": "salecycle.svg",
+      "website": "https://www.salecycle.com/"
+    },
+    "Salesfloor": {
+      "cats": [
+        6
+      ],
+      "icon": "salesfloor.png",
+      "script": [
+        "salesFloor\\.js"
+      ],
+      "website": "https://salesfloor.net/"
+    },
     "Salesforce": {
       "cats": [
         53
@@ -9768,7 +10301,10 @@
       "headers": {
         "Server": "Demandware eCommerce Server"
       },
-      "html": "<[^>]+demandware\\.edgesuite",
+      "html": [
+        "<[^>]+demandware\\.edgesuite",
+        "/demandware\\.static/"
+      ],
       "icon": "Salesforce.svg",
       "js": {
         "dwAnalytics": ""
@@ -9882,6 +10418,16 @@
       },
       "icon": "sectionio.svg",
       "website": "https://www.section.io"
+    },
+    "Seers": {
+      "cats": [
+        67
+      ],
+      "icon": "seersco.png",
+      "script": [
+        "seersco.com/script/cb\\.js"
+      ],
+      "website": "http://www.seersco.com"
     },
     "Segment": {
       "cats": [
@@ -10044,6 +10590,16 @@
       "script": "^https?://codice(?:business|ssl|pro|isp)?\\.shinystat\\.com/cgi-bin/getcod\\.cgi",
       "website": "http://shinystat.com"
     },
+    "Shop Pay": {
+      "cats": [
+        41
+      ],
+      "html": "<[^>]+aria-labelledby=\"pi-shopify_pay",
+      "icon": "Shopify.svg",
+      "implies": "Shopify",
+      "url": "^https://pay.shopify.com",
+      "website": "https://pay.google.com"
+    },
     "Shopatron": {
       "cats": [
         6
@@ -10126,6 +10682,7 @@
       "js": {
         "Shopify": "\\;confidence:25"
       },
+      "script": "sdks\\.shopifycdn\\.com",
       "url": "^https?//.+\\.myshopify\\.com",
       "website": "http://shopify.com"
     },
@@ -10187,7 +10744,8 @@
     },
     "Signal": {
       "cats": [
-        32
+        32,
+        42
       ],
       "icon": "signal.png",
       "js": {
@@ -10473,7 +11031,7 @@
       "cats": [
         12
       ],
-      "icon": "Socket.io.png",
+      "icon": "Socket.IO.svg",
       "implies": "Node.js",
       "js": {
         "io.Socket": "",
@@ -10491,6 +11049,22 @@
         "author": "SoftTr E-Ticaret Sitesi Yazılımı"
       },
       "website": "http://www.softtr.com"
+    },
+    "SolidPixels": {
+      "cats": [
+        1,
+        6,
+        4
+      ],
+      "icon": "SolidPixels.png",
+      "implies": "React",
+      "meta": {
+        "web_author": "^solidpixels"
+      },
+      "script": [
+        "^https?://cdn\\.solidpixels\\.net/"
+      ],
+      "website": "https://www.solidpixels.net"
     },
     "Solodev": {
       "cats": [
@@ -10605,12 +11179,23 @@
       "implies": "PHP",
       "website": "http://www.spin.cw"
     },
+    "SplitIt": {
+      "cats": [
+        41
+      ],
+      "icon": "splitit.png",
+      "script": "checkout\\.production\\.splitit\\.com",
+      "website": "https://www.splitit.com/"
+    },
     "Splitbee": {
       "cats": [
         10
       ],
       "icon": "splitbee.svg",
-      "script": "^https:\\/\\/cdn\\.splitbee\\.io\\/sb\\.js",
+      "js": {
+        "splitbee": ""
+      },
+      "script": "^https://cdn\\.splitbee\\.io/sb\\.js",
       "website": "https://splitbee.io"
     },
     "Splunk": {
@@ -10811,6 +11396,10 @@
       "cats": [
         41
       ],
+      "cookies": {
+        "__stripe_mid": "",
+        "__stripe_sid": ""
+      },
       "html": "<input[^>]+data-stripe",
       "icon": "Stripe.png",
       "js": {
@@ -11065,6 +11654,14 @@
       "implies": "Tessitura",
       "website": "https://www.tessituranetwork.com"
     },
+    "TNS Payments": {
+      "cats": [
+        41
+      ],
+      "icon": "tnsi.png",
+      "script": "secure\\.ap\\.tnspayments\\.com",
+      "website": "https://tnsi.com/products/payments/"
+    },
     "TWiki": {
       "cats": [
         8
@@ -11106,6 +11703,15 @@
       },
       "script": "\\.tagcommander\\.com",
       "website": "https://www.commandersact.com/en/solutions/tagcommander/"
+    },
+    "Taggbox": {
+      "cats": [
+        5
+      ],
+      "icon": "Taggbox.svg",
+      "script": "web\\.taggbox\\.com",
+      "url": "web\\.taggbox\\.com",
+      "website": "https://taggbox.com/"
     },
     "Taiga": {
       "cats": [
@@ -11233,6 +11839,14 @@
       "icon": "Tengine.png",
       "website": "http://tengine.taobao.org"
     },
+    "Termly": {
+      "cats": [
+        67
+      ],
+      "icon": "termly.svg",
+      "script": "app\\.termly\\.io/embed\\.min\\.js",
+      "website": "https://termly.io/"
+    },
     "Tessitura": {
       "cats": [
         53
@@ -11256,6 +11870,14 @@
       },
       "website": "https://www.textalk.se"
     },
+    "Texthelp": {
+      "cats": [
+        68
+      ],
+      "icon": "Texthelp.png",
+      "script": "browsealoud\\.com/.*/browsealoud\\.js",
+      "website": "https://www.texthelp.com/en-gb/products/browsealoud/"
+    },
     "Textpattern CMS": {
       "cats": [
         1
@@ -11269,6 +11891,16 @@
         "generator": "Textpattern"
       },
       "website": "http://textpattern.com"
+    },
+    "The Hut Group": {
+      "cats": [
+        6
+      ],
+      "icon": "TheHutGroup.png",
+      "script": [
+        "THEHUT-.*\\.js"
+      ],
+      "website": "https://www.thg.com/"
     },
     "Thelia": {
       "cats": [
@@ -11474,6 +12106,14 @@
       "icon": "tray.png",
       "script": "tcdn\\.com\\.br",
       "website": "https://www.tray.com.br"
+    },
+    "TrustArc": {
+      "cats": [
+        67
+      ],
+      "icon": "TrustArc.svg",
+      "script": "consent\\.trustarc\\.com",
+      "website": "http://trustarc.com"
     },
     "Tumblr": {
       "cats": [
@@ -11706,6 +12346,14 @@
       "script": "underscore.*\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
       "website": "http://underscorejs.org"
     },
+    "Uniconsent": {
+      "cats": [
+        67
+      ],
+      "icon": "Uniconsent.png",
+      "script": "cmp\\.uniconsent\\.mgr\\.consensu\\.org/dfp\\.js",
+      "website": "https://www.uniconsent.com/"
+    },
     "Usabilla": {
       "cats": [
         13
@@ -11715,6 +12363,15 @@
         "usabilla_live": ""
       },
       "website": "http://usabilla.com"
+    },
+    "UsableNet": {
+      "cats": [
+        68
+      ],
+      "html": "<iframe[ˆ>]*\\.usablenet\\.com/pt/",
+      "icon": "UsableNet.png",
+      "script": "\\.usablenet\\.com/pt/",
+      "website": "https://usablenet.com/"
     },
     "UserLike": {
       "cats": [
@@ -11746,6 +12403,14 @@
         "UserVoice": ""
       },
       "website": "http://uservoice.com"
+    },
+    "UserWay": {
+      "cats": [
+        68
+      ],
+      "icon": "UserWay.png",
+      "script": "cdn\\.userway\\.org/widget.*\\.js",
+      "website": "https://userway.org/"
     },
     "Ushahidi": {
       "cats": [
@@ -11856,6 +12521,14 @@
       },
       "icon": "Varnish.svg",
       "website": "http://www.varnish-cache.org"
+    },
+    "Venmo": {
+      "cats": [
+        41
+      ],
+      "html": "<[^>]+aria-labelledby=\"pi-venmo",
+      "icon": "Venmo.svg",
+      "website": "https://venmo.com"
     },
     "Veoxa": {
       "cats": [
@@ -11974,6 +12647,22 @@
       "url": "/sparql",
       "website": "https://virtuoso.openlinksw.com/"
     },
+    "Visa": {
+      "cats": [
+        41
+      ],
+      "html": "<[^>]+aria-labelledby=\"pi-visa",
+      "icon": "Visa.svg",
+      "website": "https://www.visa.com"
+    },
+    "Visa Checkout": {
+      "cats": [
+        41
+      ],
+      "icon": "visa.png",
+      "script": "secure\\.checkout\\.visa\\.com",
+      "website": "https://checkout.visa.com"
+    },
     "Visual Website Optimizer": {
       "cats": [
         10
@@ -12018,8 +12707,9 @@
       "cats": [
         12
       ],
+      "description": "Vue is a progressive framework for building user interfaces.",
       "html": "<[^>]+\\sdata-v(?:ue)?-",
-      "icon": "Vue.js.png",
+      "icon": "vue.svg",
       "js": {
         "Vue.version": "^(.+)$\\;version:\\1"
       },
@@ -12160,6 +12850,16 @@
       },
       "script": "web2py\\.js",
       "website": "http://web2py.com"
+    },
+    "WebAR": {
+      "cats": [
+        19
+      ],
+      "html": [
+        "<model-viewer"
+      ],
+      "icon": "webAR.svg",
+      "website": "https://modelviewer.dev/"
     },
     "WebGUI": {
       "cats": [
@@ -13114,6 +13814,18 @@
       },
       "website": "http://django-blog-zinnia.com"
     },
+    "Zip Pay / Zip Money": {
+      "cats": [
+        41
+      ],
+      "html": "<img [^>]*src=\"[^/]*//[^/]*eway\\.com",
+      "icon": "zip_pay.png",
+      "script": [
+        "static\\.zipmoney\\.com\\.au",
+        "zip\\.co"
+      ],
+      "website": "https://www.zip.co/"
+    },
     "Zipkin": {
       "cats": [
         10
@@ -13205,6 +13917,18 @@
       },
       "script": "basket.*\\.js\\;confidence:10",
       "website": "https://addyosmani.github.io/basket.js/"
+    },
+    "borderfree": {
+      "cats": [
+        6
+      ],
+      "icon": "borderfree.png",
+      "script": [
+        "global\\.prd\\.borderfree\\.com",
+        "wm\\.prd\\.borderfree\\.com",
+        "bfx\\.js"
+      ],
+      "website": "https://www.borderfree.com/"
     },
     "cPanel": {
       "cats": [
@@ -13317,6 +14041,15 @@
       },
       "website": "http://esyndicat.com"
     },
+    "eWAY Payments": {
+      "cats": [
+        41
+      ],
+      "html": "<img [^>]*src=\"[^/]*//[^/]*eway\\.com",
+      "icon": "eway.png",
+      "script": "secure\\.ewaypayments\\.com",
+      "website": "https://www.eway.com.au/"
+    },
     "eZ Platform": {
       "cats": [
         1,
@@ -13369,6 +14102,14 @@
       "icon": "enduro.js.svg",
       "implies": "Node.js",
       "website": "http://endurojs.com"
+    },
+    "eucookie.eu": {
+      "cats": [
+        67
+      ],
+      "icon": "eucookie.png",
+      "script": "eucookie\\.eu/public/gdpr-cookie-consent\\.js",
+      "website": "https://www.eucookie.eu/"
     },
     "experiencedCMS": {
       "cats": [
@@ -13450,7 +14191,6 @@
         "Server": "gunicorn(?:/([\\d.]+))?\\;version:\\1"
       },
       "icon": "gunicorn.png",
-      "implies": "Python",
       "website": "http://gunicorn.org"
     },
     "hCaptcha": {
@@ -14336,6 +15076,14 @@
       "script": "/media/conv/js/jquery\\.js",
       "website": "https://uknowva.com"
     },
+    "uRemediate": {
+      "cats": [
+        68
+      ],
+      "icon": "User1st.png",
+      "script": "fecdn\\.user1st\\.info/Loader/head",
+      "website": "https://www.user1st.com/uremediate/"
+    },
     "user.com": {
       "cats": [
         10
@@ -14471,7 +15219,7 @@
       "priority": 2
     },
     "4": {
-      "name": "Documentation tools",
+      "name": "Documentation",
       "priority": 2
     },
     "5": {
@@ -14519,7 +15267,7 @@
       "priority": 9
     },
     "16": {
-      "name": "Captchas",
+      "name": "Security",
       "priority": 9
     },
     "17": {
@@ -14713,6 +15461,18 @@
     "66": {
       "name": "UI frameworks",
       "priority": 7
+    },
+    "67": {
+      "name": "Cookie compliance",
+      "priority": 9
+    },
+    "68": {
+      "name": "Accessibility",
+      "priority": 9
+    },
+    "69": {
+      "name": "Social login",
+      "priority": 6
     }
   }
 }
