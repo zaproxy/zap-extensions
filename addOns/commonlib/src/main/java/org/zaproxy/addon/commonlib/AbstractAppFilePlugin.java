@@ -178,10 +178,11 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
         }
         int statusCode = newRequest.getResponseHeader().getStatusCode();
         if (statusCode == HttpStatusCode.OK) {
-            raiseAlert(newRequest, getRisk(), "");
-        } else if (statusCode == HttpStatusCode.UNAUTHORIZED
-                || statusCode == HttpStatusCode.FORBIDDEN) {
-            raiseAlert(newRequest, Alert.RISK_INFO, getOtherInfo());
+            raiseAlert(newRequest, getRisk(), Alert.CONFIDENCE_MEDIUM, "");
+        } else if (this.getAlertThreshold().equals(AlertThreshold.LOW)
+                && (statusCode == HttpStatusCode.UNAUTHORIZED
+                        || statusCode == HttpStatusCode.FORBIDDEN)) {
+            raiseAlert(newRequest, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getOtherInfo());
         }
     }
 
@@ -209,10 +210,10 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
         return newPath;
     }
 
-    private void raiseAlert(HttpMessage msg, int risk, String otherInfo) {
+    private void raiseAlert(HttpMessage msg, int risk, int confidence, String otherInfo) {
         newAlert()
                 .setRisk(risk)
-                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setConfidence(confidence)
                 .setOtherInfo(otherInfo)
                 .setEvidence(msg.getResponseHeader().getPrimeHeader())
                 .setMessage(msg)
