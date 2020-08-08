@@ -20,18 +20,18 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpHeaderField;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.*;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
@@ -46,8 +46,12 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
 
     private static Logger log = Logger.getLogger(MongoDbVulnScanner.class);
 
-    private static String TIMING_ATTACK =
-            "1';var time = new Date().getTime(); while (new Date().getTime() < time + 2000);'";
+    private static String[] TIMING_ATTACKS = new String[] {
+            "1';var time = new Date().getTime(); while (new Date().getTime() < time + 2000);'",
+            "{%S}', $where: 'function(){sleep(2000); return this.name == \"{%S}\"}'})"};
+
+    private static final String[] JSON_INJECTION = {"$ne", "0"};
+    private static final String FORM_AUTH_INJECTION = "[$ne]";
 
     private static ExtensionAuthentication extAuth =
             (ExtensionAuthentication)
@@ -62,12 +66,12 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "name");
+        return "Mongo DB Vuln Scanner";
     }
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+        return "The application generates a query intended to access or manipulate data in MongoDB, but it does not neutralize or incorrectly neutralizes special elements that can modify the intended logic of the query.";
     }
 
     private enum FlawType {
@@ -78,9 +82,14 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        detectAuthenticationBypass(param);
-        detectDataInjection(msg.getResponseBody().toString(), param);
-        detectJavascriptInjection(param);
+        try {
+            detectFormAuthenticationBypass(param);
+            detectJsonInjection(param);
+            detectDataInjection(msg.getResponseBody().toString(), param, value);
+            detectJavascriptInjection(param, value);
+        } catch (HttpMalformedHeaderException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -90,26 +99,29 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
      *
      * @param param
      */
-    private void detectJavascriptInjection(String param) {
+    private void detectJavascriptInjection(String param, String value) {
         try {
             HttpMessage newMsg = getNewMsg();
-            setParameter(newMsg, param, TIMING_ATTACK);
-            long start = System.currentTimeMillis();
-            sendAndReceive(newMsg, false);
-            long finish = System.currentTimeMillis();
-            long timeElapsed = finish - start;
-            if (timeElapsed > 2500) {
-                this.bingo(
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        "Timing Attack",
-                        getDescription(),
-                        null,
-                        param,
-                        TIMING_ATTACK,
-                        getOtherInfo(FlawType.JS),
-                        getSolution(),
-                        newMsg);
+            for (String attack : TIMING_ATTACKS) {
+                attack=attack.replace("{%S}",value);
+                setParameter(newMsg, param, attack);
+                long start = System.currentTimeMillis();
+                sendAndReceive(newMsg, false);
+                long finish = System.currentTimeMillis();
+                long timeElapsed = finish - start;
+                if (timeElapsed > 2000) {
+                    this.bingo(
+                            Alert.RISK_HIGH,
+                            Alert.CONFIDENCE_MEDIUM,
+                            "Timing Attack",
+                            getDescription(),
+                            null,
+                            param,
+                            attack,
+                            getOtherInfo(FlawType.JS),
+                            getSolution(),
+                            newMsg);
+                }
             }
         } catch (IOException ex) {
             log.error("caught exception sending request ", ex);
@@ -125,31 +137,59 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
      * @param originalResponse
      * @param param
      */
-    private void detectDataInjection(String originalResponse, String param) {
+    private void detectDataInjection(String originalResponse, String param, String value) throws HttpMalformedHeaderException {
         HttpMessage newMsg = getNewMsg();
-        setEscapedParameter(newMsg, param + "[$gt]", "");
+        boolean isJsonRequestBody = Heuristics.isJSONValid(getBaseMsg().getRequestBody().toString());
+        if (isJsonRequestBody) {
+            newMsg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
+            String requestBody = getFormDataFromJSONWithInjection(getBaseMsg().getRequestBody().toString(), param, "[$gt]", "");
+            newMsg.setRequestBody(requestBody);
+        } else {
+            setEscapedParameter(newMsg, param + "[$gt]", "");
+        }
         try {
             sendAndReceive(newMsg, false);
-            // If initial response is not JSON and if injected attack results in a JSON we can
-            // conclude that the attack worked
-            if (!Heuristics.isJSONValid(originalResponse)
-                    && Heuristics.isJSONValid(newMsg.getResponseBody().toString())) {
-                this.bingo(
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_MEDIUM,
-                        "Query Selector Injection (Data)",
-                        getDescription(),
-                        null,
-                        param,
-                        param + "[$gt]",
-                        getOtherInfo(FlawType.DATA),
-                        getSolution(),
-                        newMsg);
+            boolean isStatusCodeEqual = false;
+            if (newMsg.getResponseHeader().getStatusCode()
+                    == getBaseMsg().getResponseHeader().getStatusCode()) {
+                isStatusCodeEqual = true;
             }
+            if (isStatusCodeEqual) {
+                if (!newMsg.getResponseBody().toString().equals(originalResponse)) {
+                    HttpMessage counterProofMsg = getNewMsg();
+                    if (isJsonRequestBody) {
+                        counterProofMsg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
+                        String requestBody = getFormDataFromJSONWithInjection(getBaseMsg().getRequestBody().toString(), param, "[$eq]", value);
+                        counterProofMsg.setRequestBody(requestBody);
+                    } else {
+                        setEscapedParameter(counterProofMsg, param + "[$eq]", "");
+                    }
+                    sendAndReceive(counterProofMsg, false);
+                    if (counterProofMsg.getResponseBody().toString().equals(originalResponse) ||
+                            isEmptyResponse(counterProofMsg.getResponseBody().toString(), originalResponse)) {
+                        this.bingo(
+                                Alert.RISK_HIGH,
+                                Alert.CONFIDENCE_MEDIUM,
+                                "Query Selector Injection (Data)",
+                                getDescription(),
+                                null,
+                                param,
+                                param + "[$gt]",
+                                getOtherInfo(FlawType.DATA),
+                                getSolution(),
+                                newMsg);
+                    }
+                }
+            }
+
         } catch (IOException ex) {
             log.error("caught exception sending request ", ex);
             ;
         }
+    }
+
+    private boolean isEmptyResponse(String counterProofMessage, String originalResponse) {
+        return (counterProofMessage.equals("[]") && originalResponse.isEmpty());
     }
 
     /**
@@ -160,7 +200,7 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
      * @param param
      */
     @SuppressWarnings("deprecation")
-    private void detectAuthenticationBypass(String param) {
+    private void detectFormAuthenticationBypass(String param) {
         try {
             // if this url has a form auth continue with this attack
             if (hasFormBasedAuthContext(extAuth.getModel().getSession().getContexts())) {
@@ -186,7 +226,7 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
                 // if the message belongs to login url then attack its params
                 if (loginUrl) {
                     HttpMessage newMsg = getNewMsg();
-                    setEscapedParameter(newMsg, param + "[$ne]", "");
+                    setEscapedParameter(newMsg, param + FORM_AUTH_INJECTION, "");
                     sendAndReceive(newMsg, false);
                     if (newMsg.getResponseHeader().getStatusCode() >= 200
                             && newMsg.getResponseHeader().getStatusCode() < 400) {
@@ -217,12 +257,59 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
                                     this.getDescription(),
                                     null,
                                     param,
-                                    param + "[$ne]",
+                                    param + FORM_AUTH_INJECTION,
                                     this.getOtherInfo(FlawType.AUTH),
                                     this.getSolution(),
                                     newMsg);
                         }
                     }
+                }
+            }
+        } catch (Exception ex) {
+            log.error("caught exception while detecting authentication bypass ", ex);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void detectJsonInjection(String param) {
+        try {
+            HttpMessage newMsg = getNewMsg();
+            JSONObject valueInj = getParamJsonString(JSON_INJECTION);
+            setEscapedParameter(newMsg, param , valueInj.toString());
+            sendAndReceive(newMsg, false);
+            if (newMsg.getResponseHeader().getStatusCode() >= 200
+                    && newMsg.getResponseHeader().getStatusCode() < 400) {
+                if (newMsg.getResponseHeader().getStatusCode() >= 300) {
+                    String location = "/";
+                    // get location header
+                    List<HttpHeaderField> header =
+                            newMsg.getResponseHeader().getHeaders().stream()
+                                    .filter(
+                                            h ->
+                                                    h.getName()
+                                                            .equals(
+                                                                    HttpRequestHeader
+                                                                            .LOCATION))
+                                    .collect(Collectors.toList());
+                    location = header.get(0).getValue();
+                    newMsg.setCookies(newMsg.getResponseHeader().getHttpCookies());
+                    newMsg.getRequestHeader().setMethod(HttpRequestHeader.GET);
+                    newMsg.getRequestHeader()
+                            .setURI(new URI(this.getParent().getHostAndPort() + location));
+                    this.sendAndReceive(newMsg, false);
+                }
+                if (Heuristics.isUserLoggedIn(newMsg.getResponseBody().toString())) {
+                    this.bingo(
+                            Alert.RISK_HIGH,
+                            Alert.CONFIDENCE_MEDIUM,
+                            "Json Injection Attack",
+                            this.getDescription(),
+                            null,
+                            param,
+                            valueInj.toString(),
+                            this.getOtherInfo(FlawType.AUTH),
+                            this.getSolution(),
+                            newMsg);
                 }
             }
         } catch (Exception ex) {
@@ -249,7 +336,7 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+        return "Please ensure that you follow one or more of the following techniques, 1. Input validation  2. Parametrized queries 3. Use Stored procedures 4. Use Character Escaping  5. Use a Web Application Firewall";
     }
 
     public String getOtherInfo(FlawType flawType) {
@@ -292,4 +379,42 @@ public class MongoDbVulnScanner extends AbstractAppParamPlugin {
     public int getWascId() {
         return 19;
     }
+
+    private static JSONObject getParamJsonString(String[] params) throws JSONException {
+        JSONObject internal = new JSONObject();
+        internal.put(params[0], params[1]);
+        return internal;
+    }
+
+    private static String getFormDataFromJSONWithInjection(String jsonString, String param, String injection, String value){
+        try {
+            StringBuilder formData = new StringBuilder();
+            JSONObject obj = new JSONObject(jsonString);
+            Iterator<String> itr = obj.keys();
+            int i = 0;
+            while (itr.hasNext()) {
+                Object key = itr.next();
+                if (i > 0) {
+                    formData.append("&");
+                }
+                formData.append(key.toString());
+                if (key.equals(param)) {
+                    formData.append(injection);
+                }
+                formData.append("=");
+                if (key.equals(param)) {
+                    formData.append(value);
+                } else {
+                    formData.append(obj.get(key.toString()));
+                }
+                i++;
+            }
+            return formData.toString();
+        }
+        catch(Exception e){
+            log.error("Error parsing request body");
+        }
+        return "";
+    }
+
 }

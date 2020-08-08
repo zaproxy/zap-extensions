@@ -183,14 +183,15 @@ public class LDAPInjection extends AbstractAppParamPlugin {
 
     @Override
     public void scan(HttpMessage msg, NameValuePair originalParam) {
+        return;
         /*
          * Scan everything _except_ URL path parameters.
          * URL Path parameters are problematic for the matching based scanners, because changing the URL path
          * "parameter" generates output that is wildly different from the unmodified URL path "parameter"
          */
-        if (originalParam.getType() != NameValuePair.TYPE_URL_PATH) {
-            super.scan(msg, originalParam);
-        }
+//        if (originalParam.getType() != NameValuePair.TYPE_URL_PATH) {
+//            super.scan(msg, originalParam);
+//        }
     }
 
     /**

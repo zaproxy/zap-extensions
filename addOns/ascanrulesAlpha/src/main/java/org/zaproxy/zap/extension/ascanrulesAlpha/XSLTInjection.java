@@ -122,11 +122,12 @@ public class XSLTInjection extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String param, String value) {
         // goes through all checks and stops if it finds a possible
         // injection
-        for (XSLTInjectionType check : XSLTInjectionType.values()) {
-            if (tryInjection(msg, param, check)) {
-                return;
-            }
-        }
+        return;
+//        for (XSLTInjectionType check : XSLTInjectionType.values()) {
+//            if (tryInjection(msg, param, check)) {
+//                return;
+//            }
+//        }
     }
 
     private Boolean tryInjection(HttpMessage msg, String param, XSLTInjectionType checkType) {

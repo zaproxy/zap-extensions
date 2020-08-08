@@ -121,18 +121,19 @@ public class CloudMetadataScanner extends AbstractHostPlugin {
 
     @Override
     public void scan() {
-        HttpMessage newRequest = getNewMsg();
-        try {
-            newRequest.getRequestHeader().getURI().setPath(METADATA_PATH);
-            this.sendMessageWithCustomHostHeader(newRequest, METADATA_HOST);
-            if (HttpStatusCode.isSuccess(newRequest.getResponseHeader().getStatusCode())
-                    && newRequest.getResponseBody().length() > 0) {
-                this.raiseAlert(newRequest);
-            }
-        } catch (Exception e) {
-            LOG.error("Error sending URL " + newRequest.getRequestHeader().getURI(), e);
-            return;
-        }
+        return;
+//        HttpMessage newRequest = getNewMsg();
+//        try {
+//            newRequest.getRequestHeader().getURI().setPath(METADATA_PATH);
+//            this.sendMessageWithCustomHostHeader(newRequest, METADATA_HOST);
+//            if (HttpStatusCode.isSuccess(newRequest.getResponseHeader().getStatusCode())
+//                    && newRequest.getResponseBody().length() > 0) {
+//                this.raiseAlert(newRequest);
+//            }
+//        } catch (Exception e) {
+//            LOG.error("Error sending URL " + newRequest.getRequestHeader().getURI(), e);
+//            return;
+//        }
     }
 
     void sendMessageWithCustomHostHeader(HttpMessage message, String host) throws IOException {

@@ -116,34 +116,36 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
      */
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        try {
-            if (!Constant.isDevBuild()) {
-                // Only run this example scanner in dev mode
-                // Uncomment locally if you want to see these alerts in non dev mode ;)
-                return;
-            }
-            // This is where you change the 'good' request to attack the application
-            // You can make multiple requests if needed
-            String attack = "attack";
-
-            // Always use getNewMsg() for each new request
-            msg = getNewMsg();
-            setParameter(msg, param, attack);
-            sendAndReceive(msg);
-
-            // This is where you detect potential vulnerabilities in the response
-
-            // For this example we're just going to raise the alert at random!
-
-            if (rnd.nextInt(10) == 0) {
-                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, value, null, msg);
-                return;
-            }
-
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+        return;
     }
+//        try {
+//            if (!Constant.isDevBuild()) {
+//                // Only run this example scanner in dev mode
+//                // Uncomment locally if you want to see these alerts in non dev mode ;)
+//                return;
+//            }
+//            // This is where you change the 'good' request to attack the application
+//            // You can make multiple requests if needed
+//            String attack = "attack";
+//
+//            // Always use getNewMsg() for each new request
+//            msg = getNewMsg();
+//            setParameter(msg, param, attack);
+//            sendAndReceive(msg);
+//
+//            // This is where you detect potential vulnerabilities in the response
+//
+//            // For this example we're just going to raise the alert at random!
+//
+//            if (rnd.nextInt(10) == 0) {
+//                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, value, null, msg);
+//                return;
+//            }
+//
+//        } catch (IOException e) {
+//            log.error(e.getMessage(), e);
+//        }
+//    }
 
     @Override
     public int getRisk() {

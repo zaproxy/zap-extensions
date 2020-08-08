@@ -104,72 +104,73 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
      */
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-        try {
-            if (!Constant.isDevBuild()) {
-                // Only run this example scanner in dev mode
-                // Uncomment locally if you want to see these alerts in non dev mode ;)
-                return;
-            }
-
-            if (this.strings == null) {
-                this.strings = loadFile(exampleAscanFile);
-            }
-            // This is where you change the 'good' request to attack the application
-            // You can make multiple requests if needed
-            int numAttacks = 0;
-
-            switch (this.getAttackStrength()) {
-                case LOW:
-                    numAttacks = 6;
-                    break;
-                case MEDIUM:
-                    numAttacks = 12;
-                    break;
-                case HIGH:
-                    numAttacks = 24;
-                    break;
-                case INSANE:
-                    numAttacks = 96;
-                    break;
-                default:
-                    break;
-            }
-
-            for (int i = 0; i < numAttacks; i++) {
-                if (this.isStop()) {
-                    // User has stopped the scan
-                    break;
-                }
-                if (i >= this.strings.size()) {
-                    // run out of attack strings
-                    break;
-                }
-                String attack = this.strings.get(i);
-                // Always use getNewMsg() for each new request
-                msg = getNewMsg();
-                setParameter(msg, param, attack);
-                sendAndReceive(msg);
-
-                // This is where you detect potential vulnerabilities in the response
-                String evidence;
-                if ((evidence = doesResponseContainString(msg.getResponseBody(), attack)) != null) {
-                    // Raise an alert
-                    bingo(
-                            Alert.RISK_HIGH,
-                            Alert.CONFIDENCE_MEDIUM,
-                            null,
-                            param,
-                            attack,
-                            getOtherInfo(),
-                            evidence,
-                            msg);
-                    return;
-                }
-            }
-
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+        return;
+//        try {
+//            if (!Constant.isDevBuild()) {
+//                // Only run this example scanner in dev mode
+//                // Uncomment locally if you want to see these alerts in non dev mode ;)
+//                return;
+//            }
+//
+//            if (this.strings == null) {
+//                this.strings = loadFile(exampleAscanFile);
+//            }
+//            // This is where you change the 'good' request to attack the application
+//            // You can make multiple requests if needed
+//            int numAttacks = 0;
+//
+//            switch (this.getAttackStrength()) {
+//                case LOW:
+//                    numAttacks = 6;
+//                    break;
+//                case MEDIUM:
+//                    numAttacks = 12;
+//                    break;
+//                case HIGH:
+//                    numAttacks = 24;
+//                    break;
+//                case INSANE:
+//                    numAttacks = 96;
+//                    break;
+//                default:
+//                    break;
+//            }
+//
+//            for (int i = 0; i < numAttacks; i++) {
+//                if (this.isStop()) {
+//                    // User has stopped the scan
+//                    break;
+//                }
+//                if (i >= this.strings.size()) {
+//                    // run out of attack strings
+//                    break;
+//                }
+//                String attack = this.strings.get(i);
+//                // Always use getNewMsg() for each new request
+//                msg = getNewMsg();
+//                setParameter(msg, param, attack);
+//                sendAndReceive(msg);
+//
+//                // This is where you detect potential vulnerabilities in the response
+//                String evidence;
+//                if ((evidence = doesResponseContainString(msg.getResponseBody(), attack)) != null) {
+//                    // Raise an alert
+//                    bingo(
+//                            Alert.RISK_HIGH,
+//                            Alert.CONFIDENCE_MEDIUM,
+//                            null,
+//                            param,
+//                            attack,
+//                            getOtherInfo(),
+//                            evidence,
+//                            msg);
+//                    return;
+//                }
+//            }
+//
+//        } catch (IOException e) {
+//            log.error(e.getMessage(), e);
+//        }
     }
 
     private String doesResponseContainString(HttpBody body, String str) {

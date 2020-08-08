@@ -91,37 +91,38 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
     @Override
     public void scan() {
-        for (HiddenFile file : hfList) {
-
-            if (isStop()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scanner " + getName() + " stopping.");
-                }
-                return;
-            }
-
-            HttpMessage testMsg = sendHiddenFileRequest(file);
-            if (testMsg == null) {
-                continue;
-            }
-            int statusCode = testMsg.getResponseHeader().getStatusCode();
-            if (statusCode == HttpStatusCode.OK) {
-                String responseBody = testMsg.getResponseBody().toString();
-                // If all the content checks matched then confidence is high
-                boolean matches =
-                        doesNotMatch(responseBody, file.getNotContent())
-                                && doesMatch(responseBody, file.getContent())
-                                && doesBinaryMatch(responseBody, file.getBinary());
-                raiseAlert(
-                        testMsg,
-                        matches ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_LOW,
-                        getRisk(),
-                        file);
-            } else if (statusCode == HttpStatusCode.UNAUTHORIZED
-                    || statusCode == HttpStatusCode.FORBIDDEN) {
-                raiseAlert(testMsg, Alert.CONFIDENCE_LOW, Alert.RISK_INFO, file);
-            }
-        }
+        return;
+//        for (HiddenFile file : hfList) {
+//
+//            if (isStop()) {
+//                if (LOG.isDebugEnabled()) {
+//                    LOG.debug("Scanner " + getName() + " stopping.");
+//                }
+//                return;
+//            }
+//
+//            HttpMessage testMsg = sendHiddenFileRequest(file);
+//            if (testMsg == null) {
+//                continue;
+//            }
+//            int statusCode = testMsg.getResponseHeader().getStatusCode();
+//            if (statusCode == HttpStatusCode.OK) {
+//                String responseBody = testMsg.getResponseBody().toString();
+//                // If all the content checks matched then confidence is high
+//                boolean matches =
+//                        doesNotMatch(responseBody, file.getNotContent())
+//                                && doesMatch(responseBody, file.getContent())
+//                                && doesBinaryMatch(responseBody, file.getBinary());
+//                raiseAlert(
+//                        testMsg,
+//                        matches ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_LOW,
+//                        getRisk(),
+//                        file);
+//            } else if (statusCode == HttpStatusCode.UNAUTHORIZED
+//                    || statusCode == HttpStatusCode.FORBIDDEN) {
+//                raiseAlert(testMsg, Alert.CONFIDENCE_LOW, Alert.RISK_INFO, file);
+//            }
+//        }
     }
 
     private static String generatePath(String baseUriPath, String hiddenFile) {
