@@ -85,7 +85,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                             Collections.emptyList(),
                             "",
                             Collections.emptyList(),
-                            ""));
+                            "",
+                            true));
         }
     }
 
@@ -112,13 +113,15 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                         doesNotMatch(responseBody, file.getNotContent())
                                 && doesMatch(responseBody, file.getContent())
                                 && doesBinaryMatch(responseBody, file.getBinary());
-                raiseAlert(
-                        testMsg,
-                        matches ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_LOW,
-                        getRisk(),
-                        file);
-            } else if (statusCode == HttpStatusCode.UNAUTHORIZED
-                    || statusCode == HttpStatusCode.FORBIDDEN) {
+                if (matches && !file.isCustom()) {
+                    raiseAlert(testMsg, Alert.CONFIDENCE_HIGH, getRisk(), file);
+                } else if (this.getAlertThreshold().equals(AlertThreshold.HIGH)
+                        || file.isCustom()) {
+                    raiseAlert(testMsg, Alert.CONFIDENCE_LOW, getRisk(), file);
+                }
+            } else if ((statusCode == HttpStatusCode.UNAUTHORIZED
+                            || statusCode == HttpStatusCode.FORBIDDEN)
+                    && this.getAlertThreshold().equals(AlertThreshold.HIGH)) {
                 raiseAlert(testMsg, Alert.CONFIDENCE_LOW, Alert.RISK_INFO, file);
             }
         }
@@ -266,7 +269,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                                 getOptionalList(hiddenFileObject, "not_content"),
                                 getOptionalString(hiddenFileObject, "binary"),
                                 getOptionalList(hiddenFileObject, "links"),
-                                getOptionalString(hiddenFileObject, "type"));
+                                getOptionalString(hiddenFileObject, "type"),
+                                false);
                 hiddenFiles.add(hiddenFile);
 
                 if (LOG.isDebugEnabled()) {
@@ -387,6 +391,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         private final String binary;
         private final List<String> links;
         private final String type;
+        private final boolean custom;
 
         public HiddenFile(
                 String path,
@@ -394,7 +399,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                 List<String> not_content,
                 String binary,
                 List<String> links,
-                String type) {
+                String type,
+                boolean custom) {
             super();
             this.path = path;
             this.content = content;
@@ -402,6 +408,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
             this.binary = binary;
             this.links = links;
             this.type = type;
+            this.custom = custom;
         }
 
         public String getPath() {
@@ -426,6 +433,10 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
         public String getType() {
             return type;
+        }
+
+        public boolean isCustom() {
+            return custom;
         }
     }
 }
