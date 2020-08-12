@@ -20,7 +20,6 @@
 package org.zaproxy.addon.graphql;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import graphql.introspection.IntrospectionQuery;
@@ -38,9 +37,9 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.addon.graphql.GraphQlGenerator.RequestType;
 
 public class GraphQlParser {
 
@@ -48,31 +47,26 @@ public class GraphQlParser {
     private static final String THREAD_PREFIX = "ZAP-GraphQL-Parser";
     private static AtomicInteger threadId = new AtomicInteger();
 
-    private final URI endpointUrl;
     private final Requestor requestor;
+    private final GraphQlParam param =
+            Control.getSingleton()
+                    .getExtensionLoader()
+                    .getExtension(ExtensionGraphQl.class)
+                    .getParam();
 
     public GraphQlParser(String endpointUrlStr, int initiator) throws URIException {
         this(UrlBuilder.build(endpointUrlStr), initiator);
     }
 
     public GraphQlParser(URI endpointUrl, int initiator) {
-        this.endpointUrl = endpointUrl;
-        requestor = new Requestor(initiator);
+        requestor = new Requestor(endpointUrl, initiator);
     }
 
     public void introspect() throws IOException {
-        JsonObject msgBodyJson = new JsonObject();
-        msgBodyJson.addProperty("query", IntrospectionQuery.INTROSPECTION_QUERY);
-        HttpRequestBody msgBody = new HttpRequestBody(msgBodyJson.toString());
-
-        HttpRequestHeader msgHeader =
-                new HttpRequestHeader(HttpRequestHeader.POST, endpointUrl, "HTTP/1.1");
-        msgHeader.setHeader("Accept", "application/json");
-        msgHeader.setHeader("Content-Type", "application/json");
-        msgHeader.setContentLength(msgBody.length());
-
-        HttpMessage importMessage = new HttpMessage(msgHeader, msgBody);
-        requestor.send(importMessage);
+        HttpMessage importMessage =
+                requestor.sendQuery(
+                        IntrospectionQuery.INTROSPECTION_QUERY,
+                        GraphQlParam.RequestMethodOption.POST_JSON);
 
         try {
             Map<String, Object> result =
@@ -123,9 +117,31 @@ public class GraphQlParser {
                 new Thread(THREAD_PREFIX + threadId.incrementAndGet()) {
                     @Override
                     public void run() {
-                        LOG.error("endpointUrl: " + endpointUrl.toString());
-                        LOG.error("schema: " + schema);
-                        LOG.error("Import was successful.");
+                        try {
+                            GraphQlGenerator generator =
+                                    new GraphQlGenerator(schema, requestor, param);
+                            generator.checkServiceMethods();
+                            switch (param.getQuerySplitType()) {
+                                case DO_NOT_SPLIT:
+                                    generator.sendFull(RequestType.QUERY);
+                                    generator.sendFull(RequestType.MUTATION);
+                                    generator.sendFull(RequestType.SUBSCRIPTION);
+                                    break;
+                                case ROOT_FIELD:
+                                    generator.sendByField(RequestType.QUERY);
+                                    generator.sendByField(RequestType.MUTATION);
+                                    generator.sendByField(RequestType.SUBSCRIPTION);
+                                    break;
+                                case LEAF:
+                                default:
+                                    generator.sendByLeaf(RequestType.QUERY);
+                                    generator.sendByLeaf(RequestType.MUTATION);
+                                    generator.sendByLeaf(RequestType.SUBSCRIPTION);
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            LOG.error(e.getMessage());
+                        }
                     }
                 };
         t.start();
