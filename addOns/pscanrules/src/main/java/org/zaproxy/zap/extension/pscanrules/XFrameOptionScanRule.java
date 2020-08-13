@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.ArrayList;
 import java.util.List;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -92,26 +93,26 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
                     if (xFrameOptionParam.toLowerCase().indexOf("deny") < 0
                             && xFrameOptionParam.toLowerCase().indexOf("sameorigin") < 0
                             && xFrameOptionParam.toLowerCase().indexOf("allow-from") < 0) {
-                        raiseAlert(msg, id, xFrameOptionParam, VulnType.XFO_MALFORMED_SETTING);
+                        buildAlert(xFrameOptionParam, VulnType.XFO_MALFORMED_SETTING).raise();
                     }
                 }
                 if (xFrameOption.size() > 1) { // Multiple headers
-                    raiseAlert(msg, id, "", VulnType.XFO_MULTIPLE_HEADERS);
+                    buildAlert("", VulnType.XFO_MULTIPLE_HEADERS).raise();
                 }
             } else {
-                raiseAlert(msg, id, "", VulnType.XFO_MISSING);
+                buildAlert("", VulnType.XFO_MISSING).raise();
             }
 
             String metaXFO = getMetaXFOEvidence(source);
 
             if (metaXFO != null) {
                 // XFO found defined by META tag
-                raiseAlert(msg, id, metaXFO, VulnType.XFO_META);
+                buildAlert(metaXFO, VulnType.XFO_META).raise();
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String evidence, VulnType currentVT) {
+    private AlertBuilder buildAlert(String evidence, VulnType currentVT) {
         int risk = Alert.RISK_MEDIUM;
         String other = "";
         if (this.includedInCsp) {
@@ -119,7 +120,7 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
             other = Constant.messages.getString(MESSAGE_PREFIX + "incInCsp");
         }
 
-        newAlert()
+        return newAlert()
                 .setName(getAlertElement(currentVT, "name"))
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -130,8 +131,7 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
                 .setReference(getAlertElement(currentVT, "refs"))
                 .setEvidence(evidence)
                 .setCweId(16) // CWE-16: Configuration
-                .setWascId(15) // WASC-15: Application Misconfiguration
-                .raise();
+                .setWascId(15); // WASC-15: Application Misconfiguration
     }
 
     @Override
@@ -187,5 +187,13 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
             }
         }
         return null;
+    }
+
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<Alert>();
+        for (VulnType vulnType : VulnType.values()) {
+            alerts.add(buildAlert("", vulnType).build());
+        }
+        return alerts;
     }
 }

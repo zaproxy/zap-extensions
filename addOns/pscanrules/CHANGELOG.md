@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The CSP scan rule now checks if the form-action directive allows wildcards.
 - The CSP scan rule now includes further information in the description of allowed wildcard directives alerts when the impacted directive is one (or more) which doesn't fallback to default-src.
 - Maintenance changes.
+- Changed ViewState and XFrameOption rules to return example alerts for the docs
 
 ## [29] - 2020-06-01
 ### Changed
