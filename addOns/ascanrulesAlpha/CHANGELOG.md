@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- 'Hidden File Finder' will raise fewer alerts at Thresholds other than High (Issue 6116).
 
 ### Fixed
 - Fixed Mongo DB Injection false positive (Issue 6025).

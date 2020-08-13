@@ -37,12 +37,12 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addO
 
 <H2>Hidden File Finder</H2>
 This scan rule checks for various web accessible files which may leak administrative, configuration, or credential information.
-The built-in set of payloads are based on <a href="https://github.com/hannob/snallygaster">Snallygaster</a> by Hanno Böck.
+The original included set of payloads were based on <a href="https://github.com/hannob/snallygaster">Snallygaster</a> by Hanno Böck.
 Such payloads are verified by checking response code, and content. If the response code is 200 (Ok) then additional content checks are performed to increase alert confidence.
-If the response code is 401 (Unauthorized) or 403 (Forbidden) then an alert is raised with lower confidence.
+If the response code is 401 (Unauthorized) or 403 (Forbidden) or the content checks are un-successful then an alert is raised with lower confidence (at HIGH Threshold).
 <strong>Note:</strong> If the Custom Payloads addon is installed you can add your own hidden file paths (payloads) in the Custom Payloads options panel. 
 For custom payloads only the response status code is checked. If there is a requirement to include a content check then it is also possible to add payloads to 
-the <code>json/hidden_files.json</code> file in ZAP's user directory.
+the <code>json/hidden_files.json</code> file in ZAP's user directory (in which case they will be treated as included payloads).
 <p>
 The following describes the fields of the JSON entries.
 <pre><code>
