@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+ - Allow to add fuzz specific message components and views to fuzzer dialogue.
+
 ### Fixed
  - Correctly handle other HTTP message locations.
  - Fixed error when missing getRequiredParamsNames and getOptionalParamsNames
