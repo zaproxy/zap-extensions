@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import static org.zaproxy.zap.extension.ascanrules.PersistentXSSCollectAndRefreshOriginalParamValues.XSS_STORAGE;
+import static org.zaproxy.zap.extension.ascanrules.SinkDetectionCollectAndRefreshParamValues.SINK_DETECTION_STORAGE;
 
 import java.util.Set;
 import org.apache.log4j.Logger;
@@ -29,12 +29,12 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class PersistentXSSFindPossibleSinks extends AbstractAppPlugin {
+public class SinkDetectionFindProbableSinks extends AbstractAppPlugin {
 
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "ascanrules.persistentxssfindpossiblesinks.";
+    private static final String MESSAGE_PREFIX = "ascanrules.sinkdetectionfindprobablesinks.";
 
-    private static Logger log = Logger.getLogger(PersistentXSSFindPossibleSinks.class);
+    private static Logger log = Logger.getLogger(SinkDetectionFindProbableSinks.class);
 
     @Override
     public int getId() {
@@ -48,7 +48,7 @@ public class PersistentXSSFindPossibleSinks extends AbstractAppPlugin {
 
     @Override
     public String[] getDependency() {
-        return new String[] {"PersistentXSSCollectAndRefreshOriginalParamValues"};
+        return new String[] {"SinkDetectionCollectAndRefreshParamValues"};
     }
 
     @Override
@@ -77,14 +77,14 @@ public class PersistentXSSFindPossibleSinks extends AbstractAppPlugin {
         try {
             HttpMessage msg1 = msg.cloneRequest();
             sendAndReceive(msg1, false);
-            findPossibleSinks(msg1);
+            findProbableSinks(msg1);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }
 
-    private void findPossibleSinks(HttpMessage msg) {
-        PersistentXSSStorage storage = getStorage();
+    private void findProbableSinks(HttpMessage msg) {
+        SinkDetectionStorage storage = getStorage();
         String msgBody = msg.getResponseBody().toString();
         Set<String> valuesSeenInResponseBody = storage.getSeenValuesContainedInString(msgBody);
 
@@ -93,14 +93,14 @@ public class PersistentXSSFindPossibleSinks extends AbstractAppPlugin {
         }
     }
 
-    private PersistentXSSStorage getStorage() {
-        PersistentXSSStorage storage;
-        Object obj = getKb().get(XSS_STORAGE);
-        if (obj instanceof PersistentXSSStorage) {
-            storage = (PersistentXSSStorage) obj;
+    private SinkDetectionStorage getStorage() {
+        SinkDetectionStorage storage;
+        Object obj = getKb().get(SINK_DETECTION_STORAGE);
+        if (obj instanceof SinkDetectionStorage) {
+            storage = (SinkDetectionStorage) obj;
         } else {
             throw new IllegalStateException(
-                    "The XSS_STORAGE Should have been initialized by the PersistentXSSCollectAndRefreshOriginalParamValues");
+                    "The SINK_DETECTION_STORAGE Should have been initialized by the SinkDetectionCollectAndRefreshParamValues");
         }
         return storage;
     }

@@ -24,12 +24,12 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
-/** Unit test for {@link PersistentXSSStorage}. */
-public class PersistentXSSStorageUnitTest {
+/** Unit test for {@link SinkDetectionStorage}. */
+public class SinkDetectionStorageUnitTest {
 
     @Test
     public void storesSeenValue() {
-        PersistentXSSStorage storage = new PersistentXSSStorage();
+        SinkDetectionStorage storage = new SinkDetectionStorage();
         storage.addSeenValue("ZAPLALA");
         Set<String> seenValues = storage.getSeenValuesContainedInString("aaa ZAPLALA aaa");
         assert (seenValues.size() == 1);
@@ -38,7 +38,7 @@ public class PersistentXSSStorageUnitTest {
 
     @Test
     public void ifNoSeenValuesReturnsEmptySet() {
-        PersistentXSSStorage storage = new PersistentXSSStorage();
+        SinkDetectionStorage storage = new SinkDetectionStorage();
         Set<String> seenValues = storage.getSeenValuesContainedInString("aaa ZAPLALA aaa");
         assert (seenValues != null);
         assert (seenValues.isEmpty());
@@ -46,7 +46,7 @@ public class PersistentXSSStorageUnitTest {
 
     @Test
     public void noRepeatedSeenValues() {
-        PersistentXSSStorage storage = new PersistentXSSStorage();
+        SinkDetectionStorage storage = new SinkDetectionStorage();
         storage.addSeenValue("ZAPLALA");
         storage.addSeenValue("ZAPLALA");
         Set<String> seenValues = storage.getSeenValuesContainedInString("aaa ZAPLALA aaa");
@@ -55,7 +55,7 @@ public class PersistentXSSStorageUnitTest {
 
     @Test
     public void ifNoSinkForValueReturnsEmptyList() {
-        PersistentXSSStorage storage = new PersistentXSSStorage();
+        SinkDetectionStorage storage = new SinkDetectionStorage();
         storage.addSeenValue("ZAPLALA");
         List<HttpMessage> sinksForValue = storage.getPossibleSinksForValue("some random text");
         assert (sinksForValue != null);

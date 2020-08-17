@@ -26,16 +26,15 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class PersistentXSSCollectAndRefreshOriginalParamValues extends AbstractAppParamPlugin {
+public class SinkDetectionCollectAndRefreshParamValues extends AbstractAppParamPlugin {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX =
-            "ascanrules.persistentxsscollectandrefreshoriginalparamvalues.";
+            "ascanrules.sinkdetectioncollectandrefreshparamvalues.";
 
-    public static final String XSS_STORAGE = "XSSStorage";
+    public static final String SINK_DETECTION_STORAGE = "SinkDetectionStorage";
 
-    private static Logger log =
-            Logger.getLogger(PersistentXSSCollectAndRefreshOriginalParamValues.class);
+    private static Logger log = Logger.getLogger(SinkDetectionCollectAndRefreshParamValues.class);
 
     @Override
     public int getId() {
@@ -105,15 +104,15 @@ public class PersistentXSSCollectAndRefreshOriginalParamValues extends AbstractA
         return false;
     }
 
-    private PersistentXSSStorage getStorage() {
-        PersistentXSSStorage storage;
+    private SinkDetectionStorage getStorage() {
+        SinkDetectionStorage storage;
         synchronized (getKb()) {
-            Object obj = getKb().get(XSS_STORAGE);
-            if (obj != null && obj instanceof PersistentXSSStorage) {
-                storage = (PersistentXSSStorage) obj;
+            Object obj = getKb().get(SINK_DETECTION_STORAGE);
+            if (obj != null && obj instanceof SinkDetectionStorage) {
+                storage = (SinkDetectionStorage) obj;
             } else {
-                storage = new PersistentXSSStorage();
-                getKb().add(XSS_STORAGE, storage);
+                storage = new SinkDetectionStorage();
+                getKb().add(SINK_DETECTION_STORAGE, storage);
             }
         }
         return storage;

@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import static org.zaproxy.zap.extension.ascanrules.PersistentXSSCollectAndRefreshOriginalParamValues.XSS_STORAGE;
+import static org.zaproxy.zap.extension.ascanrules.SinkDetectionCollectAndRefreshParamValues.SINK_DETECTION_STORAGE;
 
 import java.util.List;
 import java.util.Random;
@@ -31,12 +31,12 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.ParamSinksUtils;
 
-public class PersistentXSSCheckReflectionOnSinks extends AbstractAppParamPlugin {
+public class SinkDetectionVerifyProbableSinks extends AbstractAppParamPlugin {
 
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "ascanrules.persistentxsscheckreflectiononsinks.";
+    private static final String MESSAGE_PREFIX = "ascanrules.sinkdetectionverifyprobablesinks.";
 
-    private static Logger log = Logger.getLogger(PersistentXSSCheckReflectionOnSinks.class);
+    private static Logger log = Logger.getLogger(SinkDetectionVerifyProbableSinks.class);
 
     @Override
     public int getId() {
@@ -60,7 +60,7 @@ public class PersistentXSSCheckReflectionOnSinks extends AbstractAppParamPlugin 
 
     @Override
     public String[] getDependency() {
-        return new String[] {"PersistentXSSFindPossibleSinks"};
+        return new String[] {"SinkDetectionFindProbableSinks"};
     }
 
     @Override
@@ -76,7 +76,7 @@ public class PersistentXSSCheckReflectionOnSinks extends AbstractAppParamPlugin 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
         // TODO: should test only on POST/PUT ?
-        PersistentXSSStorage storage = getStorage();
+        SinkDetectionStorage storage = getStorage();
         List<HttpMessage> possibleSinks = storage.getPossibleSinksForValue(value);
 
         try {
@@ -102,14 +102,14 @@ public class PersistentXSSCheckReflectionOnSinks extends AbstractAppParamPlugin 
         }
     }
 
-    private PersistentXSSStorage getStorage() {
-        PersistentXSSStorage storage;
-        Object obj = getKb().get(XSS_STORAGE);
-        if (obj instanceof PersistentXSSStorage) {
-            storage = (PersistentXSSStorage) obj;
+    private SinkDetectionStorage getStorage() {
+        SinkDetectionStorage storage;
+        Object obj = getKb().get(SINK_DETECTION_STORAGE);
+        if (obj instanceof SinkDetectionStorage) {
+            storage = (SinkDetectionStorage) obj;
         } else {
             throw new IllegalStateException(
-                    "The XSS_STORAGE Should have been initialized by the PersistentXSSCollectAndRefreshOriginalParamValues");
+                    "The SINK_DETECTION_STORAGE Should have been initialized by the SinkDetectionCollectAndRefreshParamValues");
         }
         return storage;
     }

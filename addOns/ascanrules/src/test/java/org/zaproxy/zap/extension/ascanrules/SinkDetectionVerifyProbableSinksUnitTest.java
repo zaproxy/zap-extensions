@@ -27,15 +27,15 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.ParamSinksUtils;
 
-/** Unit test for {@link PersistentXSSCheckReflectionOnSinks}. */
-public class PersistentXSSCheckReflectionOnSinksUnitTest
-        extends SinkDetectionUnitTest<PersistentXSSCheckReflectionOnSinks> {
+/** Unit test for {@link SinkDetectionVerifyProbableSinks}. */
+public class SinkDetectionVerifyProbableSinksUnitTest
+        extends SinkDetectionUnitTest<SinkDetectionVerifyProbableSinks> {
 
     final String[] storedValue = new String[] {""};
 
     @Override
-    protected PersistentXSSCheckReflectionOnSinks createScanner() {
-        return new PersistentXSSCheckReflectionOnSinks();
+    protected SinkDetectionVerifyProbableSinks createScanner() {
+        return new SinkDetectionVerifyProbableSinks();
     }
 
     private void checkIfMsgHasDstMsgAsSink(HttpMessage srcMsg, HttpMessage dstMsg) {

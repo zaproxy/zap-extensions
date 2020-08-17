@@ -31,12 +31,12 @@ import java.util.Map;
 import java.util.Set;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class PersistentXSSStorage {
+public class SinkDetectionStorage {
 
     private ConcurrentInvertedRadixTree<VoidValue> seenValues;
     private Map<String, List<HttpMessage>> possibleSinksForValues;
 
-    public PersistentXSSStorage() {
+    public SinkDetectionStorage() {
         seenValues = new ConcurrentInvertedRadixTree<VoidValue>(new DefaultCharArrayNodeFactory());
         possibleSinksForValues =
                 Collections.synchronizedMap(new HashMap<String, List<HttpMessage>>());

@@ -64,7 +64,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String[] getDependency() {
-        return new String[] {"PersistentXSSCheckReflectionOnSinks"};
+        return new String[] {"SinkDetectionVerifyProbableSinks"};
     }
 
     @Override

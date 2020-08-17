@@ -25,13 +25,13 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-/** Unit test for {@link PersistentXSSFindPossibleSinks}. */
-public class PersistentXSSFindPossibleSinksUnitTest
-        extends SinkDetectionUnitTest<PersistentXSSFindPossibleSinks> {
+/** Unit test for {@link SinkDetectionFindProbableSinks}. */
+public class SinkDetectionFindProbableSinksUnitTest
+        extends SinkDetectionUnitTest<SinkDetectionFindProbableSinks> {
 
     @Override
-    protected PersistentXSSFindPossibleSinks createScanner() {
-        return new PersistentXSSFindPossibleSinks();
+    protected SinkDetectionFindProbableSinks createScanner() {
+        return new SinkDetectionFindProbableSinks();
     }
 
     final String[] storedValue = new String[] {""};

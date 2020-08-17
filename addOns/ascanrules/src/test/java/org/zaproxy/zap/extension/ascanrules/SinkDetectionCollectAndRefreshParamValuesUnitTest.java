@@ -26,13 +26,13 @@ import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-/** Unit test for {@link PersistentXSSCollectAndRefreshOriginalParamValues}. */
-public class PersistentXSSCollectAndRefreshOriginalParamValuesUnitTest
-        extends SinkDetectionUnitTest<PersistentXSSCollectAndRefreshOriginalParamValues> {
+/** Unit test for {@link SinkDetectionCollectAndRefreshParamValues}. */
+public class SinkDetectionCollectAndRefreshParamValuesUnitTest
+        extends SinkDetectionUnitTest<SinkDetectionCollectAndRefreshParamValues> {
 
     @Override
-    protected PersistentXSSCollectAndRefreshOriginalParamValues createScanner() {
-        return new PersistentXSSCollectAndRefreshOriginalParamValues();
+    protected SinkDetectionCollectAndRefreshParamValues createScanner() {
+        return new SinkDetectionCollectAndRefreshParamValues();
     }
 
     @Test

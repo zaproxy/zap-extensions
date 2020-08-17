@@ -20,7 +20,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
-import static org.zaproxy.zap.extension.ascanrules.PersistentXSSCollectAndRefreshOriginalParamValues.XSS_STORAGE;
+import static org.zaproxy.zap.extension.ascanrules.SinkDetectionCollectAndRefreshParamValues.SINK_DETECTION_STORAGE;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
@@ -40,13 +40,13 @@ public abstract class SinkDetectionUnitTest<T extends AbstractAppPlugin>
 
     public static final String baseHtmlResponse = "<!DOCTYPE html><html><body>OK</body></html>";
 
-    PersistentXSSStorage storage = null;
+    SinkDetectionStorage storage = null;
 
     @BeforeEach
     protected void initiateStorage() {
-        storage = new PersistentXSSStorage();
+        storage = new SinkDetectionStorage();
         kb = new Kb();
-        kb.add(XSS_STORAGE, storage);
+        kb.add(SINK_DETECTION_STORAGE, storage);
         ParamSinksUtils.reset();
         ParamSinksUtils.setMessagesStorage(new MockMessageStorage());
     }
