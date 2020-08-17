@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [13.0.0] - 2020-08-17
 ### Added
  - Allow to add fuzz specific message components and views to fuzzer dialogue.
