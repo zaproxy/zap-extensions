@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [13.0.0] - 2020-08-17
 ### Added
  - Allow to add fuzz specific message components and views to fuzzer dialogue.
 
@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  
 ### Changed
 - Update minimum ZAP version to 2.9.0.
+- Use semantic versioning.
 - Maintenance changes.
 
 ## [12] - 2020-01-17
@@ -113,5 +114,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[13.0.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.0.0
 [12]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v11
