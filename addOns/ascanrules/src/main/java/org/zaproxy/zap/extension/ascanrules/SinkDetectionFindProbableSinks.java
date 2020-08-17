@@ -38,7 +38,7 @@ public class SinkDetectionFindProbableSinks extends AbstractAppPlugin {
 
     @Override
     public int getId() {
-        return 40039;
+        return 40017;
     }
 
     @Override

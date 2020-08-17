@@ -38,7 +38,7 @@ public class SinkDetectionCollectAndRefreshParamValues extends AbstractAppParamP
 
     @Override
     public int getId() {
-        return 40037;
+        return 40016;
     }
 
     @Override

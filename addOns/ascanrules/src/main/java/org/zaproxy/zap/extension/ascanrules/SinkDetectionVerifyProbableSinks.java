@@ -40,7 +40,7 @@ public class SinkDetectionVerifyProbableSinks extends AbstractAppParamPlugin {
 
     @Override
     public int getId() {
-        return 40040;
+        return 40037;
     }
 
     @Override
