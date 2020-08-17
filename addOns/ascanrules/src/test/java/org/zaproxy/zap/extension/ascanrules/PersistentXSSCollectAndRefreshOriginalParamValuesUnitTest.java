@@ -56,4 +56,52 @@ public class PersistentXSSCollectAndRefreshOriginalParamValuesUnitTest
         assert (x.size() == 1);
         assert (x.contains("test"));
     }
+
+    @Test
+    public void shouldNotAddPathParamIfThresholdHigh() throws HttpMalformedHeaderException {
+        this.scannerParam.setTargetParamsInjectable(ScannerParam.TARGET_URLPATH);
+        String testInputLocation = "/sinksDetectionSavePathParameterInput/";
+        this.nano.addHandler(new HandlerStoresPathParam(testInputLocation, new String[] {""}));
+        HttpMessage srcMsg = this.getHttpMessage(testInputLocation + "xxxx/name");
+
+        this.rule.setAlertThreshold(Plugin.AlertThreshold.HIGH);
+        this.rule.setAttackStrength(Plugin.AttackStrength.HIGH);
+        this.rule.init(srcMsg, this.parent);
+        this.rule.scan();
+
+        Set<String> x = storage.getSeenValuesContainedInString("xxxx");
+        assert (x.size() == 0);
+    }
+
+    @Test
+    public void shouldNotAddPathParamIfAttackStrengthLow() throws HttpMalformedHeaderException {
+        this.scannerParam.setTargetParamsInjectable(ScannerParam.TARGET_URLPATH);
+        String testInputLocation = "/sinksDetectionSavePathParameterInput/";
+        this.nano.addHandler(new HandlerStoresPathParam(testInputLocation, new String[] {""}));
+        HttpMessage srcMsg = this.getHttpMessage(testInputLocation + "xxxx/name");
+
+        this.rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
+        this.rule.setAttackStrength(Plugin.AttackStrength.LOW);
+        this.rule.init(srcMsg, this.parent);
+        this.rule.scan();
+
+        Set<String> x = storage.getSeenValuesContainedInString("xxxx");
+        assert (x.size() == 0);
+    }
+
+    @Test
+    public void shouldNotAddPathParamIfAttackStrengthMedium() throws HttpMalformedHeaderException {
+        this.scannerParam.setTargetParamsInjectable(ScannerParam.TARGET_URLPATH);
+        String testInputLocation = "/sinksDetectionSavePathParameterInput/";
+        this.nano.addHandler(new HandlerStoresPathParam(testInputLocation, new String[] {""}));
+        HttpMessage srcMsg = this.getHttpMessage(testInputLocation + "xxxx/name");
+
+        this.rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
+        this.rule.setAttackStrength(Plugin.AttackStrength.MEDIUM);
+        this.rule.init(srcMsg, this.parent);
+        this.rule.scan();
+
+        Set<String> x = storage.getSeenValuesContainedInString("xxxx");
+        assert (x.size() == 0);
+    }
 }
