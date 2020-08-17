@@ -34,6 +34,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.addon.graphql.GraphQlParam.ArgsTypeOption;
 import org.zaproxy.addon.graphql.GraphQlParam.QuerySplitOption;
 import org.zaproxy.addon.graphql.GraphQlParam.RequestMethodOption;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
@@ -50,6 +51,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
     private ZapNumberSpinner maxQueryDepthNumberSpinner;
     private ZapNumberSpinner maxArgsDepthNumberSpinner;
     private JCheckBox optionalArgsEnabled = null;
+    private JComboBox<ArgsTypeOption> argsTypeOptions = null;
     private JComboBox<QuerySplitOption> querySplitOptions = null;
     private JComboBox<RequestMethodOption> requestMethodOptions = null;
 
@@ -66,6 +68,8 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
                 new JLabel(Constant.messages.getString("graphql.options.label.queryDepth"));
         JLabel maxArgsDepthLabel =
                 new JLabel(Constant.messages.getString("graphql.options.label.argsDepth"));
+        JLabel argsTypeLabel =
+                new JLabel(Constant.messages.getString("graphql.options.label.argsType"));
         JLabel splitQueryLabel =
                 new JLabel(Constant.messages.getString("graphql.options.label.split"));
         JLabel requestMethodLabel =
@@ -83,6 +87,8 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         panel.add(
                 getOptionalArgsEnabled(),
                 LayoutHelper.getGBC(0, ++i, 2, 1.0, new Insets(2, 2, 2, 2)));
+        panel.add(argsTypeLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
+        panel.add(getArgsTypeOptions(), LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
         panel.add(splitQueryLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
         panel.add(
                 getQuerySplitOptions(), LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
@@ -102,6 +108,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         getMaxQueryDepthNumberSpinner().setValue(param.getMaxQueryDepth());
         getMaxArgsDepthNumberSpinner().setValue(param.getMaxArgsDepth());
         getOptionalArgsEnabled().setSelected(param.getOptionalArgsEnabled());
+        getArgsTypeOptions().setSelectedItem(param.getArgsType());
         getQuerySplitOptions().setSelectedItem(param.getQuerySplitType());
         getRequestMethodOptions().setSelectedItem(param.getRequestMethod());
     }
@@ -114,6 +121,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         param.setMaxQueryDepth(getMaxQueryDepthNumberSpinner().getValue());
         param.setMaxArgsDepth(getMaxArgsDepthNumberSpinner().getValue());
         param.setOptionalArgsEnabled(getOptionalArgsEnabled().isSelected());
+        param.setArgsType((ArgsTypeOption) getArgsTypeOptions().getSelectedItem());
         param.setSplitQueryType((QuerySplitOption) getQuerySplitOptions().getSelectedItem());
         param.setRequestMethod((RequestMethodOption) getRequestMethodOptions().getSelectedItem());
     }
@@ -140,6 +148,19 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
                                     "graphql.options.label.optionalArgsEnabled"));
         }
         return optionalArgsEnabled;
+    }
+
+    @SuppressWarnings("unchecked")
+    private JComboBox<ArgsTypeOption> getArgsTypeOptions() {
+        if (argsTypeOptions == null) {
+            argsTypeOptions =
+                    new JComboBox<ArgsTypeOption>(
+                            new ArgsTypeOption[] {
+                                ArgsTypeOption.INLINE, ArgsTypeOption.VARIABLES, ArgsTypeOption.BOTH
+                            });
+            argsTypeOptions.setRenderer(new CustomComboBoxRenderer());
+        }
+        return argsTypeOptions;
     }
 
     @SuppressWarnings("unchecked")
@@ -177,10 +198,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         return "graphql.options";
     }
 
-    /**
-     * A renderer for properly displaying the name of a QuerySplitOption or a RequestMethodOption in
-     * a ComboBox.
-     */
+    /** A renderer for properly displaying the name of options in a ComboBox. */
     private static class CustomComboBoxRenderer extends BasicComboBoxRenderer {
         private static final long serialVersionUID = 1L;
         private static final Border BORDER = new EmptyBorder(2, 3, 3, 3);
@@ -192,7 +210,10 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if (value != null) {
                 setBorder(BORDER);
-                if (value instanceof QuerySplitOption) {
+                if (value instanceof ArgsTypeOption) {
+                    ArgsTypeOption item = (ArgsTypeOption) value;
+                    setText(item.getName());
+                } else if (value instanceof QuerySplitOption) {
                     QuerySplitOption item = (QuerySplitOption) value;
                     setText(item.getName());
                 } else if (value instanceof RequestMethodOption) {

@@ -31,6 +31,7 @@ public class GraphQlParam extends VersionedAbstractParam {
     private static final String PARAM_MAX_QUERY_DEPTH = PARAM_BASE_KEY + ".maxQueryDepth";
     private static final String PARAM_MAX_ARGS_DEPTH = PARAM_BASE_KEY + ".maxArgsDepth";
     private static final String PARAM_OPTIONAL_ARGS = PARAM_BASE_KEY + ".optionalArgs";
+    private static final String PARAM_ARGS_TYPE = PARAM_BASE_KEY + ".argsType";
     private static final String PARAM_QUERY_SPLIT_TYPE = PARAM_BASE_KEY + ".querySplitType";
     private static final String PARAM_REQUEST_METHOD = PARAM_BASE_KEY + ".requestMethod";
 
@@ -44,19 +45,44 @@ public class GraphQlParam extends VersionedAbstractParam {
 
     public GraphQlParam() {}
 
-    /** For unit tests */
+    /** For unit tests. */
     public GraphQlParam(
             int maxQueryDepth,
             int maxArgsDepth,
             boolean optionalArgsEnabled,
+            ArgsTypeOption argsType,
             QuerySplitOption querySplitType,
             RequestMethodOption requestMethod) {
         this.maxQueryDepth = maxQueryDepth;
         this.maxArgsDepth = maxArgsDepth;
         this.optionalArgsEnabled = optionalArgsEnabled;
+        this.argsType = argsType;
         this.querySplitType = querySplitType;
         this.requestMethod = requestMethod;
     }
+
+    /** This option is used to specify how field arguments should be included. */
+    public enum ArgsTypeOption {
+        /** Arguments are added in-line. */
+        INLINE,
+        /** Arguments are added using variables. */
+        VARIABLES,
+        /** Each request is sent twice - once with in-line arguments and once using variables. */
+        BOTH;
+
+        public String getName() {
+            switch (this) {
+                case INLINE:
+                    return Constant.messages.getString("graphql.options.value.args.inline");
+                case VARIABLES:
+                    return Constant.messages.getString("graphql.options.value.args.variables");
+                case BOTH:
+                    return Constant.messages.getString("graphql.options.value.args.both");
+                default:
+                    return null;
+            }
+        }
+    };
 
     /** This option is used to specify how the queries should be generated and sent. */
     public enum QuerySplitOption {
@@ -109,6 +135,7 @@ public class GraphQlParam extends VersionedAbstractParam {
     private int maxQueryDepth;
     private int maxArgsDepth;
     private boolean optionalArgsEnabled;
+    private ArgsTypeOption argsType;
     private QuerySplitOption querySplitType;
     private RequestMethodOption requestMethod;
 
@@ -137,6 +164,15 @@ public class GraphQlParam extends VersionedAbstractParam {
     public void setOptionalArgsEnabled(boolean optionalArgsEnabled) {
         this.optionalArgsEnabled = optionalArgsEnabled;
         getConfig().setProperty(PARAM_OPTIONAL_ARGS, optionalArgsEnabled);
+    }
+
+    public ArgsTypeOption getArgsType() {
+        return argsType;
+    }
+
+    public void setArgsType(ArgsTypeOption argsType) {
+        this.argsType = argsType;
+        getConfig().setProperty(PARAM_ARGS_TYPE, argsType.toString());
     }
 
     public QuerySplitOption getQuerySplitType() {
@@ -172,6 +208,8 @@ public class GraphQlParam extends VersionedAbstractParam {
         maxQueryDepth = getInt(PARAM_MAX_QUERY_DEPTH, 5);
         maxArgsDepth = getInt(PARAM_MAX_ARGS_DEPTH, 5);
         optionalArgsEnabled = getBoolean(PARAM_OPTIONAL_ARGS, false);
+        argsType =
+                ArgsTypeOption.valueOf(getString(PARAM_ARGS_TYPE, ArgsTypeOption.BOTH.toString()));
         querySplitType =
                 QuerySplitOption.valueOf(
                         getString(PARAM_QUERY_SPLIT_TYPE, QuerySplitOption.LEAF.toString()));

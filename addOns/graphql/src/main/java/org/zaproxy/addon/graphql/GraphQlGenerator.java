@@ -49,11 +49,10 @@ import org.zaproxy.zap.model.ValueGenerator;
 public class GraphQlGenerator {
 
     private static final Logger LOG = Logger.getLogger(GraphQlGenerator.class);
-    private static final String OPERATION_TYPE_MUTATION = "mutation ";
-    private static final String OPERATION_TYPE_SUBSCRIPTION = "subscription ";
     private final Requestor requestor;
     private final GraphQlParam param;
     private GraphQLSchema schema;
+    private boolean inlineArgsEnabled;
 
     public enum RequestType {
         QUERY,
@@ -67,6 +66,7 @@ public class GraphQlGenerator {
         this.param = param;
     }
 
+    /** Send three requests to check which service methods are available. */
     public void checkServiceMethods() {
         String query = "{__schema{types{name kind description}}}";
         requestor.sendQuery(query, RequestMethodOption.GET);
@@ -74,119 +74,220 @@ public class GraphQlGenerator {
         requestor.sendQuery(query, RequestMethodOption.POST_GRAPHQL);
     }
 
-    public String generateFull(RequestType requestType) {
-        StringBuilder query = new StringBuilder();
-        GraphQLObjectType object;
-        switch (requestType) {
-            case MUTATION:
-                query.append(OPERATION_TYPE_MUTATION);
-                object = schema.getMutationType();
+    /** Generates and sends graphql requests based on user set parameters. */
+    public void generateAndSend() {
+        switch (param.getArgsType()) {
+            case INLINE:
+                inlineArgsEnabled = true;
+                checkSplitAndSend();
                 break;
-            case SUBSCRIPTION:
-                query.append(OPERATION_TYPE_SUBSCRIPTION);
-                object = schema.getSubscriptionType();
+            case VARIABLES:
+                inlineArgsEnabled = false;
+                checkSplitAndSend();
                 break;
-            case QUERY:
+            case BOTH:
             default:
-                object = schema.getQueryType();
-                break;
-        }
-        generate(query, object, 0);
-        return query.toString();
-    }
-
-    public void sendFull(RequestType requestType) {
-        switch (requestType) {
-            case MUTATION:
-                StringBuilder mutation = new StringBuilder(OPERATION_TYPE_MUTATION);
-                generate(mutation, schema.getMutationType(), 0);
-                requestor.sendQuery(mutation.toString(), param.getRequestMethod());
-                break;
-            case SUBSCRIPTION:
-                StringBuilder subscription = new StringBuilder(OPERATION_TYPE_SUBSCRIPTION);
-                generate(subscription, schema.getSubscriptionType(), 0);
-                requestor.sendQuery(subscription.toString(), param.getRequestMethod());
-                break;
-            case QUERY:
-            default:
-                StringBuilder query = new StringBuilder();
-                generate(query, schema.getQueryType(), 0);
-                requestor.sendQuery(query.toString(), param.getRequestMethod());
+                inlineArgsEnabled = true;
+                checkSplitAndSend();
+                inlineArgsEnabled = false;
+                checkSplitAndSend();
                 break;
         }
     }
 
-    public void sendByLeaf(RequestType requestType) {
-        switch (requestType) {
-            case MUTATION:
-                StringBuilder mutation = new StringBuilder();
-                generate(mutation, schema.getMutationType(), 0, requestor);
+    /**
+     * Generates a full graphql request with inline arguments.
+     *
+     * @param requestType the {@linkplain RequestType type} for which a request is generated.
+     * @return the generated query / mutation / subscription or {@code null} if the generator is
+     *     interrupted.
+     */
+    public String generate(RequestType requestType) {
+        try {
+            inlineArgsEnabled = true;
+            StringBuilder query = new StringBuilder();
+            generate(query, null, getRequestTypeObject(requestType), 0);
+            prefixRequestType(query, requestType);
+            return query.toString();
+        } catch (InterruptedException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Generates a full graphql request with arguments using variables.
+     *
+     * @param requestType the {@linkplain RequestType type} for which a request is generated.
+     * @return the generated query / mutation / subscription and associated variables or {@code
+     *     null} if the generator is interrupted.
+     */
+    public String[] generateWithVariables(RequestType requestType) {
+        try {
+            inlineArgsEnabled = false;
+            StringBuilder query = new StringBuilder();
+            StringBuilder variables = new StringBuilder();
+            generate(query, variables, getRequestTypeObject(requestType), 0);
+            prefixRequestType(query, requestType);
+            return new String[] {query.toString(), variables.toString()};
+        } catch (InterruptedException e) {
+            return null;
+        }
+    }
+
+    private void checkSplitAndSend() {
+        switch (param.getQuerySplitType()) {
+            case DO_NOT_SPLIT:
+                sendFull(RequestType.QUERY);
+                sendFull(RequestType.MUTATION);
+                sendFull(RequestType.SUBSCRIPTION);
                 break;
-            case SUBSCRIPTION:
-                StringBuilder subscription = new StringBuilder();
-                generate(subscription, schema.getSubscriptionType(), 0, requestor);
+            case ROOT_FIELD:
+                sendByField(RequestType.QUERY);
+                sendByField(RequestType.MUTATION);
+                sendByField(RequestType.SUBSCRIPTION);
                 break;
-            case QUERY:
+            case LEAF:
             default:
-                StringBuilder query = new StringBuilder();
-                generate(query, schema.getQueryType(), 0, requestor);
+                sendByLeaf(RequestType.QUERY);
+                sendByLeaf(RequestType.MUTATION);
+                sendByLeaf(RequestType.SUBSCRIPTION);
                 break;
         }
     }
 
-    public void sendByField(RequestType requestType) {
-        GraphQLObjectType object;
-        switch (requestType) {
-            case MUTATION:
-                object = schema.getMutationType();
-                break;
-            case SUBSCRIPTION:
-                object = schema.getSubscriptionType();
-                break;
-            case QUERY:
-            default:
-                object = schema.getQueryType();
-                break;
+    private void sendFull(RequestType requestType) {
+        try {
+            StringBuilder query = new StringBuilder();
+            StringBuilder variables = new StringBuilder();
+            generate(query, variables, getRequestTypeObject(requestType), 0);
+            prefixRequestType(query, requestType);
+            requestor.sendQuery(query.toString(), variables.toString(), param.getRequestMethod());
+        } catch (InterruptedException e) {
+            // Do nothing.
         }
+    }
+
+    private void sendByLeaf(RequestType requestType) {
+        try {
+            StringBuilder query = new StringBuilder();
+            StringBuilder variables = new StringBuilder();
+            generate(
+                    query, variables, getRequestTypeObject(requestType), 0, requestor, requestType);
+        } catch (InterruptedException e) {
+            // Do nothing.
+        }
+    }
+
+    private void sendByField(RequestType requestType) {
+        GraphQLObjectType object = getRequestTypeObject(requestType);
         List<GraphQLFieldDefinition> fields = object.getFieldDefinitions();
         for (GraphQLFieldDefinition field : fields) {
             StringBuilder query = new StringBuilder();
-            generate(query, field.getType(), 1);
-            requestor.sendQuery(query.toString(), param.getRequestMethod());
+            StringBuilder variables = new StringBuilder();
+            GraphQLType fieldType = field.getType();
+            if (GraphQLTypeUtil.isWrapped(fieldType)) {
+                fieldType = GraphQLTypeUtil.unwrapAll(fieldType);
+            }
+            query.append('{').append(field.getName()).append(' ');
+            addArguments(query, variables, field);
+            try {
+                generate(query, variables, fieldType, 1);
+            } catch (InterruptedException e) {
+                return;
+            }
+            query.append('}');
+            prefixRequestType(query, requestType);
+            requestor.sendQuery(query.toString(), variables.toString(), param.getRequestMethod());
         }
     }
 
-    private void generate(StringBuilder query, GraphQLType type, int depth) {
-        generate(query, type, depth, null);
+    private GraphQLObjectType getRequestTypeObject(RequestType requestType) {
+        switch (requestType) {
+            case MUTATION:
+                return schema.getMutationType();
+            case SUBSCRIPTION:
+                return schema.getSubscriptionType();
+            case QUERY:
+            default:
+                return schema.getQueryType();
+        }
     }
 
-    private void generate(StringBuilder query, GraphQLType type, int depth, Requestor requestor) {
+    private void prefixRequestType(StringBuilder query, RequestType requestType) {
+        switch (requestType) {
+            case MUTATION:
+                query.insert(0, "mutation ");
+                break;
+            case SUBSCRIPTION:
+                query.insert(0, "subscription ");
+                break;
+            case QUERY:
+            default:
+                query.insert(0, "query ");
+                break;
+        }
+    }
+
+    /** Convenience method for generate, generateWithVariables, sendFull, and sendByField methods */
+    private void generate(StringBuilder query, StringBuilder variables, GraphQLType type, int depth)
+            throws InterruptedException {
+        generate(query, variables, type, depth, null, RequestType.QUERY);
+    }
+
+    /**
+     * Generates a GraphQL query recursively
+     *
+     * @param query StringBuilder for the GraphQL query to be generated.
+     * @param variables StringBuilder for query variables when inline arguments are disabled.
+     * @param type the type of a GraphQL field.
+     * @param depth the current depth for the query being generated.
+     * @param requestor Requestor for the sendByLeaf method.
+     * @param requestType RequestType for the sendByLeaf method.
+     */
+    private void generate(
+            StringBuilder query,
+            StringBuilder variables,
+            GraphQLType type,
+            int depth,
+            Requestor requestor,
+            RequestType requestType)
+            throws InterruptedException {
         if (type instanceof GraphQLObjectType) {
             query.append("{ ");
             GraphQLObjectType object = (GraphQLObjectType) type;
             List<GraphQLFieldDefinition> fields = object.getFieldDefinitions();
             for (GraphQLFieldDefinition field : fields) {
+                if (Thread.currentThread() instanceof ParserThread) {
+                    ParserThread t = (ParserThread) Thread.currentThread();
+                    if (!t.isRunning()) {
+                        LOG.debug("Stopping the GraphQL Generator.");
+                        // Break out of recursion.
+                        throw new InterruptedException();
+                    }
+                }
                 GraphQLType fieldType = field.getType();
-                int parentLength = query.length();
+                String beforeSendingByLeaf = query.toString();
                 if (GraphQLTypeUtil.isWrapped(fieldType)) {
                     fieldType = GraphQLTypeUtil.unwrapAll(fieldType);
                 }
                 if (GraphQLTypeUtil.isLeaf(fieldType)) {
                     query.append(field.getName()).append(' ');
-                    addArguments(query, field);
+                    addArguments(query, variables, field);
                     if (requestor != null) {
                         for (int i = 0; i <= depth; ++i) {
                             query.append("} ");
                         }
-                        requestor.sendQuery(query.toString(), param.getRequestMethod());
+                        prefixRequestType(query, requestType);
+                        requestor.sendQuery(
+                                query.toString(), variables.toString(), param.getRequestMethod());
                     }
                 } else if (depth < param.getMaxQueryDepth()) {
                     query.append(field.getName()).append(' ');
-                    addArguments(query, field);
-                    generate(query, fieldType, depth + 1, requestor);
+                    addArguments(query, variables, field);
+                    generate(query, variables, fieldType, depth + 1, requestor, requestType);
                 }
                 if (requestor != null) {
-                    query.setLength(parentLength);
+                    query = new StringBuilder(beforeSendingByLeaf);
                 }
             }
             query.append("} ");
@@ -196,7 +297,7 @@ public class GraphQlGenerator {
             query.append("{ ");
             for (GraphQLObjectType object : objects) {
                 query.append("... on ").append(object.getName()).append(' ');
-                generate(query, object, depth + 1, requestor);
+                generate(query, variables, object, depth + 1, requestor, requestType);
             }
             query.append("} ");
         } else if (type instanceof GraphQLUnionType) {
@@ -205,23 +306,62 @@ public class GraphQlGenerator {
             query.append("{ ");
             for (GraphQLNamedOutputType member : members) {
                 query.append("... on ").append(member.getName()).append(' ');
-                generate(query, member, depth + 1, requestor);
+                generate(query, variables, member, depth + 1, requestor, requestType);
             }
             query.append("} ");
         }
     }
 
-    private void addArguments(StringBuilder query, GraphQLFieldDefinition field) {
+    private void addArguments(
+            StringBuilder query, StringBuilder variables, GraphQLFieldDefinition field) {
         List<GraphQLArgument> args = field.getArguments();
-        if (!args.isEmpty()) {
+        if (args != null && !args.isEmpty()) {
             query.append('(');
             boolean nonZeroArguments = false;
             for (GraphQLArgument arg : args) {
-                if (param.getOptionalArgsEnabled() || GraphQLTypeUtil.isNonNull(arg.getType())) {
-                    query.append(arg.getName())
-                            .append(": ")
-                            .append(getDefaultValue(arg.getType(), 0))
-                            .append(", ");
+                GraphQLType argType = arg.getType();
+                if (param.getOptionalArgsEnabled() || GraphQLTypeUtil.isNonNull(argType)) {
+                    query.append(arg.getName()).append(": ");
+                    if (inlineArgsEnabled) {
+                        query.append(getDefaultValue(argType, 0)).append(", ");
+                    } else {
+                        String var_name = field.getName() + '_' + arg.getName();
+                        query.append('$').append(var_name).append(", ");
+
+                        String var_type = "";
+                        if (GraphQLTypeUtil.isWrapped(argType)) {
+                            var_type = argType.toString();
+                        } else if (argType instanceof GraphQLNamedType) {
+                            GraphQLNamedType namedType = (GraphQLNamedType) argType;
+                            var_type = namedType.getName();
+                        }
+                        if (var_type != null && !var_type.isEmpty()) {
+                            if (query.toString().startsWith("(")) {
+                                query.insert(1, '$' + var_name + ": " + var_type + ", ");
+                            } else {
+                                query.insert(0, "($" + var_name + ": " + var_type + ") ");
+                            }
+                        }
+
+                        if (variables != null) {
+                            if (!variables.toString().isEmpty()) {
+                                variables.insert(
+                                        1,
+                                        '"'
+                                                + var_name
+                                                + "\": "
+                                                + getDefaultValue(argType, 0)
+                                                + ", ");
+                            } else {
+                                variables
+                                        .append("{\"")
+                                        .append(var_name)
+                                        .append("\": ")
+                                        .append(getDefaultValue(argType, 0))
+                                        .append("}");
+                            }
+                        }
+                    }
                     nonZeroArguments = true;
                 }
             }
@@ -260,17 +400,32 @@ public class GraphQlGenerator {
             }
         } else if (type instanceof GraphQLEnumType) {
             GraphQLEnumType enumType = (GraphQLEnumType) type;
-            defaultValue.append(enumType.getValues().get(0).getName());
+            if (inlineArgsEnabled) {
+                defaultValue.append(enumType.getValues().get(0).getName());
+            } else {
+                defaultValue.append('"').append(enumType.getValues().get(0).getName()).append('"');
+            }
         } else if (type instanceof GraphQLInputObjectType) {
             GraphQLInputObjectType object = (GraphQLInputObjectType) type;
             defaultValue.append("{ ");
             List<GraphQLInputObjectField> fields = object.getFields();
-            for (GraphQLInputObjectField field : fields) {
-                defaultValue
-                        .append(field.getName())
-                        .append(": ")
-                        .append(getDefaultValue(field.getType(), depth + 1))
-                        .append(", ");
+            if (inlineArgsEnabled) {
+                for (GraphQLInputObjectField field : fields) {
+                    defaultValue
+                            .append(field.getName())
+                            .append(": ")
+                            .append(getDefaultValue(field.getType(), depth + 1))
+                            .append(", ");
+                }
+            } else {
+                for (GraphQLInputObjectField field : fields) {
+                    defaultValue
+                            .append('"')
+                            .append(field.getName())
+                            .append("\": ")
+                            .append(getDefaultValue(field.getType(), depth + 1))
+                            .append(", ");
+                }
             }
             defaultValue.setLength(defaultValue.length() - 2);
             defaultValue.append(" }");
@@ -315,7 +470,7 @@ public class GraphQlGenerator {
                             Collections.<String>emptyList(),
                             Collections.<String, String>emptyMap(),
                             fieldAttributes);
-            if (!value.isEmpty()) {
+            if (value != null && !value.isEmpty()) {
                 return value;
             }
         }
