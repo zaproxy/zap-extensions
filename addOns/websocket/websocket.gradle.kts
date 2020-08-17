@@ -22,7 +22,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("fuzz") {
-                            semVer.set("2.*")
+                            version.set("2.* | 13.*")
                         }
                     }
                 }
