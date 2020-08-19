@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -36,8 +37,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.ascanrulesAlpha.HiddenFilesScanRule.HiddenFile;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
@@ -79,6 +82,35 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         // When
         rule.scan();
         // Then = No Exception
+    }
+
+    @Test
+    public void shouldSendGetRequestWhenOriginalRequestWasNotGet()
+            throws HttpMalformedHeaderException {
+        // Given
+        String path = "";
+        HttpMessage msg = getHttpMessage(path);
+        msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
+        msg.getRequestHeader()
+                .addHeader(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        msg.setRequestBody("field1=value1&field2=value2");
+        rule.init(msg, parent);
+        HiddenFilesScanRule.addTestPayload(
+                new HiddenFile(
+                        "",
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        "",
+                        Collections.emptyList(),
+                        "file",
+                        false));
+        // When
+        rule.scan();
+        // Then
+        assertEquals(httpMessagesSent.size(), 1);
+        assertEquals(httpMessagesSent.get(0).getRequestHeader().getMethod(), HttpRequestHeader.GET);
+        assertNull(httpMessagesSent.get(0).getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
+        assertEquals(httpMessagesSent.get(0).getRequestBody().length(), 0);
     }
 
     @Test

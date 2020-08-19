@@ -27,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -113,6 +114,8 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
 
         HttpMessage newRequest = getNewMsg();
         newRequest.getRequestHeader().setMethod(HttpRequestHeader.GET);
+        newRequest.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
+        newRequest.setRequestBody("");
         URI baseUri = getBaseMsg().getRequestHeader().getURI();
         URI newUri = null;
         try {

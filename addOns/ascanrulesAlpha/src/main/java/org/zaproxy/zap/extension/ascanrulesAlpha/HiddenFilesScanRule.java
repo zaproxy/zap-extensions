@@ -38,7 +38,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
 /**
@@ -155,6 +157,9 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                             baseUri.getPort(),
                             generatePath(baseUri.getPath(), file.getPath()));
             testMsg.getRequestHeader().setURI(testUri);
+            testMsg.getRequestHeader().setMethod(HttpRequestHeader.GET);
+            testMsg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
+            testMsg.setRequestBody("");
             sendAndReceive(testMsg);
             return testMsg;
         } catch (URIException uEx) {

@@ -27,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -117,6 +118,8 @@ public class ElmahScanRule extends AbstractHostPlugin {
 
         HttpMessage newRequest = getNewMsg();
         newRequest.getRequestHeader().setMethod(HttpRequestHeader.GET);
+        newRequest.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
+        newRequest.setRequestBody("");
         URI baseUri = getBaseMsg().getRequestHeader().getURI();
         URI elmahUri = null;
         try {
