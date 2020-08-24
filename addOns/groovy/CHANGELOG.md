@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix links in script templates.
+- Fix missing parameter functions in template
 
 ## 2 - 2018-04-19
 

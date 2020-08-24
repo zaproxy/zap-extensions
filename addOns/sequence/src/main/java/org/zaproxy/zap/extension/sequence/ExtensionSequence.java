@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Scanner;
@@ -106,11 +105,6 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
             getExtActiveScan().removeCustomScanPanel(sequencePanel);
         }
         getExtScript().removeScriptType(scriptType);
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

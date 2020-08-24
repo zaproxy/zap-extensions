@@ -28,7 +28,7 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
-public class ZestClientElementClickDialog extends ZestClientElementDialog implements ZestDialog {
+public class ZestClientElementClickDialog extends ZestClientElementDialog {
 
     private static final long serialVersionUID = 1L;
 

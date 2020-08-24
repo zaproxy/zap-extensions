@@ -30,11 +30,6 @@ public class ExtensionTodoList extends ExtensionAdaptor {
         super();
     }
 
-    @Override
-    public String getAuthor() {
-        return "vishesh";
-    }
-
     private TodoList getTodoList() {
         if (todoList == null) {
             todoList = new TodoList();

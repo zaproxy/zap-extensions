@@ -19,17 +19,22 @@
  */
 package org.zaproxy.zap.extension.websocket.treemap.nodes.factories;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.httpclient.URIException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.zaproxy.zap.extension.websocket.*;
+import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
+import org.zaproxy.zap.extension.websocket.WebSocketAddonTestUtils;
+import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
+import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.NodesUtilities;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.HostFolderContent;
 import org.zaproxy.zap.extension.websocket.treemap.nodes.contents.MessageContent;
@@ -42,7 +47,7 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
     private NodeFactory nodeFactory;
     private WebSocketSimpleNodeNamer namer;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUpMessages();
         super.startWebSocketServer("localhost");
@@ -65,7 +70,7 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
         TreeNode hostNode = nodeFactory.getHostTreeNode(channel);
 
         // Then
-        Assert.assertEquals(NodesUtilities.getHostName(channel), hostNode.getHost());
+        assertEquals(NodesUtilities.getHostName(channel), hostNode.getHost());
     }
 
     @Test
@@ -83,9 +88,9 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
         TreeNode hostNode_4_3 = nodeFactory.getHostTreeNode(channel4_3);
 
         // Then
-        Assert.assertEquals(hostNode_1_1, hostNode_2_1);
-        Assert.assertNotEquals(hostNode_3_2, hostNode_2_1);
-        Assert.assertNotEquals(hostNode_3_2, hostNode_4_3);
+        assertEquals(hostNode_1_1, hostNode_2_1);
+        assertNotEquals(hostNode_3_2, hostNode_2_1);
+        assertNotEquals(hostNode_3_2, hostNode_4_3);
     }
 
     @Test
@@ -122,12 +127,12 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
         host2Messages.sort(comparator);
 
         // Then
-        Assert.assertEquals(host1Messages.get(0).id, messages.get(0).id);
-        Assert.assertEquals(host1Messages.get(1).id, messages.get(2).id);
-        Assert.assertEquals(host1Messages.get(2).id, messages.get(4).id);
+        assertEquals(host1Messages.get(0).id, messages.get(0).id);
+        assertEquals(host1Messages.get(1).id, messages.get(2).id);
+        assertEquals(host1Messages.get(2).id, messages.get(4).id);
 
-        Assert.assertEquals(host2Messages.get(0).id, messages.get(1).id);
-        Assert.assertEquals(host2Messages.get(1).id, messages.get(3).id);
+        assertEquals(host2Messages.get(0).id, messages.get(1).id);
+        assertEquals(host2Messages.get(1).id, messages.get(3).id);
     }
 
     @Test
@@ -149,8 +154,8 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
         // Then
         WebSocketMessageDTO actualMessage =
                 nodeFactory.getRoot().getMessagesPerHost(new HashMap<>()).get(hostNode).get(0);
-        Assert.assertEquals(expectedMessage.id, actualMessage.id);
-        Assert.assertEquals(expectedMessage.channel, actualMessage.channel);
+        assertEquals(expectedMessage.id, actualMessage.id);
+        assertEquals(expectedMessage.channel, actualMessage.channel);
     }
 
     @Test
@@ -177,19 +182,13 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
         nodeFactory.getRoot().getHostNodes(hostNodes);
 
         // When & Then
-        Assert.assertEquals(
-                0, nodeFactory.getRoot().getPosition(new HostFolderContent(namer, channelA)));
-        Assert.assertEquals(
-                1, nodeFactory.getRoot().getPosition(new HostFolderContent(namer, channelB)));
-        Assert.assertEquals(
-                -3, nodeFactory.getRoot().getPosition(new HostFolderContent(namer, channelC)));
-        Assert.assertEquals(
-                0, hostNodes.get(0).getPosition(new MessageContent(namer, messages.get(0))));
-        Assert.assertEquals(
-                1, hostNodes.get(0).getPosition(new MessageContent(namer, messages.get(1))));
-        Assert.assertEquals(
-                2, hostNodes.get(0).getPosition(new MessageContent(namer, messages.get(2))));
-        Assert.assertEquals(
+        assertEquals(0, nodeFactory.getRoot().getPosition(new HostFolderContent(namer, channelA)));
+        assertEquals(1, nodeFactory.getRoot().getPosition(new HostFolderContent(namer, channelB)));
+        assertEquals(-3, nodeFactory.getRoot().getPosition(new HostFolderContent(namer, channelC)));
+        assertEquals(0, hostNodes.get(0).getPosition(new MessageContent(namer, messages.get(0))));
+        assertEquals(1, hostNodes.get(0).getPosition(new MessageContent(namer, messages.get(1))));
+        assertEquals(2, hostNodes.get(0).getPosition(new MessageContent(namer, messages.get(2))));
+        assertEquals(
                 -4,
                 hostNodes
                         .get(0)
@@ -197,7 +196,7 @@ public class SimpleNodeFactoryUnitTest extends WebSocketAddonTestUtils {
                                 new MessageContent(
                                         namer,
                                         getTextOutgoingMessage(channelA, "Message_A_4", 4))));
-        Assert.assertEquals(
+        assertEquals(
                 -1,
                 hostNodes
                         .get(1)

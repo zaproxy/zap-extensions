@@ -4,11 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [22] - 2020-08-17
 ### Changed
 - Update minimum ZAP version to 2.9.0.
+- Allow to use newer versions of Fuzzer add-on.
+- Maintenance changes.
 
 ### Fixed
 - Correctly handle API request without parameters.
+- Fixed an exception which was occurring when the tab was shown when a handshake response was first encountered during a ZAP session.
 
 ## [21] - 2020-01-17
 ### Added
@@ -153,6 +159,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[22]: https://github.com/zaproxy/zap-extensions/releases/websocket-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/websocket-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/websocket-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/websocket-v19

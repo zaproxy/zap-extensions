@@ -673,6 +673,6 @@ public class ReportLastScan {
 
         public static boolean isMac() {
             return isMac;
-        };
+        }
     }
 }

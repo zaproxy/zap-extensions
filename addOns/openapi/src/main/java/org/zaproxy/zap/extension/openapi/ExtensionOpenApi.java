@@ -157,7 +157,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
      * @param initViaUi {@code true} if the import is being done through the GUI, {@code false}
      *     otherwise.
      * @return the list of errors, if any. Returns {@code null} if the import is being done through
-     *     the GUI.
+     *     the GUI, or, if not done through the GUI the target was not accessed (caused by an {@code
+     *     IOException}).
      * @throws InvalidUrlException if the target URL is not valid.
      */
     public List<String> importOpenApiDefinition(
@@ -263,10 +264,13 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                                 } else {
                                     exMsg = "";
                                 }
+                                String baseMessage =
+                                        Constant.messages.getString("openapi.parse.error", exMsg);
+                                View.getSingleton().getOutputPanel().append(baseMessage);
+                                View.getSingleton().getOutputPanel().append(e);
                                 View.getSingleton()
                                         .showWarningDialog(
-                                                Constant.messages.getString(
-                                                                "openapi.parse.error", exMsg)
+                                                baseMessage
                                                         + "\n\n"
                                                         + Constant.messages.getString(
                                                                 "openapi.parse.trailer"));
@@ -314,12 +318,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM
-                + " plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak";
     }
 
     @Override

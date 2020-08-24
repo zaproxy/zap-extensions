@@ -24,7 +24,6 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -40,7 +39,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -115,7 +113,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                         new ImageIcon(
                                 WebSocketPanel.class.getResource(
                                         "/resource/icon/fugue/plug-connect-target.png")));
-    };
+    }
 
     private JToolBar panelToolbar = null;
 
@@ -180,16 +178,11 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
     }
 
     /** Sets up the graphical representation of this tab. */
-    @SuppressWarnings("deprecation")
     private void initializePanel() {
         setName(Constant.messages.getString("websocket.panel.title"));
-        // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when targeting Java 10+
         setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        KeyEvent.VK_W,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                View.getSingleton()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_W, KeyEvent.SHIFT_DOWN_MASK, false));
         setMnemonic(Constant.messages.getChar("websocket.panel.mnemonic"));
 
         setLayout(new GridBagLayout());

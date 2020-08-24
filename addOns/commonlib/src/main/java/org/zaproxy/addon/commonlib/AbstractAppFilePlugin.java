@@ -27,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -113,6 +114,8 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
 
         HttpMessage newRequest = getNewMsg();
         newRequest.getRequestHeader().setMethod(HttpRequestHeader.GET);
+        newRequest.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
+        newRequest.setRequestBody("");
         URI baseUri = getBaseMsg().getRequestHeader().getURI();
         URI newUri = null;
         try {
@@ -178,10 +181,11 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
         }
         int statusCode = newRequest.getResponseHeader().getStatusCode();
         if (statusCode == HttpStatusCode.OK) {
-            raiseAlert(newRequest, getRisk(), "");
-        } else if (statusCode == HttpStatusCode.UNAUTHORIZED
-                || statusCode == HttpStatusCode.FORBIDDEN) {
-            raiseAlert(newRequest, Alert.RISK_INFO, getOtherInfo());
+            raiseAlert(newRequest, getRisk(), Alert.CONFIDENCE_MEDIUM, "");
+        } else if (this.getAlertThreshold().equals(AlertThreshold.LOW)
+                && (statusCode == HttpStatusCode.UNAUTHORIZED
+                        || statusCode == HttpStatusCode.FORBIDDEN)) {
+            raiseAlert(newRequest, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getOtherInfo());
         }
     }
 
@@ -209,10 +213,10 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
         return newPath;
     }
 
-    private void raiseAlert(HttpMessage msg, int risk, String otherInfo) {
+    private void raiseAlert(HttpMessage msg, int risk, int confidence, String otherInfo) {
         newAlert()
                 .setRisk(risk)
-                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setConfidence(confidence)
                 .setOtherInfo(otherInfo)
                 .setEvidence(msg.getResponseHeader().getPrimeHeader())
                 .setMessage(msg)

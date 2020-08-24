@@ -29,8 +29,8 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
-import org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanner;
-import org.zaproxy.zap.extension.pscanrules.UsernameIdorScanner;
+import org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanRule;
+import org.zaproxy.zap.extension.pscanrules.UsernameIdorScanRule;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
 
@@ -60,17 +60,17 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         .getExtension(ExtensionCustomPayloads.class);
         idorCategory =
                 new PayloadCategory(
-                        UsernameIdorScanner.USERNAME_IDOR_PAYLOAD_CATEGORY,
-                        UsernameIdorScanner.DEFAULT_USERNAMES);
+                        UsernameIdorScanRule.USERNAME_IDOR_PAYLOAD_CATEGORY,
+                        UsernameIdorScanRule.DEFAULT_USERNAMES);
         ecp.addPayloadCategory(idorCategory);
-        UsernameIdorScanner.setPayloadProvider(() -> idorCategory.getPayloadsIterator());
+        UsernameIdorScanRule.setPayloadProvider(() -> idorCategory.getPayloadsIterator());
 
         errorCategory =
                 new PayloadCategory(
-                        ApplicationErrorScanner.ERRORS_PAYLOAD_CATEGORY,
-                        ApplicationErrorScanner.DEFAULT_ERRORS);
+                        ApplicationErrorScanRule.ERRORS_PAYLOAD_CATEGORY,
+                        ApplicationErrorScanRule.DEFAULT_ERRORS);
         ecp.addPayloadCategory(errorCategory);
-        ApplicationErrorScanner.setPayloadProvider(() -> errorCategory.getPayloadsIterator());
+        ApplicationErrorScanRule.setPayloadProvider(() -> errorCategory.getPayloadsIterator());
     }
 
     @Override
@@ -80,18 +80,13 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        UsernameIdorScanner.setPayloadProvider(null);
+        UsernameIdorScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(idorCategory);
     }
 
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

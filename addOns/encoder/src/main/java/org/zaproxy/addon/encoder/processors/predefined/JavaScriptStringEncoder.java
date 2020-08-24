@@ -19,10 +19,12 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 public class JavaScriptStringEncoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) {
-        return getEncoder().getJavaScriptString(value);
+        return StringEscapeUtils.escapeJavaScript(value);
     }
 }

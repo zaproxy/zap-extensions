@@ -43,6 +43,7 @@ import org.zaproxy.addon.encoder.processors.predefined.JavaScriptStringDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.JavaScriptStringEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.Md5Hasher;
 import org.zaproxy.addon.encoder.processors.predefined.Sha1Hasher;
+import org.zaproxy.addon.encoder.processors.predefined.Sha256Hasher;
 import org.zaproxy.addon.encoder.processors.predefined.UnicodeDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.UnicodeEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.UrlDecoder;
@@ -79,6 +80,7 @@ public class EncodeDecodeProcessors {
 
         addPredefined("md5hash", new Md5Hasher());
         addPredefined("sha1hash", new Sha1Hasher());
+        addPredefined("sha256hash", new Sha256Hasher());
 
         addPredefined("illegalutf8with2byteencoder", new IllegalUTF8With2ByteEncoder());
         addPredefined("illegalutf8with3byteencoder", new IllegalUTF8With3ByteEncoder());

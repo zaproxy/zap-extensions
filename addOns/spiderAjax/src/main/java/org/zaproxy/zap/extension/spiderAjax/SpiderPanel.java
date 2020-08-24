@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -33,7 +32,6 @@ import java.util.TreeSet;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -61,7 +59,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
     private javax.swing.JToolBar panelToolbar = null;
     private JLabel filterStatus = null;
     private int foundCount = 0;
-    private JLabel foundLabel = new JLabel();;
+    private JLabel foundLabel = new JLabel();
     private ExtensionAjax extension = null;
     private SpiderThread runnable = null;
     private JButton stopScanButton;
@@ -85,12 +83,6 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
     public SpiderPanel(ExtensionAjax e) {
         super();
         this.extension = e;
-        initialize();
-    }
-
-    /** This method initializes this class and its attributes */
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setLayout(new BorderLayout());
         if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
             this.setSize(600, 200);
@@ -103,13 +95,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
                         this.extension.getMessages().getString("spiderajax.panel.title"));
 
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when
-                        // targeting Java 10+
-                        KeyEvent.VK_J,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                this.extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_J, KeyEvent.SHIFT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("spiderajax.panel.mnemonic"));
 
         if (View.isInitialised()) {

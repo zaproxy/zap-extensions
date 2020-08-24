@@ -1103,8 +1103,8 @@ public class GitMetadata {
      *
      * @param data the raw binary data from a valid Git index file (Versions 2,3,4 are supported)
      * @return a Map of relative file paths to SHA1s using raw Git index file data
-     * @todo consider sharing this method between the Git Spider, and the SourceCodeDisclosure
-     *     scanner.
+     * @todo consider sharing this method between the Git Spider, and the SourceCodeDisclosure scan
+     *     rule.
      */
     @SuppressWarnings("unused")
     public Map<String, String> getIndexSha1s(byte[] data) throws Exception {

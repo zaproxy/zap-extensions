@@ -4,8 +4,18 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Show import exceptions in the Output tab (Issue 6042).
+
+### Fixed
+- Correct parent dialogue when choosing the file to import (Issue 6041).
+- Properly handle no schema when generating the request body (Issue 6042).
+- Return API error `illegal_parameter` (instead of `internal_error`) when unable to get the OpenAPI definition from the provided URL.
+
+## [16] - 2020-06-09
 ### Added
 - Map Structure support for OpenAPI v3.0 (Issue 5863).
+- Using OpenAPI Example values for value generation in request bodies and urls (Issue 5168).
 
 ### Changed
 - Improve content checks when spidering for specifications (Issue 5725).
@@ -96,6 +106,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[16]: https://github.com/zaproxy/zap-extensions/releases/openapi-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/openapi-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/openapi-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/openapi-v13

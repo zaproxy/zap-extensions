@@ -127,7 +127,7 @@ public class FrameExportReport extends AbstractFrame implements ActionListener {
             }
         }
         if (e.getSource() == this.btnNext) {
-            if (btnNext.getText() == FINISH) {
+            if (FINISH.equals(btnNext.getText())) {
                 extension.generateReport();
             }
 

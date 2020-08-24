@@ -320,11 +320,6 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
         return textareaLimit;
     }
 
-    @Override
-    public String getAuthor() {
-        return "Author: Goran Sarenkapa - JordanGS";
-    }
-
     public void emitFrame() {
         frameER.setVisible(false);
         frameER.dispose();

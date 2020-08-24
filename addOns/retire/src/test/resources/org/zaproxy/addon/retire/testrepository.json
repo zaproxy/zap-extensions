@@ -25,11 +25,21 @@
 				"below" : "0.0.2",
 				"severity" : "low",
 				"identifiers" : {
-					"CVE" : [ "CVE-XXXX-XXXX" ],
+					"CVE" : [ "CVE-XXXX-XXX0", "CVE-XXXX-XXX1" ],
 					"bug" : "4321",
 					"summary" : "bug summary"
 				},
-				"info" : [ "http://example.com/hash-test-entry" ]
+				"info" : [ "http://example.com/hash-test-entry", "http://example.com/hash-test-entry2" ]
+			},
+			{
+				"below" : "0.0.3",
+				"severity" : "low",
+				"identifiers" : {
+					"CVE" : [ "CVE-XXXX-XXX2", "CVE-XXXX-XXX0" ],
+					"bug" : "1234",
+					"summary" : "bug summary"
+				},
+				"info" : [ "http://example.com/hash-test-entry", "http://example.com/hash-test-entry2" ]
 			}
 		],
 		"extractors" : {

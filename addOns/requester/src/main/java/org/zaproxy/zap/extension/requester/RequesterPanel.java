@@ -20,14 +20,14 @@
 package org.zaproxy.zap.extension.requester;
 
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import javax.swing.KeyStroke;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.extension.OptionsChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class RequesterPanel extends AbstractPanel {
+public class RequesterPanel extends AbstractPanel implements OptionsChangedListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,7 +35,6 @@ public class RequesterPanel extends AbstractPanel {
 
     private RequesterNumberedTabbedPane requesterNumberedTabbedPane = null;
 
-    @SuppressWarnings("deprecation")
     public RequesterPanel(ExtensionRequester extension) {
         super();
         this.setLayout(new GridLayout(1, 1));
@@ -43,13 +42,9 @@ public class RequesterPanel extends AbstractPanel {
         this.setName(Constant.messages.getString("requester.panel.title"));
         this.setIcon(ExtensionRequester.REQUESTER_ICON);
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        KeyEvent.VK_R,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.ALT_DOWN_MASK,
-                        false));
+                extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_R, KeyEvent.ALT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("requester.panel.mnemonic"));
         this.setShowByDefault(true);
         requesterNumberedTabbedPane = new RequesterNumberedTabbedPane();
@@ -70,4 +65,9 @@ public class RequesterPanel extends AbstractPanel {
     void unload() {
         getRequesterNumberedTabbedPane().unload();
     }
-};
+
+    @Override
+    public void optionsChanged(OptionsParam optionsParam) {
+        getRequesterNumberedTabbedPane().optionsChanged(optionsParam);
+    }
+}

@@ -19,9 +19,7 @@
  */
 package org.zaproxy.zap.extension.onlineMenu;
 
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import javax.swing.KeyStroke;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -63,16 +61,10 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
 
         if (getView() != null) {
             // Homepage
-            @SuppressWarnings("deprecation")
             ZapMenuItem menuHomepage =
                     new ZapMenuItem(
                             "onlineMenu.home",
-                            // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression)
-                            // when targeting Java 10+
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_Z,
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
-                                    false));
+                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_Z, 0, false));
             menuHomepage.setEnabled(DesktopUtils.canOpenUrlInBrowser());
             menuHomepage.addActionListener(
                     new java.awt.event.ActionListener() {
@@ -172,11 +164,6 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.gettingStarted;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -85,11 +85,6 @@ public class ExtensionGettingStarted extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

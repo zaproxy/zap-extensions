@@ -32,6 +32,7 @@ public class DialogModifyAlertFilter extends DialogAddAlertFilter {
         super(extension, owner, DIALOG_TITLE);
     }
 
+    @Override
     public void setAlertFilter(AlertFilter alertFilter) {
         super.setAlertFilter(alertFilter);
     }

@@ -66,6 +66,8 @@ public class ExtensionEncoder extends ExtensionAdaptor {
     private PopupEncoderMenu popupEncodeMenu = null;
     private ZapMenuItem toolsMenuEncoder = null;
     private PopupEncoderDeleteOutputPanelMenu popupDeleteOutputMenu;
+    private EncodeDecodeOptionsPanel optionsPanel;
+    private EncodeDecodeOptions options;
 
     public ExtensionEncoder() {
         super(NAME);
@@ -111,6 +113,11 @@ public class ExtensionEncoder extends ExtensionAdaptor {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuEncode());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuDeleteOutputPanel());
             extensionHook.getHookMenu().addToolsMenuItem(getToolsMenuItemEncoder());
+
+            extensionHook.getHookView().addOptionPanel(getOptionsPanel());
+            extensionHook.addOptionsParamSet(getOptions());
+
+            extensionHook.addOptionsChangedListener(getEncodeDecodeDialog());
         }
 
         ExtensionScript extScript = getExtensionScript();
@@ -153,7 +160,7 @@ public class ExtensionEncoder extends ExtensionAdaptor {
         return popupDeleteOutputMenu;
     }
 
-    private EncodeDecodeDialog showEncodeDecodeDialog(JTextComponent lastInvoker) {
+    private EncodeDecodeDialog getEncodeDecodeDialog() {
         if (encodeDecodeDialog == null) {
             List<TabModel> tabModels;
             try {
@@ -163,11 +170,14 @@ public class ExtensionEncoder extends ExtensionAdaptor {
                 tabModels = new ArrayList<>(0);
             }
             encodeDecodeDialog = new EncodeDecodeDialog(tabModels);
-        } else {
-            if ((encodeDecodeDialog.getState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
-                // bring up to front if iconfied
-                encodeDecodeDialog.setState(Frame.NORMAL);
-            }
+        }
+        return encodeDecodeDialog;
+    }
+
+    private EncodeDecodeDialog showEncodeDecodeDialog(JTextComponent lastInvoker) {
+        if ((encodeDecodeDialog.getState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
+            // bring up to front if iconified
+            encodeDecodeDialog.setState(Frame.NORMAL);
         }
 
         encodeDecodeDialog.setVisible(true);
@@ -192,11 +202,6 @@ public class ExtensionEncoder extends ExtensionAdaptor {
         if (encodeDecodeDialog != null) {
             encodeDecodeDialog.dispose();
         }
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override
@@ -225,5 +230,19 @@ public class ExtensionEncoder extends ExtensionAdaptor {
                 keybdExt.setShortcut(ENCODER_MENU_IDENTIFIER, coreKs);
             }
         }
+    }
+
+    private EncodeDecodeOptionsPanel getOptionsPanel() {
+        if (optionsPanel == null) {
+            optionsPanel = new EncodeDecodeOptionsPanel();
+        }
+        return optionsPanel;
+    }
+
+    public EncodeDecodeOptions getOptions() {
+        if (options == null) {
+            options = new EncodeDecodeOptions();
+        }
+        return options;
     }
 }

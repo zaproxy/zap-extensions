@@ -38,7 +38,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
 /**
@@ -85,7 +87,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                             Collections.emptyList(),
                             "",
                             Collections.emptyList(),
-                            ""));
+                            "",
+                            true));
         }
     }
 
@@ -95,7 +98,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
             if (isStop()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scanner " + getName() + " stopping.");
+                    LOG.debug("Scan rule " + getName() + " stopping.");
                 }
                 return;
             }
@@ -112,13 +115,15 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                         doesNotMatch(responseBody, file.getNotContent())
                                 && doesMatch(responseBody, file.getContent())
                                 && doesBinaryMatch(responseBody, file.getBinary());
-                raiseAlert(
-                        testMsg,
-                        matches ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_LOW,
-                        getRisk(),
-                        file);
-            } else if (statusCode == HttpStatusCode.UNAUTHORIZED
-                    || statusCode == HttpStatusCode.FORBIDDEN) {
+                if (matches && !file.isCustom()) {
+                    raiseAlert(testMsg, Alert.CONFIDENCE_HIGH, getRisk(), file);
+                } else if (this.getAlertThreshold().equals(AlertThreshold.HIGH)
+                        || file.isCustom()) {
+                    raiseAlert(testMsg, Alert.CONFIDENCE_LOW, getRisk(), file);
+                }
+            } else if ((statusCode == HttpStatusCode.UNAUTHORIZED
+                            || statusCode == HttpStatusCode.FORBIDDEN)
+                    && this.getAlertThreshold().equals(AlertThreshold.HIGH)) {
                 raiseAlert(testMsg, Alert.CONFIDENCE_LOW, Alert.RISK_INFO, file);
             }
         }
@@ -152,6 +157,9 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                             baseUri.getPort(),
                             generatePath(baseUri.getPath(), file.getPath()));
             testMsg.getRequestHeader().setURI(testUri);
+            testMsg.getRequestHeader().setMethod(HttpRequestHeader.GET);
+            testMsg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
+            testMsg.setRequestBody("");
             sendAndReceive(testMsg);
             return testMsg;
         } catch (URIException uEx) {
@@ -159,7 +167,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                 LOG.debug(
                         "An error occurred creating or setting a URI for the: "
                                 + getName()
-                                + " scanner. "
+                                + " scan rule. "
                                 + uEx.getMessage(),
                         uEx);
             }
@@ -180,21 +188,15 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     }
 
     private void raiseAlert(HttpMessage msg, int confidence, int risk, HiddenFile file) {
-        bingo(
-                risk, // Risk
-                confidence, // Confidence
-                getAlertName(), // Name
-                getDescription(), // Description
-                msg.getRequestHeader().getURI().toString(), // URI
-                null, // Param
-                "", // Attack
-                getOtherInfo(file.getType()), // OtherInfo
-                getSolution(), // Solution
-                msg.getResponseHeader().getPrimeHeader(), // Evidence
-                getReferences(file), // References
-                getCweId(), // CWE ID
-                getWascId(), // WASC ID
-                msg); // HTTPMessage
+        newAlert()
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setName(getAlertName())
+                .setOtherInfo(getOtherInfo(file.getType()))
+                .setEvidence(msg.getResponseHeader().getPrimeHeader())
+                .setReference(getReferences(file))
+                .setMessage(msg)
+                .raise();
     }
 
     @Override
@@ -272,7 +274,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                                 getOptionalList(hiddenFileObject, "not_content"),
                                 getOptionalString(hiddenFileObject, "binary"),
                                 getOptionalList(hiddenFileObject, "links"),
-                                getOptionalString(hiddenFileObject, "type"));
+                                getOptionalString(hiddenFileObject, "type"),
+                                false);
                 hiddenFiles.add(hiddenFile);
 
                 if (LOG.isDebugEnabled()) {
@@ -393,6 +396,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         private final String binary;
         private final List<String> links;
         private final String type;
+        private final boolean custom;
 
         public HiddenFile(
                 String path,
@@ -400,7 +404,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                 List<String> not_content,
                 String binary,
                 List<String> links,
-                String type) {
+                String type,
+                boolean custom) {
             super();
             this.path = path;
             this.content = content;
@@ -408,6 +413,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
             this.binary = binary;
             this.links = links;
             this.type = type;
+            this.custom = custom;
         }
 
         public String getPath() {
@@ -432,6 +438,10 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
         public String getType() {
             return type;
+        }
+
+        public boolean isCustom() {
+            return custom;
         }
     }
 }

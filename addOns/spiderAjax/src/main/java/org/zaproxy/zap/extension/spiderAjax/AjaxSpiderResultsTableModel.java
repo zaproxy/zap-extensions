@@ -122,7 +122,7 @@ public class AjaxSpiderResultsTableModel
                     @Override
                     public void run() {
                         final int row = resources.size();
-                        idsToRows.put(Integer.valueOf(entry.getHistoryId()), Integer.valueOf(row));
+                        idsToRows.put(entry.getHistoryId(), Integer.valueOf(row));
                         resources.add(entry);
                         fireTableRowsInserted(row, row);
                     }

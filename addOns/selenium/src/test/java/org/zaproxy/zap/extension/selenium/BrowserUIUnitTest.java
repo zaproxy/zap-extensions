@@ -19,42 +19,40 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link BrowserUI}. */
 public class BrowserUIUnitTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenCreatingBrowserUIWithNullName() {
         // Given
         String name = null;
-        // When
-        new BrowserUI(name, Browser.FIREFOX);
-        // Then = Exception
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> new BrowserUI(name, Browser.FIREFOX));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenCreatingBrowserUIWithEmptyName() {
         // Given
         String name = "";
-        // When
-        new BrowserUI(name, Browser.FIREFOX);
-        // Then = Exception
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> new BrowserUI(name, Browser.FIREFOX));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenCreatingBrowserUIWithNullBrowser() {
         // Given
         Browser browser = null;
-        // When
-        new BrowserUI("Some Browser", browser);
-        // Then = Exception
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> new BrowserUI("Some Browser", browser));
     }
 
     @Test

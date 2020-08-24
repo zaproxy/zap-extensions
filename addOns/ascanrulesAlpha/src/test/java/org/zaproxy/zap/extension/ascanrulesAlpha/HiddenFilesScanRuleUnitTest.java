@@ -19,9 +19,10 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -30,11 +31,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.ascanrulesAlpha.HiddenFilesScanRule.HiddenFile;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
@@ -53,7 +59,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         return new HiddenFilesScanRule();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         HiddenFilesScanRule.setPayloadProvider(null);
     }
@@ -71,10 +77,40 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
                         Collections.emptyList(),
                         "",
                         Collections.emptyList(),
-                        "file"));
+                        "file",
+                        false));
         // When
         rule.scan();
         // Then = No Exception
+    }
+
+    @Test
+    public void shouldSendGetRequestWhenOriginalRequestWasNotGet()
+            throws HttpMalformedHeaderException {
+        // Given
+        String path = "";
+        HttpMessage msg = getHttpMessage(path);
+        msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
+        msg.getRequestHeader()
+                .addHeader(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        msg.setRequestBody("field1=value1&field2=value2");
+        rule.init(msg, parent);
+        HiddenFilesScanRule.addTestPayload(
+                new HiddenFile(
+                        "",
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        "",
+                        Collections.emptyList(),
+                        "file",
+                        false));
+        // When
+        rule.scan();
+        // Then
+        assertEquals(httpMessagesSent.size(), 1);
+        assertEquals(httpMessagesSent.get(0).getRequestHeader().getMethod(), HttpRequestHeader.GET);
+        assertNull(httpMessagesSent.get(0).getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
+        assertEquals(httpMessagesSent.get(0).getRequestBody().length(), 0);
     }
 
     @Test
@@ -87,7 +123,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         List<String> contents = Arrays.asList("Awesome");
         List<String> links = Arrays.asList("https://example.org");
         HiddenFile hiddenFile =
-                new HiddenFile(testPath, contents, Collections.emptyList(), "", links, "test_php");
+                new HiddenFile(
+                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(
@@ -113,8 +150,37 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
                 rule.getReference() + '\n' + hiddenFile.getLinks().get(0), alert.getReference());
     }
 
+    @ParameterizedTest
+    @EnumSource(names = {"LOW", "MEDIUM"})
+    public void shouldNotRaiseAlertIfTestedUrlRespondsForbiddenWhenThresholdNotHigh(
+            AlertThreshold threshold) throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/shouldAlert";
+
+        String testPath = "foo/test.php";
+        List<String> contents = Arrays.asList("Awesome");
+        List<String> links = Collections.emptyList();
+        HiddenFile hiddenFile =
+                new HiddenFile(
+                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
+
+        this.nano.addHandler(new OkResponse(servePath));
+        this.nano.addHandler(new ForbiddenResponseWithReqPath("/" + testPath));
+
+        HttpMessage msg = this.getHttpMessage(servePath);
+
+        rule.init(msg, this.parent);
+        rule.setAlertThreshold(threshold);
+        HiddenFilesScanRule.addTestPayload(hiddenFile);
+
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     @Test
-    public void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsForbidden()
+    public void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsForbiddenAtHighThreshold()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -123,7 +189,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         List<String> contents = Arrays.asList("Awesome");
         List<String> links = Collections.emptyList();
         HiddenFile hiddenFile =
-                new HiddenFile(testPath, contents, Collections.emptyList(), "", links, "test_php");
+                new HiddenFile(
+                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(new ForbiddenResponseWithReqPath("/" + testPath));
@@ -131,6 +198,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         HttpMessage msg = this.getHttpMessage(servePath);
 
         rule.init(msg, this.parent);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
         HiddenFilesScanRule.addTestPayload(hiddenFile);
 
         // When
@@ -153,7 +221,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         List<String> contents = Arrays.asList("Awesome");
         List<String> links = Collections.emptyList();
         HiddenFile hiddenFile =
-                new HiddenFile(testPath, contents, Collections.emptyList(), "", links, "test_php");
+                new HiddenFile(
+                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(new OkResponse("/fred.php"));
@@ -171,7 +240,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldAlertWithLowConfidenceIfContentStringsDontAllMatch()
+    public void shouldAlertWithLowConfidenceIfContentStringsDontAllMatchAtHighThreshold()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -180,7 +249,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         List<String> contents = Arrays.asList("Site", "StringNotFound");
         List<String> links = Collections.emptyList();
         HiddenFile hiddenFile =
-                new HiddenFile(testPath, contents, Collections.emptyList(), "", links, "test_php");
+                new HiddenFile(
+                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(new OkResponse("/" + testPath));
@@ -188,6 +258,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         HttpMessage msg = this.getHttpMessage(servePath);
 
         rule.init(msg, this.parent);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
         HiddenFilesScanRule.addTestPayload(hiddenFile);
 
         // When
@@ -202,6 +273,35 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         assertEquals(rule.getReference(), alert.getReference());
     }
 
+    @ParameterizedTest
+    @EnumSource(names = {"LOW", "MEDIUM"})
+    public void shouldNotAlertIfContentStringsDontAllMatchWhenNotHighThreshold(
+            AlertThreshold threshold) throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/shouldAlert";
+
+        String testPath = "foo/test.php";
+        List<String> contents = Arrays.asList("Site", "StringNotFound");
+        List<String> links = Collections.emptyList();
+        HiddenFile hiddenFile =
+                new HiddenFile(
+                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
+
+        this.nano.addHandler(new OkResponse(servePath));
+        this.nano.addHandler(new OkResponse("/" + testPath));
+
+        HttpMessage msg = this.getHttpMessage(servePath);
+
+        rule.init(msg, this.parent);
+        rule.setAlertThreshold(threshold);
+        HiddenFilesScanRule.addTestPayload(hiddenFile);
+
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     @Test
     public void shouldRaiseAlertWithHighConfidenceIfContentStringsAllMatch()
             throws HttpMalformedHeaderException {
@@ -212,7 +312,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         List<String> contents = Arrays.asList("Site", "Text");
         List<String> links = Collections.emptyList();
         HiddenFile hiddenFile =
-                new HiddenFile(testPath, contents, Collections.emptyList(), "", links, "test_php");
+                new HiddenFile(
+                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(new OkResponse("/" + testPath));
@@ -235,13 +336,13 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldRaiseAlertWithHighConfidenceIfTestedUrlRespondsOkToCustomPayload()
+    public void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkToCustomPayload()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
 
         String testPath = "foo/test.php";
-        List<String> testPaths = Arrays.asList(testPath);
+        List<String> customPaths = Arrays.asList(testPath);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(
@@ -251,7 +352,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
 
         HttpMessage msg = this.getHttpMessage(servePath);
 
-        HiddenFilesScanRule.setPayloadProvider(() -> testPaths);
+        HiddenFilesScanRule.setPayloadProvider(() -> customPaths);
         rule.init(msg, this.parent);
 
         // When
@@ -261,7 +362,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         Alert alert = alertsRaised.get(0);
         assertEquals(1, httpMessagesSent.size());
         assertEquals(Alert.RISK_MEDIUM, alertsRaised.get(0).getRisk());
-        assertEquals(Alert.CONFIDENCE_HIGH, alertsRaised.get(0).getConfidence());
+        assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
         assertEquals(rule.getReference(), alert.getReference());
     }
 
@@ -275,7 +376,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         List<String> contents = Arrays.asList("Site", "Text");
         List<String> links = Collections.emptyList();
         HiddenFile hiddenFile =
-                new HiddenFile(testPath, contents, Collections.emptyList(), "", links, "test_php");
+                new HiddenFile(
+                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(new NotFoundResponse("/" + testPath));
@@ -303,7 +405,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         List<String> notContents = Arrays.asList("<");
         List<String> links = Collections.emptyList();
         HiddenFile hiddenFile =
-                new HiddenFile(testPath, contents, notContents, "", links, "cvs_dir");
+                new HiddenFile(testPath, contents, notContents, "", links, "cvs_dir", false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(
@@ -329,7 +431,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
 
     @Test
     public void
-            shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithRelevantContentButDoesContainNotContent()
+            shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithRelevantContentButDoesContainNotContentAtHighThreshold()
                     throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -339,7 +441,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         List<String> notContents = Arrays.asList("<");
         List<String> links = Collections.emptyList();
         HiddenFile hiddenFile =
-                new HiddenFile(testPath, contents, notContents, "", links, "cvs_dir");
+                new HiddenFile(testPath, contents, notContents, "", links, "cvs_dir", false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(
@@ -350,6 +452,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         HttpMessage msg = this.getHttpMessage(servePath);
 
         rule.init(msg, this.parent);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
         HiddenFilesScanRule.addTestPayload(hiddenFile);
 
         // When
@@ -361,6 +464,39 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         assertEquals(Alert.RISK_MEDIUM, alertsRaised.get(0).getRisk());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
         assertEquals(rule.getReference(), alert.getReference());
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"LOW", "MEDIUM"})
+    public void
+            shouldNotRaiseAlertIfTestedUrlRespondsOkWithRelevantContentButDoesContainNotContentWhenNotHighThreshold(
+                    AlertThreshold threshold) throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/shouldAlert";
+
+        String testPath = "CVS/root";
+        List<String> contents = Arrays.asList(":");
+        List<String> notContents = Arrays.asList("<");
+        List<String> links = Collections.emptyList();
+        HiddenFile hiddenFile =
+                new HiddenFile(testPath, contents, notContents, "", links, "cvs_dir", false);
+
+        this.nano.addHandler(new OkResponse(servePath));
+        this.nano.addHandler(
+                new StaticContentServerHandler(
+                        '/' + testPath,
+                        "<html>pserver:anonymous@duma.cvs.sourceforge.net:/cvsroot/duma"));
+
+        HttpMessage msg = this.getHttpMessage(servePath);
+
+        rule.init(msg, this.parent);
+        rule.setAlertThreshold(threshold);
+        HiddenFilesScanRule.addTestPayload(hiddenFile);
+
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
@@ -379,7 +515,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
                         Collections.emptyList(),
                         validDSStoreBinString,
                         Collections.emptyList(),
-                        "ds_store");
+                        "ds_store",
+                        false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(new OkBinResponse('/' + testPath, validDSStoreBinString));
@@ -401,8 +538,9 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
     }
 
     @Test
-    public void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithoutRelevantBinContent()
-            throws HttpMalformedHeaderException {
+    public void
+            shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithoutRelevantBinContentAtHighThreshold()
+                    throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
 
@@ -418,7 +556,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
                         Collections.emptyList(),
                         validDSStoreBinString,
                         Collections.emptyList(),
-                        "ds_store");
+                        "ds_store",
+                        false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(new OkBinResponse('/' + testPath, invalidDSStoreBinString));
@@ -426,6 +565,7 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         HttpMessage msg = this.getHttpMessage(servePath);
 
         rule.init(msg, this.parent);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
         HiddenFilesScanRule.addTestPayload(hiddenFile);
 
         // When
@@ -437,6 +577,44 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         assertEquals(Alert.RISK_MEDIUM, alertsRaised.get(0).getRisk());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
         assertEquals(rule.getReference(), alert.getReference());
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"LOW", "MEDIUM"})
+    public void
+            shouldNotRaiseAlertIfTestedUrlRespondsOkWithoutRelevantBinContentWhenNotHighThreshold(
+                    AlertThreshold threshold) throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/shouldAlert";
+
+        String testPath = ".DS_Store";
+        String validDSStoreBinString =
+                new String(new byte[] {0, 0, 0, 1, 'B', 'u', 'd', '1'}, StandardCharsets.US_ASCII);
+        String invalidDSStoreBinString =
+                new String(new byte[] {0, 0, 0, 2, 'B', 'u', 'd', '2'}, StandardCharsets.US_ASCII);
+        HiddenFile hiddenFile =
+                new HiddenFile(
+                        testPath,
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        validDSStoreBinString,
+                        Collections.emptyList(),
+                        "ds_store",
+                        false);
+
+        this.nano.addHandler(new OkResponse(servePath));
+        this.nano.addHandler(new OkBinResponse('/' + testPath, invalidDSStoreBinString));
+
+        HttpMessage msg = this.getHttpMessage(servePath);
+
+        rule.init(msg, this.parent);
+        rule.setAlertThreshold(threshold);
+        HiddenFilesScanRule.addTestPayload(hiddenFile);
+
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     private static class ForbiddenResponseWithReqPath extends NanoServerHandler {

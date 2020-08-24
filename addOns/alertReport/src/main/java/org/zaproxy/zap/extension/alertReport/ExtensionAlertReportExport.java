@@ -120,11 +120,6 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return "Talsoft SRL";
-    }
-
-    @Override
     public String getDescription() {
         return this.getMessages().getString("alertreport.export.message.desc");
     }

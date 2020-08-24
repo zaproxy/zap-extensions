@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.requester;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.HeadlessException;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -36,16 +35,17 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
@@ -135,7 +135,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
     }
 
     @Override
-    protected MessageSender getMessageSender() {
+    protected HttpPanelSender getMessageSender() {
         return sender;
     }
 
@@ -264,18 +264,12 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public ZapMenuItem getMenuItem() {
         if (menuItem == null) {
             menuItem =
                     new ZapMenuItem(
                             "menu.tools.manReq",
-                            // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke
-                            // with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_M,
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
-                                    false));
+                            View.getSingleton().getMenuShortcutKeyStroke(KeyEvent.VK_M, 0, false));
             menuItem.addActionListener(
                     new ActionListener() {
                         @Override
@@ -307,7 +301,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
         try {
             URI uri = new URI("http://www.any_domain_name.org/path", true);
             msg.setRequestHeader(
-                    new HttpRequestHeader(HttpRequestHeader.GET, uri, HttpHeader.HTTP10));
+                    new HttpRequestHeader(HttpRequestHeader.GET, uri, HttpHeader.HTTP11));
             setMessage(msg);
         } catch (HttpMalformedHeaderException e) {
             logger.error(e.getMessage(), e);
@@ -643,16 +637,22 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
     }
 
     public void addPersistentConnectionListener(PersistentConnectionListener listener) {
-        ((HttpPanelSender) getMessageSender()).addPersistentConnectionListener(listener);
+        getMessageSender().addPersistentConnectionListener(listener);
     }
 
     public void removePersistentConnectionListener(PersistentConnectionListener listener) {
-        ((HttpPanelSender) getMessageSender()).removePersistentConnectionListener(listener);
+        getMessageSender().removePersistentConnectionListener(listener);
     }
 
     public void beforeClose() {
         HttpPanelManager panelManager = HttpPanelManager.getInstance();
         panelManager.removeRequestPanel(getRequestPanel());
         panelManager.removeResponsePanel(getResponsePanel());
+    }
+
+    void optionsChanged(OptionsParam optionsParam) {
+        getMessageSender()
+                .setButtonTrackingSessionStateEnabled(
+                        optionsParam.getConnectionParam().isHttpStateEnabled());
     }
 }

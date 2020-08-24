@@ -51,11 +51,6 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return "Carl Sampson";
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("treetools.desc");
     }

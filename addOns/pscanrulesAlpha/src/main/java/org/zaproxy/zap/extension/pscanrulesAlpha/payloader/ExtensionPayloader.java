@@ -29,7 +29,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
-import org.zaproxy.zap.extension.pscanrulesAlpha.JSFunctionPassiveScanner;
+import org.zaproxy.zap.extension.pscanrulesAlpha.JsFunctionScanRule;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
 
@@ -58,10 +58,10 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         .getExtension(ExtensionCustomPayloads.class);
         jsFuncCategory =
                 new PayloadCategory(
-                        JSFunctionPassiveScanner.JS_FUNCTION_PAYLOAD_CATEGORY,
-                        JSFunctionPassiveScanner.DEFAULT_FUNCTIONS);
+                        JsFunctionScanRule.JS_FUNCTION_PAYLOAD_CATEGORY,
+                        JsFunctionScanRule.DEFAULT_FUNCTIONS);
         ecp.addPayloadCategory(jsFuncCategory);
-        JSFunctionPassiveScanner.setPayloadProvider(() -> jsFuncCategory.getPayloadsIterator());
+        JsFunctionScanRule.setPayloadProvider(() -> jsFuncCategory.getPayloadsIterator());
     }
 
     @Override
@@ -71,18 +71,13 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        JSFunctionPassiveScanner.setPayloadProvider(null);
+        JsFunctionScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(jsFuncCategory);
     }
 
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

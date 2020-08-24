@@ -1,0 +1,17 @@
+type Query {
+    someAnimal: Animal
+    someBird: Bird
+}
+
+interface Bird {
+    wingspan: Int
+}
+
+interface Animal {
+    speed: Int
+}
+
+type Swallow implements Animal & Bird {
+    wingspan: Int
+    speed: Int
+}

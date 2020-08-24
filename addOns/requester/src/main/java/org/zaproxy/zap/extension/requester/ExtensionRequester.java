@@ -57,6 +57,8 @@ public class ExtensionRequester extends ExtensionAdaptor {
         super.hook(extensionHook);
         extensionHook.addOptionsParamSet(getOptionsParam());
         if (getView() != null) {
+            extensionHook.addOptionsChangedListener(getRequesterPanel());
+
             ExtensionHookView hookView = extensionHook.getHookView();
             hookView.addWorkPanel(getRequesterPanel());
             hookView.addOptionPanel(getOptionsPanel());
@@ -129,7 +131,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
         if (getOptionsParam().isAutoFocus() == true) {
             getRequesterPanel().setTabFocus();
         }
-    };
+    }
 
     @Override
     public boolean canUnload() {
@@ -141,11 +143,6 @@ public class ExtensionRequester extends ExtensionAdaptor {
         if (getView() != null) {
             getRequesterPanel().unload();
         }
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

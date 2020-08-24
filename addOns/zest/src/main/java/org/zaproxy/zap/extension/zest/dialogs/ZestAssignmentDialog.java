@@ -269,7 +269,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
     private void initElementsSelector() {
         String value = this.getStringValue(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR);
         getField(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME)
-                .setEnabled(value == FROM_ELEMENT_SELECTOR_ATTRIBUTE);
+                .setEnabled(FROM_ELEMENT_SELECTOR_ATTRIBUTE.equals(value));
     }
 
     private void addFieldListenerToSetEnabledOnCheckedChanged(
@@ -402,9 +402,9 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
             za.atIndex(index, reverse);
 
             String value = this.getStringValue(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR);
-            if (value == FROM_ELEMENT_SELECTOR_CONTENT) {
+            if (FROM_ELEMENT_SELECTOR_CONTENT.equals(value)) {
                 za.selectContent();
-            } else if (value == FROM_ELEMENT_SELECTOR_ATTRIBUTE) {
+            } else if (FROM_ELEMENT_SELECTOR_ATTRIBUTE.equals(value)) {
                 String attributeName =
                         getStringValue(
                                 FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME);
@@ -526,7 +526,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
             }
 
             String value = this.getStringValue(FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR);
-            if (value == FROM_ELEMENT_SELECTOR_ATTRIBUTE
+            if (FROM_ELEMENT_SELECTOR_ATTRIBUTE.equals(value)
                     && this.isEmptyField(
                             FIELD_FROM_ELEMENT_FILTERED_ELEMENTS_SELECTOR_ATTRIBUTE_NAME)) {
                 return Constant.messages.getString(

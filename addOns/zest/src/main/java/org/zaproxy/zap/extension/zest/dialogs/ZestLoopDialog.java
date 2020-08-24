@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.swing.JFileChooser;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestLoopClientElements;
@@ -150,8 +151,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
                         .getFuzzerDelegate()
                         .getFuzzersForCategory(this.getStringValue(CATEGORY_FUZZ)),
                 "");
-        // TODO replace with a file selector when one is available
-        this.addTextField(FILE_PATH, path);
+        this.addFileSelectField(FILE_PATH, new File(path), JFileChooser.FILES_ONLY, null);
         this.addFieldListener(
                 CATEGORY_FUZZ,
                 new ActionListener() {

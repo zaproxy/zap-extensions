@@ -27,7 +27,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.openapi.converter.swagger.InvalidUrlException;
 
 public class ImportFromFileDialog extends ImportFromAbstractDialog {
@@ -65,7 +64,7 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
                         JFileChooser filechooser =
                                 new JFileChooser(
                                         Model.getSingleton().getOptionsParam().getUserDirectory());
-                        int state = filechooser.showOpenDialog(View.getSingleton().getMainFrame());
+                        int state = filechooser.showOpenDialog(this);
                         if (state == JFileChooser.APPROVE_OPTION) {
                             try {
                                 getFromField()

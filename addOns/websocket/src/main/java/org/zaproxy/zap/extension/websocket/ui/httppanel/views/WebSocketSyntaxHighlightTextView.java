@@ -72,7 +72,7 @@ public class WebSocketSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTe
                                 View.getSingleton()
                                         .getPopupMenu()
                                         .show(WebSocketSyntaxHighlightTextView.this, x, y);
-                            };
+                            }
                         });
     }
 

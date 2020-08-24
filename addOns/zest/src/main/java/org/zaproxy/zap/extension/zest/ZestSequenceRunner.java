@@ -131,7 +131,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
         if (scrMsg != null) {
             String reqBodyFromScript = scrMsg.getRequestBody().toString();
-            if (reqBodyFromScript == null || reqBodyFromScript == "") {
+            if (reqBodyFromScript == null || reqBodyFromScript.isEmpty()) {
                 return;
             }
             String[] nameValuePairs = reqBodyFromScript.split("&");

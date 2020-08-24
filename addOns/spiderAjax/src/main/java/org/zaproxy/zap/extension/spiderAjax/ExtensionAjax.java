@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.net.URI;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -194,19 +192,14 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return popupMenuSpiderSite;
     }
 
-    @SuppressWarnings("deprecation")
     private ZapMenuItem getMenuItemCustomScan() {
         if (menuItemCustomScan == null) {
             menuItemCustomScan =
                     new ZapMenuItem(
                             "spiderajax.menu.tools.label",
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_X,
-                                    // TODO Use getMenuShortcutKeyMaskEx() (and remove warn
-                                    // suppression) when targeting Java 10+
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                            | KeyEvent.ALT_DOWN_MASK,
-                                    false));
+                            getView()
+                                    .getMenuShortcutKeyStroke(
+                                            KeyEvent.VK_X, KeyEvent.ALT_DOWN_MASK, false));
             menuItemCustomScan.setEnabled(Control.getSingleton().getMode() != Mode.safe);
 
             menuItemCustomScan.addActionListener(
@@ -394,12 +387,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
     /** @return the exclude list */
     public List<String> getExcludeList() {
         return excludeList;
-    }
-
-    /** @return the author */
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     /** @return description of the plugin */

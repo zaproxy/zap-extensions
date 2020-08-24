@@ -1,0 +1,11 @@
+type Query {
+    name: String!
+    phone: Int!
+    child: Child!
+}
+
+type Child {
+    id: ID!
+    name: String!
+    school: String!
+}

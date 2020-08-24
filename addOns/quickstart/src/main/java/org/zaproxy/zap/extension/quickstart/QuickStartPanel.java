@@ -25,7 +25,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -37,7 +36,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import org.jdesktop.swingx.JXPanel;
@@ -78,23 +76,14 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
     public QuickStartPanel(ExtensionQuickStart extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
-
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setShowByDefault(true);
         this.setIcon(
                 new ImageIcon(
                         ZAP.class.getResource("/resource/icon/16/147.png"))); // 'lightning' icon
-        // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when
-        // targeting Java 10+
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        KeyEvent.VK_Q,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                this.extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_Q, KeyEvent.SHIFT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
         this.setLayout(new BorderLayout());
 
@@ -355,7 +344,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         if (this.newsPanel != null) {
             this.showNews(newsItem);
         }
-    };
+    }
 
     class CloseButton extends JButton {
         private static final long serialVersionUID = 1L;

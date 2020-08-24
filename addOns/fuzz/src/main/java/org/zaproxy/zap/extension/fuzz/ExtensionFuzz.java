@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -42,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.owasp.jbrofuzz.core.Database;
 import org.owasp.jbrofuzz.version.JBroFuzzPrefs;
@@ -146,6 +144,9 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     private ScriptType scriptTypeGenerator;
     private ScriptType scriptTypeProcessor;
     private ZapMenuItem menuItemCustomScan = null;
+
+    private MessagePanelManager clientMessagePanelManager;
+    private MessagePanelManager serverMessagePanelManager;
 
     public ExtensionFuzz() {
         super(NAME);
@@ -312,6 +313,9 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     ScriptStringPayloadProcessorAdapter.class,
                     new ScriptStringPayloadProcessorAdapterUIHandler(extensionScript));
         }
+
+        clientMessagePanelManager = new MessagePanelManager();
+        serverMessagePanelManager = new MessagePanelManager();
     }
 
     @Override
@@ -368,11 +372,6 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getUIName() {
         return getMessages().getString("fuzz.name");
     }
@@ -410,19 +409,32 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         fuzzersController.stopAllScans();
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Gets the panel manager for client messages.
+     *
+     * @return the panel manager for client messages, {@code null} if there's no view.
+     */
+    public MessagePanelManager getClientMessagePanelManager() {
+        return clientMessagePanelManager;
+    }
+
+    /**
+     * Gets the panel manager for server messages.
+     *
+     * @return the panel manager for server messages, {@code null} if there's no view.
+     */
+    public MessagePanelManager getServerMessagePanelManager() {
+        return serverMessagePanelManager;
+    }
+
     private ZapMenuItem getMenuItemCustomScan() {
         if (menuItemCustomScan == null) {
             menuItemCustomScan =
                     new ZapMenuItem(
                             "fuzz.menu.tools.fuzz",
-                            // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke
-                            // with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_F,
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                            | KeyEvent.ALT_DOWN_MASK,
-                                    false));
+                            getView()
+                                    .getMenuShortcutKeyStroke(
+                                            KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false));
 
             menuItemCustomScan.addActionListener(
                     new java.awt.event.ActionListener() {

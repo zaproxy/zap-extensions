@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.9.0.
 - Tweak help content.
+- Show script engine when editing the script.
+- Fixed case where script print statements could deadlock ZAP.
 
 ## [26] - 2020-01-17
 ### Added

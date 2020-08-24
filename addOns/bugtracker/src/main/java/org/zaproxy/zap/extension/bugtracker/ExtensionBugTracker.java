@@ -94,6 +94,14 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
+
+        if (hasView()) {
+            bugTrackers.forEach(
+                    bugTracker ->
+                            View.getSingleton()
+                                    .getOptionsDialog("")
+                                    .removeParamPanel(bugTracker.getOptionsPanel()));
+        }
     }
 
     private PopupSemiAutoIssue getPopupMsgRaiseSemiAuto() {
@@ -105,11 +113,6 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
         popupMsgRaiseSemiAuto.setExtension(
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class));
         return popupMsgRaiseSemiAuto;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

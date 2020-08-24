@@ -27,7 +27,7 @@ spotless {
     javaWith3rdPartyFormatted(project, listOf(
         "**/DBMSHelper.java",
         "**/SQLiBoundary.java",
-        "**/SQLInjectionPlugin.java",
+        "**/SQLInjectionScanRule.java",
         "**/SQLiPayloadManager.java",
         "**/SQLiTest.java",
         "**/SQLiTestDetails.java",

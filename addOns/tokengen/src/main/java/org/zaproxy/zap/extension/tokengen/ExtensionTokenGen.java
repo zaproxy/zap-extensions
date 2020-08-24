@@ -56,7 +56,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     private GenerateTokensDialog genTokensDialog = null;
     private AnalyseTokensDialog analyseTokensDialog = null;
 
-    private TokenParam tokenParam = null;;
+    private TokenParam tokenParam = null;
     private TokenOptionsPanel tokenOptionsPanel;
 
     private List<TokenGenerator> generators = Collections.emptyList();
@@ -362,11 +362,6 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
         for (TokenGenerator gen : generators) {
             gen.setPaused(false);
         }
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

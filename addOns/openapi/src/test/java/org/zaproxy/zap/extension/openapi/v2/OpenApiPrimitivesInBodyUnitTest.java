@@ -20,13 +20,13 @@
 package org.zaproxy.zap.extension.openapi.v2;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;

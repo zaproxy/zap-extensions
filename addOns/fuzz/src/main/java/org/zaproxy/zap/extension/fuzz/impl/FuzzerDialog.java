@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -34,6 +35,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.border.EtchedBorder;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessor;
 import org.zaproxy.zap.extension.fuzz.FuzzerOptions;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
@@ -102,10 +105,12 @@ public class FuzzerDialog<
         if (outgoingMessage) {
             fuzzMessagePanel.addComponent(new RequestSplitComponent<>(), new ZapXmlConfiguration());
             HttpPanelManager.getInstance().addRequestPanel(fuzzMessagePanel);
+            withExtensionFuzz(ext -> ext.getClientMessagePanelManager().addPanel(fuzzMessagePanel));
         } else {
             fuzzMessagePanel.addComponent(
                     new ResponseSplitComponent<>(), new ZapXmlConfiguration());
             HttpPanelManager.getInstance().addResponsePanel(fuzzMessagePanel);
+            withExtensionFuzz(ext -> ext.getServerMessagePanelManager().addPanel(fuzzMessagePanel));
         }
         fuzzMessagePanel.setMessage(message, true);
 
@@ -130,14 +135,26 @@ public class FuzzerDialog<
         }
     }
 
+    private static void withExtensionFuzz(Consumer<ExtensionFuzz> consumer) {
+        ExtensionFuzz extFuzz =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
+        if (extFuzz != null) {
+            consumer.accept(extFuzz);
+        }
+    }
+
     @Override
     public void dispose() {
         super.dispose();
 
         if (outgoingMessage) {
             HttpPanelManager.getInstance().removeRequestPanel(fuzzMessagePanel);
+            withExtensionFuzz(
+                    ext -> ext.getClientMessagePanelManager().removePanel(fuzzMessagePanel));
         } else {
             HttpPanelManager.getInstance().removeResponsePanel(fuzzMessagePanel);
+            withExtensionFuzz(
+                    ext -> ext.getServerMessagePanelManager().removePanel(fuzzMessagePanel));
         }
     }
 

@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.zest;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.Box;
@@ -29,7 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -57,22 +55,13 @@ public class ZestResultsPanel extends AbstractPanel {
     public ZestResultsPanel(ExtensionZest extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
-
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("zest.results.panel.title"));
         this.setIcon(ExtensionZest.ZEST_ICON);
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        KeyEvent.VK_Z,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                this.extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_Z, KeyEvent.SHIFT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("zest.results.panel.mnemonic"));
 
         this.add(getZestPanel(), getZestPanel().getName());

@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.custompayloads;
 
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -117,7 +116,7 @@ public class CustomPayloadsMultipleOptionsTablePanel
     private boolean showDialog(CustomPayload payload) {
         CustomPayloadDialog dialog =
                 new CustomPayloadDialog(
-                        (Window) View.getSingleton().getOptionsDialog(null),
+                        View.getSingleton().getOptionsDialog(null),
                         "custompayloads.options.dialog.title",
                         payload);
         dialog.pack();

@@ -4,11 +4,27 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- ELMAH Information Leak ensure that test requests are appropriately rebuilt for this scan rule (Issue 6129).
+
+## [30] - 2020-07-23
+### Changed
+- Anti-CSRF Tokens Check address potential false positives by only analyzing HTML responses (Issue 6089).
+
+## [29] - 2020-07-22
+### Changed
+- Maintenance Changes.
+- Backup File Disclosure: don't raise issues for non-success codes unless at LOW threshold (Issue 6059).
+- ELMAH Information Leak: don't raise issues unless content looks good unless at LOW threshold (Issue 6076).
+- Session Fixation scan rule fix potential false positive on session cookie HttpOnly, and Secure flags (Issue 6082).
+
+## [28] - 2020-06-01
 ### Added
 - Add info and repo URLs.
 - Add links to the code in the help.
 
 ### Changed
+- Update minimum ZAP version to 2.9.0.
 - Backup File Disclosure scan rule - updated CWE to 530, added reference links to alerts, made sure WASC and CWE identifiers are included in alerts.
 - Maintenance changes.
 - Updated owasp.org references (Issue 5962).
@@ -204,6 +220,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[30]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v30
+[29]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v29
+[28]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v25

@@ -1,5 +1,3 @@
-<h1>FuzzDB Attack Patterns</h1>
+# Attack
 
-**WAF Evasion** <br>
-* <a href=../master/docs/attack-docs/waf-bypass/regexp-security-cheatsheet.md>Regexp security Cheatsheet</a> 
-* Source: https://github.com/attackercan/regexp-security-cheatsheet/blob/master/README.md 
+Please check the ZAP Marketplace for the "FuzzDB Offensive" add-on which contains Attack and Web Backdoor files. Those files are sometimes flagged/removed by anti-virus packages and are therefore packaged separately.

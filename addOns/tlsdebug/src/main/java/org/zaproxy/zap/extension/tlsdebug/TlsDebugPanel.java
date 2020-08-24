@@ -23,7 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -39,7 +38,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 import org.apache.commons.httpclient.URI;
@@ -73,21 +71,12 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
     public TlsDebugPanel(ExtensionTlsDebug extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
-
-    @SuppressWarnings("deprecation")
-    private void initialize() {
 
         this.setIcon(TLSDEBUG_ICON);
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        KeyEvent.VK_D,
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.ALT_DOWN_MASK,
-                        false));
+                this.extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_D, KeyEvent.ALT_DOWN_MASK, false));
         this.setLayout(new BorderLayout());
 
         JPanel panelContent = new JPanel(new GridBagLayout());

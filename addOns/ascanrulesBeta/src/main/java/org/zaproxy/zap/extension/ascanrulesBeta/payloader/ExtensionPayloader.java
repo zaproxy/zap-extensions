@@ -27,7 +27,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.zap.extension.ascanrulesBeta.TestUserAgent;
+import org.zaproxy.zap.extension.ascanrulesBeta.UserAgentScanRule;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
 
@@ -58,9 +58,10 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         .getExtension(ExtensionCustomPayloads.class);
         uaCategory =
                 new PayloadCategory(
-                        TestUserAgent.USER_AGENT_PAYLOAD_CATEGORY, TestUserAgent.USER_AGENTS);
+                        UserAgentScanRule.USER_AGENT_PAYLOAD_CATEGORY,
+                        UserAgentScanRule.USER_AGENTS);
         ecp.addPayloadCategory(uaCategory);
-        TestUserAgent.setPayloadProvider(() -> uaCategory.getPayloadsIterator());
+        UserAgentScanRule.setPayloadProvider(() -> uaCategory.getPayloadsIterator());
     }
 
     @Override
@@ -70,18 +71,13 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        TestUserAgent.setPayloadProvider(null);
+        UserAgentScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(uaCategory);
     }
 
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

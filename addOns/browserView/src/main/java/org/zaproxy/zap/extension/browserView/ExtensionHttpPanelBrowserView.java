@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.browserView;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
@@ -191,10 +190,5 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
         public Object getOptions() {
             return null;
         }
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 }

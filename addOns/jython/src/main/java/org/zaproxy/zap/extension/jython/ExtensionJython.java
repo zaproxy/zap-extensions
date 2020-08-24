@@ -22,11 +22,7 @@ package org.zaproxy.zap.extension.jython;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -40,8 +36,6 @@ public class ExtensionJython extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionJython";
     public static final ImageIcon PYTHON_ICON;
-
-    private static final Logger LOGGER = Logger.getLogger(ExtensionJython.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
@@ -60,7 +54,6 @@ public class ExtensionJython extends ExtensionAdaptor {
 
     private ExtensionScript extScript = null;
     private JythonOptionsParam jythonOptionsParam;
-    private CountDownLatch engineLoaderCDL;
 
     public ExtensionJython() {
         super(NAME);
@@ -73,60 +66,13 @@ public class ExtensionJython extends ExtensionAdaptor {
 
         this.jythonOptionsParam = new JythonOptionsParam();
 
-        ScriptEngineManager mgr = new ScriptEngineManager();
-
-        ScriptEngine se = mgr.getEngineByExtension("py");
-
-        if (se == null) {
-            if (getView() == null) {
-                engineLoaderCDL = new CountDownLatch(1);
-            }
-
-            Thread engineLoaderThread =
-                    new Thread(
-                            new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    try {
-                                        LOGGER.info("Loading Jython engine...");
-                                        getExtScript()
-                                                .registerScriptEngineWrapper(
-                                                        new JythonEngineWrapper(
-                                                                jythonOptionsParam,
-                                                                new PyScriptEngineFactory()));
-                                        LOGGER.info("Jython engine loaded.");
-                                    } finally {
-                                        if (engineLoaderCDL != null) {
-                                            engineLoaderCDL.countDown();
-                                        }
-                                    }
-                                }
-                            });
-            engineLoaderThread.setName("ZAP-Jython-EngineLoader");
-            engineLoaderThread.start();
-        }
+        getExtScript()
+                .registerScriptEngineWrapper(
+                        new JythonEngineWrapper(jythonOptionsParam, new PyScriptEngineFactory()));
 
         extensionHook.addOptionsParamSet(this.jythonOptionsParam);
         if (null != super.getView()) {
             extensionHook.getHookView().addOptionPanel(new JythonOptionsPanel());
-        }
-    }
-
-    @Override
-    public void postInit() {
-        super.postInit();
-
-        if (engineLoaderCDL != null) {
-            try {
-                LOGGER.info("Waiting for Jython engine to load...");
-                engineLoaderCDL.await();
-            } catch (InterruptedException e) {
-                LOGGER.warn("Interrupted while waiting for the Jython engine to load.");
-                Thread.currentThread().interrupt();
-            } finally {
-                engineLoaderCDL = null;
-            }
         }
     }
 
@@ -144,11 +90,6 @@ public class ExtensionJython extends ExtensionAdaptor {
                                     .getExtension(ExtensionScript.NAME);
         }
         return extScript;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

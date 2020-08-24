@@ -19,20 +19,20 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hamcrest.Matcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link UriBuilder}. */
 public class UriBuilderUnitTest {
@@ -198,19 +198,16 @@ public class UriBuilderUnitTest {
     public void shouldFailToParseWithEmptyScheme() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        String value = "://";
-                        // When
-                        UriBuilder.parse(value);
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method,
-                                e.getMessage(),
-                                containsString("Expected non-empty scheme"));
-                    }
+                    // Given
+                    String value = "://";
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(
+                                    IllegalArgumentException.class, () -> UriBuilder.parse(value));
+                    assertThat(
+                            "Parsed with: " + method,
+                            e.getMessage(),
+                            containsString("Expected non-empty scheme"));
                 });
     }
 
@@ -218,19 +215,16 @@ public class UriBuilderUnitTest {
     public void shouldFailToParseWithMalformedScheme() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        String value = "notscheme//";
-                        // When
-                        UriBuilder.parse(value);
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method,
-                                e.getMessage(),
-                                containsString("Expected no scheme"));
-                    }
+                    // Given
+                    String value = "notscheme//";
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(
+                                    IllegalArgumentException.class, () -> UriBuilder.parse(value));
+                    assertThat(
+                            "Parsed with: " + method,
+                            e.getMessage(),
+                            containsString("Expected no scheme"));
                 });
     }
 
@@ -292,16 +286,12 @@ public class UriBuilderUnitTest {
     public void shouldThrowNullPointerIfMergingToNull() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        UriBuilder uriBuilder = method.parse("");
-                        // When
-                        uriBuilder.merge(null);
-                        fail("Expected NullPointerException");
-                    } catch (NullPointerException e) {
-                        // Then
-                        assertThat("Parsed with: " + method, e, is(not(nullValue())));
-                    }
+                    // Given
+                    UriBuilder uriBuilder = method.parse("");
+                    // When / Then
+                    NullPointerException e =
+                            assertThrows(NullPointerException.class, () -> uriBuilder.merge(null));
+                    assertThat("Parsed with: " + method, e, is(not(nullValue())));
                 });
     }
 
@@ -776,17 +766,12 @@ public class UriBuilderUnitTest {
     public void shouldFailToBuildWithNoScheme() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        UriBuilder uriBuilder = method.parse("//example.com/");
-                        // When
-                        uriBuilder.build();
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method, e.getMessage(), containsString("scheme"));
-                    }
+                    // Given
+                    UriBuilder uriBuilder = method.parse("//example.com/");
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(IllegalArgumentException.class, () -> uriBuilder.build());
+                    assertThat("Parsed with: " + method, e.getMessage(), containsString("scheme"));
                 });
     }
 
@@ -794,19 +779,13 @@ public class UriBuilderUnitTest {
     public void shouldFailToBuildWithNoAuthority() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        UriBuilder uriBuilder = method.parse("http://");
-                        // When
-                        uriBuilder.build();
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method,
-                                e.getMessage(),
-                                containsString("authority"));
-                    }
+                    // Given
+                    UriBuilder uriBuilder = method.parse("http://");
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(IllegalArgumentException.class, () -> uriBuilder.build());
+                    assertThat(
+                            "Parsed with: " + method, e.getMessage(), containsString("authority"));
                 });
     }
 
@@ -814,19 +793,13 @@ public class UriBuilderUnitTest {
     public void shouldFailToBuildWithMalformedUri() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        UriBuilder uriBuilder = method.parse("http://x%0");
-                        // When
-                        uriBuilder.build();
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method,
-                                e.getMessage(),
-                                containsString("normalise"));
-                    }
+                    // Given
+                    UriBuilder uriBuilder = method.parse("http://x%0");
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(IllegalArgumentException.class, () -> uriBuilder.build());
+                    assertThat(
+                            "Parsed with: " + method, e.getMessage(), containsString("normalise"));
                 });
     }
 

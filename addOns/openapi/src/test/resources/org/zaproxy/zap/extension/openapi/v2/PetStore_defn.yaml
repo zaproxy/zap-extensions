@@ -667,7 +667,6 @@ definitions:
         $ref: "#/definitions/Category"
       name:
         type: "string"
-        example: "doggie"
       photoUrls:
         type: "array"
         xml:

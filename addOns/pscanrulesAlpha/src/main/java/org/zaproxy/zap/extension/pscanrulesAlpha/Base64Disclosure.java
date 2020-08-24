@@ -59,7 +59,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
         // base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\-_]{30,}={0,2}"));  //used in JWT - file
         // and URL safe variant of Base64 alphabet
         base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\+\\\\/\\-_]{30,}={0,2}"));
-    };
+    }
 
     /**
      * patterns used to identify strings withut each of the given character sets which is used to
@@ -79,22 +79,11 @@ public class Base64Disclosure extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.base64disclosure.";
 
-    /**
-     * gets the name of the scanner
-     *
-     * @return
-     */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /**
-     * scans the HTTP request sent (in fact, does nothing)
-     *
-     * @param msg
-     * @param id
-     */
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
         // TODO: implement checks for base64 encoding in the request?
@@ -394,60 +383,28 @@ public class Base64Disclosure extends PluginPassiveScanner {
         }
     }
 
-    /**
-     * sets the parent
-     *
-     * @param parent
-     */
     @Override
     public void setParent(PassiveScanThread parent) {
         // Nothing to do.
     }
 
-    /**
-     * get the id of the scanner
-     *
-     * @return
-     */
     @Override
     public int getPluginId() {
         return 10094;
     }
 
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
     private String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    /**
-     * get the solution for the alert
-     *
-     * @return
-     */
     private String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    /**
-     * gets references for the alert
-     *
-     * @return
-     */
     private String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    /**
-     * gets extra information associated with the alert
-     *
-     * @param msg
-     * @param arg0
-     * @return
-     */
     private String getExtraInfo(HttpMessage msg, String evidence, byte[] decodeddata) {
         return Constant.messages.getString(
                 MESSAGE_PREFIX + "extrainfo", evidence, new String(decodeddata));

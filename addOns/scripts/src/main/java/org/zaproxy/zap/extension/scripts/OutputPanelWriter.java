@@ -32,6 +32,20 @@ public class OutputPanelWriter extends Writer {
     }
 
     @Override
+    public void write(int c) throws IOException {
+        if (enabled) {
+            outputPanel.append(String.valueOf((char) c));
+        }
+    }
+
+    @Override
+    public void write(String str, int off, int len) throws IOException {
+        if (enabled) {
+            outputPanel.append(str.substring(off, len));
+        }
+    }
+
+    @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
         if (enabled) {
             outputPanel.append(new String(cbuf, off, len));

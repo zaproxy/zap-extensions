@@ -35,6 +35,7 @@ public class JrubyScriptWrapper extends ScriptWrapper {
         this.original = script;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getInterface(Class<T> class1) throws ScriptException, IOException {
         // JRuby is a pain and doesnt seem to work like other JSR223 languages
