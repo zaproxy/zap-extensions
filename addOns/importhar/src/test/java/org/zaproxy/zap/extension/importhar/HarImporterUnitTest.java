@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import edu.umass.cs.benchlab.har.HarEntries;
 import edu.umass.cs.benchlab.har.HarLog;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.utils.HarUtils;
 
