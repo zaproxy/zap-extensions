@@ -451,7 +451,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
         }
 
         defaultCategoryComboBox.setSelectedItem(category);
-        if (!category.equals(defaultCategoryComboBox.getSelectedItem())) {
+        if (category != null && !category.equals(defaultCategoryComboBox.getSelectedItem())) {
             defaultCategoryComboBox.setSelectedIndex(-1);
         }
 
@@ -479,7 +479,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
         FuzzOptions options = ((OptionsParam) optionParams).getParamSet(FuzzOptions.class);
 
         String selectedCategory = (String) defaultCategoryComboBox.getSelectedItem();
-        if (selectedCategory.equals(customCategoryName)) {
+        if (customCategoryName.equals(selectedCategory)) {
             selectedCategory = null;
         }
         options.setCustomDefaultCategory(selectedCategory == null);

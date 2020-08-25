@@ -404,8 +404,9 @@ public class FuzzerPayloadGeneratorUIHandler
             fileFuzzersCheckBoxTree.collapseAll();
 
             TreePath treePath = null;
-            if (!extensionFuzz.getFuzzOptions().isCustomDefaultCategory()) {
-                String defaultCategory = extensionFuzz.getFuzzOptions().getDefaultCategoryName();
+            String defaultCategory = extensionFuzz.getFuzzOptions().getDefaultCategoryName();
+            if (defaultCategory != null
+                    && !extensionFuzz.getFuzzOptions().isCustomDefaultCategory()) {
                 root = (DefaultMutableTreeNode) fileFuzzersCheckBoxTree.getModel().getRoot();
                 @SuppressWarnings("unchecked")
                 Enumeration<TreeNode> nodes = root.breadthFirstEnumeration();
