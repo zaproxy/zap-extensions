@@ -1,4 +1,4 @@
-version = "0.1.0"
+version = "0.2.0"
 description = "Inspect and attack GraphQL endpoints."
 
 zapAddOn {
@@ -7,6 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/graphql-support/")
     }
 
     apiClientGen {
