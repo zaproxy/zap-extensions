@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.graphql.GraphQlGenerator.RequestType;
 
 public class GraphQlParser {
 
@@ -48,11 +47,9 @@ public class GraphQlParser {
     private static AtomicInteger threadId = new AtomicInteger();
 
     private final Requestor requestor;
-    private final GraphQlParam param =
-            Control.getSingleton()
-                    .getExtensionLoader()
-                    .getExtension(ExtensionGraphQl.class)
-                    .getParam();
+    private final ExtensionGraphQl extensionGraphQl =
+            Control.getSingleton().getExtensionLoader().getExtension(ExtensionGraphQl.class);
+    private final GraphQlParam param = extensionGraphQl.getParam();
 
     public GraphQlParser(String endpointUrlStr, int initiator) throws URIException {
         this(UrlBuilder.build(endpointUrlStr), initiator);
@@ -91,8 +88,8 @@ public class GraphQlParser {
 
     public void importUrl(URI schemaUrl) throws IOException {
         HttpMessage importMessage = new HttpMessage(schemaUrl);
+        requestor.send(importMessage);
         if (MessageValidator.validate(importMessage) == MessageValidator.Result.VALID_SCHEMA) {
-            requestor.send(importMessage);
             parse(importMessage.getResponseBody().toString());
         } else {
             throw new IOException("Invalid Schema at " + schemaUrl);
@@ -113,38 +110,22 @@ public class GraphQlParser {
     }
 
     public void parse(String schema) {
-        Thread t =
-                new Thread(THREAD_PREFIX + threadId.incrementAndGet()) {
+        ParserThread t =
+                new ParserThread(THREAD_PREFIX + threadId.incrementAndGet()) {
                     @Override
                     public void run() {
                         try {
                             GraphQlGenerator generator =
                                     new GraphQlGenerator(schema, requestor, param);
                             generator.checkServiceMethods();
-                            switch (param.getQuerySplitType()) {
-                                case DO_NOT_SPLIT:
-                                    generator.sendFull(RequestType.QUERY);
-                                    generator.sendFull(RequestType.MUTATION);
-                                    generator.sendFull(RequestType.SUBSCRIPTION);
-                                    break;
-                                case ROOT_FIELD:
-                                    generator.sendByField(RequestType.QUERY);
-                                    generator.sendByField(RequestType.MUTATION);
-                                    generator.sendByField(RequestType.SUBSCRIPTION);
-                                    break;
-                                case LEAF:
-                                default:
-                                    generator.sendByLeaf(RequestType.QUERY);
-                                    generator.sendByLeaf(RequestType.MUTATION);
-                                    generator.sendByLeaf(RequestType.SUBSCRIPTION);
-                                    break;
-                            }
+                            generator.generateAndSend();
                         } catch (Exception e) {
                             LOG.error(e.getMessage());
                         }
                     }
                 };
-        t.start();
+        extensionGraphQl.addParserThread(t);
+        t.startParser();
     }
 
     public void addRequesterListener(RequesterListener listener) {

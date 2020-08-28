@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="GraphQL Support" image="graphql-icon" target="graphql"/>
+			<tocitem text="GraphQL Support" image="graphql-icon" target="graphql">
+				<tocitem text="Options" image="graphql-icon" target="graphql.options"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

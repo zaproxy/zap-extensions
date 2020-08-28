@@ -21,16 +21,21 @@ package org.zaproxy.addon.graphql;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
@@ -38,7 +43,8 @@ import org.zaproxy.zap.spider.filters.ParseFilter;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineListener {
+public class ExtensionGraphQl extends ExtensionAdaptor
+        implements CommandLineListener, SessionChangedListener {
 
     public static final String NAME = "ExtensionGraphQl";
     private static final Logger LOG = Logger.getLogger(ExtensionGraphQl.class);
@@ -49,6 +55,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
     private ParseFilter graphQlParseFilter;
     private GraphQlOptionsPanel graphQlOptionsPanel;
     private GraphQlParam param;
+    private List<ParserThread> parserThreads = Collections.synchronizedList(new ArrayList<>());
 
     private static final int ARG_IMPORT_FILE_IDX = 0;
     private static final int ARG_IMPORT_URL_IDX = 1;
@@ -85,6 +92,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
         extensionHook.addApiImplementor(new GraphQlApi());
         extensionHook.addOptionsParamSet(getParam());
         extensionHook.addCommandLine(getCommandLineArguments());
+        extensionHook.addSessionListener(this);
     }
 
     @Override
@@ -140,6 +148,36 @@ public class ExtensionGraphQl extends ExtensionAdaptor implements CommandLineLis
         }
         return param;
     }
+
+    protected void addParserThread(ParserThread thread) {
+        parserThreads.add(thread);
+    }
+
+    private void stopParserThreads() {
+        synchronized (parserThreads) {
+            for (ParserThread thread : parserThreads) {
+                if (thread.isRunning()) {
+                    LOG.debug("Stopping Thread " + thread.getName());
+                    thread.stopParser();
+                }
+            }
+        }
+        parserThreads.clear();
+    }
+
+    @Override
+    public void sessionAboutToChange(Session arg0) {
+        stopParserThreads();
+    }
+
+    @Override
+    public void sessionChanged(Session arg0) {}
+
+    @Override
+    public void sessionModeChanged(Mode mode) {}
+
+    @Override
+    public void sessionScopeChanged(Session arg0) {}
 
     @Override
     public boolean canUnload() {

@@ -8,7 +8,7 @@ GraphQL Support
 </HEAD>
 <BODY>
 <H1>GraphQL Support</H1>
-This add-on allows you to import GraphQL definitions.
+This add-on allows you to import GraphQL definitions and send queries generated from them.
 <br><br>
 The add-on will automatically detect any GraphQL definitions and spider them as long as they are in scope. <br>
 The spider is supported on ZAP 2.10.0 and later.
@@ -24,6 +24,10 @@ The spider is supported on ZAP 2.10.0 and later.
 The Endpoint URL has the following format:<br>
 <code>scheme://authority/path</code><br>
 with all URI components mandatory when importing from file.
+
+<h3>Options Panel</h3>
+A GraphQL Options Panel is added under Tools -> Options -> GraphQL.
+These options allow you to control the output of the Query Generator.
 
 <H2>API</H2>
 The following operations are added to the API:

@@ -58,13 +58,19 @@ public class Requestor {
                 HttpRequestConfig.builder().setRedirectionValidator(new MessageHandler()).build();
     }
 
-    private HttpMessage sendQueryByGet(String query) {
+    private HttpMessage sendQueryByGet(String query, String variables) {
         try {
-            URI url =
-                    UrlBuilder.build(
-                            endpointUrl
-                                    + "?query="
-                                    + URLEncoder.encode(query, StandardCharsets.UTF_8.toString()));
+            String updatedEndpointUrl =
+                    endpointUrl
+                            + "?query="
+                            + URLEncoder.encode(query, StandardCharsets.UTF_8.toString());
+            if (!variables.isEmpty()) {
+                updatedEndpointUrl +=
+                        "?variables="
+                                + URLEncoder.encode(variables, StandardCharsets.UTF_8.toString());
+            }
+
+            URI url = UrlBuilder.build(updatedEndpointUrl);
             HttpMessage message = new HttpMessage(url);
             send(message);
             return message;
@@ -74,11 +80,18 @@ public class Requestor {
         return null;
     }
 
-    private HttpMessage sendQueryByGraphQlPost(String query) {
+    private HttpMessage sendQueryByGraphQlPost(String query, String variables) {
         try {
+            String updatedEndpointUrl = endpointUrl.toString();
+            if (!variables.isEmpty()) {
+                updatedEndpointUrl +=
+                        "?variables="
+                                + URLEncoder.encode(variables, StandardCharsets.UTF_8.toString());
+            }
+            URI url = UrlBuilder.build(updatedEndpointUrl);
             HttpRequestBody msgBody = new HttpRequestBody(query);
             HttpRequestHeader msgHeader =
-                    new HttpRequestHeader(HttpRequestHeader.POST, endpointUrl, HttpHeader.HTTP11);
+                    new HttpRequestHeader(HttpRequestHeader.POST, url, HttpHeader.HTTP11);
             msgHeader.setHeader("Accept", HttpHeader.JSON_CONTENT_TYPE);
             msgHeader.setHeader(HttpHeader.CONTENT_TYPE, GRAPHQL_CONTENT_TYPE);
             msgHeader.setContentLength(msgBody.length());
@@ -92,10 +105,13 @@ public class Requestor {
         return null;
     }
 
-    private HttpMessage sendQueryByJsonPost(String query) {
+    private HttpMessage sendQueryByJsonPost(String query, String variables) {
         try {
             JSONObject msgBodyJson = new JSONObject();
             msgBodyJson.put("query", query);
+            if (!variables.isEmpty()) {
+                msgBodyJson.put("variables", variables);
+            }
             HttpRequestBody msgBody = new HttpRequestBody(msgBodyJson.toString());
 
             HttpRequestHeader msgHeader =
@@ -114,14 +130,19 @@ public class Requestor {
     }
 
     public HttpMessage sendQuery(String query, GraphQlParam.RequestMethodOption method) {
+        return sendQuery(query, "", method);
+    }
+
+    public HttpMessage sendQuery(
+            String query, String variables, GraphQlParam.RequestMethodOption method) {
         switch (method) {
             case GET:
-                return sendQueryByGet(query);
+                return sendQueryByGet(query, variables);
             case POST_GRAPHQL:
-                return sendQueryByGraphQlPost(query);
+                return sendQueryByGraphQlPost(query, variables);
             case POST_JSON:
             default:
-                return sendQueryByJsonPost(query);
+                return sendQueryByJsonPost(query, variables);
         }
     }
 
