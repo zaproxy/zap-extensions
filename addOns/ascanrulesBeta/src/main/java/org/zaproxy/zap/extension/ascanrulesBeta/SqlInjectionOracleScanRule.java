@@ -58,6 +58,8 @@ import org.zaproxy.zap.model.TechSet;
  */
 public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
 
+    private int expectedDelayInMs = 5000;
+
     private boolean doUnionBased = false; // TODO: use in Union based, when we implement it
     private boolean doTimeBased = false;
 
@@ -227,7 +229,6 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
             HttpMessage msgTimeBaseline = getNewMsg();
-            long originalTimeStarted = System.currentTimeMillis();
             try {
                 sendAndReceive(msgTimeBaseline, false); // do not follow redirects
             } catch (java.net.SocketTimeoutException e) {
@@ -241,7 +242,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                                     + msgTimeBaseline.getRequestHeader().getURI().getURI()
                                     + "]");
             }
-            long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
+            long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
             // end of timing baseline check
 
             int countUnionBasedRequests = 0;
@@ -271,7 +272,6 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                                 "<<<<ORIGINALVALUE>>>>", paramValue);
                 setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
                 // send it.
-                long modifiedTimeStarted = System.currentTimeMillis();
                 try {
                     sendAndReceive(msgAttack, false); // do not follow redirects
                     countTimeBasedRequests++;
@@ -288,7 +288,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                                         + paramName
                                         + "]");
                 }
-                long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
+                long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
 
                 if (this.debugEnabled)
                     log.debug(
@@ -304,8 +304,22 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                                     + originalTimeUsed
                                     + "ms");
 
-                if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
-                    // takes more than 5 extra seconds => likely time based SQL injection. Raise it
+                if (modifiedTimeUsed >= (originalTimeUsed + expectedDelayInMs)) {
+                    // takes more than 5 extra seconds => likely time based SQL injection.
+
+                    // But first double check
+                    HttpMessage msgc = getNewMsg();
+                    try {
+                        sendAndReceive(msgc, false); // do not follow redirects
+                    } catch (Exception e) {
+                        // Ignore all exceptions
+                    }
+                    long checkTimeUsed = msgc.getTimeElapsedMillis();
+                    if (checkTimeUsed >= (originalTimeUsed + this.expectedDelayInMs - 200)) {
+                        // Looks like the server is overloaded, very unlikely this is a real issue
+                        continue;
+                    }
+
                     String extraInfo =
                             Constant.messages.getString(
                                     "ascanbeta.sqlinjection.alert.timebased.extrainfo",
@@ -352,6 +366,10 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
             log.error(
                     "An error occurred checking a url for Oracle SQL Injection vulnerabilities", e);
         }
+    }
+
+    public void setExpectedDelayInMs(int delay) {
+        expectedDelayInMs = delay;
     }
 
     @Override

@@ -68,7 +68,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
     private int doTimeMaxRequests = 0;
 
     // note this is in milliseconds
-    private int sleep = 5000;
+    private int sleepInMs = 15000;
 
     /** Hypersonic one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
@@ -256,14 +256,15 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
         }
         // Read the sleep value from the configs - note this is in milliseconds
         try {
-            this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 5) * 1000;
+            this.sleepInMs =
+                    this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15) * 1000;
         } catch (ConversionException e) {
             log.debug(
                     "Invalid value for 'rules.common.sleep': "
                             + this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
         if (this.debugEnabled) {
-            log.debug("Sleep set to " + sleep + " milliseconds");
+            log.debug("Sleep set to " + sleepInMs + " milliseconds");
         }
     }
 
@@ -282,7 +283,6 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
             HttpMessage msgTimeBaseline = getNewMsg();
-            long originalTimeStarted = System.currentTimeMillis();
             try {
                 sendAndReceive(msgTimeBaseline, false); // do not follow redirects
             } catch (java.net.SocketTimeoutException e) {
@@ -307,7 +307,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                                     + " for Base Time Check");
                 return; // No need to keep going
             }
-            long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
+            long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
             // end of timing baseline check
 
             int countUnionBasedRequests = 0;
@@ -335,12 +335,11 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                 String newTimeBasedInjectionValue =
                         SQL_HYPERSONIC_TIME_REPLACEMENTS[timeBasedSQLindex]
                                 .replace(ORIG_VALUE_TOKEN, paramValue)
-                                .replace(SLEEP_TOKEN, Integer.toString(sleep));
+                                .replace(SLEEP_TOKEN, Integer.toString(sleepInMs));
 
                 setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
 
                 // send it.
-                long modifiedTimeStarted = System.currentTimeMillis();
                 try {
                     sendAndReceive(msgAttack, false); // do not follow redirects
                     countTimeBasedRequests++;
@@ -368,7 +367,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                                         + " for time check query");
                     return; // No need to keep going
                 }
-                long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
+                long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
 
                 if (this.debugEnabled)
                     log.debug(
@@ -384,9 +383,24 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                                     + originalTimeUsed
                                     + "ms");
 
-                if (modifiedTimeUsed >= (originalTimeUsed + sleep)) {
-                    // takes more than 5 (by default) extra seconds => likely time based SQL
-                    // injection. Raise it
+                if (modifiedTimeUsed >= (originalTimeUsed + sleepInMs)) {
+                    // takes more than 15 (by default) extra seconds => likely time based SQL
+                    // injection.
+
+                    // But first double check
+
+                    HttpMessage msgc = getNewMsg();
+                    try {
+                        sendAndReceive(msgc, false); // do not follow redirects
+                    } catch (Exception e) {
+                        // Ignore all exceptions
+                    }
+                    long checkTimeUsed = msgc.getTimeElapsedMillis();
+                    if (checkTimeUsed >= (originalTimeUsed + this.sleepInMs - 200)) {
+                        // Looks like the server is overloaded, very unlikely this is a real issue
+                        continue;
+                    }
+
                     String extraInfo =
                             Constant.messages.getString(
                                     "ascanbeta.sqlinjection.alert.timebased.extrainfo",
@@ -434,6 +448,10 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                     "An error occurred checking a url for Hypersonic SQL Injection vulnerabilities",
                     e);
         }
+    }
+
+    public void setSleepInMs(int sleepInMs) {
+        this.sleepInMs = sleepInMs;
     }
 
     @Override

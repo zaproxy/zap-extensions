@@ -59,7 +59,7 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
 
     private int doTimeMaxRequests = 0;
 
-    private int sleep = 5;
+    private int sleepInSeconds = 15;
 
     /** Postgresql one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
@@ -244,14 +244,15 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
         }
         // Read the sleep value from the configs
         try {
-            this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 5);
+            this.sleepInSeconds =
+                    this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15);
         } catch (ConversionException e) {
             log.debug(
                     "Invalid value for 'rules.common.sleep': "
                             + this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
         if (this.debugEnabled) {
-            log.debug("Sleep set to " + sleep + " seconds");
+            log.debug("Sleep set to " + sleepInSeconds + " seconds");
         }
     }
 
@@ -270,7 +271,6 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
             HttpMessage msgTimeBaseline = getNewMsg();
-            long originalTimeStarted = System.currentTimeMillis();
             try {
                 sendAndReceive(msgTimeBaseline, false); // do not follow redirects
             } catch (java.net.SocketTimeoutException e) {
@@ -294,7 +294,7 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                                     + msgTimeBaseline.getRequestHeader().getURI().toString());
                 return; // No need to keep going
             }
-            long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
+            long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
             // end of timing baseline check
 
             int countTimeBasedRequests = 0;
@@ -321,12 +321,11 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                 String newTimeBasedInjectionValue =
                         SQL_POSTGRES_TIME_REPLACEMENTS[timeBasedSQLindex]
                                 .replace(ORIG_VALUE_TOKEN, paramValue)
-                                .replace(SLEEP_TOKEN, Integer.toString(sleep));
+                                .replace(SLEEP_TOKEN, Integer.toString(sleepInSeconds));
 
                 setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
 
                 // send it.
-                long modifiedTimeStarted = System.currentTimeMillis();
                 try {
                     sendAndReceive(msgAttack, false); // do not follow redirects
                     countTimeBasedRequests++;
@@ -353,7 +352,7 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                                         + msgTimeBaseline.getRequestHeader().getURI().toString());
                     return; // No need to keep going
                 }
-                long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
+                long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
 
                 if (this.debugEnabled)
                     log.debug(
@@ -369,9 +368,23 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                                     + originalTimeUsed
                                     + "ms");
 
-                if (modifiedTimeUsed >= (originalTimeUsed + (sleep * 1000))) {
-                    // takes more than 5 (by default) extra seconds => likely time based SQL
-                    // injection. Raise it
+                if (modifiedTimeUsed >= (originalTimeUsed + (sleepInSeconds * 1000))) {
+                    // takes more than 15 (by default) extra seconds => likely time based SQL
+                    // injection
+
+                    // But first double check
+                    HttpMessage msgc = getNewMsg();
+                    try {
+                        sendAndReceive(msgc, false); // do not follow redirects
+                    } catch (Exception e) {
+                        // Ignore all exceptions
+                    }
+                    long checkTimeUsed = msgc.getTimeElapsedMillis();
+                    if (checkTimeUsed >= (originalTimeUsed + (this.sleepInSeconds * 1000) - 200)) {
+                        // Looks like the server is overloaded, very unlikely this is a real issue
+                        continue;
+                    }
+
                     String extraInfo =
                             Constant.messages.getString(
                                     "ascanbeta.sqlinjection.alert.timebased.extrainfo",
@@ -419,6 +432,10 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                     "An error occurred checking a url for POSTGRES SQL Injection vulnerabilities",
                     e);
         }
+    }
+
+    public void setSleepInSeconds(int sleep) {
+        this.sleepInSeconds = sleep;
     }
 
     @Override

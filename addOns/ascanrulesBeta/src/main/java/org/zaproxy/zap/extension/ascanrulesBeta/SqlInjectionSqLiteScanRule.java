@@ -95,6 +95,8 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
     // 1.0         (2000-08-17) - covers lots of unversioned releases.  ||, fcnt(), UNION, UNION
     // ALL, INTERSECT, and EXCEPT, LIKE, GLOB, COPY supported
 
+    private int expectedDelayInMs = 5000;
+
     private boolean doTimeBased = false;
 
     private int doTimeMaxRequests = 0;
@@ -254,28 +256,28 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
             doTimeBased = true;
-            doTimeMaxRequests = 15;
+            doTimeMaxRequests = 0;
             this.maxBlobBytes = 1000000000;
             doUnionBased = false;
             doUnionMaxRequests = 0;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
             doTimeBased = true;
-            doTimeMaxRequests = 35;
+            doTimeMaxRequests = 4;
             this.maxBlobBytes = 1000000000;
             doUnionBased = false;
             doUnionMaxRequests = 0;
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
             doTimeBased = true;
-            doTimeMaxRequests = 50;
+            doTimeMaxRequests = 20;
             this.maxBlobBytes = 1000000000;
             doUnionBased = true;
-            doUnionMaxRequests = 50;
+            doUnionMaxRequests = 10;
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
             doTimeBased = true;
-            doTimeMaxRequests = 500;
+            doTimeMaxRequests = 100;
             this.maxBlobBytes = 1000000000;
             doUnionBased = true;
-            doUnionMaxRequests = 5000;
+            doUnionMaxRequests = 200;
         }
 
         // the allowable difference between a parse delay and an attack delay is controlled by the
@@ -308,7 +310,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
             HttpMessage msgTimeBaseline = getNewMsg();
-            long originalTimeStarted = System.currentTimeMillis();
             try {
                 sendAndReceive(msgTimeBaseline);
             } catch (java.net.SocketTimeoutException e) {
@@ -322,7 +323,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                     + msgTimeBaseline.getRequestHeader().getURI().getURI()
                                     + "]");
             }
-            long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
+            long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
             // if the time was very slow (because JSP was being compiled on first call, for
             // instance)
             // then the rest of the time based logic will fail.  Lets double-check for that scenario
@@ -331,8 +332,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
             // baseline.  If it come out in a slow fashion again,
             // we will abort the check on this URL, since we will only spend lots of time trying
             // request, when we will (very likely) not get positive results.
-            if (originalTimeUsed > 5000) {
-                long originalTimeStarted2 = System.currentTimeMillis();
+            if (originalTimeUsed > expectedDelayInMs) {
                 try {
                     sendAndReceive(msgTimeBaseline);
                 } catch (java.net.SocketTimeoutException e) {
@@ -346,8 +346,8 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                         + msgTimeBaseline.getRequestHeader().getURI().getURI()
                                         + "]");
                 }
-                long originalTimeUsed2 = System.currentTimeMillis() - originalTimeStarted2;
-                if (originalTimeUsed2 > 5000) {
+                long originalTimeUsed2 = msgTimeBaseline.getTimeElapsedMillis();
+                if (originalTimeUsed2 > expectedDelayInMs) {
                     // no better the second time around.  we need to bale out.
                     if (this.debugEnabled)
                         log.debug(
@@ -361,7 +361,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                     // phew.  the second time came in within the limits. use the later timing
                     // details as the base time for the checks.
                     originalTimeUsed = originalTimeUsed2;
-                    originalTimeStarted = originalTimeStarted2;
                 }
             }
             // end of timing baseline check
@@ -425,7 +424,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                         + numberOfSequentialIncreases);
 
                     // send it.
-                    long modifiedTimeStarted = System.currentTimeMillis();
                     try {
                         sendAndReceive(msgDelay);
                         countTimeBasedRequests++;
@@ -442,7 +440,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                             + paramName
                                             + "]");
                     }
-                    long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
+                    long modifiedTimeUsed = msgDelay.getTimeElapsedMillis();
 
                     // before we do the time based checking, first check for a known error message
                     // from the atatck, indicating a SQL injection vuln
@@ -516,11 +514,9 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                         newTimeBasedInjectionValue.length(),
                                         RANDOM_PARAMETER_CHARS);
                         setParameter(msgParseDelay, paramName, parseDelayCheckParameter);
-                        long parseDelayTimeStarted = System.currentTimeMillis();
                         sendAndReceive(msgParseDelay);
                         countTimeBasedRequests++;
-                        long parseDelayTimeUsed =
-                                System.currentTimeMillis() - parseDelayTimeStarted;
+                        long parseDelayTimeUsed = msgParseDelay.getTimeElapsedMillis();
 
                         // figure out if the attack delay and the (non-sql-injection) parse delay
                         // are within X ms of each other..
@@ -824,6 +820,10 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
             log.error(
                     "An error occurred checking a url for SQLite SQL Injection vulnerabilities", e);
         }
+    }
+
+    public void setExpectedDelayInMs(int delay) {
+        expectedDelayInMs = delay;
     }
 
     @Override
