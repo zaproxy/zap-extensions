@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - ELMAH Information Leak ensure that test requests are appropriately rebuilt for this scan rule (Issue 6129).
+- SQL rules changed to double check timing attacks
+- Significantly reduced the number of attacks made by the SQLite rule
 
 ## [30] - 2020-07-23
 ### Changed

@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP Development Team
+ * Copyright 2020 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,29 +23,46 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link SqlInjectionPostgreScanRule}. */
-public class SqlInjectionPostgreScanRuleUnitTest
-        extends ActiveScannerAppParamTest<SqlInjectionPostgreScanRule> {
+/** Unit test for {@link SqlInjectionSqLiteScanRule}. */
+public class SqlInjectionSQLiteScanRuleUnitTest
+        extends ActiveScannerAppParamTest<SqlInjectionSqLiteScanRule> {
 
     @Override
-    protected SqlInjectionPostgreScanRule createScanner() {
-        return new SqlInjectionPostgreScanRule();
+    protected SqlInjectionSqLiteScanRule createScanner() {
+        return new SqlInjectionSqLiteScanRule();
+    }
+
+    // Give a bit more leeway
+    protected int getRecommendMaxNumberMessagesPerParam(Plugin.AttackStrength strength) {
+        switch (strength) {
+            case LOW:
+                return NUMBER_MSGS_ATTACK_STRENGTH_LOW;
+            case MEDIUM:
+            default:
+                return NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM + 2;
+            case HIGH:
+                return NUMBER_MSGS_ATTACK_STRENGTH_HIGH + 4;
+            case INSANE:
+                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE + 10;
+        }
     }
 
     @Test
-    public void shouldTargetPostgreSQLTech() throws Exception {
+    public void shouldTargetSqLiteSQLTech() throws Exception {
         // Given
-        TechSet techSet = techSet(Tech.PostgreSQL);
+        TechSet techSet = techSet(Tech.SQLite);
         // When
         boolean targets = rule.targets(techSet);
         // Then
@@ -53,9 +70,9 @@ public class SqlInjectionPostgreScanRuleUnitTest
     }
 
     @Test
-    public void shouldNotTargetNonPostgreSQLTechs() throws Exception {
+    public void shouldNotTargetNonSqLiteSQLTechs() throws Exception {
         // Given
-        TechSet techSet = techSetWithout(Tech.PostgreSQL);
+        TechSet techSet = techSetWithout(Tech.SQLite);
         // When
         boolean targets = rule.targets(techSet);
         // Then
@@ -63,7 +80,41 @@ public class SqlInjectionPostgreScanRuleUnitTest
     }
 
     @Test
-    public void shouldAlertIfSleepTimesGetLonger() throws Exception {
+    public void shouldAlertIfSqlErrorReturned() throws Exception {
+        String test = "/shouldReportSqlErrorMessage/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response = "<html><body></body></html>";
+                        if (name != null && name.contains(" randomblob(")) {
+                            response =
+                                    "<html><body>SQL error: no such function: randomblob</body></html>";
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no such function: randomblob"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("case randomblob(100000) when not null then 1 else 1 end "));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    public void shouldAlertIfRandomBlobTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
 
         this.nano.addHandler(
@@ -74,13 +125,13 @@ public class SqlInjectionPostgreScanRuleUnitTest
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
                         String response = "<html><body></body></html>";
-                        if (name != null && name.contains("pg_sleep(")) {
+                        if (name != null && name.contains(" randomblob(")) {
                             try {
                                 Thread.sleep(time);
                             } catch (InterruptedException e) {
                                 // Ignore
                             }
-                            time += 1000;
+                            time += 100;
                         }
                         return newFixedLengthResponse(response);
                     }
@@ -89,23 +140,23 @@ public class SqlInjectionPostgreScanRuleUnitTest
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInSeconds(1);
+        this.rule.setExpectedDelayInMs(90);
 
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(
-                alertsRaised.get(0).getAttack(),
-                equalTo(
-                        "field: [name], value [case when cast(pg_sleep(1) as varchar) > '' then 0 else 1 end -- ]"));
+                alertsRaised.get(0).getEvidence(),
+                startsWith("The query time is controllable using parameter value"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), startsWith("case randomblob(100"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
     @Test
     public void shouldNotAlertIfAllTimesGetLonger() throws Exception {
-        String test = "/shouldNotReportGeneralTimingIssue/";
+        String test = "/shouldReportSqlTimingIssue/";
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
@@ -119,7 +170,7 @@ public class SqlInjectionPostgreScanRuleUnitTest
                         } catch (InterruptedException e) {
                             // Ignore
                         }
-                        time += 1000;
+                        time += 100;
                         return newFixedLengthResponse(response);
                     }
                 });
@@ -127,7 +178,7 @@ public class SqlInjectionPostgreScanRuleUnitTest
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInSeconds(1);
+        this.rule.setExpectedDelayInMs(90);
 
         this.rule.scan();
 

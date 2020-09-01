@@ -53,7 +53,7 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
 
     private int doTimeMaxRequests = 0;
 
-    private int sleep = 5;
+    private int sleep = 15;
 
     /** MySQL one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
@@ -249,7 +249,7 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
 
         // Read the sleep value from the configs
         try {
-            this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 5);
+            this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15);
         } catch (ConversionException e) {
             log.debug(
                     "Invalid value for 'rules.common.sleep': "
@@ -271,7 +271,6 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
             HttpMessage msgTimeBaseline = getNewMsg();
-            long originalTimeStarted = System.currentTimeMillis();
             try {
                 sendAndReceive(msgTimeBaseline, false); // do not follow redirects
             } catch (java.net.SocketTimeoutException e) {
@@ -295,7 +294,7 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                                     + msgTimeBaseline.getRequestHeader().getURI().toString());
                 return; // No need to keep going
             }
-            long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
+            long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
             // if the time was very slow (because JSP was being compiled on first call, for
             // instance)
             // then the rest of the time based logic will fail.  Lets double-check for that scenario
@@ -305,7 +304,6 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
             // we will abort the check on this URL, since we will only spend lots of time trying
             // request, when we will (very likely) not get positive results.
             if (originalTimeUsed > sleep * 1000) {
-                long originalTimeStarted2 = System.currentTimeMillis();
                 try {
                     sendAndReceive(msgTimeBaseline, false); // do not follow redirects
                 } catch (java.net.SocketTimeoutException e) {
@@ -329,7 +327,7 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                                         + msgTimeBaseline.getRequestHeader().getURI().toString());
                     return; // No need to keep going
                 }
-                long originalTimeUsed2 = System.currentTimeMillis() - originalTimeStarted2;
+                long originalTimeUsed2 = msgTimeBaseline.getTimeElapsedMillis();
                 if (originalTimeUsed2 > sleep * 1000) {
                     // no better the second time around.  we need to bale out.
                     if (this.debugEnabled)
@@ -344,7 +342,6 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                     // phew.  the second time came in within the limits. use the later timing
                     // details as the base time for the checks.
                     originalTimeUsed = originalTimeUsed2;
-                    originalTimeStarted = originalTimeStarted2;
                 }
             }
             // end of timing baseline check
@@ -377,7 +374,6 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                 setParameter(msg3, paramName, newTimeBasedInjectionValue);
 
                 // send it.
-                long modifiedTimeStarted = System.currentTimeMillis();
                 try {
                     sendAndReceive(msg3, false); // do not follow redirects
                     countTimeBasedRequests++;
@@ -404,7 +400,7 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                                         + msg3.getRequestHeader().getURI().toString());
                     return; // No need to keep going
                 }
-                long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
+                long modifiedTimeUsed = msg3.getTimeElapsedMillis();
 
                 if (this.debugEnabled)
                     log.debug(
@@ -425,7 +421,20 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                 // to take a full 5 (by default) seconds longer to run than the original..
                 if (modifiedTimeUsed >= (originalTimeUsed + (sleep * 1000) - 200)) {
                     // takes more than 5 (by default) extra seconds => likely time based SQL
-                    // injection. Raise it
+                    // injection.
+
+                    // But first double check
+                    HttpMessage msgc = getNewMsg();
+                    try {
+                        sendAndReceive(msgc, false); // do not follow redirects
+                    } catch (Exception e) {
+                        // Ignore all exceptions
+                    }
+                    long checkTimeUsed = msgc.getTimeElapsedMillis();
+                    if (checkTimeUsed >= (originalTimeUsed + (sleep * 1000) - 200)) {
+                        // Looks like the server is overloaded, very unlikely this is a real issue
+                        continue;
+                    }
 
                     // Likely a SQL Injection. Raise it
                     String extraInfo =
@@ -474,6 +483,10 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
             log.error(
                     "An error occurred checking a url for MySQL SQL Injection vulnerabilities", e);
         }
+    }
+
+    public void setSleepInSeconds(int sleep) {
+        this.sleep = sleep;
     }
 
     @Override

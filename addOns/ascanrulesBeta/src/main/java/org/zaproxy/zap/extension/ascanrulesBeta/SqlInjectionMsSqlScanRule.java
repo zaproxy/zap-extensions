@@ -79,11 +79,11 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
     /** for logging. */
     private static final Logger log = Logger.getLogger(SqlInjectionMsSqlScanRule.class);
 
-    private static final int DEFAULT_SLEEP_TIME = 5;
+    private static final int DEFAULT_SLEEP_TIME = 15;
 
     private boolean doTimeBased;
     private int doTimeMaxRequests;
-    private int sleep = DEFAULT_SLEEP_TIME;
+    private int sleepInSeconds = DEFAULT_SLEEP_TIME;
     // how many requests have we made?
     private int countTimeBasedRequests;
 
@@ -145,7 +145,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
 
         // Read the sleep value from the configs
         try {
-            this.sleep =
+            this.sleepInSeconds =
                     this.getConfig()
                             .getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_SLEEP_TIME);
         } catch (ConversionException e) {
@@ -154,7 +154,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                             + this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
         if (log.isDebugEnabled()) {
-            log.debug("Sleep set to " + sleep + " seconds");
+            log.debug("Sleep set to " + sleepInSeconds + " seconds");
         }
     }
 
@@ -174,7 +174,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
             // baseline.  If it come out in a slow fashion again,
             // we will abort the check on this URL, since we will only spend lots of time trying
             // request, when we will (very likely) not get positive results.
-            int sleepTimeInMilliSeconds = sleep * 1000;
+            int sleepTimeInMilliSeconds = sleepInSeconds * 1000;
             if (originalTimeUsed > sleepTimeInMilliSeconds) {
                 long originalTimeUsed2 = getRoundTripTime(msgTimeBaseline);
                 if (originalTimeUsed2 > sleepTimeInMilliSeconds) {
@@ -208,7 +208,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
             }
 
             // Check for time based SQL Injection, using MsSQL specific syntax
-            String sleepToken = getSleepToken(sleep);
+            String sleepToken = getSleepToken(sleepInSeconds);
             for (int timeBasedSQLindex = 0;
                     timeBasedSQLindex < SQL_MSSQL_TIME_REPLACEMENTS.length
                             && doTimeBased
@@ -238,10 +238,24 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                 }
                 // add some small leeway on the time, since adding a 5 (by default) second delay in
                 // the SQL query will not cause the request
-                // to take a full 5 (by default) seconds longer to run than the original..
-                if (modifiedTimeUsed >= (originalTimeUsed + sleep * 1000 - 200)) {
+                // to take a full 15 (by default) seconds longer to run than the original..
+                if (modifiedTimeUsed >= (originalTimeUsed + sleepInSeconds * 1000 - 200)) {
                     // takes more than 5(by default) extra seconds => likely time based SQL
-                    // injection. Raise it
+                    // injection.
+
+                    // But first double check
+                    HttpMessage msgc = getNewMsg();
+                    try {
+                        sendAndReceive(msgc, false); // do not follow redirects
+                    } catch (Exception e) {
+                        // Ignore all exceptions
+                    }
+                    long checkTimeUsed = msgc.getTimeElapsedMillis();
+                    if (checkTimeUsed >= (originalTimeUsed + (this.sleepInSeconds * 1000) - 200)) {
+                        // Looks like the server is overloaded, very unlikely this is a real issue
+                        continue;
+                    }
+
                     String extraInfo =
                             Constant.messages.getString(
                                     "ascanbeta.sqlinjection.mssql.alert.timebased.extrainfo",
@@ -317,6 +331,10 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                 + Long.toString(minutesInTotalTime)
                 + ":"
                 + Long.toString(secondsInTotalTime));
+    }
+
+    public void setSleepInSeconds(int sleep) {
+        this.sleepInSeconds = sleep;
     }
 
     @Override
