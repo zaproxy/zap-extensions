@@ -140,24 +140,10 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
         this.model = model;
     }
 
-    /**
-     * Gets the CWE ID of the issue(s) raised by the scanner.
-     *
-     * @return the CWE ID,
-     * @see <a href="https://cwe.mitre.org/index.html">CWE - Common Weakness Enumeration</a>
-     */
-    public int getCweId(){
+    public int getCweId() {
         // CWE Id 614 - Sensitive Cookie in HTTPS Session Without 'Secure' Attribute
         return 614;
     }
-
-    /**
-     * Gets the WASC ID of the issue(s) raised by the scanner.
-     *
-     * @return the WASC ID,
-     * @see <a href="http://projects.webappsec.org/w/page/13246978/Threat%20Classification">The WASC
-     *     Threat Classification</a>
-     */
 
     public int getWascId() {
         // WASC Id 13 - Info leakage
