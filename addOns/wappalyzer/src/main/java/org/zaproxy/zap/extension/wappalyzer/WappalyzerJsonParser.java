@@ -106,7 +106,7 @@ public class WappalyzerJsonParser {
                 result.addCategory(mCat.getKey(), mCat.getValue().getString("name"));
             }
 
-            JSONObject apps = json.getJSONObject("apps");
+            JSONObject apps = json.getJSONObject("technologies");
             for (Object entry : apps.entrySet()) {
                 Map.Entry<String, JSONObject> mApp = (Map.Entry<String, JSONObject>) entry;
 
@@ -121,7 +121,7 @@ public class WappalyzerJsonParser {
                 app.setHeaders(this.jsonToAppPatternMapList("HEADER", appData.get("headers")));
                 app.setUrl(this.jsonToPatternList("URL", appData.get("url")));
                 app.setHtml(this.jsonToPatternList("HTML", appData.get("html")));
-                app.setScript(this.jsonToPatternList("SCRIPT", appData.get("script")));
+                app.setScript(this.jsonToPatternList("SCRIPT", appData.get("scripts")));
                 app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
                 app.setImplies(this.jsonToStringList(appData.get("implies")));
                 app.setCpe(appData.optString("cpe"));
