@@ -94,8 +94,8 @@ public class CookieHttpOnlyScanRule extends PluginPassiveScanner {
                 .setEvidence(
                         CookieUtils.getSetCookiePlusName(
                                 msg.getResponseHeader().toString(), headerValue))
-                .setCweId(16) // CWE Id 16 - Configuration
-                .setWascId(13) // WASC Id 13 - Info leakage)
+                .setCweId(getCweId())
+                .setWascId(getWascId())
                 .raise();
     }
 
@@ -133,5 +133,29 @@ public class CookieHttpOnlyScanRule extends PluginPassiveScanner {
      */
     protected void setModel(Model model) {
         this.model = model;
+    }
+
+    /**
+     * Gets the CWE ID of the issue(s) raised by the scanner.
+     *
+     * @return the CWE ID,
+     * @see <a href="https://cwe.mitre.org/index.html">CWE - Common Weakness Enumeration</a>
+     */
+    public int getCweId(){
+        // CWE Id 16 - Configuration
+        return 16;
+    }
+
+    /**
+     * Gets the WASC ID of the issue(s) raised by the scanner.
+     *
+     * @return the WASC ID,
+     * @see <a href="http://projects.webappsec.org/w/page/13246978/Threat%20Classification">The WASC
+     *     Threat Classification</a>
+     */
+
+    public int getWascId() {
+        // WASC Id 13 - Info leakage)
+        return 13;
     }
 }
