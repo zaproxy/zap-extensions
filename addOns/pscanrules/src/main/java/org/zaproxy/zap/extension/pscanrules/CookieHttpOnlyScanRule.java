@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
@@ -135,13 +136,29 @@ public class CookieHttpOnlyScanRule extends PluginPassiveScanner {
         this.model = model;
     }
 
-    public int getCweId() {
+    private int getCweId() {
         // CWE Id 16 - Configuration
         return 16;
     }
 
-    public int getWascId() {
+    private int getWascId() {
         // WASC Id 13 - Info leakage)
         return 13;
+    }
+
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<Alert>();
+        Alert alert =
+                newAlert()
+                        .setRisk(Alert.RISK_LOW)
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setDescription(getDescription())
+                        .setSolution(getSolution())
+                        .setReference(getReference())
+                        .setCweId(getCweId())
+                        .setWascId(getWascId())
+                        .build();
+        alerts.add(alert);
+        return alerts;
     }
 }
