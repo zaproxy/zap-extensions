@@ -84,6 +84,7 @@ public class ReportLastScan {
             Boolean reference,
             Boolean cweid,
             Boolean wascid,
+            Boolean evidence,
             Boolean requestHeader,
             Boolean responseHeader,
             Boolean requestBody,
@@ -107,6 +108,7 @@ public class ReportLastScan {
                 reference,
                 cweid,
                 wascid,
+                evidence,
                 requestHeader,
                 responseHeader,
                 requestBody,
@@ -126,6 +128,7 @@ public class ReportLastScan {
             Boolean reference,
             Boolean cweid,
             Boolean wascid,
+            Boolean evidence,
             Boolean requestHeader,
             Boolean responseHeader,
             Boolean requestBody,
@@ -225,7 +228,7 @@ public class ReportLastScan {
                             .append(replaceEntity(alert.getAttack()))
                             .append("</attack>\r\n");
                 }
-                if (alert.getEvidence() != null && alert.getEvidence().length() > 0) {
+                if (alert.getEvidence() != null && alert.getEvidence().length() > 0 && evidence) {
                     report.append("<evidence>")
                             .append(replaceEntity(alert.getEvidence()))
                             .append("</evidence>\r\n");
@@ -357,6 +360,7 @@ public class ReportLastScan {
                                 extension.reference(),
                                 extension.cweid(),
                                 extension.wascid(),
+                                extension.evidence(),
                                 extension.requestHeader(),
                                 extension.responseHeader(),
                                 extension.requestBody(),
