@@ -38,6 +38,8 @@ public class AlertDetailsPanel extends JPanel {
     private JCheckBox reference = null;
     private JCheckBox cweid = null;
     private JCheckBox wascid = null;
+    private JCheckBox attack = null;
+    private JCheckBox param = null;
     private JCheckBox evidence = null;
     private JCheckBox requestHeader = null;
     private JCheckBox responseHeader = null;
@@ -52,6 +54,8 @@ public class AlertDetailsPanel extends JPanel {
         reference.setSelected(true);
         cweid.setSelected(true);
         wascid.setSelected(true);
+        attack.setSelected(true);
+        param.setSelected(true);
         evidence.setSelected(true);
     }
 
@@ -101,6 +105,18 @@ public class AlertDetailsPanel extends JPanel {
         wascid.setText(Constant.messages.getString("customreport.alertdetails.wascid"));
         gbc.gridy++;
         optionpanel.add(wascid, gbc);
+
+        // Include Attack
+        attack = new JCheckBox();
+        attack.setText(Constant.messages.getString("customreport.alertdetails.attack"));
+        gbc.gridy++;
+        optionpanel.add(attack, gbc);
+
+        // Include Param
+        param = new JCheckBox();
+        param.setText(Constant.messages.getString("customreport.alertdetails.param"));
+        gbc.gridy++;
+        optionpanel.add(param, gbc);
 
         // Include Evidence
         evidence = new JCheckBox();
@@ -166,6 +182,14 @@ public class AlertDetailsPanel extends JPanel {
 
     public boolean wascid() {
         return wascid.isSelected();
+    }
+
+    public boolean attack() {
+        return attack.isSelected();
+    }
+
+    public boolean param() {
+        return param.isSelected();
     }
 
     public boolean evidence() {

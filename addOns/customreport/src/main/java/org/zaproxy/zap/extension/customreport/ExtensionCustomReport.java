@@ -183,6 +183,14 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
         return alertDetailstab.wascid();
     }
 
+    public boolean attack() {
+        return alertDetailstab.attack();
+    }
+
+    public boolean param() {
+        return alertDetailstab.param();
+    }
+
     public boolean evidence() {
         return alertDetailstab.evidence();
     }

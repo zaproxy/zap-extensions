@@ -84,6 +84,8 @@ public class ReportLastScan {
             Boolean reference,
             Boolean cweid,
             Boolean wascid,
+            Boolean attack,
+            Boolean param,
             Boolean evidence,
             Boolean requestHeader,
             Boolean responseHeader,
@@ -108,6 +110,8 @@ public class ReportLastScan {
                 reference,
                 cweid,
                 wascid,
+                attack,
+                param,
                 evidence,
                 requestHeader,
                 responseHeader,
@@ -128,6 +132,8 @@ public class ReportLastScan {
             Boolean reference,
             Boolean cweid,
             Boolean wascid,
+            Boolean attack,
+            Boolean param,
             Boolean evidence,
             Boolean requestHeader,
             Boolean responseHeader,
@@ -218,12 +224,12 @@ public class ReportLastScan {
                     report.append("<wascid>").append(alert.getWascId()).append("</wascid>\r\n");
                 }
                 report.append("  <uri>").append(replaceEntity(alert.getUri())).append("</uri>\r\n");
-                if (alert.getParam().length() > 0) {
+                if (alert.getParam().length() > 0 && param) {
                     report.append("<param>")
                             .append(replaceEntity(alert.getParam()))
                             .append("</param>\r\n");
                 }
-                if (alert.getAttack() != null && alert.getAttack().length() > 0) {
+                if (alert.getAttack() != null && alert.getAttack().length() > 0 && attack) {
                     report.append("<attack>")
                             .append(replaceEntity(alert.getAttack()))
                             .append("</attack>\r\n");
@@ -360,6 +366,8 @@ public class ReportLastScan {
                                 extension.reference(),
                                 extension.cweid(),
                                 extension.wascid(),
+                                extension.attack(),
+                                extension.param(),
                                 extension.evidence(),
                                 extension.requestHeader(),
                                 extension.responseHeader(),
