@@ -83,14 +83,14 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
                     continue;
                 }
                 if (!ignoreList.contains(CookieUtils.getCookieName(headerValue))) {
-                    this.raiseAlert(msg, id, headerValue);
+                    this.buildAlert(msg, headerValue).raise();
                 }
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String headerValue) {
-        newAlert()
+    private AlertBuilder buildAlert(HttpMessage msg, String headerValue) {
+        return newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -100,9 +100,9 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
                 .setEvidence(
                         CookieUtils.getSetCookiePlusName(
                                 msg.getResponseHeader().toString(), headerValue))
-                .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setCweId(614) // CWE-614: Sensitive Cookie in HTTPS Session Without 'Secure'
+                // Attribute
+                .setWascId(13); // WASC-13: Info leakage
     }
 
     @Override
@@ -141,29 +141,9 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
         this.model = model;
     }
 
-    private int getCweId() {
-        // CWE Id 614 - Sensitive Cookie in HTTPS Session Without 'Secure' Attribute
-        return 614;
-    }
-
-    private int getWascId() {
-        // WASC Id 13 - Info leakage
-        return 13;
-    }
-
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<Alert>();
-        Alert alert =
-                newAlert()
-                        .setRisk(Alert.RISK_LOW)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setDescription(getDescription())
-                        .setSolution(getSolution())
-                        .setReference(getReference())
-                        .setCweId(getCweId())
-                        .setWascId(getWascId())
-                        .build();
-        alerts.add(alert);
+        alerts.add(buildAlert(new HttpMessage(), "").build());
         return alerts;
     }
 }

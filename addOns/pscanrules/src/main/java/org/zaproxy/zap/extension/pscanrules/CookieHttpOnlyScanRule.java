@@ -78,14 +78,14 @@ public class CookieHttpOnlyScanRule extends PluginPassiveScanner {
                     continue;
                 }
                 if (!ignoreList.contains(CookieUtils.getCookieName(headerValue))) {
-                    this.raiseAlert(msg, id, headerValue);
+                    this.buildAlert(msg, headerValue).raise();
                 }
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String headerValue) {
-        newAlert()
+    private AlertBuilder buildAlert(HttpMessage msg, String headerValue) {
+        return newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -95,9 +95,8 @@ public class CookieHttpOnlyScanRule extends PluginPassiveScanner {
                 .setEvidence(
                         CookieUtils.getSetCookiePlusName(
                                 msg.getResponseHeader().toString(), headerValue))
-                .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(13); // WASC-13: Info leakage
     }
 
     @Override
@@ -136,29 +135,9 @@ public class CookieHttpOnlyScanRule extends PluginPassiveScanner {
         this.model = model;
     }
 
-    private int getCweId() {
-        // CWE Id 16 - Configuration
-        return 16;
-    }
-
-    private int getWascId() {
-        // WASC Id 13 - Info leakage)
-        return 13;
-    }
-
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<Alert>();
-        Alert alert =
-                newAlert()
-                        .setRisk(Alert.RISK_LOW)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setDescription(getDescription())
-                        .setSolution(getSolution())
-                        .setReference(getReference())
-                        .setCweId(getCweId())
-                        .setWascId(getWascId())
-                        .build();
-        alerts.add(alert);
+        alerts.add(buildAlert(new HttpMessage(), "").build());
         return alerts;
     }
 }
