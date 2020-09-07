@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
@@ -82,14 +83,14 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
                     continue;
                 }
                 if (!ignoreList.contains(CookieUtils.getCookieName(headerValue))) {
-                    this.raiseAlert(msg, id, headerValue);
+                    this.buildAlert(msg, headerValue).raise();
                 }
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String headerValue) {
-        newAlert()
+    private AlertBuilder buildAlert(HttpMessage msg, String headerValue) {
+        return newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -99,9 +100,9 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
                 .setEvidence(
                         CookieUtils.getSetCookiePlusName(
                                 msg.getResponseHeader().toString(), headerValue))
-                .setCweId(614)
-                .setWascId(13)
-                .raise();
+                .setCweId(614) // CWE-614: Sensitive Cookie in HTTPS Session Without 'Secure'
+                // Attribute
+                .setWascId(13); // WASC-13: Info leakage
     }
 
     @Override
@@ -138,5 +139,11 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner {
      */
     protected void setModel(Model model) {
         this.model = model;
+    }
+
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<Alert>();
+        alerts.add(buildAlert(new HttpMessage(), "").build());
+        return alerts;
     }
 }
