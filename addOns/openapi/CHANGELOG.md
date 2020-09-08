@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Show import exceptions in the Output tab (Issue 6042).
+- Maintenance changes.
 
 ### Fixed
 - Add imported messages synchronously to the Sites tree (Issue 5936).
