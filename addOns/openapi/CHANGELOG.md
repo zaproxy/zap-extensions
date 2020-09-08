@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Show import exceptions in the Output tab (Issue 6042).
 
 ### Fixed
+- Add imported messages synchronously to the Sites tree (Issue 5936).
 - Correct parent dialogue when choosing the file to import (Issue 6041).
 - Properly handle no schema when generating the request body (Issue 6042).
 - Return API error `illegal_parameter` (instead of `internal_error`) when unable to get the OpenAPI definition from the provided URL.
