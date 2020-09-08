@@ -21,10 +21,12 @@ package org.zaproxy.zap.extension.openapi.generators;
 
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
@@ -34,6 +36,10 @@ public class HeadersGenerator {
 
     private static final String ACCEPT = "Accept";
     private static final String HEADER = "header";
+    private static final String COOKIE = "cookie";
+
+    private static final char COOKIE_NAME_VALUE_SEPARATOR = '=';
+    private static final String COOKIE_SEPARATOR = "; ";
 
     private DataGenerator dataGenerator;
 
@@ -49,8 +55,9 @@ public class HeadersGenerator {
         return headerList;
     }
 
-    private void generateCustomHeader(Operation operation, List<HttpHeaderField> headers) {
+    void generateCustomHeader(Operation operation, List<HttpHeaderField> headers) {
         if (operation.getParameters() != null) {
+            List<Parameter> cookies = null;
             for (Parameter parameter : operation.getParameters()) {
                 if (parameter == null) {
                     continue;
@@ -60,28 +67,50 @@ public class HeadersGenerator {
                     String value = dataGenerator.generate(name, parameter);
                     HttpHeaderField header = new HttpHeaderField(name, value);
                     headers.add(header);
+                } else if (COOKIE.equals(parameter.getIn())) {
+                    if (cookies == null) {
+                        cookies = new ArrayList<>();
+                    }
+                    cookies.add(parameter);
                 }
+            }
+
+            if (cookies != null) {
+                headers.add(generateCookieHeader(cookies));
             }
         }
     }
 
-    private void generateContentTypeHeaders(Operation operation, List<HttpHeaderField> headers) {
+    HttpHeaderField generateCookieHeader(List<Parameter> cookies) {
+        StringBuilder strBuilder = new StringBuilder(cookies.size() * 15);
+        cookies.forEach(
+                cookie -> {
+                    if (strBuilder.length() != 0) {
+                        strBuilder.append(COOKIE_SEPARATOR);
+                    }
+                    strBuilder.append(cookie.getName()).append(COOKIE_NAME_VALUE_SEPARATOR);
+                    strBuilder.append(dataGenerator.generate(cookie.getName(), cookie));
+                });
+        return new HttpHeaderField(HttpHeader.COOKIE, strBuilder.toString());
+    }
+
+    void generateContentTypeHeaders(Operation operation, List<HttpHeaderField> headers) {
         if (operation.getRequestBody() == null || operation.getRequestBody().getContent() == null) {
             return;
         }
 
         for (String type : operation.getRequestBody().getContent().keySet()) {
-            if (type.toLowerCase().contains("json")
-                    || type.toLowerCase().contains("x-www-form-urlencoded")) {
+            String typeLc = type.toLowerCase(Locale.ROOT);
+            if (typeLc.contains("json") || typeLc.contains("x-www-form-urlencoded")) {
                 headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, type));
                 break;
             }
         }
     }
 
-    private void generateAcceptHeaders(Operation operation, List<HttpHeaderField> headers) {
+    void generateAcceptHeaders(Operation operation, List<HttpHeaderField> headers) {
 
-        Set<String> contentSet = new HashSet<>();
+        Set<String> contentSet = new LinkedHashSet<>();
         operation.getResponses().values().stream()
                 .map(
                         response -> {
