@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
+import java.util.function.Consumer;
+
 public class HexStringEncoder extends DefaultEncodeDecodeProcessor {
 
     @Override
@@ -27,8 +29,13 @@ public class HexStringEncoder extends DefaultEncodeDecodeProcessor {
     }
 
     protected static String getHexString(byte[] buf) {
+        return getHexString(buf, sb -> {});
+    }
+
+    private static String getHexString(byte[] buf, Consumer<StringBuilder> pre) {
         StringBuilder sb = new StringBuilder(20);
         for (int i = 0; i < buf.length; i++) {
+            pre.accept(sb);
             int digit = buf[i] & 0xFF;
             String hexDigit = Integer.toHexString(digit).toUpperCase();
             if (hexDigit.length() == 1) {
@@ -37,5 +44,9 @@ public class HexStringEncoder extends DefaultEncodeDecodeProcessor {
             sb.append(hexDigit);
         }
         return sb.toString();
+    }
+
+    static String getPercentHexString(byte[] buf) {
+        return getHexString(buf, sb -> sb.append('%'));
     }
 }

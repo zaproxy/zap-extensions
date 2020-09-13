@@ -23,6 +23,10 @@ public class HexStringDecoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) {
+        return decodeHexString(value);
+    }
+
+    protected static String decodeHexString(String value) {
         String decodedText = "";
         String chunk;
 
@@ -39,5 +43,9 @@ public class HexStringDecoder extends DefaultEncodeDecodeProcessor {
             decodedText = new String(rawToByte);
         }
         return decodedText;
+    }
+
+    static String hexDecode(String value) {
+        return decodeHexString(value);
     }
 }

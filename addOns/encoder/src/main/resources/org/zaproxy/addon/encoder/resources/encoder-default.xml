@@ -17,6 +17,10 @@
                 </outputpanel>
                 <outputpanel>
                     <name/>
+                    <processorId>encoder.predefined.fullurlencode</processorId>
+                </outputpanel>
+                <outputpanel>
+                    <name/>
                     <processorId>encoder.predefined.hexencode</processorId>
                 </outputpanel>
                 <outputpanel>
@@ -43,6 +47,10 @@
                 <outputpanel>
                     <name/>
                     <processorId>encoder.predefined.urldecode</processorId>
+                </outputpanel>
+                <outputpanel>
+                    <name/>
+                    <processorId>encoder.predefined.fullurldecode</processorId>
                 </outputpanel>
                 <outputpanel>
                     <name/>
