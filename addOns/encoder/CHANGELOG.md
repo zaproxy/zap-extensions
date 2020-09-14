@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - rot13.js example script.
 - SHA256 predefined processor.
+- Full URL Encode predefined processor (Issue 6171).
 
 ## [0.2.0] - 2020-06-01
 

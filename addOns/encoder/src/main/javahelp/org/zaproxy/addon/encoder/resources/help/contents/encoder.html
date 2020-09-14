@@ -38,6 +38,7 @@ In its default state the Encode/Decode/Hash dialog displays tabs and output pane
   <li>Base 64 Encode</li>
   <li>Base 64 URL Encode</li>
   <li>URL Encode</li>
+  <li>Full URL Encode</li>
   <li>ASCII Hex Encode</li>
   <li>HTML Encode</li>
   <li>JavaScript Encode</li>
@@ -49,6 +50,7 @@ In its default state the Encode/Decode/Hash dialog displays tabs and output pane
   <li>Base 64 Decode</li>
   <li>Base 64 URL Decode</li>
   <li>URL Decode</li>
+  <li>Full URL Decode</li>
   <li>ASCII Hex Decode</li>
   <li>HTML Decode</li>
   <li>JavaScript Decode</li>
@@ -118,6 +120,9 @@ Will display escaped JavaScript literals of the text you enter. For example, the
 <H4>URL Encode</H4>
 Will display the URL encoding of the text you enter.
 
+<H4>Full URL Encode</H4>
+Will display the full URL encoding of the text you enter (all characters converted to HEX and percent prepended).
+
 <H4>Unescaped Unicode Text</H4>
 Will display the unescaped Unicode characters. For example, the text
 <code>%u0041%u00e7%u006f%u0072%u0065%u0073</code> would be decoded as <code>A&ccedil;ores</code>.
@@ -147,6 +152,9 @@ Will display the unescaped JavaScript literals of the text you enter. For exampl
 
 <H4>URL Decode</H4>
 Will display the URL decoding of the text you enter.
+
+<H4>Full URL Decode</H4>
+Will display the URL decoding of the text you enter (percent signs removed and HEX decoded).
 
 <H3>Hashers</H3>
 
