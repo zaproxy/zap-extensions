@@ -154,8 +154,7 @@
                         "available",
                         "pending",
                         "sold"
-                     ],
-                     "default":"available"
+                     ]
                   },
                   "collectionFormat":"multi"
                }
@@ -895,8 +894,7 @@
                ]
             },
             "complete":{
-               "type":"boolean",
-               "default":false
+               "type":"boolean"
             }
          },
          "xml":{

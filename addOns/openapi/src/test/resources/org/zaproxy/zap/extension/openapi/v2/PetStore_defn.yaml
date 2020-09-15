@@ -110,7 +110,6 @@ paths:
           - "available"
           - "pending"
           - "sold"
-          default: "available"
         collectionFormat: "multi"
       responses:
         200:
@@ -607,7 +606,6 @@ definitions:
         - "delivered"
       complete:
         type: "boolean"
-        default: false
     xml:
       name: "Order"
   Category:
