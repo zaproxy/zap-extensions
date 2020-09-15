@@ -115,8 +115,7 @@
                            "available",
                            "pending",
                            "sold"
-                        ],
-                        "default": "available"
+                        ]
                      }
                   }
                }
@@ -851,8 +850,7 @@
                   ]
                },
                "complete": {
-                  "type": "boolean",
-                  "default": false
+                  "type": "boolean"
                }
             },
             "xml": {

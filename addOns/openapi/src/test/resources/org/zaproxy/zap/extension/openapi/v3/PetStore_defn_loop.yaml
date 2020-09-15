@@ -82,7 +82,6 @@ paths:
                 - available
                 - pending
                 - sold
-              default: available
       responses:
         "200":
           description: successful operation
@@ -600,7 +599,6 @@ components:
             - delivered
         complete:
           type: boolean
-          default: false
       xml:
         name: Order
     Category:

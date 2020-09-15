@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Handle cookie parameters (Issue 6045).
+- Use default values in `x-www-form-urlencoded` and `json` bodies (Issue 6095).
 
 ### Changed
 - Show import exceptions in the Output tab (Issue 6042).
