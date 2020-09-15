@@ -71,24 +71,30 @@ public class DataGenerator {
     }
 
     private static String generateDefaultValue(Parameter parameter) {
-        List<String> enumValues = null;
-        if (parameter.getSchema() instanceof StringSchema) {
-            enumValues = ((StringSchema) (parameter.getSchema())).getEnum();
-        }
-
-        if (parameter.getSchema().getDefault() != null) {
-            String strValue = parameter.getSchema().getDefault().toString();
-            if (!strValue.isEmpty()) {
-                return strValue;
-            }
-        }
-        if (enumValues != null && !enumValues.isEmpty()) {
-            return enumValues.get(0);
+        String value = getDefaultValue(parameter.getSchema());
+        if (value != null) {
+            return value;
         }
         if (parameter.getExample() != null) {
             return parameter.getExample().toString();
         }
         return "";
+    }
+
+    private static String getDefaultValue(Schema<?> schema) {
+        if (schema.getDefault() != null) {
+            String strValue = schema.getDefault().toString();
+            if (!strValue.isEmpty()) {
+                return strValue;
+            }
+        }
+        if (schema instanceof StringSchema) {
+            List<String> enumValues = ((StringSchema) schema).getEnum();
+            if (enumValues != null && !enumValues.isEmpty()) {
+                return enumValues.get(0);
+            }
+        }
+        return null;
     }
 
     private String generateParam(String name, String example, Parameter parameter) {
@@ -139,15 +145,18 @@ public class DataGenerator {
     }
 
     public String generateValue(String name, Schema<?> schema, boolean isPath) {
-        String value = "";
-        if (schema.getExample() != null) {
-            value = schema.getExample().toString();
-        } else if (isEnumValue(schema)) {
-            value = getEnumValue(schema);
-        } else if (isDateTime(schema)) {
-            value = "1970-01-01T00:00:00.001Z";
-        } else if (isDate(schema)) {
-            value = "1970-01-01";
+        String value = getDefaultValue(schema);
+
+        if (value == null || value.isEmpty()) {
+            if (schema.getExample() != null) {
+                value = schema.getExample().toString();
+            } else if (isDateTime(schema)) {
+                value = "1970-01-01T00:00:00.001Z";
+            } else if (isDate(schema)) {
+                value = "1970-01-01";
+            } else {
+                value = "";
+            }
         }
 
         value = generators.getValueGenerator().getValue(name, schema.getType(), value);
@@ -188,23 +197,6 @@ public class DataGenerator {
 
     private String generateSimpleExampleValue(String type) {
         return TYPES.get(type);
-    }
-
-    public boolean isEnumValue(Schema<?> schema) {
-        if (schema instanceof StringSchema) {
-            if (((StringSchema) schema).getEnum() != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public String getEnumValue(Schema<?> schema) {
-        String value = "";
-        if (isEnumValue(schema)) {
-            value = ((StringSchema) schema).getEnum().get(0);
-        }
-        return value;
     }
 
     public boolean isPath(String type) {
