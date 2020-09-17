@@ -26,13 +26,10 @@ import java.util.Vector;
 import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JViewport;
-import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextArea;
-import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -60,19 +57,6 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
             Constant.messages.getString("scripts.syntaxtext.syntax.html");
     public static final String CSS_SYNTAX_LABEL =
             Constant.messages.getString("scripts.syntaxtext.syntax.css");
-
-    private static final String ANTI_ALIASING = "aa";
-    private static final String SHOW_LINE_NUMBERS = "linenumbers";
-    private static final String CODE_FOLDING = "codefolding";
-    private static final String WORD_WRAP = "wordwrap";
-    private static final String HIGHLIGHT_CURRENT_LINE = "highlightline";
-    private static final String FADE_CURRENT_HIGHLIGHT_LINE = "fadehighlightline";
-    private static final String SHOW_WHITESPACE_CHARACTERS = "whitespaces";
-    private static final String SHOW_NEWLINE_CHARACTERS = "newlines";
-    private static final String MARK_OCCURRENCES = "markocurrences";
-    private static final String ROUNDED_SELECTION_EDGES = "roundedselection";
-    private static final String BRACKET_MATCHING = "bracketmatch";
-    private static final String ANIMATED_BRACKET_MATCHING = "animatedbracketmatch";
 
     private Vector<SyntaxStyle> syntaxStyles;
 
@@ -141,99 +125,6 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
     @Override
     protected JPopupMenu createPopupMenu() {
         return null;
-    }
-
-    public void loadConfiguration(String key, FileConfiguration fileConfiguration) {
-        setAntiAliasingEnabled(
-                fileConfiguration.getBoolean(key + ANTI_ALIASING, this.getAntiAliasingEnabled()));
-
-        Component c = getParent();
-        if (c instanceof JViewport) {
-            c = c.getParent();
-            if (c instanceof RTextScrollPane) {
-                final RTextScrollPane scrollPane = (RTextScrollPane) c;
-                scrollPane.setLineNumbersEnabled(
-                        fileConfiguration.getBoolean(
-                                key + SHOW_LINE_NUMBERS, scrollPane.getLineNumbersEnabled()));
-
-                setCodeFoldingEnabled(
-                        fileConfiguration.getBoolean(
-                                key + CODE_FOLDING, this.isCodeFoldingEnabled()));
-                scrollPane.setFoldIndicatorEnabled(this.isCodeFoldingEnabled());
-            }
-        }
-
-        setLineWrap(fileConfiguration.getBoolean(key + WORD_WRAP, this.getLineWrap()));
-
-        setHighlightCurrentLine(
-                fileConfiguration.getBoolean(
-                        key + HIGHLIGHT_CURRENT_LINE, this.getHighlightCurrentLine()));
-        setFadeCurrentLineHighlight(
-                fileConfiguration.getBoolean(
-                        key + FADE_CURRENT_HIGHLIGHT_LINE, this.getFadeCurrentLineHighlight()));
-
-        setWhitespaceVisible(
-                fileConfiguration.getBoolean(
-                        key + SHOW_WHITESPACE_CHARACTERS, this.isWhitespaceVisible()));
-        setEOLMarkersVisible(
-                fileConfiguration.getBoolean(
-                        key + SHOW_NEWLINE_CHARACTERS, this.getEOLMarkersVisible()));
-
-        setMarkOccurrences(
-                fileConfiguration.getBoolean(key + MARK_OCCURRENCES, this.getMarkOccurrences()));
-
-        setRoundedSelectionEdges(
-                fileConfiguration.getBoolean(
-                        key + ROUNDED_SELECTION_EDGES, this.getRoundedSelectionEdges()));
-
-        setBracketMatchingEnabled(
-                fileConfiguration.getBoolean(
-                        key + BRACKET_MATCHING, this.isBracketMatchingEnabled()));
-        setAnimateBracketMatching(
-                fileConfiguration.getBoolean(
-                        key + ANIMATED_BRACKET_MATCHING, this.getAnimateBracketMatching()));
-    }
-
-    public void saveConfiguration(String key, FileConfiguration fileConfiguration) {
-        fileConfiguration.setProperty(
-                key + ANTI_ALIASING, Boolean.valueOf(this.getAntiAliasingEnabled()));
-
-        Component c = getParent();
-        if (c instanceof JViewport) {
-            c = c.getParent();
-            if (c instanceof RTextScrollPane) {
-                final RTextScrollPane scrollPane = (RTextScrollPane) c;
-                fileConfiguration.setProperty(
-                        key + SHOW_LINE_NUMBERS,
-                        Boolean.valueOf(scrollPane.getLineNumbersEnabled()));
-                fileConfiguration.setProperty(
-                        key + CODE_FOLDING, Boolean.valueOf(this.isCodeFoldingEnabled()));
-            }
-        }
-
-        fileConfiguration.setProperty(key + WORD_WRAP, Boolean.valueOf(this.getLineWrap()));
-
-        fileConfiguration.setProperty(
-                key + HIGHLIGHT_CURRENT_LINE, Boolean.valueOf(this.getHighlightCurrentLine()));
-        fileConfiguration.setProperty(
-                key + FADE_CURRENT_HIGHLIGHT_LINE,
-                Boolean.valueOf(this.getFadeCurrentLineHighlight()));
-
-        fileConfiguration.setProperty(
-                key + SHOW_WHITESPACE_CHARACTERS, Boolean.valueOf(this.isWhitespaceVisible()));
-        fileConfiguration.setProperty(
-                key + SHOW_NEWLINE_CHARACTERS, Boolean.valueOf(this.getEOLMarkersVisible()));
-
-        fileConfiguration.setProperty(
-                key + MARK_OCCURRENCES, Boolean.valueOf(this.getMarkOccurrences()));
-
-        fileConfiguration.setProperty(
-                key + ROUNDED_SELECTION_EDGES, Boolean.valueOf(this.getRoundedSelectionEdges()));
-
-        fileConfiguration.setProperty(
-                key + BRACKET_MATCHING, Boolean.valueOf(this.isBracketMatchingEnabled()));
-        fileConfiguration.setProperty(
-                key + ANIMATED_BRACKET_MATCHING, Boolean.valueOf(this.getAnimateBracketMatching()));
     }
 
     public Vector<SyntaxStyle> getSyntaxStyles() {

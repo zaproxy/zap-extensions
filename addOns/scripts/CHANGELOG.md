@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Tweak help content.
 - Show script engine when editing the script.
 - Fixed case where script print statements could deadlock ZAP.
+- Maintenance changes.
 
 ## [26] - 2020-01-17
 ### Added
