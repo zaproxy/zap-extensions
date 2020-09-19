@@ -37,6 +37,32 @@ Alerts generated:
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/CacheableScanRule.java">CacheableScanRule.java</a>
 
+<H2>Cross-Origin-Resource-Policy Scan Rule</H2>
+Spectre is a side-channel attack allowing an attacker to read data
+from memory. One of the counter-measure is to prevent sensitive data
+to enter the memory.
+<blockquote cite="https://resourcepolicy.fyi/">
+ The Cross-Origin-Resource-Policy (CORP) header allows you
+ to control the set of origins that are empowered to include
+ a resource. It is a robust defense against attacks like Spectre,
+ as it allows browsers to block a given response before it enters
+ an attacker's process.
+</blockquote>
+For example, an attacker site can include a image tag with an attribute
+src to an internal content. The browser will load the data. With a
+side-channel attack, an attacker will be able to read it.
+
+CORP is complementary of CORB and COOP.
+<p>
+ Alerts generated:
+<ul>
+ <li><b>Non-Storable Content</b></li>
+ <li><b>Storable but Non-Cacheable Content</b></li>
+ <li><b>Storable and Cacheable Content</b></li>
+</ul>
+<p>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/CacheableScanRule.java">CacheableScanRule.java</a>
+
 <H2>Example Passive Scan Rule: Denial of Service</H2>
 This implements a very simple example passive scan rule.<br>
 For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
