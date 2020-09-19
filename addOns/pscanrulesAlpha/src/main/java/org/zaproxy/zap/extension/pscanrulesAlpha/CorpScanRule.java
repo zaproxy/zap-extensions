@@ -49,11 +49,11 @@ public class CorpScanRule extends PluginPassiveScanner {
         if (corpHeaders.isEmpty()) {
             raiseAlert(msg, "");
         }
-        for (String corsHeader : corpHeaders) {
-            if ("same-site".equalsIgnoreCase(corsHeader)
-                    || !("same-origin".equalsIgnoreCase(corsHeader)
-                            || "cross-origin".equalsIgnoreCase(corsHeader))) {
-                raiseAlert(msg, corsHeader);
+        for (String corpHeader : corpHeaders) {
+            if ("same-site".equalsIgnoreCase(corpHeader)
+                    || !("same-origin".equalsIgnoreCase(corpHeader)
+                            || "cross-origin".equalsIgnoreCase(corpHeader))) {
+                raiseAlert(msg, corpHeader);
             }
         }
     }
@@ -87,6 +87,7 @@ public class CorpScanRule extends PluginPassiveScanner {
                 .setReference(getString("refs"))
                 .setEvidence(evidence)
                 .setCweId(16) // CWE-16: Configuration
+                .setWascId(14) // WASC-14: Server Misconfiguration
                 .raise();
     }
 }
