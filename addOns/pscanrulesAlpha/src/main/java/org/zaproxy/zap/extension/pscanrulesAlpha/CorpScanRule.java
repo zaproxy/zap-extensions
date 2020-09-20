@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import java.util.ArrayList;
 import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
@@ -47,13 +48,13 @@ public class CorpScanRule extends PluginPassiveScanner {
                 msg.getResponseHeader()
                         .getHeaderValues(CorpScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER);
         if (corpHeaders.isEmpty()) {
-            raiseAlert(msg, "");
+            corpHeaderAlert("").raise();
         }
         for (String corpHeader : corpHeaders) {
             if ("same-site".equalsIgnoreCase(corpHeader)
                     || !("same-origin".equalsIgnoreCase(corpHeader)
                             || "cross-origin".equalsIgnoreCase(corpHeader))) {
-                raiseAlert(msg, corpHeader);
+                corpHeaderAlert(corpHeader).raise();
             }
         }
     }
@@ -77,17 +78,22 @@ public class CorpScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + param);
     }
 
-    private void raiseAlert(HttpMessage msg, String evidence) {
-        newAlert()
+    private AlertBuilder corpHeaderAlert(String evidence) {
+        return newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setParam(CROSS_ORIGIN_RESOURCE_POLICY_HEADER)
                 .setDescription(getString("desc"))
                 .setSolution(getString("soln"))
                 .setReference(getString("refs"))
-                .setEvidence(evidence)
                 .setCweId(16) // CWE-16: Configuration
                 .setWascId(14) // WASC-14: Server Misconfiguration
-                .raise();
+                .setEvidence(evidence);
+    }
+
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<Alert>();
+        alerts.add(corpHeaderAlert("").build());
+        return alerts;
     }
 }
