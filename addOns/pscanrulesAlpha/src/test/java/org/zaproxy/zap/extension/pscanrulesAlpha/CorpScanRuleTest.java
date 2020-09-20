@@ -129,6 +129,20 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         assertThat(alertsRaised, hasSize(0));
     }
 
+    @Test
+    public void shouldRaiseCorpAlertOnlyForSuccessfulQueries() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 500 Internal Server Error\r\n");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     @Override
     protected CorpScanRule createScanner() {
         return new CorpScanRule();

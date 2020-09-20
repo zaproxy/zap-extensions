@@ -25,6 +25,7 @@ import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -34,6 +35,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * @see <a
  *     href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cross-Origin_Resource_Policy_(CORP)">CORP
  *     on MDN</a>
+ * @see <a href="https://fetch.spec.whatwg.org/#cross-origin-resource-policy-header">Specs</a>
  */
 public class CorpScanRule extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
@@ -44,6 +46,13 @@ public class CorpScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        // Specs don't state that errors pages should be excluded
+        // However, successful responses are associated to a resource
+        // that should be protected.
+        // Only consider HTTP Status code 2XX to avoid a False Positive
+        if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())) {
+            return;
+        }
         List<String> corpHeaders =
                 msg.getResponseHeader()
                         .getHeaderValues(CorpScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER);
