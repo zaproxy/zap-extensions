@@ -700,7 +700,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
         // check if message is filtered out
         WebSocketMessagesViewFilter filter = getFilterDialog().getFilter();
-        if (filter.isBlacklisted(message)) {
+        if (filter.isDenylisted(message)) {
             // make it visible by resetting filter
             filter.reset();
             setFilterStatus();

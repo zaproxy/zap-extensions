@@ -156,7 +156,7 @@
 <section>
 <name> Risky Functionality - File Uploads </name>
 <tasks>
-<task> Test that acceptable file types are whitelisted</task>
+<task> Test that acceptable file types are allow listed</task>
 <task> Test that file size limits</task>
 <task> Test that file contents match the defined file type</task>
 <task> Test that all file uploads have Anti-Virus scanning in-place</task>

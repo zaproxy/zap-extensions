@@ -35,7 +35,7 @@ import org.zaproxy.zap.utils.PagingTableModel;
 
 /**
  * This model uses the {@link TableWebSocket} instance to load only needed entries from database.
- * Moreover it shows only those entries that are not blacklisted by given {@link
+ * Moreover it shows only those entries that are not deny listed by given {@link
  * WebSocketMessagesViewFilter}.
  */
 public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessageDTO> {
@@ -363,9 +363,9 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
      * @param message
      */
     public void fireMessageArrived(WebSocketMessageDTO message) {
-        boolean isWhitelistedChannel =
+        boolean isAllowlistedChannel =
                 (activeChannelId == null) || message.channel.id.equals(activeChannelId);
-        if ((filter != null && filter.isBlacklisted(message)) || !isWhitelistedChannel) {
+        if ((filter != null && filter.isDenylisted(message)) || !isAllowlistedChannel) {
             // no need to fire update, as it isn't active now
         } else {
             // find out where it is inserted and update precisely

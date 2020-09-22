@@ -75,7 +75,7 @@ This Stackoverflow gives ideas on how to keep a local repository tidy: https://s
 
 You can also browse the [FuzzDB github sources](https://github.com/fuzzdb-project/fuzzdb/) and there is always a fresh [zip file](https://github.com/fuzzdb-project/fuzzdb/archive/master.zip)
 
-Note: Some antivirus/antimalware software will alert on FuzzDB. To resolve, the filepath should be whitelisted. There is nothing in FuzzDB that can harm your computer as-is, however due to the risk of local file include attacks it's not recommended to store this repository on a server or other important system. Use at your own risk. 
+Note: Some antivirus/antimalware software will alert on FuzzDB. To resolve, the filepath should be allow listed. There is nothing in FuzzDB that can harm your computer as-is, however due to the risk of local file include attacks it's not recommended to store this repository on a server or other important system. Use at your own risk. 
 
 ### Who ###
 FuzzDB was created by Adam Muntner (amuntner @ gmail.com)

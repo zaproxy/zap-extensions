@@ -75,7 +75,7 @@ public abstract class WebSocketProxy {
         CLOSING,
         CLOSED, // ready state
         EXCLUDED,
-        INCLUDED; // no WebSocket state, used for new black- or whitelisted channels
+        INCLUDED; // no WebSocket state, used for new allow/deny listed channels
     }
 
     /** WebSocket frame initiator - to be kept in step with the ZAP HttpSender class. */
@@ -778,7 +778,7 @@ public abstract class WebSocketProxy {
 
     /**
      * Helper to inform about new {@link WebSocketProxy#state}. Also called when a former {@link
-     * WebSocketProxy#isForwardOnly} channel is no longer blacklisted {@link State#INCLUDED} or
+     * WebSocketProxy#isForwardOnly} channel is no longer deny listed {@link State#INCLUDED} or
      * vice-versa {@link State#EXCLUDED}.
      */
     protected void notifyStateObservers(State state) {

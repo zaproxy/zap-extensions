@@ -93,7 +93,7 @@ public class WebSocketMessagesViewFilter {
         return isShowJustInScope;
     }
 
-    /** Resets this filter. Message will no longer be blacklisted. */
+    /** Resets this filter. Message will no longer be deny listed. */
     public void reset() {
         opcodeList = null;
         direction = null;
@@ -106,7 +106,7 @@ public class WebSocketMessagesViewFilter {
      * @param message
      * @return True if the given entry is filtered out, false if valid.
      */
-    public boolean isBlacklisted(WebSocketMessageDTO message) {
+    public boolean isDenylisted(WebSocketMessageDTO message) {
         if (isShowJustInScope && !message.channel.isInScope()) {
             return true;
         }
