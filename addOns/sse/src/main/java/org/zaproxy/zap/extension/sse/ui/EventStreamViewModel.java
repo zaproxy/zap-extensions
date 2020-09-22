@@ -34,7 +34,7 @@ import org.zaproxy.zap.utils.PagingTableModel;
 
 /**
  * This model uses a database table to load only needed entries from database. Moreover it shows
- * only those entries that are not blacklisted by the given filter.
+ * only those entries that are not deny listed by the given filter.
  */
 public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 
@@ -308,9 +308,9 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
      * @param event
      */
     public void fireMessageArrived(ServerSentEvent event) {
-        boolean isWhitelistedChannel =
+        boolean isAllowlistedChannel =
                 (activeStreamId == null) || event.getStreamId().equals(activeStreamId);
-        if ((filter != null && filter.isBlacklisted(event)) || !isWhitelistedChannel) {
+        if ((filter != null && filter.isDenylisted(event)) || !isAllowlistedChannel) {
             // no need to fire update, as it isn't active now
         } else {
             // find out where it is inserted and update precisely

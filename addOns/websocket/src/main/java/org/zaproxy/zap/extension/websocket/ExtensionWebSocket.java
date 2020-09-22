@@ -1009,7 +1009,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     }
 
     /**
-     * If given channel is blacklisted, then nothing should be stored. Moreover it should not appear
+     * If given channel is deny listed, then nothing should be stored. Moreover it should not appear
      * in user interface, but messages should be forwarded.
      *
      * @param channel
@@ -1019,7 +1019,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         boolean doNotStore = false;
 
         if (config.isForwardAll()) {
-            // all channels are blacklisted
+            // all channels are deny listed
             doNotStore = true;
         } else if (!preparedIgnoredChannels.isEmpty()) {
             for (Pattern p : preparedIgnoredChannels) {

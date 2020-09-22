@@ -641,7 +641,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 
         // check if message is filtered out
         EventStreamViewFilter filter = getFilterDialog().getFilter();
-        if (filter.isBlacklisted(event)) {
+        if (filter.isDenylisted(event)) {
             // make it visible by resetting filter
             filter.reset();
             setFilterStatus();

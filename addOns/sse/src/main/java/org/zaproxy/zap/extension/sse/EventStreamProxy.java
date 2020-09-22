@@ -45,7 +45,7 @@ public class EventStreamProxy {
         OPEN,
         CLOSED, // ready state
         EXCLUDED,
-        INCLUDED; // no Server-Sent Events state, used for new black- or whitelisted streams
+        INCLUDED; // no Server-Sent Events state, used for new allow/deny listed streams
     }
 
     //	private final HttpMessage message;
@@ -241,7 +241,7 @@ public class EventStreamProxy {
 
     /**
      * Helper to inform about new {@link WebSocketProxy#state}. Also called when a former {@link
-     * WebSocketProxy#isForwardOnly} channel is no longer blacklisted {@link State#INCLUDED} or
+     * WebSocketProxy#isForwardOnly} channel is no longer deny listed {@link State#INCLUDED} or
      * vice-versa {@link State#EXCLUDED}.
      */
     protected void notifyStateObservers(State state) {

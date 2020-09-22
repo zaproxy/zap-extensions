@@ -45,7 +45,7 @@ function invokeWith(msg) {
 	header = msg.getRequestHeader().getHeadersAsString();
 	header = header.split(msg.getRequestHeader().getLineDelimiter());
 	for(i=0;i<header.length;i++){
-		//blacklisting Host (other blacklisting should also specify here
+		// deny listing Host (other deny listing should also specify here)
 		keyval = header[i].split(":");
 		if(keyval[0].trim() != "Host")
 			string += " -H '"+header[i].trim()+"' ";
