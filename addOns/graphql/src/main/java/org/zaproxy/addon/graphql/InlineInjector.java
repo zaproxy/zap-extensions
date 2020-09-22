@@ -39,6 +39,13 @@ import java.util.stream.Collectors;
 
 public final class InlineInjector {
 
+    /**
+     * Extract argument names and values from a GraphQL request.
+     *
+     * @param query the query from which the arguments need to be extracted.
+     * @return a {@link Map} that contains the name and value of all arguments in the provided
+     *     query.
+     */
     @SuppressWarnings("rawtypes")
     public Map<String, String> extract(String query) {
         Document document = Parser.parse(query);
@@ -102,6 +109,15 @@ public final class InlineInjector {
         }
     }
 
+    /**
+     * Inject inline argument values into a GraphQL request.
+     *
+     * @param query the query from which the arguments need to be extracted.
+     * @param name the name of the argument (must use dot notation, as in the Map returned by {@link
+     *     #extract}).
+     * @param value the value to be injected.
+     * @return query with the injected argument value.
+     */
     public String inject(String query, String name, String value) {
         Document tempDocument = Parser.parse(query);
         // Reparse with AstPrinter.printAstCompact(...) to get the right source location later.
@@ -183,16 +199,18 @@ public final class InlineInjector {
                 List<Argument> args = field.getArguments();
                 if (args != null && !args.isEmpty()) {
                     String argName = name.substring(name.indexOf('.') + 1);
-                    for (Argument arg : args) {
-                        if (argName.equals(arg.getName())) {
-                            Value argValue = arg.getValue();
-                            // Start Location of argument value.
-                            int ivStartPos = argValue.getSourceLocation().getColumn() - 1;
-                            // End Location of argument value.
-                            int ivEndPos =
-                                    ivStartPos + AstPrinter.printAstCompact(argValue).length();
-                            queryBuilder.replace(ivStartPos, ivEndPos, value);
-                            return;
+                    if (!argName.contains(".")) {
+                        for (Argument arg : args) {
+                            if (argName.equals(arg.getName())) {
+                                Value argValue = arg.getValue();
+                                // Start Location of argument value.
+                                int ivStartPos = argValue.getSourceLocation().getColumn() - 1;
+                                // End Location of argument value.
+                                int ivEndPos =
+                                        ivStartPos + AstPrinter.printAstCompact(argValue).length();
+                                queryBuilder.replace(ivStartPos, ivEndPos, value);
+                                return;
+                            }
                         }
                     }
                 }
@@ -220,6 +238,12 @@ public final class InlineInjector {
         }
     }
 
+    /**
+     * Get name of the node which represents the GraphQL message in the sites tree.
+     *
+     * @param query the GraphQL request.
+     * @return unique node name to represent the message.
+     */
     @SuppressWarnings("rawtypes")
     public String getNodeName(String query) {
         Document tempDocument = Parser.parse(query);
@@ -297,6 +321,12 @@ public final class InlineInjector {
         }
     }
 
+    /**
+     * Get operations in a GraphQL request.
+     *
+     * @param query the GraphQL request.
+     * @return operations in the request, separated by a comma.
+     */
     @SuppressWarnings("rawtypes")
     public String extractOperations(String query) {
         Document document = Parser.parse(query);
@@ -312,6 +342,12 @@ public final class InlineInjector {
                 .collect(Collectors.joining(", "));
     }
 
+    /**
+     * Check if a GraphQL request is syntactically valid.
+     *
+     * @param query the GraphQL request.
+     * @return true if the GraphQL request is syntactically valid.
+     */
     public boolean validateQuery(String query) {
         try {
             Document document = Parser.parse(query);
