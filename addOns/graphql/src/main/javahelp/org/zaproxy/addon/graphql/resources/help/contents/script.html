@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>GraphQL Support Script</TITLE>
+</HEAD>
+<BODY>
+	<H1>GraphQL Support Script</H1>
+
+	The GraphQL Support script is responsible for two things:
+	<ol>
+		<li>Correctly representing the nodes for a GraphQL request in the sites tree (since ZAP 2.10.0).</li>
+		<li>Adding GraphQL support for Active Scan Input Vectors.</li>
+	</ol>
+
+	The following sections will elaborate a little on each of these functionalities.
+
+	<h2>Sites Tree Representation</h2>
+
+	Each unique GraphQL request proxied through ZAP is represented in the sites tree. 
+	Requests are placed under a common node if they have the same operations.
+	Two queries that have the same fields will be represented by the same node.
+	The only exception is when a query is sent with inline arguments and also using variables. 
+	In this case, a prefix of either '0' or '1' is added to distinguish between them respectively.
+	<br>
+	For example, the following figure illustrates how two requests may be represented in the sites tree.
+	<br>
+	<img src="images/sitesTreeExample.png">
+
+	<h2>Active Scan Input Vectors</h2>
+
+	If Active Scan Script Input Vectors are enabled,
+	values are injected for inline arguments in all queries proxied through ZAP. 
+	If a query uses variables, then variables are replaced inline and variable definitions are deleted.
+	<br>
+	Note that the built-in JSON Input Vector handler also works when a request is sent as JSON.
+
+	<h2>See also</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="graphql.html">GraphQL</a></td>
+			<td>for an overview of the GraphQL add-on.</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">GraphQL Options</a></td>
+			<td>for information about the optional parameters.</td>
+		</tr>
+	</table>
+
+</BODY>
+</HTML>

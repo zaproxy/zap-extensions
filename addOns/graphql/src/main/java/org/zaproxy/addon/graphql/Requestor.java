@@ -75,7 +75,7 @@ public class Requestor {
             send(message);
             return message;
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            LOG.warn(e.getMessage());
         }
         return null;
     }
@@ -100,7 +100,7 @@ public class Requestor {
             send(message);
             return message;
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            LOG.warn(e.getMessage());
         }
         return null;
     }
@@ -124,7 +124,7 @@ public class Requestor {
             send(message);
             return message;
         } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
         return null;
     }
@@ -150,7 +150,7 @@ public class Requestor {
         try {
             sender.sendAndReceive(message, requestConfig);
         } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -171,7 +171,7 @@ public class Requestor {
                 try {
                     listener.handleMessage(message, initiator);
                 } catch (Exception e) {
-                    LOG.error(e.getMessage(), e);
+                    LOG.warn(e.getMessage(), e);
                 }
             }
         }

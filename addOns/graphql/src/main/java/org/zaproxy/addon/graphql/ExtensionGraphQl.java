@@ -21,6 +21,7 @@ package org.zaproxy.addon.graphql;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,11 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptType;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.spider.filters.ParseFilter;
 import org.zaproxy.zap.spider.parser.SpiderParser;
@@ -93,6 +99,16 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         extensionHook.addOptionsParamSet(getParam());
         extensionHook.addCommandLine(getCommandLineArguments());
         extensionHook.addSessionListener(this);
+    }
+
+    @Override
+    public void postInit() {
+        super.postInit();
+        try {
+            addScript();
+        } catch (IOException e) {
+            LOG.warn("Could not add GraphQL Input Vectors script.");
+        }
     }
 
     @Override
@@ -163,6 +179,37 @@ public class ExtensionGraphQl extends ExtensionAdaptor
             }
         }
         parserThreads.clear();
+    }
+
+    private void addScript() throws IOException {
+        ExtensionScript extScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        String scriptName = "GraphQL Support.js";
+        if (extScript != null && extScript.getScript(scriptName) == null) {
+            ScriptType variantType =
+                    extScript.getScriptType(ExtensionActiveScan.SCRIPT_TYPE_VARIANT);
+            ScriptEngineWrapper engine = extScript.getEngineWrapper("Oracle Nashorn");
+            if (variantType != null && engine != null) {
+                File scriptPath =
+                        Paths.get(
+                                        Constant.getZapHome(),
+                                        ExtensionScript.SCRIPTS_DIR,
+                                        ExtensionScript.SCRIPTS_DIR,
+                                        ExtensionActiveScan.SCRIPT_TYPE_VARIANT,
+                                        scriptName)
+                                .toFile();
+                ScriptWrapper script =
+                        new ScriptWrapper(
+                                scriptName,
+                                Constant.messages.getString("graphql.script.description"),
+                                engine,
+                                variantType,
+                                true,
+                                scriptPath);
+                script.reloadScript();
+                extScript.addScript(script);
+            }
+        }
     }
 
     @Override

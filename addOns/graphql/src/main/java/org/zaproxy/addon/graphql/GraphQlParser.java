@@ -64,7 +64,9 @@ public class GraphQlParser {
                 requestor.sendQuery(
                         IntrospectionQuery.INTROSPECTION_QUERY,
                         GraphQlParam.RequestMethodOption.POST_JSON);
-
+        if (importMessage == null) {
+            throw new IOException("Could not obtain schema via Introspection.");
+        }
         try {
             Map<String, Object> result =
                     new Gson()

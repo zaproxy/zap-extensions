@@ -254,4 +254,15 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
         assertEquals(request[0], expectedQuery);
         assertEquals(request[1], expectedVariables);
     }
+
+    @Test
+    public void variableNamesClash() throws Exception {
+        generator = new GraphQlGenerator(getHtml("variableNamesClash.graphql"), null, param);
+        String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
+        String expectedQuery =
+                "query ($field2_name_id: ID, $field1_name_id: ID) { field1 { name (id: $field1_name_id) } field2 { name (id: $field2_name_id) } } ";
+        String expectedVariables = "{\"field2_name_id\": 1, \"field1_name_id\": 1}";
+        assertEquals(request[0], expectedQuery);
+        assertEquals(request[1], expectedVariables);
+    }
 }
