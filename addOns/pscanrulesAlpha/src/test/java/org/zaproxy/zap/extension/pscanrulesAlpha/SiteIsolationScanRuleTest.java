@@ -26,14 +26,15 @@ import static org.hamcrest.Matchers.hasSize;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
-class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
+class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule> {
 
     @Test
     public void shouldRaiseCorpAlertWhenResponseDoesntSendCorpHeader() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n" + "Cross-Origin-Embedder-Policy: require-corp\r\n");
 
         // When
         scanHttpResponseReceive(msg);
@@ -42,7 +43,7 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(CorpScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER));
+                equalTo(SiteIsolationScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
     }
 
@@ -51,7 +52,10 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\nCross-Origin-Resource-Policy: same-site\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Cross-Origin-Resource-Policy: same-site\r\n"
+                        + "Cross-Origin-Embedder-Policy: require-corp\r\n");
 
         // When
         scanHttpResponseReceive(msg);
@@ -60,7 +64,7 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(CorpScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER));
+                equalTo(SiteIsolationScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("same-site"));
     }
 
@@ -69,7 +73,10 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\nCross-Origin-Resource-Policy: unexpected\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Cross-Origin-Resource-Policy: unexpected\r\n"
+                        + "Cross-Origin-Embedder-Policy: require-corp\r\n");
 
         // When
         scanHttpResponseReceive(msg);
@@ -78,7 +85,7 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(CorpScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER));
+                equalTo(SiteIsolationScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("unexpected"));
     }
 
@@ -87,7 +94,10 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\nCross-Origin-Resource-Policy: same-SITE\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Cross-Origin-Resource-Policy: same-SITE\r\n"
+                        + "Cross-Origin-Embedder-Policy: require-corp\r\n");
 
         // When
         scanHttpResponseReceive(msg);
@@ -96,16 +106,19 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(CorpScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER));
+                equalTo(SiteIsolationScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("same-SITE"));
     }
 
     @Test
-    public void shouldNotRaiseCorpAlertWhenCorpHeaderIsSetForSameOrigin() throws Exception {
+    public void shouldNotRaiseAlertGivenValidConfigurationIsGiven() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\nCross-Origin-Resource-Policy: same-origin\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Cross-Origin-Resource-Policy: same-origin\r\n"
+                        + "Cross-Origin-Embedder-Policy: require-corp\r\n");
 
         // When
         scanHttpResponseReceive(msg);
@@ -120,7 +133,10 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\nCross-Origin-Resource-Policy: cross-origin\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Cross-Origin-Resource-Policy: cross-origin\r\n"
+                        + "Cross-Origin-Embedder-Policy: require-corp\r\n");
 
         // When
         scanHttpResponseReceive(msg);
@@ -143,8 +159,47 @@ class CorpScanRuleTest extends PassiveScannerTest<CorpScanRule> {
         assertThat(alertsRaised, hasSize(0));
     }
 
+    @Test
+    public void shouldRaiseAlertGivenCoepHeaderIsMissing() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n" + "Cross-Origin-Resource-Policy: same-origin\r\n");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(
+                alertsRaised.get(0).getParam(),
+                equalTo(SiteIsolationScanRule.CROSS_ORIGIN_EMBEDDER_POLICY_HEADER));
+    }
+
+    @Test
+    public void shouldRaiseAlertGivenCoepHeaderIsNotEqualsToRequireCorp() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Cross-Origin-Resource-Policy: same-origin\r\n"
+                        + "Cross-Origin-Embedder-Policy: something-else\r\n");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(
+                alertsRaised.get(0).getParam(),
+                equalTo(SiteIsolationScanRule.CROSS_ORIGIN_EMBEDDER_POLICY_HEADER));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("something-else"));
+    }
+
     @Override
-    protected CorpScanRule createScanner() {
-        return new CorpScanRule();
+    protected SiteIsolationScanRule createScanner() {
+        return new SiteIsolationScanRule();
     }
 }
