@@ -19,9 +19,10 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -33,8 +34,9 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
  * Spectre vulnerability has shown that Javascript code can be used to read any part of memory in
- * the same address space. Browser architectures are been redesigned to keep sensitive data outside
- * of the address space of untrusted code.
+ * the same address space. Browser architectures are been <a href=
+ * "https://chromium.googlesource.com/chromium/src/+/master/docs/security/side-channel-threat-model.md">re-think</a>
+ * to keep sensitive data outside of the address space of untrusted code.
  *
  * <p>To achieve this, three headers have been added:
  *
@@ -47,18 +49,27 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * @see <a
  *     href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cross-Origin_Resource_Policy_(CORP)">CORP
  *     on MDN</a>
- * @see <a href="https://fetch.spec.whatwg.org/#cross-origin-resource-policy-header">Specs</a>
+ * @see <a
+ *     href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Embedder-Policy">COEP
+ *     on MDN</a>
+ * @see <a
+ *     href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Opener-Policy">COOP
+ *     on MDN</a>
+ * @see <a href="https://fetch.spec.whatwg.org/#cross-origin-resource-policy-header">COOP Specs</a>
+ * @see <a href="https://html.spec.whatwg.org/multipage/origin.html#coep">COEP Specs</a>
  */
 public class SiteIsolationScanRule extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String SITE_ISOLATION_MESSAGE_PREFIX = "pscanalpha.site-isolation.";
 
     private static final int PLUGIN_ID = 90004;
-    public static final String CROSS_ORIGIN_RESOURCE_POLICY_HEADER = "Cross-Origin-Resource-Policy";
-    public static final String CROSS_ORIGIN_EMBEDDER_POLICY_HEADER = "Cross-Origin-Embedder-Policy";
 
-    private final CorpHeaderScanner corpHeaderScanner = new CorpHeaderScanner(this::newAlert);
-    private final CoepHeaderScanner coepHeaderScanner = new CoepHeaderScanner(this::newAlert);
+    private final SiteIsolationHeaderScanner[] scanners =
+            new SiteIsolationHeaderScanner[] {
+                new CorpHeaderScanner(this::newAlert),
+                new CoepHeaderScanner(this::newAlert),
+                new CoopHeaderScanner(this::newAlert)
+            };
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -71,8 +82,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
             return;
         }
 
-        corpHeaderScanner.check(msg.getResponseHeader());
-        coepHeaderScanner.check(msg.getResponseHeader());
+        Stream.of(scanners).forEach(s -> s.check(msg.getResponseHeader()));
     }
 
     @Override
@@ -91,24 +101,64 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
     }
 
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts = new ArrayList<Alert>();
-        alerts.add(corpHeaderScanner.alert("").build());
-        alerts.add(coepHeaderScanner.alert("").build());
-        return alerts;
+        return Stream.of(scanners).map(s -> s.alert("").build()).collect(Collectors.toList());
     }
 
-    static class CorpHeaderScanner {
-        private static final String CORP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "corp.";
+    abstract static class SiteIsolationHeaderScanner {
         private final Supplier<AlertBuilder> newAlert;
 
-        public CorpHeaderScanner(Supplier<AlertBuilder> newAlert) {
+        public SiteIsolationHeaderScanner(Supplier<AlertBuilder> newAlert) {
             this.newAlert = newAlert;
         }
 
-        public void check(HttpResponseHeader responseHeader) {
-            List<String> corpHeaders =
-                    responseHeader.getHeaderValues(
-                            SiteIsolationScanRule.CROSS_ORIGIN_RESOURCE_POLICY_HEADER);
+        protected abstract String getHeader();
+
+        protected abstract String getString(String param);
+
+        abstract void check(HttpResponseHeader responseHeader);
+
+        protected boolean isDocument(HttpResponseHeader responseHeader) {
+            return responseHeader.getHeaders().stream()
+                    .filter(header -> "Content-Type".equalsIgnoreCase(header.getName()))
+                    .anyMatch(
+                            header ->
+                                    header.getValue().startsWith("text/html")
+                                            || header.getValue().startsWith("application/xml"));
+        }
+
+        AlertBuilder alert(String evidence) {
+            return newAlert.get()
+                    .setRisk(Alert.RISK_LOW)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setParam(getHeader())
+                    .setDescription(getString("desc"))
+                    .setSolution(getString("soln"))
+                    .setReference(getString("refs"))
+                    .setCweId(16) // CWE-16: Configuration
+                    .setWascId(14) // WASC-14: Server Misconfiguration
+                    .setEvidence(evidence);
+        }
+    }
+
+    static class CorpHeaderScanner extends SiteIsolationHeaderScanner {
+        public static final String HEADER = "Cross-Origin-Resource-Policy";
+        private static final String CORP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "corp.";
+        public static final String CORS_PREFIX = "Access-Control-Allow-";
+
+        public CorpHeaderScanner(Supplier<AlertBuilder> newAlert) {
+            super(newAlert);
+        }
+
+        @Override
+        void check(HttpResponseHeader responseHeader) {
+            boolean hasCorsHeader =
+                    responseHeader.getHeaders().stream()
+                            .anyMatch(header -> header.getName().startsWith(CORS_PREFIX));
+            if (hasCorsHeader) {
+                return;
+            }
+
+            List<String> corpHeaders = responseHeader.getHeaderValues(HEADER);
             if (corpHeaders.isEmpty()) {
                 alert("").raise();
             }
@@ -121,63 +171,87 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
             }
         }
 
-        private String getCorpString(String param) {
+        @Override
+        protected String getString(String param) {
             return Constant.messages.getString(CORP_MESSAGE_PREFIX + param);
         }
 
-        AlertBuilder alert(String evidence) {
-            return newAlert.get()
-                    .setRisk(Alert.RISK_LOW)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setParam(CROSS_ORIGIN_RESOURCE_POLICY_HEADER)
-                    .setDescription(getCorpString("desc"))
-                    .setSolution(getCorpString("soln"))
-                    .setReference(getCorpString("refs"))
-                    .setCweId(16) // CWE-16: Configuration
-                    .setWascId(14) // WASC-14: Server Misconfiguration
-                    .setEvidence(evidence);
+        @Override
+        protected String getHeader() {
+            return HEADER;
         }
     }
 
-    static class CoepHeaderScanner {
+    static class CoepHeaderScanner extends SiteIsolationHeaderScanner {
+        public static final String HEADER = "Cross-Origin-Embedder-Policy";
         private static final String COEP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "coep.";
 
-        private final Supplier<AlertBuilder> newAlert;
-
         public CoepHeaderScanner(Supplier<AlertBuilder> newAlert) {
-            this.newAlert = newAlert;
+            super(newAlert);
         }
 
         public void check(HttpResponseHeader responseHeader) {
-            List<String> coepHeaders =
-                    responseHeader.getHeaderValues(
-                            SiteIsolationScanRule.CROSS_ORIGIN_EMBEDDER_POLICY_HEADER);
+            if (!isDocument(responseHeader)) {
+                return;
+            }
+
+            List<String> coepHeaders = responseHeader.getHeaderValues(HEADER);
             if (coepHeaders.isEmpty()) {
                 alert("").raise();
             }
             for (String coepHeader : coepHeaders) {
-                // unsafe-none is the default value
+                // unsafe-none is the default value. It disables COEP checks.
                 if (!"require-corp".equalsIgnoreCase(coepHeader)) {
                     alert(coepHeader).raise();
                 }
             }
         }
 
-        private String getCoepString(String param) {
+        @Override
+        protected String getString(String param) {
             return Constant.messages.getString(COEP_MESSAGE_PREFIX + param);
         }
 
-        AlertBuilder alert(String evidence) {
-            return newAlert.get()
-                    .setRisk(Alert.RISK_LOW)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setParam(CROSS_ORIGIN_EMBEDDER_POLICY_HEADER)
-                    .setDescription(getCoepString("desc"))
-                    .setSolution(getCoepString("soln"))
-                    .setReference(getCoepString("refs"))
-                    .setCweId(16) // CWE-16: Configuration
-                    .setWascId(14) // WASC-14: Server Misconfiguration
-                    .setEvidence(evidence);
+        @Override
+        protected String getHeader() {
+            return HEADER;
+        }
+    }
+
+    static class CoopHeaderScanner extends SiteIsolationHeaderScanner {
+        public static final String HEADER = "Cross-Origin-Opener-Policy";
+        private static final String COOP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "coop.";
+
+        public CoopHeaderScanner(Supplier<AlertBuilder> newAlert) {
+            super(newAlert);
+        }
+
+        @Override
+        public void check(HttpResponseHeader responseHeader) {
+            if (!isDocument(responseHeader)) {
+                return;
+            }
+
+            List<String> coopHeaders = responseHeader.getHeaderValues(HEADER);
+            if (coopHeaders.isEmpty()) {
+                alert("").raise();
+            }
+            for (String coopHeader : coopHeaders) {
+                // unsafe-none is the default value
+                if (!"same-origin".equalsIgnoreCase(coopHeader)) {
+                    alert(coopHeader).raise();
+                }
+            }
+        }
+
+        @Override
+        protected String getString(String param) {
+            return Constant.messages.getString(COOP_MESSAGE_PREFIX + param);
+        }
+
+        @Override
+        protected String getHeader() {
+            return HEADER;
         }
     }
 }
