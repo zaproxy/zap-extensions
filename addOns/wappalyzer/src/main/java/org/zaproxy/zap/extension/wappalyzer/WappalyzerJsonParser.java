@@ -115,6 +115,7 @@ public class WappalyzerJsonParser {
 
                 Application app = new Application();
                 app.setName(appName);
+                app.setDescription(appData.optString("description"));
                 app.setWebsite(appData.getString("website"));
                 app.setCategories(
                         this.jsonToCategoryList(result.getCategories(), appData.get("cats")));

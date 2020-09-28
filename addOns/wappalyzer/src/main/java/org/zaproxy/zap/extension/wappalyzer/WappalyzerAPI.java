@@ -91,6 +91,7 @@ public class WappalyzerAPI extends ApiImplementor {
         for (int i = 0; i < ttm.getRowCount(); i++) {
             Map<String, String> map = new HashMap<>();
             map.put("name", ((Application) ttm.getValueAt(i, 0)).toString());
+            map.put("description", ttm.getApp(i).getDescription());
             map.put("version", (String) ttm.getValueAt(i, 1));
             map.put("category", (String) ttm.getValueAt(i, 2));
             map.put("website", (String) ttm.getValueAt(i, 3));
