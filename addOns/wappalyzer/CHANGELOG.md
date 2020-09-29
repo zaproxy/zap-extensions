@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 - Maintenance changes.
+- When available the description of a given app/technology will show in the tooltip for a row in the table, and be included in detailed API responses.
 
 ## [20.2.0] - 2020-08-04
 ### Changed

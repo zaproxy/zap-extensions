@@ -69,6 +69,15 @@ public class WappalyzerJsonParser {
         return parseJson(getStringResource(ExtensionWappalyzer.RESOURCE + "/apps.json"));
     }
 
+    WappalyzerData parseAppsJson(String path) {
+        try {
+            return parseJson(getStringResource(path));
+        } catch (IOException e) {
+            logger.warn("An error occurred reading the file: " + path);
+        }
+        return null;
+    }
+
     private static String getStringResource(String resourceName) throws IOException {
         InputStream in = null;
         StringBuilder sb = new StringBuilder();
@@ -115,6 +124,7 @@ public class WappalyzerJsonParser {
 
                 Application app = new Application();
                 app.setName(appName);
+                app.setDescription(appData.optString("description"));
                 app.setWebsite(appData.getString("website"));
                 app.setCategories(
                         this.jsonToCategoryList(result.getCategories(), appData.get("cats")));

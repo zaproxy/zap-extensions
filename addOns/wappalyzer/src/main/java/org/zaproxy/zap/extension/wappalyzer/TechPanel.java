@@ -26,6 +26,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -174,7 +175,25 @@ public class TechPanel extends AbstractPanel {
 
     protected JXTable getTechTable() {
         if (techTable == null) {
-            techTable = new JXTable(techModel);
+            techTable =
+                    new JXTable(techModel) {
+                        private static final long serialVersionUID = -5249686560976842645L;
+
+                        @Override
+                        public String getToolTipText(MouseEvent e) {
+                            String tip = "";
+                            int rowIndex = rowAtPoint(e.getPoint());
+
+                            if (rowIndex != -1) {
+                                tip =
+                                        techModel
+                                                .getApp(convertRowIndexToModel(rowIndex))
+                                                .getDescription();
+                            }
+
+                            return tip.isEmpty() ? null : tip;
+                        }
+                    };
 
             techTable.setColumnSelectionAllowed(false);
             techTable.setCellSelectionEnabled(false);
