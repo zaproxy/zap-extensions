@@ -51,12 +51,29 @@ public class QuickStartBackgroundPanel extends JXPanel {
      * Gets the background colour that should be used by quick start panels and other components
      * displayed in them.
      *
+     * @param force if true then reread the background colour from the UIManager
      * @return the custom background colour for quick start panels.
      */
-    public static Color getBackgroundColor() {
-        if (backgroundColor == null) {
+    public static Color getBackgroundColor(boolean force) {
+        if (backgroundColor == null || force) {
             backgroundColor = new Color(UIManager.getColor("TextField.background").getRGB());
         }
         return backgroundColor;
+    }
+
+    /**
+     * Gets the background colour that should be used by quick start panels and other components
+     * displayed in them.
+     *
+     * @return the custom background colour for quick start panels.
+     */
+    public static Color getBackgroundColor() {
+        return getBackgroundColor(false);
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        setBackground(getBackgroundColor(true));
     }
 }
