@@ -47,7 +47,7 @@ public class WappalyzerPassiveScannerUnitTest
             try {
                 defaultHolder = new WappalyzerApplicationTestHolder();
                 WappalyzerJsonParser parser = new WappalyzerJsonParser();
-                WappalyzerData result = parser.parseDefaultAppsJson();
+                WappalyzerData result = parser.parseAppsJson("apps.json");
                 defaultHolder.setApplications(result.getApplications());
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
