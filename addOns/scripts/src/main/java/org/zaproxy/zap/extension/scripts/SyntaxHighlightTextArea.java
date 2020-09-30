@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.Action;
@@ -29,10 +31,12 @@ import javax.swing.JPopupMenu;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextArea;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 
 public class SyntaxHighlightTextArea extends RSyntaxTextArea {
@@ -69,6 +73,13 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
     private TextAreaMenuItem undoAction = null;
     private TextAreaMenuItem redoAction = null;
     private TextAreaMenuItem selectAllAction = null;
+
+    private static final String RESOURCE_DARK = "/org/fife/ui/rsyntaxtextarea/themes/dark.xml";
+    private static final String RESOURCE_LIGHT = "/org/fife/ui/rsyntaxtextarea/themes/default.xml";
+
+    private Boolean supportsDarkLaF;
+    private Method isDarkLookAndFeelMethod;
+    private boolean darkLaF;
 
     public SyntaxHighlightTextArea() {
         setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
@@ -120,6 +131,13 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
             font = FontUtils.getFont(Font.PLAIN);
         }
         this.setFont(font);
+
+        if (isDarkLaF()) {
+            darkLaF = true;
+            setLookAndFeel(true);
+        } else {
+            darkLaF = false;
+        }
     }
 
     @Override
@@ -163,6 +181,60 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
             mainPopupMenuItems.add(deleteAction);
 
             mainPopupMenuItems.add(selectAllAction);
+        }
+    }
+
+    private void setLookAndFeel(boolean dark) {
+        try {
+            Theme theme =
+                    Theme.load(
+                            this.getClass()
+                                    .getResourceAsStream(dark ? RESOURCE_DARK : RESOURCE_LIGHT));
+
+            theme.apply(this);
+        } catch (IOException e) {
+            // Ignore
+        }
+    }
+
+    private boolean isDarkLaF() {
+        // TODO Update to calling the DisplayUtils.isDarkLookAndFeel() method directly once it is
+        // available
+        if (supportsDarkLaF == null) {
+            supportsDarkLaF = false;
+            try {
+                Class<DisplayUtils> cls = DisplayUtils.class;
+                isDarkLookAndFeelMethod = cls.getMethod("isDarkLookAndFeel");
+                if (isDarkLookAndFeelMethod != null) {
+                    supportsDarkLaF = true;
+                }
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+        if (isDarkLookAndFeelMethod != null) {
+            try {
+                Object obj = isDarkLookAndFeelMethod.invoke(null);
+                if (obj instanceof Boolean) {
+                    return (Boolean) obj;
+                }
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        if (darkLaF != isDarkLaF()) {
+            if (isDarkLaF()) {
+                darkLaF = true;
+            } else {
+                darkLaF = false;
+            }
+            setLookAndFeel(darkLaF);
         }
     }
 
