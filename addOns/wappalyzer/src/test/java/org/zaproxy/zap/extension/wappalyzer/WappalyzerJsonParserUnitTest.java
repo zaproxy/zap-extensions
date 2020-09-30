@@ -39,7 +39,7 @@ public class WappalyzerJsonParserUnitTest {
         List<Application> apps = wappData.getApplications();
         Application app = apps.get(0);
         // Then
-        assertEquals(1, apps.size());
+        assertEquals(5, apps.size());
         assertTrue(app.getName().equals("Test Entry"));
         assertTrue(app.getDescription().equals("Test Entry is a test entry for UnitTests"));
         assertTrue(app.getWebsite().equals("https://www.example.com/testentry"));
