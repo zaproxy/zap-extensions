@@ -55,14 +55,18 @@ public class WappalyzerJsonParser {
     private static final int SIZE = 16;
 
     private static final Logger logger = Logger.getLogger(WappalyzerJsonParser.class);
-    private PatternErrorHandler patternErrorHandler;
+    private final PatternErrorHandler patternErrorHandler;
+    private final ParsingExceptionHandler parsingExceptionHandler;
 
     public WappalyzerJsonParser() {
-        patternErrorHandler = (pattern, e) -> logger.error("Invalid pattern syntax " + pattern, e);
+        this(
+                (pattern, e) -> logger.error("Invalid pattern syntax " + pattern, e),
+                e -> logger.error(e.getMessage(), e));
     }
 
-    public WappalyzerJsonParser(PatternErrorHandler peh) {
+    WappalyzerJsonParser(PatternErrorHandler peh, ParsingExceptionHandler parsingExceptionHandler) {
         this.patternErrorHandler = peh;
+        this.parsingExceptionHandler = parsingExceptionHandler;
     }
 
     public WappalyzerData parseDefaultAppsJson() throws IOException {
@@ -152,7 +156,7 @@ public class WappalyzerJsonParser {
             }
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            parsingExceptionHandler.handleException(e);
         }
 
         return result;
@@ -339,5 +343,9 @@ public class WappalyzerJsonParser {
             return (int) Double.parseDouble(confidence) * 100;
         }
         return Integer.parseInt(confidence);
+    }
+
+    interface ParsingExceptionHandler {
+        void handleException(Exception e);
     }
 }

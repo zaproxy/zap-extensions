@@ -33,11 +33,14 @@ public class WappalyzerAppsJsonParseUnitTest {
     public void test() throws IOException {
         // Given
         List<String> errs = new ArrayList<>();
+        List<Exception> parsingExceptions = new ArrayList<>();
         // When
         WappalyzerJsonParser parser =
-                new WappalyzerJsonParser((pattern, e) -> errs.add(e.toString()));
+                new WappalyzerJsonParser(
+                        (pattern, e) -> errs.add(e.toString()), parsingExceptions::add);
         parser.parseDefaultAppsJson();
         // Then
         assertEquals(Collections.emptyList(), errs);
+        assertEquals(Collections.emptyList(), parsingExceptions);
     }
 }
