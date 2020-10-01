@@ -19,13 +19,20 @@
  */
 package org.zaproxy.zap.testutils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
@@ -174,6 +181,38 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
     }
 
     protected abstract T createScanner();
+
+    @TestFactory
+    Collection<DynamicTest> commonScanRuleTests() {
+        List<DynamicTest> commonTests = new ArrayList<>();
+        commonTests.add(testScanRuleHasName());
+        return commonTests;
+    }
+
+    private DynamicTest testScanRuleHasName() {
+        return dynamicTest(
+                "shouldHaveI18nNonEmptyName",
+                () -> {
+                    setUp();
+                    try {
+                        shouldHaveI18nNonEmptyName();
+                    } finally {
+                        shutDownServer();
+                    }
+                });
+    }
+
+    private void shouldHaveI18nNonEmptyName() {
+        // Given / When
+        String name = rule.getName();
+        // Then
+        assertThat(name, not(isEmptyOrNullString()));
+        assertThat(
+                "Name does not seem to be i18n'ed, not found in the resource bundle:" + name,
+                extensionResourceBundle.keySet().stream()
+                        .map(extensionResourceBundle::getString)
+                        .anyMatch(str -> str.equals(name)));
+    }
 
     /**
      * Gets the recommended maximum number of messages that a scanner can send per parameter for the

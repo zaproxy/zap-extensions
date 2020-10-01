@@ -23,12 +23,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
@@ -106,5 +111,35 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
 
     protected Source createSource(HttpMessage msg) {
         return new Source(msg.getResponseBody().toString());
+    }
+
+    @TestFactory
+    Collection<DynamicTest> commonScanRuleTests() {
+        List<DynamicTest> commonTests = new ArrayList<>();
+        if (rule instanceof PluginPassiveScanner) {
+            commonTests.add(testScanRuleHasName());
+        }
+        return commonTests;
+    }
+
+    private DynamicTest testScanRuleHasName() {
+        return dynamicTest(
+                "shouldHaveI18nNonEmptyName",
+                () -> {
+                    setUp();
+                    shouldHaveI18nNonEmptyName();
+                });
+    }
+
+    private void shouldHaveI18nNonEmptyName() {
+        // Given / When
+        String name = rule.getName();
+        // Then
+        assertThat(name, not(isEmptyOrNullString()));
+        assertThat(
+                "Name does not seem to be i18n'ed, not found in the resource bundle: " + name,
+                extensionResourceBundle.keySet().stream()
+                        .map(extensionResourceBundle::getString)
+                        .anyMatch(str -> str.equals(name)));
     }
 }

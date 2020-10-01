@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -43,7 +44,7 @@ public class CookieHttpOnlyScanRuleUnitTest extends PassiveScannerTest<CookieHtt
     protected CookieHttpOnlyScanRule createScanner() {
         rule = new CookieHttpOnlyScanRule();
         // Mock the model and options
-        model = mock(Model.class);
+        model = mock(Model.class, withSettings().lenient());
         OptionsParam options = new OptionsParam();
         ZapXmlConfiguration conf = new ZapXmlConfiguration();
         options.load(conf);
