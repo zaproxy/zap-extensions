@@ -20,6 +20,7 @@
 package org.zaproxy.zap.testutils;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -132,35 +133,36 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         alertsRaised = new ArrayList<>();
         httpMessagesSent = new ArrayList<>();
         parent =
-                new HostProcess(
-                        "localhost:" + port,
-                        parentScanner,
-                        scannerParam,
-                        connectionParam,
-                        scanPolicy,
-                        ruleConfigParam) {
-                    @Override
-                    public void alertFound(Alert arg1) {
-                        alertsRaised.add(arg1);
-                    }
+                spy(
+                        new HostProcess(
+                                "localhost:" + port,
+                                parentScanner,
+                                scannerParam,
+                                connectionParam,
+                                scanPolicy,
+                                ruleConfigParam) {
+                            @Override
+                            public void alertFound(Alert arg1) {
+                                alertsRaised.add(arg1);
+                            }
 
-                    @Override
-                    public void notifyNewMessage(HttpMessage msg) {
-                        httpMessagesSent.add(msg);
-                        countMessagesSent++;
-                    }
+                            @Override
+                            public void notifyNewMessage(HttpMessage msg) {
+                                httpMessagesSent.add(msg);
+                                countMessagesSent++;
+                            }
 
-                    @Override
-                    public void notifyNewMessage(Plugin plugin) {
-                        countMessagesSent++;
-                    }
+                            @Override
+                            public void notifyNewMessage(Plugin plugin) {
+                                countMessagesSent++;
+                            }
 
-                    @Override
-                    public void notifyNewMessage(Plugin plugin, HttpMessage msg) {
-                        httpMessagesSent.add(msg);
-                        countMessagesSent++;
-                    }
-                };
+                            @Override
+                            public void notifyNewMessage(Plugin plugin, HttpMessage msg) {
+                                httpMessagesSent.add(msg);
+                                countMessagesSent++;
+                            }
+                        });
 
         rule = createScanner();
         if (rule.getConfig() == null) {

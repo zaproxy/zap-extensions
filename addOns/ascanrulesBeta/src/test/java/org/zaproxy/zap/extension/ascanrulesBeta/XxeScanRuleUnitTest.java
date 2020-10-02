@@ -21,14 +21,29 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMessage;
 
 public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
 
     @Override
     protected XxeScanRule createScanner() {
         return new XxeScanRule();
+    }
+
+    @Test
+    public void shouldSkipScanRuleIfExtensionCallbackIsNotEnabled() {
+        // Given
+        HttpMessage message = mock(HttpMessage.class);
+        // When
+        rule.init(message, parent);
+        // Then
+        verify(parent).pluginSkipped(eq(rule), anyString());
     }
 
     @Test
