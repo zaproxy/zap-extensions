@@ -106,7 +106,7 @@ public abstract class TestUtils {
      *
      * <p>Lazily initialised, in {@link #mockMessages(Extension)}.
      */
-    private static ResourceBundle extensionResourceBundle;
+    protected static ResourceBundle extensionResourceBundle;
 
     /**
      * A HTTP test server.
