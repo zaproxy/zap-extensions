@@ -45,6 +45,7 @@ public class SqlInjectionSQLiteScanRuleUnitTest
     }
 
     // Give a bit more leeway
+    @Override
     protected int getRecommendMaxNumberMessagesPerParam(Plugin.AttackStrength strength) {
         switch (strength) {
             case LOW:
@@ -53,9 +54,9 @@ public class SqlInjectionSQLiteScanRuleUnitTest
             default:
                 return NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM + 2;
             case HIGH:
-                return NUMBER_MSGS_ATTACK_STRENGTH_HIGH + 4;
+                return NUMBER_MSGS_ATTACK_STRENGTH_HIGH + 10;
             case INSANE:
-                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE + 10;
+                return NUMBER_MSGS_ATTACK_STRENGTH_INSANE + 20;
         }
     }
 
