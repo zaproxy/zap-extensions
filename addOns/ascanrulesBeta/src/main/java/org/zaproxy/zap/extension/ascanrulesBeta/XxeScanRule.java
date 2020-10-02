@@ -174,7 +174,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
             // The callback extension is not available, cant do anything :(
             getParent()
                     .pluginSkipped(
-                            this, Constant.messages.getString("ascanbeta.xxeplugin.nocallback"));
+                            this, Constant.messages.getString(MESSAGE_PREFIX + "nocallback"));
         }
     }
 

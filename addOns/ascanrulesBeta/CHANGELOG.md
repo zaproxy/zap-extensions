@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
  - Terminology
+ - Correct reason shown when the XML External Entity Attack scan rule is skipped.
 
 ## [31] - 2020-09-02
 ### Changed
