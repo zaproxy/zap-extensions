@@ -50,7 +50,7 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
      * resource bundle ({@link Constant#messages}).
      *
      * @param filename the name of the file to check if it's present.
-     * @param messagePrefix the messages prefix.
+     * @param messagePrefix the messages prefix (including the trailing period).
      */
     protected AbstractAppFilePlugin(String filename, String messagePrefix) {
         this.filename = filename;
@@ -221,5 +221,9 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
                 .setEvidence(msg.getResponseHeader().getPrimeHeader())
                 .setMessage(msg)
                 .raise();
+    }
+
+    public String getFilename() {
+        return filename;
     }
 }

@@ -37,6 +37,7 @@ dependencies {
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
+    testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
 }
