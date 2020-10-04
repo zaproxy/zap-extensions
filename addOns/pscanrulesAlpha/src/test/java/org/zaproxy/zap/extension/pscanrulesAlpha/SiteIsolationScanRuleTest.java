@@ -292,6 +292,25 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(0));
     }
 
+    @Test
+    public void shouldNotRaiseAlertForReportingAPI() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Content-Type: text/html\r\n"
+                        + "cross-origin-embedder-policy: require-corp;report-to=\"coep\"\r\n"
+                        + "cross-origin-opener-policy: same-origin;report-to=\"coop\"\r\n"
+                        + "Cross-Origin-Resource-Policy: same-origin;report-to=\"corp\"\r\n");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     @Override
     protected SiteIsolationScanRule createScanner() {
         return new SiteIsolationScanRule();

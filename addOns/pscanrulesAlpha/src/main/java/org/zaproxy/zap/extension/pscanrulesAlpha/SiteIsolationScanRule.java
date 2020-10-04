@@ -126,7 +126,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
                                             || header.getValue().startsWith("application/xml"));
         }
 
-        AlertBuilder alert(String evidence) {
+        protected AlertBuilder alert(String evidence) {
             return newAlert.get()
                     .setRisk(Alert.RISK_LOW)
                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -137,6 +137,12 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
                     .setCweId(16) // CWE-16: Configuration
                     .setWascId(14) // WASC-14: Server Misconfiguration
                     .setEvidence(evidence);
+        }
+
+        protected Stream<String> filterReportHeader(String coopHeader) {
+            return Stream.of(coopHeader.split(";"))
+                    .map(String::trim)
+                    .filter(header -> !header.startsWith("report-to"));
         }
     }
 
@@ -163,11 +169,13 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
                 alert("").raise();
             }
             for (String corpHeader : corpHeaders) {
-                if ("same-site".equalsIgnoreCase(corpHeader)
-                        || !("same-origin".equalsIgnoreCase(corpHeader)
-                                || "cross-origin".equalsIgnoreCase(corpHeader))) {
-                    alert(corpHeader).raise();
-                }
+                filterReportHeader(corpHeader)
+                        .filter(
+                                header ->
+                                        "same-site".equalsIgnoreCase(header)
+                                                || !("same-origin".equalsIgnoreCase(header)
+                                                        || "cross-origin".equalsIgnoreCase(header)))
+                        .forEach(header -> alert(header).raise());
             }
         }
 
@@ -201,9 +209,9 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
             }
             for (String coepHeader : coepHeaders) {
                 // unsafe-none is the default value. It disables COEP checks.
-                if (!"require-corp".equalsIgnoreCase(coepHeader)) {
-                    alert(coepHeader).raise();
-                }
+                filterReportHeader(coepHeader)
+                        .filter(header -> !"require-corp".equalsIgnoreCase(header))
+                        .forEach(header -> alert(header).raise());
             }
         }
 
@@ -238,9 +246,9 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
             }
             for (String coopHeader : coopHeaders) {
                 // unsafe-none is the default value
-                if (!"same-origin".equalsIgnoreCase(coopHeader)) {
-                    alert(coopHeader).raise();
-                }
+                filterReportHeader(coopHeader)
+                        .filter(header -> !"same-origin".equalsIgnoreCase(header))
+                        .forEach(header -> alert(header).raise());
             }
         }
 
