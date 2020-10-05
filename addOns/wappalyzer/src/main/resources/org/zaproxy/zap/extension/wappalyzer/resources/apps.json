@@ -266,15 +266,15 @@
       "priority": 9
     },
     "69": {
-      "name": "Social login",
+      "name": "Social logins",
       "priority": 6
     },
     "70": {
-      "name": "SSL/TLS certificate authority",
+      "name": "SSL/TLS certificate authorities",
       "priority": 6
     },
     "71": {
-      "name": "Affiliate program",
+      "name": "Affiliate programs",
       "priority": 6
     }
   },
@@ -1678,6 +1678,27 @@
       ],
       "website": "http://aurelia.io"
     },
+    "Auth0": {
+      "cats": [
+        19
+      ],
+      "description": "Auth0 provides authentication and authorization as a service.",
+      "icon": "Auth0.png",
+      "scripts": [
+        "/auth0(?:-js)?/([\\d.]+)/auth0(?:.min)?\\.js\\;version:\\1",
+        "/auth0-js@([\\d.]+)/([a-z]+)/auth0\\.min\\.js\\;version:\\1"
+      ],
+      "website": "https://auth0.github.io/auth0.js/index.html"
+    },
+    "Auth0 Lock": {
+      "cats": [
+        19
+      ],
+      "description": "Auth0's signin solution",
+      "icon": "Auth0.png",
+      "scripts": "/lock/([\\d.]+)/lock(?:.min)?\\.js\\;version:\\1",
+      "website": "https://auth0.com/docs/libraries/lock"
+    },
     "Automattic": {
       "cats": [
         62
@@ -1722,6 +1743,16 @@
       },
       "scripts": "/awesomplete\\.js(?:$|\\?)",
       "website": "https://leaverou.github.io/awesomplete/"
+    },
+    "Axios": {
+      "cats": [
+        19
+      ],
+      "scripts": [
+        "/axios(@|/)([\\d.]+)(?:/[a-z]+)?/axios(?:.min)?\\.js\\;version:\\2"
+      ],
+      "description": "Promise based HTTP client for the browser and node.js",
+      "website": "https://github.com/axios/axios"
     },
     "Azure": {
       "cats": [
@@ -1942,6 +1973,20 @@
         "Bizweb": ""
       },
       "website": "https://www.bizweb.vn"
+    },
+    "Blackbaud Luminate Online": {
+      "cats": [
+        41,
+        32
+      ],
+      "icon": "Blackbaud-Luminate-Online.png",
+      "js": {
+        "don_premium_map": ""
+      },
+      "url": "/site/Donation2?.*df_id=",
+      "scripts": "js/convio/modules\\.js",
+      "description": "Blackbaud Luminate Online provides online fundraising and marketing automation for nonprofits.",
+      "website": "https://www.blackbaud.com/products/blackbaud-luminate-online"
     },
     "Blade": {
       "cats": [
@@ -2706,6 +2751,17 @@
       },
       "website": "http://ckan.org/"
     },
+    "Classy": {
+      "cats": [
+        51
+      ],
+      "icon": "classy.png",
+      "js": {
+        "Classy": ""
+      },
+      "description": "Classy is a class library for JavaScript applications.",
+      "website": "https://www.classy.org/"
+    },
     "Clarity": {
       "cats": [
         66
@@ -2721,6 +2777,17 @@
       },
       "scripts": "clr-angular(?:\\.umd)?(?:\\.min)?\\.js",
       "website": "https://clarity.design/"
+    },
+    "Clearbit Reveal": {
+      "cats": [
+        10
+      ],
+      "icon": "Clearbit.png",
+      "scripts": [
+        "reveal\\.clearbit\\.com/v[(0-9)]/"
+      ],
+      "description": "Clearbit Reveal identifies anonymous visitors to websites.",
+      "website": "https://clearbit.com/reveal"
     },
     "ClickFunnels": {
       "cats": [
@@ -3270,7 +3337,14 @@
       ],
       "description": "CrownPeak is a cloud-based Digital Experience Management (DEM) platform that is designed to in the management of digital experiences across multiple touch-points, especially for marketing and a freer IT architecture.",
       "icon": "Crownpeak.png",
-      "scripts": "c\\.evidon\\.com",
+      "js": {
+        "CrownPeakAutocomplete": "",
+        "CrownPeakSearch": ""
+      },
+      "scripts": [
+        "c\\.evidon\\.com",
+        "js/crownpeak\\."
+      ],
       "website": "http://www.crownpeak.com"
     },
     "Crypto-Loot": {
@@ -4398,7 +4472,7 @@
       ],
       "description": "Facebook is an online social media and social networking service.",
       "icon": "Facebook.svg",
-      "scripts": "//connect\\.facebook\\.net/[^/]*/[a-z]*\\.js",
+      "scripts": "//connect\\.facebook\\.([a-z]+)/[^/]*/[a-z]*\\.js",
       "website": "http://facebook.com"
     },
     "Facebook Sign-in": {
@@ -4523,6 +4597,16 @@
       },
       "website": "https://www.traycorp.com.br"
     },
+    "Feedback Fish": {
+      "cats": [
+        13,
+        61
+      ],
+      "icon": "feedback-fish.svg",
+      "scripts": "^https://feedback\\.fish/ff\\.js",
+      "description": "Feedback Fish is a widget for collecting website feedback from users.",
+      "website": "https://feedback.fish"
+    },
     "Fedora": {
       "cats": [
         28
@@ -4556,7 +4640,10 @@
       "js": {
         "firebase.SDK_VERSION": "([\\d.]+)$\\;version:\\1"
       },
-      "scripts": "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js\\;version:\\1",
+      "scripts": [
+        "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js\\;version:\\1",
+        "/firebasejs/([\\d.]+)/firebase\\;version:\\1"
+      ],
       "website": "https://firebase.com"
     },
     "Fireblade": {
@@ -4795,6 +4882,18 @@
       "icon": "Freespee.svg",
       "scripts": "analytics\\.freespee\\.com/js/external/fs\\.(?:min\\.)?js",
       "website": "https://www.freespee.com"
+    },
+    "Crisp Live Chat": {
+      "cats": [
+        52
+      ],
+      "description": "Crisp Live Chat is a live chat solution with free and paid options.",
+      "icon": "Crisp Live Chat.svg",
+      "js": {
+        "$crisp": "",
+        "CRISP_WEBSITE_ID": ""
+      },
+      "website": "https://crisp.chat/"
     },
     "Freshchat": {
       "cats": [
@@ -5374,7 +5473,7 @@
         "GoogleAnalyticsObject": "",
         "gaGlobal": ""
       },
-      "scripts": "google-analytics\\.com\\/(?:ga|urchin|analytics)\\.js",
+      "scripts": "google-analytics\\.com/(?:ga|urchin|analytics)\\.js",
       "website": "http://google.com/analytics"
     },
     "Google Analytics Enhanced eCommerce": {
@@ -5481,6 +5580,9 @@
         41
       ],
       "html": "<[^>]+aria-labelledby=\"pi-google_pay",
+      "scripts": [
+        "pay\\.google\\.com/([a-z/]+)/pay\\.js"
+      ],
       "icon": "Google.svg",
       "description": "Google Pay is a digital wallet platform and online payment system developed by Google to power in-app and tap-to-pay purchases on mobile devices, enabling users to make payments with Android phones, tablets or watches.",
       "website": "https://pay.google.com"
@@ -5534,6 +5636,9 @@
         "google_tag_manager": "",
         "googletag": ""
       },
+      "scripts": [
+        "googletagmanager\\.com/gtm\\.js"
+      ],
       "website": "http://www.google.com/tagmanager"
     },
     "Google Wallet": {
@@ -5957,6 +6062,16 @@
         "generator": "hinzacms"
       },
       "website": "http://hinzaco.com"
+    },
+    "History": {
+      "cats": [
+        19
+      ],
+      "description": "Manage session history with JavaScript",
+      "scripts": [
+        "/history(@|/)([\\d.]+)(?:/[a-z]+)?/history(?:(.production|.development))?(?:.min)?\\.js\\;version:\\2"
+      ],
+      "website": "https://github.com/ReactTraining/history"
     },
     "Hogan.js": {
       "cats": [
@@ -10601,10 +10716,28 @@
       "scripts": "/redoc\\.(?:min\\.)?js",
       "website": "https://github.com/Rebilly/ReDoc"
     },
+    "Redux": {
+      "cats": [
+        12
+      ],
+      "description": "Redux is a predictable state container for JavaScript applications.",
+      "icon": "Redux.png",
+      "scripts": [
+        "/redux(@|/)([\\d.]+)(?:/[a-z]+)?/redux(?:.min)?\\.js\\;version:\\2"
+      ],
+      "website": "https://redux.js.org/"
+    },
     "React": {
       "cats": [
         12
       ],
+      "dom": {
+        "#root": {
+          "properties": {
+            "_reactRootContainer": ""
+          }
+        }
+      },
       "cpe": "cpe:/a:facebook:react",
       "description": "React is an open-source JavaScript library for building user interfaces or UI components.",
       "html": "<[^>]+data-react",
@@ -10619,6 +10752,33 @@
         "^react\\b.*\\.js"
       ],
       "website": "https://reactjs.org"
+    },
+    "React Redux": {
+      "cats": [
+        12
+      ],
+      "description": "Official React bindings for Redux",
+      "icon": "Redux.png",
+      "implies": [
+        "React",
+        "Redux"
+      ],
+      "scripts": [
+        "/react-redux(@|/)([\\d.]+)(?:/[a-z]+)?/react-redux(?:.min)?\\.js\\;version:\\2"
+      ],
+      "website": "https://react-redux.js.org/"
+    },
+    "React Router": {
+      "cats": [
+        12
+      ],
+      "description": "React Router provides declarative routing for React.",
+      "icon": "React Router.png",
+      "implies": "React",
+      "scripts": [
+        "/react-router(@|/)([\\d.]+)(?:/[a-z]+)?/react-router(?:.min)?\\.js\\;version:\\2"
+      ],
+      "website": "https://reactrouter.com/"
     },
     "RebelMouse": {
       "cats": [
@@ -11595,6 +11755,9 @@
       ],
       "description": "Shop Pay is an accelerated checkout that lets customers save their email address, credit card, and shipping and billing information so they can complete their transaction faster the next time they are directed to the Shopify checkout.",
       "html": "<[^>]+aria-labelledby=\"pi-shopify_pay",
+      "scripts": [
+        "cdn\\.shopify\\.com/shopifycloud/shopify_pay/"
+      ],
       "icon": "Shopify.svg",
       "implies": "Shopify",
       "url": "^https://pay.shopify.com",
@@ -12840,7 +13003,7 @@
     },
     "Tealium": {
       "cats": [
-        36
+        42
       ],
       "description": "Tealium provides a sales enterprise tag management system and marketing software.",
       "icon": "Tealium.png",
