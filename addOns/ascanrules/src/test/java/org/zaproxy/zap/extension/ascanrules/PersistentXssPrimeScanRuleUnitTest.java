@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 /** Unit test for {@link PersistentXssPrimeScanRule}. */
 public class PersistentXssPrimeScanRuleUnitTest
-        extends ActiveScannerAppParamTest<PersistentXssPrimeScanRule> {
+        extends ActiveScannerTest<PersistentXssPrimeScanRule> {
 
     @Override
     protected PersistentXssPrimeScanRule createScanner() {

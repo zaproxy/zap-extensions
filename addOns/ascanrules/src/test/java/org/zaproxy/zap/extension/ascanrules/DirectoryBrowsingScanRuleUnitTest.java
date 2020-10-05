@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 /** Unit test for {@link DirectoryBrowsingScanRule}. */
 public class DirectoryBrowsingScanRuleUnitTest
-        extends ActiveScannerAppTest<DirectoryBrowsingScanRule> {
+        extends ActiveScannerTest<DirectoryBrowsingScanRule> {
 
     @Override
     protected DirectoryBrowsingScanRule createScanner() {

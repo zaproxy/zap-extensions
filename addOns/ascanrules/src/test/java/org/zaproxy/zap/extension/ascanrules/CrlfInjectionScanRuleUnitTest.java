@@ -22,8 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 
 /** Unit test for {@link CrlfInjectionScanRule}. */
-public class CrlfInjectionScanRuleUnitTest
-        extends ActiveScannerAppParamTest<CrlfInjectionScanRule> {
+public class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjectionScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {

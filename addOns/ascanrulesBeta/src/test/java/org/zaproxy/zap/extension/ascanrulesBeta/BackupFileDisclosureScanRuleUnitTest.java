@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -30,8 +29,8 @@ import fi.iki.elonen.NanoHTTPD.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -61,53 +60,10 @@ public class BackupFileDisclosureScanRuleUnitTest
         return rule;
     }
 
-    @Test
-    public void shouldSendReasonableNumberOfMessagesInLowStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.LOW);
-        rule.init(getHttpMessage(URL), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_LOW)));
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
-    public void shouldSendReasonableNumberOfMessagesInMediumStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.MEDIUM);
-        rule.init(getHttpMessage(URL), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_MED)));
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
-    public void shouldSendReasonableNumberOfMessagesInHighStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.HIGH);
-        rule.init(getHttpMessage(URL), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_HIGH)));
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
-    public void shouldSendReasonableNumberOfMessagesInInsaneStrength() throws Exception {
-        // Given
-        rule.setAttackStrength(Plugin.AttackStrength.INSANE);
-        rule.init(getHttpMessage(URL), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(
-                httpMessagesSent, hasSize(lessThanOrEqualTo(NUMBER_MSGS_ATTACK_PER_PAGE_INSANE)));
-        assertThat(alertsRaised, hasSize(0));
+    @Override
+    protected HttpMessage getHttpMessageForSendReasonableNumberOfMessages(String defaultPath)
+            throws HttpMalformedHeaderException {
+        return super.getHttpMessageForSendReasonableNumberOfMessages(URL);
     }
 
     @Test

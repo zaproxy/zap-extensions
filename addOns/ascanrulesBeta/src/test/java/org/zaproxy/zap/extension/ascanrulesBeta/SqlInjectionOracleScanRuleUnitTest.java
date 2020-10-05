@@ -35,7 +35,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link SqlInjectionOracleScanRule}. */
 public class SqlInjectionOracleScanRuleUnitTest
-        extends ActiveScannerAppParamTest<SqlInjectionOracleScanRule> {
+        extends ActiveScannerTest<SqlInjectionOracleScanRule> {
 
     @Override
     protected SqlInjectionOracleScanRule createScanner() {

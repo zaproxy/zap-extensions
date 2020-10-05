@@ -34,8 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link ParameterTamperScanRule}. */
-public class ParameterTamperScanRuleUnitTest
-        extends ActiveScannerAppParamTest<ParameterTamperScanRule> {
+public class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperScanRule> {
 
     @Override
     protected ParameterTamperScanRule createScanner() {

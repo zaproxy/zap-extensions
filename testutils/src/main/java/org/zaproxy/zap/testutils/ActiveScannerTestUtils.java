@@ -20,7 +20,9 @@
 package org.zaproxy.zap.testutils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.Mockito.mock;
@@ -29,7 +31,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Function;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
@@ -44,6 +50,7 @@ import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.core.scanner.Scanner;
 import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.network.ConnectionParam;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
@@ -188,6 +195,7 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
     Collection<DynamicTest> commonScanRuleTests() {
         List<DynamicTest> commonTests = new ArrayList<>();
         commonTests.add(testScanRuleHasName());
+        addTestsSendReasonableNumberOfMessages(commonTests);
         return commonTests;
     }
 
@@ -215,6 +223,96 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
                         .map(extensionResourceBundle::getString)
                         .anyMatch(str -> str.equals(name)));
     }
+
+    private void addTestsSendReasonableNumberOfMessages(List<DynamicTest> tests) {
+        T scanRule = createScanner();
+
+        String messagePath = "";
+        Function<Plugin.AttackStrength, Integer> maxNumberMessagesProvider = null;
+        if (scanRule instanceof AbstractAppParamPlugin) {
+            messagePath = "?p=v";
+            maxNumberMessagesProvider = this::getRecommendMaxNumberMessagesPerParam;
+        } else if (scanRule instanceof AbstractAppPlugin) {
+            maxNumberMessagesProvider = this::getRecommendMaxNumberMessagesPerPage;
+        }
+
+        if (maxNumberMessagesProvider != null) {
+            for (Plugin.AttackStrength strength :
+                    EnumSet.range(Plugin.AttackStrength.LOW, Plugin.AttackStrength.INSANE)) {
+                String strengthName =
+                        StringUtils.capitalize(strength.name().toLowerCase(Locale.ROOT));
+                String testName =
+                        String.format(
+                                "shouldSendReasonableNumberOfMessagesIn%sStrength", strengthName);
+                int maxNumberMessages = maxNumberMessagesProvider.apply(strength);
+                String path = messagePath;
+                tests.add(
+                        dynamicTest(
+                                testName,
+                                () -> {
+                                    setUp();
+                                    try {
+                                        shouldSendReasonableNumberOfMessages(
+                                                strength, maxNumberMessages, path);
+                                    } finally {
+                                        shutDownServer();
+                                    }
+                                }));
+            }
+        }
+    }
+
+    /**
+     * Tests the number of messages sent for a given strength.
+     *
+     * <p>The tests for all strengths are created dynamically using this and other referenced
+     * methods.
+     *
+     * <p>The recommended maximum number of messages is obtained from {@link
+     * #getRecommendMaxNumberMessagesPerParam(org.parosproxy.paros.core.scanner.Plugin.AttackStrength)}
+     * and {@link
+     * #getRecommendMaxNumberMessagesPerPage(org.parosproxy.paros.core.scanner.Plugin.AttackStrength)}
+     * depending on the type of the scan rule being tested.
+     *
+     * <p>Should not be overridden in normal cases.
+     *
+     * @param strength the strength to test.
+     * @param maxNumberMessages the maximum number of messages allowed to be sent.
+     * @param defaultPath the default path used to create the {@link
+     *     #getHttpMessageForSendReasonableNumberOfMessages(String) test message}.
+     * @throws HttpMalformedHeaderException if an exception occurred while creating the test HTTP
+     *     message.
+     * @see #setupServerForSendReasonableNumberOfMessages()
+     * @see #isIgnoreAlertsRaisedInSendReasonableNumberOfMessages()
+     */
+    protected void shouldSendReasonableNumberOfMessages(
+            Plugin.AttackStrength strength, int maxNumberMessages, String defaultPath)
+            throws HttpMalformedHeaderException {
+        // Given
+        setupServerForSendReasonableNumberOfMessages();
+        rule.setAttackStrength(strength);
+        rule.init(getHttpMessageForSendReasonableNumberOfMessages(defaultPath), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(lessThanOrEqualTo(maxNumberMessages)));
+        if (!isIgnoreAlertsRaisedInSendReasonableNumberOfMessages()) {
+            assertThat(alertsRaised, hasSize(0));
+        }
+    }
+
+    /**
+     * Setups the {@link TestUtils#nano test server} for the tests that verify the number of
+     * messages sent for a given strength.
+     *
+     * <p>Does nothing by default. Scan rules test class should override this method to setup the
+     * test server in a way that maximises the number of the messages sent by the scan rule.
+     *
+     * @see
+     *     #shouldSendReasonableNumberOfMessages(org.parosproxy.paros.core.scanner.Plugin.AttackStrength,
+     *     int, String)
+     */
+    protected void setupServerForSendReasonableNumberOfMessages() {}
 
     /**
      * Gets the recommended maximum number of messages that a scanner can send per parameter for the
@@ -258,5 +356,36 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
             case INSANE:
                 return NUMBER_MSGS_ATTACK_PER_PAGE_INSANE;
         }
+    }
+
+    /**
+     * Gets the HTTP message that causes the scan rule to send the most messages, to verify that it
+     * does not exceed (too much) the recommended limits.
+     *
+     * <p>The default message is created with {@link #getHttpMessage(String)} using the given
+     * default path, a query parameter for {@link AbstractAppParamPlugin} and an empty path for
+     * {@link AbstractAppPlugin}.
+     *
+     * @param defaultPath the default path
+     * @return the HTTP message.
+     */
+    protected HttpMessage getHttpMessageForSendReasonableNumberOfMessages(String defaultPath)
+            throws HttpMalformedHeaderException {
+        return getHttpMessage(defaultPath);
+    }
+
+    /**
+     * Tells whether or not the scan rule raises alerts even when testing the number of messages
+     * sent.
+     *
+     * <p>In normal cases no alert should be raised, as that usually reduces the number of messages
+     * sent.
+     *
+     * <p>Default value: {@code false}.
+     *
+     * @return {@code true} if the scan rule raises alerts, {@code false} otherwise.
+     */
+    protected boolean isIgnoreAlertsRaisedInSendReasonableNumberOfMessages() {
+        return false;
     }
 }

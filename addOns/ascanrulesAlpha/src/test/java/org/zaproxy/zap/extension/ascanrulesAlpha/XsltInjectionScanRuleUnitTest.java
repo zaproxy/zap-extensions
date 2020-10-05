@@ -30,8 +30,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
 
 /** Unit test for {@link XsltInjectionScanRule}. */
-public class XsltInjectionScanRuleUnitTest
-        extends ActiveScannerAppParamTest<XsltInjectionScanRule> {
+public class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjectionScanRule> {
 
     @Override
     protected XsltInjectionScanRule createScanner() {

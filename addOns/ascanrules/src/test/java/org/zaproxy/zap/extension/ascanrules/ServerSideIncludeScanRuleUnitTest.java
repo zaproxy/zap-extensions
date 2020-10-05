@@ -29,7 +29,7 @@ import org.zaproxy.zap.model.TechSet;
 
 /** Unit test for {@link ServerSideIncludeScanRule}. */
 public class ServerSideIncludeScanRuleUnitTest
-        extends ActiveScannerAppParamTest<ServerSideIncludeScanRule> {
+        extends ActiveScannerTest<ServerSideIncludeScanRule> {
 
     @Override
     protected ServerSideIncludeScanRule createScanner() {
