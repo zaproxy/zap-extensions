@@ -32,7 +32,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link RemoteFileIncludeScanRule}. */
 public class RemoteFileIncludeScanRuleUnitTest
-        extends ActiveScannerAppParamTest<RemoteFileIncludeScanRule> {
+        extends ActiveScannerTest<RemoteFileIncludeScanRule> {
 
     @Override
     protected RemoteFileIncludeScanRule createScanner() {

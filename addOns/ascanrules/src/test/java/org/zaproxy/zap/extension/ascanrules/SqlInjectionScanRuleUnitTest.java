@@ -37,7 +37,7 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link SqlInjectionScanRule}. */
-public class SqlInjectionScanRuleUnitTest extends ActiveScannerAppParamTest<SqlInjectionScanRule> {
+public class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {

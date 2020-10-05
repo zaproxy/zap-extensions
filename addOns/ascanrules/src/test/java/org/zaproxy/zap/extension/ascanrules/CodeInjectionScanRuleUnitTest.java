@@ -29,8 +29,7 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /** Unit test for {@link CodeInjectionScanRule}. */
-public class CodeInjectionScanRuleUnitTest
-        extends ActiveScannerAppParamTest<CodeInjectionScanRule> {
+public class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {

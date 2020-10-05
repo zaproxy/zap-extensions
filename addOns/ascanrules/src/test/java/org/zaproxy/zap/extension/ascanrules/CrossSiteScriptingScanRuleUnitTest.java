@@ -47,7 +47,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class CrossSiteScriptingScanRuleUnitTest
-        extends ActiveScannerAppParamTest<CrossSiteScriptingScanRule> {
+        extends ActiveScannerTest<CrossSiteScriptingScanRule> {
 
     @Override
     protected CrossSiteScriptingScanRule createScanner() {

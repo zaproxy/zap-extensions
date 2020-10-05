@@ -47,8 +47,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link CommandInjectionScanRule}. */
-public class CommandInjectionScanRuleUnitTest
-        extends ActiveScannerAppParamTest<CommandInjectionScanRule> {
+public class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectionScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {

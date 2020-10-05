@@ -35,7 +35,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link SqlInjectionPostgreScanRule}. */
 public class SqlInjectionPostgreScanRuleUnitTest
-        extends ActiveScannerAppParamTest<SqlInjectionPostgreScanRule> {
+        extends ActiveScannerTest<SqlInjectionPostgreScanRule> {
 
     @Override
     protected SqlInjectionPostgreScanRule createScanner() {

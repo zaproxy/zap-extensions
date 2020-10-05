@@ -39,8 +39,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link PathTraversalScanRule}. */
-public class PathTraversalScanRuleUnitTest
-        extends ActiveScannerAppParamTest<PathTraversalScanRule> {
+public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanRule> {
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {

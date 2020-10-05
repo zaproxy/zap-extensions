@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 /** Unit test for {@link PersistentXssSpiderScanRule}. */
 public class PersistentXssSpiderScanRuleUnitTest
-        extends ActiveScannerAppTest<PersistentXssSpiderScanRule> {
+        extends ActiveScannerTest<PersistentXssSpiderScanRule> {
 
     @Override
     protected PersistentXssSpiderScanRule createScanner() {

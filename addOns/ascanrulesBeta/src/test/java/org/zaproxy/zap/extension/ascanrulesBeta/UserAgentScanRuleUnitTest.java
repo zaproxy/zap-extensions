@@ -34,6 +34,11 @@ public class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRu
         return new UserAgentScanRule();
     }
 
+    @Override
+    protected boolean isIgnoreAlertsRaisedInSendReasonableNumberOfMessages() {
+        return true;
+    }
+
     @Test
     public void shouldHaveInfoRisk() {
         // Given / When

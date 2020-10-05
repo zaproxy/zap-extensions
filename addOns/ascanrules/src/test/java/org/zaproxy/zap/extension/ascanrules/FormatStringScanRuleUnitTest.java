@@ -28,7 +28,7 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /** Unit test for {@link FormatStringScanRule}. */
-public class FormatStringScanRuleUnitTest extends ActiveScannerAppParamTest<FormatStringScanRule> {
+public class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatStringScanRule> {
 
     @Override
     protected FormatStringScanRule createScanner() {

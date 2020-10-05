@@ -28,8 +28,7 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
 /** Unit test for {@link BufferOverflowScanRule}. */
-public class BufferOverflowScanRuleUnitTest
-        extends ActiveScannerAppParamTest<BufferOverflowScanRule> {
+public class BufferOverflowScanRuleUnitTest extends ActiveScannerTest<BufferOverflowScanRule> {
 
     @Override
     protected BufferOverflowScanRule createScanner() {

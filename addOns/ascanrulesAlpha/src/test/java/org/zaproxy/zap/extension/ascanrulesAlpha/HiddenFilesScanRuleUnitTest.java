@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -59,8 +59,8 @@ public class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesSc
         return new HiddenFilesScanRule();
     }
 
-    @BeforeEach
-    public void before() {
+    @AfterEach
+    public void after() {
         HiddenFilesScanRule.setPayloadProvider(null);
     }
 
