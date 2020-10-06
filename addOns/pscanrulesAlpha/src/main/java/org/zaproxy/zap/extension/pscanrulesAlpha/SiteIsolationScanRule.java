@@ -33,9 +33,9 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Spectre vulnerability has shown that Javascript code can be used to read any part of memory in
- * the same address space. Browser architectures are been <a href=
- * "https://chromium.googlesource.com/chromium/src/+/master/docs/security/side-channel-threat-model.md">re-think</a>
+ * Spectre vulnerability has shown that JavaScript code can be used to read any part of memory in
+ * the same address space. Browser architectures are being <a href=
+ * "https://chromium.googlesource.com/chromium/src/+/master/docs/security/side-channel-threat-model.md">re-thought</a>
  * to keep sensitive data outside of the address space of untrusted code.
  *
  * <p>To achieve this, three headers have been added:
@@ -92,7 +92,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
 
     @Override
     public String getName() {
-        return SITE_ISOLATION_MESSAGE_PREFIX + "name";
+        return Constant.messages.getString(SITE_ISOLATION_MESSAGE_PREFIX + "name");
     }
 
     @Override
