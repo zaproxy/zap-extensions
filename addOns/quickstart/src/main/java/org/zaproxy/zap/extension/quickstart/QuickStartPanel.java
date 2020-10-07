@@ -37,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.ScrollableSizeHint;
@@ -70,6 +71,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
     private DefaultExplorePanel defaultExplorePanel;
     private QuickStartSubPanel explorePanel;
     private JXPanel newsPanel;
+    private JLabel topTitle;
 
     private NewsItem newsItem;
 
@@ -102,7 +104,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
         panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 
-        JLabel topTitle = new JLabel(Constant.messages.getString("quickstart.top.panel.title"));
+        topTitle = new JLabel(Constant.messages.getString("quickstart.top.panel.title"));
         topTitle.setBackground(panelContent.getBackground());
         topTitle.setFont(FontUtils.getFont(Size.much_larger));
         topTitle.setHorizontalAlignment(SwingConstants.CENTER);
@@ -141,6 +143,26 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
         getAttackPanel().setMode(Control.getSingleton().getMode());
         getLearnMorePanel();
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        if (panelContent != null) {
+            SwingUtilities.updateComponentTreeUI(panelContent);
+            Color color = QuickStartBackgroundPanel.getBackgroundColor(true);
+            topTitle.setBackground(color);
+            buttonPanel.setBackground(color);
+
+            SwingUtilities.updateComponentTreeUI(attackPanel);
+            SwingUtilities.updateComponentTreeUI(learnMorePanel);
+            if (defaultExplorePanel != null) {
+                SwingUtilities.updateComponentTreeUI(defaultExplorePanel);
+            }
+            if (explorePanel != null) {
+                SwingUtilities.updateComponentTreeUI(explorePanel);
+            }
+        }
     }
 
     public void backToMainPanel() {

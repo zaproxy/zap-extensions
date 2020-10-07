@@ -35,11 +35,25 @@ public class QuickStartHelper {
     }
 
     public static ZapLabel getWrappedLabel(String key) {
-        ZapLabel label = new ZapLabel(Constant.messages.getString(key));
-        label.setBackground(QuickStartBackgroundPanel.getBackgroundColor());
+        ZapLabel label = new QuickStartLabel(Constant.messages.getString(key));
         label.setLineWrap(true);
         label.setWrapStyleWord(true);
         return label;
+    }
+
+    private static class QuickStartLabel extends ZapLabel {
+        private static final long serialVersionUID = 1L;
+
+        public QuickStartLabel(String text) {
+            super(text);
+            setBackground(QuickStartBackgroundPanel.getBackgroundColor());
+        }
+
+        @Override
+        public void updateUI() {
+            super.updateUI();
+            setBackground(QuickStartBackgroundPanel.getBackgroundColor(true));
+        }
     }
 
     public static void raiseOptionsChangedEvent() {
