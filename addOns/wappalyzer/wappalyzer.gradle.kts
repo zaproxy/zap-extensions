@@ -5,7 +5,7 @@ description = "Technology detection using Wappalyzer: wappalyzer.com"
 
 zapAddOn {
     addOnName.set("Wappalyzer - Technology Detection")
-    addOnStatus.set(AddOnStatus.BETA)
+    addOnStatus.set(AddOnStatus.RELEASE)
     zapVersion.set("2.9.0")
 
     manifest {

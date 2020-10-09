@@ -5,7 +5,7 @@ description = "Retire.js"
 
 zapAddOn {
     addOnName.set("Retire.js")
-    addOnStatus.set(AddOnStatus.BETA)
+    addOnStatus.set(AddOnStatus.RELEASE)
     zapVersion.set("2.9.0")
 
     manifest {
