@@ -45,13 +45,13 @@ public class ExtensionDomXSS extends ExtensionAdaptor {
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }
 
-    private TestDomXSS scanner;
+    private DomXssScanRule scanner;
 
     @Override
     public void init() {
         super.init();
 
-        scanner = new TestDomXSS();
+        scanner = new DomXssScanRule();
         scanner.setStatus(getAddOn().getStatus());
     }
 

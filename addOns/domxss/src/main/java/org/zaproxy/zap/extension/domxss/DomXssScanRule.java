@@ -22,8 +22,11 @@ package org.zaproxy.zap.extension.domxss;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -55,33 +58,34 @@ import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 import org.zaproxy.zap.utils.Stats;
 
-public class TestDomXSS extends AbstractAppParamPlugin {
+public class DomXssScanRule extends AbstractAppParamPlugin {
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
-    private static Logger log = Logger.getLogger(TestDomXSS.class);
+    private static Logger log = Logger.getLogger(DomXssScanRule.class);
 
-    private static final String POLYGLOT_ALERT =
+    protected static final String POLYGLOT_ALERT =
             "#jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert()//>\\x3e";
     private static final String HASH_SCRIPT_ALERT = "#<script>alert(1)</script>";
     private static final String HASH_IMG_ALERT = "#<img src=\"random.gif\" onerror=alert(1)>";
     private static final String HASH_HASH_ALERT = "#abc#<script>alert(1)</script>";
-    private static final String QUERY_IMG_ALERT = "?name=<img src=\"random.gif\" onerror=alert(1)>";
+    protected static final String QUERY_IMG_ALERT =
+            "?name=<img src=\"random.gif\" onerror=alert(1)>";
     private static final String HASH_HASH_IMG_ALERT = "#abc#<img src='random.gif' onerror=alert(1)";
-    private static final String HASH_JAVASCRIPT_ALERT = "#javascript:alert(1)";
-    private static final String HASH_ALERT = "#alert(1)";
-    private static final String QUERY_HASH_IMG_ALERT =
+    protected static final String HASH_JAVASCRIPT_ALERT = "#javascript:alert(1)";
+    protected static final String HASH_ALERT = "#alert(1)";
+    protected static final String QUERY_HASH_IMG_ALERT =
             "?name=abc#<img src=\"random.gif\" onerror=alert(1)>";
 
     // In order of effectiveness vs benchmark apps
     public static final String[] ATTACK_STRINGS = {
         POLYGLOT_ALERT,
+        HASH_JAVASCRIPT_ALERT,
+        QUERY_HASH_IMG_ALERT,
+        HASH_ALERT,
+        QUERY_IMG_ALERT,
         HASH_SCRIPT_ALERT,
         HASH_IMG_ALERT,
         HASH_HASH_ALERT,
-        QUERY_IMG_ALERT,
         HASH_HASH_IMG_ALERT,
-        HASH_JAVASCRIPT_ALERT,
-        HASH_ALERT,
-        QUERY_HASH_IMG_ALERT
     };
 
     private static final String IMG_ALERT = "<img src=\"random.gif\" onerror=alert(1)>";
@@ -95,8 +99,9 @@ public class TestDomXSS extends AbstractAppParamPlugin {
 
     private static final Browser DEFAULT_BROWSER = Browser.FIREFOX_HEADLESS;
 
-    private static Stack<WebDriverWrapper> freeFirefoxDrivers = new Stack<WebDriverWrapper>();
-    private static List<WebDriverWrapper> takenFirefoxDrivers = new ArrayList<WebDriverWrapper>();
+    private static Map<Browser, Stack<WebDriverWrapper>> freeDrivers =
+            new HashMap<Browser, Stack<WebDriverWrapper>>();
+    private static List<WebDriverWrapper> takenDrivers = new ArrayList<WebDriverWrapper>();
 
     private static Thread reaperThread = null;
     private static Object reaperThreadSync = new Object();
@@ -188,14 +193,14 @@ public class TestDomXSS extends AbstractAppParamPlugin {
     }
 
     private static boolean isSupportedBrowser(Browser browser) {
-        /*
-         * TODO look at supporting other browsers
-         * Notes:
-         * 	HtmlUnit just logs a _load_ of errors
-         * 	Chrome doesnt seem to find anything, possibly due to its XSS protection
-         * 	Phantom JS doesnt find anything as 'alerts' arent yet supported
-         */
-        return browser == Browser.FIREFOX || browser == Browser.FIREFOX_HEADLESS;
+        return browser == Browser.FIREFOX
+                || browser == Browser.FIREFOX_HEADLESS
+                || browser == Browser.CHROME
+                || browser == Browser.CHROME_HEADLESS;
+    }
+
+    Browser getBrowser() {
+        return browser;
     }
 
     /*
@@ -247,14 +252,21 @@ public class TestDomXSS extends AbstractAppParamPlugin {
     }
 
     private WebDriverWrapper getWebDriver() {
-        WebDriverWrapper fxDriver;
+        WebDriverWrapper driver = null;
         try {
-            fxDriver = freeFirefoxDrivers.pop();
+            driver = freeDrivers.get(browser).pop();
+            if (!driver.getBrowser().equals(browser)) {
+                driver.getDriver().quit();
+                driver = null;
+            }
         } catch (Exception e) {
-            fxDriver = new WebDriverWrapper(createWebDriver());
+            // Ignore
         }
-        synchronized (takenFirefoxDrivers) {
-            takenFirefoxDrivers.add(fxDriver);
+        if (driver == null) {
+            driver = new WebDriverWrapper(createWebDriver(), browser);
+        }
+        synchronized (takenDrivers) {
+            takenDrivers.add(driver);
         }
 
         if (reaperThread == null) {
@@ -275,9 +287,9 @@ public class TestDomXSS extends AbstractAppParamPlugin {
                                                 }
                                                 Date now = new Date();
                                                 // concurrent modification exception :(
-                                                synchronized (takenFirefoxDrivers) {
+                                                synchronized (takenDrivers) {
                                                     Iterator<WebDriverWrapper> iter =
-                                                            takenFirefoxDrivers.iterator();
+                                                            takenDrivers.iterator();
                                                     while (iter.hasNext()) {
                                                         WebDriverWrapper wrapper = iter.next();
                                                         if ((now.getTime()
@@ -298,10 +310,9 @@ public class TestDomXSS extends AbstractAppParamPlugin {
                                                         }
                                                     }
                                                 }
-                                            } while (takenFirefoxDrivers.size() > 0);
+                                            } while (takenDrivers.size() > 0);
                                             log.info(
-                                                    "Reaper thread exiting "
-                                                            + takenFirefoxDrivers.size());
+                                                    "Reaper thread exiting " + takenDrivers.size());
 
                                             reaperThread = null;
                                         }
@@ -310,13 +321,16 @@ public class TestDomXSS extends AbstractAppParamPlugin {
                 }
             }
         }
-        return fxDriver;
+        return driver;
     }
 
-    private void returnFirefoxDriver(WebDriverWrapper fxDriver) {
-        synchronized (takenFirefoxDrivers) {
-            if (takenFirefoxDrivers.remove(fxDriver)) {
-                freeFirefoxDrivers.push(fxDriver);
+    private void returnDriver(WebDriverWrapper driver) {
+        synchronized (takenDrivers) {
+            if (takenDrivers.remove(driver)) {
+                freeDrivers
+                        .computeIfAbsent(driver.getBrowser(), k -> new Stack<WebDriverWrapper>())
+                        .push(driver);
+
             } else {
                 log.debug("Driver not in 'taken' list");
             }
@@ -326,15 +340,21 @@ public class TestDomXSS extends AbstractAppParamPlugin {
     @Override
     public void setTimeFinished() {
         super.setTimeFinished();
+        tidyUp();
+    }
+
+    static void tidyUp() {
         // Tidy up...
         // Dont kill drivers in the 'taken' list as there may be multiple scans
-        WebDriverWrapper fxDriver;
-        while (!freeFirefoxDrivers.isEmpty()) {
-            try {
-                fxDriver = freeFirefoxDrivers.pop();
-                fxDriver.getDriver().quit();
-            } catch (Exception e) {
-                // Ignore
+        WebDriverWrapper driver;
+        for (Entry<Browser, Stack<WebDriverWrapper>> map : freeDrivers.entrySet()) {
+            while (!map.getValue().isEmpty()) {
+                try {
+                    driver = map.getValue().pop();
+                    driver.getDriver().quit();
+                } catch (Exception e) {
+                    // Ignore
+                }
             }
         }
     }
@@ -526,14 +546,14 @@ public class TestDomXSS extends AbstractAppParamPlugin {
 
         switch (this.getAttackStrength()) {
             case LOW:
-                numberOfAttackStrings = 3;
+                numberOfAttackStrings = 1;
                 break;
             case MEDIUM:
             default:
-                numberOfAttackStrings = 5;
+                numberOfAttackStrings = 3;
                 break;
             case HIGH:
-                numberOfAttackStrings = 7;
+                numberOfAttackStrings = 6;
                 break;
             case INSANE:
                 numberOfAttackStrings = ATTACK_STRINGS.length;
@@ -547,7 +567,7 @@ public class TestDomXSS extends AbstractAppParamPlugin {
         try {
             driver = getWebDriver();
         } catch (Exception e) {
-            getLog().warn("Skipping scanner, failed to start Firefox: " + e.getMessage());
+            getLog().warn("Skipping scanner, failed to start browser: " + e.getMessage());
             getParent()
                     .pluginSkipped(
                             this,
@@ -569,7 +589,7 @@ public class TestDomXSS extends AbstractAppParamPlugin {
             }
             super.scan();
         } finally {
-            this.returnFirefoxDriver(driver);
+            this.returnDriver(driver);
         }
     }
 
