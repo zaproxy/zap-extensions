@@ -36,6 +36,9 @@ public final class MessageValidator {
 
     protected static Result validate(HttpMessage message) {
         String uri = message.getRequestHeader().getURI().toString();
+        if (message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE) == null) {
+            return Result.INVALID;
+        }
         String contentType =
                 message.getResponseHeader()
                         .getHeader(HttpHeader.CONTENT_TYPE)

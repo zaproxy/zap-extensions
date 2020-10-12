@@ -7,4 +7,5 @@
     <mapID target="graphql-icon" url="contents/images/graphql.png" />
     <mapID target="graphql" url="contents/graphql.html" />
     <mapID target="graphql.options" url="contents/options.html" />
+    <mapID target="graphql.script" url="contents/script.html" />
 </map>

@@ -1,0 +1,12 @@
+type Query {
+    field1: type1
+    field2: type2
+}
+
+type type1 {
+    name (id:ID): String
+}
+
+type type2 {
+    name (id: ID): String
+}
