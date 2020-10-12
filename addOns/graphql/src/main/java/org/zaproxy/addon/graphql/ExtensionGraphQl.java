@@ -207,7 +207,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
                                 true,
                                 scriptPath);
                 script.reloadScript();
-                extScript.addScript(script);
+                extScript.addScript(script, false);
             }
         }
     }
