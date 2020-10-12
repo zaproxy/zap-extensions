@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Terminology
  - Correct reason shown when the XML External Entity Attack scan rule is skipped.
 
+### Added
+- The following scan rules were promoted to Beta: Cloud Meta Data, .env File, Hidden Files, XSLT Injection (Issue 6211).
+
+### Removed
+- The following scan rules were removed and promoted to Release: ELMAH Information Leak, .htaccess Information Leak (Issue 6211).
+
 ## [31] - 2020-09-02
 ### Changed
 - ELMAH Information Leak ensure that test requests are appropriately rebuilt for this scan rule (Issue 6129).

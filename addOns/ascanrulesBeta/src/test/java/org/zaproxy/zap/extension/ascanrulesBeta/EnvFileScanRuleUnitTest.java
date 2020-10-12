@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 
@@ -31,6 +31,6 @@ public class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFi
 
     @Override
     protected void setUpMessages() {
-        mockMessages(new ExtensionAscanRulesAlpha());
+        mockMessages(new ExtensionAscanRulesBeta());
     }
 }

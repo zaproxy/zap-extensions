@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Fixed
- - Terminology
+- Terminology
+ 
+### Added
+- The following scan rules were promoted to Beta: ELMAH Information Leak, .htaccess Information Leak (Issue 6211).
 
 ## [36] - 2020-08-04
 ### Changed

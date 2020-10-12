@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -28,7 +28,7 @@ import org.zaproxy.zap.model.TechSet;
 
 public class HtAccessScanRule extends AbstractAppFilePlugin {
 
-    private static final String MESSAGE_PREFIX = "ascanbeta.htaccess.";
+    private static final String MESSAGE_PREFIX = "ascanrules.htaccess.";
     private static final int PLUGIN_ID = 40032;
 
     public HtAccessScanRule() {

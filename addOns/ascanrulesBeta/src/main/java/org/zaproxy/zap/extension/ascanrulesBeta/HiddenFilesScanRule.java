@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +58,7 @@ import org.parosproxy.paros.network.HttpStatusCode;
  */
 public class HiddenFilesScanRule extends AbstractHostPlugin {
 
-    private static final String MESSAGE_PREFIX = "ascanalpha.hidden.files.";
+    private static final String MESSAGE_PREFIX = "ascanbeta.hidden.files.";
     private static final int PLUGIN_ID = 40035;
     private static final Logger LOG = Logger.getLogger(HiddenFilesScanRule.class);
 
