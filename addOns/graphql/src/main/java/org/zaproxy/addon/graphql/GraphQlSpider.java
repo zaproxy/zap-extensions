@@ -34,7 +34,9 @@ public class GraphQlSpider extends SpiderParser {
         try {
             GraphQlParser parser =
                     new GraphQlParser(
-                            message.getRequestHeader().getURI(), HttpSender.SPIDER_INITIATOR);
+                            message.getRequestHeader().getURI(),
+                            HttpSender.SPIDER_INITIATOR,
+                            false);
             parser.addRequesterListener(new HistoryPersister());
             parser.introspect();
         } catch (Exception e) {

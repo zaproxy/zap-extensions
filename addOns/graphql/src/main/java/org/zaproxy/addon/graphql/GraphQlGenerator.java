@@ -136,7 +136,7 @@ public class GraphQlGenerator {
 
     private void checkSplitAndSend() {
         switch (param.getQuerySplitType()) {
-            case DO_NOT_SPLIT:
+            case OPERATION:
                 sendFull(RequestType.QUERY);
                 sendFull(RequestType.MUTATION);
                 sendFull(RequestType.SUBSCRIPTION);

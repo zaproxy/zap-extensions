@@ -10,7 +10,8 @@ function getQuery(msg){
 	var query;
 	
 	if (header.getMethod() == "POST") {
-		if (header.getHeader("Content-Type").contains("application/json")) {
+		var contentTypeHeader = header.getHeader("Content-Type");
+		if (contentTypeHeader == null || contentTypeHeader.contains("application/json")) {
 			try{
 				var json = JSON.parse(body);
 				query = json.query;
@@ -19,7 +20,7 @@ function getQuery(msg){
 				print("Parsing message body failed: " + err.message);
 				return null;
 			}
-		} else if (header.getHeader("Content-Type").contains("application/graphql")) {
+		} else if (contentTypeHeader.contains("application/graphql")) {
 			query = body;
 		}
 	} else if (header.getMethod() == "GET") {
@@ -37,7 +38,8 @@ function setQuery(msg, query){
 	var body = msg.getRequestBody().toString();
 	
 	if (header.getMethod() == "POST") {
-		if (header.getHeader("Content-Type").contains("application/json")) {
+		var contentTypeHeader = header.getHeader("Content-Type");
+		if (contentTypeHeader == null || contentTypeHeader.contains("application/json")) {
 			try{
 				var json = JSON.parse(body);
 				json.query = query;
@@ -47,7 +49,7 @@ function setQuery(msg, query){
 			catch(err){
 				print("Parsing message body failed: " + err.message);
 			}
-		} else if (header.getHeader("Content-Type").contains("application/graphql")) {
+		} else if (contentTypeHeader.contains("application/graphql")) {
 			msg.setRequestBody(query);
 			msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 		}
@@ -63,7 +65,7 @@ function setQuery(msg, query){
 function parseParameters(helper, msg) {
 	var query = getQuery(msg);
 	if (query == null) {
-		print("  not GraphQL");
+		// print("  not GraphQL");
 		return;	
 	}
 	var params = injector.extract(query);
@@ -76,7 +78,7 @@ function parseParameters(helper, msg) {
 function setParameter(helper, msg, param, value, escaped) {
 	var query = getQuery(msg);
 	if (query == null) {
-		print("  not GraphQL");
+		// print("  not GraphQL");
 		return;	
 	}
 	try {
@@ -96,11 +98,11 @@ function getLeafName(helper, nodeName, msg) {
 function getTreePath(helper, msg) {
 	var query = getQuery(msg);
 	if (query == null) {
-		print("  not GraphQL");
+		// print("  not GraphQL");
 		return null;	
 	}
 	var uri = msg.getRequestHeader().getURI();
-	var path = uri.getPath().split('/');
+	var path = uri.getPath() != null ? uri.getPath().split('/') : [];
 	var list = [];
 	for (var x = 1; x < path.length; x++) {
 		list.push(path[x]);

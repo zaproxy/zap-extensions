@@ -95,7 +95,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
             extensionHook.getHookView().addOptionPanel(getGraphQlOptionsPanel());
         }
 
-        extensionHook.addApiImplementor(new GraphQlApi());
+        extensionHook.addApiImplementor(new GraphQlApi(getParam()));
         extensionHook.addOptionsParamSet(getParam());
         extensionHook.addCommandLine(getCommandLineArguments());
         extensionHook.addSessionListener(this);
@@ -283,7 +283,8 @@ public class ExtensionGraphQl extends ExtensionAdaptor
                 parser =
                         new GraphQlParser(
                                 args[ARG_END_URL_IDX].getArguments().firstElement(),
-                                HttpSender.MANUAL_REQUEST_INITIATOR);
+                                HttpSender.MANUAL_REQUEST_INITIATOR,
+                                true);
                 parser.addRequesterListener(new HistoryPersister());
             } catch (URIException e) {
                 CommandLine.error(
@@ -311,7 +312,8 @@ public class ExtensionGraphQl extends ExtensionAdaptor
                 GraphQlParser parser =
                         new GraphQlParser(
                                 args[ARG_END_URL_IDX].getArguments().firstElement(),
-                                HttpSender.MANUAL_REQUEST_INITIATOR);
+                                HttpSender.MANUAL_REQUEST_INITIATOR,
+                                true);
                 parser.addRequesterListener(new HistoryPersister());
                 parser.introspect();
             } catch (IOException e) {

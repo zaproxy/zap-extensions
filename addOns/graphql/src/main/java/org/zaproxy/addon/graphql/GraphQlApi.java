@@ -52,6 +52,16 @@ public class GraphQlApi extends ApiImplementor {
                         new String[] {PARAM_URL}));
     }
 
+    /**
+     * Constructs a {@code GraphQlApi} with the given {@code options} exposed through the API.
+     *
+     * @param options the options that will be exposed through the API.
+     */
+    public GraphQlApi(GraphQlParam options) {
+        this();
+        addApiOptions(options);
+    }
+
     @Override
     public String getPrefix() {
         return PREFIX;
@@ -77,7 +87,9 @@ public class GraphQlApi extends ApiImplementor {
         try {
             GraphQlParser parser =
                     new GraphQlParser(
-                            params.getString(PARAM_ENDPOINT), HttpSender.MANUAL_REQUEST_INITIATOR);
+                            params.getString(PARAM_ENDPOINT),
+                            HttpSender.MANUAL_REQUEST_INITIATOR,
+                            true);
             parser.importFile(params.getString(PARAM_FILE));
         } catch (URIException e) {
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
@@ -92,7 +104,9 @@ public class GraphQlApi extends ApiImplementor {
         try {
             GraphQlParser parser =
                     new GraphQlParser(
-                            params.getString(PARAM_ENDPOINT), HttpSender.MANUAL_REQUEST_INITIATOR);
+                            params.getString(PARAM_ENDPOINT),
+                            HttpSender.MANUAL_REQUEST_INITIATOR,
+                            true);
             parser.addRequesterListener(new HistoryPersister());
             if (params.optString(PARAM_URL, "").isEmpty()) {
                 parser.introspect();

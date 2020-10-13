@@ -12,6 +12,7 @@ zapAddOn {
 
     apiClientGen {
         api.set("org.zaproxy.addon.graphql.GraphQlApi")
+        options.set("org.zaproxy.addon.graphql.GraphQlParam")
         messages.set(file("src/main/resources/org/zaproxy/addon/graphql/resources/Messages.properties"))
     }
 }

@@ -122,7 +122,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         param.setMaxArgsDepth(getMaxArgsDepthNumberSpinner().getValue());
         param.setOptionalArgsEnabled(getOptionalArgsEnabled().isSelected());
         param.setArgsType((ArgsTypeOption) getArgsTypeOptions().getSelectedItem());
-        param.setSplitQueryType((QuerySplitOption) getQuerySplitOptions().getSelectedItem());
+        param.setQuerySplitType((QuerySplitOption) getQuerySplitOptions().getSelectedItem());
         param.setRequestMethod((RequestMethodOption) getRequestMethodOptions().getSelectedItem());
     }
 
@@ -171,7 +171,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
                             new QuerySplitOption[] {
                                 QuerySplitOption.LEAF,
                                 QuerySplitOption.ROOT_FIELD,
-                                QuerySplitOption.DO_NOT_SPLIT
+                                QuerySplitOption.OPERATION
                             });
             querySplitOptions.setRenderer(new CustomComboBoxRenderer());
         }
