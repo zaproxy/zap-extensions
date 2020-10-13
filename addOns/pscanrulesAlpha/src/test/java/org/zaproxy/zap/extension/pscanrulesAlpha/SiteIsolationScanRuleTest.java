@@ -166,7 +166,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    public void shouldRaiseCorpAlertGivenCorsHeaderIsSet() throws Exception {
+    public void shouldNotRaiseCorpAlertGivenCorsHeaderIsSet() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
@@ -284,6 +284,24 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                 "HTTP/1.1 200 OK\r\n"
                         + "Content-Type: application/json\r\n"
                         + "Cross-Origin-Resource-Policy: same-origin\r\n");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertGivenNoHeaderContentTypeIsPresent() throws Exception {
+        // If no header content-type is provided, it is browser-dependent.
+        //        It will try to sniff the type.
+        // There is a rule ContentTypeMissingScanRule
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n" + "Cross-Origin-Resource-Policy: same-origin\r\n");
 
         // When
         scanHttpResponseReceive(msg);

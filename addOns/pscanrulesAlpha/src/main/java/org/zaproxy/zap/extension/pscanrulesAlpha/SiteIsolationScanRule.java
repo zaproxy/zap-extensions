@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ import java.util.stream.Stream;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -41,7 +45,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * <p>To achieve this, three headers have been added:
  *
  * <ul>
- *   <li>Cross-Origin-Resource-Policy:
+ *   <li>Cross-Origin-Resource-Policy: opt-in mechanism for sharing resources
  *   <li>Cross-Origin-Embedder-Policy: only allow resources that have enabled CORP ou CORS
  *   <li>Cross-Origin-Opener-Policy: allow sites to control browsing context group
  * </ul>
@@ -64,12 +68,11 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 90004;
 
-    private final SiteIsolationHeaderScanner[] scanners =
-            new SiteIsolationHeaderScanner[] {
-                new CorpHeaderScanner(this::newAlert),
-                new CoepHeaderScanner(this::newAlert),
-                new CoopHeaderScanner(this::newAlert)
-            };
+    private final List<SiteIsolationHeaderScanner> scanners =
+            Arrays.asList(
+                    new CorpHeaderScanner(this::newAlert),
+                    new CoepHeaderScanner(this::newAlert),
+                    new CoopHeaderScanner(this::newAlert));
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -82,7 +85,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
             return;
         }
 
-        Stream.of(scanners).forEach(s -> s.check(msg.getResponseHeader()));
+        scanners.forEach(s -> s.build(msg.getResponseHeader()).forEach(AlertBuilder::raise));
     }
 
     @Override
@@ -101,13 +104,13 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
     }
 
     public List<Alert> getExampleAlerts() {
-        return Stream.of(scanners).map(s -> s.alert("").build()).collect(Collectors.toList());
+        return scanners.stream().map(s -> s.alert("").build()).collect(Collectors.toList());
     }
 
     abstract static class SiteIsolationHeaderScanner {
         private final Supplier<AlertBuilder> newAlert;
 
-        public SiteIsolationHeaderScanner(Supplier<AlertBuilder> newAlert) {
+        SiteIsolationHeaderScanner(Supplier<AlertBuilder> newAlert) {
             this.newAlert = newAlert;
         }
 
@@ -115,15 +118,14 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
 
         protected abstract String getString(String param);
 
-        abstract void check(HttpResponseHeader responseHeader);
+        abstract List<AlertBuilder> build(HttpResponseHeader responseHeader);
 
         protected boolean isDocument(HttpResponseHeader responseHeader) {
-            return responseHeader.getHeaders().stream()
-                    .filter(header -> "Content-Type".equalsIgnoreCase(header.getName()))
+            return responseHeader.getHeaderValues(HttpHeader.CONTENT_TYPE).stream()
                     .anyMatch(
                             header ->
-                                    header.getValue().startsWith("text/html")
-                                            || header.getValue().startsWith("application/xml"));
+                                    header.startsWith("text/html")
+                                            || header.startsWith("application/xml"));
         }
 
         protected AlertBuilder alert(String evidence) {
@@ -151,32 +153,37 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         private static final String CORP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "corp.";
         public static final String CORS_PREFIX = "Access-Control-Allow-";
 
-        public CorpHeaderScanner(Supplier<AlertBuilder> newAlert) {
+        CorpHeaderScanner(Supplier<AlertBuilder> newAlert) {
             super(newAlert);
         }
 
         @Override
-        void check(HttpResponseHeader responseHeader) {
+        List<AlertBuilder> build(HttpResponseHeader responseHeader) {
             boolean hasCorsHeader =
                     responseHeader.getHeaders().stream()
                             .anyMatch(header -> header.getName().startsWith(CORS_PREFIX));
             if (hasCorsHeader) {
-                return;
+                return Collections.emptyList();
             }
 
             List<String> corpHeaders = responseHeader.getHeaderValues(HEADER);
             if (corpHeaders.isEmpty()) {
-                alert("").raise();
+                return Collections.singletonList(alert(""));
             }
+            List<AlertBuilder> alerts = new ArrayList<>();
             for (String corpHeader : corpHeaders) {
-                filterReportHeader(corpHeader)
-                        .filter(
-                                header ->
-                                        "same-site".equalsIgnoreCase(header)
-                                                || !("same-origin".equalsIgnoreCase(header)
-                                                        || "cross-origin".equalsIgnoreCase(header)))
-                        .forEach(header -> alert(header).raise());
+                alerts.addAll(
+                        filterReportHeader(corpHeader)
+                                .filter(
+                                        header ->
+                                                "same-site".equalsIgnoreCase(header)
+                                                        || !("same-origin".equalsIgnoreCase(header)
+                                                                || "cross-origin"
+                                                                        .equalsIgnoreCase(header)))
+                                .map(this::alert)
+                                .collect(Collectors.toList()));
             }
+            return alerts;
         }
 
         @Override
@@ -194,25 +201,31 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         public static final String HEADER = "Cross-Origin-Embedder-Policy";
         private static final String COEP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "coep.";
 
-        public CoepHeaderScanner(Supplier<AlertBuilder> newAlert) {
+        CoepHeaderScanner(Supplier<AlertBuilder> newAlert) {
             super(newAlert);
         }
 
-        public void check(HttpResponseHeader responseHeader) {
+        @Override
+        List<AlertBuilder> build(HttpResponseHeader responseHeader) {
             if (!isDocument(responseHeader)) {
-                return;
+                return Collections.emptyList();
             }
 
             List<String> coepHeaders = responseHeader.getHeaderValues(HEADER);
             if (coepHeaders.isEmpty()) {
-                alert("").raise();
+                return Collections.singletonList(alert(""));
             }
+
+            List<AlertBuilder> alerts = new ArrayList<>();
             for (String coepHeader : coepHeaders) {
                 // unsafe-none is the default value. It disables COEP checks.
-                filterReportHeader(coepHeader)
-                        .filter(header -> !"require-corp".equalsIgnoreCase(header))
-                        .forEach(header -> alert(header).raise());
+                alerts.addAll(
+                        filterReportHeader(coepHeader)
+                                .filter(header -> !"require-corp".equalsIgnoreCase(header))
+                                .map(this::alert)
+                                .collect(Collectors.toList()));
             }
+            return alerts;
         }
 
         @Override
@@ -230,26 +243,31 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         public static final String HEADER = "Cross-Origin-Opener-Policy";
         private static final String COOP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "coop.";
 
-        public CoopHeaderScanner(Supplier<AlertBuilder> newAlert) {
+        CoopHeaderScanner(Supplier<AlertBuilder> newAlert) {
             super(newAlert);
         }
 
         @Override
-        public void check(HttpResponseHeader responseHeader) {
+        List<AlertBuilder> build(HttpResponseHeader responseHeader) {
             if (!isDocument(responseHeader)) {
-                return;
+                return Collections.emptyList();
             }
 
             List<String> coopHeaders = responseHeader.getHeaderValues(HEADER);
             if (coopHeaders.isEmpty()) {
-                alert("").raise();
+                return Collections.singletonList(alert(""));
             }
+
+            List<AlertBuilder> alerts = new ArrayList<>();
             for (String coopHeader : coopHeaders) {
                 // unsafe-none is the default value
-                filterReportHeader(coopHeader)
-                        .filter(header -> !"same-origin".equalsIgnoreCase(header))
-                        .forEach(header -> alert(header).raise());
+                alerts.addAll(
+                        filterReportHeader(coopHeader)
+                                .filter(header -> !"same-origin".equalsIgnoreCase(header))
+                                .map(this::alert)
+                                .collect(Collectors.toList()));
             }
+            return alerts;
         }
 
         @Override
