@@ -17,13 +17,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
 
 public class EnvFileScanRule extends AbstractAppFilePlugin {
 
-    private static final String MESSAGE_PREFIX = "ascanalpha.envfiles.";
+    private static final String MESSAGE_PREFIX = "ascanbeta.envfiles.";
     private static final int PLUGIN_ID = 40034;
 
     public EnvFileScanRule() {

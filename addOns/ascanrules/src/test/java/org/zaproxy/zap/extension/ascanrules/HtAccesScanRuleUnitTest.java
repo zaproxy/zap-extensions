@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,7 +59,7 @@ public class HtAccesScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAcc
 
     @Override
     protected void setUpMessages() {
-        mockMessages(new ExtensionAscanRulesBeta());
+        mockMessages(new ExtensionAscanRules());
     }
 
     @Test

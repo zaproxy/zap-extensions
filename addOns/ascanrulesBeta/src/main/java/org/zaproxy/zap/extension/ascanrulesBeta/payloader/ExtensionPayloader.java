@@ -27,6 +27,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.zap.extension.ascanrulesBeta.HiddenFilesScanRule;
 import org.zaproxy.zap.extension.ascanrulesBeta.UserAgentScanRule;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
@@ -37,6 +38,7 @@ public class ExtensionPayloader extends ExtensionAdaptor {
     private static final List<Class<? extends Extension>> DEPENDENCIES;
     private static ExtensionCustomPayloads ecp;
     private PayloadCategory uaCategory;
+    private PayloadCategory hfCategory;
 
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
@@ -62,6 +64,13 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         UserAgentScanRule.USER_AGENTS);
         ecp.addPayloadCategory(uaCategory);
         UserAgentScanRule.setPayloadProvider(() -> uaCategory.getPayloadsIterator());
+
+        hfCategory =
+                new PayloadCategory(
+                        HiddenFilesScanRule.HIDDEN_FILE_PAYLOAD_CATEGORY,
+                        HiddenFilesScanRule.HIDDEN_FILES);
+        ecp.addPayloadCategory(hfCategory);
+        HiddenFilesScanRule.setPayloadProvider(() -> hfCategory.getPayloadsIterator());
     }
 
     @Override

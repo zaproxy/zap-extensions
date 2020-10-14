@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * @author ZainabAlShowely
  */
 public class XsltInjectionScanRule extends AbstractAppParamPlugin {
-    private static final String MESSAGE_PREFIX = "ascanalpha.xsltinjection.";
+    private static final String MESSAGE_PREFIX = "ascanbeta.xsltinjection.";
 
     private enum XSLTInjectionType {
         ERROR(

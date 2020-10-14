@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -49,7 +49,7 @@ import org.zaproxy.zap.users.User;
 public class CloudMetadataScanRule extends AbstractHostPlugin {
 
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "ascanalpha.cloudmetadata.";
+    private static final String MESSAGE_PREFIX = "ascanbeta.cloudmetadata.";
 
     private static final int PLUGIN_ID = 90034;
     private static final String METADATA_PATH = "/latest/meta-data/";

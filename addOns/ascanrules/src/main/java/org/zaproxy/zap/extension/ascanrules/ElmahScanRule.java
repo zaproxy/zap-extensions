@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import org.apache.commons.httpclient.URI;
@@ -42,7 +42,7 @@ import org.zaproxy.zap.model.TechSet;
  */
 public class ElmahScanRule extends AbstractHostPlugin {
 
-    private static final String MESSAGE_PREFIX = "ascanbeta.elmah.";
+    private static final String MESSAGE_PREFIX = "ascanrules.elmah.";
     private static final int PLUGIN_ID = 40028;
 
     private static final Logger LOG = Logger.getLogger(ElmahScanRule.class);
