@@ -79,7 +79,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 
     private Boolean supportsDarkLaF;
     private Method isDarkLookAndFeelMethod;
-    private boolean darkLaF;
+    private Boolean darkLaF;
 
     public SyntaxHighlightTextArea() {
         setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
@@ -228,7 +228,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
     @Override
     public void updateUI() {
         super.updateUI();
-        if (darkLaF != isDarkLaF()) {
+        if (darkLaF != null && darkLaF != isDarkLaF()) {
             if (isDarkLaF()) {
                 darkLaF = true;
             } else {
