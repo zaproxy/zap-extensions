@@ -88,12 +88,12 @@ public class SinkDetectionVerifyProbableSinks extends AbstractAppParamPlugin {
             for (HttpMessage possibleSink : possibleSinks) {
                 // Reflections on the same request are not considered "stored sinks"
                 if (inputMsg.hashCode() != possibleSink.hashCode()) {
-                    HttpMessage possibleSink1 = possibleSink.cloneRequest();
-                    sendAndReceive(possibleSink1, false);
-                    if (possibleSink1.getResponseBody().toString().contains(injectedValue)) {
+                    HttpMessage possibleSinkClone = possibleSink.cloneRequest();
+                    sendAndReceive(possibleSinkClone, false);
+                    if (possibleSinkClone.getResponseBody().toString().contains(injectedValue)) {
                         // the sink source needs to be the original message otherwise path
                         // params will not be stored properly
-                        ParamSinksUtils.setSinkForSource(msg, param, possibleSink1);
+                        ParamSinksUtils.setSinkForSource(msg, param, possibleSinkClone);
                     }
                 }
             }

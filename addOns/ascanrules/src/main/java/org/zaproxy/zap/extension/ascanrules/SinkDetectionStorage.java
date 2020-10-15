@@ -63,6 +63,12 @@ public class SinkDetectionStorage {
                 sinkList = new ArrayList<HttpMessage>();
                 possibleSinksForValues.put(value, sinkList);
             }
+
+            for (HttpMessage s : sinkList) {
+                if (s.equals(sink)) {
+                    return;
+                }
+            }
             sinkList.add(sink);
         }
     }
