@@ -36,7 +36,7 @@ import org.zaproxy.addon.commonlib.ParamSinksUtils;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 public abstract class SinkDetectionUnitTest<T extends AbstractAppPlugin>
-        extends ActiveScannerAppTest<T> {
+        extends ActiveScannerTest<T> {
 
     public static final String baseHtmlResponse = "<!DOCTYPE html><html><body>OK</body></html>";
 
