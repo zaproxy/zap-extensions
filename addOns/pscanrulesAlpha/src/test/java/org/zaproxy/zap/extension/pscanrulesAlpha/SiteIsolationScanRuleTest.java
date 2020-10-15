@@ -62,7 +62,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(SiteIsolationScanRule.CorpHeaderScanner.HEADER));
+                equalTo(SiteIsolationScanRule.CorpHeaderScanRule.HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
     }
 
@@ -84,7 +84,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(SiteIsolationScanRule.CorpHeaderScanner.HEADER));
+                equalTo(SiteIsolationScanRule.CorpHeaderScanRule.HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("same-site"));
     }
 
@@ -106,7 +106,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(SiteIsolationScanRule.CorpHeaderScanner.HEADER));
+                equalTo(SiteIsolationScanRule.CorpHeaderScanRule.HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("unexpected"));
     }
 
@@ -128,7 +128,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(SiteIsolationScanRule.CorpHeaderScanner.HEADER));
+                equalTo(SiteIsolationScanRule.CorpHeaderScanRule.HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("same-SITE"));
     }
 
@@ -201,7 +201,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(SiteIsolationScanRule.CoepHeaderScanner.HEADER));
+                equalTo(SiteIsolationScanRule.CoepHeaderScanRule.HEADER));
     }
 
     @Test
@@ -224,7 +224,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(SiteIsolationScanRule.CoepHeaderScanner.HEADER));
+                equalTo(SiteIsolationScanRule.CoepHeaderScanRule.HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("unsafe-none"));
     }
 
@@ -246,7 +246,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(SiteIsolationScanRule.CoopHeaderScanner.HEADER));
+                equalTo(SiteIsolationScanRule.CoopHeaderScanRule.HEADER));
     }
 
     @Test
@@ -269,7 +269,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getParam(),
-                equalTo(SiteIsolationScanRule.CoopHeaderScanner.HEADER));
+                equalTo(SiteIsolationScanRule.CoopHeaderScanRule.HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("same-origin-allow-popups"));
     }
 
