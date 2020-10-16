@@ -19,9 +19,11 @@
  */
 package org.zaproxy.addon.graphql;
 
+import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
+import org.zaproxy.zap.extension.api.ApiException;
 
 public class GraphQlParam extends VersionedAbstractParam {
 
@@ -91,7 +93,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         /** A request is sent for each field immediately under a Root type. */
         ROOT_FIELD,
         /** A single large request is sent. */
-        DO_NOT_SPLIT;
+        OPERATION;
 
         public String getName() {
             switch (this) {
@@ -99,8 +101,8 @@ public class GraphQlParam extends VersionedAbstractParam {
                     return Constant.messages.getString("graphql.options.value.split.leaf");
                 case ROOT_FIELD:
                     return Constant.messages.getString("graphql.options.value.split.rootField");
-                case DO_NOT_SPLIT:
-                    return Constant.messages.getString("graphql.options.value.split.doNotSplit");
+                case OPERATION:
+                    return Constant.messages.getString("graphql.options.value.split.operation");
                 default:
                     return null;
             }
@@ -170,6 +172,16 @@ public class GraphQlParam extends VersionedAbstractParam {
         return argsType;
     }
 
+    // For generating an API action.
+    public void setArgsType(String argsType) throws ApiException {
+        try {
+            setArgsType(ArgsTypeOption.valueOf(argsType.toUpperCase(Locale.ROOT)));
+        } catch (IllegalArgumentException e) {
+            LOG.debug('"' + argsType + "\" is not a valid Arguments Specification Type.");
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
+        }
+    }
+
     public void setArgsType(ArgsTypeOption argsType) {
         this.argsType = argsType;
         getConfig().setProperty(PARAM_ARGS_TYPE, argsType.toString());
@@ -179,13 +191,33 @@ public class GraphQlParam extends VersionedAbstractParam {
         return querySplitType;
     }
 
-    public void setSplitQueryType(QuerySplitOption querySplitType) {
+    // For generating an API action.
+    public void setQuerySplitType(String querySplitType) throws ApiException {
+        try {
+            setQuerySplitType(QuerySplitOption.valueOf(querySplitType.toUpperCase(Locale.ROOT)));
+        } catch (IllegalArgumentException e) {
+            LOG.debug('"' + querySplitType + "\" is not a valid Query Split Type.");
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
+        }
+    }
+
+    public void setQuerySplitType(QuerySplitOption querySplitType) {
         this.querySplitType = querySplitType;
         getConfig().setProperty(PARAM_QUERY_SPLIT_TYPE, querySplitType.toString());
     }
 
     public RequestMethodOption getRequestMethod() {
         return requestMethod;
+    }
+
+    // For generating an API action.
+    public void setRequestMethod(String requestMethod) throws ApiException {
+        try {
+            setRequestMethod(RequestMethodOption.valueOf(requestMethod.toUpperCase(Locale.ROOT)));
+        } catch (IllegalArgumentException e) {
+            LOG.debug('"' + requestMethod + "\" is not a valid Request Method Option.");
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
+        }
     }
 
     public void setRequestMethod(RequestMethodOption requestMethod) {

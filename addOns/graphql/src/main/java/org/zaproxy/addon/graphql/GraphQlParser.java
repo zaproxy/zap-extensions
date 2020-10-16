@@ -50,13 +50,16 @@ public class GraphQlParser {
     private final ExtensionGraphQl extensionGraphQl =
             Control.getSingleton().getExtensionLoader().getExtension(ExtensionGraphQl.class);
     private final GraphQlParam param = extensionGraphQl.getParam();
+    private boolean syncParse;
 
-    public GraphQlParser(String endpointUrlStr, int initiator) throws URIException {
-        this(UrlBuilder.build(endpointUrlStr), initiator);
+    public GraphQlParser(String endpointUrlStr, int initiator, boolean syncParse)
+            throws URIException {
+        this(UrlBuilder.build(endpointUrlStr), initiator, syncParse);
     }
 
-    public GraphQlParser(URI endpointUrl, int initiator) {
+    public GraphQlParser(URI endpointUrl, int initiator, boolean syncParse) {
         requestor = new Requestor(endpointUrl, initiator);
+        this.syncParse = syncParse;
     }
 
     public void introspect() throws IOException {
@@ -112,22 +115,29 @@ public class GraphQlParser {
     }
 
     public void parse(String schema) {
+        if (syncParse) {
+            generate(schema);
+            return;
+        }
         ParserThread t =
                 new ParserThread(THREAD_PREFIX + threadId.incrementAndGet()) {
                     @Override
                     public void run() {
-                        try {
-                            GraphQlGenerator generator =
-                                    new GraphQlGenerator(schema, requestor, param);
-                            generator.checkServiceMethods();
-                            generator.generateAndSend();
-                        } catch (Exception e) {
-                            LOG.error(e.getMessage());
-                        }
+                        generate(schema);
                     }
                 };
         extensionGraphQl.addParserThread(t);
         t.startParser();
+    }
+
+    private void generate(String schema) {
+        try {
+            GraphQlGenerator generator = new GraphQlGenerator(schema, requestor, param);
+            generator.checkServiceMethods();
+            generator.generateAndSend();
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+        }
     }
 
     public void addRequesterListener(RequesterListener listener) {

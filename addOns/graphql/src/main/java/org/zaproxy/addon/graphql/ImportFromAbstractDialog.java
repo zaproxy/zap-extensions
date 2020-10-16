@@ -110,7 +110,8 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
     protected boolean validateEndpointUrl() {
         try {
             parser =
-                    new GraphQlParser(fieldEndpoint.getText(), HttpSender.MANUAL_REQUEST_INITIATOR);
+                    new GraphQlParser(
+                            fieldEndpoint.getText(), HttpSender.MANUAL_REQUEST_INITIATOR, false);
             parser.addRequesterListener(new HistoryPersister());
             return true;
         } catch (URIException e) {
