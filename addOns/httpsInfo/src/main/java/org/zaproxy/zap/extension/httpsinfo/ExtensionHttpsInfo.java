@@ -19,24 +19,20 @@
  */
 package org.zaproxy.zap.extension.httpsinfo;
 
-import java.awt.CardLayout;
-import java.awt.Component;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.*;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.view.TabbedPanel2;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control.Mode;
-import org.parosproxy.paros.extension.AbstractPanel;
-import org.parosproxy.paros.extension.Extension;
-import org.parosproxy.paros.extension.ExtensionAdaptor;
-import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.view.TabbedPanel2;
 
 public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChangedListener {
 
@@ -55,9 +51,26 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
     private MenuEntry httpsMenuEntry;
     private AbstractPanel httpsInfoPanel;
     private TabbedPanel2 httpsInfoTabsPanel;
+    private UsagePanel usagePanel;
+    private Boolean neededUsage = true;
+    private ExtensionHook extensionHook;
+    private boolean flag = true;
 
     public ExtensionHttpsInfo() {
         super();
+    }
+
+    private UsagePanel getUsagePanel() {
+        if (usagePanel == null) {
+            usagePanel = new UsagePanel((View) getView());
+            usagePanel.setName("Usage");
+
+            usagePanel.setIcon(
+                    new ImageIcon("/org/zaproxy/zap/extension/httpsinfo/resources/icon.png"));
+            // Dont allow this tab to be hidden
+            usagePanel.setHideable(false);
+        }
+        return usagePanel;
     }
 
     @Override
@@ -83,6 +96,8 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+
+        this.extensionHook = extensionHook;
 
         if (getView() != null) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgMenu());
@@ -119,12 +134,17 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
     }
 
     protected AbstractPanel getHttpsInfoPanel() {
-        if (httpsInfoPanel == null) {
+        if (httpsInfoPanel == null && neededUsage) {
             httpsInfoPanel = new AbstractPanel();
             httpsInfoPanel.setLayout(new CardLayout());
             httpsInfoPanel.setName(Constant.messages.getString("httpsinfo.name"));
             httpsInfoPanel.setIcon(new ImageIcon(ExtensionHttpsInfo.class.getResource(ICON_PATH)));
+            httpsInfoPanel.add(getUsagePanel());
+            neededUsage = false;
+
+        } else if (!neededUsage) {
             httpsInfoPanel.add(getHttpsInfoTabsPanel());
+            httpsInfoPanel.updateUI();
         }
         return httpsInfoPanel;
     }
@@ -145,13 +165,18 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
     }
 
     protected void addTab(HttpMessage msg) {
+
+        if (!neededUsage && flag) {
+            httpsInfoPanel.removeAll();
+            extensionHook.getHookView().addStatusPanel(getHttpsInfoPanel());
+            flag = false;
+        }
+
         String hostname = msg.getRequestHeader().getHostName();
         String tabName =
                 hostname
                         + " - "
-                        + (getHttpsInfoTabsPanel().getTabCount() == 0
-                                ? 0
-                                : getHttpsInfoTabsPanel().getTabCount());
+                        + (getHttpsInfoTabsPanel().getTabCount());
 
         addTab(
                 tabName,
@@ -159,9 +184,7 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
                 new HttpsInfoOutputPanel(msg),
                 true,
                 true,
-                getHttpsInfoTabsPanel().getTabCount() == 0
-                        ? 0
-                        : getHttpsInfoTabsPanel().getTabCount());
+                getHttpsInfoTabsPanel().getTabCount());
 
         getHttpsInfoPanel().setTabFocus();
         getHttpsInfoTabsPanel()
