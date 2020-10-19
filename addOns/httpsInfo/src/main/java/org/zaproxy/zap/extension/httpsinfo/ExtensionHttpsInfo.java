@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.httpsinfo;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -36,6 +40,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.TabbedPanel2;
 
 public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChangedListener {
@@ -54,6 +59,8 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
 
     private MenuEntry httpsMenuEntry;
     private AbstractPanel httpsInfoPanel;
+    private CardLayout httpsInfoPanelLayout;
+    private boolean usageShown;
     private TabbedPanel2 httpsInfoTabsPanel;
 
     public ExtensionHttpsInfo() {
@@ -113,18 +120,44 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
                                 removeTab((AbstractPanel) component);
                             }
                         }
+
+                        @Override
+                        public void removeTabAt(int index) {
+                            super.removeTabAt(index);
+
+                            if (getTabCount() == 0) {
+                                showUsagePanel();
+                            }
+                        }
                     };
         }
         return httpsInfoTabsPanel;
     }
 
+    private void showUsagePanel() {
+        if (!usageShown) {
+            httpsInfoPanelLayout.next(httpsInfoPanel);
+            usageShown = true;
+        }
+    }
+
     protected AbstractPanel getHttpsInfoPanel() {
         if (httpsInfoPanel == null) {
             httpsInfoPanel = new AbstractPanel();
-            httpsInfoPanel.setLayout(new CardLayout());
+            httpsInfoPanelLayout = new CardLayout();
+            httpsInfoPanel.setLayout(httpsInfoPanelLayout);
             httpsInfoPanel.setName(Constant.messages.getString("httpsinfo.name"));
             httpsInfoPanel.setIcon(new ImageIcon(ExtensionHttpsInfo.class.getResource(ICON_PATH)));
             httpsInfoPanel.add(getHttpsInfoTabsPanel());
+            JPanel usagePanel = new JPanel(new BorderLayout());
+            ZapLabel usageInfo = new ZapLabel(Constant.messages.getString("httpsinfo.panel.usage"));
+            usageInfo.setLineWrap(true);
+            usageInfo.setWrapStyleWord(true);
+            JScrollPane scrollPane = new JScrollPane(usageInfo);
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            usagePanel.add(scrollPane);
+            httpsInfoPanel.add(usagePanel);
+            showUsagePanel();
         }
         return httpsInfoPanel;
     }
@@ -145,6 +178,11 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
     }
 
     protected void addTab(HttpMessage msg) {
+        if (usageShown) {
+            httpsInfoPanelLayout.next(httpsInfoPanel);
+            usageShown = false;
+        }
+
         String hostname = msg.getRequestHeader().getHostName();
         String tabName =
                 hostname
@@ -181,6 +219,7 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
     @Override
     public void sessionChanged(Session arg0) {
         getHttpsInfoTabsPanel().removeAll();
+        showUsagePanel();
     }
 
     @Override
