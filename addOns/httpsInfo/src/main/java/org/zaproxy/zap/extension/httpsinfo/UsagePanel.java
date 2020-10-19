@@ -1,22 +1,3 @@
-/*
- * Zed Attack Proxy (ZAP) and its related class files.
- *
- * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- *
- * Copyright 2020 The ZAP Development Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.zaproxy.zap.extension.httpsinfo;
 
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -34,7 +15,7 @@ public class UsagePanel extends AbstractPanel {
     private JTextArea tf;
     private final ViewDelegate view;
 
-    public UsagePanel(View view) {
+    public UsagePanel(View view){
         super();
         this.view = view;
         initialize();
@@ -60,15 +41,14 @@ public class UsagePanel extends AbstractPanel {
         return panel;
     }
 
-    private JTextArea getTextArea() {
-        if (tf == null) {
-            tf =
-                    new JTextArea(
-                            "To start an HTTPS assessment choose 'Scan HTTPS Configuration' from the context menu (right click) on a Sites Tree or History entry");
-            // tf.setEnabled(true);
+    private JTextArea getTextArea(){
+        if (tf == null){
+            tf = new JTextArea("To start an HTTPS assessment choose 'Scan HTTPS Configuration' from the context menu (right click) on a Sites Tree or History entry");
+            //tf.setEnabled(true);
             tf.setEditable(false);
         }
 
         return tf;
     }
+
 }
