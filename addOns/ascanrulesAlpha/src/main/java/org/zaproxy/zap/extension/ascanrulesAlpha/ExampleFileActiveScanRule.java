@@ -146,9 +146,9 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
                 }
                 String attack = this.strings.get(i);
                 // Always use getNewMsg() for each new request
-                msg = getNewMsg();
-                setParameter(msg, param, attack);
-                sendAndReceive(msg);
+                HttpMessage testMsg = getNewMsg();
+                setParameter(testMsg, param, attack);
+                sendAndReceive(testMsg);
 
                 // This is where you detect potential vulnerabilities in the response
                 String evidence;
@@ -160,7 +160,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
                             .setAttack(attack)
                             .setOtherInfo(getOtherInfo())
                             .setEvidence(evidence)
-                            .setMessage(msg)
+                            .setMessage(testMsg)
                             .raise();
                     return;
                 }

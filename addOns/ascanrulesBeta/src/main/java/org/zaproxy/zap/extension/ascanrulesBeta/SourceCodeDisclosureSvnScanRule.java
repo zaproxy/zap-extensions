@@ -512,13 +512,13 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
 
                     try (Connection conn = DriverManager.getConnection(sqliteConnectionUrl)) {
                         if (conn != null) {
-                            Statement pragmaStatement = null;
-                            PreparedStatement nodeStatement = null;
                             ResultSet rsSVNWCFormat = null;
                             ResultSet rsNode = null;
                             ResultSet rsRepo = null;
-                            try {
-                                pragmaStatement = conn.createStatement();
+                            try (Statement pragmaStatement = conn.createStatement();
+                                    PreparedStatement nodeStatement =
+                                            conn.prepareStatement(
+                                                    "select kind,local_relpath,'pristine/'||substr(checksum,7,2) || \"/\" || substr(checksum,7)|| \".svn-base\" from nodes where local_relpath = ? order by wc_id")) {
                                 rsSVNWCFormat = pragmaStatement.executeQuery("pragma USER_VERSION");
 
                                 // get the precise internal version of SVN in use
@@ -552,16 +552,6 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                             "Refer to http://svn.apache.org/repos/asf/subversion/trunk/subversion/libsvn_wc/wc.h for more details!");
                                 }
 
-                                // allow future changes to be easily handled
-                                switch (svnFormat) {
-                                    case 29:
-                                    case 30:
-                                    case 31:
-                                        nodeStatement =
-                                                conn.prepareStatement(
-                                                        "select kind,local_relpath,'pristine/'||substr(checksum,7,2) || \"/\" || substr(checksum,7)|| \".svn-base\" from nodes where local_relpath = ? order by wc_id");
-                                        break;
-                                }
                                 // now set the parameter, and execute the query
                                 nodeStatement.setString(1, relPath);
                                 rsNode = nodeStatement.executeQuery();
@@ -705,8 +695,6 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                 if (rsRepo != null) rsRepo.close();
                                 if (rsNode != null) rsNode.close();
                                 if (rsSVNWCFormat != null) rsSVNWCFormat.close();
-                                if (pragmaStatement != null) pragmaStatement.close();
-                                if (nodeStatement != null) nodeStatement.close();
                             }
                         } else
                             throw new SQLException(

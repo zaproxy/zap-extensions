@@ -42,11 +42,13 @@ import org.parosproxy.paros.network.HttpMessage;
 public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin {
 
     // Logger object
-    private static final Logger log = Logger.getLogger(ExpressionLanguageInjectionScanRule.class);
+    private static final Logger LOG = Logger.getLogger(ExpressionLanguageInjectionScanRule.class);
 
     private static final int MAX_NUM_TRIES = 1000;
     private static final int DEVIATION_VALUE = 999999;
     private static final int MEAN_VALUE = 100000;
+
+    private static final Random RAND = new Random();
 
     @Override
     public int getId() {
@@ -112,15 +114,14 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
     public void scan(HttpMessage msg, String paramName, String value) {
 
         String originalContent = getBaseMsg().getResponseBody().toString();
-        Random rand = new Random();
         String addedString;
         int bignum1;
         int bignum2;
         int tries = 0;
 
         do {
-            bignum1 = MEAN_VALUE + (int) (rand.nextFloat() * (DEVIATION_VALUE - MEAN_VALUE + 1));
-            bignum2 = MEAN_VALUE + (int) (rand.nextFloat() * (DEVIATION_VALUE - MEAN_VALUE + 1));
+            bignum1 = MEAN_VALUE + (int) (RAND.nextFloat() * (DEVIATION_VALUE - MEAN_VALUE + 1));
+            bignum2 = MEAN_VALUE + (int) (RAND.nextFloat() * (DEVIATION_VALUE - MEAN_VALUE + 1));
             addedString = String.valueOf(bignum1 + bignum2);
             tries++;
 
@@ -139,8 +140,8 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
                     | URIException
                     | UnknownHostException
                     | IllegalArgumentException ex) {
-                if (log.isDebugEnabled())
-                    log.debug(
+                if (LOG.isDebugEnabled())
+                    LOG.debug(
                             "Caught "
                                     + ex.getClass().getName()
                                     + " "
@@ -154,7 +155,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
             if (msg.getResponseBody().toString().contains(addedString)) {
                 // We Found IT!
                 // First do logging
-                log.debug(
+                LOG.debug(
                         "[Expression Langage Injection Found] on parameter ["
                                 + paramName
                                 + "]  with payload ["
@@ -173,7 +174,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
         } catch (IOException ex) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.error(
+            LOG.error(
                     "Expression Language Injection vulnerability check failed for parameter ["
                             + paramName
                             + "] and payload ["

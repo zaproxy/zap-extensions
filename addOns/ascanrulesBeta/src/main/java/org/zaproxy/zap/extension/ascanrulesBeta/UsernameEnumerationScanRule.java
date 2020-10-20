@@ -663,7 +663,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 // the output when changing the parm is stable),
                 // check if the parameter might be vulnerable by comparins its LCS with the original
                 // LCS for a valid login
-                if (continueForParameter == true) {
+                if (longestCommonSubstringB != null && continueForParameter == true) {
                     // get rid of any remnants of cookie setting and Date headers in the responses,
                     // as these cause false positives, and can be safely ignored
                     // replace the content length with a non-variable placeholder

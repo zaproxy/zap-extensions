@@ -181,7 +181,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
             }
 
             if ((pos = token.indexOf(":")) < 0) {
-                return null;
+                continue;
             }
             name = token.substring(0, pos).trim();
             value = token.substring(pos + 1).trim();

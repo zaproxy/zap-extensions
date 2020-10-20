@@ -626,7 +626,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                             .setMessage(detectableDelayMessage)
                             .raise();
 
-                    if (this.debugEnabled)
+                    if (detectableDelayMessage != null && this.debugEnabled)
                         log.debug(
                                 "A likely Time Based SQL Injection Vulnerability has been found with ["
                                         + detectableDelayMessage.getRequestHeader().getMethod()
