@@ -68,11 +68,11 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 90004;
 
-    private final List<SiteIsolationHeaderScanner> scanners =
+    private final List<SiteIsolationHeaderScanRule> rules =
             Arrays.asList(
-                    new CorpHeaderScanner(this::newAlert),
-                    new CoepHeaderScanner(this::newAlert),
-                    new CoopHeaderScanner(this::newAlert));
+                    new CorpHeaderScanRule(this::newAlert),
+                    new CoepHeaderScanRule(this::newAlert),
+                    new CoopHeaderScanRule(this::newAlert));
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -85,7 +85,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
             return;
         }
 
-        scanners.forEach(s -> s.build(msg.getResponseHeader()).forEach(AlertBuilder::raise));
+        rules.forEach(s -> s.build(msg.getResponseHeader()).forEach(AlertBuilder::raise));
     }
 
     @Override
@@ -104,13 +104,13 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
     }
 
     public List<Alert> getExampleAlerts() {
-        return scanners.stream().map(s -> s.alert("").build()).collect(Collectors.toList());
+        return rules.stream().map(s -> s.alert("").build()).collect(Collectors.toList());
     }
 
-    abstract static class SiteIsolationHeaderScanner {
+    abstract static class SiteIsolationHeaderScanRule {
         private final Supplier<AlertBuilder> newAlert;
 
-        SiteIsolationHeaderScanner(Supplier<AlertBuilder> newAlert) {
+        SiteIsolationHeaderScanRule(Supplier<AlertBuilder> newAlert) {
             this.newAlert = newAlert;
         }
 
@@ -148,12 +148,12 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         }
     }
 
-    static class CorpHeaderScanner extends SiteIsolationHeaderScanner {
+    static class CorpHeaderScanRule extends SiteIsolationHeaderScanRule {
         public static final String HEADER = "Cross-Origin-Resource-Policy";
         private static final String CORP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "corp.";
         public static final String CORS_PREFIX = "Access-Control-Allow-";
 
-        CorpHeaderScanner(Supplier<AlertBuilder> newAlert) {
+        CorpHeaderScanRule(Supplier<AlertBuilder> newAlert) {
             super(newAlert);
         }
 
@@ -197,11 +197,11 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         }
     }
 
-    static class CoepHeaderScanner extends SiteIsolationHeaderScanner {
+    static class CoepHeaderScanRule extends SiteIsolationHeaderScanRule {
         public static final String HEADER = "Cross-Origin-Embedder-Policy";
         private static final String COEP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "coep.";
 
-        CoepHeaderScanner(Supplier<AlertBuilder> newAlert) {
+        CoepHeaderScanRule(Supplier<AlertBuilder> newAlert) {
             super(newAlert);
         }
 
@@ -239,11 +239,11 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         }
     }
 
-    static class CoopHeaderScanner extends SiteIsolationHeaderScanner {
+    static class CoopHeaderScanRule extends SiteIsolationHeaderScanRule {
         public static final String HEADER = "Cross-Origin-Opener-Policy";
         private static final String COOP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "coop.";
 
-        CoopHeaderScanner(Supplier<AlertBuilder> newAlert) {
+        CoopHeaderScanRule(Supplier<AlertBuilder> newAlert) {
             super(newAlert);
         }
 
