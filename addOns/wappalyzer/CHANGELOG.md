@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 - Add-on promoted to Release.
+- Dependency updates.
 
 ## [20.3.0] - 2020-09-30
 ### Changed
