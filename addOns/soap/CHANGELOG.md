@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Various fixes (related to Issue 4832 and other testing).
 - Fix exception with Java 9+ (Issue 4037).
+- SOAP operations are no longer overwritten in sites tree (Issue 1867).
 
 ## 3 - 2017-03-31
 

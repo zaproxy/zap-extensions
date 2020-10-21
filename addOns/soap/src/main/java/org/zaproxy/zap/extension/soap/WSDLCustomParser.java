@@ -50,7 +50,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.codehaus.groovy.runtime.metaclass.MissingPropertyExceptionNoStack;
 import org.parosproxy.paros.Constant;
@@ -263,7 +262,6 @@ public class WSDLCustomParser {
 
                     /* Identifies operations for each endpoint.. */
                     for (BindingOperation bindOp : operations) {
-                        String opDisplayName = "/" + bindOp.getName() + " (v1." + soapVersion + ")";
                         sb.append(
                                 "|\t|-- SOAP 1." + soapVersion + " Operation: " + bindOp.getName());
                         /* Adds this operation to the global operations chart. */
@@ -284,8 +282,7 @@ public class WSDLCustomParser {
                                 new SOAPMsgConfig(wsdl, soapVersion, formParams, port, bindOp);
                         lastConfig = soapConfig;
                         HttpMessage requestMessage = createSoapRequest(soapConfig);
-                        if (sendMessages)
-                            sendSoapRequest(keyIndex, requestMessage, opDisplayName, sb);
+                        if (sendMessages) sendSoapRequest(keyIndex, requestMessage, sb);
                     } // bindingOperations loop
                 } // Binding check if
             } // Ports loop
@@ -515,8 +512,7 @@ public class WSDLCustomParser {
      * Sends a given SOAP request. File is needed to record its associated ops, and
      * stringBuilder logs the output message.
      */
-    private void sendSoapRequest(
-            int wsdlID, HttpMessage httpRequest, String opDisplayName, StringBuilder sb) {
+    private void sendSoapRequest(int wsdlID, HttpMessage httpRequest, StringBuilder sb) {
         if (httpRequest == null) return;
         HttpRequestBody body = httpRequest.getRequestBody();
         /* Avoids connection if message has no proper body. */
@@ -535,12 +531,12 @@ public class WSDLCustomParser {
             LOG.debug("Trace:", e);
         }
         wsdlSingleton.putRequest(wsdlID, httpRequest);
-        persistMessage(httpRequest, opDisplayName);
+        persistMessage(httpRequest);
         if (sb != null)
             sb.append(" (Status code: " + httpRequest.getResponseHeader().getStatusCode() + ")\n");
     }
 
-    private static void persistMessage(final HttpMessage message, final String opDisplayName) {
+    private static void persistMessage(final HttpMessage message) {
         // Add the message to the history panel and sites tree
         final HistoryReference historyRef;
 
@@ -563,23 +559,6 @@ public class WSDLCustomParser {
                         @Override
                         public void run() {
                             extHistory.addHistory(historyRef);
-
-                            // FIXME
-                            /*
-                             * Modifies the URI adding the SOAP operation name to avoid overwrites. It's
-                             * done after saving it in history so that the original URI is preserved for
-                             * scanning tasks.
-                             *
-                             * URI modification solution is only a workaround since it has size limitations
-                             * and, anyway, it is not an elegant solution.
-                             */
-                            try {
-                                URI soapURI = message.getRequestHeader().getURI();
-                                String soapStringURI = soapURI.getPath();
-                                soapURI.setPath(soapStringURI + opDisplayName);
-                            } catch (URIException e) {
-                                LOG.warn(e.getMessage(), e);
-                            }
                             Model.getSingleton()
                                     .getSession()
                                     .getSiteTree()
