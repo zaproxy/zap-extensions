@@ -127,9 +127,9 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
             String attack = "attack";
 
             // Always use getNewMsg() for each new request
-            msg = getNewMsg();
-            setParameter(msg, param, attack);
-            sendAndReceive(msg);
+            HttpMessage testMsg = getNewMsg();
+            setParameter(testMsg, param, attack);
+            sendAndReceive(testMsg);
 
             // This is where you detect potential vulnerabilities in the response
 
@@ -140,7 +140,7 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
                         .setParam(param)
                         .setAttack(value)
-                        .setMessage(msg)
+                        .setMessage(testMsg)
                         .raise();
                 return;
             }

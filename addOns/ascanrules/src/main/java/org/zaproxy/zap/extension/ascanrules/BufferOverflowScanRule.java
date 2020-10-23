@@ -107,8 +107,6 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
             // This is where you change the 'good' request to attack the application
             // You can make multiple requests if needed
             String checkStringHeader1 = "Connection: close"; // Un natural close
-            // Always use getNewMsg() for each new request
-            msg = getNewMsg();
             String returnAttack = randomCharacterString(2100);
             setParameter(msg, param, returnAttack);
             try {

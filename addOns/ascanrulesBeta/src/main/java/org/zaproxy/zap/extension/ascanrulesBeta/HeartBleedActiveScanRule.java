@@ -922,13 +922,12 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                                     + tlsNames[tlsIndex]
                                     + " --------------------");
 
-                Socket socket = null;
                 OutputStream os = null;
                 InputStream is = null;
-                try {
-                    // establish a raw socket connection, without proxying it (the request will
-                    // definitely not appear in Zap's history tab)
-                    socket = new Socket();
+                // establish a raw socket connection, without proxying it (the request will
+                // definitely not appear in Zap's history tab)
+                try (Socket socket = new Socket()) {
+
                     try {
                         socket.connect(new InetSocketAddress(hostname, portnumber), this.timeoutMs);
                         if (log.isDebugEnabled()) log.debug("Connected");
@@ -1021,7 +1020,6 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                     }
                     if (is != null) is.close();
                     if (os != null) os.close();
-                    if (socket != null) socket.close();
                 } catch (Exception e) {
                     // this particular variant is not vulnerable. skip to the next one..
                     if (log.isDebugEnabled())
@@ -1034,7 +1032,6 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                     if (log.isDebugEnabled()) log.debug("Tidying up");
                     if (is != null) is.close();
                     if (os != null) os.close();
-                    if (socket != null) socket.close();
                 }
             }
         } catch (Exception e) {

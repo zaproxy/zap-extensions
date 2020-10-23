@@ -217,8 +217,8 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
             payload = REDIRECT_TARGETS[h];
 
             // Get a new copy of the original message (request only) for each parameter value to try
-            msg = getNewMsg();
-            setParameter(msg, param, payload);
+            HttpMessage testMsg = getNewMsg();
+            setParameter(testMsg, param, payload);
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Testing [" + param + "] = [" + payload + "]");
@@ -227,7 +227,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
             try {
                 // Send the request and retrieve the response
                 // Be careful: we haven't to follow redirect
-                sendAndReceive(msg, false, false);
+                sendAndReceive(testMsg, false, false);
 
                 // If it's a meta based injection the use the base url
                 redirectUrl =
@@ -236,7 +236,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                                 : payload;
 
                 // Get back if a redirection occurs
-                int redirectType = isRedirected(redirectUrl, msg);
+                int redirectType = isRedirected(redirectUrl, testMsg);
 
                 if (redirectType != NO_REDIRECT) {
                     // We Found IT!
@@ -256,7 +256,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                             .setAttack(payload)
                             .setOtherInfo(getRedirectionReason(redirectType))
                             .setEvidence(redirectUrl)
-                            .setMessage(msg)
+                            .setMessage(testMsg)
                             .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent

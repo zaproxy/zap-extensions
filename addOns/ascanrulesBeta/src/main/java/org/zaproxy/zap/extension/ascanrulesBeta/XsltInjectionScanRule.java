@@ -123,13 +123,13 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
         // goes through all checks and stops if it finds a possible
         // injection
         for (XSLTInjectionType check : XSLTInjectionType.values()) {
-            if (tryInjection(msg, param, check)) {
+            if (tryInjection(param, check)) {
                 return;
             }
         }
     }
 
-    private Boolean tryInjection(HttpMessage msg, String param, XSLTInjectionType checkType) {
+    private Boolean tryInjection(String param, XSLTInjectionType checkType) {
         Predicate<String> filterEvidence =
                 ((Predicate<String>) (getBaseMsg().getResponseBody().toString()::contains))
                         .negate();
@@ -139,7 +139,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                         .filter(filterEvidence)
                         .toArray(String[]::new);
 
-        for (String payload : checkType.getPayloads(msg)) {
+        for (String payload : checkType.getPayloads(getBaseMsg())) {
             try {
                 if (isStop() || requestsLimitReached()) { // stop before sending request
                     if (LOG.isDebugEnabled()) {
@@ -148,7 +148,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                     return true;
                 }
 
-                msg = sendRequest(msg, param, payload);
+                HttpMessage msg = sendRequest(param, payload);
 
                 for (String evidence : relevantEvidence) {
                     if (msg.getResponseBody().toString().contains(evidence)) {
@@ -161,9 +161,9 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
             } catch (Exception e) {
                 LOG.warn(
                         "An error occurred while checking ["
-                                + msg.getRequestHeader().getMethod()
+                                + getBaseMsg().getRequestHeader().getMethod()
                                 + "] ["
-                                + msg.getRequestHeader().getURI()
+                                + getBaseMsg().getRequestHeader().getURI()
                                 + "] for "
                                 + getName()
                                 + " Caught "
@@ -176,13 +176,12 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
         return false;
     }
 
-    private HttpMessage sendRequest(HttpMessage msg, String param, String value)
-            throws IOException {
-        msg = getNewMsg();
-        setParameter(msg, param, value);
-        sendAndReceive(msg);
+    private HttpMessage sendRequest(String param, String value) throws IOException {
+        HttpMessage testMsg = getNewMsg();
+        setParameter(testMsg, param, value);
+        sendAndReceive(testMsg);
         requestsSent++;
-        return msg;
+        return testMsg;
     }
 
     private static String getXslForPortScan(HttpMessage msg) {

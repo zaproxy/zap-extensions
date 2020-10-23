@@ -46,7 +46,7 @@ dependencies {
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.commons:commons-lang3:3.9")
+    testImplementation("org.apache.commons:commons-lang3:3.11")
 }
 
 spotless {

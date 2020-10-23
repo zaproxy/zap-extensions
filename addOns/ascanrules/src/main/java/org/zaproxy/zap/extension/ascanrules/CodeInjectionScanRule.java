@@ -72,6 +72,8 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
     // Logger instance
     private static final Logger log = Logger.getLogger(CodeInjectionScanRule.class);
 
+    private static final Random RAND = new Random();
+
     @Override
     public int getId() {
         return 90019;
@@ -260,9 +262,8 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
      * @see #ASP_PAYLOADS
      */
     private boolean testAspInjection(String paramName) {
-        Random rand = new Random();
-        int bignum1 = 100000 + (int) (rand.nextFloat() * (999999 - 1000000 + 1));
-        int bignum2 = 100000 + (int) (rand.nextFloat() * (999999 - 1000000 + 1));
+        int bignum1 = 100000 + (int) (RAND.nextFloat() * (999999 - 1000000 + 1));
+        int bignum2 = 100000 + (int) (RAND.nextFloat() * (999999 - 1000000 + 1));
 
         for (String aspPayload : ASP_PAYLOADS) {
             HttpMessage msg = getNewMsg();

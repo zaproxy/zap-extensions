@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - 'Hidden File Finder' ensure that test requests are appropriately rebuilt for this scan rule (Issue 6129).
+- Maintenance changes.
 
 ### Fixed
  - Terminology

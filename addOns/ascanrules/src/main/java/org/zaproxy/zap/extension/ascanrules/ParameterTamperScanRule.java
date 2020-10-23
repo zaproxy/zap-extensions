@@ -72,7 +72,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
     private static Pattern patternErrorPHP = Pattern.compile(" on line <b>", PATTERN_PARAM);
     private static Pattern patternErrorTomcat =
             Pattern.compile(
-                    "(Apache Tomcat).*(^Caused by:|HTTP Status 500 - Internal Server Error)",
+                    "(Apache Tomcat).*(Caused by:|HTTP Status 500 - Internal Server Error)",
                     PATTERN_PARAM);
     // ZAP: Added logger
     private static Logger log = Logger.getLogger(ParameterTamperScanRule.class);
@@ -144,18 +144,18 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
         }
 
         for (int i = 0; i < PARAM_LIST.length && !isStop(); i++) {
-            msg = getNewMsg();
+            HttpMessage testMsg = getNewMsg();
             if (i == 0) {
                 // remove entire parameter when i=0;
-                setParameter(msg, null, null);
+                setParameter(testMsg, null, null);
                 attack = null;
             } else {
-                setParameter(msg, param, PARAM_LIST[i]);
+                setParameter(testMsg, param, PARAM_LIST[i]);
                 attack = PARAM_LIST[i];
             }
             try {
                 try {
-                    sendAndReceive(msg);
+                    sendAndReceive(testMsg);
                 } catch (InvalidRedirectLocationException
                         | SocketException
                         | IllegalStateException
@@ -169,11 +169,11 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
                                         + " "
                                         + ex.getMessage()
                                         + " when accessing: "
-                                        + msg.getRequestHeader().getURI().toString()
+                                        + testMsg.getRequestHeader().getURI().toString()
                                         + "\n The target may have replied with a poorly formed redirect due to our input.");
                     continue; // Something went wrong, move on to the next item in the PARAM_LIST
                 }
-                if (checkResult(msg, param, attack, normalMsg.getResponseBody().toString())) {
+                if (checkResult(testMsg, param, attack, normalMsg.getResponseBody().toString())) {
                     return;
                 }
             } catch (Exception e) {

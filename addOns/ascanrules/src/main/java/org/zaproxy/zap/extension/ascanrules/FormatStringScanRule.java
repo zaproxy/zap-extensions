@@ -136,11 +136,11 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
              * %n  Writes the number of characters into a pointer  Reference
              */
             // Always use getNewMsg() for each new request
-            msg = getNewMsg();
+            HttpMessage testMsg = getNewMsg();
             String initialMessage = "ZAP";
-            setParameter(msg, param, initialMessage);
+            setParameter(testMsg, param, initialMessage);
             try {
-                sendAndReceive(msg);
+                sendAndReceive(testMsg);
             } catch (InvalidRedirectLocationException | UnknownHostException ex) {
                 if (log.isDebugEnabled())
                     log.debug(
@@ -149,16 +149,17 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                                     + " "
                                     + ex.getMessage()
                                     + " when accessing: "
-                                    + msg.getRequestHeader().getURI().toString()
+                                    + testMsg.getRequestHeader().getURI().toString()
                                     + "\n The target may have replied with a poorly formed redirect due to our input.");
                 return; // Something went wrong, no point continuing
             }
 
-            if (HttpStatusCode.INTERNAL_SERVER_ERROR == msg.getResponseHeader().getStatusCode()) {
+            if (HttpStatusCode.INTERNAL_SERVER_ERROR
+                    == testMsg.getResponseHeader().getStatusCode()) {
                 return; // Initial message returned error, subsequent requests are likely to as well
             }
 
-            HttpResponseBody initialResponseBody = msg.getResponseBody();
+            HttpResponseBody initialResponseBody = testMsg.getResponseBody();
             int initialResponseLength = initialResponseBody.length();
             //  The following section of the code attacks GNU and generic C compiler format
             //	string errors.  It does not attack specific Microsoft format string  errors.
@@ -203,10 +204,10 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 sb1.append('\n');
                 String secondAttackPayload = sb1.toString();
 
-                msg = getNewMsg();
-                setParameter(msg, param, secondAttackPayload);
+                HttpMessage verificationMsg = getNewMsg();
+                setParameter(verificationMsg, param, secondAttackPayload);
                 try {
-                    sendAndReceive(msg);
+                    sendAndReceive(verificationMsg);
                 } catch (InvalidRedirectLocationException | UnknownHostException ex) {
                     if (log.isDebugEnabled())
                         log.debug(
@@ -215,19 +216,20 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                                         + " "
                                         + ex.getMessage()
                                         + " when accessing: "
-                                        + msg.getRequestHeader().getURI().toString()
+                                        + verificationMsg.getRequestHeader().getURI().toString()
                                         + "\n The target may have replied with a poorly formed redirect due to our input.");
                     return; // Something went wrong, no point continuing
                 }
-                HttpResponseBody secondAttackResponseBody = msg.getResponseBody();
+                HttpResponseBody secondAttackResponseBody = verificationMsg.getResponseBody();
                 if (secondAttackResponseBody.length() > initialResponseLength + 20
-                        && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+                        && verificationMsg.getResponseHeader().getStatusCode()
+                                == HttpStatusCode.OK) {
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setParam(param)
                             .setAttack(secondAttackPayload)
                             .setOtherInfo(getError('2'))
-                            .setMessage(msg)
+                            .setMessage(verificationMsg)
                             .raise();
                 } else {
                     newAlert()
@@ -264,10 +266,10 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             }
             sb2.append('\n');
             String microsoftAttackMessage = sb2.toString();
-            msg = getNewMsg();
-            setParameter(msg, param, microsoftAttackMessage);
+            HttpMessage microsoftTestMsg = getNewMsg();
+            setParameter(microsoftTestMsg, param, microsoftAttackMessage);
             try {
-                sendAndReceive(msg);
+                sendAndReceive(microsoftTestMsg);
             } catch (InvalidRedirectLocationException | UnknownHostException ex) {
                 if (log.isDebugEnabled())
                     log.debug(
@@ -276,17 +278,18 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                                     + " "
                                     + ex.getMessage()
                                     + " when accessing: "
-                                    + msg.getRequestHeader().getURI().toString()
+                                    + microsoftTestMsg.getRequestHeader().getURI().toString()
                                     + "\n The target may have replied with a poorly formed redirect due to our input.");
                 return; // Something went wrong, no point continuing
             }
-            if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR) {
+            if (microsoftTestMsg.getResponseHeader().getStatusCode()
+                    == HttpStatusCode.INTERNAL_SERVER_ERROR) {
                 newAlert()
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
                         .setParam(param)
                         .setAttack(microsoftAttackMessage)
                         .setOtherInfo(getError('3'))
-                        .setMessage(msg)
+                        .setMessage(microsoftTestMsg)
                         .raise();
             }
             return;
