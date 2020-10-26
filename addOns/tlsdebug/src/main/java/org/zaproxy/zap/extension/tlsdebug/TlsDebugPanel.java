@@ -63,6 +63,7 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
             new ImageIcon(TlsDebugPanel.class.getResource(RESOURCES + "/tlsdebug.png"));
 
     private ExtensionTlsDebug extension;
+    private JPanel panelContent;
     private JButton checkButton;
     private ZapTextField urlField;
     private JTextArea outputArea;
@@ -79,10 +80,10 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
                         .getMenuShortcutKeyStroke(KeyEvent.VK_D, KeyEvent.ALT_DOWN_MASK, false));
         this.setLayout(new BorderLayout());
 
-        JPanel panelContent = new JPanel(new GridBagLayout());
+        panelContent = new JPanel(new GridBagLayout());
         this.add(panelContent, BorderLayout.NORTH);
 
-        panelContent.setBackground(new Color(UIManager.getColor("TextField.background").getRGB()));
+        setDefaultPanelContentBackground();
         panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 
         panelContent.add(
@@ -147,6 +148,19 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
         outputPanel.add(jScrollPane, BorderLayout.CENTER);
 
         this.add(outputPanel, BorderLayout.CENTER);
+    }
+
+    private void setDefaultPanelContentBackground() {
+        if (panelContent != null) {
+            panelContent.setBackground(
+                    new Color(UIManager.getColor("TextField.background").getRGB()));
+        }
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        setDefaultPanelContentBackground();
     }
 
     private ZapTextField getUrlField() {
