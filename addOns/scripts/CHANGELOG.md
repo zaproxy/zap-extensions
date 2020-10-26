@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
  - Terminology
+ - Do not show the Enable/Disable Script menu item if the script can't be enabled/disabled, in some
+ look and feels it could show an empty menu item (Issue 6256).
 
 ## [26] - 2020-01-17
 ### Added
