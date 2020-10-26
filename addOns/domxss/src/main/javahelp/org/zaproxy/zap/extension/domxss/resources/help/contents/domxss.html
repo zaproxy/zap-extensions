@@ -14,18 +14,17 @@ It launches browser windows and sends attack payloads to all of the relevant DOM
 As it launches browser windows it will take significantly longer than other (non browser based) rules. 
 </p>
 <p>
-This version only supports Firefox. It can be run with GUI or headless (default), it can be changed with
+This version supports Firefox (the default) and Chrome. They can be run with GUI or headless (default), it can be changed with
 the rule <code>rules.domxss.browserid</code>, via the Options 'Rule configuration' panel, with values
-<code>firefox</code> and <code>firefox-headless</code>, respectively.<br>
-Future versions may support other browsers.
+<code>firefox</code>, <code>firefox-headless</code>, <code>chrome</code> and <code>chrome-headless</code>.
 </p>
 <p>
 The following Attack Strengths are supported, and related directly to the number of attack payloads used
-for URL fragment injections (eg: http://example.com/index.html?foo=bar#injection):
+for URL fragment and form input field injections (eg: http://example.com/index.html?foo=bar#injection):
 <ul>
-<li>LOW: 3 attack payloads 
-<li>MEDIUM: 5 attack payloads 
-<li>HIGH: 7 attack payloads 
+<li>LOW: 1 attack payloads 
+<li>MEDIUM: 3 attack payloads 
+<li>HIGH: 6 attack payloads 
 <li>INSANE: 9 attack payloads 
 </ul>
 The scanner will also attempt URL/query parameter injections which are not impacted by the selected strength.
@@ -35,7 +34,7 @@ The rule will only report one DOM XSS vulnerability per node, unless the LOW Ale
 is used, in which case it will keep trying all of the specified payloads. 
 </p>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/TestDomXSS.java">TestDomXSS.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/DomXssScanRule.java">DomXssScanRule.java</a>
 
 </BODY>
 </HTML>

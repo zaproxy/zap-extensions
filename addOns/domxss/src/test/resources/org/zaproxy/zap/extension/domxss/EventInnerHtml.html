@@ -1,0 +1,49 @@
+<html>
+  <head><title>Toxic DOM</title></head>
+  <body>
+    <script>
+      function deferredPayload() {
+  var div = document.createElement('div');
+document.documentElement.appendChild(div);
+
+// Sync trigger.
+div.innerHTML = payload;
+
+// Async trigger.
+function trigger(payload) {
+  div.innerHTML = payload;
+};
+
+}var form = document.createElement('form');
+
+var input = document.createElement('input');
+input.setAttribute('id', 'userInput');
+
+var submit = document.createElement('input');
+submit.setAttribute('type', 'submit');
+
+form.setAttribute('action', '#');
+form.appendChild(input);
+form.appendChild(submit);
+
+var payload = '';
+form.onsubmit = function() {
+  payload = document.getElementById('userInput').value;
+  deferredPayload();
+  return false;
+};
+
+document.body.appendChild(form);var div = document.createElement('div');
+document.documentElement.appendChild(div);
+
+// Sync trigger.
+div.innerHTML = payload;
+
+// Async trigger.
+function trigger(payload) {
+  div.innerHTML = payload;
+};
+
+    </script>
+  </body>
+</html>
