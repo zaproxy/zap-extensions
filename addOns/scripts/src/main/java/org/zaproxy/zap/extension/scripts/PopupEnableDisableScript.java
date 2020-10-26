@@ -123,7 +123,7 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
                             }
                         }
                     }
-                    return true;
+                    return enable != null;
                 }
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
