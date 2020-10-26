@@ -239,7 +239,7 @@ public class GraphQlParam extends VersionedAbstractParam {
     protected void parseImpl() {
         maxQueryDepth = getInt(PARAM_MAX_QUERY_DEPTH, 5);
         maxArgsDepth = getInt(PARAM_MAX_ARGS_DEPTH, 5);
-        optionalArgsEnabled = getBoolean(PARAM_OPTIONAL_ARGS, false);
+        optionalArgsEnabled = getBoolean(PARAM_OPTIONAL_ARGS, true);
         argsType =
                 ArgsTypeOption.valueOf(getString(PARAM_ARGS_TYPE, ArgsTypeOption.BOTH.toString()));
         querySplitType =
