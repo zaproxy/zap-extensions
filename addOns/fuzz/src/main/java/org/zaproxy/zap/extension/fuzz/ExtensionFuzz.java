@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
@@ -584,7 +585,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
 
     public <M extends Message, F extends Fuzzer<M>> void addFuzzerHandler(
             FuzzerHandler<M, F> fuzzerHandler) {
-        fuzzerHandlers.add(fuzzerHandler);
+        fuzzerHandlers.add(Objects.requireNonNull(fuzzerHandler));
 
         if (defaultFuzzerHandler == null) {
             defaultFuzzerHandler = fuzzerHandler;
