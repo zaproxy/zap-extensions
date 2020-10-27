@@ -27,6 +27,7 @@ import com.shapesecurity.salvation.data.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -121,6 +122,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
                     xcspOptions.get(0),
                     false,
+                    false,
                     "");
         }
 
@@ -137,6 +139,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
                     xwkcspOptions.get(0),
                     false,
+                    false,
                     "");
         }
 
@@ -145,13 +148,15 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
             Origin origin = URI.parse(msg.getRequestHeader().getURI().toString());
             Policy unifiedPolicy = new Policy(origin);
             boolean multipleCsp = cspOptions.size() > 1;
-            if (multipleCsp) {
+            boolean hasReportUri = hasReportUri(cspOptions);
+            if (multipleCsp && !hasReportUri) {
                 for (String csp : cspOptions) {
                     Policy policy = ParserWithLocation.parse(csp, origin);
                     unifiedPolicy.intersect(policy);
                 }
             }
-            String unifiedPolicyText = multipleCsp ? unifiedPolicy.show() : cspOptions.get(0);
+            String unifiedPolicyText =
+                    multipleCsp && !hasReportUri ? unifiedPolicy.show() : cspOptions.get(0);
             Policy pol =
                     ParserWithLocation.parse(
                             unifiedPolicyText, origin, notices); // Populate notices
@@ -175,6 +180,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                         noticesRisk,
                         cspOptions.get(0),
                         multipleCsp,
+                        hasReportUri,
                         unifiedPolicyText);
             }
 
@@ -205,6 +211,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                         Alert.RISK_MEDIUM,
                         cspOptions.get(0),
                         multipleCsp,
+                        hasReportUri,
                         unifiedPolicyText);
             }
 
@@ -218,6 +225,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                         Alert.RISK_MEDIUM,
                         cspOptions.get(0),
                         multipleCsp,
+                        hasReportUri,
                         unifiedPolicyText);
             }
 
@@ -231,6 +239,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                         Alert.RISK_MEDIUM,
                         cspOptions.get(0),
                         multipleCsp,
+                        hasReportUri,
                         unifiedPolicyText);
             }
         }
@@ -243,6 +252,16 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                             + (System.currentTimeMillis() - start)
                             + " ms");
         }
+    }
+
+    private static boolean hasReportUri(List<String> cspOptions) {
+        for (String csp : cspOptions) {
+            String lowerCsp = csp.toLowerCase(Locale.ROOT);
+            if (lowerCsp.contains("report-uri")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String getCSPNoticesString(ArrayList<Notice> notices) {
@@ -383,12 +402,15 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
             int risk,
             String evidence,
             boolean multipleCsp,
+            boolean hasReportUri,
             String policy) {
         String alertName = StringUtils.isEmpty(name) ? getName() : getName() + ": " + name;
-        String otherInfo =
-                multipleCsp
-                        ? Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", policy)
-                        : "";
+        String otherInfo = "";
+        if (hasReportUri) {
+            otherInfo = Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.nomerge");
+        } else if (multipleCsp) {
+            otherInfo = Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", policy);
+        }
 
         newAlert()
                 .setName(alertName)
