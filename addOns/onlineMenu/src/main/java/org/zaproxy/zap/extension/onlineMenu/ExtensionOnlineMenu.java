@@ -36,10 +36,8 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
     public static final String ZAP_HOMEPAGE = "https://www.zaproxy.org/";
     public static final String ZAP_EXTENSIONS_PAGE = "https://www.zaproxy.org/addons/";
     public static final String ZAP_DOWNLOADS_PAGE = "https://www.zaproxy.org/download/";
-    public static final String ZAP_WIKI_PAGE = "https://github.com/zaproxy/zaproxy/wiki";
     public static final String ZAP_FAQ_PAGE = "https://www.zaproxy.org/faq/";
-    public static final String ZAP_NEWSLETTERS_PAGE =
-            "https://github.com/zaproxy/zaproxy/wiki/Newsletters";
+    public static final String ZAP_VIDEOS_PAGE = "https://www.zaproxy.org/videos/";
     public static final String ZAP_USER_GROUP_PAGE =
             "https://groups.google.com/group/zaproxy-users";
     public static final String ZAP_DEV_GROUP_PAGE =
@@ -87,18 +85,6 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
                     });
             extensionHook.getHookMenu().addOnlineMenuItem(menuExtPage);
 
-            // Wiki
-            ZapMenuItem menuWiki = new ZapMenuItem("onlineMenu.wiki");
-            menuWiki.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuWiki.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_WIKI_PAGE);
-                        }
-                    });
-            extensionHook.getHookMenu().addOnlineMenuItem(menuWiki);
-
             // FAQ
             ZapMenuItem menuFAQ = new ZapMenuItem("onlineMenu.faq");
             menuFAQ.setEnabled(DesktopUtils.canOpenUrlInBrowser());
@@ -111,17 +97,17 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
                     });
             extensionHook.getHookMenu().addOnlineMenuItem(menuFAQ);
 
-            // Newsletters
-            ZapMenuItem menuNews = new ZapMenuItem("onlineMenu.news");
-            menuNews.setEnabled(DesktopUtils.canOpenUrlInBrowser());
-            menuNews.addActionListener(
+            // Videos
+            ZapMenuItem menuVideos = new ZapMenuItem("onlineMenu.videos");
+            menuVideos.setEnabled(DesktopUtils.canOpenUrlInBrowser());
+            menuVideos.addActionListener(
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent e) {
-                            DesktopUtils.openUrlInBrowser(ZAP_NEWSLETTERS_PAGE);
+                            DesktopUtils.openUrlInBrowser(ZAP_VIDEOS_PAGE);
                         }
                     });
-            extensionHook.getHookMenu().addOnlineMenuItem(menuNews);
+            extensionHook.getHookMenu().addOnlineMenuItem(menuVideos);
 
             // UserGroup
             ZapMenuItem menuUserGroup = new ZapMenuItem("onlineMenu.usergroup");
