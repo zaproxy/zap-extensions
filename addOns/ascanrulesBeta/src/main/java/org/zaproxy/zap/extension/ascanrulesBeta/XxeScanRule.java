@@ -222,125 +222,109 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
             }
 
             // Check #2 : XXE Local File Reflection Attack
-            // ------------------------------------------------------
-            // This attack is not described anywhere but the idea is
-            // very simple: use the original XML request and substitute
-            // every content and attribute with a fake entity which
-            // include a sensitive local file. If the page goes in error
-            // or reflect and manage the sent content you can probably
-            // have the file included in the HTML page and you can check it
-            //
-            msg = getNewMsg();
+            localFileReflectionAttack(getNewMsg());
 
-            try {
-                Matcher matcher;
-                String localFile;
-                String response;
-                String requestBody = createLfrPayload(msg.getRequestBody().toString());
-
-                for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
-                    // Prepare the message
-                    localFile = LOCAL_FILE_TARGETS[idx];
-                    payload = MessageFormat.format(requestBody, localFile);
-                    // msg = getNewMsg();
-                    msg.setRequestBody(payload);
-
-                    // Send message with local file inclusion
-                    sendAndReceive(msg);
-
-                    // Parse the result
-                    response = msg.getResponseBody().toString();
-                    matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
-                    if (matcher.find()) {
-
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setAttack(payload)
-                                .setEvidence(matcher.group())
-                                .setMessage(msg)
-                                .raise();
-                    }
-
-                    // Check if the scan has been stopped
-                    // if yes dispose resources and exit
-                    if (isStop()) {
-                        // Dispose all resources
-                        // Exit the rule
-                        return;
-                    }
-                }
-
-            } catch (IOException ex) {
-                log.warn(
-                        "XXE Injection vulnerability check failed for payload ["
-                                + payload
-                                + "] due to an I/O error",
-                        ex);
-            }
-
-            // Check if we've to do only medium sized analysis (only remote and reflected will be
-            // done)...
+            // Check if we've to do only medium sized analysis
+            // (only remote and reflected will be done)
             if (this.getAttackStrength() == AttackStrength.MEDIUM) {
                 return;
             }
 
-            // Check #3 : XXE Local File Inclusion Attack
-            // ------------------------------------------------------
-            // This attack is described in
-            // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
-            // trying to include a local file and maybe have the inclusion back in
-            // the result page. This situation is very uncommon because it works
-            // only in case of a bare XML parser which execute the conetnt and then
-            // gives it back almost untouched (maybe because it applies an XSLT or
-            // query it using XPath and give back the result).
-            msg = getNewMsg();
-
-            try {
-                String localFile;
-                String response;
-                Matcher matcher;
-
-                for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
-                    // Prepare the message
-                    localFile = LOCAL_FILE_TARGETS[idx];
-                    payload = MessageFormat.format(ATTACK_HEADER + ATTACK_BODY, localFile);
-                    // msg = getNewMsg();
-                    msg.setRequestBody(payload);
-
-                    // Send message with local file inclusion
-                    sendAndReceive(msg);
-
-                    // Parse the result
-                    response = msg.getResponseBody().toString();
-                    matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
-                    if (matcher.find()) {
-
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setAttack(payload)
-                                .setEvidence(matcher.group())
-                                .setMessage(msg)
-                                .raise();
-                    }
-
-                    // Check if the scan has been stopped
-                    // if yes dispose resources and exit
-                    if (isStop()) {
-                        // Dispose all resources
-                        // Exit the rule
-                        return;
-                    }
-                }
-
-            } catch (IOException ex) {
-                // Do not try to internationalise this.. we need an error message in any event..
-                // if it's in English, it's still better than not having it at all.
-                log.warn(
-                        "XXE Injection vulnerability check failed for payload ["
-                                + payload
-                                + "] due to an I/O error",
-                        ex);
+            // Exit if the scan has been stopped
+            if (isStop()) {
+                return;
             }
+
+            // Check #3 : XXE Local File Inclusion Attack
+            localFileInclusionAttack(getNewMsg());
+        }
+    }
+
+    /**
+     * Local File Reflection Attack substitutes every attribute in the original XML request with a
+     * fake entity which includes a sensitive local file. The attack is repeated for every file
+     * listed in the LOCAL_FILE_TARGETS. The response returned is pattern matched against
+     * LOCAL_FILE_PATTERNS. An alert is raised when a match is found.
+     *
+     * @param msg new HttpMessage with the same request as the base. This is used to build the
+     *     attack payload.
+     */
+    private void localFileReflectionAttack(HttpMessage msg) {
+        String payload = null;
+        try {
+            String requestBody = createLfrPayload(msg.getRequestBody().toString());
+            for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
+                String localFile = LOCAL_FILE_TARGETS[idx];
+                payload = MessageFormat.format(requestBody, localFile);
+                msg.setRequestBody(payload);
+                sendAndReceive(msg);
+                String response = msg.getResponseBody().toString();
+                Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
+                if (matcher.find()) {
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setAttack(payload)
+                            .setEvidence(matcher.group())
+                            .setMessage(msg)
+                            .raise();
+                }
+                if (isStop()) {
+                    return;
+                }
+            }
+        } catch (IOException ex) {
+            log.warn(
+                    "XXE Injection vulnerability check failed for payload ["
+                            + payload
+                            + "] due to an I/O error",
+                    ex);
+        }
+    }
+
+    /**
+     * Local File Inclusion Attack is described in
+     * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing. The
+     * attack builds a payload for every file listed in LOCAL_FILE_TARGETS with the ATTACK_HEADER
+     * and the ATTACK_BODY. The response returned is pattern matched against LOCAL_FILE_PATTERNS. An
+     * alert is raised when a match is found.
+     *
+     * <p>This situation is very uncommon because it works only in case of a bare XML parser which
+     * execute the content and then returns the content almost untouched (maybe because it applies
+     * an XSLT or query it using XPath and give back the result)
+     *
+     * @param msg new HttpMessage with the same request as the base. This is used to build the
+     *     attack payload.
+     */
+    private void localFileInclusionAttack(HttpMessage msg) {
+        String payload = null;
+        try {
+            for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
+                String localFile = LOCAL_FILE_TARGETS[idx];
+                payload = MessageFormat.format(ATTACK_HEADER + ATTACK_BODY, localFile);
+                msg.setRequestBody(payload);
+                sendAndReceive(msg);
+                String response = msg.getResponseBody().toString();
+                Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
+                if (matcher.find()) {
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setAttack(payload)
+                            .setEvidence(matcher.group())
+                            .setMessage(msg)
+                            .raise();
+                }
+                if (isStop()) {
+                    return;
+                }
+            }
+        } catch (IOException ex) {
+            // Do not try to internationalise this.. we need an error message in any event..
+            // if it's in English, it's still better than not having it at all.
+            log.warn(
+                    "XXE Injection vulnerability check failed for payload ["
+                            + payload
+                            + "] due to an I/O error",
+                    ex);
         }
     }
 
