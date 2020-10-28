@@ -68,11 +68,11 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
         // find all loosely scoped cookies
         List<HttpCookie> looselyScopedCookies = new LinkedList<HttpCookie>();
         for (HttpCookie cookie : cookies) {
+          if (!ignoreList.contains(cookie.getName())) {
             if (isLooselyScopedCookie(cookie, host)) {
-                if (!ignoreList.contains(cookie.getName())) {
-                    looselyScopedCookies.add(cookie);
-                }
+              looselyScopedCookies.add(cookie);
             }
+          }
         }
 
         // raise alert if have found any loosely scoped cookies
