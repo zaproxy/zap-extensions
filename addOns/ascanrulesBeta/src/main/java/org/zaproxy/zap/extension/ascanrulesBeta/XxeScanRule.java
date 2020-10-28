@@ -31,7 +31,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.callback.ExtensionCallback;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -62,7 +61,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                     + "  <!ENTITY zapxxe SYSTEM \"{0}\">\n"
                     + "]>\n";
 
-    private static final String ATTACK_BODY = "<foo>" + ATTACK_ENTITY + "</foo>";
+    protected static final String ATTACK_BODY = "<foo>" + ATTACK_ENTITY + "</foo>";
 
     // XML standard from W3C Consortium
     // ---------------------------------------------
@@ -250,19 +249,16 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                     sendAndReceive(msg);
 
                     // Parse the result
-                    if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+                    response = msg.getResponseBody().toString();
+                    matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
+                    if (matcher.find()) {
 
-                        response = msg.getResponseBody().toString();
-                        matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
-                        if (matcher.find()) {
-
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setAttack(payload)
-                                    .setEvidence(matcher.group())
-                                    .setMessage(msg)
-                                    .raise();
-                        }
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setAttack(payload)
+                                .setEvidence(matcher.group())
+                                .setMessage(msg)
+                                .raise();
                     }
 
                     // Check if the scan has been stopped
@@ -315,19 +311,16 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                     sendAndReceive(msg);
 
                     // Parse the result
-                    if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+                    response = msg.getResponseBody().toString();
+                    matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
+                    if (matcher.find()) {
 
-                        response = msg.getResponseBody().toString();
-                        matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
-                        if (matcher.find()) {
-
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setAttack(payload)
-                                    .setEvidence(matcher.group())
-                                    .setMessage(msg)
-                                    .raise();
-                        }
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setAttack(payload)
+                                .setEvidence(matcher.group())
+                                .setMessage(msg)
+                                .raise();
                     }
 
                     // Check if the scan has been stopped
