@@ -20,6 +20,9 @@
 package org.zaproxy.addon.retire;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
@@ -88,25 +91,31 @@ public class RetireScanRule extends PluginPassiveScanner {
                     otherInfo = otherInfo + result.getOtherinfo();
                 }
 
-                newAlert()
-                        .setRisk(Alert.RISK_MEDIUM)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setDescription(
-                                Constant.messages.getString(
-                                        "retire.rule.desc",
-                                        result.getFilename(),
-                                        result.getVersion()))
-                        .setOtherInfo(otherInfo)
-                        .setReference(getDetails(Result.INFO, result.getInfo()))
-                        .setSolution(
-                                Constant.messages.getString(
-                                        "retire.rule.soln", result.getFilename()))
-                        .setEvidence(result.getEvidence())
-                        .setCweId(829) // CWE-829: Inclusion of Functionality from Untrusted Control
-                        // Sphere
-                        .raise();
+                buildAlert(result, otherInfo).raise();
             }
         }
+    }
+
+    private AlertBuilder buildAlert(Result result, String otherInfo) {
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString(
+                                "retire.rule.desc", result.getFilename(), result.getVersion()))
+                .setOtherInfo(otherInfo)
+                .setReference(getDetails(Result.INFO, result.getInfo()))
+                .setSolution(Constant.messages.getString("retire.rule.soln", result.getFilename()))
+                .setEvidence(result.getEvidence())
+                .setCweId(829); // CWE-829: Inclusion of Functionality from Untrusted Control Sphere
+    }
+
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<Alert>();
+        alerts.add(
+                buildAlert(new Result("ExampleLibrary", "x.y.z", Collections.emptyMap(), null), "")
+                        .build());
+        return alerts;
     }
 
     private String getDetails(String key, Map<String, Set<String>> info) {
