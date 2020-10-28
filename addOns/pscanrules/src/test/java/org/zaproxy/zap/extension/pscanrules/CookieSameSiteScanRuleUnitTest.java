@@ -326,7 +326,8 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
     }
 
     @Test
-    public void cookieOnIgnoreList() throws HttpMalformedHeaderException {
+    public void shouldNotAlertWhenCookieOnIgnoreList() throws HttpMalformedHeaderException {
+        // Given
         model.getOptionsParam()
                 .getConfig()
                 .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,test,bbb");
@@ -343,13 +344,17 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+
+        // When
         scanHttpResponseReceive(msg);
 
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
-    public void cookieNotOnIgnoreList() throws HttpMalformedHeaderException {
+    public void shouldAlertWhenCookieNotOnIgnoreList() throws HttpMalformedHeaderException {
+        // Given
         model.getOptionsParam()
                 .getConfig()
                 .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,bbb,ccc");
@@ -366,8 +371,11 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+
+        // When
         scanHttpResponseReceive(msg);
 
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));

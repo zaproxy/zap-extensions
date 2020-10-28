@@ -218,7 +218,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void cookieOnIgnoreList() throws HttpMalformedHeaderException {
+    public void shouldNotAlertWhenCookieOnIgnoreList() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
@@ -236,7 +236,7 @@ public class CookieLooselyScopedScanRuleUnitTest
     }
 
     @Test
-    public void cookieNotOnIgnoreList() throws HttpMalformedHeaderException {
+    public void shouldAlertWhenCookieNotOnIgnoreList() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
