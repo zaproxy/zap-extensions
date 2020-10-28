@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- XML External Entity Attack scan rule changed to skip only Remote File Inclusion Attack when Callback extension is not available.
 - Maintenance changes.
 - The Relative Path Confusion scan rule no longer treats 'href="#"' as a problematic use.
 

@@ -168,16 +168,6 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
         return Alert.RISK_HIGH;
     }
 
-    @Override
-    public void init() {
-        if (ChallengeCallbackImplementor.getExtensionCallback() == null) {
-            // The callback extension is not available, cant do anything :(
-            getParent()
-                    .pluginSkipped(
-                            this, Constant.messages.getString(MESSAGE_PREFIX + "nocallback"));
-        }
-    }
-
     /**
      * Scan rule to check for XXE vulnerabilities. It checks both for local and remote using the ZAP
      * API and also a new model based on parameter substitution
@@ -199,29 +189,32 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
             // using an external bouncing site, in this case we use
             // the ZAP API as a server for the vulnerability check
             // using a challenge/response model based on a random string
-            //
-            String challenge = randomString(CHALLENGE_LENGTH);
 
-            try {
-                // Prepare the attack message
-                msg = getNewMsg();
-                payload = getCallbackAttackPayload(challenge);
-                msg.setRequestBody(payload);
+            // Skip XXE Remote File Inclusion Attack when callback extension is not available.
+            if (ChallengeCallbackImplementor.getExtensionCallback() != null) {
+                String challenge = randomString(CHALLENGE_LENGTH);
 
-                // Register the callback for future actions
-                callbackImplementor.registerCallback(challenge, this, msg);
+                try {
+                    // Prepare the attack message
+                    msg = getNewMsg();
+                    payload = getCallbackAttackPayload(challenge);
+                    msg.setRequestBody(payload);
 
-                // All we need has been done...
-                sendAndReceive(msg);
+                    // Register the callback for future actions
+                    callbackImplementor.registerCallback(challenge, this, msg);
 
-            } catch (IOException ex) {
-                // Do not try to internationalise this.. we need an error message in any event..
-                // if it's in English, it's still better than not having it at all.
-                log.warn(
-                        "XXE Injection vulnerability check failed for payload ["
-                                + payload
-                                + "] due to an I/O error",
-                        ex);
+                    // All we need has been done...
+                    sendAndReceive(msg);
+
+                } catch (IOException ex) {
+                    // Do not try to internationalise this.. we need an error message in any event..
+                    // if it's in English, it's still better than not having it at all.
+                    log.warn(
+                            "XXE Injection vulnerability check failed for payload ["
+                                    + payload
+                                    + "] due to an I/O error",
+                            ex);
+                }
             }
 
             // Check if we've to do only basic analysis (only remote should be done)...
