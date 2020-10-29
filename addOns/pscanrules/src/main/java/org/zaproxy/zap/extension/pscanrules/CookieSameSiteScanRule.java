@@ -70,10 +70,10 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
         Set<String> ignoreList = CookieUtils.getCookieIgnoreList(getModel());
 
         for (String cookie : cookies) {
-            if (CookieUtils.isExpired(cookie)) {
-                continue;
-            }
             if (!ignoreList.contains(CookieUtils.getCookieName(cookie))) {
+                if (CookieUtils.isExpired(cookie)) {
+                    continue;
+                }
                 String sameSiteVal =
                         CookieUtils.getAttributeValue(cookie, SAME_SITE_COOKIE_ATTRIBUTE);
                 if (sameSiteVal == null) {
