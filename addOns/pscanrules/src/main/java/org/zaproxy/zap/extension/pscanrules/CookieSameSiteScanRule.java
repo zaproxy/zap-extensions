@@ -70,24 +70,22 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
         Set<String> ignoreList = CookieUtils.getCookieIgnoreList(getModel());
 
         for (String cookie : cookies) {
-            if (!ignoreList.contains(CookieUtils.getCookieName(cookie))) {
-                if (CookieUtils.isExpired(cookie)) {
-                    continue;
-                }
-                String sameSiteVal =
-                        CookieUtils.getAttributeValue(cookie, SAME_SITE_COOKIE_ATTRIBUTE);
-                if (sameSiteVal == null) {
-                    // Its missing
-                    this.raiseAlert(msg, id, cookie, this.getDescription());
-                } else if (!(sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_STRICT)
-                        || sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_LAX))) {
-                    // Its present but with an illegal value
-                    this.raiseAlert(
-                            msg,
-                            id,
-                            cookie,
-                            Constant.messages.getString(MESSAGE_PREFIX + "badval"));
-                }
+            if (ignoreList.contains(CookieUtils.getCookieName(cookie)) || CookieUtils.isExpired(cookie)) {
+                continue;
+            }
+            String sameSiteVal =
+                CookieUtils.getAttributeValue(cookie, SAME_SITE_COOKIE_ATTRIBUTE);
+            if (sameSiteVal == null) {
+                // Its missing
+                this.raiseAlert(msg, id, cookie, this.getDescription());
+            } else if (!(sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_STRICT)
+                || sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_LAX))) {
+                // Its present but with an illegal value
+                this.raiseAlert(
+                    msg,
+                    id,
+                    cookie,
+                    Constant.messages.getString(MESSAGE_PREFIX + "badval"));
             }
         }
     }
