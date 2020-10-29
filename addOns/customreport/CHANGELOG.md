@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.9.0.
 - Add Evidence to report (Issue 6151).
 - Make Parameter and Attack fields optional.
+- Fix bug to allow writing reports with file path containing '#' (Issue 6267).
 
 ## [5] - 2019-08-30
 

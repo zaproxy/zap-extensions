@@ -26,6 +26,7 @@
 // ZAP: 2015/11/16 Issue 1804: Disable processing of XML external entities by default
 // ZAP: 2015/11/16 Issue 1555: Rework inclusion of HTML tags in reports
 // ZAP: 2019/05/08 Normalise format/indentation.
+// ZAP: 2020/10/29 Issue 6267: Fix bug to allow writing reports with file path containing '#'.
 package org.zaproxy.zap.extension.customreport;
 
 import java.io.BufferedReader;
@@ -81,7 +82,7 @@ public class ReportGenerator {
             Transformer transformer = tFactory.newTransformer(stylesource);
 
             // Make the transformation and write to the output file
-            StreamResult result = new StreamResult(outFile);
+            StreamResult result = new StreamResult(outFile.getPath());
             transformer.transform(source, result);
 
         } catch (TransformerException e) {
@@ -116,7 +117,7 @@ public class ReportGenerator {
                 Transformer transformer = tFactory.newTransformer(stylesource);
 
                 DOMSource source = new DOMSource(doc);
-                StreamResult result = new StreamResult(outfile);
+                StreamResult result = new StreamResult(outfile.getPath());
                 transformer.transform(source, result);
 
             } catch (TransformerException
@@ -261,7 +262,7 @@ public class ReportGenerator {
             Transformer transformer = tFactory.newTransformer(stylesource);
 
             DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(outfile);
+            StreamResult result = new StreamResult(outfile.getPath());
             transformer.transform(source, result);
 
         } catch (TransformerException
