@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "0.5.0"
+version = "0.6.0"
 description = "Retire.js"
 
 zapAddOn {
