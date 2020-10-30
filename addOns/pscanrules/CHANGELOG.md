@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Changed ViewState and XFrameOption rules to return example alerts for the docs
 - Handle an IllegalArgumentException that could occur in the CSP scan rule if multiple CSP headers were present and one (or more) had a report-uri directive when trying to merge them.
+- Allow to ignore cookies in same site and loosely scoped scan rules.
 
 ## [29] - 2020-06-01
 ### Changed

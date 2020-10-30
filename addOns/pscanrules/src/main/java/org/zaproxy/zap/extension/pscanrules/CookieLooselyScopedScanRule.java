@@ -22,10 +22,13 @@ package org.zaproxy.zap.extension.pscanrules;
 import java.net.HttpCookie;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CookieUtils;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -39,6 +42,8 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cookielooselyscoped.";
+
+    private Model model = null;
 
     @Override
     public String getName() {
@@ -58,10 +63,12 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
         // name of a host from which the response has been sent from
         String host = msg.getRequestHeader().getHostName();
 
+        Set<String> ignoreList = CookieUtils.getCookieIgnoreList(getModel());
+
         // find all loosely scoped cookies
         List<HttpCookie> looselyScopedCookies = new LinkedList<HttpCookie>();
         for (HttpCookie cookie : cookies) {
-            if (isLooselyScopedCookie(cookie, host)) {
+            if (!ignoreList.contains(cookie.getName()) && isLooselyScopedCookie(cookie, host)) {
                 looselyScopedCookies.add(cookie);
             }
         }
@@ -196,5 +203,19 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
 
     private String getReferenceMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    private Model getModel() {
+        if (this.model == null) {
+            this.model = Model.getSingleton();
+        }
+        return this.model;
+    }
+
+    /*
+     * Just for use in the unit tests
+     */
+    protected void setModel(Model model) {
+        this.model = model;
     }
 }

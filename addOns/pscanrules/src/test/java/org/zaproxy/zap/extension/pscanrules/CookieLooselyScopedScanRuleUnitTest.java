@@ -20,21 +20,39 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** @author Vahid Rafiei (@vahid_r) */
 public class CookieLooselyScopedScanRuleUnitTest
         extends PassiveScannerTest<CookieLooselyScopedScanRule> {
 
+    private Model model;
+
     @Override
     protected CookieLooselyScopedScanRule createScanner() {
-        return new CookieLooselyScopedScanRule();
+        rule = new CookieLooselyScopedScanRule();
+        // Mock the model and options
+        model = mock(Model.class, withSettings().lenient());
+        OptionsParam options = new OptionsParam();
+        ZapXmlConfiguration conf = new ZapXmlConfiguration();
+        options.load(conf);
+        when(model.getOptionsParam()).thenReturn(options);
+        rule.setModel(model);
+        return rule;
     }
 
     private HttpMessage createBasicMessage() throws HttpMalformedHeaderException {
@@ -197,5 +215,40 @@ public class CookieLooselyScopedScanRuleUnitTest
 
         // When / Then
         assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
+    }
+
+    @Test
+    public void shouldNotAlertWhenCookieOnIgnoreList() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.SET_COOKIE, "aaaa=b;domain=.example.com");
+        model.getOptionsParam()
+                .getConfig()
+                .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,bbb,ccc");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldAlertWhenCookieNotOnIgnoreList() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.example.com");
+        model.getOptionsParam()
+                .getConfig()
+                .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,bbb,ccc");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
     }
 }

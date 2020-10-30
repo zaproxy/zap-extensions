@@ -20,9 +20,11 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
+import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CookieUtils;
@@ -39,6 +41,8 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
     private static final String SAME_SITE_COOKIE_ATTRIBUTE = "SameSite";
     private static final String SAME_SITE_COOKIE_VALUE_STRICT = "Strict";
     private static final String SAME_SITE_COOKIE_VALUE_LAX = "Lax";
+
+    private Model model = null;
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -62,8 +66,12 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
         if (cookies.isEmpty()) {
             return;
         }
+
+        Set<String> ignoreList = CookieUtils.getCookieIgnoreList(getModel());
+
         for (String cookie : cookies) {
-            if (CookieUtils.isExpired(cookie)) {
+            if (ignoreList.contains(CookieUtils.getCookieName(cookie))
+                    || CookieUtils.isExpired(cookie)) {
                 continue;
             }
             String sameSiteVal = CookieUtils.getAttributeValue(cookie, SAME_SITE_COOKIE_ATTRIBUTE);
@@ -115,5 +123,19 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
 
     private String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
+
+    private Model getModel() {
+        if (this.model == null) {
+            this.model = Model.getSingleton();
+        }
+        return this.model;
+    }
+
+    /*
+     * Just for use in the unit tests
+     */
+    protected void setModel(Model model) {
+        this.model = model;
     }
 }

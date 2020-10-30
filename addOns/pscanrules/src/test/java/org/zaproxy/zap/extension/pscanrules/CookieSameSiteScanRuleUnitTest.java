@@ -21,19 +21,36 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteScanRule> {
 
+    private Model model;
+
     @Override
     protected CookieSameSiteScanRule createScanner() {
-        return new CookieSameSiteScanRule();
+        rule = new CookieSameSiteScanRule();
+        // Mock the model and options
+        model = mock(Model.class, withSettings().lenient());
+        OptionsParam options = new OptionsParam();
+        ZapXmlConfiguration conf = new ZapXmlConfiguration();
+        options.load(conf);
+        when(model.getOptionsParam()).thenReturn(options);
+        rule.setModel(model);
+        return rule;
     }
 
     @Test
@@ -303,6 +320,62 @@ public class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSam
                         + "\r\n");
         scanHttpResponseReceive(msg);
 
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+    }
+
+    @Test
+    public void shouldNotAlertWhenCookieOnIgnoreList() throws HttpMalformedHeaderException {
+        // Given
+        model.getOptionsParam()
+                .getConfig()
+                .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,test,bbb");
+
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=123; Path=/; HttpOnly\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldAlertWhenCookieNotOnIgnoreList() throws HttpMalformedHeaderException {
+        // Given
+        model.getOptionsParam()
+                .getConfig()
+                .setProperty(RuleConfigParam.RULE_COOKIE_IGNORE_LIST, "aaaa,bbb,ccc");
+
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: test=123; Path=/; HttpOnly\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
