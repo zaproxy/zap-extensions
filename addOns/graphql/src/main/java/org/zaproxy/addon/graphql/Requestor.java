@@ -146,12 +146,8 @@ public class Requestor {
         }
     }
 
-    public void send(HttpMessage message) {
-        try {
-            sender.sendAndReceive(message, requestConfig);
-        } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
-        }
+    public void send(HttpMessage message) throws IOException {
+        sender.sendAndReceive(message, requestConfig);
     }
 
     public void addListener(RequesterListener listener) {
