@@ -141,8 +141,20 @@ public abstract class ManualRequestEditorPanel extends JPanel implements Tab {
                         public void actionPerformed(ActionEvent e) {
                             btnSend.setEnabled(false);
 
-                            // save current message (i.e. set payload/body)
-                            getRequestPanel().saveData();
+                            try {
+                                getRequestPanel().saveData();
+                            } catch (Exception e1) {
+                                StringBuilder warnMessage = new StringBuilder(150);
+                                warnMessage.append(
+                                        Constant.messages.getString("requester.warn.datainvalid"));
+                                String exceptionMessage = e1.getLocalizedMessage();
+                                if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
+                                    warnMessage.append('\n').append(exceptionMessage);
+                                }
+                                View.getSingleton().showWarningDialog(warnMessage.toString());
+                                btnSend.setEnabled(true);
+                                return;
+                            }
 
                             Mode mode = Control.getSingleton().getMode();
                             if (mode.equals(Mode.safe)) {
