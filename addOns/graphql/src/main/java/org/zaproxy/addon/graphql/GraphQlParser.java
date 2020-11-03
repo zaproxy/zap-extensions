@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 
 public class GraphQlParser {
 
@@ -47,10 +48,18 @@ public class GraphQlParser {
     private static AtomicInteger threadId = new AtomicInteger();
 
     private final Requestor requestor;
-    private final ExtensionGraphQl extensionGraphQl =
-            Control.getSingleton().getExtensionLoader().getExtension(ExtensionGraphQl.class);
-    private final GraphQlParam param = extensionGraphQl.getParam();
+    private final ExtensionGraphQl extensionGraphQl;
+    private final GraphQlParam param;
     private boolean syncParse;
+
+    // For Unit Tests
+    protected GraphQlParser(String endpointUrlStr) throws URIException {
+        extensionGraphQl = new ExtensionGraphQl();
+        param = extensionGraphQl.getParam();
+        requestor =
+                new Requestor(
+                        UrlBuilder.build(endpointUrlStr), HttpSender.MANUAL_REQUEST_INITIATOR);
+    }
 
     public GraphQlParser(String endpointUrlStr, int initiator, boolean syncParse)
             throws URIException {
@@ -59,6 +68,9 @@ public class GraphQlParser {
 
     public GraphQlParser(URI endpointUrl, int initiator, boolean syncParse) {
         requestor = new Requestor(endpointUrl, initiator);
+        extensionGraphQl =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionGraphQl.class);
+        param = extensionGraphQl.getParam();
         this.syncParse = syncParse;
     }
 
@@ -76,6 +88,9 @@ public class GraphQlParser {
                             .fromJson(
                                     importMessage.getResponseBody().toString(),
                                     new TypeToken<Map<String, Object>>() {}.getType());
+            if (result == null) {
+                throw new IOException("The response was empty.");
+            }
             @SuppressWarnings("unchecked")
             Document schema =
                     new IntrospectionResultToSchema()
