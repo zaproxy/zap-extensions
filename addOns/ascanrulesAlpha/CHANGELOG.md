@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 
 ### Fixed
- - Terminology
+ - Terminology.
+ - SocketTimeoutException in the LDAP Injection scan rule.
 
 ### Removed
 - The following scan rules were removed and promoted to Beta: Cloud Meta Data, .env File, Hidden Files, XSLT Injection (Issue 6211).

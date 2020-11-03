@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,6 +38,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -674,7 +676,26 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
             HttpMessage trackmsg = getNewMsg();
             trackmsg.setRequestHeader(trackRequestHeader);
 
-            sendAndReceive(trackmsg, false); // do not follow redirects.
+            try {
+                sendAndReceive(trackmsg, false); // do not follow redirects.
+            } catch (SocketTimeoutException ste) {
+                log.warn(
+                        "A timeout occurred while checking ["
+                                + trackmsg.getRequestHeader().getMethod()
+                                + "] ["
+                                + trackmsg.getRequestHeader().getURI()
+                                + "] for Proxy Disclosure.\n"
+                                + "The currently configured timeout is: "
+                                + Integer.toString(
+                                        Model.getSingleton()
+                                                .getOptionsParam()
+                                                .getConnectionParam()
+                                                .getTimeoutInSecs()));
+                if (log.isDebugEnabled()) {
+                    log.debug("Caught " + ste.getClass().getName() + " " + ste.getMessage());
+                }
+                return;
+            }
 
             // TODO: fingerprint more origin web servers response to a TRACK request for a file that
             // does not exist.

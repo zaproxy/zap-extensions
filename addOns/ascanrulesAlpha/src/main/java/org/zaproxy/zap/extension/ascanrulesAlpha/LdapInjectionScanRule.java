@@ -219,11 +219,6 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                                 + "] for LDAP Injection");
             }
 
-            // get the response for the "original" unmodified request
-            // this fixes what seems to be a bug in the Zap core, where the request response is not
-            // actually available at this point via "originalmsg"
-            sendAndReceive(originalmsg);
-
             // 1: try error based LDAP injection, for one of the LDAP implementations that we know
             // about
             HttpMessage attackMsg = getNewMsg();
