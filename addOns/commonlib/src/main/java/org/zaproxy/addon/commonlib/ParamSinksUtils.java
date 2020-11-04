@@ -38,6 +38,7 @@ import org.parosproxy.paros.network.HttpMessage;
 public class ParamSinksUtils {
 
     private static Map<String, HashSet<Integer>> sourceToSinks;
+    private static Map<String, HashSet<Integer>> sourceToSinksHashCodes;
     /**
      * A {@code Map} to cache the URIs used by source messages ({@code UserDataSource}).
      *
@@ -90,13 +91,20 @@ public class ParamSinksUtils {
                             + sinkMsg.getRequestHeader().getURI());
         }
         HashSet<Integer> sinks = sourceToSinks.get(source.toString());
+        HashSet<Integer> sinksHashCodes = sourceToSinksHashCodes.get(source.toString());
         if (sinks == null) {
             sinks = new HashSet<>();
+            sinksHashCodes = new HashSet<>();
         }
 
-        int id = messagesStorage.storeMessage(sinkMsg);
-        sinks.add(id);
-        sourceToSinks.put(source.toString(), sinks);
+        int msgHashCode = sinkMsg.hashCode();
+        if (!sinksHashCodes.contains(msgHashCode)) {
+            int id = messagesStorage.storeMessage(sinkMsg);
+            sinks.add(id);
+            sourceToSinks.put(source.toString(), sinks);
+            sinksHashCodes.add(msgHashCode);
+            sourceToSinksHashCodes.put(source.toString(), sinksHashCodes);
+        }
     }
 
     /**
@@ -126,6 +134,7 @@ public class ParamSinksUtils {
     @SuppressWarnings("unchecked")
     public static void reset() {
         sourceToSinks = new HashMap<>();
+        sourceToSinksHashCodes = new HashMap<>();
         cachedUris =
                 Collections.synchronizedMap(new ReferenceMap(ReferenceMap.SOFT, ReferenceMap.SOFT));
         cachedParams =
