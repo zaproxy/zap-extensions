@@ -8,8 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 
 ### Fixed
- - Terminology
+ - Terminology.
  - Correct reason shown when the XML External Entity Attack scan rule is skipped.
+ - SocketTimeoutException in the Proxy Disclosure scan rule.
 
 ### Added
 - The following scan rules were promoted to Beta: Cloud Meta Data, .env File, Hidden Files, XSLT Injection (Issue 6211).
