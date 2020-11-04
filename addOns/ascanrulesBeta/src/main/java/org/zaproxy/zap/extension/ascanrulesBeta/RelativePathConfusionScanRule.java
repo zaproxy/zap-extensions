@@ -357,10 +357,13 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                 // and scheme are inferred)
                                 // if it starts with "//, it's a reference to the host and path (but
                                 // not the scheme), and it's essentially an absolute reference..
+                                // if it starts with or is simply "#" it is either a fragment link
+                                // or JS invocation
                                 if (!loadingHtmlAttribute.equals("style")) {
                                     if (!attributeUpper.startsWith("HTTP://")
                                             && !attributeUpper.startsWith("HTTPS://")
-                                            && !attributeUpper.startsWith("/")) {
+                                            && !attributeUpper.startsWith("/")
+                                            && !attributeUpper.startsWith("#")) {
                                         // it's a relative reference..
                                         relativeReferenceFound = true;
                                         // Note: since we parsed the HTML, and are reconstructing
