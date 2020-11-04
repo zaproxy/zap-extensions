@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- The Relative Path Confusion scan rule no longer treats 'href="#"' as a problematic use.
 
 ### Fixed
  - Terminology

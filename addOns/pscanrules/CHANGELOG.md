@@ -8,9 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The CSP scan rule now checks if the form-action directive allows wildcards.
 - The CSP scan rule now includes further information in the description of allowed wildcard directives alerts when the impacted directive is one (or more) which doesn't fallback to default-src.
 - Maintenance changes.
-- Changed ViewState and XFrameOption rules to return example alerts for the docs
+- Changed ViewState and XFrameOption rules to return example alerts for the docs.
 - Handle an IllegalArgumentException that could occur in the CSP scan rule if multiple CSP headers were present and one (or more) had a report-uri directive when trying to merge them.
 - Allow to ignore cookies in same site and loosely scoped scan rules.
+- The Application Error scan rule will not alert on web assembly responses.
 
 ## [29] - 2020-06-01
 ### Changed

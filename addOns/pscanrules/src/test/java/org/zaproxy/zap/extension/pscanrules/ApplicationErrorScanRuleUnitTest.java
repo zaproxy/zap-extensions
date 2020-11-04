@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -248,6 +249,25 @@ public class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<Applica
         Alert result = alertsRaised.get(0);
         assertThat(result.getEvidence(), equalTo(expectedEvidence));
         validateAlert(result);
+    }
+
+    @Test
+    public void
+            shouldNotRaiseAlertForResponseCodeOkAndContentTypeWebAssemblyWhenFilePayloadPresent()
+                    throws HttpMalformedHeaderException {
+        // Given
+        // String from standard XML file
+        String expectedEvidence = "Microsoft OLE DB Provider for ODBC Drivers";
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(OK));
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/wasm");
+        msg.setResponseBody(expectedEvidence);
+        ApplicationErrorScanRule.setPayloadProvider(() -> Arrays.asList(expectedEvidence));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     private static void validateAlert(Alert alert) {

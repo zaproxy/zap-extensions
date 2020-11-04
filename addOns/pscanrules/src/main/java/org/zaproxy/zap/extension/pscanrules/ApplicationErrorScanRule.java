@@ -178,7 +178,8 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
             }
             raiseAlert(msg, id, msg.getResponseHeader().getPrimeHeader(), Alert.RISK_LOW);
 
-        } else if (status != HttpStatusCode.NOT_FOUND) {
+        } else if (status != HttpStatusCode.NOT_FOUND
+                && !msg.getResponseHeader().hasContentType("application/wasm")) {
             String body = msg.getResponseBody().toString();
             for (String payload : getCustomPayloads().get()) {
                 if (body.contains(payload)) {
