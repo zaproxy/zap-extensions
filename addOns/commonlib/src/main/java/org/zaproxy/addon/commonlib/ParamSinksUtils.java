@@ -163,12 +163,12 @@ public class ParamSinksUtils {
 
         public UserDataSource(HttpMessage sourceMsg, String param) {
             super();
-
-            String genericUri = createGenericUri(sourceMsg.getRequestHeader().getURI(), param);
+            URI originalRequestUri = sourceMsg.getRequestHeader().getURI();
+            String genericUri = createGenericUri(originalRequestUri, param);
             this.uri = getCachedItem(cachedUris, genericUri);
 
-            boolean requestUriIsGeneric = sourceMsg.getRequestHeader().getURI().equals(genericUri);
-            if (!requestUriIsGeneric) {
+            boolean paramWasReplacedInUri = !originalRequestUri.toString().equals(genericUri);
+            if (paramWasReplacedInUri) {
                 this.param = GENERIC_STRING;
             } else {
                 this.param = getCachedItem(cachedParams, param);

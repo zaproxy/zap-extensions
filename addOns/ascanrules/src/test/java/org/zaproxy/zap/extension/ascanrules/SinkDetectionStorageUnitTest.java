@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
@@ -57,7 +56,7 @@ public class SinkDetectionStorageUnitTest {
     public void ifNoSinkForValueReturnsEmptyList() {
         SinkDetectionStorage storage = new SinkDetectionStorage();
         storage.addSeenValue("ZAPLALA");
-        List<HttpMessage> sinksForValue = storage.getPossibleSinksForValue("some random text");
+        Set<HttpMessage> sinksForValue = storage.getPossibleSinksForValue("some random text");
         assert (sinksForValue != null);
         assert (sinksForValue.isEmpty());
     }

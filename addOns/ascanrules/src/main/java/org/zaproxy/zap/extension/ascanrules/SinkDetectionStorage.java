@@ -22,24 +22,23 @@ package org.zaproxy.zap.extension.ascanrules;
 import com.googlecode.concurrenttrees.radix.node.concrete.DefaultCharArrayNodeFactory;
 import com.googlecode.concurrenttrees.radix.node.concrete.voidvalue.VoidValue;
 import com.googlecode.concurrenttrees.radixinverted.ConcurrentInvertedRadixTree;
-import java.util.ArrayList;
+import com.googlecode.concurrenttrees.radixinverted.InvertedRadixTree;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class SinkDetectionStorage {
 
-    private ConcurrentInvertedRadixTree<VoidValue> seenValues;
-    private Map<String, List<HttpMessage>> possibleSinksForValues;
+    private InvertedRadixTree<VoidValue> seenValues;
+    private Map<String, Set<HttpMessage>> possibleSinksForValues;
 
     public SinkDetectionStorage() {
         seenValues = new ConcurrentInvertedRadixTree<VoidValue>(new DefaultCharArrayNodeFactory());
         possibleSinksForValues =
-                Collections.synchronizedMap(new HashMap<String, List<HttpMessage>>());
+                Collections.synchronizedMap(new HashMap<String, Set<HttpMessage>>());
     }
 
     public void addSeenValue(String value) {
@@ -56,26 +55,20 @@ public class SinkDetectionStorage {
 
     public void addPossibleSinkForValue(String value, HttpMessage sink) {
         synchronized (possibleSinksForValues) {
-            List<HttpMessage> sinkList;
-            sinkList = possibleSinksForValues.get(value);
+            Set<HttpMessage> sinksForValue;
+            sinksForValue = possibleSinksForValues.get(value);
 
-            if (sinkList == null) {
-                sinkList = new ArrayList<HttpMessage>();
-                possibleSinksForValues.put(value, sinkList);
+            if (sinksForValue == null) {
+                sinksForValue = new HashSet<>();
+                possibleSinksForValues.put(value, sinksForValue);
             }
-
-            for (HttpMessage s : sinkList) {
-                if (s.equals(sink)) {
-                    return;
-                }
-            }
-            sinkList.add(sink);
+            sinksForValue.add(sink);
         }
     }
 
-    public List<HttpMessage> getPossibleSinksForValue(String value) {
-        List<HttpMessage> possibleSinks = possibleSinksForValues.get(value);
-        if (possibleSinks == null) return Collections.emptyList();
+    public Set<HttpMessage> getPossibleSinksForValue(String value) {
+        Set<HttpMessage> possibleSinks = possibleSinksForValues.get(value);
+        if (possibleSinks == null) return Collections.emptySet();
         return possibleSinks;
     }
 }

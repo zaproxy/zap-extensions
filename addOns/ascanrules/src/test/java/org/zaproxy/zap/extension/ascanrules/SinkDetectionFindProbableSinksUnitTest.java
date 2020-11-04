@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -50,12 +50,13 @@ public class SinkDetectionFindProbableSinksUnitTest
         this.rule.init(dstMsg, this.parent);
         this.rule.scan();
 
-        List<HttpMessage> x = storage.getPossibleSinksForValue("test");
+        Set<HttpMessage> x = storage.getPossibleSinksForValue("test");
         assert (x != null);
         assert (x.size() == 1);
+        HttpMessage possibleSink = x.iterator().next();
         assert (dstMsg.getRequestHeader()
                 .getURI()
                 .getEscapedURI()
-                .equals(x.get(0).getRequestHeader().getURI().getEscapedURI()));
+                .equals(possibleSink.getRequestHeader().getURI().getEscapedURI()));
     }
 }

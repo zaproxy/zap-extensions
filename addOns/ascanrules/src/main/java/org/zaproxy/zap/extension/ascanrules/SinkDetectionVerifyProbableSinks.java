@@ -21,8 +21,8 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static org.zaproxy.zap.extension.ascanrules.SinkDetectionCollectAndRefreshParamValues.SINK_DETECTION_STORAGE;
 
-import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -35,6 +35,11 @@ public class SinkDetectionVerifyProbableSinks extends AbstractAppParamPlugin {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.sinkdetectionverifyprobablesinks.";
+
+    private static final String alphabet =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    private static final int RAND_STR_LEN = 8;
 
     private static Logger log = Logger.getLogger(SinkDetectionVerifyProbableSinks.class);
 
@@ -77,7 +82,7 @@ public class SinkDetectionVerifyProbableSinks extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String param, String value) {
         // TODO: should test only on POST/PUT ?
         SinkDetectionStorage storage = getStorage();
-        List<HttpMessage> possibleSinks = storage.getPossibleSinksForValue(value);
+        Set<HttpMessage> possibleSinks = storage.getPossibleSinksForValue(value);
 
         try {
             HttpMessage inputMsg = msg.cloneRequest();
@@ -115,11 +120,9 @@ public class SinkDetectionVerifyProbableSinks extends AbstractAppParamPlugin {
     }
 
     private static String getRandomString() {
-        String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random rand = new Random();
-        int length = 8;
-        StringBuilder result = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
+        StringBuilder result = new StringBuilder(RAND_STR_LEN);
+        for (int i = 0; i < RAND_STR_LEN; i++) {
             result.append(alphabet.charAt(rand.nextInt(alphabet.length())));
         }
         return result.toString();
