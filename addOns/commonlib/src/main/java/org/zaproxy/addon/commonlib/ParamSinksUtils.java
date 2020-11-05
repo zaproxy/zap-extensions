@@ -37,8 +37,8 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class ParamSinksUtils {
 
-    private static Map<String, HashSet<Integer>> sourceToSinks;
-    private static Map<String, HashSet<Integer>> sourceToSinksHashCodes;
+    private static Map<String, Set<Integer>> sourceToSinks;
+    private static Map<String, Set<Integer>> sourceToSinksHashCodes;
     /**
      * A {@code Map} to cache the URIs used by source messages ({@code UserDataSource}).
      *
@@ -90,8 +90,8 @@ public class ParamSinksUtils {
                             + " sink="
                             + sinkMsg.getRequestHeader().getURI());
         }
-        HashSet<Integer> sinks = sourceToSinks.get(source.toString());
-        HashSet<Integer> sinksHashCodes = sourceToSinksHashCodes.get(source.toString());
+        Set<Integer> sinks = sourceToSinks.get(source.toString());
+        Set<Integer> sinksHashCodes = sourceToSinksHashCodes.get(source.toString());
         if (sinks == null) {
             sinks = new HashSet<>();
             sinksHashCodes = new HashSet<>();
