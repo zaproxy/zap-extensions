@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## Unreleased
 ### Changed
-- Bug Fixes.
 - Enhanced Support for Script Input Vectors.
 - Options are now exposed through the API.
 - Optional Arguments are enabled by default.
+
+### Fixed
+- Fix clashes in variable names. See [PR#2550](https://github.com/zaproxy/zap-extensions/pull/2550) for details.
+- Fix a bug where the "GraphQL Support.js" script was enabled when ZAP was restarted even if it had been disabled and saved before.
 
 ## [0.1.0] - 2020-08-28
 - First Version
