@@ -216,6 +216,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         ajaxSpiderParam.setEventWait(eventWaitNumberSpinner.getValue().intValue());
         ajaxSpiderParam.setReloadWait(reloadWaitNumberSpinner.getValue().intValue());
         ajaxSpiderParam.setElems(getAjaxSpiderClickModel().getElements());
+        ajaxSpiderParam.setConfirmRemoveElem(!elemsOptionsPanel.isRemoveWithoutConfirmation());
 
         ajaxSpiderParam.setBrowserId(browsersComboBoxModel.getSelectedItem().getBrowser().getId());
         ajaxSpiderParam.setConfirmRemoveAllowedResource(

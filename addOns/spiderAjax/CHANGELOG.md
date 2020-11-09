@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.2.0] - 2020-11-09
 ### Added
 - Allow to specify allowed resources (Issue 3236). The allowed resources are always fetched
 even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.
@@ -15,6 +15,7 @@ By default it allows files with extension `.js` and `.css`.
 
 ### Fixed
 - Unregister the event publisher when the add-on is uninstalled.
+- Persist the state of "Remove Without Confirmation" of non-default elements to click.
 
 ## [23.1.0] - 2020-01-17
 ### Added
@@ -165,5 +166,6 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.2.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.2.0
 [23.1.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.1.0
 [23.0.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.0.0
