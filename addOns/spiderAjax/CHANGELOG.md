@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [23.2.0] - 2020-11-09
 ### Added
 - Allow to specify allowed resources (Issue 3236). The allowed resources are always fetched
