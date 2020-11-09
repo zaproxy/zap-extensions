@@ -25,8 +25,11 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -62,7 +65,11 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
     private static final String ACTION_START_SCAN = "scan";
     private static final String ACTION_START_SCAN_AS_USER = "scanAsUser";
     private static final String ACTION_STOP_SCAN = "stop";
+    private static final String ACTION_ADD_ALLOWED_RESOURCE = "addAllowedResource";
+    private static final String ACTION_REMOVE_ALLOWED_RESOURCE = "removeAllowedResource";
+    private static final String ACTION_SET_ENABLED_ALLOWED_RESOURCE = "setEnabledAllowedResource";
 
+    private static final String VIEW_ALLOWED_RESOURCES = "allowedResources";
     private static final String VIEW_STATUS = "status";
     private static final String VIEW_RESULTS = "results";
     private static final String VIEW_FULL_RESULTS = "fullResults";
@@ -75,6 +82,8 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
     private static final String PARAM_START = "start";
     private static final String PARAM_COUNT = "count";
     private static final String PARAM_SUBTREE_ONLY = "subtreeOnly";
+    private static final String PARAM_REGEX = "regex";
+    private static final String PARAM_ENABLED = "enabled";
 
     private enum SpiderStatus {
         STOPPED,
@@ -123,6 +132,19 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         this.addApiAction(scanAsUser);
         this.addApiAction(new ApiAction(ACTION_STOP_SCAN));
 
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_ADD_ALLOWED_RESOURCE,
+                        new String[] {PARAM_REGEX},
+                        new String[] {PARAM_ENABLED}));
+        this.addApiAction(
+                new ApiAction(ACTION_REMOVE_ALLOWED_RESOURCE, new String[] {PARAM_REGEX}));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_SET_ENABLED_ALLOWED_RESOURCE,
+                        new String[] {PARAM_REGEX, PARAM_ENABLED}));
+
+        this.addApiView(new ApiView(VIEW_ALLOWED_RESOURCES));
         this.addApiView(new ApiView(VIEW_STATUS));
         this.addApiView(new ApiView(VIEW_RESULTS, null, new String[] {PARAM_START, PARAM_COUNT}));
         this.addApiView(new ApiView(VIEW_NUMBER_OF_RESULTS));
@@ -189,10 +211,72 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             case ACTION_STOP_SCAN:
                 stopSpider();
                 break;
+            case ACTION_ADD_ALLOWED_RESOURCE:
+                addAllowedResource(params);
+                break;
+            case ACTION_REMOVE_ALLOWED_RESOURCE:
+                removeAllowedResource(params);
+                break;
+            case ACTION_SET_ENABLED_ALLOWED_RESOURCE:
+                setAllowedResourceEnabledState(params);
+                break;
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
         }
         return ApiResponseElement.OK;
+    }
+
+    private void addAllowedResource(JSONObject params) throws ApiException {
+        Pattern regex;
+        try {
+            regex = AllowedResource.createDefaultPattern(params.getString(PARAM_REGEX));
+        } catch (IllegalArgumentException e) {
+            throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_REGEX, e);
+        }
+        boolean enabled = getParam(params, PARAM_URL, true);
+        List<AllowedResource> allowedResources =
+                new ArrayList<>(extension.getAjaxSpiderParam().getAllowedResources());
+        allowedResources.add(new AllowedResource(regex, enabled));
+        extension.getAjaxSpiderParam().setAllowedResources(allowedResources);
+    }
+
+    private void removeAllowedResource(JSONObject params) throws ApiException {
+        String regex = params.getString(PARAM_REGEX);
+        boolean removed = false;
+        List<AllowedResource> allowedResources =
+                new ArrayList<>(extension.getAjaxSpiderParam().getAllowedResources());
+        for (Iterator<AllowedResource> it = allowedResources.iterator(); it.hasNext(); ) {
+            AllowedResource allowedResource = it.next();
+            if (allowedResource.getPattern().pattern().equals(regex)) {
+                it.remove();
+                removed = true;
+                break;
+            }
+        }
+        if (!removed) {
+            throw new ApiException(Type.DOES_NOT_EXIST, PARAM_REGEX);
+        }
+        extension.getAjaxSpiderParam().setAllowedResources(allowedResources);
+    }
+
+    private void setAllowedResourceEnabledState(JSONObject params) throws ApiException {
+        String regex = params.getString(PARAM_REGEX);
+        boolean enabled = ApiUtils.getBooleanParam(params, PARAM_ENABLED);
+        boolean changed = false;
+        List<AllowedResource> allowedResources =
+                extension.getAjaxSpiderParam().getAllowedResources();
+        for (Iterator<AllowedResource> it = allowedResources.iterator(); it.hasNext(); ) {
+            AllowedResource allowedResource = it.next();
+            if (allowedResource.getPattern().pattern().equals(regex)) {
+                allowedResource.setEnabled(enabled);
+                changed = true;
+                break;
+            }
+        }
+        if (!changed) {
+            throw new ApiException(Type.DOES_NOT_EXIST, PARAM_REGEX);
+        }
+        extension.getAjaxSpiderParam().setAllowedResources(allowedResources);
     }
 
     /**
@@ -287,7 +371,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         AjaxSpiderTarget.Builder targetBuilder =
                 AjaxSpiderTarget.newBuilder(extension.getModel().getSession())
                         .setInScopeOnly(inScopeOnly)
-                        .setOptions(extension.getAjaxSpiderParam())
+                        .setOptions(extension.getAjaxSpiderParam().clone())
                         .setStartUri(startURI)
                         .setSubtreeOnly(subtreeOnly);
 
@@ -312,6 +396,21 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
         ApiResponse result;
         switch (name) {
+            case VIEW_ALLOWED_RESOURCES:
+                List<ApiResponse> allowedResources =
+                        extension.getAjaxSpiderParam().getAllowedResources().stream()
+                                .map(
+                                        e -> {
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("enabled", e.isEnabled());
+                                            map.put("regex", e.getPattern().pattern());
+                                            return new ApiResponseSet<Object>(
+                                                    "allowedResource", map);
+                                        })
+                                .collect(Collectors.toList());
+
+                result = new ApiResponseList(name, allowedResources);
+                break;
             case VIEW_STATUS:
                 result =
                         new ApiResponseElement(

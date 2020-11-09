@@ -4,6 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to specify allowed resources (Issue 3236). The allowed resources are always fetched
+even if out of scope, allowing to include necessary resources (e.g. scripts) from 3rd-parties.
+By default it allows files with extension `.js` and `.css`.
+
 ### Changed
 - Update minimum ZAP version to 2.9.0.
 - Maintenance changes.

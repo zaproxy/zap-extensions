@@ -78,6 +78,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     private Target target;
     private AjaxSpiderParam params = null;
     // private OptionsAjaxSpiderTableModel ajaxSpiderClickModel = null;
+    private AllowedResourcesTableModel allowedResourcesTableModel;
 
     /**
      * Flag that holds the previous checked state of the "Subtree Only" checkbox.
@@ -93,6 +94,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     public AjaxSpiderDialog(ExtensionAjax ext, Frame owner, Dimension dim) {
         super(owner, "spiderajax.scandialog.title", dim, LABELS);
 
+        this.allowedResourcesTableModel = new AllowedResourcesTableModel();
         this.extension = ext;
         this.extUserMgmt =
                 Control.getSingleton()
@@ -197,6 +199,13 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         this.addNumberField(1, FIELD_DURATION, 0, Integer.MAX_VALUE, params.getMaxDuration());
         this.addNumberField(1, FIELD_EVENT_WAIT, 1, Integer.MAX_VALUE, params.getEventWait());
         this.addNumberField(1, FIELD_RELOAD_WAIT, 1, Integer.MAX_VALUE, params.getReloadWait());
+
+        allowedResourcesTableModel.setAllowedResources(params.getAllowedResources());
+        AllowedResourcesPanel allowedResourcesPanel =
+                new AllowedResourcesPanel(this, allowedResourcesTableModel);
+        allowedResourcesPanel.setRemoveWithoutConfirmation(
+                !params.isConfirmRemoveAllowedResource());
+        addCustomComponent(1, allowedResourcesPanel);
 
         this.addPadding(1);
 
@@ -364,7 +373,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     /** Use the save method to launch a scan */
     @Override
     public void save() {
-        AjaxSpiderParam params = (AjaxSpiderParam) this.extension.getAjaxSpiderParam().clone();
+        AjaxSpiderParam params = this.extension.getAjaxSpiderParam().clone();
 
         String selectedBrowser = getSelectedBrowser();
         if (selectedBrowser != null) {
@@ -378,6 +387,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             params.setMaxDuration(this.getIntValue(FIELD_DURATION));
             params.setEventWait(this.getIntValue(FIELD_EVENT_WAIT));
             params.setReloadWait(this.getIntValue(FIELD_RELOAD_WAIT));
+            params.setAllowedResources(allowedResourcesTableModel.getElements());
 
             // params.setElems(getAjaxSpiderClickModel().getElements());
 

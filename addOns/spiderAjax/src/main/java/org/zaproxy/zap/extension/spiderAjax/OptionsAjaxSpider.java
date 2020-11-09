@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
@@ -64,6 +65,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
     private JLabel maxDuration = null;
     private JLabel eventWait = null;
     private JLabel reloadWait = null;
+
+    private AllowedResourcesPanel allowedResourcesPanel;
+    private AllowedResourcesTableModel allowedResourcesTableModel;
 
     private ResourceBundle resourceBundle;
 
@@ -188,6 +192,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         setClickElemsEnabled(!ajaxSpiderParam.isClickDefaultElems());
 
         browsersComboBoxModel.setSelectedBrowser(ajaxSpiderParam.getBrowserId());
+        allowedResourcesPanel.setRemoveWithoutConfirmation(
+                !ajaxSpiderParam.isConfirmRemoveAllowedResource());
+        allowedResourcesTableModel.setAllowedResources(ajaxSpiderParam.getAllowedResources());
     }
 
     /** This method validates the parameters before saving them. */
@@ -211,6 +218,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         ajaxSpiderParam.setElems(getAjaxSpiderClickModel().getElements());
 
         ajaxSpiderParam.setBrowserId(browsersComboBoxModel.getSelectedItem().getBrowser().getId());
+        ajaxSpiderParam.setConfirmRemoveAllowedResource(
+                !allowedResourcesPanel.isRemoveWithoutConfirmation());
+        ajaxSpiderParam.setAllowedResources(allowedResourcesTableModel.getElements());
     }
 
     /**
@@ -345,6 +355,13 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.weighty = 1.0D;
             gbc.insets = new java.awt.Insets(2, 2, 2, 2);
             innerPanel.add(elemsOptionsPanel, gbc);
+
+            gbc.gridy++;
+            allowedResourcesTableModel = new AllowedResourcesTableModel();
+            allowedResourcesPanel =
+                    new AllowedResourcesPanel(
+                            View.getSingleton().getOptionsDialog(null), allowedResourcesTableModel);
+            innerPanel.add(allowedResourcesPanel, gbc);
 
             JScrollPane scrollPane = new JScrollPane(innerPanel);
             scrollPane.setBorder(BorderFactory.createEmptyBorder());

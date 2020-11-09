@@ -63,11 +63,7 @@ public class AjaxSpiderExplorer implements PlugableSpider {
     public void startScan(URI uri) {
         ExtensionAjax extAjax = this.getExtAjax();
         AjaxSpiderParam options =
-                (AjaxSpiderParam)
-                        Model.getSingleton()
-                                .getOptionsParam()
-                                .getParamSet(AjaxSpiderParam.class)
-                                .clone();
+                Model.getSingleton().getOptionsParam().getParamSet(AjaxSpiderParam.class).clone();
         ProvidedBrowserUI browserUi = (ProvidedBrowserUI) getBrowserComboBox().getSelectedItem();
         options.setBrowserId(browserUi.getBrowser().getId());
         AjaxSpiderTarget.Builder builder =
