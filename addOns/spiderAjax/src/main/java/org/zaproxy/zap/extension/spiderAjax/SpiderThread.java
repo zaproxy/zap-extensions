@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import org.apache.commons.httpclient.URI;
@@ -321,6 +322,15 @@ public class SpiderThread implements Runnable {
 
     private class SpiderProxyListener implements OverrideMessageProxyListener {
 
+        private final List<AllowedResource> allowedResourcesEnabled;
+
+        SpiderProxyListener() {
+            allowedResourcesEnabled =
+                    target.getOptions().getAllowedResources().stream()
+                            .filter(AllowedResource::isEnabled)
+                            .collect(Collectors.toList());
+        }
+
         @Override
         public int getArrangeableListenerOrder() {
             return 0;
@@ -330,7 +340,10 @@ public class SpiderThread implements Runnable {
         public boolean onHttpRequestSend(HttpMessage httpMessage) {
             ResourceState state = ResourceState.PROCESSED;
             final String uri = httpMessage.getRequestHeader().getURI().toString();
-            if (httpPrefixUriValidator != null
+            if (allowedResourcesEnabled.stream()
+                    .anyMatch(e -> e.getPattern().matcher(uri).matches())) {
+                // Nothing to do, state already set to processed.
+            } else if (httpPrefixUriValidator != null
                     && !httpPrefixUriValidator.isValid(httpMessage.getRequestHeader().getURI())) {
                 logger.debug("Excluding request [" + uri + "] not under subtree.");
                 state = ResourceState.OUT_OF_SCOPE;

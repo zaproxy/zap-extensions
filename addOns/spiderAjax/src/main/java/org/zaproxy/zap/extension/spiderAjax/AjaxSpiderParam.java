@@ -20,7 +20,10 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.log4j.Logger;
@@ -41,7 +44,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 3;
+    private static final int CURRENT_CONFIG_VERSION = 4;
 
     private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
 
@@ -143,6 +146,23 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     private static final boolean DEFAULT_RANDOM_INPUTS = true;
 
+    private static final String ALL_ALLOWED_RESOURCES_KEY =
+            AJAX_SPIDER_BASE_KEY + ".allowedResources.allowedResource";
+
+    private static final String ALLOWED_RESOURCE_REGEX_KEY = "regex";
+
+    private static final String ALLOWED_RESOURCE_ENABLED_KEY = "enabled";
+
+    private static final String CONFIRM_REMOVE_ALLOWED_RESOURCE =
+            AJAX_SPIDER_BASE_KEY + ".confirmRemoveAllowedResource";
+
+    private static final List<AllowedResource> DEFAULT_ALLOWED_RESOURCES =
+            Arrays.asList(
+                    new AllowedResource(
+                            AllowedResource.createDefaultPattern("^http.*\\.js(?:\\?.*)?$")),
+                    new AllowedResource(
+                            AllowedResource.createDefaultPattern("^http.*\\.css(?:\\?.*)?$")));
+
     private int numberOfBrowsers;
     private int maxCrawlDepth;
     private int maxCrawlStates;
@@ -160,6 +180,14 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private boolean randomInputs;
     private boolean confirmRemoveElem = true;
     private boolean showAdvancedDialog;
+
+    private boolean confirmRemoveAllowedResource;
+    private List<AllowedResource> allowedResources = Collections.emptyList();
+
+    @Override
+    public AjaxSpiderParam clone() {
+        return (AjaxSpiderParam) super.clone();
+    }
 
     @Override
     protected int getCurrentVersion() {
@@ -300,6 +328,28 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             logger.error(
                     "Error while loading the confirm remove element option: " + e.getMessage(), e);
         }
+
+        try {
+            List<HierarchicalConfiguration> fields =
+                    ((HierarchicalConfiguration) getConfig())
+                            .configurationsAt(ALL_ALLOWED_RESOURCES_KEY);
+            this.allowedResources = new ArrayList<>(fields.size());
+            List<String> regexes = new ArrayList<>(fields.size());
+            for (HierarchicalConfiguration sub : fields) {
+                String regex = sub.getString(ALLOWED_RESOURCE_REGEX_KEY, "");
+                if (!"".equals(regex) && !regexes.contains(regex)) {
+                    boolean enabled = sub.getBoolean(ALLOWED_RESOURCE_ENABLED_KEY, true);
+                    this.allowedResources.add(
+                            new AllowedResource(
+                                    AllowedResource.createDefaultPattern(regex), enabled));
+                    regexes.add(regex);
+                }
+            }
+        } catch (ConversionException e) {
+            logger.error("Error while loading allowed resources: " + e.getMessage(), e);
+            this.allowedResources = new ArrayList<>(DEFAULT_ALLOWED_RESOURCES);
+        }
+        confirmRemoveAllowedResource = getBoolean(CONFIRM_REMOVE_ALLOWED_RESOURCE, true);
     }
 
     @SuppressWarnings({"fallthrough"})
@@ -328,7 +378,16 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 // Remove old version element, from now on the version is saved as an attribute of
                 // root element
                 getConfig().clearProperty(OLD_CONFIG_VERSION_KEY);
+            case 3:
+                setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
         }
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+
+        setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
     }
 
     public int getNumberOfBrowsers() {
@@ -473,5 +532,50 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     public void setShowAdvancedDialog(boolean show) {
         this.showAdvancedDialog = show;
         getConfig().setProperty(SHOW_ADV_OPTIONS_KEY, Boolean.valueOf(showAdvancedDialog));
+    }
+
+    @ZapApiIgnore
+    public boolean isConfirmRemoveAllowedResource() {
+        return this.confirmRemoveAllowedResource;
+    }
+
+    @ZapApiIgnore
+    public void setConfirmRemoveAllowedResource(boolean confirmRemove) {
+        this.confirmRemoveAllowedResource = confirmRemove;
+        getConfig()
+                .setProperty(
+                        CONFIRM_REMOVE_ALLOWED_RESOURCE,
+                        Boolean.valueOf(confirmRemoveAllowedResource));
+    }
+
+    @ZapApiIgnore
+    public void setAllowedResources(List<AllowedResource> allowedResources) {
+        this.allowedResources = new ArrayList<>(Objects.requireNonNull(allowedResources));
+
+        ((HierarchicalConfiguration) getConfig()).clearTree(ALL_ALLOWED_RESOURCES_KEY);
+
+        for (int i = 0, size = allowedResources.size(); i < size; ++i) {
+            String allowedResourceBaseKey = ALL_ALLOWED_RESOURCES_KEY + "(" + i + ").";
+            AllowedResource allowedResource = allowedResources.get(i);
+
+            getConfig()
+                    .setProperty(
+                            allowedResourceBaseKey + ALLOWED_RESOURCE_REGEX_KEY,
+                            allowedResource.getPattern().pattern());
+            getConfig()
+                    .setProperty(
+                            allowedResourceBaseKey + ALLOWED_RESOURCE_ENABLED_KEY,
+                            Boolean.valueOf(allowedResource.isEnabled()));
+        }
+    }
+
+    /**
+     * Gets the allowed resources.
+     *
+     * @return an unmodifiable list containing the allowed resources.
+     */
+    @ZapApiIgnore
+    public List<AllowedResource> getAllowedResources() {
+        return Collections.unmodifiableList(allowedResources);
     }
 }
