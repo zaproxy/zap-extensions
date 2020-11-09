@@ -41,6 +41,13 @@ public class SpiderEventPublisher extends ScanEventPublisher {
         return publisher;
     }
 
+    static synchronized void unregisterPublisher() {
+        if (publisher == null) {
+            return;
+        }
+        ZAP.getEventBus().unregisterPublisher(publisher);
+    }
+
     public static void publishScanEvent(String event, int scanId) {
         SpiderEventPublisher publisher = getPublisher();
         publisher.publishScanEvent(publisher, event, scanId);

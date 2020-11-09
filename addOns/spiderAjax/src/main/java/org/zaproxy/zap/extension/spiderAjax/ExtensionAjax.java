@@ -134,6 +134,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
             getSpiderPanel().stopScan();
             getSpiderPanel().unload();
 
+            SpiderEventPublisher.unregisterPublisher();
+
             getView()
                     .getMainFrame()
                     .getMainFooterPanel()
