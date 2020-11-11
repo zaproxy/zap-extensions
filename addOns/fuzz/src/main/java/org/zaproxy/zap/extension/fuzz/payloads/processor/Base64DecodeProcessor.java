@@ -19,11 +19,10 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Base64;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
 public class Base64DecodeProcessor extends AbstractCharsetProcessor<DefaultPayload>
@@ -47,13 +46,11 @@ public class Base64DecodeProcessor extends AbstractCharsetProcessor<DefaultPaylo
     public DefaultPayload process(DefaultPayload payload) {
         try {
             payload.setValue(
-                    new String(
-                            Base64.decode(payload.getValue(), Base64.NO_OPTIONS),
-                            getCharsetName()));
+                    new String(Base64.getDecoder().decode(payload.getValue()), getCharsetName()));
         } catch (UnsupportedEncodingException ignore) {
             // Shouldn't happen, the encoding was already validated.
-        } catch (IOException e) {
-            LOGGER.warn("An error occurred while encoding the payload: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("An error occurred while decoding the payload: " + e.getMessage());
         }
         return payload;
     }

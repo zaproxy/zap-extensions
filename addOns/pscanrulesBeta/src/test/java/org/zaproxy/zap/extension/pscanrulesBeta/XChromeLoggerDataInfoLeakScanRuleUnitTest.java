@@ -24,10 +24,10 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
@@ -84,7 +84,8 @@ public class XChromeLoggerDataInfoLeakScanRuleUnitTest
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(XCLD_VALUE));
         String otherInfo =
                 "The following represents an attempt to base64 decode the value:\n"
-                        + new String(Base64.decode(XCLD_VALUE), StandardCharsets.UTF_8);
+                        + new String(
+                                Base64.getDecoder().decode(XCLD_VALUE), StandardCharsets.UTF_8);
         assertThat(alertsRaised.get(0).getOtherInfo(), equalTo(otherInfo));
     }
 
@@ -100,7 +101,8 @@ public class XChromeLoggerDataInfoLeakScanRuleUnitTest
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(XCLD_VALUE));
         String otherInfo =
                 "The following represents an attempt to base64 decode the value:\n"
-                        + new String(Base64.decode(XCLD_VALUE), StandardCharsets.UTF_8);
+                        + new String(
+                                Base64.getDecoder().decode(XCLD_VALUE), StandardCharsets.UTF_8);
         assertThat(alertsRaised.get(0).getOtherInfo(), equalTo(otherInfo));
     }
 

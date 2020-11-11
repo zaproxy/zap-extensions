@@ -19,12 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.codec.binary.Hex;
-import org.parosproxy.paros.extension.encoder.Base64;
 
 /**
  * Decodes a ViewState into an XML based format.
@@ -344,8 +343,8 @@ public class ViewStateDecoder {
         byte[] decodeddata = null;
         // String viewstatebase64encoded = new String (base64encoded);
         try {
-            decodeddata = Base64.decode(base64encoded);
-        } catch (IOException e) {
+            decodeddata = Base64.getDecoder().decode(base64encoded);
+        } catch (IllegalArgumentException e) {
             throw new Exception("Invalid Base64 data");
         }
 

@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +34,6 @@ import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -357,11 +356,10 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 this.isSplit = wasSplit;
                 this.base64Value = s.getAttributeValue("value");
                 try {
-                    this.decodedValue =
-                            new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
+                    this.decodedValue = base64Decode(this.base64Value);
                     this.isValid = true;
                     this.setVersion();
-                } catch (IllegalArgumentException | IOException e) {
+                } catch (IllegalArgumentException e) {
                     // Incorrect Base64 value.
                 }
             }
@@ -374,11 +372,10 @@ public class ViewstateScanRule extends PluginPassiveScanner {
                 this.isSplit = wasSplit;
                 this.base64Value = s;
                 try {
-                    this.decodedValue =
-                            new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
+                    this.decodedValue = base64Decode(this.base64Value);
                     this.isValid = true;
                     this.setVersion();
-                } catch (IllegalArgumentException | IOException e) {
+                } catch (IllegalArgumentException e) {
                     // Incorrect Base64 value.
                 }
             }
@@ -460,5 +457,26 @@ public class ViewstateScanRule extends PluginPassiveScanner {
         public Object[] getSerializedComponentsTree() throws Exception {
             throw new Exception("Not implemented (yet)");
         }
+    }
+
+    private static String base64Decode(String value) {
+        byte[] bytes;
+
+        try {
+            bytes = Base64.getDecoder().decode(value.getBytes(StandardCharsets.US_ASCII));
+        } catch (IllegalArgumentException e) {
+            String message = e.getMessage();
+            if (message == null
+                    || !(message.contains("ending unit") || message.contains("Last unit "))) {
+                throw e;
+            }
+            bytes =
+                    Base64.getDecoder()
+                            .decode(
+                                    value.substring(0, value.length() - 1)
+                                            .getBytes(StandardCharsets.US_ASCII));
+        }
+
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 }

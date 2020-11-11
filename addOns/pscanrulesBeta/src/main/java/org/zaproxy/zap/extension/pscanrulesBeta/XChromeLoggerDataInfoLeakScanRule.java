@@ -19,15 +19,14 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -121,11 +120,11 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
 
     private String getOtherInfo(String headerValue) {
         try {
-            byte[] decodedByteArray = Base64.decode(headerValue);
+            byte[] decodedByteArray = Base64.getDecoder().decode(headerValue);
             return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.msg")
                     + "\n"
                     + new String(decodedByteArray, StandardCharsets.UTF_8);
-        } catch (IOException e) {
+        } catch (IllegalArgumentException e) {
             return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.error")
                     + " "
                     + headerValue;

@@ -23,10 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
+import java.util.Base64;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -79,7 +79,7 @@ public class InsecureAuthenticationScanRuleUnitTest
                 HttpHeader.AUTHORIZATION,
                 AUTHORIZATION_BASIC
                         + " "
-                        + Base64.encodeBytes(userAndPass.getBytes(), Base64.DONT_GUNZIP));
+                        + Base64.getEncoder().encodeToString(userAndPass.getBytes()));
         msg.setRequestHeader(requestHeader);
         // When
         scanHttpRequestSend(msg);
@@ -113,9 +113,7 @@ public class InsecureAuthenticationScanRuleUnitTest
                         HttpRequestHeader.HTTP11);
         requestHeader.addHeader(
                 HttpHeader.AUTHORIZATION,
-                AUTHORIZATION_BASIC
-                        + " "
-                        + Base64.encodeBytes(user.getBytes(), Base64.DONT_GUNZIP));
+                AUTHORIZATION_BASIC + " " + Base64.getEncoder().encodeToString(user.getBytes()));
         msg.setRequestHeader(requestHeader);
         // When
         scanHttpRequestSend(msg);
