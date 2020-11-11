@@ -20,15 +20,14 @@
 package org.zaproxy.zap.extension.saml;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Base64;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -50,8 +49,8 @@ public class SAMLUtils {
      */
     public static byte[] b64Decode(String message) throws SAMLException {
         try {
-            return Base64.decode(message);
-        } catch (IOException e) {
+            return Base64.getDecoder().decode(message);
+        } catch (IllegalArgumentException e) {
             throw new SAMLException("Base 64 Decode of failed for message: \n" + message, e);
         }
     }
@@ -63,7 +62,7 @@ public class SAMLUtils {
      * @return Encoded string
      */
     public static String b64Encode(byte[] data) {
-        return Base64.encodeBytes(data);
+        return Base64.getEncoder().encodeToString(data);
     }
 
     /**

@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,6 @@ import org.mozilla.zest.core.v1.ZestHttpAuthentication;
 import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpHeader;
@@ -465,7 +465,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 String auth = header.getHeader(HttpHeader.AUTHORIZATION);
                 if (auth != null && auth.length() > 0) {
                     if (auth.toLowerCase().startsWith("basic ")) {
-                        String userPword = new String(Base64.decode(auth.substring(6)));
+                        String userPword =
+                                new String(Base64.getDecoder().decode(auth.substring(6)));
                         int colon = userPword.indexOf(":");
                         if (colon > 0) {
                             this.setFieldValue(FIELD_AUTH_SITE, header.getHostName());

@@ -22,10 +22,14 @@ package org.zaproxy.zap.extension.pscanrules;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
+import java.util.zip.GZIPOutputStream;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -76,7 +80,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("secureValue".getBytes(), Base64.GZIP);
+        String encoded = Base64.getEncoder().encodeToString(gzipCompress("secureValue".getBytes()));
         msg.setResponseBody(
                 "<html><head></head>"
                         + "<body>"
@@ -119,7 +123,7 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(), Base64.DONT_GUNZIP);
+        String encoded = Base64.getEncoder().encodeToString("insecureValue_java".getBytes());
         msg.setResponseBody(
                 "<html><head></head>"
                         + "<body>"
@@ -145,7 +149,8 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(), Base64.GZIP);
+        String encoded =
+                Base64.getEncoder().encodeToString(gzipCompress("insecureValue_java".getBytes()));
         msg.setResponseBody(
                 "<html><head></head>"
                         + "<body>"
@@ -171,7 +176,8 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(), Base64.GZIP);
+        String encoded =
+                Base64.getEncoder().encodeToString(gzipCompress("insecureValue_java".getBytes()));
         msg.setResponseBody(
                 "<html><head></head>"
                         + "<body>"
@@ -197,7 +203,8 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-        String encoded = Base64.encodeBytes("insecureValue_java".getBytes(), Base64.GZIP);
+        String encoded =
+                Base64.getEncoder().encodeToString(gzipCompress("insecureValue_java".getBytes()));
         msg.setResponseBody(
                 "<html><head></head>"
                         + "<body>"
@@ -220,6 +227,14 @@ public class InsecureJsfViewStatePassiveScanRuleUnitTest
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
         assertThat(alertsRaised.get(0).getCweId(), equalTo(16));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
+    }
+
+    private static byte[] gzipCompress(byte[] value) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (GZIPOutputStream gzip = new GZIPOutputStream(output)) {
+            IOUtils.copy(new ByteArrayInputStream(value), gzip, 2048);
+        }
+        return output.toByteArray();
     }
 
     private void setTextHtmlResponseHeader(HttpMessage msg) throws HttpMalformedHeaderException {

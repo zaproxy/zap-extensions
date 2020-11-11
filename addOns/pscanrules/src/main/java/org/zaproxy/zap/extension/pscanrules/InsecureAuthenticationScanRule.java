@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.io.IOException;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -29,7 +29,6 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -105,7 +104,8 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                                         authMechanism + " Authentication Value: " + authValues[1]);
                             // now decode it from base64 into the username and password
                             try {
-                                String decoded = new String(Base64.decode(authValues[1]));
+                                String decoded =
+                                        new String(Base64.getDecoder().decode(authValues[1]));
                                 if (this.debugEnabled)
                                     log.debug("Decoded Base64 value: " + decoded);
                                 String[] usernamePassword = decoded.split(":", 2);
@@ -120,7 +120,7 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                                 if (password != null) {
                                     alertRisk = Alert.RISK_HIGH;
                                 }
-                            } catch (IOException e) {
+                            } catch (IllegalArgumentException e) {
                                 log.error(
                                         "Invalid Base64 value for "
                                                 + authMechanism

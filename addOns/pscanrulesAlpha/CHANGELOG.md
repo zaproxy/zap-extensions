@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
  - Add rule for Site Isolation (CORP/COEP/COOP).
 
+### Changed
+- Maintenance changes.
+
 ## [28] - 2020-08-13
 ### Changed
 - Maintenance changes.

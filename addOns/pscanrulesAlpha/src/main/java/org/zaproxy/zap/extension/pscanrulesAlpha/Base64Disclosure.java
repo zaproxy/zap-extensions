@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.io.IOException;
+import java.util.Base64;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
-import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -125,8 +124,8 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         tempbase64evidence = tempbase64evidence.replace('_', '/');
 
                         // decode the data
-                        decodeddata = Base64.decode(tempbase64evidence);
-                    } catch (IOException e) {
+                        decodeddata = Base64.getDecoder().decode(tempbase64evidence);
+                    } catch (IllegalArgumentException e) {
                         // it's not actually Base64. so skip it.
                         if (log.isDebugEnabled())
                             log.debug(

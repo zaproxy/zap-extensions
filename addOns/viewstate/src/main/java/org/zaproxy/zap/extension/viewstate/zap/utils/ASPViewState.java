@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.viewstate.zap.utils;
 
-import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.extension.encoder.Base64;
 
 public class ASPViewState extends ViewState {
 
@@ -157,7 +156,7 @@ public class ASPViewState extends ViewState {
     }
 
     public String encode(byte[] plain) {
-        this.value = Base64.encodeBytes(plain);
+        this.value = Base64.getEncoder().encodeToString(plain);
         return this.value;
     }
 
@@ -167,8 +166,8 @@ public class ASPViewState extends ViewState {
 
     public byte[] decode(String base64) {
         try {
-            return Base64.decode(base64);
-        } catch (IOException e) {
+            return Base64.getDecoder().decode(base64);
+        } catch (IllegalArgumentException e) {
             logger.error("Could not decode ASPViewState: " + e.getMessage(), e);
             return base64.getBytes();
         }
