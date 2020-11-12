@@ -82,7 +82,7 @@ public class Sample {
                         + "SOAPAction: urn:sayHelloWorld \r\n"
                         + "Host: 192.168.145.131:8443\r\n");
         msg.setRequestBody(
-                "<?xml version=\"1.0 \" encoding= \"UTF-8\" ?>\r\n"
+                "<?xml version=\"1.0\" encoding= \"UTF-8\" ?>\r\n"
                         + "<s11:Envelope xmlns:s11='http://schemas.xmlsoap.org/soap/envelope/'>\r\n"
                         + "\t<s11:Body>\r\n"
                         + "\t\t<ns:sayHelloWorld xmlns:ns='http://main.soaptest.org'>\r\n"
@@ -147,6 +147,29 @@ public class Sample {
                         + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                         + "<soapenv:Body>"
                         + "</soapenv:Envelope>");
+        return msg;
+    }
+
+    public static HttpMessage setSoapVersionTwoRequest(HttpMessage msg)
+            throws HttpMalformedHeaderException {
+        msg.setRequestHeader(
+                "POST https://www.example.com/Soap12Endpoint/ HTTP/1.1"
+                        + "User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0;)"
+                        + "Pragma: no-cache"
+                        + "Cache-Control: no-cache"
+                        + "Content-Length: 275"
+                        + "Content-Type: application/soap+xml; charset=UTF-8; action= https://www.example.com/xml/sayHelloWorld"
+                        + "Host: www.example.com");
+        msg.setRequestBody(
+                "<?xml version='1.0' encoding= 'UTF-8' ?>"
+                        + "<s12:Envelope xmlns:s12='http://www.w3.org/2003/05/soap-envelope'>"
+                        + "<s12:Body>"
+                        + "<ns:sayHelloWorld xmlns:ns='http://main.soaptest.org'>"
+                        + "<ns:args0>paramValue</ns:args0>"
+                        + "</ns:sayHelloWorld>"
+                        + "</s12:Body>"
+                        + "</s12:Envelope>");
+        msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
         return msg;
     }
 }

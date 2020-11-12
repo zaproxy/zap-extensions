@@ -19,10 +19,6 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.Charset;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -30,6 +26,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
@@ -82,10 +79,8 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String paramName, String paramValue) {
         try {
             /* This scan is only applied to SOAP messages. */
-            final String request = new String(msg.getRequestBody().getBytes());
-            final String reqCharset = msg.getRequestBody().getCharset();
             if (this.isStop()) return;
-            if (isSoapMessage(request, reqCharset)) {
+            if (isSoapMessage(msg.getRequestBody())) {
                 String paramValue2 = paramValue + "_modified";
                 String finalValue =
                         paramValue + "</" + paramName + "><" + paramName + ">" + paramValue2;
@@ -104,11 +99,9 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
                 sendAndReceive(attackMsg);
                 if (this.isStop()) return;
                 /* Analyzes the response. */
-                final String response = new String(attackMsg.getResponseBody().getBytes());
-                final String resCharset = attackMsg.getResponseBody().getCharset();
                 final HttpMessage originalMsg = getBaseMsg();
                 if (this.isStop()) return;
-                if (!isSoapMessage(response, resCharset)) {
+                if (!isSoapMessage(attackMsg.getResponseBody())) {
                     /*
                      * Response has no SOAP format. It is still notified since it is an unexpected
                      * result.
@@ -140,16 +133,10 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
     }
 
     /* Checks whether server response follows a SOAP message format. */
-    private boolean isSoapMessage(String content, String charset) {
-        SOAPMessage soapMsg = null;
-        if (content.length() <= 0) return false;
-        MessageFactory factory;
+    private boolean isSoapMessage(HttpBody msgBody) {
+        if (msgBody.length() <= 0) return false;
         try {
-            factory = MessageFactory.newInstance();
-            soapMsg =
-                    factory.createMessage(
-                            new MimeHeaders(),
-                            new ByteArrayInputStream(content.getBytes(Charset.forName(charset))));
+            SOAPMessage soapMsg = SoapMessageFactory.createMessage(msgBody);
             /* Content has been parsed correctly as SOAP content. */
             if (soapMsg != null) return true;
             else return false;

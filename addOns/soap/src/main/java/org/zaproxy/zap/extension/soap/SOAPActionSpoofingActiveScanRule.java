@@ -19,11 +19,7 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
@@ -160,13 +156,7 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
 
         SOAPMessage soapMsg = null;
         try {
-            MessageFactory factory = MessageFactory.newInstance();
-            soapMsg =
-                    factory.createMessage(
-                            new MimeHeaders(),
-                            new ByteArrayInputStream(
-                                    responseContent.getBytes(
-                                            Charset.forName(msg.getResponseBody().getCharset()))));
+            soapMsg = SoapMessageFactory.createMessage(msg.getResponseBody());
 
             /* Looks for fault code. */
             SOAPBody body = soapMsg.getSOAPBody();
@@ -184,14 +174,8 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
             if (bodyList.getLength() <= 0) return EMPTY_RESPONSE;
 
             /* Prepares original request to compare it. */
-            String originalContent = originalMsg.getResponseBody().toString();
             SOAPMessage originalSoapMsg =
-                    factory.createMessage(
-                            new MimeHeaders(),
-                            new ByteArrayInputStream(
-                                    originalContent.getBytes(
-                                            Charset.forName(
-                                                    originalMsg.getResponseBody().getCharset()))));
+                    SoapMessageFactory.createMessage(originalMsg.getResponseBody());
 
             /* Comparison between original response body and attack response body. */
             SOAPBody originalBody = originalSoapMsg.getSOAPBody();

@@ -17,7 +17,8 @@ zapAddOn {
 
 dependencies {
     implementation("com.predic8:soa-model-core:1.6.0")
-    implementation("com.sun.xml.ws:jaxws-rt:2.3.2")
+    implementation("jakarta.xml.soap:jakarta.xml.soap-api:1.4.2")
+    implementation("com.sun.xml.messaging.saaj:saaj-impl:1.5.2")
 
     testImplementation(project(":testutils"))
 }
