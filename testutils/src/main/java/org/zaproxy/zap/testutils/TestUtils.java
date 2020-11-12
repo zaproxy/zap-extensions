@@ -95,7 +95,11 @@ public abstract class TestUtils {
     @TempDir protected static Path tempDir;
 
     static {
-        Config.LoggerProvider = ZAP.JERICHO_LOGGER_PROVIDER;
+        try {
+            Config.LoggerProvider = ZAP.JERICHO_LOGGER_PROVIDER;
+        } catch (NoSuchFieldError ignore) {
+            // Newer core versions no longer provide/need it.
+        }
     }
 
     private static String zapInstallDir;
@@ -122,6 +126,7 @@ public abstract class TestUtils {
         Path installDir = Files.createDirectory(tempDir.resolve("install"));
         Path xmlDir = Files.createDirectory(installDir.resolve("xml"));
         Files.createFile(xmlDir.resolve("log4j.properties"));
+        Files.createFile(xmlDir.resolve("log4j2.properties"));
 
         zapInstallDir = installDir.toAbsolutePath().toString();
         zapHomeDir = Files.createDirectory(tempDir.resolve("home")).toAbsolutePath().toString();
