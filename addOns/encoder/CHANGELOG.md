@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Promoted to Beta.
 - Added Info URL to manifest.
+- Target ZAP 2.10. Remove "Advanced" from labels, titles, and name.
 
 ## [0.3.0] - 2020-09-14
 
