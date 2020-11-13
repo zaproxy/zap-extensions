@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.retire.model.Repo;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -60,11 +59,13 @@ public class RetireScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
+        if (!getHelper().isPage200(msg)) {
             return;
         }
         String uri = msg.getRequestHeader().getURI().toString();
-        if (!msg.getResponseHeader().isImage() && !uri.endsWith(".css")) {
+        if (!msg.getResponseHeader().isImage()
+                && !msg.getRequestHeader().isCss()
+                && !msg.getResponseHeader().isCss()) {
             Result result = getRepo().scanJS(msg);
             if (result == null) {
                 if (LOGGER.isDebugEnabled()) {
@@ -110,6 +111,7 @@ public class RetireScanRule extends PluginPassiveScanner {
                 .setCweId(829); // CWE-829: Inclusion of Functionality from Untrusted Control Sphere
     }
 
+    @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<Alert>();
         alerts.add(

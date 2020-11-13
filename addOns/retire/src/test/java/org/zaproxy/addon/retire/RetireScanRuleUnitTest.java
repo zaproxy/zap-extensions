@@ -21,11 +21,14 @@ package org.zaproxy.addon.retire;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
 
 import java.io.IOException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -45,10 +48,59 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     }
 
     @Test
+    public void shouldIgnoreNon200OkMessages() {
+        // Given
+        HttpMessage msg =
+                createMessage("http://example.com/ajax/libs/angularjs/1.2.19/angular.min.js", null);
+        msg.getResponseHeader().setStatusCode(403);
+        given(passiveScanData.isPage200(any())).willReturn(false);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldIgnoreCssUrl() {
+        // Given
+        HttpMessage msg = createMessage("https://www.example.com/assets/styles.css", null);
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldIgnoreCssResponse() {
+        // Given
+        HttpMessage msg = createMessage("https://www.example.com/assets/styles.scss", null);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/css");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldIgnoreImageResponse() {
+        // Given
+        HttpMessage msg = createMessage("https://www.example.com/assets/image.gif", null);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "image/gif");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
     public void shouldRaiseAlertOnVulnerableUrl() {
         // Given
         HttpMessage msg =
                 createMessage("http://example.com/ajax/libs/angularjs/1.2.19/angular.min.js", null);
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -67,6 +119,7 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         // Given
         HttpMessage msg =
                 createMessage("http://example.com/CommonElements/js/jquery-3.1.1.min.js", null);
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -89,6 +142,7 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
                         + " * Licensed under the MIT license\n"
                         + " */";
         HttpMessage msg = createMessage("http://example.com/angular.min.js", content);
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -111,6 +165,7 @@ public class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
                         + " * Licensed under the MIT license\n"
                         + " */";
         HttpMessage msg = createMessage("http://example.com/hash.js", content);
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
