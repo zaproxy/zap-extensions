@@ -7,6 +7,9 @@ function parseParameters(helper, msg) { }
 function setParameter(helper, msg, param, value, escaped) { }
 
 function getLeafName(helper, nodeName, msg) {
+	if (helper.getParamList().isEmpty()) {
+		return null;
+	}
 	return helper.getStandardLeafName(nodeName, msg, helper.getParamList());
 }
 
