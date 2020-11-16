@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -54,6 +56,9 @@ public class InPageBannerInfoLeakScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage("");
         msg.getResponseHeader().setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT);
+        given(passiveScanData.isPage200(any())).willReturn(false);
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -65,6 +70,9 @@ public class InPageBannerInfoLeakScanRuleUnitTest
         // Given
         String squidBanner = "Squid/2.5.STABLE4";
         HttpMessage msg = createMessage(squidBanner);
+        given(passiveScanData.isPage200(any())).willReturn(false);
+        given(passiveScanData.isClientError(any())).willReturn(true);
+        given(passiveScanData.isServerError(any())).willReturn(false);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -78,6 +86,25 @@ public class InPageBannerInfoLeakScanRuleUnitTest
         String apacheBanner = "Apache/2.4.17";
         HttpMessage msg = createMessage(apacheBanner);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        given(passiveScanData.isPage200(any())).willReturn(false);
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertIfResponseHasRelevantContentWithCustomPage200()
+            throws URIException {
+        // Given - Default threshold (MEDIUM)
+        String apacheBanner = "Apache/2.4.17";
+        HttpMessage msg = createMessage(apacheBanner);
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.TEMPORARY_REDIRECT);
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -91,6 +118,9 @@ public class InPageBannerInfoLeakScanRuleUnitTest
         String jettyBanner = "Jetty://9.4z-SNAPSHOT";
         HttpMessage msg = createMessage(jettyBanner);
         msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        given(passiveScanData.isPage200(any())).willReturn(false);
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
         rule.setAlertThreshold(AlertThreshold.LOW);
         // When
         scanHttpResponseReceive(msg);

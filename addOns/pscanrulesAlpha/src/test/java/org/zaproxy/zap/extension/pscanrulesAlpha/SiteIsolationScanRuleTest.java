@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
@@ -37,6 +39,47 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Cross-Origin-Resource-Policy: same-origin\r\n"
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertGivenSiteIsIsolatedWhenSuccessIdentifiedByCustomPage()
+            throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 400 OK\r\n"
+                        + "Cross-Origin-Resource-Policy: same-origin\r\n"
+                        + "Cross-Origin-Embedder-Policy: require-corp\r\n"
+                        + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertGivenSiteIsIsolatedWhenSuccessAndIdentifiedByCustomPage()
+            throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Cross-Origin-Resource-Policy: same-origin\r\n"
+                        + "Cross-Origin-Embedder-Policy: require-corp\r\n"
+                        + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(true);
 
         // When
         scanHttpResponseReceive(msg);
@@ -54,6 +97,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                 "HTTP/1.1 200 OK\r\n"
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -98,6 +142,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Cross-Origin-Resource-Policy: unexpected\r\n"
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -120,6 +165,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Cross-Origin-Resource-Policy: same-SITE\r\n"
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -143,6 +189,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Cross-Origin-Resource-Policy: cross-origin\r\n"
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -157,6 +204,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 500 Internal Server Error\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -175,6 +223,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Access-Control-Allow-Origin: *\r\n"
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -193,6 +242,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Content-Type: application/xml\r\n"
                         + "Cross-Origin-Resource-Policy: same-origin\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -216,6 +266,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Cross-Origin-Resource-Policy: same-origin\r\n"
                         + "Cross-Origin-Embedder-Policy: unsafe-none\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -238,6 +289,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Content-Type: text/html;charset=utf-8\r\n"
                         + "Cross-Origin-Resource-Policy: same-origin\r\n"
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -261,6 +313,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Cross-Origin-Resource-Policy: same-origin\r\n"
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin-allow-popups\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -284,6 +337,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                 "HTTP/1.1 200 OK\r\n"
                         + "Content-Type: application/json\r\n"
                         + "Cross-Origin-Resource-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -302,6 +356,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         msg.setRequestHeader("GET / HTTP/1.1");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n" + "Cross-Origin-Resource-Policy: same-origin\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
@@ -321,6 +376,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "cross-origin-embedder-policy: require-corp;report-to=\"coep\"\r\n"
                         + "cross-origin-opener-policy: same-origin;report-to=\"coop\"\r\n"
                         + "Cross-Origin-Resource-Policy: same-origin;report-to=\"corp\"\r\n");
+        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
