@@ -81,7 +81,8 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         // However, successful responses are associated to a resource
         // that should be protected.
         // Only consider HTTP Status code 2XX to avoid a False Positive
-        if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())) {
+        if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())
+                || getHelper().isPage200(msg)) {
             return;
         }
 

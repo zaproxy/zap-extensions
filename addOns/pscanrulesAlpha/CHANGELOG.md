@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Now targeting ZAP 2.10.
+- The In Page Banner Information Leak scan rule and Site Isolation scan rule now support Custom Page definitions.
 
 ## [29] - 2020-11-16
 

@@ -59,9 +59,8 @@ public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
         int statusCode = msg.getResponseHeader().getStatusCode();
         // If LOW and 200 then check or if isClientError or isServerError check
         if ((this.getAlertThreshold().equals(AlertThreshold.LOW)
-                        && HttpStatusCode.isSuccess(statusCode))
-                || (HttpStatusCode.isClientError(statusCode)
-                        || HttpStatusCode.isServerError(statusCode))) {
+                        && (HttpStatusCode.isSuccess(statusCode) || getHelper().isPage200(msg)))
+                || (getHelper().isClientError(msg) || getHelper().isServerError(msg))) {
             for (BannerPattern patt : BannerPattern.values()) {
                 Matcher bannerMatcher = patt.getPattern().matcher(msg.getResponseBody().toString());
                 boolean found = bannerMatcher.find();
