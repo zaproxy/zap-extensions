@@ -46,11 +46,7 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener {
 
     private ExtensionImportWSDL caller = null;
 
-    private JLabel labelURL = new JLabel(Constant.messages.getString(MESSAGE_PREFIX + "labelURL"));
     private JTextField fieldURL = new JTextField(30);
-
-    private JButton buttonImport =
-            new JButton(Constant.messages.getString(MESSAGE_PREFIX + "importButton"));
 
     public ImportFromUrlDialog(JFrame parent, ExtensionImportWSDL caller) {
         super(parent, Constant.messages.getString(MESSAGE_PREFIX + "actionName"), true);
@@ -68,11 +64,14 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener {
         constraints.anchor = GridBagConstraints.WEST;
         constraints.insets = new Insets(5, 5, 5, 5);
 
+        JButton buttonImport =
+                new JButton(Constant.messages.getString(MESSAGE_PREFIX + "importButton"));
         buttonImport.addActionListener(this);
 
         // add components to the frame
         constraints.gridx = 0;
         constraints.gridy = 0;
+        JLabel labelURL = new JLabel(Constant.messages.getString(MESSAGE_PREFIX + "labelURL"));
         add(labelURL, constraints);
 
         constraints.gridx = 1;
@@ -103,8 +102,7 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener {
 
     /* Adds a context menu to URL text field with "paste" option. */
     public JTextField addContextMenu(final JTextField field) {
-        JTextField field2 = field;
-        field2.addMouseListener(
+        field.addMouseListener(
                 new MouseAdapter() {
                     public void mouseReleased(MouseEvent e) {
                         if (e.isPopupTrigger()) {
@@ -124,6 +122,6 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener {
                         }
                     }
                 });
-        return field2;
+        return field;
     }
 }

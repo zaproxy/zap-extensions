@@ -23,7 +23,6 @@ import com.predic8.wsdl.BindingOperation;
 import com.predic8.wsdl.Definitions;
 import com.predic8.wsdl.Port;
 import java.util.HashMap;
-import java.util.Set;
 
 /**
  * This class encapsulates all required variables to craft a SOAP request message.
@@ -56,40 +55,12 @@ public class SOAPMsgConfig {
 
     /* Custom methods. */
     public boolean isComplete() {
-        if (this.wsdl == null
-                || this.soapVersion < 1
-                || this.soapVersion > 2
-                || this.params == null
-                || this.port == null
-                || this.bindOp == null) return false;
-        else return true;
-    }
-
-    /*
-     * Changes a parameter value given its simple name (it can include namespace
-     * prefix). Returns true if value has been changed correctly.
-     */
-    public boolean changeParam(String paramName, String paramValue) {
-        if (paramName == null || paramValue == null) return false;
-        String xpath = null;
-        Set<String> xpaths = params.keySet();
-        if (paramName.contains(":")) {
-            /* Removes namespace prefix. */
-            String[] paramNameParts = paramName.split(":");
-            paramName = paramNameParts[paramNameParts.length - 1];
-        }
-        for (String key : xpaths) {
-            if (key.endsWith("/" + paramName)) {
-                xpath = key;
-                break;
-            }
-        }
-        if (xpath != null) {
-            params.put(xpath, paramValue);
-            return true;
-        } else {
-            return false;
-        }
+        return this.wsdl != null
+                && this.soapVersion >= 1
+                && this.soapVersion <= 2
+                && this.params != null
+                && this.port != null
+                && this.bindOp != null;
     }
 
     /* Getters and Setters. */
@@ -134,11 +105,7 @@ public class SOAPMsgConfig {
     }
 
     public boolean equals(SOAPMsgConfig other) {
-        if (this.getHash() == other.getHash()) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.getHash() == other.getHash();
     }
 
     private int getHash() {

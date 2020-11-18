@@ -20,15 +20,20 @@
 package org.zaproxy.zap.extension.soap;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.w3c.dom.Node;
@@ -45,11 +50,13 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
 
     private static final Logger LOG = Logger.getLogger(SOAPActionSpoofingActiveScanRule.class);
 
-    public static final int INVALID_FORMAT = -3;
-    public static final int FAULT_CODE = -2;
-    public static final int EMPTY_RESPONSE = -1;
-    public static final int SOAPACTION_IGNORED = 1;
-    public static final int SOAPACTION_EXECUTED = 2;
+    public enum ResponseType {
+        INVALID_FORMAT,
+        FAULT_CODE,
+        EMPTY_RESPONSE,
+        SOAPACTION_IGNORED,
+        SOAPACTION_EXECUTED
+    }
 
     @Override
     public int getId() {
@@ -73,91 +80,112 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
+    private TableWsdl getTable() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionImportWSDL.class)
+                .getTable();
+    }
+
     @Override
     public int getCategory() {
         return Category.MISC;
     }
 
-    /*
-     * This method is called by the active scanner for each GET and POST parameter
-     * for every page
-     *
-     * @see
-     * org.parosproxy.paros.core.scanner.AbstractAppParamPlugin#scan(org.parosproxy.
-     * paros.network.HttpMessage, java.lang.String, java.lang.String)
-     */
     @Override
     public void scan() {
+        /* Retrieves the original request-response pair. */
+        final HttpMessage originalMsg = getBaseMsg();
+        String originalSoapAction = SoapAction.extractFrom(originalMsg);
+        if (originalSoapAction == null) {
+            // Not a SOAP message
+            return;
+        }
+
+        /* Retrieves available actions to try attacks. */
+        List<SoapAction> soapActions;
         try {
-            /* Retrieves the original request-response pair. */
-            final HttpMessage originalMsg = getBaseMsg();
-            /* This scan is only applied to SOAP 1.1 messages. */
-            String currentHeader = originalMsg.getRequestHeader().getHeader("SOAPAction");
-            if (currentHeader != null && originalMsg.getRequestBody().length() > 0) {
-                currentHeader = currentHeader.trim();
-                /* Retrieves available actions to try attacks. */
-                String[] soapActions = ImportWSDL.getInstance().getSourceSoapActions(originalMsg);
-
-                boolean endScan = false;
-                if (soapActions == null || soapActions.length == 0) {
-                    // No actions to spoof
-                    LOG.info(
-                            "Skipping "
-                                    + getName()
-                                    + " because no actions were found. (URL: "
-                                    + originalMsg.getRequestHeader().getURI().toString()
-                                    + ")");
-                    return;
-                }
-                for (int j = 0; j < soapActions.length && !endScan; j++) {
-                    HttpMessage msg = getNewMsg();
-                    /* Skips the original case. */
-                    if (!currentHeader.equals(soapActions[j])) {
-                        HttpRequestHeader header = msg.getRequestHeader();
-                        /* Available actions should be known here from the imported WSDL file. */
-                        header.setHeader("SOAPAction", soapActions[j]);
-                        msg.setRequestHeader(header);
-
-                        /* Sends the modified request. */
-                        if (this.isStop()) return;
-                        sendAndReceive(msg);
-                        if (this.isStop()) return;
-
-                        /* Checks the response. */
-                        int code = scanResponse(msg, originalMsg);
-                        if (code > 0) endScan = true;
-                        raiseAlert(msg, code);
-                    } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(
-                                    "Ignoring matching actions: "
-                                            + currentHeader
-                                            + " : "
-                                            + soapActions[j]);
-                        }
-                    }
-                    if (this.isStop()) return;
-                }
+            soapActions = getTable().getSourceSoapActions(originalSoapAction);
+        } catch (DatabaseException e) {
+            LOG.warn("Could not retrieve SOAP actions from the database. Ignoring message.", e);
+            return;
+        }
+        if (soapActions == null || soapActions.isEmpty()) {
+            // No actions to spoof
+            LOG.info(
+                    "Ignoring "
+                            + getName()
+                            + " because no actions were found. (URL: "
+                            + originalMsg.getRequestHeader().getURI().toString()
+                            + ")");
+            return;
+        }
+        for (SoapAction soapAction : soapActions) {
+            if (isStop()) {
+                return;
             }
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            HttpMessage msg = getNewMsg();
+            /* Skips the original case. */
+            if (originalSoapAction.trim().equals(soapAction.getAction())) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(
+                            "Ignoring matching actions: "
+                                    + originalSoapAction
+                                    + " : "
+                                    + soapAction.getAction());
+                }
+                continue;
+            }
+            HttpRequestHeader header = msg.getRequestHeader();
+            boolean isSoapVersionOne = false;
+            /* Available actions should be known here from the imported WSDL file. */
+            if (originalMsg.getRequestHeader().getHeader("SOAPAction") != null) {
+                header.setHeader("SOAPAction", soapAction.getAction());
+                isSoapVersionOne = true;
+            } else {
+                header.setHeader(
+                        HttpHeader.CONTENT_TYPE,
+                        "application/soap+xml;charset=UTF-8;action=" + soapAction.getAction());
+            }
+
+            /* Sends the modified request. */
+            try {
+                sendAndReceive(msg);
+            } catch (IOException e) {
+                LOG.warn("Could not send modified SOAP request.");
+                return;
+            }
+            /* Checks the response. */
+            ResponseType code = scanResponse(msg, originalMsg);
+            String otherAlertInfo =
+                    Constant.messages.getString(
+                            MESSAGE_PREFIX + "alertInfo",
+                            isSoapVersionOne ? "1" : "2",
+                            originalSoapAction,
+                            soapAction.getAction());
+            raiseAlert(msg, code, otherAlertInfo);
+            if (code == ResponseType.SOAPACTION_IGNORED
+                    || code == ResponseType.SOAPACTION_EXECUTED) {
+                return;
+            }
         }
     }
 
     // Relaxed accessibility for testing.
-    int scanResponse(HttpMessage msg, HttpMessage originalMsg) {
-        if (msg.getResponseBody().length() == 0) return EMPTY_RESPONSE;
+    ResponseType scanResponse(HttpMessage msg, HttpMessage originalMsg) {
+        if (msg.getResponseBody().length() == 0) return ResponseType.EMPTY_RESPONSE;
         String responseContent = new String(msg.getResponseBody().getBytes());
         responseContent = responseContent.trim();
 
         if (responseContent.length() <= 0) {
-            return EMPTY_RESPONSE;
+            return ResponseType.EMPTY_RESPONSE;
         }
 
-        SOAPMessage soapMsg = null;
         try {
-            soapMsg = SoapMessageFactory.createMessage(msg.getResponseBody());
-
+            SOAPMessage soapMsg = SoapMessageFactory.createMessage(msg.getResponseBody());
+            if (soapMsg == null) {
+                return ResponseType.INVALID_FORMAT;
+            }
             /* Looks for fault code. */
             SOAPBody body = soapMsg.getSOAPBody();
             SOAPFault fault = body.getFault();
@@ -166,16 +194,19 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
                  * The web service server has detected something was wrong with the SOAPAction
                  * header so it rejects the request.
                  */
-                return FAULT_CODE;
+                return ResponseType.FAULT_CODE;
             }
 
             // Body child.
             NodeList bodyList = body.getChildNodes();
-            if (bodyList.getLength() <= 0) return EMPTY_RESPONSE;
+            if (bodyList.getLength() <= 0) return ResponseType.EMPTY_RESPONSE;
 
             /* Prepares original request to compare it. */
             SOAPMessage originalSoapMsg =
                     SoapMessageFactory.createMessage(originalMsg.getResponseBody());
+            if (originalSoapMsg == null) {
+                return ResponseType.INVALID_FORMAT;
+            }
 
             /* Comparison between original response body and attack response body. */
             SOAPBody originalBody = originalSoapMsg.getSOAPBody();
@@ -196,75 +227,52 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
                      * Both responses have the same content. The SOAPAction header has been ignored.
                      * SOAPAction Spoofing attack cannot be done if this happens.
                      */
-                    return SOAPACTION_IGNORED;
+                    return ResponseType.SOAPACTION_IGNORED;
                 } else {
                     /*
                      * The SOAPAction header has been processed and an operation which is not the
                      * original one has been executed.
                      */
-                    return SOAPACTION_EXECUTED;
+                    return ResponseType.SOAPACTION_EXECUTED;
                 }
             } else {
                 /*
                  * The SOAPAction header has been processed and an operation which is not the
                  * original one has been executed.
                  */
-                return SOAPACTION_EXECUTED;
+                return ResponseType.SOAPACTION_EXECUTED;
             }
         } catch (IOException | SOAPException e) {
             LOG.info("Exception thrown when scanning: ", e);
-            return INVALID_FORMAT;
+            return ResponseType.INVALID_FORMAT;
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int code) {
+    private void raiseAlert(HttpMessage msg, ResponseType code, String otherInfo) {
+        int risk;
         switch (code) {
             case INVALID_FORMAT:
-                newAlert()
-                        .setRisk(Alert.RISK_LOW)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setOtherInfo(
-                                Constant.messages.getString(MESSAGE_PREFIX + "invalidFormatMsg"))
-                        .setMessage(msg)
-                        .raise();
-                break;
             case FAULT_CODE:
-                newAlert()
-                        .setRisk(Alert.RISK_LOW)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "faultCodeMsg"))
-                        .setMessage(msg)
-                        .raise();
-                break;
             case EMPTY_RESPONSE:
-                newAlert()
-                        .setRisk(Alert.RISK_LOW)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setOtherInfo(
-                                Constant.messages.getString(MESSAGE_PREFIX + "emptyResponseMsg"))
-                        .setMessage(msg)
-                        .raise();
-                break;
-            case SOAPACTION_IGNORED:
-                newAlert()
-                        .setRisk(Alert.RISK_INFO)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setOtherInfo(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "soapactionIgnoredMsg"))
-                        .setMessage(msg)
-                        .raise();
+                risk = Alert.RISK_LOW;
                 break;
             case SOAPACTION_EXECUTED:
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setOtherInfo(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "soapactionExecutedMsg"))
-                        .setMessage(msg)
-                        .raise();
+                risk = Alert.RISK_MEDIUM;
+                break;
+            case SOAPACTION_IGNORED:
+            default:
+                risk = Alert.RISK_INFO;
                 break;
         }
+        otherInfo =
+                Constant.messages.getString(MESSAGE_PREFIX + code.name().toLowerCase(Locale.ROOT))
+                        + otherInfo;
+        newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setOtherInfo(otherInfo)
+                .setMessage(msg)
+                .raise();
     }
 
     @Override
