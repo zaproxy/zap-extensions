@@ -203,7 +203,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.size(), is(2));
-        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_LOW);
+        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM);
         assertCSPAlertAttributes(alertsRaised.get(1), "ro.", Alert.RISK_INFO);
     }
 
@@ -223,7 +223,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
 
     private void assertContentSecurityPolicyAlertRaised() {
         assertThat(alertsRaised.size(), is(1));
-        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_LOW);
+        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM);
     }
 
     private static void assertCSPAlertAttributes(Alert alert, String key, int expectedRisk) {
@@ -232,7 +232,7 @@ public class ContentSecurityPolicyMissingScanRuleUnitTest
         assertThat(alert.getDescription(), is(getLocalisedString(key + "desc")));
         assertThat(alert.getReference(), is(getLocalisedString(key + "refs")));
         assertThat(alert.getSolution(), is(getLocalisedString("soln")));
-        assertThat(alert.getConfidence(), is(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alert.getConfidence(), is(Alert.CONFIDENCE_HIGH));
         assertThat(alert.getCweId(), is(16));
         assertThat(alert.getWascId(), is(15));
         assertThat(alert.getUri(), is(URI));

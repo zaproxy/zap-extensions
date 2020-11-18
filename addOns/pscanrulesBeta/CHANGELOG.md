@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update RE2/J library to latest version (1.4).
 - Maintenance changes.
+- Content Security Policy header missing scan rule changed to Medium risk in order to align with other CSP findings, and confidence to High (Issue 6301).
 
 ## [22] - 2020-06-01
 ### Added
