@@ -118,8 +118,8 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
             // Always report if the latest header isnt found,
             // but only report if the older ones arent present at Low threshold
             newAlert()
-                    .setRisk(Alert.RISK_LOW)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setRisk(Alert.RISK_MEDIUM)
+                    .setConfidence(Alert.CONFIDENCE_HIGH)
                     .setDescription(getAlertAttribute("desc"))
                     .setSolution(getAlertAttribute("soln"))
                     .setReference(getAlertAttribute("refs"))
@@ -132,7 +132,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
             newAlert()
                     .setName(getAlertAttribute("ro.name"))
                     .setRisk(Alert.RISK_INFO)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setConfidence(Alert.CONFIDENCE_HIGH)
                     .setDescription(getAlertAttribute("ro.desc"))
                     .setSolution(getAlertAttribute("soln"))
                     .setReference(getAlertAttribute("ro.refs"))
