@@ -3,8 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
-
+## [23] - 2020-11-18
+### Changed
+- Update ChromeDriver to 87.0.4280.20.
 
 ## [22] - 2020-11-04
 ### Changed
@@ -113,6 +114,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[23]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v20
