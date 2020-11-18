@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.groovy.runtime.metaclass.MissingPropertyExceptionNoStack;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -68,10 +70,12 @@ public class WSDLCustomParser {
 
     private static final Logger LOG = Logger.getLogger(WSDLCustomParser.class);
     private static int keyIndex = -1;
-    private ImportWSDL wsdlSingleton = ImportWSDL.getInstance();
     private SOAPMsgConfig lastConfig; // Only used for unit testing purposes.
+    private final TableWsdl table;
 
-    public WSDLCustomParser() {}
+    public WSDLCustomParser(TableWsdl table) {
+        this.table = table;
+    }
 
     /* Method called from external classes to import a WSDL file from an URL. */
     public void extUrlWSDLImport(final String url, final String threadName) {
@@ -127,7 +131,8 @@ public class WSDLCustomParser {
             // WSDL parsing.
             WSDLParser parser = new WSDLParser();
             try {
-                InputStream contentI = new ByteArrayInputStream(content.getBytes("UTF-8"));
+                InputStream contentI =
+                        new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
                 parser.parse(contentI);
                 contentI.close();
                 return true;
@@ -215,7 +220,8 @@ public class WSDLCustomParser {
             // WSDL parsing.
             WSDLParser parser = new WSDLParser();
             try {
-                InputStream contentI = new ByteArrayInputStream(content.getBytes("UTF-8"));
+                InputStream contentI =
+                        new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
                 Definitions wsdl = parser.parse(contentI);
                 contentI.close();
                 parseWSDL(wsdl, sendMessages);
@@ -252,24 +258,25 @@ public class WSDLCustomParser {
                 if (style != null && (style.equals("document") || style.equals("rpc"))) {
 
                     List<BindingOperation> operations = binding.getOperations();
-                    String endpointLocation = port.getAddress().getLocation().toString();
-                    sb.append(
-                            "\n|-- Port detected: "
-                                    + port.getName()
-                                    + " ("
-                                    + endpointLocation
-                                    + ")\n");
+                    String endpointLocation = port.getAddress().getLocation();
+                    sb.append("\n|-- Port detected: ")
+                            .append(port.getName())
+                            .append(" (")
+                            .append(endpointLocation)
+                            .append(")\n");
 
                     /* Identifies operations for each endpoint.. */
                     for (BindingOperation bindOp : operations) {
-                        sb.append(
-                                "|\t|-- SOAP 1." + soapVersion + " Operation: " + bindOp.getName());
+                        sb.append("|\t|-- SOAP 1.")
+                                .append(soapVersion)
+                                .append(" Operation: ")
+                                .append(bindOp.getName());
                         /* Adds this operation to the global operations chart. */
                         recordOperation(keyIndex, bindOp);
                         /* Identifies operation's parameters. */
                         List<Part> requestParts = detectParameters(wsdl, bindOp);
                         /* Set values to parameters. */
-                        HashMap<String, String> formParams = new HashMap<String, String>();
+                        HashMap<String, String> formParams = new HashMap<>();
                         for (Part part : requestParts) {
                             Element element = part.getElement();
                             if (element != null) {
@@ -282,7 +289,7 @@ public class WSDLCustomParser {
                                 new SOAPMsgConfig(wsdl, soapVersion, formParams, port, bindOp);
                         lastConfig = soapConfig;
                         HttpMessage requestMessage = createSoapRequest(soapConfig);
-                        if (sendMessages) sendSoapRequest(keyIndex, requestMessage, sb);
+                        if (sendMessages) sendSoapRequest(requestMessage, sb);
                     } // bindingOperations loop
                 } // Binding check if
             } // Ports loop
@@ -317,16 +324,19 @@ public class WSDLCustomParser {
 
     /* Record the given operation in the global chart. */
     private void recordOperation(int wsdlID, BindingOperation bindOp) {
-        String soapActionName = "";
-        try {
-            soapActionName = bindOp.getOperation().getSoapAction();
-        } catch (NullPointerException e) {
+        String soapActionName;
+        if (bindOp.getOperation() == null) {
             // SOAP Action not defined for this operation.
-            LOG.info("No SOAP Action defined for this operation.", e);
+            LOG.info("No SOAP Action defined for this operation.");
             return;
         }
-        if (!soapActionName.trim().equals("")) {
-            wsdlSingleton.putAction(wsdlID, soapActionName);
+        try {
+            soapActionName = bindOp.getOperation().getSoapAction();
+            if (table != null && !"".equals(soapActionName.trim())) {
+                table.insertSoapAction(new SoapAction(wsdlID, soapActionName));
+            }
+        } catch (DatabaseException e) {
+            LOG.debug("Could not add SOAP action to the database.", e);
         }
     }
 
@@ -342,10 +352,10 @@ public class WSDLCustomParser {
     }
 
     private HashMap<String, String> fillParameters(Element element, String parent) {
-        HashMap<String, String> formParams = new HashMap<String, String>();
+        HashMap<String, String> formParams = new HashMap<>();
         try {
             /* Tries to parse it as a complex type first. */
-            String xpath = null;
+            String xpath;
             if (parent != null) xpath = parent + "/" + element.getName();
             else xpath = element.getName();
             ComplexType ct = (ComplexType) element.getEmbeddedType();
@@ -362,10 +372,8 @@ public class WSDLCustomParser {
                 formParams.putAll(fillParameters(e, xpath));
             }
         } catch (ClassCastException cce) {
-            /* Simple element treatment. */
-            if (element == null) return formParams;
             /* Handles simple types. */
-            SimpleType simpleType = null;
+            SimpleType simpleType;
             try {
                 simpleType = (SimpleType) element.getEmbeddedType();
                 if (simpleType == null) {
@@ -373,7 +381,7 @@ public class WSDLCustomParser {
                     simpleType = (SimpleType) currentSchema.getType(element.getType());
                     if (simpleType == null) {
                         /* It is not simple type, so it is treated as a plain element. */
-                        String xpath = "";
+                        String xpath;
                         if (parent != null) xpath = parent + "/" + element.getName();
                         else xpath = element.getName();
                         if (element.getType() != null)
@@ -383,7 +391,7 @@ public class WSDLCustomParser {
                 }
             } catch (ClassCastException cce2) {
                 /* It is not simple type, so it is treated as a plain element. */
-                String xpath = "";
+                String xpath;
                 if (parent != null) xpath = parent + "/" + element.getName();
                 else xpath = element.getName();
                 return addParameter(xpath, element.getType().getQualifiedName(), null);
@@ -410,7 +418,7 @@ public class WSDLCustomParser {
     }
 
     private HashMap<String, String> addParameter(String path, String paramType, String value) {
-        HashMap<String, String> formParams = new HashMap<String, String>();
+        HashMap<String, String> formParams = new HashMap<>();
         LOG.debug("Detected parameter: " + path);
         if (paramType.contains(":")) {
             String[] stringParts = paramType.split(":");
@@ -422,22 +430,31 @@ public class WSDLCustomParser {
             return formParams;
         }
         /* Parameter value depends on parameter type. */
-        if (paramType.equals("string")) {
-            formParams.put("xpath:/" + path, "paramValue");
-        } else if (paramType.equals("int")
-                || paramType.equals("double")
-                || paramType.equals("long")) {
-            formParams.put("xpath:/" + path, "0");
-        } else if (paramType.equals("date")) {
-            Date date = new Date();
-            SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DD");
-            String dateS = dt1.format(date);
-            formParams.put("xpath:/" + path, dateS);
-        } else if (paramType.equals("dateTime")) {
-            Date date = new Date();
-            SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DDThh:mm:ssZ");
-            String dateS = dt1.format(date);
-            formParams.put("xpath:/" + path, dateS);
+        switch (paramType) {
+            case "string":
+                formParams.put("xpath:/" + path, "paramValue");
+                break;
+            case "int":
+            case "double":
+            case "long":
+                formParams.put("xpath:/" + path, "0");
+                break;
+            case "date":
+                {
+                    Date date = new Date();
+                    SimpleDateFormat dt1 = new SimpleDateFormat("CCyy-MM-dd");
+                    String dateS = dt1.format(date);
+                    formParams.put("xpath:/" + path, dateS);
+                    break;
+                }
+            case "dateTime":
+                {
+                    Date date = new Date();
+                    SimpleDateFormat dt1 = new SimpleDateFormat("CCyy-MM-ddThh:mm:ssZ");
+                    String dateS = dt1.format(date);
+                    formParams.put("xpath:/" + path, dateS);
+                    break;
+                }
         }
         return formParams;
     }
@@ -470,7 +487,7 @@ public class WSDLCustomParser {
 
             // LOG.info("[ExtensionImportWSDL] "+writerSOAPReq);
             /* HTTP Request. */
-            String endpointLocation = port.getAddress().getLocation().toString();
+            String endpointLocation = port.getAddress().getLocation();
             HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, false));
             /* Body. */
             HttpRequestBody httpReqBody = httpRequest.getRequestBody();
@@ -484,18 +501,16 @@ public class WSDLCustomParser {
             httpReqHeader.setMethod("POST");
             /* Sets headers according to SOAP version. */
             if (soapVersion == 1) {
-                httpReqHeader.setHeader(HttpHeader.CONTENT_TYPE, "text/xml; charset=UTF-8");
+                httpReqHeader.setHeader(HttpHeader.CONTENT_TYPE, "text/xml;charset=UTF-8");
                 httpReqHeader.setHeader("SOAPAction", bindOp.getOperation().getSoapAction());
             } else if (soapVersion == 2) {
-                String contentType = "application/soap+xml; charset=UTF-8";
+                String contentType = "application/soap+xml;charset=UTF-8";
                 String action = bindOp.getOperation().getSoapAction();
-                if (!action.trim().equals("")) contentType += "; action=" + action;
+                if (!action.trim().equals("")) contentType += ";action=" + action;
                 httpReqHeader.setHeader(HttpHeader.CONTENT_TYPE, contentType);
             }
             httpReqHeader.setContentLength(httpReqBody.length());
             httpRequest.setRequestHeader(httpReqHeader);
-            /* Saves the message and its configuration. */
-            wsdlSingleton.putConfiguration(httpRequest, soapConfig);
             return httpRequest;
         } catch (Exception e) {
             LOG.error(
@@ -512,7 +527,7 @@ public class WSDLCustomParser {
      * Sends a given SOAP request. File is needed to record its associated ops, and
      * stringBuilder logs the output message.
      */
-    private void sendSoapRequest(int wsdlID, HttpMessage httpRequest, StringBuilder sb) {
+    private void sendSoapRequest(HttpMessage httpRequest, StringBuilder sb) {
         if (httpRequest == null) return;
         HttpRequestBody body = httpRequest.getRequestBody();
         /* Avoids connection if message has no proper body. */
@@ -530,10 +545,11 @@ public class WSDLCustomParser {
             LOG.error("Unable to communicate with SOAP server. Server may be not available.");
             LOG.debug("Trace:", e);
         }
-        wsdlSingleton.putRequest(wsdlID, httpRequest);
         persistMessage(httpRequest);
         if (sb != null)
-            sb.append(" (Status code: " + httpRequest.getResponseHeader().getStatusCode() + ")\n");
+            sb.append(" (Status code: ")
+                    .append(httpRequest.getResponseHeader().getStatusCode())
+                    .append(")\n");
     }
 
     private static void persistMessage(final HttpMessage message) {
@@ -555,15 +571,12 @@ public class WSDLCustomParser {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
         if (extHistory != null) {
             EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            extHistory.addHistory(historyRef);
-                            Model.getSingleton()
-                                    .getSession()
-                                    .getSiteTree()
-                                    .addPath(historyRef, message);
-                        }
+                    () -> {
+                        extHistory.addHistory(historyRef);
+                        Model.getSingleton()
+                                .getSession()
+                                .getSiteTree()
+                                .addPath(historyRef, message);
                     });
         }
     }
@@ -572,13 +585,7 @@ public class WSDLCustomParser {
     private void printOutput(StringBuilder sb) {
         if (View.isInitialised()) {
             final String str = sb.toString();
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            View.getSingleton().getOutputPanel().append(str);
-                        }
-                    });
+            EventQueue.invokeLater(() -> View.getSingleton().getOutputPanel().append(str));
         }
     }
 

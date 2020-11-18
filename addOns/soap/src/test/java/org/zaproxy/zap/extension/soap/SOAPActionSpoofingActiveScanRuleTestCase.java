@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.soap.SOAPActionSpoofingActiveScanRule.ResponseType;
 
 public class SOAPActionSpoofingActiveScanRuleTestCase {
 
@@ -47,23 +48,23 @@ public class SOAPActionSpoofingActiveScanRuleTestCase {
         SOAPActionSpoofingActiveScanRule scanner = new SOAPActionSpoofingActiveScanRule();
 
         /* Positive cases. */
-        int result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanRule.SOAPACTION_EXECUTED);
+        ResponseType result = scanner.scanResponse(modifiedMsg, originalMsg);
+        assertTrue(result == ResponseType.SOAPACTION_EXECUTED);
 
         Sample.setOriginalResponse(modifiedMsg);
         result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanRule.SOAPACTION_IGNORED);
+        assertTrue(result == ResponseType.SOAPACTION_IGNORED);
 
         /* Negative cases. */
         result = scanner.scanResponse(new HttpMessage(), originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanRule.EMPTY_RESPONSE);
+        assertTrue(result == ResponseType.EMPTY_RESPONSE);
 
         Sample.setEmptyBodyResponse(modifiedMsg);
         result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanRule.EMPTY_RESPONSE);
+        assertTrue(result == ResponseType.EMPTY_RESPONSE);
 
         Sample.setInvalidFormatResponse(modifiedMsg);
         result = scanner.scanResponse(modifiedMsg, originalMsg);
-        assertTrue(result == SOAPActionSpoofingActiveScanRule.INVALID_FORMAT);
+        assertTrue(result == ResponseType.INVALID_FORMAT);
     }
 }

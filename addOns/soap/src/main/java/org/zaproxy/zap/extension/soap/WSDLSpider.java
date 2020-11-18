@@ -27,17 +27,20 @@ import org.zaproxy.zap.spider.parser.SpiderParser;
 
 public class WSDLSpider extends SpiderParser {
 
-    private WSDLCustomParser parser = new WSDLCustomParser();
+    private final WSDLCustomParser parser;
 
     private static final Logger LOG = Logger.getLogger(WSDLSpider.class);
 
-    @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
-        return parseResourceWSDL(message, source, depth, true);
+    public WSDLSpider(WSDLCustomParser parser) {
+        this.parser = parser;
     }
 
-    public boolean parseResourceWSDL(
-            HttpMessage message, Source source, int depth, boolean sendRequests) {
+    @Override
+    public boolean parseResource(HttpMessage message, Source source, int depth) {
+        return parseResourceWSDL(message, true);
+    }
+
+    public boolean parseResourceWSDL(HttpMessage message, boolean sendRequests) {
         if (message == null) return false;
         /* Only applied to wsdl files. */
         LOG.debug("WSDL custom spider called.");
@@ -95,7 +98,6 @@ public class WSDLSpider extends SpiderParser {
     public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
         // Get the context (base url)
         String baseURL = getURIfromMessage(message);
-        if (baseURL.endsWith(".wsdl")) return true;
-        else return false;
+        return baseURL.endsWith(".wsdl");
     }
 }
