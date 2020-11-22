@@ -231,7 +231,7 @@ public class ParamSinksUtils {
         public HttpMessage getMessage(int id);
     }
 
-    private static class DatabaseMessagesStorage implements MessagesStorage {
+    public static class DatabaseMessagesStorage implements MessagesStorage {
 
         public int storeMessage(HttpMessage msg) {
             try {

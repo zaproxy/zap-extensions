@@ -29,16 +29,25 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ParamSinksUtils.DatabaseMessagesStorage;
+import org.zaproxy.addon.commonlib.ParamSinksUtils.MessagesStorage;
 
 public class SinkDetectionStorage {
 
     private InvertedRadixTree<VoidValue> seenValues;
-    private Map<String, Set<HttpMessage>> possibleSinksForValues;
+    private Map<String, Set<Integer>> possibleSinksForValues;
+    private Map<Integer, Integer> messagesHashToStorageIds;
+    private static MessagesStorage messagesStorage;
 
     public SinkDetectionStorage() {
         seenValues = new ConcurrentInvertedRadixTree<VoidValue>(new DefaultCharArrayNodeFactory());
-        possibleSinksForValues =
-                Collections.synchronizedMap(new HashMap<String, Set<HttpMessage>>());
+        possibleSinksForValues = Collections.synchronizedMap(new HashMap<>());
+        messagesHashToStorageIds = Collections.synchronizedMap(new HashMap<>());
+        messagesStorage = new DatabaseMessagesStorage();
+    }
+
+    public void setMessagesStorage(MessagesStorage storage) {
+        messagesStorage = storage;
     }
 
     public void addSeenValue(String value) {
@@ -55,20 +64,32 @@ public class SinkDetectionStorage {
 
     public void addPossibleSinkForValue(String value, HttpMessage sink) {
         synchronized (possibleSinksForValues) {
-            Set<HttpMessage> sinksForValue;
-            sinksForValue = possibleSinksForValues.get(value);
+            Set<Integer> sinksForValue = possibleSinksForValues.get(value);
 
             if (sinksForValue == null) {
                 sinksForValue = new HashSet<>();
                 possibleSinksForValues.put(value, sinksForValue);
             }
-            sinksForValue.add(sink);
+            boolean newMessage = sinksForValue.add(sink.hashCode());
+            if (newMessage) {
+                int msgId = messagesStorage.storeMessage(sink);
+                messagesHashToStorageIds.put(sink.hashCode(), msgId);
+            }
         }
     }
 
     public Set<HttpMessage> getPossibleSinksForValue(String value) {
-        Set<HttpMessage> possibleSinks = possibleSinksForValues.get(value);
+        Set<Integer> possibleSinks = possibleSinksForValues.get(value);
         if (possibleSinks == null) return Collections.emptySet();
-        return possibleSinks;
+
+        Set<HttpMessage> sinkMsgs = new HashSet<>();
+        for (int msgHash : possibleSinks) {
+            int msgId = messagesHashToStorageIds.get(msgHash);
+            HttpMessage msg = messagesStorage.getMessage(msgId);
+            if (msg != null) {
+                sinkMsgs.add(msg);
+            }
+        }
+        return sinkMsgs;
     }
 }

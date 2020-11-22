@@ -45,6 +45,7 @@ public abstract class SinkDetectionUnitTest<T extends AbstractAppPlugin>
     @BeforeEach
     protected void initiateStorage() {
         storage = new SinkDetectionStorage();
+        storage.setMessagesStorage(new MockMessageStorage());
         kb = new Kb();
         kb.add(SINK_DETECTION_STORAGE, storage);
         ParamSinksUtils.reset();
