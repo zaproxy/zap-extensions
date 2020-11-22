@@ -90,20 +90,22 @@ public class ParamSinksUtils {
                             + " sink="
                             + sinkMsg.getRequestHeader().getURI());
         }
-        Set<Integer> sinks = sourceToSinks.get(source.toString());
-        Set<Integer> sinksHashCodes = sourceToSinksHashCodes.get(source.toString());
-        if (sinks == null) {
-            sinks = new HashSet<>();
-            sinksHashCodes = new HashSet<>();
-        }
+        synchronized (sourceToSinks) {
+            Set<Integer> sinks = sourceToSinks.get(source.toString());
+            Set<Integer> sinksHashCodes = sourceToSinksHashCodes.get(source.toString());
+            if (sinks == null) {
+                sinks = Collections.synchronizedSet(new HashSet<>());
+                sinksHashCodes = Collections.synchronizedSet(new HashSet<>());
+            }
 
-        int msgHashCode = sinkMsg.hashCode();
-        if (!sinksHashCodes.contains(msgHashCode)) {
-            int id = messagesStorage.storeMessage(sinkMsg);
-            sinks.add(id);
-            sourceToSinks.put(source.toString(), sinks);
-            sinksHashCodes.add(msgHashCode);
-            sourceToSinksHashCodes.put(source.toString(), sinksHashCodes);
+            int msgHashCode = sinkMsg.hashCode();
+            if (!sinksHashCodes.contains(msgHashCode)) {
+                int id = messagesStorage.storeMessage(sinkMsg);
+                sinks.add(id);
+                sourceToSinks.put(source.toString(), sinks);
+                sinksHashCodes.add(msgHashCode);
+                sourceToSinksHashCodes.put(source.toString(), sinksHashCodes);
+            }
         }
     }
 
@@ -133,8 +135,8 @@ public class ParamSinksUtils {
     /** Resets the state of {@code ParamSinksUtils}. */
     @SuppressWarnings("unchecked")
     public static void reset() {
-        sourceToSinks = new HashMap<>();
-        sourceToSinksHashCodes = new HashMap<>();
+        sourceToSinks = Collections.synchronizedMap(new HashMap<>());
+        sourceToSinksHashCodes = Collections.synchronizedMap(new HashMap<>());
         cachedUris =
                 Collections.synchronizedMap(new ReferenceMap(ReferenceMap.SOFT, ReferenceMap.SOFT));
         cachedParams =
