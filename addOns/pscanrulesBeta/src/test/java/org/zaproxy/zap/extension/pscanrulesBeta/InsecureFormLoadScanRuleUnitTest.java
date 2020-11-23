@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -54,6 +56,7 @@ public class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<Insecur
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setSecure(true);
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -65,6 +68,7 @@ public class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<Insecur
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
+        given(passiveScanData.isPage200(any())).willReturn(false);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -76,6 +80,7 @@ public class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<Insecur
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -87,6 +92,7 @@ public class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<Insecur
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -99,6 +105,7 @@ public class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<Insecur
         HttpMessage msg = createMessage();
         msg.setResponseBody(
                 "<html><form name=\"someform\" action=\"https://example.com/processform\"></form</html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -111,6 +118,7 @@ public class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<Insecur
         HttpMessage msg = createMessage();
         msg.setResponseBody(
                 "<html><form name=\"someform\" action=\"http://example.com/processform\"></form</html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then

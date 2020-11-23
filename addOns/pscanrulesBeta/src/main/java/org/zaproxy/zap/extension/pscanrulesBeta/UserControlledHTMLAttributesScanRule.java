@@ -58,7 +58,7 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (msg.getResponseHeader().getStatusCode() != 200 || !isResponseHTML(msg, source)) {
+        if (!getHelper().isPage200(msg) || !isResponseHTML(msg, source)) {
             return;
         }
 

@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -59,6 +61,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
+        given(passiveScanData.isPage200(any())).willReturn(false);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -70,6 +73,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -82,6 +86,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
         HttpMessage msg = createMessage();
         msg.getResponseHeader()
                 .setHeader(HttpHeader.CONTENT_TYPE, ""); // Removed when value set empty
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -92,6 +97,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
     public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
         // Given
         HttpMessage msg = createMessage();
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // WHen
         scanHttpResponseReceive(msg);
         // Then
@@ -103,6 +109,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -116,6 +123,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
         msg.getRequestHeader()
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" onerror=alert(\"Error\")></img></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -129,6 +137,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
         msg.getRequestHeader()
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" onblah=fred></img></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -142,6 +151,7 @@ public class UserControlledJavascriptEventScanRuleUnitTest
         msg.getRequestHeader()
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" onerror=fred></img></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
