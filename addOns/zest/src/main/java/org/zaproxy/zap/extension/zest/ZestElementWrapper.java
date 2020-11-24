@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import org.mozilla.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestElement;
 
 public class ZestElementWrapper {
     private ZestElement element;

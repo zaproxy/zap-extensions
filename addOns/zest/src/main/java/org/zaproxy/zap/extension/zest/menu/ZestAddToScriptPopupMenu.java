@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import java.util.List;
 import javax.swing.JMenuItem;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestElement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.HistoryReference;
@@ -32,6 +30,8 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestElement;
 
 public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceContainer {
 

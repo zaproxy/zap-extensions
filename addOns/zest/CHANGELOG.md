@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Update minimum ZAP version to 2.9.0.
+- Update Zest library to 0.15.0:
+  - Do not follow redirects when disabled;
+  - Reduce the changes done to the requests sent.
 - Maintenance changes.
 
 ### Fixed
@@ -38,7 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 of an element or the value of an attribute.
 
 ### Changed
-- Update Zest library to 0.14.0 (Issue 4797). Refer to its [CHANGELOG](https://github.com/mozilla/zest/blob/0.14.0/CHANGELOG.md#changelog) for full set of changes.
+- Update Zest library to 0.14.0 (Issue 4797). Refer to its [CHANGELOG](https://github.com/zaproxy/zest/blob/0.14.0/CHANGELOG.md#changelog) for full set of changes.
 - Send sequence messages with ZAP so that they make use of ZAP features e.g. authentication, HTTP
 Sender scripts. (Issue 5590)
 - Set timestamp from/to Zest requests.

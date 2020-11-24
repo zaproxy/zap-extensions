@@ -21,15 +21,15 @@ package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
 import javax.script.ScriptException;
-import org.mozilla.zest.core.v1.ZestJSON;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestScript.Type;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zest.core.v1.ZestJSON;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestScript.Type;
 
 public class ZestScriptWrapper extends ScriptWrapper {
 

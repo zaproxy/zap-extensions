@@ -20,19 +20,19 @@
 package org.zaproxy.zap.extension.zest;
 
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestAction;
-import org.mozilla.zest.core.v1.ZestAssertion;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestExpression;
-import org.mozilla.zest.core.v1.ZestExpressionElement;
-import org.mozilla.zest.core.v1.ZestLoop;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestStructuredExpression;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptTreeModel;
+import org.zaproxy.zest.core.v1.ZestAction;
+import org.zaproxy.zest.core.v1.ZestAssertion;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestExpression;
+import org.zaproxy.zest.core.v1.ZestExpressionElement;
+import org.zaproxy.zest.core.v1.ZestLoop;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
+import org.zaproxy.zest.core.v1.ZestStructuredExpression;
 
 /**
  * To change the template for this generated type comment go to Window - Preferences - Java - Code

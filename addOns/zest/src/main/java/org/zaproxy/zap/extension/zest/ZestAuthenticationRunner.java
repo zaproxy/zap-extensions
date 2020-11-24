@@ -26,12 +26,6 @@ import java.util.List;
 import java.util.Map;
 import javax.script.ScriptException;
 import org.apache.commons.httpclient.URI;
-import org.mozilla.zest.core.v1.ZestClient;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestVariables;
-import org.mozilla.zest.impl.ZestBasicRunner;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.proxy.ProxyThread;
@@ -41,6 +35,12 @@ import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.AuthenticationScript;
+import org.zaproxy.zest.core.v1.ZestClient;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestStatement;
+import org.zaproxy.zest.core.v1.ZestVariables;
+import org.zaproxy.zest.impl.ZestBasicRunner;
 
 public class ZestAuthenticationRunner extends ZestZapRunner implements AuthenticationScript {
 

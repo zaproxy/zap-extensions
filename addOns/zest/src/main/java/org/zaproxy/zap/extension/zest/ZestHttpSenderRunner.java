@@ -24,14 +24,14 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.script.ScriptException;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.script.HttpSenderScript;
 import org.zaproxy.zap.extension.script.HttpSenderScriptHelper;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
 public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScript {
 

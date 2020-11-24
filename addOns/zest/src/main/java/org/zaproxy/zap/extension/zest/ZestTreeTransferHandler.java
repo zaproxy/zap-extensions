@@ -27,12 +27,12 @@ import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestTreeTransferHandler extends TransferHandler {
 

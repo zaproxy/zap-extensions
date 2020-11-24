@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.mozilla.zest.impl.ZestScriptEngineFactory;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
 public class ZestEngineWrapper extends DefaultEngineWrapper {
 

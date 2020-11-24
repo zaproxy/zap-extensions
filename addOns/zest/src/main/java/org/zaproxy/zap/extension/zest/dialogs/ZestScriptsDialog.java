@@ -37,10 +37,6 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestAuthentication;
-import org.mozilla.zest.core.v1.ZestHttpAuthentication;
-import org.mozilla.zest.core.v1.ZestJSON;
-import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
@@ -54,6 +50,10 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestAuthentication;
+import org.zaproxy.zest.core.v1.ZestHttpAuthentication;
+import org.zaproxy.zest.core.v1.ZestJSON;
+import org.zaproxy.zest.core.v1.ZestScript;
 
 public class ZestScriptsDialog extends StandardFieldsDialog {
 

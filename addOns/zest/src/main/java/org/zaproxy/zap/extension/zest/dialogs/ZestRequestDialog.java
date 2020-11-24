@@ -32,10 +32,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.mozilla.zest.core.v1.ZestCookie;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -45,6 +41,10 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestCookie;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
 public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialog {
 

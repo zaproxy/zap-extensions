@@ -25,12 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.mozilla.zest.core.v1.ZestAssertion;
-import org.mozilla.zest.core.v1.ZestExpressionEquals;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -38,6 +32,12 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestAssertion;
+import org.zaproxy.zest.core.v1.ZestExpressionEquals;
+import org.zaproxy.zest.core.v1.ZestExpressionLength;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
+import org.zaproxy.zest.core.v1.ZestRequest;
 
 public class ZestAssertionsDialog extends StandardFieldsDialog implements ZestDialog {
 

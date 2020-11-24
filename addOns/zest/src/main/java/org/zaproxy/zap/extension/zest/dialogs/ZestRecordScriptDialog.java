@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestJSON;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.impl.ZestScriptEngineFactory;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -44,6 +41,9 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestJSON;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
 public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
