@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -60,6 +62,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
+        given(passiveScanData.isPage200(any())).willReturn(false);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -71,6 +74,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -83,6 +87,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
         HttpMessage msg = createMessage();
         msg.setResponseHeader(new HttpResponseHeader());
         msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -93,6 +98,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
     public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
         // Given
         HttpMessage msg = createMessage();
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // WHen
         scanHttpResponseReceive(msg);
         // Then
@@ -104,6 +110,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -117,6 +124,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
         msg.getRequestHeader()
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><H1>Title</H1></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -130,6 +138,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
         msg.getRequestHeader()
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" alt=\"Some image (x)\")></img></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -144,6 +153,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody(
                 "<html><meta name=\"description\" content=\"UnitTest Content\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -157,6 +167,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
         msg.getRequestHeader()
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><meta name=\"description\" content=\"fred\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -172,6 +183,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody(
                 "<html><meta http-equiv=\"refresh\" content=\"0; url=http://example.com/\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -186,6 +198,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
                 .setURI(new URI("http://example.com/i.php?place=http://example.com/", false));
         msg.setResponseBody(
                 "<html><meta http-equiv=\"refresh\" content=\"0; url=http://example.com/\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -204,6 +217,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
                                 false));
         msg.setResponseBody(
                 "<html><meta http-equiv=\"refresh\" content=\"0; url=http://example.com/\"><img src=\"x.jpg\" alt=fred></img></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -219,6 +233,7 @@ public class UserControlledHTMLAttributesScanRuleUnitTest
         msg.getRequestHeader()
                 .setURI(new URI("http://example.com/i.php?place=here&name=fred", false));
         msg.setResponseBody("<html><img src=\"x.jpg\" alt=\"fred, here\")></img></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then

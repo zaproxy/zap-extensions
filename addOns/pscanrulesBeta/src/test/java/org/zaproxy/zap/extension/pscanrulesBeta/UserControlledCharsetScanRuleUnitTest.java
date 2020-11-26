@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -60,6 +62,7 @@ public class UserControlledCharsetScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setStatusCode(HttpStatusCode.NOT_ACCEPTABLE);
+        given(passiveScanData.isPage200(any())).willReturn(false);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -70,6 +73,7 @@ public class UserControlledCharsetScanRuleUnitTest
     public void shouldNotRaiseAlertIfRequestHasNoGetParams() {
         // Given
         HttpMessage msg = createMessage();
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // WHen
         scanHttpResponseReceive(msg);
         // Then
@@ -81,6 +85,7 @@ public class UserControlledCharsetScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -92,6 +97,7 @@ public class UserControlledCharsetScanRuleUnitTest
         // Given
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=&name=", false));
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -104,6 +110,7 @@ public class UserControlledCharsetScanRuleUnitTest
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html; charset=");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -117,6 +124,7 @@ public class UserControlledCharsetScanRuleUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.getResponseHeader()
                 .setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html; charset=utf-8");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -131,6 +139,7 @@ public class UserControlledCharsetScanRuleUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.setResponseBody(
                 "<html><META http-equiv=\"Content-Type\" content=\"text/html; charset=\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -143,6 +152,7 @@ public class UserControlledCharsetScanRuleUnitTest
         HttpMessage msg = createMessage();
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.setResponseBody("<html><META http-equiv=\"info\" content=\"Someinfo\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -156,6 +166,7 @@ public class UserControlledCharsetScanRuleUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.setResponseBody(
                 "<html><META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -170,6 +181,7 @@ public class UserControlledCharsetScanRuleUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/xml");
         msg.setResponseBody("<?xml version='1.0' encoding=?>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -183,6 +195,7 @@ public class UserControlledCharsetScanRuleUnitTest
         msg.getRequestHeader().setURI(new URI("http://example.com/i.php?cs=utf-8", false));
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/xml");
         msg.setResponseBody("<?xml version='1.0' encoding='utf-8'?>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
         // Then
