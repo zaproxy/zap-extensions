@@ -3,9 +3,8 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [30] - 2020-11-26
 ### Changed
-- Maintenance changes.
 - The CSP scan rule now checks if the form-action directive allows wildcards.
 - The CSP scan rule now includes further information in the description of allowed wildcard directives alerts when the impacted directive is one (or more) which doesn't fallback to default-src.
 - Maintenance changes.
@@ -199,6 +198,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[30]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v27
