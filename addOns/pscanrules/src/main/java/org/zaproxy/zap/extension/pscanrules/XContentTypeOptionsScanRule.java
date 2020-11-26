@@ -56,8 +56,8 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
             // If it's an error and we're not including error responses then just return without
             // alerting
             if (!includeErrorRedirectResponses
-                    && (HttpStatusCode.isServerError(responseStatus)
-                            || HttpStatusCode.isClientError(responseStatus)
+                    && (getHelper().isServerError(msg)
+                            || getHelper().isClientError(msg)
                             || HttpStatusCode.isRedirection(responseStatus))) {
                 return;
             }

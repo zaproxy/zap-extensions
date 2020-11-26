@@ -34,7 +34,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.ContentMatcher;
@@ -167,8 +166,7 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         // First check if it's an INTERNAL SERVER ERROR
-        int status = msg.getResponseHeader().getStatusCode();
-        if (status == HttpStatusCode.INTERNAL_SERVER_ERROR) {
+        if (getHelper().isPage500(msg)) {
             // We found it!
             // The AS raise an Internal Error
             // so a possible disclosure can be found
@@ -178,7 +176,7 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
             }
             raiseAlert(msg, id, msg.getResponseHeader().getPrimeHeader(), Alert.RISK_LOW);
 
-        } else if (status != HttpStatusCode.NOT_FOUND
+        } else if (!getHelper().isPage404(msg)
                 && !msg.getResponseHeader().hasContentType("application/wasm")) {
             String body = msg.getResponseBody().toString();
             for (String payload : getCustomPayloads().get()) {

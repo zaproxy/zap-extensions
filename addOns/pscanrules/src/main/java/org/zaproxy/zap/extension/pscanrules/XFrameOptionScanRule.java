@@ -68,8 +68,8 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
             // If it's an error/redirect and we're not including them then just return without
             // alerting
             if (!includeErrorsAndRedirects
-                    && (HttpStatusCode.isServerError(responseStatus)
-                            || HttpStatusCode.isClientError(responseStatus)
+                    && (getHelper().isServerError(msg)
+                            || getHelper().isClientError(msg)
                             || HttpStatusCode.isRedirection(responseStatus))) {
                 return;
             }

@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -45,10 +47,9 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void xframeOptionsDeny() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -58,17 +59,19 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void xframeOptionsDenyLc() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -78,17 +81,19 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void xframeOptionsDenyMc() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -98,17 +103,19 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void xframeOptionsSameOrigin() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -118,17 +125,19 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void xframeOptionsAllowFrom() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -138,17 +147,19 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void noXframeOptions() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -157,8 +168,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -168,12 +182,10 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void noXframeOptionsErrorLow() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 401 Unauthorized\r\n"
@@ -182,8 +194,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(true);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -193,12 +208,10 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void noXframeOptionsErrorMed() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 401 Unauthorized\r\n"
@@ -207,19 +220,20 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(true);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void noXframeOptionsErrorHigh() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 401 Unauthorized\r\n"
@@ -228,19 +242,20 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(true);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void noXframeOptionsPlainTextLow() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("Blah");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -249,8 +264,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -260,12 +278,10 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void noXframeOptionsPlainTextMed() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("blah");
         msg.setResponseHeader(
                 "HTTP/1.1 401 Unauthorized\r\n"
@@ -274,19 +290,20 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(true);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void noXframeOptionsPlainTextHigh() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("blah");
         msg.setResponseHeader(
                 "HTTP/1.1 401 Unauthorized\r\n"
@@ -295,17 +312,19 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(true);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void multipleXframeOptions() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -316,8 +335,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_MULTIPLE_HEADERS));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -327,10 +349,9 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void xframeOptionsViaMetaTag() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody(
                 "<html>" + "<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">" + "</html>");
         msg.setResponseHeader(
@@ -340,8 +361,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(2));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -357,10 +381,9 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void xframeOptionsViaMetaTagAndHeader() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody(
                 "<html>" + "<meta http-equiv=\"X-Frame-Options\" content=\"DENY\">" + "</html>");
         msg.setResponseHeader(
@@ -371,8 +394,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_DEFINED_IN_META));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -384,10 +410,9 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void malformedXframeOptions() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -397,8 +422,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_MALFORMED));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -408,10 +436,9 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void cspNoFaNoXframeOptions() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -421,8 +448,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -432,10 +462,9 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void cspWithFaNoXframeOptions() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -445,17 +474,19 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void cspWithFaWithXframeOptions() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -466,19 +497,20 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void cspWithFaWithBadXframeOptionsLow() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -489,8 +521,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_MALFORMED));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
@@ -500,12 +535,10 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
 
     @Test
     public void cspWithFaWithBadXframeOptionsMedium() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -516,19 +549,20 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // THen
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void cspWithFaWithBadXframeOptionsHigh() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -539,8 +573,11 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 }
