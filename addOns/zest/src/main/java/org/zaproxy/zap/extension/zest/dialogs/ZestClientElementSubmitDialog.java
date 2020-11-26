@@ -21,12 +21,12 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import org.mozilla.zest.core.v1.ZestClientElement;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zest.core.v1.ZestClientElement;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestClientElementSubmitDialog extends ZestClientElementDialog {
 

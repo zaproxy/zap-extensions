@@ -27,12 +27,12 @@ import java.util.Map.Entry;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapRunner;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestScript;
 
 public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implements ZestDialog {
 

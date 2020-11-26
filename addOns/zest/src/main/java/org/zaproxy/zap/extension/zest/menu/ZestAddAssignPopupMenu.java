@@ -22,21 +22,6 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import org.mozilla.zest.core.v1.ZestAssignCalc;
-import org.mozilla.zest.core.v1.ZestAssignFieldValue;
-import org.mozilla.zest.core.v1.ZestAssignFromElement;
-import org.mozilla.zest.core.v1.ZestAssignGlobalVariable;
-import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
-import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
-import org.mozilla.zest.core.v1.ZestAssignReplace;
-import org.mozilla.zest.core.v1.ZestAssignString;
-import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
-import org.mozilla.zest.core.v1.ZestAssignment;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -44,6 +29,21 @@ import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxH
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestAssignCalc;
+import org.zaproxy.zest.core.v1.ZestAssignFieldValue;
+import org.zaproxy.zest.core.v1.ZestAssignFromElement;
+import org.zaproxy.zest.core.v1.ZestAssignGlobalVariable;
+import org.zaproxy.zest.core.v1.ZestAssignRandomInteger;
+import org.zaproxy.zest.core.v1.ZestAssignRegexDelimiters;
+import org.zaproxy.zest.core.v1.ZestAssignReplace;
+import org.zaproxy.zest.core.v1.ZestAssignString;
+import org.zaproxy.zest.core.v1.ZestAssignStringDelimiters;
+import org.zaproxy.zest.core.v1.ZestAssignment;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
 

@@ -23,13 +23,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.Pattern;
-import org.mozilla.zest.core.v1.ZestAssertion;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -37,6 +30,13 @@ import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxH
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestAssertion;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestExpressionLength;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
 public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
 

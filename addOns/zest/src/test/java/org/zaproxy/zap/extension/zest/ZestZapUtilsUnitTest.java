@@ -25,11 +25,11 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
+import org.zaproxy.zest.core.v1.ZestRequest;
 
 /** Unit test for {@link ZestZapUtils}. */
 public class ZestZapUtilsUnitTest {

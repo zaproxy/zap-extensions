@@ -23,13 +23,6 @@ import java.util.regex.Pattern;
 import javax.swing.JTree;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestActionFail;
-import org.mozilla.zest.core.v1.ZestComment;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestJSON;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -42,6 +35,13 @@ import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
+import org.zaproxy.zest.core.v1.ZestActionFail;
+import org.zaproxy.zest.core.v1.ZestComment;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestJSON;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
 public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageContainer {
 

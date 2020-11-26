@@ -21,14 +21,14 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import org.mozilla.zest.core.v1.ZestClientWindowHandle;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestClientWindowHandleDialog extends StandardFieldsDialog implements ZestDialog {
 

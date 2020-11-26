@@ -19,23 +19,23 @@
  */
 package org.zaproxy.zap.extension.zest.menu;
 
-import org.mozilla.zest.core.v1.ZestClientAssignCookie;
-import org.mozilla.zest.core.v1.ZestClientElementAssign;
-import org.mozilla.zest.core.v1.ZestClientElementClear;
-import org.mozilla.zest.core.v1.ZestClientElementClick;
-import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
-import org.mozilla.zest.core.v1.ZestClientElementSubmit;
-import org.mozilla.zest.core.v1.ZestClientLaunch;
-import org.mozilla.zest.core.v1.ZestClientScreenshot;
-import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
-import org.mozilla.zest.core.v1.ZestClientWindowClose;
-import org.mozilla.zest.core.v1.ZestClientWindowHandle;
-import org.mozilla.zest.core.v1.ZestClientWindowOpenUrl;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
+import org.zaproxy.zest.core.v1.ZestClientElementAssign;
+import org.zaproxy.zest.core.v1.ZestClientElementClear;
+import org.zaproxy.zest.core.v1.ZestClientElementClick;
+import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
+import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestClientScreenshot;
+import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
+import org.zaproxy.zest.core.v1.ZestClientWindowClose;
+import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
+import org.zaproxy.zest.core.v1.ZestClientWindowOpenUrl;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestMenuManager {
 

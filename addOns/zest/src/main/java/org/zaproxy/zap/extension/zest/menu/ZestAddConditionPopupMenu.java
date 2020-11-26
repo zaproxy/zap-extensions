@@ -26,24 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.swing.JMenuItem;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestExpression;
-import org.mozilla.zest.core.v1.ZestExpressionAnd;
-import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
-import org.mozilla.zest.core.v1.ZestExpressionEquals;
-import org.mozilla.zest.core.v1.ZestExpressionIsInteger;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
-import org.mozilla.zest.core.v1.ZestExpressionOr;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
-import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestExpressionURL;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestStructuredExpression;
-import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -51,9 +33,27 @@ import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxH
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestExpression;
+import org.zaproxy.zest.core.v1.ZestExpressionAnd;
+import org.zaproxy.zest.core.v1.ZestExpressionClientElementExists;
+import org.zaproxy.zest.core.v1.ZestExpressionEquals;
+import org.zaproxy.zest.core.v1.ZestExpressionIsInteger;
+import org.zaproxy.zest.core.v1.ZestExpressionLength;
+import org.zaproxy.zest.core.v1.ZestExpressionOr;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestExpressionResponseTime;
+import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
+import org.zaproxy.zest.core.v1.ZestExpressionURL;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestStatement;
+import org.zaproxy.zest.core.v1.ZestStructuredExpression;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
-// import org.mozilla.zest.core.v1.ZestExpressionOr;
-// import org.mozilla.zest.core.v1.ZestExpressionLength;
+// import org.zaproxy.zest.core.v1.ZestExpressionOr;
+// import org.zaproxy.zest.core.v1.ZestExpressionLength;
 
 public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 

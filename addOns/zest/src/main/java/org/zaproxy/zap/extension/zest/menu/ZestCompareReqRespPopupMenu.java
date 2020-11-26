@@ -21,9 +21,6 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import java.lang.reflect.Method;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -35,6 +32,9 @@ import org.zaproxy.zap.extension.zest.ZestResultsPanel;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestCompareReqRespPopupMenu extends PopupMenuItemHistoryReferenceContainer {
 

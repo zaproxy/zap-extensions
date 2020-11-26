@@ -22,8 +22,8 @@ package org.zaproxy.zap.extension.zest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.mozilla.zest.core.v1.ZestJSON;
 import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
+import org.zaproxy.zest.core.v1.ZestJSON;
 
 /** Verifies that the Zest script templates are parsed without errors. */
 public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {

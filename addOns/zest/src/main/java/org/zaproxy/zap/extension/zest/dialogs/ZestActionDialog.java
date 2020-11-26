@@ -32,16 +32,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.mozilla.zest.core.v1.ZestAction;
-import org.mozilla.zest.core.v1.ZestActionFail;
-import org.mozilla.zest.core.v1.ZestActionGlobalVariableRemove;
-import org.mozilla.zest.core.v1.ZestActionGlobalVariableSet;
-import org.mozilla.zest.core.v1.ZestActionInvoke;
-import org.mozilla.zest.core.v1.ZestActionPrint;
-import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestActionSleep;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -50,6 +40,16 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestAction;
+import org.zaproxy.zest.core.v1.ZestActionFail;
+import org.zaproxy.zest.core.v1.ZestActionGlobalVariableRemove;
+import org.zaproxy.zest.core.v1.ZestActionGlobalVariableSet;
+import org.zaproxy.zest.core.v1.ZestActionInvoke;
+import org.zaproxy.zest.core.v1.ZestActionPrint;
+import org.zaproxy.zest.core.v1.ZestActionScan;
+import org.zaproxy.zest.core.v1.ZestActionSleep;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog {
 

@@ -22,12 +22,12 @@ package org.zaproxy.zap.extension.zest;
 import java.io.IOException;
 import javax.script.ScriptException;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascan.ActiveScript;
 import org.zaproxy.zap.extension.ascan.ScriptsActiveScanner;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
 
 public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 

@@ -22,11 +22,11 @@ package org.zaproxy.zap.extension.zest;
 import javax.script.ScriptException;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScript;
 import org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner;
+import org.zaproxy.zest.core.v1.ZestRequest;
 
 public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 

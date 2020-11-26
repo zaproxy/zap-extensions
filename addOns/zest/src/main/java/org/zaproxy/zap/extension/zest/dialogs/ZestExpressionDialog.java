@@ -25,17 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestExpression;
-import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
-import org.mozilla.zest.core.v1.ZestExpressionEquals;
-import org.mozilla.zest.core.v1.ZestExpressionIsInteger;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
-import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestExpressionURL;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -43,6 +32,17 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestExpression;
+import org.zaproxy.zest.core.v1.ZestExpressionClientElementExists;
+import org.zaproxy.zest.core.v1.ZestExpressionEquals;
+import org.zaproxy.zest.core.v1.ZestExpressionIsInteger;
+import org.zaproxy.zest.core.v1.ZestExpressionLength;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestExpressionResponseTime;
+import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
+import org.zaproxy.zest.core.v1.ZestExpressionURL;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDialog {
 

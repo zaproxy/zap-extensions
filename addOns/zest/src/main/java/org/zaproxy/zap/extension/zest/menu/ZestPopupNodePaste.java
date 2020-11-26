@@ -22,14 +22,14 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.awt.Component;
 import javax.swing.JTree;
 import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 /** ZAP: New Popup Menu Alert Delete */
 public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
