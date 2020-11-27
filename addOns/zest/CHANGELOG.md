@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [33] - 2020-11-27
 ### Added
 - Allow to create a screenshot from the browser, using the context menu `Add Zest Client` > `Screenshot`.
