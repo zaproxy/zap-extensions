@@ -3,6 +3,15 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+### Changed
+- Now targeting ZAP 2.10.
+- The following scan rules now support Custom Page definitions:
+  - Application Error
+  - Cache Control
+  - X-Content-Type-Options
+  - X-Frame-Options
+
 ## [30] - 2020-11-26
 ### Changed
 - The CSP scan rule now checks if the form-action directive allows wildcards.

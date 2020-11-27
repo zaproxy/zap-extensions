@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.pscanrules;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -38,10 +40,9 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpRequest() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -50,17 +51,19 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void httpsAllPresentCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -70,8 +73,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
@@ -87,6 +93,8 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -95,10 +103,9 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpsMissingNoCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -108,8 +115,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-store, must-revalidate"));
@@ -117,10 +127,9 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpsMissingNoStoreCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -130,8 +139,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-cache, must-revalidate"));
@@ -139,10 +151,9 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpsMissingMustRevalidateCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -152,8 +163,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-store, no-cache"));
@@ -161,10 +175,9 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpsGoodPragmaCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -175,17 +188,19 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void httpsBadPragmaCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -196,8 +211,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.PRAGMA));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("cache"));
@@ -205,12 +223,10 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpsRedirectLowCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 301 Moved Permanently\r\n"
@@ -220,8 +236,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -229,12 +248,10 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpsRedirectMedCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 301 Moved Permanently\r\n"
@@ -244,8 +261,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
@@ -273,12 +293,10 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpsErrorLowCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 401 Unauthorized\r\n"
@@ -287,8 +305,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(true);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -296,12 +317,10 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpsErrorMedCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 401 Unauthorized\r\n"
@@ -310,19 +329,20 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(true);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void httpsErrorHighCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 401 Unauthorized\r\n"
@@ -331,19 +351,20 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(true);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void httpsJavaScriptLowCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test.js HTTP/1.1");
-
         msg.setResponseBody("STUFF");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -352,8 +373,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -361,12 +385,10 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
 
     @Test
     public void httpsJavaScriptMedCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test.js HTTP/1.1");
-
         msg.setResponseBody("STUFF");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -375,19 +397,20 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void httpsJavaScriptHighCacheRequest() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test.js HTTP/1.1");
-
         msg.setResponseBody("STUFF");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -396,8 +419,11 @@ public class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheContro
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 }

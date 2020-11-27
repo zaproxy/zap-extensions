@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
@@ -39,10 +41,9 @@ public class XContentTypeOptionScanRuleUnitTest
 
     @Test
     public void xContentTypeOptionsPresent() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -52,8 +53,11 @@ public class XContentTypeOptionScanRuleUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
@@ -74,6 +78,8 @@ public class XContentTypeOptionScanRuleUnitTest
                             + "Content-Length: "
                             + msg.getResponseBody().length()
                             + "\r\n");
+            given(passiveScanData.isClientError(any())).willReturn(false);
+            given(passiveScanData.isServerError(any())).willReturn(false);
             // When
             scanHttpResponseReceive(msg);
             // Then
@@ -85,10 +91,9 @@ public class XContentTypeOptionScanRuleUnitTest
 
     @Test
     public void xContentTypeOptionsAbsent() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -97,8 +102,11 @@ public class XContentTypeOptionScanRuleUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_CONTENT_TYPE_OPTIONS));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -106,10 +114,9 @@ public class XContentTypeOptionScanRuleUnitTest
 
     @Test
     public void xContentTypeOptionsBad() throws HttpMalformedHeaderException {
-
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -119,8 +126,11 @@ public class XContentTypeOptionScanRuleUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_CONTENT_TYPE_OPTIONS));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("sniff"));
@@ -128,12 +138,10 @@ public class XContentTypeOptionScanRuleUnitTest
 
     @Test
     public void xContentTypeOptionsAbsentRedirectLow() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 301 Moved Permanently\r\n"
@@ -143,8 +151,11 @@ public class XContentTypeOptionScanRuleUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_CONTENT_TYPE_OPTIONS));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -152,12 +163,10 @@ public class XContentTypeOptionScanRuleUnitTest
 
     @Test
     public void xContentTypeOptionsAbsentRedirectMed() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 301 Moved Permanently\r\n"
@@ -167,19 +176,20 @@ public class XContentTypeOptionScanRuleUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
     public void xContentTypeOptionsAbsentRedirectHigh() throws HttpMalformedHeaderException {
-
+        // Given
         rule.setAlertThreshold(AlertThreshold.HIGH);
-
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
                 "HTTP/1.1 301 Moved Permanently\r\n"
@@ -189,8 +199,11 @@ public class XContentTypeOptionScanRuleUnitTest
                         + "Content-Length: "
                         + msg.getResponseBody().length()
                         + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 }

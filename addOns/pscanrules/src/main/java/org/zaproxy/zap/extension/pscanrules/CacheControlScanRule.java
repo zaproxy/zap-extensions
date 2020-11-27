@@ -57,8 +57,8 @@ public class CacheControlScanRule extends PluginPassiveScanner {
             } else {
                 // MEDIUM or HIGH thresholds
                 if (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())
-                        || HttpStatusCode.isClientError(msg.getResponseHeader().getStatusCode())
-                        || HttpStatusCode.isServerError(msg.getResponseHeader().getStatusCode())) {
+                        || getHelper().isClientError(msg)
+                        || getHelper().isServerError(msg)) {
                     return;
                 } else if (!msg.getResponseHeader().isText()
                         || msg.getResponseHeader().isJavaScript()) {
