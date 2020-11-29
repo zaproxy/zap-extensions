@@ -2358,7 +2358,11 @@ public class diff_match_patch {
      * @param d Another Diff to compare against.
      * @return true or false.
      */
+    @Override
     public boolean equals(Object d) {
+      if (d == null || !(d instanceof Diff)) {
+          return false;
+      }
       try {
         return (((Diff) d).operation == this.operation)
                && (((Diff) d).text.equals(this.text));

@@ -117,6 +117,13 @@ public class HttpsInfoOutputPanel extends OutputPanel {
                 new Thread("ZAP-httpsinfo") {
                     @Override
                     public void run() {
+                        if (getTarget() == null) {
+                            String missingMsg =
+                                    Constant.messages.getString("httpsinfo.init.warning.missing");
+                            LOGGER.warn(missingMsg);
+                            View.getSingleton().showWarningDialog(missingMsg);
+                            return;
+                        }
                         try {
                             initSession(getTarget());
                         } catch (DVException e) {

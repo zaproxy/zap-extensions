@@ -192,4 +192,37 @@ public class CookieUtilsUnitTest {
         // Then
         assertThat(found, is(equalTo(true)));
     }
+
+    @Test
+    public void shouldNotFindCookiePlusNameIfNameIsNull() {
+        // Given
+        String fullHeader = "Set-Cookie: foo; Attribute1";
+        String headerValue = "foo; Attribute1";
+        // When
+        String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
+        // Then
+        assertThat(name, is(equalTo(null)));
+    }
+
+    @Test
+    public void shouldKnowThatNameDoesNotIncludeSemiColon() {
+        // Given
+        String fullHeader = "Set-Cookie: foo; Attribute1; Attribute2=AV2";
+        String headerValue = "foo; Attribute1; Attribute2=AV2";
+        // When
+        String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
+        // Then
+        assertThat(name, is(equalTo(null)));
+    }
+
+    @Test
+    public void shouldFindCookiePlusNameIfWellFormed() {
+        // Given
+        String fullHeader = "Set-Cookie: name=value; Attribute1; Attribute2=AV2";
+        String headerValue = "name=value; Attribute1; Attribute2=AV2";
+        // When
+        String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
+        // Then
+        assertThat(name, is(equalTo("Set-Cookie: name")));
+    }
 }

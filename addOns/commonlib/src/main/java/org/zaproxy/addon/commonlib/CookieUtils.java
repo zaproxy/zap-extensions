@@ -122,7 +122,8 @@ public final class CookieUtils {
         }
 
         int nameValuePairIdx = cookieHeaderValue.indexOf('=');
-        if (nameValuePairIdx == NOT_FOUND) {
+        if (nameValuePairIdx == NOT_FOUND
+                || cookieHeaderValue.indexOf('=') > cookieHeaderValue.indexOf(';')) {
             return null;
         }
 
@@ -146,6 +147,9 @@ public final class CookieUtils {
             return null;
         }
         String name = getCookieName(cookieHeaderValue);
+        if (name == null) {
+            return null;
+        }
 
         // First find the right line
         Pattern pattern =

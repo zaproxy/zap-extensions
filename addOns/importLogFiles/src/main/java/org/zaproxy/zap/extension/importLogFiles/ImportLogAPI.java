@@ -289,13 +289,10 @@ public class ImportLogAPI extends ApiImplementor {
         }
 
         if (httpPOSTData == null) {
-            BufferedWriter wr = null;
-            BufferedReader br = null;
-            try {
+            try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
+                    BufferedWriter wr = new BufferedWriter(new FileWriter(targetFile))) {
                 String sCurrentLine;
 
-                br = new BufferedReader(new FileReader(sourceFilePath));
-                wr = new BufferedWriter(new FileWriter(targetFile));
                 while ((sCurrentLine = br.readLine()) != null) {
                     wr.write(sCurrentLine);
                     wr.newLine();
@@ -303,32 +300,14 @@ public class ImportLogAPI extends ApiImplementor {
 
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
-            } finally {
-                try {
-                    if (wr != null) wr.close();
-                    if (br != null) br.close();
-                } catch (IOException ex) {
-                    log.error(ex.getMessage(), ex);
-                }
             }
         } else {
-            FileOutputStream fop = null;
-            try {
-                fop = new FileOutputStream(targetFile);
+            try (FileOutputStream fop = new FileOutputStream(targetFile)) {
                 byte[] contentInBytes = httpPOSTData.getBytes();
                 fop.write(contentInBytes);
                 fop.flush();
-                fop.close();
             } catch (IOException ex) {
                 log.error(ex.getMessage(), ex);
-            } finally {
-                try {
-                    if (fop != null) {
-                        fop.close();
-                    }
-                } catch (IOException ex) {
-                    log.error(ex.getMessage(), ex);
-                }
             }
         }
 

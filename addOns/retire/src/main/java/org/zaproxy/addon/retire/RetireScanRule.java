@@ -59,7 +59,7 @@ public class RetireScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (!getHelper().isPage200(msg)) {
+        if (!getHelper().isPage200(msg) || getRepo() == null) {
             return;
         }
         String uri = msg.getRequestHeader().getURI().toString();
