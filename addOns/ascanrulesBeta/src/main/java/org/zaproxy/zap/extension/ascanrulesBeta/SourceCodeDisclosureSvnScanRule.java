@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -40,7 +39,6 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -141,8 +139,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
         // at Low or Medium strength, do not attack URLs which returned "Not Found"
         AttackStrength attackStrength = getAttackStrength();
         if ((attackStrength == AttackStrength.LOW || attackStrength == AttackStrength.MEDIUM)
-                && (getBaseMsg().getResponseHeader().getStatusCode() == HttpStatus.SC_NOT_FOUND))
-            return;
+                && (isPage404(getBaseMsg()))) return;
 
         // scan the node itself (ie, at URL level, rather than at parameter level)
         if (log.isDebugEnabled()) {
@@ -249,18 +246,17 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
         return 34; // Predictable Resource Location
     }
 
-    private boolean shouldStop(AlertThreshold alertThreshold, int statusCode) {
+    private boolean shouldStop(AlertThreshold alertThreshold, HttpMessage msg) {
         // At MEDIUM or HIGH ignore all client and server error responses
         if ((alertThreshold == AlertThreshold.MEDIUM || alertThreshold == AlertThreshold.HIGH)
-                && (HttpStatusCode.isClientError(statusCode)
-                        || HttpStatusCode.isServerError(statusCode))) {
+                && (isClientError(msg) || isServerError(msg))) {
             return true;
         }
         return false;
     }
 
-    private int getConfidence(int statusCode) {
-        if (HttpStatusCode.isClientError(statusCode) || HttpStatusCode.isServerError(statusCode)) {
+    private int getConfidence(HttpMessage msg) {
+        if (isClientError(msg) || isServerError(msg)) {
             return Alert.CONFIDENCE_LOW; // Less confident due to response status code
         }
         return Alert.CONFIDENCE_MEDIUM;
@@ -329,7 +325,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
             int attackmsgResponseStatusCode =
                     svnsourcefileattackmsg.getResponseHeader().getStatusCode();
 
-            if (shouldStop(alertThreshold, attackmsgResponseStatusCode)) {
+            if (shouldStop(alertThreshold, svnsourcefileattackmsg)) {
                 return false;
             }
 
@@ -368,7 +364,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                     // if we get to here, is is very likely that we have source file inclusion
                     // attack. alert it.
                     newAlert()
-                            .setConfidence(getConfidence(attackmsgResponseStatusCode))
+                            .setConfidence(getConfidence(svnsourcefileattackmsg))
                             .setUri(getBaseMsg().getRequestHeader().getURI().getURI())
                             .setAttack(attackFilename)
                             .setOtherInfo(getExtraInfo(urlfilename, attackFilename))
@@ -444,7 +440,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                 int svnWCDBAttackMsgStatusCode =
                         svnWCDBAttackMsg.getResponseHeader().getStatusCode();
 
-                if (shouldStop(alertThreshold, svnWCDBAttackMsgStatusCode)) {
+                if (shouldStop(alertThreshold, svnWCDBAttackMsg)) {
                     return false;
                 }
 
@@ -598,8 +594,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                                         .getResponseHeader()
                                                         .getStatusCode();
 
-                                        if (shouldStop(
-                                                alertThreshold, svnSourceFileAttackMsgStatusCode)) {
+                                        if (shouldStop(alertThreshold, svnSourceFileAttackMsg)) {
                                             return false;
                                         }
 
@@ -640,7 +635,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                                 newAlert()
                                                         .setConfidence(
                                                                 getConfidence(
-                                                                        svnSourceFileAttackMsgStatusCode))
+                                                                        svnSourceFileAttackMsg))
                                                         .setUri(
                                                                 getBaseMsg()
                                                                         .getRequestHeader()

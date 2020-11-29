@@ -4,7 +4,19 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Now targeting ZAP 2.10.
+- The following scan rules now support Custom Page definitions:
+  - Hidden Files
+  - HTTPS as HTTP
+  - Insecure HTTP Methods
+  - Integer Overflow
+  - Padding Oracle
+  - Remove Code Execution CVE-2012-1823
+  - Session Fixation
+  - Source Code Disclosure CVE-2012-1823
+  - Source Code Disclosure Git
+  - Source Code Disclosure SVN
 
 ## [32] - 2020-11-26
 ### Changed

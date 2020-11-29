@@ -34,13 +34,13 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link RemoteCodeExecutionCve0121823ScanRule}. */
+/** Unit test for {@link RemoteCodeExecutionCve20121823ScanRule}. */
 public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
-        extends ActiveScannerTest<RemoteCodeExecutionCve0121823ScanRule> {
+        extends ActiveScannerTest<RemoteCodeExecutionCve20121823ScanRule> {
 
     @Override
-    protected RemoteCodeExecutionCve0121823ScanRule createScanner() {
-        return new RemoteCodeExecutionCve0121823ScanRule();
+    protected RemoteCodeExecutionCve20121823ScanRule createScanner() {
+        return new RemoteCodeExecutionCve20121823ScanRule();
     }
 
     @Test
@@ -159,7 +159,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     public void shouldAlertIfWindowsAttackWasSuccessful() throws Exception {
         // Given
         final String body =
-                RemoteCodeExecutionCve0121823ScanRule.RANDOM_STRING
+                RemoteCodeExecutionCve20121823ScanRule.RANDOM_STRING
                         + "<html><body>X Y Z</body></html>";
         String test = "/shouldAlertIfWindowsAttackWasSuccessful/";
         nano.addHandler(new WinResponse(test, body));
@@ -176,7 +176,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                 is(
                         equalTo(
                                 "<?php exec('cmd.exe /C echo "
-                                        + RemoteCodeExecutionCve0121823ScanRule.RANDOM_STRING
+                                        + RemoteCodeExecutionCve20121823ScanRule.RANDOM_STRING
                                         + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
@@ -187,7 +187,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     public void shouldNotDoWinAttackIfWinTechIsNotIncluded() throws Exception {
         // Given
         final String body =
-                RemoteCodeExecutionCve0121823ScanRule.RANDOM_STRING
+                RemoteCodeExecutionCve20121823ScanRule.RANDOM_STRING
                         + "<html><body>X Y Z</body></html>";
         String test = "/shouldNotDoWinAttackIfWinTechIsNotIncluded/";
         nano.addHandler(new WinResponse(test, body));
@@ -205,7 +205,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
     public void shouldAlertIfNixAttackWasSuccessful() throws Exception {
         // Given
         final String body =
-                RemoteCodeExecutionCve0121823ScanRule.RANDOM_STRING
+                RemoteCodeExecutionCve20121823ScanRule.RANDOM_STRING
                         + "<html><body>X Y Z</body></html>";
         String test = "/shouldAlertIfNixAttackWasSuccessful/";
         nano.addHandler(new NixResponse(test, body));
@@ -222,7 +222,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                 is(
                         equalTo(
                                 "<?php exec('echo "
-                                        + RemoteCodeExecutionCve0121823ScanRule.RANDOM_STRING
+                                        + RemoteCodeExecutionCve20121823ScanRule.RANDOM_STRING
                                         + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
@@ -236,7 +236,7 @@ public class RemoteCodeExecutionCve20121823ScanRuleUnitTest
         nano.addHandler(
                 new NixResponse(
                         test,
-                        RemoteCodeExecutionCve0121823ScanRule.RANDOM_STRING
+                        RemoteCodeExecutionCve20121823ScanRule.RANDOM_STRING
                                 + "<html><body>X Y Z</body></html>"));
         HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);

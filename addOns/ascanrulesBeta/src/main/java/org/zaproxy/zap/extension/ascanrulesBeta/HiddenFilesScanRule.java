@@ -108,7 +108,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                 continue;
             }
             int statusCode = testMsg.getResponseHeader().getStatusCode();
-            if (statusCode == HttpStatusCode.OK) {
+            if (isPage200(testMsg)) {
                 String responseBody = testMsg.getResponseBody().toString();
                 // If all the content checks matched then confidence is high
                 boolean matches =

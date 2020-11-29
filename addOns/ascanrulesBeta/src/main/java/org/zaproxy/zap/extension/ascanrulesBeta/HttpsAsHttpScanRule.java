@@ -101,12 +101,14 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
         }
 
         int originalStatusCode = getBaseMsg().getResponseHeader().getStatusCode();
-        if (originalStatusCode == HttpStatusCode.NOT_FOUND || originalStatusCode == 0) {
+        boolean was404 = isPage404(getBaseMsg());
+        if (was404) {
             if (log.isDebugEnabled()) {
                 log.debug(
                         "The original request was not successfuly completed (status = "
                                 + originalStatusCode
                                 + "), so there is not much point in looking further.");
+                log.debug("isPage404 returned: " + was404);
             }
             return;
         }

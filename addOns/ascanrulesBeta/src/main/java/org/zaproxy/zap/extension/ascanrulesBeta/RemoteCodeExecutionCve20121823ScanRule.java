@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.RandomStringUtils;
@@ -41,7 +40,7 @@ import org.zaproxy.zap.model.Vulnerability;
  *
  * @author 70pointer
  */
-public class RemoteCodeExecutionCve0121823ScanRule extends AbstractAppPlugin {
+public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
 
     /**
      * details of the vulnerability which we are attempting to find WASC 20 = Improper Input
@@ -50,7 +49,8 @@ public class RemoteCodeExecutionCve0121823ScanRule extends AbstractAppPlugin {
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_20");
 
     /** the logger object */
-    private static final Logger log = Logger.getLogger(RemoteCodeExecutionCve0121823ScanRule.class);
+    private static final Logger log =
+            Logger.getLogger(RemoteCodeExecutionCve20121823ScanRule.class);
 
     /** a random string (which remains constant across multiple runs, as long as Zap is not */
     static final String RANDOM_STRING =
@@ -161,7 +161,7 @@ public class RemoteCodeExecutionCve0121823ScanRule extends AbstractAppPlugin {
             // if the command was not recognised (by the host OS), we get a response size of 0 on
             // PHP, but not on Tomcat
             // to be sure it's not a false positive, we look for a string to be echoed
-            if (attackmsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK
+            if (isPage200(attackmsg)
                     && attackResponseBody.length >= RANDOM_STRING.length()
                     && responseBody.startsWith(RANDOM_STRING)) {
                 if (log.isDebugEnabled()) {
