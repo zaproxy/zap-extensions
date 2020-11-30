@@ -21,8 +21,9 @@ zapAddOn {
 }
 
 dependencies {
-    compile("com.googlecode.concurrent-trees", "concurrent-trees", "2.6.1")
     compileOnly(parent!!.childProjects.get("commonlib")!!)
+
+    implementation("com.googlecode.concurrent-trees:concurrent-trees:2.6.1")
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     implementation("org.bitbucket.mstrobel:procyon-compilertools:0.5.36")
 
