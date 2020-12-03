@@ -95,7 +95,8 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
             javafx.embed.swing.JFXPanel unused = new javafx.embed.swing.JFXPanel();
             return true;
         } catch (Throwable e) {
-            LOGGER.warn("Unable to use JavaFX:", e);
+            LOGGER.warn("Unable to use JavaFX: " + e.getMessage());
+            LOGGER.debug(e);
             System.setProperty(ZAP_JAVAFX_INIT_FAILED_SYSTEM_PROPERTY, "true");
         }
         return false;
