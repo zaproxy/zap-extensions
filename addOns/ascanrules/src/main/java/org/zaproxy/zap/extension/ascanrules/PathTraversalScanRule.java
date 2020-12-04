@@ -38,7 +38,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -470,9 +469,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
             String urlfilename = msg.getRequestHeader().getURI().getName();
 
             // url file name may be empty, i.e. there is no file name for next check
-            if (!StringUtils.isEmpty(urlfilename)
-                    && (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK
-                            || errorMatcher.find())) {
+            if (!StringUtils.isEmpty(urlfilename) && (!isPage200(msg) || errorMatcher.find())) {
 
                 if (log.isDebugEnabled()) {
                     log.debug(
@@ -519,8 +516,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
 
                     // did we get an Exception or an Error?
                     errorMatcher = errorPattern.matcher(msg.getResponseBody().toString());
-                    if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK)
-                            && (!errorMatcher.find())) {
+                    if (isPage200(msg) && (!errorMatcher.find())) {
 
                         // if it returns OK, and the random string above did NOT return ok, then
                         // raise an alert
@@ -647,7 +643,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
         String match = contentsMatcher.match(getContentsToMatch(msg));
 
         // if the output matches, and we get a 200
-        if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) && match != null) {
+        if (isPage200(msg) && match != null) {
             newAlert()
                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
                     .setParam(param)

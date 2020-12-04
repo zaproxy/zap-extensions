@@ -4,7 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Now targeting ZAP 2.10.
+- The following scan rules now support Custom Page definitions:
+  - Buffer Overflow
+  - Directory Browsing
+  - Format String
+  - Parameter Tamper
+  - Path Traversal
+  - Remote File Include
+  - Source Code Disclosure WEB-INF
 
 ## [37] - 2020-11-26
 ### Changed

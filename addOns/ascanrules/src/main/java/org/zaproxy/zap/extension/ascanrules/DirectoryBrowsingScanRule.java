@@ -37,7 +37,6 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.model.Tech;
 
 public class DirectoryBrowsingScanRule extends AbstractAppPlugin {
@@ -111,7 +110,7 @@ public class DirectoryBrowsingScanRule extends AbstractAppPlugin {
             writeProgress(msg.getRequestHeader().getURI().toString());
             sendAndReceive(msg);
 
-            if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
+            if (!isPage200(msg)) {
                 return;
             }
 

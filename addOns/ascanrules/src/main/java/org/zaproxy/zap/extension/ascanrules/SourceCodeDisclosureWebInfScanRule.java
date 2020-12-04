@@ -30,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.SystemUtils;
@@ -190,7 +189,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
 
                 HttpMessage classfilemsg = new HttpMessage(classURI);
                 sendAndReceive(classfilemsg, false); // do not follow redirects
-                if (classfilemsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK) {
+                if (isPage200(classfilemsg)) {
                     // to decompile the class file, we need to write it to disk..
                     // under the current version of the library, at least
                     File classFile = null;
@@ -266,8 +265,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                             URI propsFileURI = getPropsFileURI(originalURI, propsFilename);
                             HttpMessage propsfilemsg = new HttpMessage(propsFileURI);
                             sendAndReceive(propsfilemsg, false); // do not follow redirects
-                            if (propsfilemsg.getResponseHeader().getStatusCode()
-                                    == HttpStatus.SC_OK) {
+                            if (isPage200(propsfilemsg)) {
                                 // Holy sheet.. we found a properties file
                                 newAlert()
                                         .setConfidence(Alert.CONFIDENCE_MEDIUM)

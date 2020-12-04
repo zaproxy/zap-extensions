@@ -117,12 +117,6 @@ public class CrlfInjectionScanRule extends AbstractAppParamPlugin {
     }
 
     private boolean checkResult(HttpMessage msg, String param, String attack) {
-        // no need to bother if response OK or not.
-        //      if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK
-        //          && !HttpStatusCode.isServerError(msg.getResponseHeader().getStatusCode())) {
-        //          return false;
-        //      }
-
         Matcher matcher = patternCookieTamper.matcher(msg.getResponseHeader().toString());
         if (matcher.find()) {
             newAlert()
