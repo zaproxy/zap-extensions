@@ -567,7 +567,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
             log.debug("Response Code: " + responseCode);
         }
 
-        if (responseCode == HttpStatusCode.OK || responseCode == HttpStatusCode.CREATED) {
+        if (isPage200(msg) || responseCode == HttpStatusCode.CREATED) {
             evidence =
                     Constant.messages.getString(
                             "ascanbeta.insecurehttpmethod.insecure", responseCode);

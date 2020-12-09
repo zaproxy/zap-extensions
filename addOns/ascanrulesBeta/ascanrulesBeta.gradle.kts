@@ -6,11 +6,12 @@ description = "The beta quality Active Scanner rules"
 zapAddOn {
     addOnName.set("Active scanner rules (beta)")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/active-scan-rules-beta/")
+        notBeforeVersion.set("2.10.0")
 
         dependencies {
             addOns {
@@ -35,7 +36,15 @@ zapAddOn {
     }
 }
 
+repositories {
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
 dependencies {
+    zap("org.zaproxy:zap:2.10.0-20201111.162919-2")
+
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 

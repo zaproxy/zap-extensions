@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -41,7 +40,7 @@ import org.zaproxy.zap.model.Vulnerability;
  *
  * @author 70pointer
  */
-public class SourceCodeDisclosureCve0121823ScanRule extends AbstractAppPlugin {
+public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
 
     /** match on PHP tags in the response */
     private static final Pattern PHP_PATTERN1 =
@@ -61,7 +60,7 @@ public class SourceCodeDisclosureCve0121823ScanRule extends AbstractAppPlugin {
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_20");
 
     private static final Logger log =
-            Logger.getLogger(SourceCodeDisclosureCve0121823ScanRule.class);
+            Logger.getLogger(SourceCodeDisclosureCve20121823ScanRule.class);
 
     @Override
     public int getId() {
@@ -131,8 +130,7 @@ public class SourceCodeDisclosureCve0121823ScanRule extends AbstractAppPlugin {
             // at Low or Medium strength, do not attack URLs which returned "Not Found"
             AttackStrength attackStrength = getAttackStrength();
             if ((attackStrength == AttackStrength.LOW || attackStrength == AttackStrength.MEDIUM)
-                    && (getBaseMsg().getResponseHeader().getStatusCode()
-                            == HttpStatus.SC_NOT_FOUND)) return;
+                    && (isPage404(getBaseMsg()))) return;
 
             URI originalURI = getBaseMsg().getRequestHeader().getURI();
 
@@ -147,7 +145,7 @@ public class SourceCodeDisclosureCve0121823ScanRule extends AbstractAppPlugin {
             HttpMessage attackmsg = new HttpMessage(attackURI);
             sendAndReceive(attackmsg, false); // do not follow redirects
 
-            if (attackmsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK) {
+            if (isPage200(attackmsg)) {
                 // double-check: does the response contain HTML encoded PHP?
                 // Ignore the case where it contains encoded HTML for now, since thats not a source
                 // code disclosure anyway

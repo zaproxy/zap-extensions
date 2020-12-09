@@ -30,7 +30,6 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 
 /** @author yhawke (2014) */
 public class PaddingOracleScanRule extends AbstractAppParamPlugin {
@@ -136,7 +135,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
                 sendAndReceive(msg);
 
                 // If the control test returned an error, then keep going
-                if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+                if (isPage200(msg)) {
 
                     // Response without any modification
                     String controlResponse = msg.getResponseBody().toString();
@@ -149,8 +148,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
 
                     // First check if an Internal Server Error ws launched
                     // in this case we found (very) likely Padding Oracle vulnerability
-                    if (msg.getResponseHeader().getStatusCode()
-                            == HttpStatusCode.INTERNAL_SERVER_ERROR) {
+                    if (isPage500(msg)) {
                         // We Found IT!
                         // First do logging
                         if (log.isDebugEnabled()) {

@@ -39,9 +39,9 @@ import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-/** Unit test for {@link SourceCodeDisclosureCve0121823ScanRule}. */
+/** Unit test for {@link SourceCodeDisclosureCve20121823ScanRule}. */
 public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
-        extends ActiveScannerTest<SourceCodeDisclosureCve0121823ScanRule> {
+        extends ActiveScannerTest<SourceCodeDisclosureCve20121823ScanRule> {
 
     private static final String RESPONSE_HEADER_404_NOT_FOUND =
             "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n";
@@ -49,8 +49,9 @@ public class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     private static final String PHP_SOURCE_ECHO_TAG = "<?= '<h1>Welcome!</h1>' ?>";
 
     @Override
-    protected SourceCodeDisclosureCve0121823ScanRule createScanner() {
-        SourceCodeDisclosureCve0121823ScanRule rule = new SourceCodeDisclosureCve0121823ScanRule();
+    protected SourceCodeDisclosureCve20121823ScanRule createScanner() {
+        SourceCodeDisclosureCve20121823ScanRule rule =
+                new SourceCodeDisclosureCve20121823ScanRule();
         rule.setConfig(new ZapXmlConfiguration());
         return rule;
     }

@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -119,8 +118,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
         // at Low or Medium strength, do not attack URLs which returned "Not Found"
         AttackStrength attackStrength = getAttackStrength();
         if ((attackStrength == AttackStrength.LOW || attackStrength == AttackStrength.MEDIUM)
-                && (getBaseMsg().getResponseHeader().getStatusCode() == HttpStatus.SC_NOT_FOUND))
-            return;
+                && (isPage404(getBaseMsg()))) return;
 
         // scan the node itself (ie, at URL level, rather than at parameter level)
         if (log.isDebugEnabled()) {
