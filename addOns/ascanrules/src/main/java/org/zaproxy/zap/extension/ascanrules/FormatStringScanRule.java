@@ -49,7 +49,6 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.network.HttpResponseBody;
@@ -115,9 +114,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             return; // Stop!
         }
 
-        if (getBaseMsg().getResponseHeader().getStatusCode()
-                == HttpStatusCode
-                        .INTERNAL_SERVER_ERROR) // Check to see if the page closed initially
+        if (isPage500(getBaseMsg())) // Check to see if the page closed initially
         {
             return; // Stop
         }
@@ -154,8 +151,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 return; // Something went wrong, no point continuing
             }
 
-            if (HttpStatusCode.INTERNAL_SERVER_ERROR
-                    == testMsg.getResponseHeader().getStatusCode()) {
+            if (isPage500(testMsg)) {
                 return; // Initial message returned error, subsequent requests are likely to as well
             }
 
@@ -194,8 +190,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                                     + "\n The target may have replied with a poorly formed redirect due to our input.");
                 return; // Something went wrong, no point continuing
             }
-            if (intialAttackMsg.getResponseHeader().getStatusCode()
-                    == HttpStatusCode.INTERNAL_SERVER_ERROR) {
+            if (isPage500(intialAttackMsg)) {
                 StringBuilder sb1 = new StringBuilder();
                 sb1.append(initialMessage);
                 for (i = 0; i < 10; i++) {
@@ -222,8 +217,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 }
                 HttpResponseBody secondAttackResponseBody = verificationMsg.getResponseBody();
                 if (secondAttackResponseBody.length() > initialResponseLength + 20
-                        && verificationMsg.getResponseHeader().getStatusCode()
-                                == HttpStatusCode.OK) {
+                        && isPage200(verificationMsg)) {
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setParam(param)
@@ -282,8 +276,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                                     + "\n The target may have replied with a poorly formed redirect due to our input.");
                 return; // Something went wrong, no point continuing
             }
-            if (microsoftTestMsg.getResponseHeader().getStatusCode()
-                    == HttpStatusCode.INTERNAL_SERVER_ERROR) {
+            if (isPage500(microsoftTestMsg)) {
                 newAlert()
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
                         .setParam(param)

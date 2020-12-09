@@ -43,7 +43,6 @@ import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 
 public class ParameterTamperScanRule extends AbstractAppParamPlugin {
 
@@ -139,7 +138,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
             return;
         }
 
-        if (normalMsg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
+        if (!isPage200(normalMsg)) {
             return;
         }
 
@@ -186,8 +185,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
     private boolean checkResult(
             HttpMessage msg, String param, String attack, String normalHTTPResponse) {
 
-        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK
-                && !HttpStatusCode.isServerError(msg.getResponseHeader().getStatusCode())) {
+        if (!isPage200(msg) && !isPage500(msg)) {
             return false;
         }
 

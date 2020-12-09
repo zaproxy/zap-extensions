@@ -30,7 +30,6 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -223,8 +222,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
                             msg.getResponseHeader().toString() + msg.getResponseBody().toString();
                     matcher = REMOTE_FILE_PATTERNS[i].matcher(response);
                     // if the output matches, and we get a 200
-                    if (matcher.find()
-                            && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+                    if (matcher.find() && isPage200(msg)) {
                         // And check that this isnt exactly the same as the original response
                         origMatcher = REMOTE_FILE_PATTERNS[i].matcher(origResponse);
                         if (origMatcher.find() && origMatcher.group().equals(matcher.group())) {

@@ -32,7 +32,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -96,9 +95,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
             }
             return; // Stop!
         }
-        if (getBaseMsg().getResponseHeader().getStatusCode()
-                == HttpStatusCode
-                        .INTERNAL_SERVER_ERROR) // Check to see if the page closed initially
+        if (isPage500(getBaseMsg())) // Check to see if the page closed initially
         {
             return; // Stop
         }
@@ -129,8 +126,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
             // response
             String chkerrorheader = requestReturn.getHeadersAsString();
             log.debug("Header: " + chkerrorheader);
-            if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR
-                    && chkerrorheader.contains(checkStringHeader1)) {
+            if (isPage500(msg) && chkerrorheader.contains(checkStringHeader1)) {
                 log.debug("Found Header");
                 newAlert()
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
