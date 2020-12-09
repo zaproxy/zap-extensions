@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.9.0.
 - Maintenance changes.
 - Promote to beta
+- Now clicking on different buttons throughout the page to see if it triggers XSS.
 
 ## [9] - 2019-06-12
 ### Fixed
