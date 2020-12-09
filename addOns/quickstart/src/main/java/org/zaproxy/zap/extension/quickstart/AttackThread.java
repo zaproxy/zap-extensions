@@ -267,12 +267,15 @@ public class AttackThread extends Thread {
                         }
                     });
 
+            String urlStr = url.toString();
+            if (urlStr.endsWith("/")) {
+                // The sites tree treats URLs ending in a slash as leaf nodes
+                urlStr = urlStr.substring(0, urlStr.length() - 1);
+            }
+            URI uri = new URI(urlStr, false);
+
             for (int i = 0; i < 10; i++) {
-                startNode =
-                        Model.getSingleton()
-                                .getSession()
-                                .getSiteTree()
-                                .findNode(new URI(url.toString(), false));
+                startNode = Model.getSingleton().getSession().getSiteTree().findNode(uri);
                 if (startNode != null) {
                     break;
                 }
