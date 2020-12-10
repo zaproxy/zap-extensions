@@ -113,8 +113,7 @@ public class DataGenerator {
             }
         }
 
-        return getExampleValue(
-                isPath(parameter.getIn()), parameter.getSchema().getType(), parameter.getName());
+        return getExampleValue(parameter);
     }
 
     private String generateArrayValue(String name, Parameter parameter) {
@@ -172,6 +171,15 @@ public class DataGenerator {
             value = generators.getBodyGenerator().generate(schema);
         }
         return value;
+    }
+
+    private String getExampleValue(Parameter parameter) {
+        String in = parameter.getIn();
+        String type = parameter.getSchema().getType();
+        if ("cookie".equals(in) && "string".equals(type)) {
+            return "JohnDoe";
+        }
+        return getExampleValue(isPath(in), type, parameter.getName());
     }
 
     private String getExampleValue(boolean isPath, String type, String name) {
