@@ -1,15 +1,16 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "20.4.0"
+version = "21.0.0"
 description = "Technology detection using Wappalyzer: wappalyzer.com"
 
 zapAddOn {
     addOnName.set("Wappalyzer - Technology Detection")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        notBeforeVersion.set("2.10.0")
         url.set("https://www.zaproxy.org/docs/desktop/addons/technology-detection/")
     }
 
@@ -19,7 +20,15 @@ zapAddOn {
     }
 }
 
+repositories {
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
 dependencies {
+    zap("org.zaproxy:zap:2.10.0-20201111.162919-2")
+
     implementation("com.google.re2j:re2j:1.5")
 
     val batikVersion = "1.13"

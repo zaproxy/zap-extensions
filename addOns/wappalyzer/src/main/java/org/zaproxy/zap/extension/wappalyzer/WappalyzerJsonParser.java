@@ -137,6 +137,7 @@ public class WappalyzerJsonParser {
                 app.setHtml(this.jsonToPatternList("HTML", appData.get("html")));
                 app.setScript(this.jsonToPatternList("SCRIPT", appData.get("scripts")));
                 app.setMetas(this.jsonToAppPatternMapList("META", appData.get("meta")));
+                app.setCss(this.jsonToPatternList("CSS", appData.get("css")));
                 app.setImplies(this.jsonToStringList(appData.get("implies")));
                 app.setCpe(appData.optString("cpe"));
 

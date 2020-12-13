@@ -1,10 +1,11 @@
 {
   "$schema": "../schema.json",
   "technologies": {
-	"Test Entry": {
+    "Test Entry": {
       "cats": [
         36
       ],
+      "css": "\\.example",
       "html": [
         "example\\.com/test\\.html[^>]+></iframe>",
         "<!-- (?:End )?Test Entry -->"

@@ -123,6 +123,19 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         checkBodyMatches(msg);
         checkMetaElementsMatches(source);
         checkScriptElementsMatches(source);
+        checkCssElementsMatches(msg, source);
+    }
+
+    private void checkCssElementsMatches(HttpMessage msg, Source source) {
+        for (AppPattern appPattern : currentApp.getCss()) {
+            if (msg.getRequestHeader().isCss() || msg.getResponseHeader().isCss()) {
+                addIfMatches(appPattern, msg.getResponseBody().toString());
+            } else {
+                for (Element styleElement : source.getAllElements(HTMLElementName.STYLE)) {
+                    addIfMatches(appPattern, styleElement.getSource().toString());
+                }
+            }
+        }
     }
 
     private void checkScriptElementsMatches(Source source) {

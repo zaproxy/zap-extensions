@@ -78,6 +78,9 @@ public class PopupMenuEvidence extends ExtensionPopupMenu {
                 for (AppPattern p : app.getScript()) {
                     addMenuItem(p.getJavaPattern(), ExtensionSearch.Type.Response);
                 }
+                for (AppPattern p : app.getCss()) {
+                    addMenuItem(p.getJavaPattern(), ExtensionSearch.Type.Response);
+                }
             }
             return getMenuComponentCount() != 0;
         }
