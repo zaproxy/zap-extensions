@@ -6,8 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
+- Now targeting ZAP 2.10.
 - Add-on promoted to Release.
 - Dependency updates.
+
+### Added
+- Added support for CSS patterns, aligning with upstream project.
 
 ## [20.3.0] - 2020-09-30
 ### Changed

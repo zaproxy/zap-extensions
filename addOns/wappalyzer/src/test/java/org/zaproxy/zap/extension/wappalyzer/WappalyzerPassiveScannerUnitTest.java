@@ -143,6 +143,59 @@ public class WappalyzerPassiveScannerUnitTest
         assertFoundApp("https://www.example.com", "PHP"); // Implied
     }
 
+    @Test
+    public void shouldMatchOnCssResponseWhenContentMatches() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/css");
+        msg.setResponseBody(".example {background-color: lightblue;}");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
+    @Test
+    public void shouldMatchOnCssRequestWhenContentMatches() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/styles.css HTTP/1.1");
+        msg.setResponseBody(".example {background-color: lightblue;}");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
+    @Test
+    public void shouldMatchOnHtmlResponseWhenContentStyleMatches()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><head><style>.example {background-color: lightblue;}</style></head></html>");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
+    @Test
+    public void shouldNotMatchOnHtmlResponseWhenContentStyleDoesNotMatch()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><head><style>.TEST {background-color: lightblue;}</style></head></html>");
+        // When
+        scan(msg);
+        // Then
+        assertNotFound("https://www.example.com");
+    }
+
     private void scan(HttpMessage msg) {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
     }
@@ -159,6 +212,11 @@ public class WappalyzerPassiveScannerUnitTest
         httpMessage.setResponseHeader("HTTP/1.1 200 OK");
         httpMessage.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
         return httpMessage;
+    }
+
+    private void assertNotFound(String site) {
+        List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
+        assertNull(appsForSite);
     }
 
     private void assertFoundAppCount(String site, int appCount) {

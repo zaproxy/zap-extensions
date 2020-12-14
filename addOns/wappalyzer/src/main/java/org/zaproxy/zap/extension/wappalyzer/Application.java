@@ -36,6 +36,7 @@ public class Application {
     private List<AppPattern> url = new ArrayList<AppPattern>();
     private List<AppPattern> html = new ArrayList<AppPattern>();
     private List<Map<String, AppPattern>> metas;
+    private List<AppPattern> css = new ArrayList<AppPattern>();
     private List<AppPattern> script = new ArrayList<AppPattern>();
 
     private List<String> implies = new ArrayList<String>();
@@ -92,6 +93,10 @@ public class Application {
         this.html = html;
     }
 
+    public void setCss(List<AppPattern> css) {
+        this.css = css;
+    }
+
     public void setMetas(List<Map<String, AppPattern>> metas) {
         this.metas = metas;
     }
@@ -138,6 +143,14 @@ public class Application {
 
     public void addMetas(Map<String, AppPattern> meta) {
         this.metas.add(meta);
+    }
+
+    public List<AppPattern> getCss() {
+        return css;
+    }
+
+    public void addMCss(AppPattern css) {
+        this.css.add(css);
     }
 
     public List<AppPattern> getScript() {
