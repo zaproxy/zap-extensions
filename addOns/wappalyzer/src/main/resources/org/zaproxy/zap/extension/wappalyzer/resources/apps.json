@@ -11890,7 +11890,7 @@
       "cpe": "cpe:/a:dave_thomas:rdoc",
       "description": "RDoc produces HTML and command-line documentation for Ruby projects.",
       "html": [
-        "<link[^>]+href=\"[^\"]*rdoc-style\\.css",
+        "<link[^>]+href=\"[^\"]*rdoc-style\\.css"
       ],
       "icon": "RDoc.png",
       "implies": "Ruby",
