@@ -8,6 +8,7 @@ zapAddOn {
     manifest {
         author.set("Chienli Ma")
         url.set("https://www.zaproxy.org/docs/desktop/addons/custom-report/")
+        notBeforeVersion.set("2.10.0")
     }
 }
 
