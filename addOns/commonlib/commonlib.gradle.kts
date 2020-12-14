@@ -20,6 +20,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        notBeforeVersion.set("2.10.0")
 
         helpSet {
             baseName.set("help%LC%.helpset")
