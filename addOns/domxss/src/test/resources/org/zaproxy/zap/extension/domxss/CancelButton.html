@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DOM XSS Button Click Test Page</title>
+
+</head>
+<body>
+    <button onclick="myFunction()">Cancel</button>
+
+    <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const returnUrl = urlParams.get('returnUrl')
+
+        function myFunction() {
+            window.location = returnUrl;
+        }
+    </script>
+
+</body>
+</html>

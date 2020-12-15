@@ -201,6 +201,28 @@ public class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRul
         assertAlertsRaised();
     }
 
+    /** Test to trigger XSS after cancel button is clicked */
+    @ParameterizedTest
+    @MethodSource("testBrowsers")
+    public void shouldReportXssWhenCancelButtonIsClicked(String browser)
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldReportXssWhenCancelButtonIsClicked/";
+
+        this.nano.addHandler(new TestNanoServerHandler(test, "CancelButton.html"));
+
+        HttpMessage msg = this.getHttpMessage(test + "?returnUrl=javascript:alert()");
+        this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
+
+        this.rule.init(msg, this.parent);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertAlertsRaised();
+    }
+
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/function */
     @ParameterizedTest
     @MethodSource("testBrowsers")

@@ -452,20 +452,21 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             throw new DomAlertException(url, attackVector);
         }
 
-        List<WebElement> inputElements;
+        List<WebElement> possibleDomXSSTriggers;
 
         try {
-            inputElements = findHelper(driver, By.tagName("input"));
+            possibleDomXSSTriggers = findHelper(driver, By.tagName("input"));
+            possibleDomXSSTriggers.addAll(findHelper(driver, By.tagName("button")));
         } catch (UnhandledAlertException uae) {
             Stats.incCounter("domxss.vulns.input1");
             throw new DomAlertException(url, attackVector);
         }
 
-        for (int i = 0; i < inputElements.size(); i++) {
+        for (int i = 0; i < possibleDomXSSTriggers.size(); i++) {
             if (this.isStop()) {
                 return;
             }
-            WebElement element = inputElements.get(i);
+            WebElement element = possibleDomXSSTriggers.get(i);
             String tagName = null;
             String attributeId = null;
             String attributeName = null;
@@ -476,10 +477,14 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 attributeId = element.getAttribute("id");
                 attributeName = element.getAttribute("name");
 
-                element.sendKeys(attackVector);
+                if (tagName.equals("input")) {
+                    element.sendKeys(attackVector);
+                }
+
                 element.click();
+
             } catch (UnhandledAlertException uae) {
-                Stats.incCounter("domxss.vulns.input2");
+                Stats.incCounter("domxss.vulns.possibleDomXSSTriggers2");
                 throw new DomAlertException(url, attackVector, tagName, attributeId, attributeName);
             } catch (WebDriverException wde) {
                 log.debug(wde);
@@ -491,9 +496,10 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 throw new DomAlertException(url, attackVector, tagName, attributeId, attributeName);
             }
             try {
-                inputElements = findHelper(driver, By.tagName("input"));
+                possibleDomXSSTriggers = findHelper(driver, By.tagName("input"));
+                possibleDomXSSTriggers.addAll(findHelper(driver, By.tagName("button")));
             } catch (UnhandledAlertException uae) {
-                Stats.incCounter("domxss.vulns.input3");
+                Stats.incCounter("domxss.vulns.possibleDomXSSTriggers3");
                 throw new DomAlertException(url, attackVector, tagName, attributeId, attributeName);
             }
         }
