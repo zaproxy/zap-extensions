@@ -3,12 +3,12 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [11] - 2020-12-15
 ### Added
 - Add info and repo URLs.
 
 ### Changed
-- Update minimum ZAP version to 2.9.0.
+- Update minimum ZAP version to 2.10.0.
 - Update Jython from 2.7.1 to 2.7.2.
 - Update the help to mention the bundled Jython version.
 - Jython templates now includes an extender script (getInputsFromuser.py) for setting global script variables based on user input.
@@ -64,3 +64,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[11]: https://github.com/zaproxy/zap-extensions/releases/jython-v11
