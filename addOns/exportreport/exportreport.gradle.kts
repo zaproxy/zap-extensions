@@ -8,6 +8,7 @@ zapAddOn {
     manifest {
         author.set("Goran Sarenkapa - JordanGS")
         url.set("https://www.zaproxy.org/docs/desktop/addons/export-report/")
+        notBeforeVersion.set("2.10.0")
     }
 
     apiClientGen {

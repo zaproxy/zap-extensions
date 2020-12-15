@@ -11,5 +11,6 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/form-handler/")
+        notBeforeVersion.set("2.10.0")
     }
 }

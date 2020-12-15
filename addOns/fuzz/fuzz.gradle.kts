@@ -22,6 +22,7 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/fuzzer/")
+        notBeforeVersion.set("2.10.0")
     }
 }
 

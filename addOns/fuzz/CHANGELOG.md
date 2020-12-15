@@ -3,10 +3,11 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [13.1.0] - 2020-12-15
 ### Changed
 - Maintenance changes.
 - Prevent adding null fuzz handlers, which would cause exceptions when selecting the fuzz message.
+- Update minimum ZAP version to 2.10.0.
 
 ## [13.0.1] - 2020-09-08
 ### Fixed
@@ -123,6 +124,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[13.1.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.1.0
 [13.0.1]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.0.1
 [13.0.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.0.0
 [12]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v12
