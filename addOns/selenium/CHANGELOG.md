@@ -4,9 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [15.3.0] - 2020-12-15
 ### Changed
 - Invoke Selenium scripts synchronously for AJAX Spider's browsers, to prevent interferences with the crawler.
+- Update minimum ZAP version to 2.10.0.
 
 ## [15.2.0] - 2020-03-31
 ### Added
@@ -100,6 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.3.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.3.0
 [15.2.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.2.0
 [15.1.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.1.0
 [15.0.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.0.0
