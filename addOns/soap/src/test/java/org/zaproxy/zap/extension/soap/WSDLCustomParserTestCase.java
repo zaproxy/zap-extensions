@@ -51,7 +51,7 @@ public class WSDLCustomParserTestCase extends TestUtils {
         Path wsdlPath = getResourcePath("resources/test.wsdl");
         wsdlContent = new String(Files.readAllBytes(wsdlPath), StandardCharsets.UTF_8);
 
-        parser = new WSDLCustomParser();
+        parser = new WSDLCustomParser(null);
     }
 
     @Test

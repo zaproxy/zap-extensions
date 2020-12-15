@@ -35,7 +35,7 @@ public class SoapAPI extends ApiImplementor {
     private static final String ACTION_IMPORT_URL = "importUrl";
     private static final String PARAM_URL = "url";
     private static final String PARAM_FILE = "file";
-    private ExtensionImportWSDL extension = null;
+    private final ExtensionImportWSDL extension;
 
     /** Provided only for API client generator usage. */
     public SoapAPI() {

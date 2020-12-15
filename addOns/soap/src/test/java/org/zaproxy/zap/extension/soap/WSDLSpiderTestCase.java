@@ -47,23 +47,21 @@ public class WSDLSpiderTestCase {
     public void parseResourceTest()
             throws NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
-        WSDLSpider spider = new WSDLSpider();
+        WSDLSpider spider = new WSDLSpider(new WSDLCustomParser(null));
 
         /* Positive case. */
-        boolean result = spider.parseResourceWSDL(wsdlMsg, null, 0, false);
+        boolean result = spider.parseResourceWSDL(wsdlMsg, false);
         assertTrue(result);
 
         /* Negative cases. */
-        result = spider.parseResourceWSDL(null, null, 0, false); /* Null response. */
+        result = spider.parseResourceWSDL(null, false); /* Null response. */
         assertFalse(result);
 
-        result = spider.parseResourceWSDL(new HttpMessage(), null, 0, false); /* Empty response. */
+        result = spider.parseResourceWSDL(new HttpMessage(), false); /* Empty response. */
         assertFalse(result);
 
         wsdlMsg.setResponseBody("test");
-        result =
-                spider.parseResourceWSDL(
-                        wsdlMsg, null, 0, false); /* Response with no-wsdl content. */
+        result = spider.parseResourceWSDL(wsdlMsg, false); /* Response with no-wsdl content. */
         assertFalse(result);
     }
 }

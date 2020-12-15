@@ -82,14 +82,14 @@ public class Sample {
                         + "SOAPAction: urn:sayHelloWorld \r\n"
                         + "Host: 192.168.145.131:8443\r\n");
         msg.setRequestBody(
-                "<?xml version=\"1.0\" encoding= \"UTF-8\" ?>\r\n"
-                        + "<s11:Envelope xmlns:s11='http://schemas.xmlsoap.org/soap/envelope/'>\r\n"
-                        + "\t<s11:Body>\r\n"
-                        + "\t\t<ns:sayHelloWorld xmlns:ns='http://main.soaptest.org'>\r\n"
-                        + "\t\t\t<ns:args0>paramValue</ns:args0>\r\n"
-                        + "\t\t</ns:sayHelloWorld>\r\n"
-                        + "\t</s11:Body>\r\n"
-                        + "</s11:Envelope>\r\n");
+                "<?xml version=\"1.0\" encoding= \"UTF-8\" ?>"
+                        + "<s11:Envelope xmlns:s11='http://schemas.xmlsoap.org/soap/envelope/'>"
+                        + "<s11:Body>"
+                        + "<ns:sayHelloWorld xmlns:ns='http://main.soaptest.org'>"
+                        + "<ns:args0>paramValue</ns:args0>"
+                        + "</ns:sayHelloWorld>"
+                        + "</s11:Body>"
+                        + "</s11:Envelope>");
         /* Sets true length. */
         int bodyLength = msg.getRequestBody().length();
         HttpRequestHeader requestHeader = msg.getRequestHeader();

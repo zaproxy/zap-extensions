@@ -29,6 +29,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
@@ -52,7 +55,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private ZapMenuItem menuImportUrlWSDL = null;
     private int threadId = 1;
 
-    private WSDLCustomParser parser = new WSDLCustomParser();
+    private final TableWsdl table = new TableWsdl();
+    private final WSDLCustomParser parser = new WSDLCustomParser(table);
     private WSDLSpider spiderParser;
 
     public ExtensionImportWSDL() {
@@ -77,7 +81,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
             ExtensionSpider spider =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
             if (spider != null) {
-                spiderParser = new WSDLSpider();
+                spiderParser = new WSDLSpider(parser);
                 spider.addCustomParser(spiderParser);
             }
         }
@@ -96,8 +100,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
-        /* Destroys current ImportWSDL singleton instance. */
-        ImportWSDL.destroy();
 
         if (spiderParser != null) {
             Control.getSingleton()
@@ -105,6 +107,16 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                     .getExtension(ExtensionSpider.class)
                     .removeCustomParser(spiderParser);
         }
+    }
+
+    @Override
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+        db.addDatabaseListener(table);
+        table.databaseOpen(db.getDatabaseServer());
+    }
+
+    protected TableWsdl getTable() {
+        return table;
     }
 
     /* Menu option to import a local WSDL file. */
@@ -120,25 +132,20 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                     Constant.messages.getString("soap.topmenu.import.importWSDL.tooltip"));
 
             menuImportLocalWSDL.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            // Prompt for a WSDL file.
-                            final JFileChooser chooser =
-                                    new JFileChooser(
-                                            Model.getSingleton()
-                                                    .getOptionsParam()
-                                                    .getUserDirectory());
-                            FileNameExtensionFilter filter =
-                                    new FileNameExtensionFilter(
-                                            Constant.messages.getString(
-                                                    "soap.topmenu.import.importWSDL.filter.description"),
-                                            "wsdl");
-                            chooser.setFileFilter(filter);
-                            int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
-                            if (rc == JFileChooser.APPROVE_OPTION) {
-                                fileUrlWSDLImport(chooser.getSelectedFile());
-                            }
+                    e -> {
+                        // Prompt for a WSDL file.
+                        final JFileChooser chooser =
+                                new JFileChooser(
+                                        Model.getSingleton().getOptionsParam().getUserDirectory());
+                        FileNameExtensionFilter filter =
+                                new FileNameExtensionFilter(
+                                        Constant.messages.getString(
+                                                "soap.topmenu.import.importWSDL.filter.description"),
+                                        "wsdl");
+                        chooser.setFileFilter(filter);
+                        int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
+                        if (rc == JFileChooser.APPROVE_OPTION) {
+                            fileUrlWSDLImport(chooser.getSelectedFile());
                         }
                     });
         }
@@ -157,19 +164,12 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
             final ExtensionImportWSDL shadowCopy = this;
             menuImportUrlWSDL.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                    e ->
                             SwingUtilities.invokeLater(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
+                                    () ->
                                             new ImportFromUrlDialog(
-                                                    View.getSingleton().getMainFrame(), shadowCopy);
-                                        }
-                                    });
-                        }
-                    });
+                                                    View.getSingleton().getMainFrame(),
+                                                    shadowCopy)));
         }
         return menuImportUrlWSDL;
     }
@@ -218,6 +218,11 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public boolean supportsDb(String type) {
+        return Database.DB_TYPE_HSQLDB.equals(type);
     }
 
     @Override
