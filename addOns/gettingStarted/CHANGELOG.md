@@ -3,9 +3,11 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [12] - 2020-12-15
 ### Changed
 - Update link to OWASP ZAP homepage.
+- Updated for 2.10.0
+- Update minimum ZAP version to 2.10.0.
 
 ### Changed
 - Update minimum ZAP version to 2.9.0.
@@ -57,5 +59,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[12]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v10

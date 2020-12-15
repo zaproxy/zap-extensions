@@ -3,9 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [29] - 2020-12-15
 ### Changed
-- Update minimum ZAP version to 2.9.0.
+- Update minimum ZAP version to 2.10.0.
 - Maintenance changes.
 - Use appropriate colour in dark mode (Issue 5542).
 
@@ -137,6 +137,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[29]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v26

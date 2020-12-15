@@ -11,6 +11,7 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak, Marcin Spiewak, and SDA SE Open Industry Solutions")
         url.set("https://www.zaproxy.org/docs/desktop/addons/openapi-support/")
+        notBeforeVersion.set("2.10.0")
     }
 
     apiClientGen {

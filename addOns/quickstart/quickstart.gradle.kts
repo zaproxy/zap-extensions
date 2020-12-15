@@ -11,6 +11,7 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/quick-start/")
+        notBeforeVersion.set("2.10.0")
         extensions {
             register("org.zaproxy.zap.extension.quickstart.ajaxspider.ExtensionQuickStartAjaxSpider") {
                 classnames {
