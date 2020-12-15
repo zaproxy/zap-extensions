@@ -3,9 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [27] - 2020-12-15
 ### Changed
-- Update minimum ZAP version to 2.9.0.
+- Update minimum ZAP version to 2.10.0.
 - Tweak help content.
 - Show script engine when editing the script.
 - Fixed case where script print statements could deadlock ZAP.
@@ -160,5 +160,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[27]: https://github.com/zaproxy/zap-extensions/releases/scripts-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/scripts-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/scripts-v25
