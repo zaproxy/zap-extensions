@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [24] - 2020-12-15
 ### Changed
 - Now targeting ZAP 2.10.
 - The following scan rules now support Custom Page definitions:
@@ -177,6 +177,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[24]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v21
