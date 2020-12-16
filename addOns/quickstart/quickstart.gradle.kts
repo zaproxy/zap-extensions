@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "29"
+version = "30"
 description = "Provides a tab which allows you to quickly test a target application"
 
 zapAddOn {

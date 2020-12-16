@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "3.0.0"
+version = "3.1.0"
 description = "Adds Groovy support to ZAP"
 
 zapAddOn {

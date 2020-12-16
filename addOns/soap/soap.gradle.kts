@@ -1,4 +1,4 @@
-version = "4"
+version = "5"
 description = "Imports and scans WSDL files containing SOAP endpoints."
 
 zapAddOn {

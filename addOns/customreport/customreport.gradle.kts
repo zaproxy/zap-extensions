@@ -1,4 +1,4 @@
-version = "6"
+version = "7"
 description = "New HTML report module allows users to customize report content."
 
 zapAddOn {
