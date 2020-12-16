@@ -3,12 +3,12 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [4] - 2020-12-16
 ### Changed
 - Internationalise file filter description.
 - Dynamically unload the add-on.
 - Change default accelerator for "Import a WSDL file from local file system".
-- Update minimum ZAP version to 2.9.0.
+- Update minimum ZAP version to 2.10.0.
 - Add import menus to (new) top level Import menu instead of Tools menu.
 - Add support for SOAP version 1.2 to the Action Spoofing Scan Rule.
 - Distinguish alerts by adding the SOAP version to the "Other Info" section.
@@ -32,3 +32,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[4]: https://github.com/zaproxy/zap-extensions/releases/soap-v4
