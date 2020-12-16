@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="SOAP Scanner" image="soap-icon" target="soap"/>
+			<tocitem text="SOAP Support" image="soap-icon" target="soap"/>
 		</tocitem>
 	</tocitem>
 </toc>
