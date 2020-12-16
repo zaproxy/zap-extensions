@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "14"
+version = "15"
 description = "Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection"
 
 tasks.withType<JavaCompile> {

@@ -1,4 +1,4 @@
-version = "7"
+version = "8"
 description = "Report Export module that allows users to customize content and export in a desired format."
 
 zapAddOn {
