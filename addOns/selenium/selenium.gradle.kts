@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "15.3.0"
+version = "15.4.0"
 description = "WebDriver provider and includes HtmlUnit browser"
 
 zapAddOn {

@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "7"
+version = "8"
 description = "Allows Ruby to be used for ZAP scripting - templates included"
 
 zapAddOn {

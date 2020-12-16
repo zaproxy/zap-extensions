@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "21.0.0"
+version = "21.1.0"
 description = "Technology detection using Wappalyzer: wappalyzer.com"
 
 zapAddOn {
