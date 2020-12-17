@@ -21,7 +21,6 @@ var addOns = listOf(
     "bruteforce",
     "bugtracker",
     "callgraph",
-    "cmss",
     "codedx",
     "commonlib",
     "coreLang",
