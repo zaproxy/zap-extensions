@@ -200,7 +200,7 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
                 extHistory.addHistory(ref);
             }
 
-            SessionStructure.addPath(Model.getSingleton().getSession(), ref, httpMessage);
+            SessionStructure.addPath(Model.getSingleton(), ref, httpMessage);
 
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             logger.warn("Failed to persist message sent:", e);

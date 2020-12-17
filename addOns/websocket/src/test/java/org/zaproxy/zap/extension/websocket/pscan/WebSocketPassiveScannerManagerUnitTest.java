@@ -37,7 +37,6 @@ public class WebSocketPassiveScannerManagerUnitTest extends WebSocketTestUtils {
     @BeforeEach
     public void setUp() {
         wsPscanManager = new WebSocketPassiveScannerManager(mock(AlertManager.class));
-        super.setUpLog();
     }
 
     @Test

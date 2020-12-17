@@ -369,6 +369,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                         new WebSocketBreakpointMessageHandler(
                                 extBreak.getBreakpointManagementInterface(), config);
                 wsBrkMessageHandler.setEnabledBreakpoints(extBreak.getBreakpointsEnabledList());
+                wsBrkMessageHandler.setEnabledIgnoreRules(Collections.emptyList());
 
                 // listen on new messages such that breakpoints can apply
                 addAllChannelObserver(new WebSocketProxyListenerBreak(this, wsBrkMessageHandler));
