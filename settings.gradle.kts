@@ -83,7 +83,6 @@ var addOns = listOf(
     "tokengen",
     "treetools",
     "viewstate",
-    "vulncheck",
     "wappalyzer",
     "wavsepRpt",
     "webdrivers",
