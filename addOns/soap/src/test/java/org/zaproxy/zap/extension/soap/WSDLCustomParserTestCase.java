@@ -19,20 +19,27 @@
  */
 package org.zaproxy.zap.extension.soap;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
 
 public class WSDLCustomParserTestCase extends TestUtils {
@@ -89,5 +96,61 @@ public class WSDLCustomParserTestCase extends TestUtils {
         /* Negative case. */
         result = parser.createSoapRequest(new SOAPMsgConfig());
         assertNull(result);
+    }
+
+    @Test
+    public void addParameterShouldUseValueGeneratorWhenAvailable() {
+        // Given
+        String path = "CelsiusToFahrenheit/Celsius";
+        String paramType = "s:string";
+        String name = "Celsius";
+        Map<String, String> fieldAttributes = new HashMap<>();
+        fieldAttributes.put("Control Type", "TEXT");
+        fieldAttributes.put("type", name);
+
+        ValueGenerator valueGenerator = mock(ValueGenerator.class);
+        when(valueGenerator.getValue(
+                        null,
+                        null,
+                        name,
+                        "",
+                        Collections.emptyList(),
+                        Collections.emptyMap(),
+                        fieldAttributes))
+                .thenReturn("TEST_VALUE");
+        parser.setValueGenerator(valueGenerator);
+
+        // Then
+        Map<String, String> expectedParams = new HashMap<>();
+        expectedParams.put("xpath:/" + path, "TEST_VALUE");
+        assertEquals(expectedParams, parser.addParameter(path, paramType, name, null));
+    }
+
+    @Test
+    public void addParameterShouldUseDefaultValuesWhenValueIsNotSpecified() {
+        // Given
+        String path = "CelsiusToFahrenheit/Celsius";
+        String paramType = "s:string";
+        String name = "Celsius";
+        Map<String, String> fieldAttributes = new HashMap<>();
+        fieldAttributes.put("Control Type", "TEXT");
+        fieldAttributes.put("type", name);
+
+        ValueGenerator valueGenerator = mock(ValueGenerator.class);
+        when(valueGenerator.getValue(
+                        null,
+                        null,
+                        name,
+                        "",
+                        Collections.emptyList(),
+                        Collections.emptyMap(),
+                        fieldAttributes))
+                .thenReturn("");
+        parser.setValueGenerator(valueGenerator);
+
+        // Then
+        Map<String, String> expectedParams = new HashMap<>();
+        expectedParams.put("xpath:/" + path, "paramValue");
+        assertEquals(expectedParams, parser.addParameter(path, paramType, name, null));
     }
 }
