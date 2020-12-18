@@ -82,7 +82,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
         if (null == CT) {
             CT = "";
         } else {
-            CT.toLowerCase();
+            CT = CT.toLowerCase();
         }
 
         URI uri = msg.getRequestHeader().getURI();

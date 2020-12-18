@@ -152,7 +152,6 @@ public class PortScan extends ScanThread implements ScanListenner {
                     this.listenner.scanProgress(site, port, maxPort);
                 }
 
-                Socket s = null;
                 if (useProxy
                         && Model.getSingleton()
                                 .getOptionsParam()
@@ -165,12 +164,10 @@ public class PortScan extends ScanThread implements ScanListenner {
 
                                         @Override
                                         public Integer call() {
-                                            Socket s = new Socket(proxy);
                                             SocketAddress endpoint =
                                                     new InetSocketAddress(site, port);
-                                            try {
+                                            try (Socket s = new Socket(proxy)) {
                                                 s.connect(endpoint, timeout);
-                                                s.close();
                                             } catch (IOException e) {
                                                 return null;
                                             }
@@ -187,9 +184,9 @@ public class PortScan extends ScanThread implements ScanListenner {
 
                 } else {
                     // Not using a proxy
-                    s = new Socket();
-                    s.connect(new InetSocketAddress(site, port), timeout);
-                    s.close();
+                    try (Socket s = new Socket()) {
+                        s.connect(new InetSocketAddress(site, port), timeout);
+                    }
                 }
                 log.debug("Site : " + site + " open port: " + port);
 

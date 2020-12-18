@@ -79,7 +79,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     public EncodeDecodeDialog(List<TabModel> tabModels) {
         super();
         encodeDecodeProcessors = new EncodeDecodeProcessors();
-        initialize();
+        init();
         setTabs(tabModels);
 
         addWindowListener(
@@ -150,7 +150,7 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     }
 
     /** This method initializes this */
-    private void initialize() {
+    private void init() {
         this.setAlwaysOnTop(false);
         this.setContentPane(getMainPanel());
         this.setTitle(Constant.messages.getString("encoder.dialog.title"));
