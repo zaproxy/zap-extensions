@@ -71,7 +71,7 @@ public class NanoWebSocketConnection extends NanoWSD.WebSocket {
      * Sends a ping message to the client. Ping payload defined by {@link
      * NanoWebSocketConnection#setPingMessage(byte[])}
      */
-    protected boolean ping() {
+    protected synchronized boolean ping() {
         try {
             if (isPongReceived()) {
                 super.ping(pingPayload);
