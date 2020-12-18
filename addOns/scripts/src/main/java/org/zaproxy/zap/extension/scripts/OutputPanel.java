@@ -216,7 +216,7 @@ public class OutputPanel extends AbstractPanel {
             return;
         }
         try {
-            EventQueue.invokeAndWait(
+            EventQueue.invokeLater(
                     new Runnable() {
                         @Override
                         public void run() {
