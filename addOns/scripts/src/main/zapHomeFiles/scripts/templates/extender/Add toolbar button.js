@@ -20,7 +20,7 @@ var button = new jbutton();
 function install(helper) {
   if (helper.getView()) {
     var imageicon = Java.type("javax.swing.ImageIcon");
-    // The icons bundled with ZAP are listed here https://github.com/zaproxy/zaproxy/tree/develop/zap/src/main/resources/resource
+    // The icons bundled with ZAP are listed here https://github.com/zaproxy/zaproxy/tree/main/zap/src/main/resources/resource
     button.setIcon(org.zaproxy.zap.utils.DisplayUtils.getScaledIcon(
        new imageicon(org.zaproxy.zap.ZAP.class.getResource("/resource/icon/16/035.png"))));
     button.setToolTipText("An example button");
