@@ -14,7 +14,7 @@
 		 		9	ACCESS_CONTROL_SCANNER_INITIATOR
 		 		10	AJAX_SPIDER_INITIATOR
 			For the latest list of values see the HttpSender class:
-			https://github.com/zaproxy/zaproxy/blob/master/zap/src/main/java/org/parosproxy/paros/network/HttpSender.java
+			https://github.com/zaproxy/zaproxy/blob/main/zap/src/main/java/org/parosproxy/paros/network/HttpSender.java
 		getBrowserId() Returns the browser Id, eg "firefox" or "chrome"
 		getProxyAddress() Returns the address of the proxy
 		getProxyPort() Returns the port of the proxy

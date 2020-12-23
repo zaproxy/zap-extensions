@@ -30,7 +30,7 @@ import javax.swing.JLabel
  */
 void install(ExtenderScriptHelper helper) {
     if (helper.getView()) {
-        // The icons bundled with ZAP are listed here https://github.com/zaproxy/zaproxy/tree/develop/zap/src/main/resources/resource
+        // The icons bundled with ZAP are listed here https://github.com/zaproxy/zaproxy/tree/main/zap/src/main/resources/resource
         selectpanel.setName('Select Example')
         selectpanel.setIcon(DisplayUtils.getScaledIcon(
                 new ImageIcon(ZAP.class.getResource("/resource/icon/16/035.png"))))
