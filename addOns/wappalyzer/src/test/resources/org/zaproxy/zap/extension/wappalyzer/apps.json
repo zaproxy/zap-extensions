@@ -19,12 +19,12 @@
         "__test_entry_urls": ""
       },
       "dom": {
-        "a[href='https://www.pinterest.com'][title*='version']": {
+        "a[href='https://www.example.com'][title*='version']": {
           "attributes": {
             "title": "^version ([0-9.]+)$\\;version:\\1"
           },
           "text":
-            "Pinterest"
+            "Example"
         }
       },
       "scripts": [

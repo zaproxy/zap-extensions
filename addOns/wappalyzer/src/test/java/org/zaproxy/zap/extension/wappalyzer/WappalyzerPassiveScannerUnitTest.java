@@ -119,7 +119,7 @@ public class WappalyzerPassiveScannerUnitTest
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
                 "<html><body>"
-                        + "<a href=\"https://www.pinterest.com\" title=\"version\" style=\"border: 5px groove rgb(244, 250, 88);\">Pinterest</a>"
+                        + "<a href=\"https://www.example.com\" title=\"version\" style=\"border: 5px groove rgb(244, 250, 88);\">Example</a>"
                         + "</body></html>");
 
         // When
@@ -136,7 +136,7 @@ public class WappalyzerPassiveScannerUnitTest
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
                 "<html><body>"
-                        + "<a href=\"https://www.pinterest.com\" title=\"version 1\" style=\"border: 5px groove rgb(244, 250, 88);\">Pinterest</a>"
+                        + "<a href=\"https://www.example.com\" title=\"version 1\" style=\"border: 5px groove rgb(244, 250, 88);\">Example</a>"
                         + "</body></html>");
 
         // When
