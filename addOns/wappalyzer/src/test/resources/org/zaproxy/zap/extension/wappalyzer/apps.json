@@ -18,6 +18,15 @@
         "Test_Entry_": "",
         "__test_entry_urls": ""
       },
+      "dom": {
+        "a[href='https://www.pinterest.com'][title*='version']": {
+          "attributes": {
+            "title": "^version ([0-9.]+)$\\;version:\\1"
+          },
+          "text":
+            "Pinterest"
+        }
+      },
       "scripts": [
         "testentry\\.com/",
         "ad\\.ca\\.testentry\\.net"

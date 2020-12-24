@@ -38,5 +38,7 @@ dependencies {
     implementation("org.apache.xmlgraphics:batik-gvt:$batikVersion")
     implementation("org.apache.xmlgraphics:batik-util:$batikVersion")
 
+    implementation("org.jsoup:jsoup:1.13.1")
+
     testImplementation(project(":testutils"))
 }

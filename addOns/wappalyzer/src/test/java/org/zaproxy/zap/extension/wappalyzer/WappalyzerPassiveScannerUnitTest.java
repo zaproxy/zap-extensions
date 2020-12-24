@@ -114,6 +114,56 @@ public class WappalyzerPassiveScannerUnitTest
     }
 
     @Test
+    public void shouldMatchDomElementWithText() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><body>"
+                        + "<a href=\"https://www.pinterest.com\" title=\"version\" style=\"border: 5px groove rgb(244, 250, 88);\">Pinterest</a>"
+                        + "</body></html>");
+
+        // When
+        scan(msg);
+
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
+    @Test
+    public void shouldMatchDomElementWithAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><body>"
+                        + "<a href=\"https://www.pinterest.com\" title=\"version 1\" style=\"border: 5px groove rgb(244, 250, 88);\">Pinterest</a>"
+                        + "</body></html>");
+
+        // When
+        scan(msg);
+
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
+    @Test
+    public void shouldNotMatchDomElement() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><body>"
+                        + "<a href=\"https://www.pinter.com\" title=\"version\" style=\"border: 5px groove rgb(244, 250, 88);\">Pinterest</a>"
+                        + "</body></html>");
+
+        // When
+        scan(msg);
+
+        // Then
+        assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
+    }
+
+    @Test
     public void shouldNotMatchOnNontextResponse() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();

@@ -19,14 +19,14 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
@@ -124,6 +124,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         checkMetaElementsMatches(source);
         checkScriptElementsMatches(source);
         checkCssElementsMatches(msg, source);
+        checkDomElementMatches(source);
     }
 
     private void checkCssElementsMatches(HttpMessage msg, Source source) {
@@ -159,6 +160,38 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
                     if (name != null && content != null && name.equals(entry.getKey())) {
                         AppPattern p = entry.getValue();
                         addIfMatches(p, content);
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkDomElementMatches(Source source) {
+        Document doc = Jsoup.parse(String.valueOf(source));
+
+        for (Map<String, Map<String, Map<String, AppPattern>>> map : currentApp.getDom()) {
+            for (Map.Entry<String, Map<String, Map<String, AppPattern>>> ap : map.entrySet()) {
+                for (Map.Entry<String, Map<String, AppPattern>> p : ap.getValue().entrySet()) {
+                    for (Map.Entry<String, AppPattern> pa : p.getValue().entrySet()) {
+                        Elements links = doc.select(ap.getKey());
+                        for (org.jsoup.nodes.Element link : links) {
+                            if (Objects.equals(pa.getKey(), "text")) {
+                                AppPattern Ap = pa.getValue();
+                                addIfMatches(Ap, link.text());
+                            }
+                            if (Objects.equals(p.getKey(), "attributes")) {
+                                AppPattern Ap = pa.getValue();
+                                if (link.hasAttr(String.valueOf(pa.getKey()))) {
+                                    addIfMatches(Ap, link.attr(pa.getKey()));
+                                }
+                            }
+                            if (Objects.equals(p.getKey(), "properties")) {
+                                AppPattern Ap = pa.getValue();
+                                if (link.hasAttr(String.valueOf(pa.getKey()))) {
+                                    addIfMatches(Ap, link.attr(pa.getKey()));
+                                }
+                            }
+                        }
                     }
                 }
             }
