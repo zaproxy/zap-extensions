@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update links to zaproxy repo.
 
+### Added
+- Forbidden (403) Bypass scan rule.
+
 ## [30] - 2020-11-26
 ### Changed
 - 'Hidden File Finder' ensure that test requests are appropriately rebuilt for this scan rule (Issue 6129).
