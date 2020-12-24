@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Added support for CSS patterns, aligning with upstream project.
+- Added support for Dom patterns.
 
 ## [20.3.0] - 2020-09-30
 ### Changed
