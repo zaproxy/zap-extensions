@@ -50,6 +50,7 @@ public class WappalyzerJsonParserUnitTest {
         assertEquals(2, app.getScript().size());
         assertEquals(0, app.getMetas().size());
         assertEquals(0, app.getImplies().size());
+        assertEquals(2, app.getDom().size());
         assertTrue(app.getCpe().equals(""));
         // Ignore Icon
     }

@@ -18,6 +18,18 @@
         "Test_Entry_": "",
         "__test_entry_urls": ""
       },
+      "dom": {
+        "a[href='https://www.example.com'][title*='version']": {
+          "attributes": {
+            "title": "^version ([0-9.]+)$\\;version:\\1"
+          },
+          "text":
+            "Example",
+          "properties": {
+            "data-value": "1"
+          }
+        }
+      },
       "scripts": [
         "testentry\\.com/",
         "ad\\.ca\\.testentry\\.net"
@@ -49,6 +61,13 @@
       "headers": {
         "Server": "(?:Apache(?:$|/([\\d.]+)|[^/-])|(?:^|\\b)HTTPD)\\;version:\\1"
       },
+      "dom": {
+        "a[href='https://www.apache.com'][title*='version']": {
+          "attributes": {
+            "title": "^version ([0-9.]+)$\\;version:\\1"
+          }
+       }
+      },
       "icon": "Apache.svg",
       "website": "http://apache.org"
     },
@@ -59,6 +78,12 @@
       "icon": "Modernizr.svg",
       "js": {
         "Modernizr._version": "^(.+)$\\;version:\\1"
+      },
+      "dom": {
+        "a[href='https://www.modern.com']": {
+          "text":
+            "Modern"
+        }
       },
       "scripts": [
         "([\\d.]+)?/modernizr(?:\\.([\\d.]+))?.*\\.js\\;version:\\1?\\1:\\2"
