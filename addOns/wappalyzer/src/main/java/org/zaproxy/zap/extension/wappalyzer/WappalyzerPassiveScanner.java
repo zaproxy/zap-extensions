@@ -26,7 +26,8 @@ import java.util.Set;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
@@ -37,7 +38,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class WappalyzerPassiveScanner implements PassiveScanner {
 
-    private static final Logger LOGGER = Logger.getLogger(WappalyzerPassiveScanner.class);
+    private static final Logger LOGGER = LogManager.getLogger(WappalyzerPassiveScanner.class);
     private WappalyzerApplicationHolder applicationHolder;
     private Set<String> visitedSiteIdentifiers = new HashSet<>();
     private ApplicationMatch appMatch;
@@ -73,18 +74,14 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
             checkAppMatches(msg, source);
             if (appMatch != null) {
                 String site = ExtensionWappalyzer.normalizeSite(msg.getRequestHeader().getURI());
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Adding " + app.getName() + " to " + site);
-                }
+                LOGGER.debug("Adding {} to {}", app.getName(), site);
                 addApplicationsToSite(site, appMatch);
                 this.appMatch = null;
             }
             this.currentApp = null;
         }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Analyse took " + (System.currentTimeMillis() - startTime) + "ms");
-        }
+        LOGGER.debug("Analysis took {} ms", System.currentTimeMillis() - startTime);
     }
 
     private String getSiteIdentifier(HttpMessage msg) {
@@ -198,10 +195,8 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
             // TODO may need to account for the wappalyzer spec in dealing with version info:
             // https://www.wappalyzer.com/docs/specification
             results.forEach(appMatch::addVersion);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(
-                        appPattern.getType() + " matched " + appMatch.getApplication().getName());
-            }
+            LOGGER.debug(
+                    "{} matched {}", appPattern.getType(), appMatch.getApplication().getName());
         }
     }
 

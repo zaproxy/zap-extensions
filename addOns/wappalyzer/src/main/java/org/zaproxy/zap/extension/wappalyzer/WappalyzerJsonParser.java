@@ -45,7 +45,8 @@ import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.svg.SVGDocument;
 
 public class WappalyzerJsonParser {
@@ -54,13 +55,13 @@ public class WappalyzerJsonParser {
     private static final String FIELD_VERSION = "version:";
     private static final int SIZE = 16;
 
-    private static final Logger logger = Logger.getLogger(WappalyzerJsonParser.class);
+    private static final Logger logger = LogManager.getLogger(WappalyzerJsonParser.class);
     private final PatternErrorHandler patternErrorHandler;
     private final ParsingExceptionHandler parsingExceptionHandler;
 
     public WappalyzerJsonParser() {
         this(
-                (pattern, e) -> logger.error("Invalid pattern syntax " + pattern, e),
+                (pattern, e) -> logger.error("Invalid pattern syntax {}", pattern, e),
                 e -> logger.error(e.getMessage(), e));
     }
 
@@ -77,7 +78,7 @@ public class WappalyzerJsonParser {
         try {
             return parseJson(getStringResource(path));
         } catch (IOException e) {
-            logger.warn("An error occurred reading the file: " + path);
+            logger.warn("An error occurred reading the file: {}", path);
         }
         return null;
     }
@@ -211,7 +212,7 @@ public class WappalyzerJsonParser {
         try {
             svgIcon = builder.build(new BridgeContext(userAgent, loader), doc);
         } catch (BridgeException | StringIndexOutOfBoundsException ex) {
-            logger.debug("Failed to parse SVG. " + ex.getMessage());
+            logger.debug("Failed to parse SVG. {}", ex.getMessage());
             return null;
         }
 
@@ -244,7 +245,7 @@ public class WappalyzerJsonParser {
                 if (category != null) {
                     list.add(category);
                 } else {
-                    logger.error("Failed to find category for " + obj.toString());
+                    logger.error("Failed to find category for {}", obj.toString());
                 }
             }
         }
@@ -265,17 +266,16 @@ public class WappalyzerJsonParser {
                     list.add(map);
                 } catch (NumberFormatException e) {
                     logger.error(
-                            "Invalid field syntax " + entry.getKey() + " : " + entry.getValue(), e);
+                            "Invalid field syntax {} : {}", entry.getKey(), entry.getValue(), e);
                 } catch (PatternSyntaxException e) {
                     patternErrorHandler.handleError(entry.getValue(), e);
                 }
             }
         } else if (json != null) {
             logger.error(
-                    "Unexpected header type for "
-                            + json.toString()
-                            + " "
-                            + json.getClass().getCanonicalName());
+                    "Unexpected header type for {} {}",
+                    json.toString(),
+                    json.getClass().getCanonicalName());
         }
         return list;
     }
@@ -323,17 +323,17 @@ public class WappalyzerJsonParser {
                 } else if (values[i].startsWith(FIELD_VERSION)) {
                     ap.setVersion(values[i].substring(FIELD_VERSION.length()));
                 } else {
-                    logger.error("Unexpected field: " + values[i]);
+                    logger.error("Unexpected field: {}", values[i]);
                 }
             } catch (Exception e) {
-                logger.error("Invalid field syntax " + values[i], e);
+                logger.error("Invalid field syntax {}", values[i], e);
             }
         }
         if (pattern.indexOf(FIELD_CONFIDENCE) > 0) {
-            logger.warn("Confidence field in pattern?: " + pattern);
+            logger.warn("Confidence field in pattern?: {}", pattern);
         }
         if (pattern.indexOf(FIELD_VERSION) > 0) {
-            logger.warn("Version field in pattern?: " + pattern);
+            logger.warn("Version field in pattern?: {}", pattern);
         }
         ap.setPattern(pattern);
         return ap;
