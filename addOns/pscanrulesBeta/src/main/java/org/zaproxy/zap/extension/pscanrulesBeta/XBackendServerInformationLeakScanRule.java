@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -40,7 +41,7 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner 
     private static final int PLUGIN_ID = 10039;
 
     private static final Logger logger =
-            Logger.getLogger(XBackendServerInformationLeakScanRule.class);
+            LogManager.getLogger(XBackendServerInformationLeakScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -73,14 +74,7 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner 
                         .raise();
             }
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        logger.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

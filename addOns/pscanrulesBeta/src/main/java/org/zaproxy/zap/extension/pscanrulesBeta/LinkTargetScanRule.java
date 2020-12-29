@@ -26,7 +26,8 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -54,7 +55,7 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
 
     private Model model = null;
 
-    private static final Logger LOG = Logger.getLogger(PluginPassiveScanner.class);
+    private static final Logger LOG = LogManager.getLogger(PluginPassiveScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -119,7 +120,7 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
                         return false;
                     }
                 } catch (Exception e) {
-                    LOG.warn("Invalid regex in rule " + TRUSTED_DOMAINS_PROPERTY + ": " + regex, e);
+                    LOG.warn("Invalid regex in rule {} : {}", TRUSTED_DOMAINS_PROPERTY, regex, e);
                 }
             }
         }
