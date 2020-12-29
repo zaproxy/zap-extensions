@@ -3,7 +3,7 @@ description = "The alpha quality Active Scanner rules"
 
 zapAddOn {
     addOnName.set("Active scanner rules (alpha)")
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
