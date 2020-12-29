@@ -25,7 +25,8 @@ import java.net.SocketTimeoutException;
 import javax.net.ssl.SSLException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -48,7 +49,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
     private static final int PLUGIN_ID = 10106;
     private static final int REDIR_LIMIT = 10;
 
-    private static final Logger log = Logger.getLogger(HttpOnlySiteScanRule.class);
+    private static final Logger log = LogManager.getLogger(HttpOnlySiteScanRule.class);
 
     @Override
     public int getId() {
@@ -125,10 +126,8 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
     public void scan() {
 
         if (getBaseMsg().getRequestHeader().isSecure()) { // Base request is HTTPS
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "The original request was HTTPS, so there is not much point in looking further.");
-            }
+            log.debug(
+                    "The original request was HTTPS, so there is not much point in looking further.");
             return;
         }
 
@@ -143,9 +142,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
         }
 
         if (isStop()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Scan rule " + getName() + " Stopping.");
-            }
+            log.debug("Scan rule {} Stopping.", getName());
             return;
         }
 
@@ -153,9 +150,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
             int count = 0;
             while (count < REDIR_LIMIT) {
                 if (isStop()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Scan rule " + getName() + " Stopping.");
-                    }
+                    log.debug("Scan rule {} Stopping.", getName());
                     return;
                 }
                 sendAndReceive(newRequest, false);

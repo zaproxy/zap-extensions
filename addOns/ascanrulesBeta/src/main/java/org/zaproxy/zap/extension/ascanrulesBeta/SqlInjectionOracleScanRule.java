@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -142,10 +143,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
     };
 
     /** for logging. */
-    private static Logger log = Logger.getLogger(SqlInjectionOracleScanRule.class);
-
-    /** determines if we should output Debug level logging */
-    private boolean debugEnabled = log.isDebugEnabled();
+    private static Logger log = LogManager.getLogger(SqlInjectionOracleScanRule.class);
 
     @Override
     public int getId() {
@@ -184,15 +182,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        // DEBUG: turn on for debugging
-        // TODO: turn this off
-        // log.setLevel(org.apache.log4j.Level.DEBUG);
-        // this.debugEnabled = true;
-
-        if (this.debugEnabled) log.debug("Initialising");
-
-        // TODO: debug only
-        // this.setAttackStrength(AttackStrength.INSANE);
+        log.debug("Initialising");
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -234,13 +224,10 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
             } catch (java.net.SocketTimeoutException e) {
                 // to be expected occasionally, if the base query was one that contains some
                 // parameters exploiting time based SQL injection?
-                if (this.debugEnabled)
-                    log.debug(
-                            "The Base Time Check timed out on ["
-                                    + msgTimeBaseline.getRequestHeader().getMethod()
-                                    + "] URL ["
-                                    + msgTimeBaseline.getRequestHeader().getURI().getURI()
-                                    + "]");
+                log.debug(
+                        "The Base Time Check timed out on [{}] URL [{}]",
+                        msgTimeBaseline.getRequestHeader().getMethod(),
+                        msgTimeBaseline.getRequestHeader().getURI().toString());
             }
             long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
             // end of timing baseline check
@@ -248,17 +235,12 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
             int countUnionBasedRequests = 0;
             int countTimeBasedRequests = 0;
 
-            if (this.debugEnabled)
-                log.debug(
-                        "Scanning URL ["
-                                + getBaseMsg().getRequestHeader().getMethod()
-                                + "] ["
-                                + getBaseMsg().getRequestHeader().getURI()
-                                + "], field ["
-                                + paramName
-                                + "] with value ["
-                                + paramValue
-                                + "] for Oracle SQL Injection");
+            log.debug(
+                    "Scanning URL [{}] [{}], field [{}] with value [{}] for Oracle SQL Injection",
+                    getBaseMsg().getRequestHeader().getMethod(),
+                    getBaseMsg().getRequestHeader().getURI().toString(),
+                    paramName,
+                    paramValue);
 
             // Check for time based SQL Injection, using Oracle specific syntax
             for (int timeBasedSQLindex = 0;
@@ -278,31 +260,21 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // this is to be expected, if we start sending slow queries to the database.
                     // ignore it in this case.. and just get the time.
-                    if (this.debugEnabled)
-                        log.debug(
-                                "The time check query timed out on ["
-                                        + msgTimeBaseline.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msgTimeBaseline.getRequestHeader().getURI().getURI()
-                                        + "] on field: ["
-                                        + paramName
-                                        + "]");
+                    log.debug(
+                            "The time check query timed out on [{}] URL [{}] on field: [{}]",
+                            msgTimeBaseline.getRequestHeader().getMethod(),
+                            msgTimeBaseline.getRequestHeader().getURI().toString(),
+                            paramName);
                 }
                 long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
 
-                if (this.debugEnabled)
-                    log.debug(
-                            "Time Based SQL Injection test: ["
-                                    + newTimeBasedInjectionValue
-                                    + "] on field: ["
-                                    + paramName
-                                    + "] with value ["
-                                    + newTimeBasedInjectionValue
-                                    + "] took "
-                                    + modifiedTimeUsed
-                                    + "ms, where the original took "
-                                    + originalTimeUsed
-                                    + "ms");
+                log.debug(
+                        "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
+                        newTimeBasedInjectionValue,
+                        paramName,
+                        newTimeBasedInjectionValue,
+                        modifiedTimeUsed,
+                        originalTimeUsed);
 
                 if (modifiedTimeUsed >= (originalTimeUsed + expectedDelayInMs)) {
                     // takes more than 5 extra seconds => likely time based SQL injection.
@@ -343,16 +315,11 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                             .setMessage(msgAttack)
                             .raise();
 
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "A likely Time Based SQL Injection Vulnerability has been found with ["
-                                        + msgAttack.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msgAttack.getRequestHeader().getURI().getURI()
-                                        + "] on field: ["
-                                        + paramName
-                                        + "]");
-                    }
+                    log.debug(
+                            "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
+                            msgAttack.getRequestHeader().getMethod(),
+                            msgAttack.getRequestHeader().getURI().toString(),
+                            paramName);
                     return;
                 } // query took longer than the amount of time we attempted to retard it by
             } // for each time based SQL index

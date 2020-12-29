@@ -33,7 +33,8 @@ import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -60,7 +61,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
     private static final String MESSAGE_PREFIX = "ascanbeta.hidden.files.";
     private static final int PLUGIN_ID = 40035;
-    private static final Logger LOG = Logger.getLogger(HiddenFilesScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(HiddenFilesScanRule.class);
 
     private static final String PAYLOADS_FILE_PATH = "json/hidden_files.json";
 
@@ -97,9 +98,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         for (HiddenFile file : hfList) {
 
             if (isStop()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scan rule " + getName() + " stopping.");
-                }
+                LOG.debug("Scan rule {} stopping.", getName());
                 return;
             }
 
@@ -163,26 +162,19 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
             sendAndReceive(testMsg);
             return testMsg;
         } catch (URIException uEx) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                        "An error occurred creating or setting a URI for the: "
-                                + getName()
-                                + " scan rule. "
-                                + uEx.getMessage(),
-                        uEx);
-            }
+            LOG.debug(
+                    "An error occurred creating or setting a URI for the: {} scan rule. {}",
+                    getName(),
+                    uEx.getMessage(),
+                    uEx);
         } catch (IOException e) {
             LOG.warn(
-                    "An error occurred while checking ["
-                            + testMsg.getRequestHeader().getMethod()
-                            + "] ["
-                            + testMsg.getRequestHeader().getURI()
-                            + "] for "
-                            + getName()
-                            + " Caught "
-                            + e.getClass().getName()
-                            + " "
-                            + e.getMessage());
+                    "An error occurred while checking [{}] [{}] for {} Caught {} {}",
+                    testMsg.getRequestHeader().getMethod(),
+                    testMsg.getRequestHeader().getURI().toString(),
+                    getName(),
+                    e.getClass().getName(),
+                    e.getMessage());
         }
         return null;
     }
@@ -278,22 +270,18 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                                 false);
                 hiddenFiles.add(hiddenFile);
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(
-                            "File to be located: "
-                                    + hiddenFile.getPath()
-                                    + " Content: "
-                                    + hiddenFile.getContent());
-                }
+                LOG.debug(
+                        "File to be located: {} content: {}",
+                        hiddenFile.getPath(),
+                        hiddenFile.getContent());
             }
 
             return hiddenFiles;
         } catch (JSONException jEx) {
             LOG.warn(
-                    "Failed to parse "
-                            + getName()
-                            + " payloads file due to JSON parsing issue. "
-                            + jEx.getMessage(),
+                    "Failed to parse {} payloads file due to JSON parsing issue. {}",
+                    getName(),
+                    jEx.getMessage(),
                     jEx);
             return new ArrayList<>();
         }
@@ -306,7 +294,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         try {
             return jsonObj.getString(key);
         } catch (JSONException jEx) {
-            LOG.warn("Unable to parse JSON (" + key + ").", jEx);
+            LOG.warn("Unable to parse JSON ({})", key, jEx);
             return "";
         }
     }
@@ -319,7 +307,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         try {
             jsonArray = jsonObj.getJSONArray(key);
         } catch (JSONException jEx) {
-            LOG.warn("Unable to parse JSON (" + key + ").", jEx);
+            LOG.warn("Unable to parse JSON ({})", key, jEx);
             return Collections.emptyList();
         }
         List<String> newList = new ArrayList<>();
@@ -332,17 +320,16 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     private String readPayloadsFile() {
         File f = new File(Constant.getZapHome() + File.separator + PAYLOADS_FILE_PATH);
         if (!f.exists()) {
-            LOG.error("No such file: " + f.getAbsolutePath());
+            LOG.error("No such file: {}", f.getAbsolutePath());
             return "";
         }
         try {
             return new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             LOG.error(
-                    "Error on opening/reading "
-                            + getName()
-                            + " payload file. Error: "
-                            + e.getMessage(),
+                    "Error on opening/reading {} payload file. Error: {}",
+                    getName(),
+                    e.getMessage(),
                     e);
         }
         return "";

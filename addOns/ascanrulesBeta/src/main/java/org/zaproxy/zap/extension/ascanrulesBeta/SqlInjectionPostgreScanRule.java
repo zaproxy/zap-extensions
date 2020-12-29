@@ -24,7 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -176,10 +177,7 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
     };
 
     /** for logging. */
-    private static Logger log = Logger.getLogger(SqlInjectionPostgreScanRule.class);
-
-    /** determines if we should output Debug level logging */
-    private boolean debugEnabled = log.isDebugEnabled();
+    private static Logger log = LogManager.getLogger(SqlInjectionPostgreScanRule.class);
 
     @Override
     public int getId() {
@@ -218,15 +216,7 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        // DEBUG: turn on for debugging
-        // TODO: turn this off
-        // log.setLevel(org.apache.log4j.Level.DEBUG);
-        // this.debugEnabled = true;
-
-        if (this.debugEnabled) log.debug("Initialising");
-
-        // TODO: debug only
-        // this.setAttackStrength(AttackStrength.LOW);
+        log.debug("Initialising");
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -248,12 +238,10 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                     this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15);
         } catch (ConversionException e) {
             log.debug(
-                    "Invalid value for 'rules.common.sleep': "
-                            + this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
+                    "Invalid value for 'rules.common.sleep': {}",
+                    this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        if (this.debugEnabled) {
-            log.debug("Sleep set to " + sleepInSeconds + " seconds");
-        }
+        log.debug("Sleep set to {} seconds", sleepInSeconds);
     }
 
     /**
@@ -262,11 +250,6 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
      */
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
-
-        // DEBUG only
-        // log.setLevel(org.apache.log4j.Level.DEBUG);
-        // this.debugEnabled = true;
-
         try {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
@@ -276,22 +259,16 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
             } catch (java.net.SocketTimeoutException e) {
                 // to be expected occasionally, if the base query was one that contains some
                 // parameters exploiting time based SQL injection?
-                if (this.debugEnabled)
-                    log.debug(
-                            "The Base Time Check timed out on ["
-                                    + msgTimeBaseline.getRequestHeader().getMethod()
-                                    + "] URL ["
-                                    + msgTimeBaseline.getRequestHeader().getURI().getURI()
-                                    + "]");
+                log.debug(
+                        "The Base Time Check timed out on [{}] URL [{}]",
+                        msgTimeBaseline.getRequestHeader().getMethod(),
+                        msgTimeBaseline.getRequestHeader().getURI().toString());
             } catch (SocketException ex) {
-                if (this.debugEnabled)
-                    log.debug(
-                            "Caught "
-                                    + ex.getClass().getName()
-                                    + " "
-                                    + ex.getMessage()
-                                    + " when accessing: "
-                                    + msgTimeBaseline.getRequestHeader().getURI().toString());
+                log.debug(
+                        "Caught {} {} when accessing: {}",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        msgTimeBaseline.getRequestHeader().getURI().toString());
                 return; // No need to keep going
             }
             long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
@@ -299,17 +276,12 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
 
             int countTimeBasedRequests = 0;
 
-            if (this.debugEnabled)
-                log.debug(
-                        "Scanning URL ["
-                                + getBaseMsg().getRequestHeader().getMethod()
-                                + "] ["
-                                + getBaseMsg().getRequestHeader().getURI()
-                                + "], field ["
-                                + paramName
-                                + "] with original value ["
-                                + paramValue
-                                + "] for SQL Injection");
+            log.debug(
+                    "Scanning URL [{}] [{}], field [{}] with original value [{}] for SQL Injection",
+                    getBaseMsg().getRequestHeader().getMethod(),
+                    getBaseMsg().getRequestHeader().getURI().toString(),
+                    paramName,
+                    paramValue);
 
             // POSTGRES specific time based SQL injection checks
             for (int timeBasedSQLindex = 0;
@@ -332,41 +304,28 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // this is to be expected, if we start sending slow queries to the database.
                     // ignore it in this case.. and just get the time.
-                    if (this.debugEnabled)
-                        log.debug(
-                                "The time check query timed out on ["
-                                        + msgTimeBaseline.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msgTimeBaseline.getRequestHeader().getURI().getURI()
-                                        + "] on field: ["
-                                        + paramName
-                                        + "]");
+                    log.debug(
+                            "The time check query timed out on [{}] URL [{}] on field: [{}]",
+                            msgTimeBaseline.getRequestHeader().getMethod(),
+                            msgTimeBaseline.getRequestHeader().getURI().toString(),
+                            paramName);
                 } catch (SocketException ex) {
-                    if (this.debugEnabled)
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msgTimeBaseline.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msgTimeBaseline.getRequestHeader().getURI().toString());
                     return; // No need to keep going
                 }
                 long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
 
-                if (this.debugEnabled)
-                    log.debug(
-                            "Time Based SQL Injection test: ["
-                                    + newTimeBasedInjectionValue
-                                    + "] on field: ["
-                                    + paramName
-                                    + "] with value ["
-                                    + newTimeBasedInjectionValue
-                                    + "] took "
-                                    + modifiedTimeUsed
-                                    + "ms, where the original took "
-                                    + originalTimeUsed
-                                    + "ms");
+                log.debug(
+                        "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
+                        newTimeBasedInjectionValue,
+                        paramName,
+                        newTimeBasedInjectionValue,
+                        modifiedTimeUsed,
+                        originalTimeUsed);
 
                 if (modifiedTimeUsed >= (originalTimeUsed + (sleepInSeconds * 1000))) {
                     // takes more than 15 (by default) extra seconds => likely time based SQL
@@ -408,16 +367,11 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                             .setMessage(msgAttack)
                             .raise();
 
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "A likely Time Based SQL Injection Vulnerability has been found with ["
-                                        + msgAttack.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msgAttack.getRequestHeader().getURI().getURI()
-                                        + "] on field: ["
-                                        + paramName
-                                        + "]");
-                    }
+                    log.debug(
+                            "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
+                            msgAttack.getRequestHeader().getMethod(),
+                            msgAttack.getRequestHeader().getURI().toString(),
+                            paramName);
                     return;
                 } // query took longer than the amount of time we attempted to retard it by
             } // for each time based SQL index

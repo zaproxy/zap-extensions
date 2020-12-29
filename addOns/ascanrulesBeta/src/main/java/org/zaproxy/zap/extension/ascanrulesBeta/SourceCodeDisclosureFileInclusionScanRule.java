@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -105,7 +106,8 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
 
     /** the logger object */
-    private static Logger log = Logger.getLogger(SourceCodeDisclosureFileInclusionScanRule.class);
+    private static Logger log =
+            LogManager.getLogger(SourceCodeDisclosureFileInclusionScanRule.class);
 
     /**
      * Hirshberg class for longest common substring calculation. Damn you John McKenna and your
@@ -225,19 +227,13 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                 return;
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
-                log.debug(
-                        "Checking ["
-                                + getBaseMsg().getRequestHeader().getMethod()
-                                + "] ["
-                                + getBaseMsg().getRequestHeader().getURI()
-                                + "], parameter ["
-                                + paramname
-                                + "], with original value ["
-                                + paramvalue
-                                + "] for Source Code Disclosure");
-            }
+            log.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+            log.debug(
+                    "Checking [{}] [{}], parameter [{}], with original value [{}] for Source Code Disclosure",
+                    getBaseMsg().getRequestHeader().getMethod(),
+                    getBaseMsg().getRequestHeader().getURI().toString(),
+                    paramname,
+                    paramvalue);
             // the response of the original message is not populated! so populate it.
             sendAndReceive(originalmsg, false); // do nto follow redirects
 
@@ -254,23 +250,17 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                             randomfileattackmsg.getResponseBody().toString());
             if (originalversusrandommatchpercentage > this.thresholdPercentage) {
                 // the output for the "random" file does not sufficiently differ. bale out.
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "The output for a non-existent filename ["
-                                    + NON_EXISTANT_FILENAME
-                                    + "] does not sufficiently differ from that of the original parameter ["
-                                    + paramvalue
-                                    + "], at "
-                                    + originalversusrandommatchpercentage
-                                    + "%, compared to a threshold of "
-                                    + this.thresholdPercentage
-                                    + "%");
-                }
+                log.debug(
+                        "The output for a non-existent filename [{}] does not sufficiently differ from that of the original parameter [{}], at {}%, compared to a threshold of {}%",
+                        NON_EXISTANT_FILENAME,
+                        paramvalue,
+                        originalversusrandommatchpercentage,
+                        this.thresholdPercentage);
                 return;
             }
 
             if (this.isStop()) {
-                if (log.isDebugEnabled()) log.debug("Stopped, due to a user request");
+                log.debug("Stopped, due to a user request");
                 return;
             }
 
@@ -300,17 +290,13 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
 
             // for each of the file names in turn, try it with each of the prefixes
             for (String sourcefilename : sourceFileNames) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Source file is [" + sourcefilename + "]");
-                }
+                log.debug("Source file is [{}]", sourcefilename);
                 // for the url filename, try each of the prefixes in turn
                 for (int h = 0; h < LOCAL_SOURCE_FILE_TARGET_PREFIXES.length; h++) {
 
                     String prefixedUrlfilename =
                             LOCAL_SOURCE_FILE_TARGET_PREFIXES[h] + sourcefilename;
-                    if (log.isDebugEnabled()) {
-                        log.debug("Trying file name [" + prefixedUrlfilename + "]");
-                    }
+                    log.debug("Trying file name [{}]", prefixedUrlfilename);
 
                     HttpMessage sourceattackmsg = getNewMsg();
                     setParameter(sourceattackmsg, paramname, prefixedUrlfilename);
@@ -324,30 +310,20 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                     if (randomversussourcefilenamematchpercentage > this.thresholdPercentage) {
                         // the output for the "source" file does not sufficiently differ from the
                         // random file name. bale out.
-                        if (log.isDebugEnabled()) {
-                            log.debug(
-                                    "The output for the source code filename ["
-                                            + prefixedUrlfilename
-                                            + "] does not sufficiently differ from that of the random parameter, at "
-                                            + randomversussourcefilenamematchpercentage
-                                            + "%, compared to a threshold of "
-                                            + this.thresholdPercentage
-                                            + "%");
-                        }
+                        log.debug(
+                                "The output for the source code filename [{}] does not sufficiently differ from that of the random parameter, at {}%, compared to a threshold of {}%",
+                                prefixedUrlfilename,
+                                randomversussourcefilenamematchpercentage,
+                                this.thresholdPercentage);
                     } else {
                         // if we verified the response
                         if (dataMatchesExtension(
                                 sourceattackmsg.getResponseBody().getBytes(), fileExtension)) {
-                            if (log.isDebugEnabled()) {
-                                log.debug(
-                                        "Source code disclosure!  The output for the source code filename ["
-                                                + prefixedUrlfilename
-                                                + "] differs sufficiently from that of the random parameter, at "
-                                                + randomversussourcefilenamematchpercentage
-                                                + "%, compared to a threshold of "
-                                                + this.thresholdPercentage
-                                                + "%");
-                            }
+                            log.debug(
+                                    "Source code disclosure!  The output for the source code filename [{}] differs sufficiently from that of the random parameter, at {}%, compared to a threshold of {}%",
+                                    prefixedUrlfilename,
+                                    randomversussourcefilenamematchpercentage,
+                                    this.thresholdPercentage);
 
                             // if we get to here, is is very likely that we have source file
                             // inclusion attack. alert it.
@@ -377,16 +353,13 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                             // All done on this parameter
                             return;
                         } else {
-                            if (log.isDebugEnabled()) {
-                                log.debug(
-                                        "Could not verify that the HTML output is source code of type "
-                                                + fileExtension
-                                                + ". Next!");
-                            }
+                            log.debug(
+                                    "Could not verify that the HTML output is source code of type {}. Next!",
+                                    fileExtension);
                         }
                     }
                     if (this.isStop()) {
-                        if (log.isDebugEnabled()) log.debug("Stopped, due to a user request");
+                        log.debug("Stopped, due to a user request");
                         return;
                     }
                 }
@@ -418,26 +391,20 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
 
                 // for each of the EAR / file names in turn, try it with each of the prefixes
                 for (String sourcefilename : warearFileNames) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("WAR/EAR file is [" + sourcefilename + "]");
-                    }
+                    log.debug("WAR/EAR file is [{}]", sourcefilename);
                     // for the url filename, try each of the prefixes in turn
                     for (int h = 0; h < LOCAL_WAR_EAR_FILE_TARGET_PREFIXES.length; h++) {
 
                         String prefixedUrlfilename =
                                 LOCAL_WAR_EAR_FILE_TARGET_PREFIXES[h] + sourcefilename;
-                        if (log.isDebugEnabled()) {
-                            log.debug("Trying WAR/EAR file name [" + prefixedUrlfilename + "]");
-                        }
+                        log.debug("Trying WAR/EAR file name [{}]", prefixedUrlfilename);
 
                         HttpMessage sourceattackmsg = getNewMsg();
                         setParameter(sourceattackmsg, paramname, prefixedUrlfilename);
                         // send the modified message (with the url filename), and see what we get
                         // back
                         sendAndReceive(sourceattackmsg, false); // do not follow redirects
-                        if (log.isDebugEnabled()) {
-                            log.debug("Completed WAR/EAR file name [" + prefixedUrlfilename + "]");
-                        }
+                        log.debug("Completed WAR/EAR file name [{}]", prefixedUrlfilename);
 
                         // since the WAR/EAR file may be large, and since the LCS does not work well
                         // with such large files, lets just look at the file size,
@@ -447,16 +414,11 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                                         sourceattackmsg.getResponseBody().length(),
                                         randomfileattackmsg.getResponseBody().length());
                         if (randomversussourcefilenamematchpercentage < this.thresholdPercentage) {
-                            if (log.isDebugEnabled()) {
-                                log.debug(
-                                        "Source code disclosure!  The output for the WAR/EAR filename ["
-                                                + prefixedUrlfilename
-                                                + "] differs sufficiently (in length) from that of the random parameter, at "
-                                                + randomversussourcefilenamematchpercentage
-                                                + "%, compared to a threshold of "
-                                                + this.thresholdPercentage
-                                                + "%");
-                            }
+                            log.debug(
+                                    "Source code disclosure!  The output for the WAR/EAR filename [{}] differs sufficiently (in length) from that of the random parameter, at {}%, compared to a threshold of {}%",
+                                    prefixedUrlfilename,
+                                    randomversussourcefilenamematchpercentage,
+                                    this.thresholdPercentage);
 
                             // Note: no verification of the file contents in this case.
 
@@ -490,32 +452,26 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                             // parameters on the same request (to reduce performance impact)
                             return;
                         } else {
-                            if (log.isDebugEnabled()) {
-                                log.debug(
-                                        "The output for the WAR/EAR code filename ["
-                                                + prefixedUrlfilename
-                                                + "] does not sufficiently differ in length from that of the random parameter, at "
-                                                + randomversussourcefilenamematchpercentage
-                                                + "%, compared to a threshold of "
-                                                + this.thresholdPercentage
-                                                + "%");
-                            }
+                            log.debug(
+                                    "The output for the WAR/EAR code filename [{}] does not sufficiently differ in length from that of the random parameter, at {}%, compared to a threshold of {}%",
+                                    prefixedUrlfilename,
+                                    randomversussourcefilenamematchpercentage,
+                                    this.thresholdPercentage);
                         }
                         if (this.isStop()) {
-                            if (log.isDebugEnabled()) log.debug("Stopped, due to a user request");
+                            log.debug("Stopped, due to a user request");
                             return;
                         }
                     }
                 }
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Not checking for EAR/WAR files for this request, since the Attack Strength is not HIGH or INSANE");
-                }
+                log.debug(
+                        "Not checking for EAR/WAR files for this request, since the Attack Strength is not HIGH or INSANE");
             }
 
         } catch (Exception e) {
-            log.error("Error scanning parameters for Source Code Disclosure: " + e.getMessage(), e);
+            log.error(
+                    "Error scanning parameters for Source Code Disclosure: {}", e.getMessage(), e);
         }
     }
 
@@ -537,12 +493,9 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             } else if (fileExtension.equals("HTML")) {
                 if (PATTERN_HTML.matcher(new String(data)).find()) return true;
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Unknown file extension "
-                                    + fileExtension
-                                    + ". Accepting this file type without verifying it. Could therefore be a false positive.");
-                }
+                log.debug(
+                        "Unknown file extension {}. Accepting this file type without verifying it. Could therefore be a false positive.",
+                        fileExtension);
                 // unknown file extension. just accept it as it is.
                 return true;
             }
@@ -580,17 +533,13 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
      * @return
      */
     private int calcMatchPercentage(String a, String b) {
-        if (log.isDebugEnabled()) {
-            log.debug("About to get LCS for [" + a + "] and [ " + b + "]");
-        }
+        log.debug("About to get LCS for [{}] and [{}]", a, b);
         if (a == null && b == null) return 100;
         if (a == null || b == null) return 0;
         if (a.length() == 0 && b.length() == 0) return 100;
         if (a.length() == 0 || b.length() == 0) return 0;
         String lcs = hirshberg.getLCS(a, b);
-        if (log.isDebugEnabled()) {
-            log.debug("Got LCS: " + lcs);
-        }
+        log.debug("Got LCS: {}", lcs);
         // get the percentage match against the longer of the 2 strings
         return (int) ((((double) lcs.length()) / Math.max(a.length(), b.length())) * 100);
     }

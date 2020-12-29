@@ -41,7 +41,8 @@ import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -78,7 +79,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
     /** details of the vulnerability which we are attempting to find 45 = "Fingerprinting" */
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_45");
     /** the logger object */
-    private static final Logger log = Logger.getLogger(InsecureHttpMethodScanRule.class);
+    private static final Logger log = LogManager.getLogger(InsecureHttpMethodScanRule.class);
     /**
      * The set of methods that we know are unsafe. It's a combination of the 'default' HTTP methods
      * and the WEBDAV methods.
@@ -166,10 +167,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
              * allowedmethods = "CONNECT"; publicmethods = null;
              */
 
-            if (log.isDebugEnabled()) {
-                log.debug("allowedmethods: " + allowedmethods);
-                log.debug("publicmethods: " + publicmethods);
-            }
+            log.debug("allowedmethods: {}", allowedmethods);
+            log.debug("publicmethods: {}", publicmethods);
 
             AttackStrength attackStrength = getAttackStrength();
 
@@ -247,12 +246,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                         continue;
                     }
 
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "The following enabled method is being checked: '"
-                                        + enabledmethod
-                                        + "'");
-                    }
+                    log.debug("The following enabled method is being checked: '{}'", enabledmethod);
                     String insecureMethod = enabledmethod;
 
                     String evidence = null;
@@ -285,7 +279,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                             testHttpMethod(enabledmethod);
 
                         } else {
-                            log.debug("Untested method: " + enabledmethod);
+                            log.debug("Untested method: {}", enabledmethod);
                         }
 
                     } else {
@@ -326,7 +320,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                 }
             }
         } catch (Exception e) {
-            log.error("Error scanning a Host for Insecure HTTP Methods: " + e.getMessage(), e);
+            log.error("Error scanning a Host for Insecure HTTP Methods: {}", e.getMessage(), e);
         }
     }
 
@@ -416,11 +410,9 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         try {
             connectResponse = client.connect();
         } catch (IOException ex) {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Could not establish a client connection to a third party using the CONNECT HTTP method",
-                        ex);
-            }
+            log.debug(
+                    "Could not establish a client connection to a third party using the CONNECT HTTP method",
+                    ex);
             return;
         }
 
@@ -433,7 +425,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
             StatusLine statusLine = connectResponse.getConnectMethod().getStatusLine();
 
-            if (log.isDebugEnabled()) log.debug("The status line returned: " + statusLine);
+            log.debug("The status line returned: {}", statusLine);
 
             int statusCode = statusLine.getStatusCode();
 
@@ -445,8 +437,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                 // for instance
                 // Remediation: Check the contents match the expected third
                 // party contents.
-                if (log.isDebugEnabled())
-                    log.debug("Raw Socket established, in theory to " + thirdpartyHost);
+                log.debug("Raw Socket established, in theory to {}", thirdpartyHost);
 
                 PrintWriter pw = new PrintWriter(os, false);
                 pw.write("GET http://" + thirdpartyHost + ":" + thirdpartyPort + "/ HTTP/1.1\n");
@@ -465,8 +456,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                     bytesRead = is.read(buffer);
                 }
                 String response = new String(bos.toByteArray());
-                if (log.isDebugEnabled())
-                    log.debug("Response is " + totalBytesRead + " bytes: \n" + response);
+                log.debug("Response is {} bytes: \n{}", totalBytesRead, response);
 
                 Matcher m = thirdPartyContentPattern.matcher(response);
                 if (m.matches()) {
@@ -497,18 +487,14 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                 }
 
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Could not establish a socket connection to a third party using the CONNECT HTTP method: NULL socket returned, or non-200 response");
-                    log.debug("The status line returned: " + statusLine);
-                }
+                log.debug(
+                        "Could not establish a socket connection to a third party using the CONNECT HTTP method: NULL socket returned, or non-200 response");
+                log.debug("The status line returned: {}", statusLine);
             }
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Could not establish a socket connection to a third party using the CONNECT HTTP method",
-                        e);
-            }
+            log.debug(
+                    "Could not establish a socket connection to a third party using the CONNECT HTTP method",
+                    e);
         } finally {
             socket.close();
         }
@@ -562,10 +548,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         enabledStatusCodes.add(HttpStatusCode.PAYMENT_REQUIRED);
         enabledStatusCodes.add(HttpStatusCode.FORBIDDEN);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Request Method: " + httpMethod);
-            log.debug("Response Code: " + responseCode);
-        }
+        log.debug("Request Method: {}", httpMethod);
+        log.debug("Response Code: {}", responseCode);
 
         if (isPage200(msg) || responseCode == HttpStatusCode.CREATED) {
             evidence =

@@ -27,7 +27,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -50,7 +51,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_34");
 
     /** the logger object */
-    private static Logger log = Logger.getLogger(SourceCodeDisclosureGitScanRule.class);
+    private static Logger log = LogManager.getLogger(SourceCodeDisclosureGitScanRule.class);
 
     /**
      * patterns expected in the output for common server side file extensions TODO: add support for
@@ -121,15 +122,11 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                 && (isPage404(getBaseMsg()))) return;
 
         // scan the node itself (ie, at URL level, rather than at parameter level)
-        if (log.isDebugEnabled()) {
-            log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
-            log.debug(
-                    "Checking ["
-                            + getBaseMsg().getRequestHeader().getMethod()
-                            + "] ["
-                            + getBaseMsg().getRequestHeader().getURI()
-                            + "], for Source Code Disclosure using Git meta-data");
-        }
+        log.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+        log.debug(
+                "Checking [{}] [{}], for Source Code Disclosure using Git meta-data",
+                getBaseMsg().getRequestHeader().getMethod(),
+                getBaseMsg().getRequestHeader().getURI().toString());
 
         try {
             URI uri = this.getBaseMsg().getRequestHeader().getURI();
@@ -145,15 +142,13 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                 }
 
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "The URI has no filename component, so there is not much point in looking for corresponding source code!");
-                }
+                log.debug(
+                        "The URI has no filename component, so there is not much point in looking for corresponding source code!");
             }
         } catch (Exception e) {
             log.error(
-                    "Error scanning a request for Git based Source Code Disclosure: "
-                            + e.getMessage(),
+                    "Error scanning a request for Git based Source Code Disclosure: {}",
+                    e.getMessage(),
                     e);
         }
     }
@@ -176,12 +171,9 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
             } else if (fileExtension.equals("HTML")) {
                 if (PATTERN_HTML.matcher(new String(data)).find()) return true;
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Unknown file extension "
-                                    + fileExtension
-                                    + ". Accepting this file type without verifying it. Could therefore be a false positive.");
-                }
+                log.debug(
+                        "Unknown file extension {}. Accepting this file type without verifying it. Could therefore be a false positive.",
+                        fileExtension);
                 // unknown file extension. just accept it as it is.
                 return true;
             }
@@ -256,7 +248,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                                     + 1); // leave the trailing slash on, if there was one
             while ((!modifiedpath.equals("")) && (!gitSHA1located)) {
 
-                if (log.isDebugEnabled()) log.debug("Path is " + modifiedpath);
+                log.debug("Path is {}", modifiedpath);
 
                 gitindexpath = modifiedpath + ".git/index";
 
@@ -268,23 +260,19 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                                 null,
                                 null);
                 try {
-                    if (log.isDebugEnabled())
-                        log.debug("Trying for a Git index file " + gitindexuri.getURI());
+                    log.debug("Trying for a Git index file {}", gitindexuri.getURI().toString());
 
                     if (!gitindexentrycache.isIndexCached(gitindexuri)) {
                         // The Git index is not cached, so parse it and cache it.
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "Git Index "
-                                            + gitindexuri.getURI()
-                                            + " is not cached. We will parse and cache it");
+                        log.debug(
+                                "Git Index {} is not cached. We will parse and cache it",
+                                gitindexuri.getURI().toString());
 
                         data = git.getURIResponseBody(gitindexuri, false, originalMessage);
                         // get the list of relative file paths and Git SHA1s from the file
                         Map<String, String> gitFiles = git.getIndexSha1s(data);
                         if (gitFiles != null) {
-                            if (log.isDebugEnabled())
-                                log.debug("We found a Git index file at '" + gitindexpath + "'");
+                            log.debug("We found a Git index file at '{}'", gitindexpath);
 
                             Set<Entry<String, String>> entrySet = gitFiles.entrySet();
                             Iterator<Entry<String, String>> entryIterator = entrySet.iterator();
@@ -303,14 +291,11 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                                 String gitSHA1Temp = gitIndexEntry.getValue();
 
                                 // cache the entry..
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "Caching Git Index file "
-                                                    + gitindexuri.getURI()
-                                                    + ", Index Entry "
-                                                    + gitIndexEntryUri.getURI()
-                                                    + ", SHA1 "
-                                                    + gitSHA1Temp);
+                                log.debug(
+                                        "Caching Git Index file {}, Index Entry {}, SHA1 {}",
+                                        gitindexuri.getURI().toString(),
+                                        gitIndexEntryUri.getURI().toString(),
+                                        gitSHA1Temp);
                                 gitindexentrycache.putIndexEntry(
                                         gitindexuri, gitIndexEntryUri, gitSHA1Temp);
                             }
@@ -326,32 +311,24 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                                 gitindexentrycache.getIndexEntry(
                                         gitindexuri, originalURIWithoutQuery);
                         log.debug(
-                                "Git SHA1 '"
-                                        + gitsha1
-                                        + "' was found for Git index file '"
-                                        + gitindexuri
-                                        + ", Git index entry file '"
-                                        + originalURIWithoutQuery
-                                        + "'");
+                                "Git SHA1 '{}' was found for Git index file '{}, Git index entry file '{}'",
+                                gitsha1,
+                                gitindexuri,
+                                originalURIWithoutQuery);
                         break;
                     } else {
                         log.debug(
-                                "A cache entry was not found for Git index file '"
-                                        + gitindexuri
-                                        + ", Git index entry file '"
-                                        + originalURIWithoutQuery
-                                        + "'");
+                                "A cache entry was not found for Git index file '{}, Git index entry file '{}'",
+                                gitindexuri,
+                                originalURIWithoutQuery);
                     }
 
                 } catch (Exception e) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Ignoring an error getting/parsing '"
-                                        + gitindexpath
-                                        + "', while trying to find the Git SHA1 value for '"
-                                        + path
-                                        + "': "
-                                        + e);
+                    log.debug(
+                            "Ignoring an error getting/parsing '{}', while trying to find the Git SHA1 value for '{}': {}",
+                            gitindexpath,
+                            path,
+                            e);
                 } finally {
                     // move to the next parent directory, by first stripping off the trailing index,
                     // and grabbing up to and including the last index
@@ -364,9 +341,8 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                 }
 
                 if (isStop()) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Stopped scan rule (while trying to find the Git index file), due to a user request");
+                    log.debug(
+                            "Stopped scan rule (while trying to find the Git index file), due to a user request");
                     return false;
                 }
             }
@@ -376,26 +352,20 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                     || gitsha1.equals("")
                     || gitindexpath == null
                     || gitindexpath.equals("")) {
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "A Git SHA1 value or Git index path for '" + path + "' was not found.");
+                log.debug("A Git SHA1 value or Git index path for '{}' was not found.", path);
                 return false;
             }
             if (!git.validateSHA1(gitsha1)) {
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "The 'gitsha1' parameter '"
-                                    + gitsha1
-                                    + "' does not appear to be a valid format for a Git SHA1 value");
+                log.debug(
+                        "The 'gitsha1' parameter '{}' does not appear to be a valid format for a Git SHA1 value",
+                        gitsha1);
                 return false;
             }
             String gitbasepath = git.getBaseFolder(gitindexpath);
             if (gitbasepath == null || gitbasepath.equals("")) {
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "The 'gitindexpath' parameter '"
-                                    + gitbasepath
-                                    + "' does not appear to be valid.");
+                log.debug(
+                        "The 'gitindexpath' parameter '{}' does not appear to be valid.",
+                        gitbasepath);
                 return false;
             }
             // get the data from Git, using its SHA1 value.
@@ -414,9 +384,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                 // check the contents of the output to some degree, if we have a file extension.
                 // if not, just try it (could be a false positive, but hey)
                 if (dataMatchesExtension(disclosedData, fileExtension)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Source code disclosure, using Git metadata leakage!");
-                    }
+                    log.debug("Source code disclosure, using Git metadata leakage!");
 
                     // source file inclusion attack. alert it.
                     // Note that, unlike with SVN, the Git data is extracted not from one file, but
@@ -436,20 +404,18 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                 // does not match the extension
                 return false;
             } else {
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "The data disclosed via Git meta-data is not source code, since it matches the data served when we requested the file in the normal manner (source code is not served by web apps, and if it is, then you have bigger problems)");
+                log.debug(
+                        "The data disclosed via Git meta-data is not source code, since it matches the data served when we requested the file in the normal manner (source code is not served by web apps, and if it is, then you have bigger problems)");
                 return false;
             }
         } catch (FileNotFoundException e) {
-            if (log.isDebugEnabled()) log.debug("A file was not found for SHA1 '" + gitsha1 + "'");
+            log.debug("A file was not found for SHA1 '{}'", gitsha1);
             return false;
         } catch (Exception e) {
             log.error(
-                    "Some other error occurred when reading data for Git SHA1 '"
-                            + gitsha1
-                            + "': "
-                            + e);
+                    "Some other error occurred when reading data for Git SHA1 '{}': {}",
+                    gitsha1,
+                    e);
             return false;
         }
     }
