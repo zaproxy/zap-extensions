@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.io.IOException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -45,7 +46,7 @@ public class ElmahScanRule extends AbstractHostPlugin {
     private static final String MESSAGE_PREFIX = "ascanrules.elmah.";
     private static final int PLUGIN_ID = 40028;
 
-    private static final Logger LOG = Logger.getLogger(ElmahScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(ElmahScanRule.class);
 
     @Override
     public int getId() {
@@ -110,9 +111,7 @@ public class ElmahScanRule extends AbstractHostPlugin {
         // Check if the user stopped things. One request per URL so check before
         // sending the request
         if (isStop()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Scan rule " + getName() + " Stopping.");
-            }
+            LOG.debug("Scan rule {} Stopping.", getName());
             return;
         }
 
@@ -131,43 +130,33 @@ public class ElmahScanRule extends AbstractHostPlugin {
                             baseUri.getPort(),
                             "/elmah.axd");
         } catch (URIException uEx) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                        "An error occurred creating a URI for the: "
-                                + getName()
-                                + " rule. "
-                                + uEx.getMessage(),
-                        uEx);
-            }
+            LOG.debug(
+                    "An error occurred creating a URI for the: {} rule. {}",
+                    getName(),
+                    uEx.getMessage(),
+                    uEx);
             return;
         }
         try {
             newRequest.getRequestHeader().setURI(elmahUri);
         } catch (URIException uEx) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                        "An error occurred setting the URI for a new request used by: "
-                                + getName()
-                                + " rule. "
-                                + uEx.getMessage(),
-                        uEx);
-            }
+            LOG.debug(
+                    "An error occurred setting the URI for a new request used by: {} rule. {}",
+                    getName(),
+                    uEx.getMessage(),
+                    uEx);
             return;
         }
         try {
             sendAndReceive(newRequest, false);
         } catch (IOException e) {
             LOG.warn(
-                    "An error occurred while checking ["
-                            + newRequest.getRequestHeader().getMethod()
-                            + "] ["
-                            + newRequest.getRequestHeader().getURI()
-                            + "] for "
-                            + getName()
-                            + " Caught "
-                            + e.getClass().getName()
-                            + " "
-                            + e.getMessage());
+                    "An error occurred while checking [{}] [{}] for {} Caught {} {}",
+                    newRequest.getRequestHeader().getMethod(),
+                    newRequest.getRequestHeader().getURI(),
+                    getName(),
+                    e.getClass().getName(),
+                    e.getMessage());
             return;
         }
         int statusCode = newRequest.getResponseHeader().getStatusCode();

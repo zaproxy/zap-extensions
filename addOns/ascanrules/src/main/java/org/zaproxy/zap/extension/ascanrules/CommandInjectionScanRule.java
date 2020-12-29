@@ -33,7 +33,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -267,7 +268,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
     }
 
     // Logger instance
-    private static final Logger log = Logger.getLogger(CommandInjectionScanRule.class);
+    private static final Logger log = LogManager.getLogger(CommandInjectionScanRule.class);
 
     // Get WASC Vulnerability description
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_31");
@@ -340,14 +341,11 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
             timeSleepSeconds = this.getConfig().getInt(RULE_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
         } catch (ConversionException e) {
             log.debug(
-                    "Invalid value for '"
-                            + RULE_SLEEP_TIME
-                            + "': "
-                            + this.getConfig().getString(RULE_SLEEP_TIME));
+                    "Invalid value for '{}': {}",
+                    RULE_SLEEP_TIME,
+                    this.getConfig().getString(RULE_SLEEP_TIME));
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Sleep set to " + timeSleepSeconds + " seconds");
-        }
+        log.debug("Sleep set to {} seconds", timeSleepSeconds);
     }
 
     /**
@@ -372,16 +370,11 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String paramName, String value) {
 
         // Begin scan rule execution
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "Checking ["
-                            + msg.getRequestHeader().getMethod()
-                            + "]["
-                            + msg.getRequestHeader().getURI()
-                            + "], parameter ["
-                            + paramName
-                            + "] for OS Command Injection vulnerabilites");
-        }
+        log.debug(
+                "Checking [{}][{}], parameter [{}] for OS Command Injection vulnerabilites",
+                msg.getRequestHeader().getMethod(),
+                msg.getRequestHeader().getURI(),
+                paramName);
 
         // Number of targets to try
         int targetCount = 0;
@@ -513,24 +506,18 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
             paramValue = value + payload;
             setParameter(msg, paramName, paramValue);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Testing [" + paramName + "] = [" + paramValue + "]");
-            }
+            log.debug("Testing [{}] = [{}]", paramName, paramValue);
 
             try {
                 // Send the request and retrieve the response
                 try {
                     sendAndReceive(msg, false);
                 } catch (SocketException ex) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msg.getRequestHeader().getURI().toString()
-                                        + "\n The target may have replied with a poorly formed redirect due to our input.");
+                    log.debug(
+                            "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg.getRequestHeader().getURI().toString());
                     continue; // Something went wrong, move to next payload iteration
                 }
                 elapsedTime = msg.getTimeElapsedMillis();
@@ -542,14 +529,10 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                 if (matcher.find()) {
                     // We Found IT!
                     // First do logging
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "[OS Command Injection Found] on parameter ["
-                                        + paramName
-                                        + "] with value ["
-                                        + paramValue
-                                        + "]");
-                    }
+                    log.debug(
+                            "[OS Command Injection Found] on parameter [{}] with value [{}]",
+                            paramName,
+                            paramValue);
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -568,11 +551,9 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
                 log.warn(
-                        "Command Injection vulnerability check failed for parameter ["
-                                + paramName
-                                + "] and payload ["
-                                + payload
-                                + "] due to an I/O error",
+                        "Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        paramName,
+                        payload,
                         ex);
             }
 
@@ -611,24 +592,18 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
             paramValue = value + payload.replace("{0}", timeSleepSecondsStr);
             setParameter(msg, paramName, paramValue);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Testing [" + paramName + "] = [" + paramValue + "]");
-            }
+            log.debug("Testing [{}] = [{}]", paramName, paramValue);
 
             try {
                 // Send the request and retrieve the response
                 try {
                     sendAndReceive(msg, false);
                 } catch (SocketException ex) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msg.getRequestHeader().getURI().toString()
-                                        + "\n The target may have replied with a poorly formed redirect due to our input.");
+                    log.debug(
+                            "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg.getRequestHeader().getURI().toString());
                     continue; // Something went wrong, move to next blind iteration
                 }
                 elapsedTime = msg.getTimeElapsedMillis();
@@ -641,14 +616,10 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
 
                     // We Found IT!
                     // First do logging
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "[Blind OS Command Injection Found] on parameter ["
-                                        + paramName
-                                        + "] with value ["
-                                        + paramValue
-                                        + "]");
-                    }
+                    log.debug(
+                            "[Blind OS Command Injection Found] on parameter [{}] with value [{}]",
+                            paramName,
+                            paramValue);
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -666,11 +637,9 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
                 log.warn(
-                        "Blind Command Injection vulnerability check failed for parameter ["
-                                + paramName
-                                + "] and payload ["
-                                + payload
-                                + "] due to an I/O error",
+                        "Blind Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        paramName,
+                        payload,
                         ex);
             }
 
@@ -709,12 +678,9 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
         // Check if there is too much deviation
         if (result > WARN_TIME_STDEV) {
             log.warn(
-                    "There is considerable lagging "
-                            + "in connection response(s) which gives a standard deviation of "
-                            + result
-                            + "ms on the sample set which is more than "
-                            + WARN_TIME_STDEV
-                            + "ms");
+                    "There is considerable lagging in connection response(s) which gives a standard deviation of {}ms on the sample set which is more than {}ms",
+                    result,
+                    WARN_TIME_STDEV);
         }
 
         return result;

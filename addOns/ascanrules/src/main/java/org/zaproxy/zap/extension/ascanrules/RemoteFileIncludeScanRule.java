@@ -24,7 +24,8 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -87,7 +88,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
     /** details of the vulnerability which we are attempting to find */
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_5");
     /** the logger object */
-    private static Logger log = Logger.getLogger(RemoteFileIncludeScanRule.class);
+    private static Logger log = LogManager.getLogger(RemoteFileIncludeScanRule.class);
 
     @Override
     public int getId() {
@@ -146,9 +147,8 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
             // DEBUG only
             // this.setAttackStrength(AttackStrength.INSANE);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
-            }
+            log.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+
             String origResponse =
                     msg.getResponseHeader().toString() + msg.getResponseBody().toString();
 
@@ -178,16 +178,11 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
             Matcher matcher;
             Matcher origMatcher;
 
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Checking ["
-                                + getBaseMsg().getRequestHeader().getMethod()
-                                + "] ["
-                                + getBaseMsg().getRequestHeader().getURI()
-                                + "], parameter ["
-                                + param
-                                + "] for Path Traversal to remote files");
-            }
+            log.debug(
+                    "Checking [{}] [{}], parameter [{}] for Path Traversal to remote files",
+                    getBaseMsg().getRequestHeader().getMethod(),
+                    getBaseMsg().getRequestHeader().getURI(),
+                    param);
 
             // for each prefix in turn
             for (int h = 0; h < prefixCountRFI; h++) {
@@ -206,14 +201,11 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
                     try {
                         sendAndReceive(msg);
                     } catch (IllegalStateException | UnknownHostException ex) {
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "Caught "
-                                            + ex.getClass().getName()
-                                            + " "
-                                            + ex.getMessage()
-                                            + " when accessing: "
-                                            + msg.getRequestHeader().getURI().toString());
+                        log.debug(
+                                "Caught {} {} when accessing: {}",
+                                ex.getClass().getName(),
+                                ex.getMessage(),
+                                msg.getRequestHeader().getURI().toString());
                         continue; // Something went wrong, continue to the next target in the loop
                     }
 
@@ -228,8 +220,8 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
                         if (origMatcher.find() && origMatcher.group().equals(matcher.group())) {
                             // Its the same as before
                             log.debug(
-                                    "Not reporting alert - same title as original: "
-                                            + matcher.group());
+                                    "Not reporting alert - same title as original: {}",
+                                    matcher.group());
                         } else {
                             newAlert()
                                     .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -255,17 +247,12 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
             }
 
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Error checking ["
-                                + getBaseMsg().getRequestHeader().getMethod()
-                                + "] ["
-                                + getBaseMsg().getRequestHeader().getURI()
-                                + "], parameter ["
-                                + param
-                                + "] for Remote File Include. "
-                                + e.getMessage());
-            }
+            log.debug(
+                    "Error checking [{}] [{}], parameter [{}] for Remote File Include. {}",
+                    getBaseMsg().getRequestHeader().getMethod(),
+                    getBaseMsg().getRequestHeader().getURI(),
+                    param,
+                    e.getMessage());
         }
     }
 

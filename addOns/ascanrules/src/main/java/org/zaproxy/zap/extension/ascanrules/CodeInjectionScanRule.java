@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.Random;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -70,7 +71,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
     };
 
     // Logger instance
-    private static final Logger log = Logger.getLogger(CodeInjectionScanRule.class);
+    private static final Logger log = LogManager.getLogger(CodeInjectionScanRule.class);
 
     private static final Random RAND = new Random();
 
@@ -143,16 +144,11 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String paramName, String value) {
 
         // Begin scan rule execution
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "Checking ["
-                            + msg.getRequestHeader().getMethod()
-                            + "]["
-                            + msg.getRequestHeader().getURI()
-                            + "], parameter ["
-                            + paramName
-                            + "] for Dynamic Code Injection vulnerabilites");
-        }
+        log.debug(
+                "Checking [{}][{}], parameter [{}] for Dynamic Code Injection vulnerabilites",
+                msg.getRequestHeader().getMethod(),
+                msg.getRequestHeader().getURI(),
+                paramName);
 
         if (inScope(Tech.PHP)) {
             if (testPhpInjection(paramName)) {
@@ -183,23 +179,18 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, phpPayload);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Testing [" + paramName + "] = [" + phpPayload + "]");
-            }
+            log.debug("Testing [{}] = [{}]", paramName, phpPayload);
 
             try {
                 // Send the request and retrieve the response
                 try {
                     sendAndReceive(msg, false);
                 } catch (SocketException ex) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msg.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {}{} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg.getRequestHeader().getURI().toString());
                     continue; // Advance in the PHP payload loop, no point continuing on this
                     // payload
                 }
@@ -208,14 +199,10 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                 if (msg.getResponseBody().toString().contains(PHP_CONTROL_TOKEN)) {
                     // We Found IT!
                     // First do logging
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "[PHP Code Injection Found] on parameter ["
-                                        + paramName
-                                        + "] with payload ["
-                                        + phpPayload
-                                        + "]");
-                    }
+                    log.debug(
+                            "[PHP Code Injection Found] on parameter [{}] with payload [{}]",
+                            paramName,
+                            phpPayload);
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -234,11 +221,9 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
                 log.warn(
-                        "PHP Code Injection vulnerability check failed for parameter ["
-                                + paramName
-                                + "] and payload ["
-                                + phpPayload
-                                + "] due to an I/O error",
+                        "PHP Code Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        paramName,
+                        phpPayload,
                         ex);
             }
 
@@ -269,23 +254,18 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, MessageFormat.format(aspPayload, bignum1, bignum2));
 
-            if (log.isDebugEnabled()) {
-                log.debug("Testing [" + paramName + "] = [" + aspPayload + "]");
-            }
+            log.debug("Testing [{}] = [{}]", paramName, aspPayload);
 
             try {
                 // Send the request and retrieve the response
                 try {
                     sendAndReceive(msg, false);
                 } catch (SocketException ex) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msg.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg.getRequestHeader().getURI().toString());
                     continue; // Advance in the ASP payload loop, no point continuing on this
                     // payload
                 }
@@ -296,14 +276,10 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                         .contains(Integer.toString(bignum1 * bignum2))) {
                     // We Found IT!
                     // First do logging
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "[ASP Code Injection Found] on parameter ["
-                                        + paramName
-                                        + "]  with payload ["
-                                        + aspPayload
-                                        + "]");
-                    }
+                    log.debug(
+                            "[ASP Code Injection Found] on parameter [{}] with payload [{}]",
+                            paramName,
+                            aspPayload);
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -319,11 +295,9 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
                 log.warn(
-                        "ASP Code Injection vulnerability check failed for parameter ["
-                                + paramName
-                                + "] and payload ["
-                                + aspPayload
-                                + "] due to an I/O error",
+                        "ASP Code Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        paramName,
+                        aspPayload,
                         ex);
             }
 
