@@ -56,7 +56,7 @@ public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<Image
 
         // When
         msg = createHttpMessageFromFilename(fname);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertEquals(alertsRaised.size(), 1);
@@ -74,7 +74,7 @@ public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<Image
 
         // When
         msg = createHttpMessageFromFilename(fname);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertEquals(alertsRaised.size(), 0);
@@ -85,7 +85,7 @@ public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<Image
 
         // When
         msg = createHttpMessageFromFilename(fname);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertEquals(alertsRaised.size(), 0);
@@ -101,7 +101,7 @@ public class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<Image
 
         // When
         msg = createHttpMessageFromFilename(fname);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+        scanHttpResponseReceive(msg);
 
         // Then
         assertEquals(alertsRaised.size(), 1);

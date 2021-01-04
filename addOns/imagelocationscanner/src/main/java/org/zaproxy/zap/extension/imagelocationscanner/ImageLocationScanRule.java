@@ -25,7 +25,8 @@ import net.htmlparser.jericho.Source;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -49,16 +50,14 @@ import com.veggiespam.imagelocationscanner.ILS;
  * @see https://www.veggiespam.com/ils/
  */
 public class ImageLocationScanRule extends PluginPassiveScanner {
-	private PassiveScanThread parent = null;
-	private static final Logger logger = Logger.getLogger(ImageLocationScanRule.class);
+	private static final Logger logger = LogManager.getLogger(ImageLocationScanRule.class);
 	private static final String MESSAGE_PREFIX = "imagelocationscanner.";
 	public static final int PLUGIN_ID = 10103;
 	
-	
-	@Override
-	public void setParent (PassiveScanThread parent) {
-		this.parent = parent;
-	}
+    @Override
+    public void setParent(PassiveScanThread parent) {
+        // Nothing to do.
+    }
 
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -105,7 +104,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
         }
 
         if (logger.isDebugEnabled()) {
-		    logger.debug("\tCT: " + CT + " url: " + url + " fileName: " + fileName + " ext: " + extension);
+            logger.debug("\tCT: {} url: {} fileName: {} ext: {}", CT, url, fileName, extension);
         }
         
         // everything is already lowercase
@@ -118,26 +117,22 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
 			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), false);
 			
 			if (! hasGPS.isEmpty()) {
-				Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getAlertTitle());
-				alert.setDetail(
-			    		getDescription(), 
-			    		url,
-			    		"",	// Param
-			    		"", // Attack
-			    		"", // Other info
-			    		getSolution(), 
-			            getReference(), 
-                        getAlertDetailPrefix()  + "\n" + hasGPS,	// Evidence
-			            200, // CWE-200: Information Exposure
-			            13,	// WASC-13: Information Leakage
-			            msg);
-				
-		    	parent.raiseAlert(id, alert);
+			    newAlert()
+			    .setName(getAlertTitle())
+			    .setRisk(Alert.RISK_INFO)
+			    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+			    .setDescription(getDescription())
+			    .setSolution(getSolution())
+			    .setReference(getReference())
+			    .setEvidence(getAlertDetailPrefix()  + "\n" + hasGPS)
+			    .setCweId(200) // CWE-200: Information Exposure
+			    .setWascId(13) // WASC-13: Information Leakage
+			    .raise();
 			}
 			
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
+		    logger.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
 		}
 	}
 
