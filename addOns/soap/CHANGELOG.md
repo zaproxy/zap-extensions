@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [5] - 2021-01-04
 ### Changed
 - Add support for ValueGenerator (Issue 3345).
 
@@ -36,4 +36,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[5]: https://github.com/zaproxy/zap-extensions/releases/soap-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/soap-v4
