@@ -47,9 +47,11 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.codehaus.groovy.runtime.metaclass.MissingPropertyExceptionNoStack;
@@ -64,6 +66,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.network.HttpRequestBody;
 
 public class WSDLCustomParser {
@@ -72,6 +76,7 @@ public class WSDLCustomParser {
     private static int keyIndex = -1;
     private SOAPMsgConfig lastConfig; // Only used for unit testing purposes.
     private final TableWsdl table;
+    private ValueGenerator valueGenerator;
 
     public WSDLCustomParser(TableWsdl table) {
         this.table = table;
@@ -385,7 +390,11 @@ public class WSDLCustomParser {
                         if (parent != null) xpath = parent + "/" + element.getName();
                         else xpath = element.getName();
                         if (element.getType() != null)
-                            return addParameter(xpath, element.getType().getQualifiedName(), null);
+                            return addParameter(
+                                    xpath,
+                                    element.getType().getQualifiedName(),
+                                    element.getName(),
+                                    null);
                         else return formParams;
                     }
                 }
@@ -394,7 +403,8 @@ public class WSDLCustomParser {
                 String xpath;
                 if (parent != null) xpath = parent + "/" + element.getName();
                 else xpath = element.getName();
-                return addParameter(xpath, element.getType().getQualifiedName(), null);
+                return addParameter(
+                        xpath, element.getType().getQualifiedName(), element.getName(), null);
             }
             /* Handles enumeration restriction. */
             BaseRestriction br = simpleType.getRestriction();
@@ -403,7 +413,11 @@ public class WSDLCustomParser {
                 if (enums != null && enums.size() > 0) {
                     String defaultValue = enums.get(0).getValue();
                     formParams.putAll(
-                            addParameter(parent + "/" + element.getName(), "string", defaultValue));
+                            addParameter(
+                                    parent + "/" + element.getName(),
+                                    "string",
+                                    element.getName(),
+                                    defaultValue));
                 }
             }
             return formParams;
@@ -417,7 +431,8 @@ public class WSDLCustomParser {
         return formParams;
     }
 
-    private HashMap<String, String> addParameter(String path, String paramType, String value) {
+    protected HashMap<String, String> addParameter(
+            String path, String paramType, String name, String value) {
         HashMap<String, String> formParams = new HashMap<>();
         LOG.debug("Detected parameter: " + path);
         if (paramType.contains(":")) {
@@ -429,6 +444,32 @@ public class WSDLCustomParser {
             formParams.put("xpath:/" + path, value);
             return formParams;
         }
+
+        if (valueGenerator == null) {
+            valueGenerator =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionSpider.class)
+                            .getValueGenerator();
+        }
+
+        Map<String, String> fieldAttributes = new HashMap<>();
+        fieldAttributes.put("Control Type", "TEXT");
+        fieldAttributes.put("type", name);
+        String valGenValue =
+                valueGenerator.getValue(
+                        null,
+                        null,
+                        name,
+                        "",
+                        Collections.emptyList(),
+                        Collections.emptyMap(),
+                        fieldAttributes);
+        if (valGenValue != null && !valGenValue.isEmpty()) {
+            formParams.put("xpath:/" + path, valGenValue);
+            return formParams;
+        }
+
         /* Parameter value depends on parameter type. */
         switch (paramType) {
             case "string":
@@ -591,5 +632,9 @@ public class WSDLCustomParser {
 
     SOAPMsgConfig getLastConfig() {
         return lastConfig;
+    }
+
+    protected void setValueGenerator(ValueGenerator valueGenerator) {
+        this.valueGenerator = valueGenerator;
     }
 }
