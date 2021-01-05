@@ -33,7 +33,8 @@ import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -73,7 +74,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private boolean enabled;
     private WappalyzerParam wappalyzerParam;
 
-    private static final Logger logger = Logger.getLogger(ExtensionWappalyzer.class);
+    private static final Logger logger = LogManager.getLogger(ExtensionWappalyzer.class);
 
     /** The dependencies of the extension. */
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
@@ -263,9 +264,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         try {
             return lead + uri.getAuthority();
         } catch (URIException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Unable to get authority from: " + uri.toString(), e);
-            }
+            logger.debug("Unable to get authority from: {}", uri.toString(), e);
             // Shouldn't happen, but sure fallback
             return ScanPanel.cleanSiteName(uri.toString(), true);
         }
@@ -276,10 +275,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             site = normalizeSite(new URI(site == null ? "" : site, false));
         } catch (URIException ue) {
             // Shouldn't happen, but sure fallback
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                        "Falling back to 'CleanSiteName'. Failed to create URI from: " + site, ue);
-            }
+            logger.debug(
+                    "Falling back to 'CleanSiteName'. Failed to create URI from: {}", site, ue);
             site = ScanPanel.cleanSiteName(site, true);
         }
         return site;
