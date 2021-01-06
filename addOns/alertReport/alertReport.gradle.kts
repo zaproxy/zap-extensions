@@ -6,7 +6,7 @@ description = "Allows you to generate reports for alerts you specify in pdf or o
 zapAddOn {
     addOnName.set("Report Alert Generator")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("Talsoft SRL")

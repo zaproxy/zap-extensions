@@ -28,7 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -43,7 +44,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 /** Export Alerts to a PDF report */
 public class AlertReportExportPDF {
 
-    private static final Logger logger = Logger.getLogger(AlertReportExportPDF.class);
+    private static final Logger logger = LogManager.getLogger(AlertReportExportPDF.class);
 
     private enum TextJustification {
         LEFT,
@@ -153,7 +154,7 @@ public class AlertReportExportPDF {
             return true;
 
         } catch (Exception e) {
-            logger.error("An error occurred trying to generate a Report PDF: " + e);
+            logger.error("An error occurred trying to generate a Report PDF: {}", e);
             return false;
         }
     }
