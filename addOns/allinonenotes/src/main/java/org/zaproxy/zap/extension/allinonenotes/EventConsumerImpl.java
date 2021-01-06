@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.allinonenotes;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -32,7 +33,7 @@ import org.zaproxy.zap.eventBus.EventConsumer;
 
 public class EventConsumerImpl implements EventConsumer {
 
-    private static final Logger LOGGER = Logger.getLogger(EventConsumerImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventConsumerImpl.class);
     private static Map<Integer, Integer> rowMapper = new HashMap<>();
     private NotesTableModel notesTableModel;
 
@@ -94,7 +95,7 @@ public class EventConsumerImpl implements EventConsumer {
 
         switch (event.getEventType()) {
             case HistoryReferenceEventPublisher.EVENT_NOTE_SET:
-                LOGGER.debug("NOTE SET EVENT recieved...");
+                LOGGER.debug("NOTE SET EVENT received...");
                 int refIdAdd =
                         Integer.valueOf(
                                 event.getParameters()
@@ -105,8 +106,7 @@ public class EventConsumerImpl implements EventConsumer {
                 break;
             case HistoryReferenceEventPublisher.EVENT_REMOVED:
                 // This only gets fired if request is removed
-                LOGGER.debug("NOTE REMOVE EVENT recieved...");
-                LOGGER.debug(event.getParameters().toString());
+                LOGGER.debug("NOTE REMOVE EVENT received... {}", event.getParameters().toString());
                 int refIdDelete =
                         Integer.valueOf(
                                 event.getParameters()
