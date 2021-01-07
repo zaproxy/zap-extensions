@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.alertReport;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.odftoolkit.odfdom.pkg.OdfFileDom;
 import org.odftoolkit.odfdom.type.Color;
 import org.odftoolkit.simple.TextDocument;
@@ -52,7 +53,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 public class AlertReportExportODT {
 
     private static ExtensionAlertReportExport extension = null;
-    private static final Logger logger = Logger.getLogger(AlertReportExportODT.class);
+    private static final Logger logger = LogManager.getLogger(AlertReportExportODT.class);
 
     // fonts
     private static org.odftoolkit.simple.style.Font fontText =

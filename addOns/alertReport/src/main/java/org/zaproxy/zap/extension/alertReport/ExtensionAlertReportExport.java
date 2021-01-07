@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordAlert;
@@ -52,7 +53,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor {
     private ZapMenuItem menuItemAlertExport = null;
     private AlertReportExportParam params;
     private List<Alert> alertsDB = null;
-    private static final Logger logger = Logger.getLogger(ExtensionAlertReportExport.class);
+    private static final Logger logger = LogManager.getLogger(ExtensionAlertReportExport.class);
 
     public AlertReportExportParam getParams() {
         if (params == null) params = new AlertReportExportParam();
