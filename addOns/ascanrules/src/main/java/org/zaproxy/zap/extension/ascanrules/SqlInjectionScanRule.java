@@ -2068,6 +2068,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         if (techSet != null) {
             return techSet;
         }
-        return TechSet.AllTech;
+        return TechSet.getAllTech();
     }
 }

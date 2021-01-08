@@ -116,7 +116,7 @@ public final class AjaxSpiderTarget {
         try {
             target.setStartNode(
                     SessionStructure.find(
-                            Model.getSingleton().getSession().getSessionId(),
+                            Model.getSingleton(),
                             new org.apache.commons.httpclient.URI(
                                     this.getStartUri().toString(), false),
                             "GET",

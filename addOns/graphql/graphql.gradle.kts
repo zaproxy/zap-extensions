@@ -3,7 +3,7 @@ description = "Inspect and attack GraphQL endpoints."
 
 zapAddOn {
     addOnName.set("GraphQL Support")
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -18,16 +18,8 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly("org.zaproxy:zap:2.10.0-SNAPSHOT")
-
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("com.graphql-java:graphql-java:15.0")
 
     testImplementation(project(":testutils"))
-}
-
-repositories {
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
 }
