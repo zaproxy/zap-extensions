@@ -45,7 +45,7 @@ public class ServletParameterPollutionScanRuleUnitTest
     @BeforeEach
     public void before() {
         rule.setAlertThreshold(AlertThreshold.LOW);
-        when(passiveScanData.getTechSet()).thenReturn(TechSet.AllTech);
+        when(passiveScanData.getTechSet()).thenReturn(TechSet.getAllTech());
     }
 
     @Test

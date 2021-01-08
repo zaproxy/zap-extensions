@@ -7,7 +7,6 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        notBeforeVersion.set("2.10.0")
         extensions {
             register("org.zaproxy.zap.extension.pscanrulesAlpha.payloader.ExtensionPayloader") {
                 classnames {
@@ -26,15 +25,7 @@ zapAddOn {
     }
 }
 
-repositories {
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-}
-
 dependencies {
-    zap("org.zaproxy:zap:2.10.0-20201111.162919-2")
-
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
