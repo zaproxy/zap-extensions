@@ -31,6 +31,8 @@ dependencies {
     zap("org.zaproxy:zap:2.10.0-20201111.162919-2")
 
     compileOnly(parent!!.childProjects.get("commonlib")!!)
+
+    implementation("com.googlecode.concurrent-trees:concurrent-trees:2.6.1")
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     implementation("org.bitbucket.mstrobel:procyon-compilertools:0.5.36")
 

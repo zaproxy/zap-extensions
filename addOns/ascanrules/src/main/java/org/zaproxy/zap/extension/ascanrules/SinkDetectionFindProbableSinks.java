@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2013 The ZAP Development Team
+ * Copyright 2020 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,36 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.zaproxy.zap.extension.ascanrules.SinkDetectionCollectAndRefreshParamValues.SINK_DETECTION_STORAGE;
+
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
+public class SinkDetectionFindProbableSinks extends AbstractAppPlugin {
 
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "ascanrules.persistentxssprime.";
+    private static final String MESSAGE_PREFIX = "ascanrules.sinkdetectionfindprobablesinks.";
 
-    private static Logger log = Logger.getLogger(PersistentXssPrimeScanRule.class);
+    private static Logger log = Logger.getLogger(SinkDetectionFindProbableSinks.class);
 
     @Override
     public int getId() {
-        return 40016;
+        return 40017;
     }
 
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
+    }
+
+    @Override
+    public String[] getDependency() {
+        return new String[] {"SinkDetectionCollectAndRefreshParamValues"};
     }
 
     @Override
@@ -64,17 +72,37 @@ public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
     }
 
     @Override
-    public void scan(HttpMessage msg, String param, String value) {
+    public void scan() {
+        HttpMessage msg = getBaseMsg();
         try {
             HttpMessage msg1 = msg.cloneRequest();
-            this.setParameter(msg1, param, PersistentXssUtils.getUniqueValue(msg1, param));
-            if (log.isDebugEnabled()) {
-                log.debug("Prime msg=" + msg1.getRequestHeader().getURI() + " param=" + param);
-            }
             sendAndReceive(msg1, false);
+            findProbableSinks(msg1);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    private void findProbableSinks(HttpMessage msg) {
+        SinkDetectionStorage storage = getStorage();
+        String msgBody = msg.getResponseBody().toString();
+        Set<String> valuesSeenInResponseBody = storage.getSeenValuesContainedInString(msgBody);
+
+        for (String value : valuesSeenInResponseBody) {
+            storage.addPossibleSinkForValue(value, msg);
+        }
+    }
+
+    private SinkDetectionStorage getStorage() {
+        SinkDetectionStorage storage;
+        Object obj = getKb().get(SINK_DETECTION_STORAGE);
+        if (obj instanceof SinkDetectionStorage) {
+            storage = (SinkDetectionStorage) obj;
+        } else {
+            throw new IllegalStateException(
+                    "The SINK_DETECTION_STORAGE Should have been initialized by the SinkDetectionCollectAndRefreshParamValues");
+        }
+        return storage;
     }
 
     @Override

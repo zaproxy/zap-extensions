@@ -25,6 +25,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.commonlib.ParamSinksUtils;
 
 /**
  * A null extension just to cause the message bundle and help file to get loaded
@@ -68,7 +69,7 @@ public class ExtensionAscanRules extends ExtensionAdaptor {
 
         @Override
         public void sessionAboutToChange(Session session) {
-            PersistentXssUtils.reset();
+            ParamSinksUtils.reset();
         }
     }
 }

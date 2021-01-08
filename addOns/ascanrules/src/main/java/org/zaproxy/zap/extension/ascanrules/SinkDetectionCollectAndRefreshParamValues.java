@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2013 The ZAP Development Team
+ * Copyright 2020 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,31 +21,29 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
+public class SinkDetectionCollectAndRefreshParamValues extends AbstractAppParamPlugin {
 
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "ascanrules.persistentxssspider.";
+    private static final String MESSAGE_PREFIX =
+            "ascanrules.sinkdetectioncollectandrefreshparamvalues.";
 
-    private static Logger log = Logger.getLogger(PersistentXssSpiderScanRule.class);
+    public static final String SINK_DETECTION_STORAGE = "SinkDetectionStorage";
+
+    private static Logger log = Logger.getLogger(SinkDetectionCollectAndRefreshParamValues.class);
 
     @Override
     public int getId() {
-        return 40017;
+        return 40016;
     }
 
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    @Override
-    public String[] getDependency() {
-        return new String[] {"PersistentXssPrimeScanRule"};
     }
 
     @Override
@@ -70,16 +68,54 @@ public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
 
     @Override
     public void scan() {
-
+        // refresh the state of the website
         HttpMessage msg = getBaseMsg();
         try {
             HttpMessage msg1 = msg.cloneRequest();
             sendAndReceive(msg1, false);
-            PersistentXssUtils.testForSink(msg1);
-
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+        super.scan();
+    }
+
+    @Override
+    public void scan(HttpMessage msg, String param, String value) {
+        // TODO: should collect params only on POST/PUT when low or medium strength?
+        if ((AlertThreshold.HIGH.equals(getAlertThreshold())
+                        || AttackStrength.LOW.equals(getAttackStrength())
+                        || AttackStrength.MEDIUM.equals(getAttackStrength()))
+                && isScanningOnPath(msg, param, value)) {
+            return;
+        }
+
+        if (value.length() > 0) {
+            getStorage().addSeenValue(value);
+        }
+    }
+
+    private boolean isScanningOnPath(HttpMessage msg, String param, String value) {
+        // TODO: Should also consider the host? if the value is contained in host
+        //  it will also cause a lot of requests
+        String url = msg.getRequestHeader().getURI().getEscapedPath();
+        if (param.equals(value) && url.contains(value)) {
+            return true;
+        }
+        return false;
+    }
+
+    private SinkDetectionStorage getStorage() {
+        SinkDetectionStorage storage;
+        synchronized (getKb()) {
+            Object obj = getKb().get(SINK_DETECTION_STORAGE);
+            if (obj != null && obj instanceof SinkDetectionStorage) {
+                storage = (SinkDetectionStorage) obj;
+            } else {
+                storage = new SinkDetectionStorage();
+                getKb().add(SINK_DETECTION_STORAGE, storage);
+            }
+        }
+        return storage;
     }
 
     @Override
