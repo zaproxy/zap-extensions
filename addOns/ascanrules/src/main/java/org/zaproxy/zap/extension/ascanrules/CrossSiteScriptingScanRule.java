@@ -27,7 +27,8 @@ import java.util.List;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -62,7 +63,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
     private static final List<Integer> GET_POST_TYPES =
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
-    private static Logger log = Logger.getLogger(CrossSiteScriptingScanRule.class);
+    private static Logger log = LogManager.getLogger(CrossSiteScriptingScanRule.class);
     private int currentParamType;
 
     @Override
@@ -153,9 +154,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         try {
             sendAndReceive(msg2);
         } catch (URIException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to send HTTP message, cause: " + e.getMessage());
-            }
+            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
             return null;
         } catch (InvalidRedirectLocationException | UnknownHostException e) {
             // Not an error, just means we probably attacked the redirect
@@ -202,9 +201,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             try {
                 sendAndReceive(msg2);
             } catch (URIException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Failed to send HTTP message, cause: " + e.getMessage());
-                }
+                log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
                 return;
             } catch (InvalidRedirectLocationException | UnknownHostException e) {
                 // Not an error, just means we probably attacked the redirect
@@ -234,9 +231,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                 try {
                     sendAndReceive(msg2);
                 } catch (URIException e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Failed to send HTTP message, cause: " + e.getMessage());
-                    }
+                    log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
                     return;
                 } catch (InvalidRedirectLocationException | UnknownHostException e) {
                     // Second eyecatcher failed for some reason, no need to
@@ -307,8 +302,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         }
                         if (!attackWorked) {
                             log.debug(
-                                    "Failed to find vuln in script attribute on "
-                                            + msg.getRequestHeader().getURI());
+                                    "Failed to find vuln in script attribute on {}",
+                                    msg.getRequestHeader().getURI());
                         }
 
                     } else if (context.isInUrlAttribute()) {
@@ -335,8 +330,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         }
                         if (!attackWorked) {
                             log.debug(
-                                    "Failed to find vuln in url attribute on "
-                                            + msg.getRequestHeader().getURI());
+                                    "Failed to find vuln in url attribute on {}",
+                                    msg.getRequestHeader().getURI());
                         }
                     }
                     if (!attackWorked && context.isInTagWithSrc()) {
@@ -365,8 +360,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         }
                         if (!attackWorked) {
                             log.debug(
-                                    "Failed to find vuln in tag with src attribute on "
-                                            + msg.getRequestHeader().getURI());
+                                    "Failed to find vuln in tag with src attribute on {}",
+                                    msg.getRequestHeader().getURI());
                         }
                     }
 
@@ -396,8 +391,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                             }
                             if (!attackWorked) {
                                 log.debug(
-                                        "Failed to find vuln with simple script attack "
-                                                + msg.getRequestHeader().getURI());
+                                        "Failed to find vuln with simple script attack {}",
+                                        msg.getRequestHeader().getURI());
                             }
 
                             if (attackWorked || isStop()) {
@@ -433,8 +428,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         }
                         if (!attackWorked) {
                             log.debug(
-                                    "Failed to find vuln in with simple onmounseover "
-                                            + msg.getRequestHeader().getURI());
+                                    "Failed to find vuln in with simple onmounseover {}",
+                                    msg.getRequestHeader().getURI());
                         }
                     }
                 } else if (context.isHtmlComment()) {

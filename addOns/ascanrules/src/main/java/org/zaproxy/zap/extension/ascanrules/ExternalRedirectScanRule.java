@@ -28,7 +28,8 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -100,7 +101,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
     // Get WASC Vulnerability description
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_38");
 
-    private static final Logger logger = Logger.getLogger(ExternalRedirectScanRule.class);
+    private static final Logger logger = LogManager.getLogger(ExternalRedirectScanRule.class);
 
     @Override
     public int getId() {
@@ -165,9 +166,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         int targetCount = 0;
 
         // Debug only
-        if (logger.isDebugEnabled()) {
-            logger.debug("Attacking at Attack Strength: " + this.getAttackStrength());
-        }
+        logger.debug("Attacking at Attack Strength: ", this.getAttackStrength());
 
         // Figure out how aggressively we should test
         switch (this.getAttackStrength()) {
@@ -195,16 +194,11 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                 break;
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "Checking ["
-                            + getBaseMsg().getRequestHeader().getMethod()
-                            + "]["
-                            + getBaseMsg().getRequestHeader().getURI()
-                            + "], parameter ["
-                            + param
-                            + "] for Open Redirect Vulnerabilities");
-        }
+        logger.debug(
+                "Checking [{}][{}], parameter [{}] for Open Redirect Vulnerabilities",
+                getBaseMsg().getRequestHeader().getMethod(),
+                getBaseMsg().getRequestHeader().getURI(),
+                param);
 
         // For each target in turn
         // note that depending on the AttackLevel,
@@ -220,9 +214,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
             HttpMessage testMsg = getNewMsg();
             setParameter(testMsg, param, payload);
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Testing [" + param + "] = [" + payload + "]");
-            }
+            logger.debug("Testing [{}] = [{}]", param, payload);
 
             try {
                 // Send the request and retrieve the response
@@ -241,14 +233,10 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                 if (redirectType != NO_REDIRECT) {
                     // We Found IT!
                     // First do logging
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(
-                                "[External Redirection Found] on parameter ["
-                                        + param
-                                        + "] with payload ["
-                                        + payload
-                                        + "]");
-                    }
+                    logger.debug(
+                            "[External Redirection Found] on parameter [{}] with payload [{}]",
+                            param,
+                            payload);
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -274,11 +262,9 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                 // Do not try to internationalize this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
                 logger.warn(
-                        "External Redirect vulnerability check failed for parameter ["
-                                + param
-                                + "] and payload ["
-                                + payload
-                                + "] due to an I/O error",
+                        "External Redirect vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        param,
+                        payload,
                         ex);
             }
         }

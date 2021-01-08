@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -31,7 +32,7 @@ public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.persistentxssspider.";
 
-    private static Logger log = Logger.getLogger(PersistentXssSpiderScanRule.class);
+    private static Logger log = LogManager.getLogger(PersistentXssSpiderScanRule.class);
 
     @Override
     public int getId() {

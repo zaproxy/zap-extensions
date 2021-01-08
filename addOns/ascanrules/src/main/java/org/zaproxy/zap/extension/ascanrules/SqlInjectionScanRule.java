@@ -35,7 +35,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -444,7 +445,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
     };
 
     /** for logging. */
-    private static Logger log = Logger.getLogger(SqlInjectionScanRule.class);
+    private static Logger log = LogManager.getLogger(SqlInjectionScanRule.class);
     /** determines if we should output Debug level logging */
     private boolean debugEnabled = log.isDebugEnabled();
 
@@ -497,9 +498,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
      */
     @Override
     public void init() {
-        if (this.debugEnabled) {
-            log.debug("Initialising");
-        }
+        log.debug("Initialising");
 
         // DEBUG only
         // this.debugEnabled=true;
@@ -576,10 +575,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
             doSpecificErrorBased = true;
             doGenericErrorBased = false;
         } else if (this.getAlertThreshold() == AlertThreshold.HIGH) {
-            if (this.debugEnabled) {
-                log.debug(
-                        "Disabling the Error Based checking, since the Alert Threshold is set to High or Medium, and this type of check is notably prone to false positives");
-            }
+            log.debug(
+                    "Disabling the Error Based checking, since the Alert Threshold is set to High or Medium, and this type of check is notably prone to false positives");
             doSpecificErrorBased = false;
             doGenericErrorBased = false;
             doErrorMaxRequests = 0;
@@ -588,19 +585,17 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         // Only check for generic errors if not targeting a specific DB
         doGenericErrorBased &= getTechSet().includes(Tech.Db);
 
-        if (this.debugEnabled) {
-            log.debug("Doing RDBMS specific error based? " + doSpecificErrorBased);
-            log.debug("Doing generic RDBMS error based? " + doGenericErrorBased);
-            log.debug("Using a max of " + doErrorMaxRequests + " requests");
-            log.debug("Doing expession based? " + doExpressionBased);
-            log.debug("Using a max of " + doExpressionMaxRequests + " requests");
-            log.debug("Using boolean based? " + doBooleanBased);
-            log.debug("Using a max of " + doBooleanMaxRequests + " requests");
-            log.debug("Doing UNION based? " + doUnionBased);
-            log.debug("Using a max of " + doUnionMaxRequests + " requests");
-            log.debug("Doing ORDER BY based? " + doOrderByBased);
-            log.debug("Using a max of " + doOrderByMaxRequests + " requests");
-        }
+        log.debug("Doing RDBMS specific error based? {}", doSpecificErrorBased);
+        log.debug("Doing generic RDBMS error based? {}", doGenericErrorBased);
+        log.debug("Using a max of {} requests", doErrorMaxRequests);
+        log.debug("Doing expession based? {}", doExpressionBased);
+        log.debug("Using a max of {} requests", doExpressionMaxRequests);
+        log.debug("Using boolean based? {}", doBooleanBased);
+        log.debug("Using a max of {} requests", doBooleanMaxRequests);
+        log.debug("Doing UNION based? {}", doUnionBased);
+        log.debug("Using a max of {} requests", doUnionMaxRequests);
+        log.debug("Doing ORDER BY based? {}", doOrderByBased);
+        log.debug("Using a max of {} requests", doOrderByMaxRequests);
     }
 
     /** scans for SQL Injection vulnerabilities */
@@ -664,14 +659,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                     try {
                         sendAndReceive(msg1, false); // do not follow redirects
                     } catch (SocketException ex) {
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "Caught "
-                                            + ex.getClass().getName()
-                                            + " "
-                                            + ex.getMessage()
-                                            + " when accessing: "
-                                            + msg1.getRequestHeader().getURI().toString());
+                        log.debug(
+                                "Caught {} {} when accessing: {}",
+                                ex.getClass().getName(),
+                                ex.getMessage(),
+                                msg1.getRequestHeader().getURI().toString());
                         continue; // Something went wrong, continue to the next prefixString in the
                         // loop
                     }
@@ -772,14 +764,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
             try {
                 sendAndReceive(refreshedmessage, false); // do not follow redirects
             } catch (SocketException ex) {
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "Caught "
-                                    + ex.getClass().getName()
-                                    + " "
-                                    + ex.getMessage()
-                                    + " when accessing: "
-                                    + refreshedmessage.getRequestHeader().getURI().toString());
+                log.debug(
+                        "Caught {} {} when accessing: {}",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        refreshedmessage.getRequestHeader().getURI().toString());
                 return; // Something went wrong, no point continuing
             }
 
@@ -799,10 +788,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                     // Integer.parseInt(SqlInjectionScanRule.getURLDecode(origParamValue));
                     int paramAsInt = Integer.parseInt(origParamValue);
 
-                    if (this.debugEnabled) {
-                        log.debug(
-                                "The parameter value [" + origParamValue + "] is of type Integer");
-                    }
+                    log.debug("The parameter value [{}] is of type Integer", origParamValue);
                     // This check is implemented using two variant PLUS(+) and MULT(*)
                     try {
                         // PLUS variant check the param value "3-2" gives same result as original
@@ -855,24 +841,14 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             }
                         }
                     } catch (ArithmeticException ex) {
-                        if (this.debugEnabled) {
-                            log.debug(
-                                    "Caught "
-                                            + ex.getClass().getName()
-                                            + " "
-                                            + ex.getMessage()
-                                            + "When performing integer math with the parameter value ["
-                                            + origParamValue
-                                            + "]");
-                        }
+                        log.debug(
+                                "Caught {} {}. When performing integer math with the parameter value [{}]",
+                                ex.getClass().getName(),
+                                ex.getMessage(),
+                                origParamValue);
                     }
                 } catch (Exception e) {
-                    if (this.debugEnabled) {
-                        log.debug(
-                                "The parameter value ["
-                                        + origParamValue
-                                        + "] is NOT of type Integer");
-                    }
+                    log.debug("The parameter value [{}] is NOT of type Integer", origParamValue);
                     // TODO: implement a similar check for string types?  This probably needs to be
                     // RDBMS specific (ie, it should not live in this scanner)
                 }
@@ -920,11 +896,9 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
             //            and we will simply hope that the *last* constraint in the SQL query is
             // constructed from a HTTP parameter under our control.
 
-            if (this.debugEnabled) {
-                log.debug(
-                        "Doing Check 2, since check 1 did not match for "
-                                + getBaseMsg().getRequestHeader().getURI());
-            }
+            log.debug(
+                    "Doing Check 2, since check 1 did not match for {}",
+                    getBaseMsg().getRequestHeader().getURI());
 
             // Since the previous checks are attempting SQL injection, and may have actually
             // succeeded in modifying the database (ask me how I know?!)
@@ -936,14 +910,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
             try {
                 sendAndReceive(refreshedmessage, false); // do not follow redirects
             } catch (SocketException ex) {
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "Caught "
-                                    + ex.getClass().getName()
-                                    + " "
-                                    + ex.getMessage()
-                                    + " when accessing: "
-                                    + refreshedmessage.getRequestHeader().getURI().toString());
+                log.debug(
+                        "Caught {} {} when accessing: {}",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        refreshedmessage.getRequestHeader().getURI().toString());
                 return; // Something went wrong, no point continuing
             }
 
@@ -975,14 +946,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 try {
                     sendAndReceive(msg2, false); // do not follow redirects
                 } catch (SocketException ex) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msg2.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg2.getRequestHeader().getURI().toString());
                     continue; // Something went wrong, continue to the next item in the loop
                 }
                 countBooleanBasedRequests++;
@@ -1007,17 +975,13 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                     if (andTrueBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
                                     normalBodyOutput[booleanStrippedUnstrippedIndex])
                             == 0) {
-                        if (this.debugEnabled) {
-                            log.debug(
-                                    "Check 2, "
-                                            + (strippedOutput[booleanStrippedUnstrippedIndex]
-                                                    ? "STRIPPED"
-                                                    : "UNSTRIPPED")
-                                            + " html output for AND TRUE condition ["
-                                            + sqlBooleanAndTrueValue
-                                            + "] matched (refreshed) original results for "
-                                            + refreshedmessage.getRequestHeader().getURI());
-                        }
+                        log.debug(
+                                "Check 2, {} html output for AND TRUE condition [{}] matched (refreshed) original results for {}",
+                                (strippedOutput[booleanStrippedUnstrippedIndex]
+                                        ? "STRIPPED"
+                                        : "UNSTRIPPED"),
+                                sqlBooleanAndTrueValue,
+                                refreshedmessage.getRequestHeader().getURI());
                         // so they match. Was it a fluke? See if we get the same result by tacking
                         // on "AND 1 = 2" to the original
                         HttpMessage msg2_and_false = getNewMsg();
@@ -1027,17 +991,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                         try {
                             sendAndReceive(msg2_and_false, false); // do not follow redirects
                         } catch (SocketException ex) {
-                            if (log.isDebugEnabled())
-                                log.debug(
-                                        "Caught "
-                                                + ex.getClass().getName()
-                                                + " "
-                                                + ex.getMessage()
-                                                + " when accessing: "
-                                                + msg2_and_false
-                                                        .getRequestHeader()
-                                                        .getURI()
-                                                        .toString());
+                            log.debug(
+                                    "Caught {} {} when accessing: {}",
+                                    ex.getClass().getName(),
+                                    ex.getMessage(),
+                                    msg2_and_false.getRequestHeader().getURI().toString());
                             continue; // Something went wrong, continue on to the next item in the
                             // loop
                         }
@@ -1068,17 +1026,13 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                         if (andFalseBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
                                         normalBodyOutput[booleanStrippedUnstrippedIndex])
                                 != 0) {
-                            if (this.debugEnabled) {
-                                log.debug(
-                                        "Check 2, "
-                                                + (strippedOutput[booleanStrippedUnstrippedIndex]
-                                                        ? "STRIPPED"
-                                                        : "UNSTRIPPED")
-                                                + " html output for AND FALSE condition ["
-                                                + sqlBooleanAndFalseValue
-                                                + "] differed from (refreshed) original results for "
-                                                + refreshedmessage.getRequestHeader().getURI());
-                            }
+                            log.debug(
+                                    "Check 2, {} html output for AND FALSE condition [{}] differed from (refreshed) original results for {}",
+                                    (strippedOutput[booleanStrippedUnstrippedIndex]
+                                            ? "STRIPPED"
+                                            : "UNSTRIPPED"),
+                                    sqlBooleanAndFalseValue,
+                                    refreshedmessage.getRequestHeader().getURI());
 
                             // it's different (suggesting that the "AND 1 = 2" appended on gave
                             // different results because it restricted the data set to nothing
@@ -1137,34 +1091,23 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             // condition becomes one that is effectively always true, returning ALL
                             // data (or as much as possible), allowing us to pinpoint the SQL
                             // Injection
-                            if (this.debugEnabled) {
-                                log.debug(
-                                        "Check 2 , "
-                                                + (strippedOutput[booleanStrippedUnstrippedIndex]
-                                                        ? "STRIPPED"
-                                                        : "UNSTRIPPED")
-                                                + " html output for AND FALSE condition ["
-                                                + sqlBooleanAndFalseValue
-                                                + "] SAME as (refreshed) original results for "
-                                                + refreshedmessage.getRequestHeader().getURI()
-                                                + " ### (forcing OR TRUE check) ");
-                            }
+                            log.debug(
+                                    "Check 2 , {} html output for AND FALSE condition [{}] SAME as (refreshed) original results for {} ### (forcing OR TRUE check) {}",
+                                    (strippedOutput[booleanStrippedUnstrippedIndex]
+                                            ? "STRIPPED"
+                                            : "UNSTRIPPED"),
+                                    sqlBooleanAndFalseValue,
+                                    refreshedmessage.getRequestHeader().getURI());
                             HttpMessage msg2_or_true = getNewMsg();
                             setParameter(msg2_or_true, param, orValue);
                             try {
                                 sendAndReceive(msg2_or_true, false); // do not follow redirects
                             } catch (SocketException ex) {
-                                if (log.isDebugEnabled())
-                                    log.debug(
-                                            "Caught "
-                                                    + ex.getClass().getName()
-                                                    + " "
-                                                    + ex.getMessage()
-                                                    + " when accessing: "
-                                                    + msg2_or_true
-                                                            .getRequestHeader()
-                                                            .getURI()
-                                                            .toString());
+                                log.debug(
+                                        "Caught {} {} when accessing: {}",
+                                        ex.getClass().getName(),
+                                        ex.getMessage(),
+                                        msg2_or_true.getRequestHeader().getURI().toString());
                                 continue; // Something went wrong, continue on to the next item in
                                 // the loop
                             }
@@ -1187,19 +1130,13 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                     orTrueBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
                                             normalBodyOutput[booleanStrippedUnstrippedIndex]);
                             if (compareOrToOriginal != 0) {
-
-                                if (this.debugEnabled) {
-                                    log.debug(
-                                            "Check 2, "
-                                                    + (strippedOutput[
-                                                                    booleanStrippedUnstrippedIndex]
-                                                            ? "STRIPPED"
-                                                            : "UNSTRIPPED")
-                                                    + " html output for OR TRUE condition ["
-                                                    + orValue
-                                                    + "] different to (refreshed) original results for "
-                                                    + refreshedmessage.getRequestHeader().getURI());
-                                }
+                                log.debug(
+                                        "Check 2, {} html output for OR TRUE condition [{}] different to (refreshed) original results for {}",
+                                        (strippedOutput[booleanStrippedUnstrippedIndex]
+                                                ? "STRIPPED"
+                                                : "UNSTRIPPED"),
+                                        orValue,
+                                        refreshedmessage.getRequestHeader().getURI());
 
                                 // it's different (suggesting that the "OR 1 = 1" appended on gave
                                 // different results because it broadened the data set from nothing
@@ -1256,14 +1193,12 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                         // whatever reason (no sql injection, or the web page is not stable)
                         if (this.debugEnabled) {
                             log.debug(
-                                    "Check 2, "
-                                            + (strippedOutput[booleanStrippedUnstrippedIndex]
-                                                    ? "STRIPPED"
-                                                    : "UNSTRIPPED")
-                                            + " html output for AND condition ["
-                                            + sqlBooleanAndTrueValue
-                                            + "] does NOT match the (refreshed) original results for "
-                                            + refreshedmessage.getRequestHeader().getURI());
+                                    "Check 2, {} html output for AND condition [{}] does NOT match the (refreshed) original results for {}",
+                                    (strippedOutput[booleanStrippedUnstrippedIndex]
+                                            ? "STRIPPED"
+                                            : "UNSTRIPPED"),
+                                    sqlBooleanAndTrueValue,
+                                    refreshedmessage.getRequestHeader().getURI());
                             Patch<String> diffpatch =
                                     DiffUtils.diff(
                                             new LinkedList<String>(
@@ -1303,7 +1238,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                                                 + delta.getRevised()
                                                 + "\n");
                             }
-                            log.debug("DIFFS: " + tempDiff);
+                            log.debug("DIFFS: {}", tempDiff);
                         }
                     }
                     // bale out if we were asked nicely
@@ -1336,14 +1271,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 try {
                     sendAndReceive(msg2, false); // do not follow redirects
                 } catch (SocketException ex) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msg2.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg2.getRequestHeader().getURI().toString());
                     continue; // Something went wrong, continue on to the next item in the loop
                 }
                 countBooleanBasedRequests++;
@@ -1355,12 +1287,9 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 // TODO: change the percentage difference threshold based on the alert threshold
                 if ((resBodyORTrueUnstripped.length()
                         > (mResBodyNormalUnstripped.length() * 1.2))) {
-                    if (this.debugEnabled) {
-                        log.debug(
-                                "Check 2a, unstripped html output for OR TRUE condition ["
-                                        + sqlBooleanOrTrueValue
-                                        + "] produced sufficiently larger results than the original message");
-                    }
+                    log.debug(
+                            "Check 2a, unstripped html output for OR TRUE condition [{}] produced sufficiently larger results than the original message",
+                            sqlBooleanOrTrueValue);
                     // if we can also restrict it back to the original results by appending a " and
                     // 1=2", then "Winner Winner, Chicken Dinner".
                     HttpMessage msg2_and_false = getNewMsg();
@@ -1368,17 +1297,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                     try {
                         sendAndReceive(msg2_and_false, false); // do not follow redirects
                     } catch (SocketException ex) {
-                        if (log.isDebugEnabled())
-                            log.debug(
-                                    "Caught "
-                                            + ex.getClass().getName()
-                                            + " "
-                                            + ex.getMessage()
-                                            + " when accessing: "
-                                            + msg2_and_false
-                                                    .getRequestHeader()
-                                                    .getURI()
-                                                    .toString());
+                        log.debug(
+                                "Caught {} {} when accessing: {}",
+                                ex.getClass().getName(),
+                                ex.getMessage(),
+                                msg2_and_false.getRequestHeader().getURI().toString());
                         continue; // Something went wrong, continue on to the next item in the loop
                     }
                     countBooleanBasedRequests++;
@@ -1397,16 +1320,10 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                     boolean verificationUsingStripped =
                             resBodyANDFalseStripped.compareTo(mResBodyNormalStripped) == 0;
                     if (verificationUsingUnstripped || verificationUsingStripped) {
-                        if (this.debugEnabled) {
-                            log.debug(
-                                    "Check 2, "
-                                            + (verificationUsingStripped
-                                                    ? "STRIPPED"
-                                                    : "UNSTRIPPED")
-                                            + " html output for AND FALSE condition ["
-                                            + sqlBooleanAndFalseValue
-                                            + "] matches the (refreshed) original results");
-                        }
+                        log.debug(
+                                "Check 2, {} html output for AND FALSE condition [{}] matches the (refreshed) original results",
+                                (verificationUsingStripped ? "STRIPPED" : "UNSTRIPPED"),
+                                sqlBooleanAndFalseValue);
                         // Likely a SQL Injection. Raise it
                         String extraInfo = null;
                         if (verificationUsingStripped) {
@@ -1467,14 +1384,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 try {
                     sendAndReceive(msg3, false); // do not follow redirects
                 } catch (SocketException ex) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msg3.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg3.getRequestHeader().getURI().toString());
                     continue; // Something went wrong, continue on to the next item in the loop
                 }
                 countUnionBasedRequests++;
@@ -1538,14 +1452,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
             try {
                 sendAndReceive(refreshedmessage, false); // do not follow redirects
             } catch (SocketException ex) {
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "Caught "
-                                    + ex.getClass().getName()
-                                    + " "
-                                    + ex.getMessage()
-                                    + " when accessing: "
-                                    + refreshedmessage.getRequestHeader().getURI().toString());
+                log.debug(
+                        "Caught {} {} when accessing: {}",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        refreshedmessage.getRequestHeader().getURI().toString());
                 return; // Something went wrong, no point continuing
             }
 
@@ -1566,14 +1477,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 try {
                     sendAndReceive(msg5, false); // do not follow redirects
                 } catch (SocketException ex) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msg5.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg5.getRequestHeader().getURI().toString());
                     return; // Something went wrong, no point continuing
                 }
                 countOrderByBasedRequests++;
@@ -1601,17 +1509,13 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                     if (ascendingBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
                                     normalBodyOutput[booleanStrippedUnstrippedIndex])
                             == 0) {
-                        if (this.debugEnabled) {
-                            log.debug(
-                                    "Check X, "
-                                            + (strippedOutput[booleanStrippedUnstrippedIndex]
-                                                    ? "STRIPPED"
-                                                    : "UNSTRIPPED")
-                                            + " html output for modified Order By parameter ["
-                                            + modifiedParamValue
-                                            + "] matched (refreshed) original results for "
-                                            + refreshedmessage.getRequestHeader().getURI());
-                        }
+                        log.debug(
+                                "Check X, {} html output for modified Order By parameter [{}] matched (refreshed) original results for {}",
+                                (strippedOutput[booleanStrippedUnstrippedIndex]
+                                        ? "STRIPPED"
+                                        : "UNSTRIPPED"),
+                                modifiedParamValue,
+                                refreshedmessage.getRequestHeader().getURI());
                         // confirm that a different parameter value generates different output, to
                         // minimise false positives
 
@@ -1626,17 +1530,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                         try {
                             sendAndReceive(msg5Confirm, false); // do not follow redirects
                         } catch (SocketException ex) {
-                            if (log.isDebugEnabled())
-                                log.debug(
-                                        "Caught "
-                                                + ex.getClass().getName()
-                                                + " "
-                                                + ex.getMessage()
-                                                + " when accessing: "
-                                                + msg5Confirm
-                                                        .getRequestHeader()
-                                                        .getURI()
-                                                        .toString());
+                            log.debug(
+                                    "Caught {} {} when accessing: {}",
+                                    ex.getClass().getName(),
+                                    ex.getMessage(),
+                                    msg5Confirm.getRequestHeader().getURI().toString());
                             continue; // Something went wrong, continue on to the next item in the
                             // loop
                         }
@@ -1894,14 +1792,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         try {
             sendAndReceive(msg, false); // do not follow redirects
         } catch (SocketException ex) {
-            if (log.isDebugEnabled())
-                log.debug(
-                        "Caught "
-                                + ex.getClass().getName()
-                                + " "
-                                + ex.getMessage()
-                                + " when accessing: "
-                                + msg.getRequestHeader().getURI().toString());
+            log.debug(
+                    "Caught {} {} when accessing: {}",
+                    ex.getClass().getName(),
+                    ex.getMessage(),
+                    msg.getRequestHeader().getURI().toString());
             return; // Something went wrong, no point continuing
         }
         countExpressionBasedRequests++;
@@ -1917,13 +1812,10 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
             // something.
 
             if (modifiedExpressionOutputStripped.compareTo(normalBodyOutputStripped) == 0) {
-                if (this.debugEnabled) {
-                    log.debug(
-                            "Check 4, STRIPPED html output for modified expression parameter ["
-                                    + modifiedParamValue
-                                    + "] matched (refreshed) original results for "
-                                    + refreshedmessage.getRequestHeader().getURI().toString());
-                }
+                log.debug(
+                        "Check 4, STRIPPED html output for modified expression parameter [{}] matched (refreshed) original results for {}",
+                        modifiedParamValue,
+                        refreshedmessage.getRequestHeader().getURI().toString());
                 // confirm that a different parameter value generates different output, to minimise
                 // false positives
                 // this time param value will be different to original value and mismatch is
@@ -1936,14 +1828,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                 try {
                     sendAndReceive(msgConfirm, false); // do not follow redirects
                 } catch (SocketException ex) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msgConfirm.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msgConfirm.getRequestHeader().getURI().toString());
                     return; // Something went wrong
                 }
                 countExpressionBasedRequests++;

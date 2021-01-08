@@ -25,7 +25,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections.map.ReferenceMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -64,7 +65,7 @@ public class PersistentXssUtils {
      */
     private static Map<String, String> cachedParams;
 
-    private static Logger log = Logger.getLogger(PersistentXssUtils.class);
+    private static Logger log = LogManager.getLogger(PersistentXssUtils.class);
 
     static {
         reset();
@@ -99,15 +100,12 @@ public class PersistentXssUtils {
     }
 
     private static void setSinkForSource(UserDataSource source, HttpMessage sinkMsg) {
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "setSinkForSource src="
-                            + source.getUri()
-                            + " param="
-                            + source.getParam()
-                            + " sink="
-                            + sinkMsg.getRequestHeader().getURI());
-        }
+        log.debug(
+                "setSinkForSource src={} param={} sink={}",
+                source.getUri(),
+                source.getParam(),
+                sinkMsg.getRequestHeader().getURI());
+
         HashSet<Integer> sinks = sourceToSinks.get(source.toString());
         if (sinks == null) {
             sinks = new HashSet<>();
@@ -136,15 +134,12 @@ public class PersistentXssUtils {
      */
     public static Set<Integer> getSinksIdsForSource(HttpMessage sourceMsg, String param) {
         UserDataSource source = new UserDataSource(sourceMsg, param);
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "getSinksIdsForSource src="
-                            + source.getUri()
-                            + " param="
-                            + param
-                            + " sinks="
-                            + sourceToSinks.get(source.toString()));
-        }
+        log.debug(
+                "getSinksIdsForSource src={} param={} sinks={}",
+                source.getUri(),
+                param,
+                sourceToSinks.get(source.toString()));
+
         return sourceToSinks.get(source.toString());
     }
 

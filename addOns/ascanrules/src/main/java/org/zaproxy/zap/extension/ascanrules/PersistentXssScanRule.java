@@ -23,7 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -48,7 +49,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
 
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
-    private static Logger log = Logger.getLogger(PersistentXssScanRule.class);
+    private static Logger log = LogManager.getLogger(PersistentXssScanRule.class);
     private int currentParamType;
 
     @Override
@@ -239,8 +240,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                 }
                                 if (!attackWorked) {
                                     log.debug(
-                                            "Failed to find vuln in script attribute on "
-                                                    + sourceMsg.getRequestHeader().getURI());
+                                            "Failed to find vuln in script attribute on {}",
+                                            sourceMsg.getRequestHeader().getURI());
                                 }
 
                             } else if (context.isInUrlAttribute()) {
@@ -273,8 +274,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                 }
                                 if (!attackWorked) {
                                     log.debug(
-                                            "Failed to find vuln in url attribute on "
-                                                    + sourceMsg.getRequestHeader().getURI());
+                                            "Failed to find vuln in url attribute on {}",
+                                            sourceMsg.getRequestHeader().getURI());
                                 }
                             }
                             if (!attackWorked && context.isInTagWithSrc()) {
@@ -304,8 +305,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                 }
                                 if (!attackWorked) {
                                     log.debug(
-                                            "Failed to find vuln in tag with src attribute on "
-                                                    + sourceMsg.getRequestHeader().getURI());
+                                            "Failed to find vuln in tag with src attribute on {}",
+                                            sourceMsg.getRequestHeader().getURI());
                                 }
                             }
 
@@ -338,8 +339,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                 }
                                 if (!attackWorked) {
                                     log.debug(
-                                            "Failed to find vuln with simple script attack "
-                                                    + sourceMsg.getRequestHeader().getURI());
+                                            "Failed to find vuln with simple script attack {}",
+                                            sourceMsg.getRequestHeader().getURI());
                                 }
                             }
                             if (!attackWorked) {
@@ -372,8 +373,8 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                 }
                                 if (!attackWorked) {
                                     log.debug(
-                                            "Failed to find vuln in with simple onmounseover "
-                                                    + sourceMsg.getRequestHeader().getURI());
+                                            "Failed to find vuln in with simple onmounseover {}",
+                                            sourceMsg.getRequestHeader().getURI());
                                 }
                             }
                         } else if (context.isHtmlComment()) {

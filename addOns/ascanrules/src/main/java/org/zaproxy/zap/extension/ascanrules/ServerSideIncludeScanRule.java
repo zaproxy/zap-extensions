@@ -31,7 +31,8 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -42,7 +43,7 @@ import org.zaproxy.zap.model.TechSet;
 
 public class ServerSideIncludeScanRule extends AbstractAppParamPlugin {
 
-    private static final Logger LOGGER = Logger.getLogger(ServerSideIncludeScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ServerSideIncludeScanRule.class);
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.serversideinclude.";
@@ -161,17 +162,15 @@ public class ServerSideIncludeScanRule extends AbstractAppParamPlugin {
                 return true;
             }
         } catch (IOException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(
-                        "IO exception while sending a message [URI="
-                                + getBaseMsg().getRequestHeader().getURI()
-                                + ", parameter="
-                                + parameter
-                                + ", value="
-                                + value
-                                + "]:",
-                        e);
-            }
+            LOGGER.debug(
+                    "IO exception while sending a message [URI={}"
+                            + ", parameter={}"
+                            + ", value={}"
+                            + "]:",
+                    getBaseMsg().getRequestHeader().getURI(),
+                    parameter,
+                    value,
+                    e);
         }
         return false;
     }
