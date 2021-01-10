@@ -61,7 +61,6 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         int confidence = Alert.CONFIDENCE_MEDIUM;
 
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
-            StringBuilder todoComments = new StringBuilder();
 
             if (msg.getResponseHeader().isJavaScript()) {
                 // Just treat as text
@@ -69,11 +68,11 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 for (String line : lines) {
                     for (Pattern pattern : patterns) {
                         if (pattern.matcher(line).find()) {
-                            todoComments.append(
+                            String other =
                                     Constant.messages.getString(
-                                            MESSAGE_PREFIX + "otherinfo", pattern, line));
-                            todoComments.append("\n");
+                                            MESSAGE_PREFIX + "otherinfo", pattern);
                             confidence = Alert.CONFIDENCE_LOW;
+                            this.raiseAlert(msg, id, other, confidence, line);
                             break; // Only need to record this line once
                         }
                     }
@@ -87,10 +86,10 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                     String tagStr = tag.toString();
                     for (Pattern pattern : patterns) {
                         if (pattern.matcher(tagStr).find()) {
-                            todoComments.append(
+                            String other =
                                     Constant.messages.getString(
-                                            MESSAGE_PREFIX + "otherinfo", pattern, tagStr));
-                            todoComments.append("\n");
+                                            MESSAGE_PREFIX + "otherinfo", pattern);
+                            this.raiseAlert(msg, id, other, confidence, tagStr);
                             break; // Only need to record this comment once
                         }
                     }
@@ -102,24 +101,22 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                     String elStr = el.toString();
                     for (Pattern pattern : patterns) {
                         if (pattern.matcher(elStr).find()) {
-                            todoComments.append(
+                            String other =
                                     Constant.messages.getString(
-                                            MESSAGE_PREFIX + "otherinfo", pattern, elStr));
-                            todoComments.append("\n");
+                                            MESSAGE_PREFIX + "otherinfo", pattern);
                             confidence = Alert.CONFIDENCE_LOW;
+                            this.raiseAlert(msg, id, other, confidence, elStr);
                             break; // Only need to record this script once
                         }
                     }
                     offset = el.getEnd();
                 }
             }
-            if (todoComments.length() > 0) {
-                this.raiseAlert(msg, id, todoComments.toString(), confidence);
-            }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String detail, int confidence) {
+    private void raiseAlert(
+            HttpMessage msg, int id, String detail, int confidence, String evidence) {
         newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(confidence)
@@ -128,6 +125,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 .setSolution(getSolution())
                 .setCweId(200) // CWE Id 200 - Information Exposure
                 .setWascId(13) // WASC Id 13 - Info leakage
+                .setEvidence(evidence)
                 .raise();
     }
 

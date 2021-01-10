@@ -99,6 +99,9 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
+        assertEquals(
+                "Some text <script>Some Script Element FIXME: DO something </script>",
+                alertsRaised.get(0).getEvidence());
     }
 
     @Test
@@ -118,6 +121,30 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
         // Then
         assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    public void shouldCreateOneAlertPerSuspiciousComment()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String body =
+                "Some text <script>Some Script Element FIXME: DO something\nFIXME: DO something else </script>\nLine 2\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertTrue(msg.getResponseHeader().isJavaScript());
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertEquals(2, alertsRaised.size());
+        assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
+        assertEquals(
+                "Some text <script>Some Script Element FIXME: DO something",
+                alertsRaised.get(0).getEvidence());
+        assertEquals("FIXME: DO something else </script>", alertsRaised.get(1).getEvidence());
     }
 
     @Test
