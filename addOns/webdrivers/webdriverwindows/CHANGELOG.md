@@ -3,8 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
-
+## [24] - 2021-01-14
+### Changed
+- Update geckodriver to 0.29.0.
 
 ## [23] - 2020-11-18
 ### Changed
@@ -117,6 +118,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[24]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v21
