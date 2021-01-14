@@ -4,7 +4,7 @@ plugins {
     id("org.sonarqube") version "3.0"
 }
 
-apply(from = "$rootDir/gradle/travis-ci.gradle.kts")
+apply(from = "$rootDir/gradle/ci.gradle.kts")
 apply(from = "$rootDir/gradle/lgtm.gradle.kts")
 
 allprojects {
