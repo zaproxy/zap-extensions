@@ -287,10 +287,8 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     private static final Color COLOR_DENIED = Color.RED;
     private static final Color COLOR_ALLOWED = new Color(31, 131, 31);
-    private static final Color COLOR_UNKNOWN = new Color(76, 76, 76);
     private static final Color COLOR_DENIED_FOCUS = new Color(255, 195, 195);
     private static final Color COLOR_ALLOWED_FOCUS = new Color(195, 255, 195);
-    private static final Color COLOR_UNKNOWN_FOCUS = new Color(220, 220, 220);
 
     /**
      * A custom cell renderer used for the tree of access rules that sets custom colors and icons
@@ -360,13 +358,6 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
                             }
                             break;
                         default:
-                            // Text color
-                            if (selected) {
-                                this.setForeground(COLOR_UNKNOWN_FOCUS);
-                            } else {
-                                this.setForeground(COLOR_UNKNOWN);
-                            }
-
                             // Icon
                             if (isLeaf) {
                                 setIcon(LEAF_ICON);
