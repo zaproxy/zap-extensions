@@ -25,7 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import net.sf.json.JSONObject;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -41,7 +42,7 @@ import org.zaproxy.zap.utils.ApiUtils;
 /** The API for manipulating {@link AlertFilter alert filters}. */
 public class AlertFilterAPI extends ApiImplementor {
 
-    private static final Logger log = Logger.getLogger(AlertFilterAPI.class);
+    private static final Logger log = LogManager.getLogger(AlertFilterAPI.class);
 
     private static final String PREFIX = "alertFilter";
 
@@ -167,7 +168,7 @@ public class AlertFilterAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-        log.debug("handleApiView " + name + " " + params.toString());
+        log.debug("handleApiView {} {}", name, params.toString());
         Context context;
 
         switch (name) {
@@ -198,7 +199,7 @@ public class AlertFilterAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        log.debug("handleApiAction " + name + " " + params.toString());
+        log.debug("handleApiAction {} {}", name, params.toString());
 
         AlertFilter af;
         Context context;

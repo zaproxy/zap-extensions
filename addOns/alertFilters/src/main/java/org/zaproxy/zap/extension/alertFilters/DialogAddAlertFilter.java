@@ -34,7 +34,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.model.Context;
@@ -49,7 +50,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private static final long serialVersionUID = -7210879426146833234L;
 
     /** The Constant logger. */
-    protected static final Logger log = Logger.getLogger(DialogAddAlertFilter.class);
+    protected static final Logger log = LogManager.getLogger(DialogAddAlertFilter.class);
 
     private static final String DIALOG_TITLE =
             Constant.messages.getString("alertFilters.dialog.add.title");
@@ -135,7 +136,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     @Override
     protected void init() {
         if (this.alertFilter != null) {
-            log.debug("Initializing add alertFilter dialog for: " + alertFilter);
+            log.debug("Initializing add alertFilter dialog for: {}", alertFilter);
             getAlertCombo()
                     .setSelectedItem(
                             ExtensionAlertFilters.getRuleNameForId(alertFilter.getRuleId()));
