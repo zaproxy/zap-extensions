@@ -6,7 +6,7 @@ description = "Allows you to automate the changing of alert risk levels."
 zapAddOn {
     addOnName.set("Alert Filters")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")

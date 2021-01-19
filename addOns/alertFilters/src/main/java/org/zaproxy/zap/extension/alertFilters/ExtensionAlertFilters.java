@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -103,7 +104,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private GlobalAlertFilterParam globalAlertFilterParam;
     private OptionsGlobalAlertFilterPanel optionsGlobalAlertFilterPanel;
 
-    private Logger log = Logger.getLogger(this.getClass());
+    private Logger log = LogManager.getLogger(this.getClass());
 
     private OnContextsChangedListenerImpl contextsChangedListener;
 
@@ -413,10 +414,9 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         final Alert alert = this.getAlert(recordAlert);
         if (alert == null || alert.getHistoryRef() == null) {
             log.error(
-                    "No alert or href for "
-                            + recordAlert.getAlertId()
-                            + " "
-                            + recordAlert.getHistoryId());
+                    "No alert or href for {} {}",
+                    recordAlert.getAlertId(),
+                    recordAlert.getHistoryId());
         } else {
             if (alert.getHistoryRef().getSiteNode() != null) {
                 this.handleAlert(alert);
@@ -429,7 +429,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                                 try {
                                     StructuralNode node =
                                             SessionStructure.addPath(
-                                                    Model.getSingleton().getSession(),
+                                                    Model.getSingleton(),
                                                     alert.getHistoryRef(),
                                                     alert.getHistoryRef().getHttpMessage());
 
@@ -449,9 +449,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     private void handleAlert(Alert alert) {
         String uri = alert.getUri();
-        if (log.isDebugEnabled()) {
-            log.debug("Alert: " + this.lastAlert + " URL: " + uri);
-        }
+        log.debug("Alert: {} URL: {}", this.lastAlert, uri);
         // Loop through global rules and apply as necessary
         for (AlertFilter filter : this.globalAlertFilterParam.getGlobalAlertFilters()) {
             if (filter.appliesToAlert(alert, true)) {
@@ -464,14 +462,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         for (ContextAlertFilterManager mgr : this.contextManagers.values()) {
             Context context = Model.getSingleton().getSession().getContext(mgr.getContextId());
             if (context.isInContext(uri)) {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Is in context "
-                                    + context.getId()
-                                    + " got "
-                                    + mgr.getAlertFilters().size()
-                                    + " filters");
-                }
+                log.debug(
+                        "Is in context {} got {} filters",
+                        context.getId(),
+                        mgr.getAlertFilters().size());
                 // Its in this context
                 for (AlertFilter filter : mgr.getAlertFilters()) {
                     if (filter.appliesToAlert(alert, true)) {
@@ -495,13 +489,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             updAlert.setRiskConfidence(filter.getNewRisk(), alert.getConfidence());
         }
         try {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Setting Alert with plugin id : "
-                                + alert.getPluginId()
-                                + " to "
-                                + filter.getNewRisk());
-            }
+            log.debug(
+                    "Setting Alert with plugin id : {} to {}",
+                    alert.getPluginId(),
+                    filter.getNewRisk());
             getExtAlert().updateAlert(updAlert);
             getExtAlert().updateAlertInTree(origAlert, updAlert);
             if (alert.getHistoryRef() != null) {
