@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.text.MessageFormat;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -40,7 +40,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.bigredirects.";
     private static final int PLUGIN_ID = 10044;
 
-    private static final Logger logger = Logger.getLogger(BigRedirectsScanRule.class);
+    private static final Logger logger = LogManager.getLogger(BigRedirectsScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -67,9 +67,8 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
                 responseLocationHeaderURILength = locationHeaderValue.length();
             } else { // No location header found
                 logger.debug(
-                        MessageFormat.format(
-                                "Though the response had a redirect status code it did not have a Location header.\nRequested URL: {0}",
-                                msg.getRequestHeader().getURI().toString()));
+                        "Though the response had a redirect status code it did not have a Location header.\nRequested URL: {}",
+                        msg.getRequestHeader().getURI().toString());
             }
 
             if (responseLocationHeaderURILength > 0) {
@@ -98,14 +97,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
                 }
             }
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        logger.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
     }
 
     /**
@@ -117,10 +109,8 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
      */
     private int getPredictedResponseSize(int redirectURILength) {
         int predictedResponseSize = redirectURILength + 300;
-        if (logger.isDebugEnabled()) {
-            logger.debug("Original Response Location Header URI Length: " + redirectURILength);
-            logger.debug("Predicted Response Size: " + predictedResponseSize);
-        }
+        logger.debug("Original Response Location Header URI Length: {}", redirectURILength);
+        logger.debug("Predicted Response Size: {}", predictedResponseSize);
         return predictedResponseSize;
     }
 

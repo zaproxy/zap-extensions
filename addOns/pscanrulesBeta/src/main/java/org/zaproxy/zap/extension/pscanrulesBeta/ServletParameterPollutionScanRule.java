@@ -24,7 +24,8 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -44,7 +45,8 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.servletparameterpollution.";
     private static final int PLUGIN_ID = 10026;
 
-    private static final Logger logger = Logger.getLogger(ServletParameterPollutionScanRule.class);
+    private static final Logger logger =
+            LogManager.getLogger(ServletParameterPollutionScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -72,7 +74,7 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner {
 
         if (formElements != null && formElements.size() > 0) {
             // Loop through all of the FORM tags
-            logger.debug("Found " + formElements.size() + " forms");
+            logger.debug("Found {} forms", formElements.size());
 
             // check for 'target' param
 
