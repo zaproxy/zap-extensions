@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.accessControl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -39,7 +40,7 @@ import org.zaproxy.zap.model.Vulnerability;
  * @author cosminstefanxp
  */
 public class AccessControlAlertsProcessor {
-    private static final Logger log = Logger.getLogger(AccessControlAlertsProcessor.class);
+    private static final Logger log = LogManager.getLogger(AccessControlAlertsProcessor.class);
 
     private static Vulnerability vulnerabilityAuthentication =
             Vulnerabilities.getVulnerability("wasc_1");
@@ -70,9 +71,7 @@ public class AccessControlAlertsProcessor {
             return;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Raising alert for: " + result);
-        }
+        log.debug("Raising alert for: {}", result);
 
         if (result.getUser() == null) {
             raiseAuthenticationAlert(result);
