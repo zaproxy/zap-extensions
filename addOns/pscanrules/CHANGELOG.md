@@ -3,8 +3,10 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
-
+## [32] - 2021-01-20
+### Changed
+- The Suspicious Comments scan rule will include the offending line as evidence.
+- The Suspicious Comments scan rule will raise one alert per finding, instead of one aggeregated alert per HTTP message.
 
 ## [31] - 2020-12-15
 ### Changed
@@ -24,8 +26,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Handle an IllegalArgumentException that could occur in the CSP scan rule if multiple CSP headers were present and one (or more) had a report-uri directive when trying to merge them.
 - Allow to ignore cookies in same site and loosely scoped scan rules.
 - The Application Error scan rule will not alert on web assembly responses.
-- The Suspicious Comments scan rule will include the offending line as evidence.
-- The Suspicious Comments scan rule will raise one alert per finding, instead of one aggeregated alert per HTTP message.
 
 ## [29] - 2020-06-01
 ### Changed
@@ -212,6 +212,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[32]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v29
