@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Handle an IllegalArgumentException that could occur in the CSP scan rule if multiple CSP headers were present and one (or more) had a report-uri directive when trying to merge them.
 - Allow to ignore cookies in same site and loosely scoped scan rules.
 - The Application Error scan rule will not alert on web assembly responses.
+- The Suspicious Comments scan rule will include the offending line as evidence.
+- The Suspicious Comments scan rule will raise one alert per finding, instead of one aggeregated alert per HTTP message.
 
 ## [29] - 2020-06-01
 ### Changed
