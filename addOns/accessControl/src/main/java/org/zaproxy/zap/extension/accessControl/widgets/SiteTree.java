@@ -19,19 +19,21 @@
  */
 package org.zaproxy.zap.extension.accessControl.widgets;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ParameterParser;
 
 public class SiteTree {
 
-    protected static final Logger log = Logger.getLogger(SiteTree.class);
+    protected static final Logger log = LogManager.getLogger(SiteTree.class);
 
     private SiteTreeNode root;
 
@@ -48,9 +50,11 @@ public class SiteTree {
     }
 
     public SiteTreeNode addPath(Context context, URI uri, String method) {
-        Collection<String> urlParams = null;
+        Collection<String> urlParams = new ArrayList<String>();
         try {
-            urlParams = context.getUrlParamParser().parse(uri.getQuery()).keySet();
+            context.getUrlParamParser()
+                    .parseParameters(uri.getQuery())
+                    .forEach(param -> urlParams.add(param.getName()));
         } catch (URIException e) {
         }
         return addPath(context, uri, method, urlParams, null, null);
@@ -105,7 +109,7 @@ public class SiteTree {
 
         } catch (Exception e) {
             // ZAP: Added error
-            log.error("Exception adding " + uri.toString() + " " + e.getMessage(), e);
+            log.error("Exception adding {} {}", uri.toString(), e.getMessage(), e);
         }
 
         return leaf;

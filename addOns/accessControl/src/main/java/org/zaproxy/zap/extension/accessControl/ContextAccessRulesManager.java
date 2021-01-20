@@ -29,7 +29,8 @@ import javax.swing.tree.TreeNode;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.extension.accessControl.widgets.ContextSiteTree;
 import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
@@ -48,7 +49,7 @@ import org.zaproxy.zap.users.User;
  */
 public class ContextAccessRulesManager {
 
-    private static final Logger log = Logger.getLogger(ContextAccessRulesManager.class);
+    private static final Logger log = LogManager.getLogger(ContextAccessRulesManager.class);
     /**
      * In order to store access rules for unauthenticated visitors, we'll use -1 as the id, which is
      * an id that should not be generated for normal users.
@@ -122,7 +123,7 @@ public class ContextAccessRulesManager {
      */
     public void addRule(int userId, SiteTreeNode node, AccessRule rule) {
         if (log.isDebugEnabled()) {
-            log.debug("Adding rule for user " + userId + " and node " + node + ": " + rule);
+            log.debug("Adding rule for user {} and node {} : {}", userId, node, rule);
         }
 
         // If the rule is INHERIT (default), remove it from the rules mapping as there's no need to
@@ -164,7 +165,7 @@ public class ContextAccessRulesManager {
             path = context.getUrlParamParser().getTreePath(node.getUri());
             hostname = UriUtils.getHostName(node.getUri());
         } catch (URIException e) {
-            log.error("An error occurred while infering access rules: " + e.getMessage(), e);
+            log.error("An error occurred while infering access rules: {}", e.getMessage(), e);
             return AccessRule.UNKNOWN;
         }
 
@@ -197,10 +198,9 @@ public class ContextAccessRulesManager {
                 parent = parent.findChild(pathSegment);
                 if (parent == null) {
                     log.warn(
-                            "Unable to find path segment while infering rule for "
-                                    + node
-                                    + ": "
-                                    + pathSegment);
+                            "Unable to find path segment while infering rule for {} : {}",
+                            node,
+                            pathSegment);
                     break;
                 }
                 // Save it's access rule, if anything relevant
@@ -301,18 +301,17 @@ public class ContextAccessRulesManager {
             URI uri = new URI(values[3], true);
             SiteTreeNode node = new SiteTreeNode(nodeName, uri);
             getUserRules(userId).put(node, rule);
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        String.format(
-                                "Imported access control rule (context, userId, node, rule): (%d, %d, %s, %s) ",
-                                context.getId(), userId, uri.toString(), rule));
-            }
+            log.debug(
+                    "Imported access control rule (context, userId, node, rule): ({}, {}, {}, {}) ",
+                    context.getId(),
+                    userId,
+                    uri.toString(),
+                    rule);
         } catch (Exception ex) {
             log.error(
-                    "Unable to import serialized rule for context "
-                            + context.getId()
-                            + ":"
-                            + serializedRule,
+                    "Unable to import serialized rule for context {} : {}",
+                    context.getId(),
+                    serializedRule,
                     ex);
         }
     }
@@ -340,12 +339,11 @@ public class ContextAccessRulesManager {
             rules.remove(node);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    String.format(
-                            "Identified hanging rules for context %d and user %d: %s",
-                            context.getId(), userId, rules));
-        }
+        log.debug(
+                "Identified hanging rules for context {} and user {}: {}",
+                context.getId(),
+                userId,
+                rules);
         return rules;
     }
 }

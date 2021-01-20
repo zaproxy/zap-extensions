@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
@@ -91,7 +92,7 @@ public class AccessControlScannerThread
         }
     }
 
-    private static final Logger log = Logger.getLogger(AccessControlScannerThread.class);
+    private static final Logger log = LogManager.getLogger(AccessControlScannerThread.class);
 
     /** The HTTP sender used to effectively send the data. */
     private HttpSender httpSender;
@@ -153,12 +154,10 @@ public class AccessControlScannerThread
 
         // And set up the state accordingly
         this.setScanMaximumProgress(targetNodes.size() + 1);
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    String.format(
-                            "Starting Access Control scan for %d URLs and %d users",
-                            targetNodes.size(), targetUsers.size()));
-        }
+        log.debug(
+                "Starting Access Control scan for {} URLs and {} users",
+                targetNodes.size(),
+                targetUsers.size());
 
         int progress = 0;
 
@@ -180,8 +179,8 @@ public class AccessControlScannerThread
                 originalMessage = sn.getHistoryReference().getHttpMessage();
             } catch (Exception ex) {
                 log.error(
-                        "An error has occurred while loading history reference message:"
-                                + ex.getMessage(),
+                        "An error has occurred while loading history reference message: {}",
+                        ex.getMessage(),
                         ex);
             }
 
@@ -212,13 +211,10 @@ public class AccessControlScannerThread
     }
 
     private void attackNode(SiteTreeNode stn, HttpMessage originalMessage, User user) {
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "Attacking node: '"
-                            + originalMessage.getRequestHeader().getURI()
-                            + "' as user: "
-                            + (user != null ? user.getName() : "unauthenticated"));
-        }
+        log.debug(
+                "Attacking node: '{}' as user: {}",
+                originalMessage.getRequestHeader().getURI(),
+                user != null ? user.getName() : "unauthenticated");
         // Clone the original message and send it from the point of view of the user
         HttpMessage scanMessage = originalMessage.cloneRequest();
         scanMessage.setRequestingUser(user);
@@ -227,8 +223,8 @@ public class AccessControlScannerThread
             httpSender.sendAndReceive(scanMessage);
         } catch (IOException e) {
             log.error(
-                    "Error occurred while sending/receiving access control testing message to:"
-                            + scanMessage.getRequestHeader().getURI(),
+                    "Error occurred while sending/receiving access control testing message to: {}",
+                    scanMessage.getRequestHeader().getURI(),
                     e);
             return;
         }
@@ -246,8 +242,8 @@ public class AccessControlScannerThread
                             scanMessage);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             log.error(
-                    "An error has occurred while saving AccessControl testing message in HistoryReference: "
-                            + e.getMessage(),
+                    "An error has occurred while saving AccessControl testing message in HistoryReference: {}",
+                    e.getMessage(),
                     e);
             return;
         }

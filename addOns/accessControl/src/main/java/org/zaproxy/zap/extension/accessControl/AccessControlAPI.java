@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -60,7 +61,7 @@ public class AccessControlAPI extends ApiImplementor {
     private static final String PARAM_UNAUTH_USER = "scanAsUnAuthUser";
     private static final String PARAM_FILENAME = "fileName";
 
-    private static final Logger LOGGER = Logger.getLogger(AccessControlAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(AccessControlAPI.class);
 
     /** Provided only for API client generator usage. */
     public AccessControlAPI() {
