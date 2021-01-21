@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -39,7 +40,7 @@ import org.parosproxy.paros.network.HttpStatusCode;
 public class ForbiddenBypassScanRule extends AbstractAppPlugin {
 
     private static final String MESSAGE_PREFIX = "ascanalpha.forbiddenBypass.";
-    private static final Logger LOG = Logger.getLogger(ForbiddenBypassScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(ForbiddenBypassScanRule.class);
 
     @Override
     public int getId() {

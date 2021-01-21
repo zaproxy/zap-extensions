@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update links to zaproxy repo.
+- Target 2.10 core and use new logging infrastructure (Log4j 2.x).
 
 ### Added
 - Forbidden (403) Bypass scan rule.
