@@ -94,6 +94,7 @@ Elaborated by yhawke 2013
   <Pattern type="string">mySQL error with query</Pattern>
   <Pattern type="string">on MySQL result index</Pattern>
   <Pattern type="string">server object error</Pattern>
+  <Pattern type="string">SyntaxError: Unexpected token</Pattern>
   <Pattern type="regex">(?i)Line\s\d+:\sIncorrect\ssyntax\snear\s'[^']*'</Pattern>
   <Pattern type="regex">(?i)pg_query\(\)[:]*\squery\sfailed:\serror:\s</Pattern>
   <Pattern type="regex">(?i)'[^']*'\sis\snull\sor\snot\san\sobject</Pattern>
