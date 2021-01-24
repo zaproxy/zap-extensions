@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ItemEvent;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -49,11 +50,14 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
     private static final String NAME = Constant.messages.getString("graphql.options.panelName");
 
     private ZapNumberSpinner maxQueryDepthNumberSpinner;
+    private JCheckBox lenientMaxQueryDepthEnabled = null;
+    private ZapNumberSpinner maxAdditionalQueryDepthNumberSpinner;
     private ZapNumberSpinner maxArgsDepthNumberSpinner;
     private JCheckBox optionalArgsEnabled = null;
     private JComboBox<ArgsTypeOption> argsTypeOptions = null;
     private JComboBox<QuerySplitOption> querySplitOptions = null;
     private JComboBox<RequestMethodOption> requestMethodOptions = null;
+    private JLabel maxAdditionalQueryDepthLabel;
 
     public GraphQlOptionsPanel() {
         super();
@@ -79,6 +83,15 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         panel.add(maxQueryDepthLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
         panel.add(
                 getMaxQueryDepthNumberSpinner(),
+                LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
+        panel.add(
+                getLenientMaxQueryDepthEnabled(),
+                LayoutHelper.getGBC(0, ++i, 2, 1.0, new Insets(2, 2, 2, 2)));
+        panel.add(
+                getMaxAdditionalQueryDepthLabel(),
+                LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
+        panel.add(
+                getMaxAdditionalQueryDepthNumberSpinner(),
                 LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
         panel.add(maxArgsDepthLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
         panel.add(
@@ -106,6 +119,8 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         final GraphQlParam param = options.getParamSet(GraphQlParam.class);
 
         getMaxQueryDepthNumberSpinner().setValue(param.getMaxQueryDepth());
+        getLenientMaxQueryDepthEnabled().setSelected(param.getLenientMaxQueryDepthEnabled());
+        getMaxAdditionalQueryDepthNumberSpinner().setValue(param.getMaxAdditionalQueryDepth());
         getMaxArgsDepthNumberSpinner().setValue(param.getMaxArgsDepth());
         getOptionalArgsEnabled().setSelected(param.getOptionalArgsEnabled());
         getArgsTypeOptions().setSelectedItem(param.getArgsType());
@@ -119,6 +134,8 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         final GraphQlParam param = options.getParamSet(GraphQlParam.class);
 
         param.setMaxQueryDepth(getMaxQueryDepthNumberSpinner().getValue());
+        param.setLenientMaxQueryDepthEnabled(getLenientMaxQueryDepthEnabled().isSelected());
+        param.setMaxAdditionalQueryDepth(getMaxAdditionalQueryDepthNumberSpinner().getValue());
         param.setMaxArgsDepth(getMaxArgsDepthNumberSpinner().getValue());
         param.setOptionalArgsEnabled(getOptionalArgsEnabled().isSelected());
         param.setArgsType((ArgsTypeOption) getArgsTypeOptions().getSelectedItem());
@@ -131,6 +148,52 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
             maxQueryDepthNumberSpinner = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
         }
         return maxQueryDepthNumberSpinner;
+    }
+
+    private JCheckBox getLenientMaxQueryDepthEnabled() {
+        if (lenientMaxQueryDepthEnabled == null) {
+            lenientMaxQueryDepthEnabled =
+                    new JCheckBox(
+                            Constant.messages.getString(
+                                    "graphql.options.label.lenientMaxQueryDepthEnabled"));
+            lenientMaxQueryDepthEnabled.setToolTipText(
+                    Constant.messages.getString(
+                            "graphql.options.label.lenientMaxQueryDepthEnabled.tooltip"));
+            lenientMaxQueryDepthEnabled.addItemListener(
+                    (e) -> {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            getMaxAdditionalQueryDepthLabel().setEnabled(true);
+                            getMaxAdditionalQueryDepthNumberSpinner().setEditable(true);
+                        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                            getMaxAdditionalQueryDepthLabel().setEnabled(false);
+                            getMaxAdditionalQueryDepthNumberSpinner().setEditable(false);
+                        }
+                        validate();
+                        repaint();
+                    });
+        }
+
+        return lenientMaxQueryDepthEnabled;
+    }
+
+    private JLabel getMaxAdditionalQueryDepthLabel() {
+        if (maxAdditionalQueryDepthLabel == null) {
+            maxAdditionalQueryDepthLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "graphql.options.label.additionalQueryDepth"));
+            maxAdditionalQueryDepthLabel.setEnabled(getLenientMaxQueryDepthEnabled().isSelected());
+        }
+        return maxAdditionalQueryDepthLabel;
+    }
+
+    private ZapNumberSpinner getMaxAdditionalQueryDepthNumberSpinner() {
+        if (maxAdditionalQueryDepthNumberSpinner == null) {
+            maxAdditionalQueryDepthNumberSpinner = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
+            maxAdditionalQueryDepthNumberSpinner.setEditable(
+                    getLenientMaxQueryDepthEnabled().isSelected());
+        }
+        return maxAdditionalQueryDepthNumberSpinner;
     }
 
     private ZapNumberSpinner getMaxArgsDepthNumberSpinner() {

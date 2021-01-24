@@ -32,7 +32,7 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
     @BeforeEach
     public void setup() throws Exception {
         setUpZap();
-        param = new GraphQlParam(5, 5, true, null, null, null);
+        param = new GraphQlParam(5, true, 5, 5, true, null, null, null);
     }
 
     @Test
@@ -264,5 +264,84 @@ public class GraphQlGeneratorUnitTest extends TestUtils {
         String expectedVariables = "{\"field2_name_id\": 1, \"field1_name_id\": 1}";
         assertEquals(request[0], expectedQuery);
         assertEquals(request[1], expectedVariables);
+    }
+
+    // Tests for queries that exceed maximum query depth (Lenient Max Query Depth Enabled)
+
+    @Test
+    public void lenientDepthDeepNestedLeaf() throws Exception {
+        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        generator = new GraphQlGenerator(getHtml("deepNestedLeaf.graphql"), null, param);
+        String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
+        String expectedQuery =
+                "query { user (id: 1) { follower { favouriteIceCream { flavour } } } } ";
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    public void strictDepthScalarArguments() throws Exception {
+        param = new GraphQlParam(1, false, 5, 5, true, null, null, null);
+        generator = new GraphQlGenerator(getHtml("scalarArguments.graphql"), null, param);
+        String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
+        String expectedQuery = "query { polygon (sides: 1, regular: true) } ";
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    public void lenientDepthScalarArguments() throws Exception {
+        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        generator = new GraphQlGenerator(getHtml("scalarArguments.graphql"), null, param);
+        String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
+        String expectedQuery = "query { polygon (sides: 1, regular: true) { perimeter } } ";
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    public void lenientDepthObjectsImplementInterface() throws Exception {
+        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        generator = new GraphQlGenerator(getHtml("objectsImplementInterface.graphql"), null, param);
+        String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
+        String expectedQuery = "query { character { ... on Hero { id } } } ";
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    public void lenientDepthUnionType() throws Exception {
+        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        generator = new GraphQlGenerator(getHtml("unionType.graphql"), null, param);
+        String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
+        String expectedQuery = "query { firstSearchResult { ... on Photo { height } } } ";
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    public void lenientDepthEnumType() throws Exception {
+        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        generator = new GraphQlGenerator(getHtml("enumType.graphql"), null, param);
+        String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
+        String expectedQuery = "query { direction } ";
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    public void lenientDepthScalarArgumentsVariables() throws Exception {
+        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        generator = new GraphQlGenerator(getHtml("scalarArguments.graphql"), null, param);
+        String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
+        String expectedQuery =
+                "query ($polygon_regular: Boolean, $polygon_sides: Int) "
+                        + "{ polygon (sides: $polygon_sides, regular: $polygon_regular) { perimeter } } ";
+        String expectedVariables = "{\"polygon_regular\": true, \"polygon_sides\": 1}";
+        assertEquals(expectedQuery, request[0]);
+        assertEquals(expectedVariables, request[1]);
+    }
+
+    @Test
+    public void lenientDepthExceeded() throws Exception {
+        param = new GraphQlParam(0, true, 3, 5, true, null, null, null);
+        generator = new GraphQlGenerator(getHtml("deepNestedLeaf.graphql"), null, param);
+        String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
+        String expectedQuery = "query ";
+        assertEquals(expectedQuery, query);
     }
 }

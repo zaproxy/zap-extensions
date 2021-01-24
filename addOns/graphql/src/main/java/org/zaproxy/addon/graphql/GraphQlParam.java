@@ -31,6 +31,10 @@ public class GraphQlParam extends VersionedAbstractParam {
     private static final String PARAM_BASE_KEY = "graphql";
 
     private static final String PARAM_MAX_QUERY_DEPTH = PARAM_BASE_KEY + ".maxQueryDepth";
+    private static final String PARAM_LENIENT_MAX_QUERY_DEPTH =
+            PARAM_BASE_KEY + ".lenientMaxQueryDepth";
+    private static final String PARAM_MAX_ADDITIONAL_QUERY_DEPTH =
+            PARAM_BASE_KEY + ".maxAdditionalQueryDepth";
     private static final String PARAM_MAX_ARGS_DEPTH = PARAM_BASE_KEY + ".maxArgsDepth";
     private static final String PARAM_OPTIONAL_ARGS = PARAM_BASE_KEY + ".optionalArgs";
     private static final String PARAM_ARGS_TYPE = PARAM_BASE_KEY + ".argsType";
@@ -41,7 +45,7 @@ public class GraphQlParam extends VersionedAbstractParam {
      * The version of the configurations. Used to keep track of configurations changes between
      * releases, if updates are needed.
      */
-    private static final int PARAM_CURRENT_VERSION = 1;
+    private static final int PARAM_CURRENT_VERSION = 2;
 
     private static final Logger LOG = Logger.getLogger(GraphQlParam.class);
 
@@ -50,12 +54,16 @@ public class GraphQlParam extends VersionedAbstractParam {
     /** For unit tests. */
     public GraphQlParam(
             int maxQueryDepth,
+            boolean lenientMaxQueryDepthEnabled,
+            int maxAdditionalQueryDepth,
             int maxArgsDepth,
             boolean optionalArgsEnabled,
             ArgsTypeOption argsType,
             QuerySplitOption querySplitType,
             RequestMethodOption requestMethod) {
         this.maxQueryDepth = maxQueryDepth;
+        this.lenientMaxQueryDepthEnabled = lenientMaxQueryDepthEnabled;
+        this.maxAdditionalQueryDepth = maxAdditionalQueryDepth;
         this.maxArgsDepth = maxArgsDepth;
         this.optionalArgsEnabled = optionalArgsEnabled;
         this.argsType = argsType;
@@ -135,6 +143,8 @@ public class GraphQlParam extends VersionedAbstractParam {
     };
 
     private int maxQueryDepth;
+    private boolean lenientMaxQueryDepthEnabled;
+    private int maxAdditionalQueryDepth;
     private int maxArgsDepth;
     private boolean optionalArgsEnabled;
     private ArgsTypeOption argsType;
@@ -148,6 +158,24 @@ public class GraphQlParam extends VersionedAbstractParam {
     public void setMaxQueryDepth(int maxQueryDepth) {
         this.maxQueryDepth = maxQueryDepth;
         getConfig().setProperty(PARAM_MAX_QUERY_DEPTH, maxQueryDepth);
+    }
+
+    public boolean getLenientMaxQueryDepthEnabled() {
+        return lenientMaxQueryDepthEnabled;
+    }
+
+    public void setLenientMaxQueryDepthEnabled(boolean lenientMaxQueryDepthEnabled) {
+        this.lenientMaxQueryDepthEnabled = lenientMaxQueryDepthEnabled;
+        getConfig().setProperty(PARAM_LENIENT_MAX_QUERY_DEPTH, lenientMaxQueryDepthEnabled);
+    }
+
+    public int getMaxAdditionalQueryDepth() {
+        return maxAdditionalQueryDepth;
+    }
+
+    public void setMaxAdditionalQueryDepth(int maxAdditionalQueryDepth) {
+        this.maxAdditionalQueryDepth = maxAdditionalQueryDepth;
+        getConfig().setProperty(PARAM_MAX_ADDITIONAL_QUERY_DEPTH, maxAdditionalQueryDepth);
     }
 
     public int getMaxArgsDepth() {
@@ -238,6 +266,8 @@ public class GraphQlParam extends VersionedAbstractParam {
     @Override
     protected void parseImpl() {
         maxQueryDepth = getInt(PARAM_MAX_QUERY_DEPTH, 5);
+        lenientMaxQueryDepthEnabled = getBoolean(PARAM_LENIENT_MAX_QUERY_DEPTH, true);
+        maxAdditionalQueryDepth = getInt(PARAM_MAX_ADDITIONAL_QUERY_DEPTH, 5);
         maxArgsDepth = getInt(PARAM_MAX_ARGS_DEPTH, 5);
         optionalArgsEnabled = getBoolean(PARAM_OPTIONAL_ARGS, true);
         argsType =
