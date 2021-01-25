@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - CORS active scan rule.
 - Forbidden (403) Bypass scan rule.
+- Web Cache Deception scan rule.
 
 ### Removed
 - Unused file, it was used by promoted scan rule.

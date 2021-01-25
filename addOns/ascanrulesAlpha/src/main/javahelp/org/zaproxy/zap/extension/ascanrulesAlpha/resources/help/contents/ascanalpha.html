@@ -39,6 +39,12 @@ This rule attempts to identify CORS headers and also CORS misconfiguration. The 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CorsScanRule.java">CorsScanRule.java</a>
 
+<H2>Web Cache Deception</H2>
+This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
+<ul>
+    <li>User must be authenticated before using this rule</li>
+</ul>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
 
 </BODY>
 </HTML>
