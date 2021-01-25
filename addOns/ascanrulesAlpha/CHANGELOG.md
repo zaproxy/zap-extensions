@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - CORS active scan rule.
 - Forbidden (403) Bypass scan rule.
+- Web Cache Deception scan rule.
 
 ## [30] - 2020-11-26
 ### Changed
