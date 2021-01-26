@@ -90,10 +90,8 @@ public class WappalyzerPassiveScannerUnitTest
                         + "<script type='text/javascript' src='libs/modernizr.min.js?ver=4.1.1'>"
                         + "</script>"
                         + "</html>");
-
         // When
         scan(msg);
-
         // Then
         assertFoundAppCount("https://www.example.com", 1);
         assertFoundApp("https://www.example.com", "Modernizr");
@@ -105,10 +103,67 @@ public class WappalyzerPassiveScannerUnitTest
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody("<html><body>libs/modernizr.min.js?ver=4.1.1</body></html>");
-
         // When
         scan(msg);
+        // Then
+        assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
+    }
 
+    @Test
+    public void shouldMatchDomElementWithTextAndAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><body>"
+                        + "<a href=\"https://www.example.com\" title=\"version 1\" style=\"border: 5px groove rgb(244, 250, 88);\">Example</a>"
+                        + "</body></html>");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
+    @Test
+    public void shouldMatchDomElementWithOnlyText() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><body>"
+                        + "<a href=\"https://www.modern.com\"  style=\"border: 5px groove rgb(244, 250, 88);\">Modern</a>"
+                        + "</body></html>");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Modernizr");
+    }
+
+    @Test
+    public void shouldMatchDomElementWithOnlyAttribute() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><body>"
+                        + "<a href=\"https://www.apache.com\" title=\"version 1\" style=\"border: 5px groove rgb(244, 250, 88);\">Example</a>"
+                        + "</body></html>");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Apache");
+    }
+
+    @Test
+    public void shouldNotMatchDomElementIfNoContentMatches() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><body>"
+                        + "<a href=\"https://www.pinter.com\" title=\"version\" style=\"border: 5px groove rgb(244, 250, 88);\">Pinterest</a>"
+                        + "</body></html>");
+        // When
+        scan(msg);
         // Then
         assertNull(getDefaultHolder().getAppsForSite("https://www.example.com"));
     }

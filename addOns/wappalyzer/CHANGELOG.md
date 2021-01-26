@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated with upstream Wappalyzer icon and pattern changes.
 - Now using 2.10 logging infrastructure (Log4j 2.x).
 
+### Added
+- Support for DOM patterns, aligning with the upstream project (Issue 6180).
+
 ## [21.0.0] - 2020-12-15
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.

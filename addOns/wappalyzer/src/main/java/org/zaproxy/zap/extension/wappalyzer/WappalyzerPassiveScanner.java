@@ -22,12 +22,16 @@ package org.zaproxy.zap.extension.wappalyzer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
@@ -121,6 +125,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
         checkMetaElementsMatches(source);
         checkScriptElementsMatches(source);
         checkCssElementsMatches(msg, source);
+        checkDomElementMatches(msg);
     }
 
     private void checkCssElementsMatches(HttpMessage msg, Source source) {
@@ -156,6 +161,35 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
                     if (name != null && content != null && name.equals(entry.getKey())) {
                         AppPattern p = entry.getValue();
                         addIfMatches(p, content);
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkDomElementMatches(HttpMessage message) {
+        Document doc = Jsoup.parse(message.getResponseBody().toString());
+        for (Map<String, Map<String, Map<String, AppPattern>>> domSelectorMap :
+                currentApp.getDom()) {
+            for (Map.Entry<String, Map<String, Map<String, AppPattern>>> selectorMap :
+                    domSelectorMap.entrySet()) {
+                for (Map.Entry<String, Map<String, AppPattern>> nodeSelectorMap :
+                        selectorMap.getValue().entrySet()) {
+                    for (Map.Entry<String, AppPattern> value :
+                            nodeSelectorMap.getValue().entrySet()) {
+                        Elements selectedElements = doc.select(selectorMap.getKey());
+                        for (org.jsoup.nodes.Element selectedElement : selectedElements) {
+                            if (Objects.equals(value.getKey(), "text")) {
+                                AppPattern ap = value.getValue();
+                                addIfMatches(ap, selectedElement.text());
+                            }
+                            if (Objects.equals(nodeSelectorMap.getKey(), "attributes")) {
+                                AppPattern ap = value.getValue();
+                                if (selectedElement.hasAttr(value.getKey())) {
+                                    addIfMatches(ap, selectedElement.attr(value.getKey()));
+                                }
+                            }
+                        }
                     }
                 }
             }
