@@ -55,7 +55,7 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
 
     private Model model = null;
 
-    private static final Logger LOG = LogManager.getLogger(PluginPassiveScanner.class);
+    private static final Logger LOG = LogManager.getLogger(LinkTargetScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
