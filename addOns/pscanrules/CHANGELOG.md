@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added Express error string pattern (Issue 6412).
 
+### Changed
+- X-Frame-Options (XFO) scan rule no longer suggests the use of "ALLOW-FROM", and also includes CSP "frame-ancestors" as an alternative.
+  - XFO headers implementing "ALLOW-FROM" will now be considered malformed.
 
 ## [32] - 2021-01-20
 ### Changed
