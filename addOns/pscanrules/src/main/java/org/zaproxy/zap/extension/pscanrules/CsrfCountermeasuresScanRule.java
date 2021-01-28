@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -135,6 +137,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                                 + formElement.getParentElement()
                                 + "]");
                 StringBuilder sbForm = new StringBuilder();
+                SortedSet<String> elementNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
                 ++numberOfFormsPassed;
                 // if the form has no parent, it is pretty likely invalid HTML (or Javascript!!!),
                 // so we will not report
@@ -160,7 +163,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                 }
 
                 List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
-                sbForm.append("[Form " + numberOfFormsPassed + ": ");
+                sbForm.append("[Form " + numberOfFormsPassed + ": \"");
                 boolean foundCsrfToken = false;
 
                 if (inputElements != null && inputElements.size() > 0) {
@@ -169,7 +172,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                     for (Element inputElement : inputElements) {
                         String attId = inputElement.getAttributeValue("ID");
                         if (attId != null) {
-                            sbForm.append("\"" + attId + "\" ");
+                            elementNames.add(attId);
                             for (String tokenName : tokenNames) {
                                 if (tokenName.equalsIgnoreCase(attId)) {
                                     foundCsrfToken = true;
@@ -181,7 +184,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                         if (name != null) {
                             if (attId == null) {
                                 // Dont bother recording both
-                                sbForm.append("\"" + name + "\" ");
+                                elementNames.add(name);
                             }
                             for (String tokenName : tokenNames) {
                                 if (tokenName.equalsIgnoreCase(name)) {
@@ -199,7 +202,9 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                 String evidence = "";
                 evidence = formElement.getFirstElement().getStartTag().toString();
 
-                sbForm.append(']');
+                // Append the form names with double quotes
+                sbForm.append(String.join("\" \"", elementNames));
+                sbForm.append("\" ]");
 
                 String formDetails = sbForm.toString();
                 String tokenNamesFlattened = tokenNames.toString();
