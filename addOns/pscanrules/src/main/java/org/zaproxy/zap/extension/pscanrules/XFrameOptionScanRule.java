@@ -91,8 +91,7 @@ public class XFrameOptionScanRule extends PluginPassiveScanner {
             if (!xFrameOption.isEmpty()) {
                 for (String xFrameOptionParam : xFrameOption) {
                     if (xFrameOptionParam.toLowerCase().indexOf("deny") < 0
-                            && xFrameOptionParam.toLowerCase().indexOf("sameorigin") < 0
-                            && xFrameOptionParam.toLowerCase().indexOf("allow-from") < 0) {
+                            && xFrameOptionParam.toLowerCase().indexOf("sameorigin") < 0) {
                         buildAlert(xFrameOptionParam, VulnType.XFO_MALFORMED_SETTING).raise();
                     }
                 }
