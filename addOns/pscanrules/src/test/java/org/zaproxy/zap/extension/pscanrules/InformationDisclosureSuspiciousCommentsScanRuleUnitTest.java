@@ -86,8 +86,8 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String body =
-                "Some text <script>Some Script Element FIXME: DO something </script>\nLine 2\n";
+        String line1 = "Some text <script>Some Script Element FIXME: DO something </script>";
+        String body = line1 + "\nLine 2\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
@@ -99,9 +99,9 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
+        assertEquals("FIXME", alertsRaised.get(0).getEvidence());
         assertEquals(
-                "Some text <script>Some Script Element FIXME: DO something </script>",
-                alertsRaised.get(0).getEvidence());
+                wrapEvidenceOtherInfo("\\bFixMe\\b", line1, 1), alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -124,12 +124,13 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    public void shouldCreateOneAlertPerSuspiciousComment()
+    public void shouldCreateOneAlertforMultipleAndEqualSuspiciousComments()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String body =
-                "Some text <script>Some Script Element FIXME: DO something\nFIXME: DO something else </script>\nLine 2\n";
+        String line1 = "Some text <script>Some Script Element FIXME: DO something";
+        String line2 = "FIXME: DO something else </script>";
+        String body = line1 + "\n" + line2 + "\nLine 2\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
@@ -139,12 +140,12 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         scanHttpResponseReceive(msg);
 
         // Then
-        assertEquals(2, alertsRaised.size());
+        assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
+        assertEquals("FIXME", alertsRaised.get(0).getEvidence());
+        // detected 2 times, the first in the element
         assertEquals(
-                "Some text <script>Some Script Element FIXME: DO something",
-                alertsRaised.get(0).getEvidence());
-        assertEquals("FIXME: DO something else </script>", alertsRaised.get(1).getEvidence());
+                wrapEvidenceOtherInfo("\\bFixMe\\b", line1, 2), alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -170,9 +171,8 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String body =
-                "<h1>Some text <script>Some Html Element todo DO something </script></h1>\n"
-                        + "<b>No script here</b>\n";
+        String script = "<script>Some Html Element todo DO something </script>";
+        String body = "<h1>Some text " + script + "</h1>\n<b>No script here</b>\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
@@ -184,6 +184,8 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
+        assertEquals(
+                wrapEvidenceOtherInfo("\\bTODO\\b", script, 1), alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -275,5 +277,22 @@ public class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
         // Then
         assertEquals(0, alertsRaised.size());
+    }
+
+    private static String wrapEvidenceOtherInfo(String evidence, String info, int count) {
+        if (count == 1) {
+            return "The following pattern was used: "
+                    + evidence
+                    + " and was detected in the element starting with: \""
+                    + info
+                    + "\", see evidence field for the suspicious comment/snippet.";
+        }
+        return "The following pattern was used: "
+                + evidence
+                + " and was detected "
+                + count
+                + " times, the first in the element starting with: \""
+                + info
+                + "\", see evidence field for the suspicious comment/snippet.";
     }
 }
