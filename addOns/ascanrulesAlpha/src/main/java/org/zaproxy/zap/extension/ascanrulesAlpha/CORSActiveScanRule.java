@@ -20,24 +20,25 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
-import org.apache.log4j.Logger;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMessage;
+
 /**
- * The CORS active scan rule identifies Cross-Origin Resource Sharing (CORS) support 
- * and overly lenient or buggy implementations
+ * The CORS active scan rule identifies Cross-Origin Resource Sharing (CORS) support and overly
+ * lenient or buggy implementations
  *
  * @author CravateRouge
  */
 public class CORSActiveScanRule extends AbstractAppPlugin {
     private static Logger LOG = Logger.getLogger(CORSActiveScanRule.class);
-    private static final String RANDOM_NAME= RandomStringUtils.random(8, true, true);
+    private static final String RANDOM_NAME = RandomStringUtils.random(8, true, true);
 
     @Override
     public void scan() {
@@ -49,76 +50,75 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
 
         // Order of likelihood and severity
         String[] payloads = {
-            handyScheme+RANDOM_NAME+".com",
+            handyScheme + RANDOM_NAME + ".com",
             "null",
-            handyScheme+RANDOM_NAME+"."+authority,
-            handyScheme+authority+"."+RANDOM_NAME+".com",
-            // URL encoded backtick used to bypass weak Regex matching only alphanumeric chars to validate the domain: https://www.corben.io/tricky-CORS/
-            handyScheme+authority+"%60"+RANDOM_NAME+".com",
+            handyScheme + RANDOM_NAME + "." + authority,
+            handyScheme + authority + "." + RANDOM_NAME + ".com",
+            // URL encoded backtick used to bypass weak Regex matching only alphanumeric chars to
+            // validate the domain: https://www.corben.io/tricky-CORS/
+            handyScheme + authority + "%60" + RANDOM_NAME + ".com",
             null,
-            handyScheme+authority
+            handyScheme + authority
         };
 
         boolean secScheme = false;
-        if(scheme == "https"){
+        if (scheme == "https") {
             secScheme = true;
-            payloads[5] = "http://"+authority; 
+            payloads[5] = "http://" + authority;
         }
 
         for (String payload : payloads) {
             HttpMessage msg = getNewMsg();
-            msg.getRequestHeader().setHeader("Origin",payload);
+            msg.getRequestHeader().setHeader("Origin", payload);
             try {
                 sendAndReceive(msg);
                 String acaoKey = HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN;
                 String acao = msg.getResponseHeader().getHeader(acaoKey);
                 // If there is an ACAO header an alert will be triggered
-                if(acao == null)
-                    continue;
+                if (acao == null) continue;
 
                 String name = getName();
                 int risk = Alert.RISK_INFO;
-                String evidence = acaoKey+": "+acao;
+                String evidence = acaoKey + ": " + acao;
                 int wasc = 14;
                 int cwe = 942;
                 String desc = getDescription();
                 boolean vuln = false;
 
                 // Evaluates the risk for this alert
-                if(acao.contains("*")){
+                if (acao.contains("*")) {
                     vuln = true;
                     risk = Alert.RISK_MEDIUM;
-                }
-                else if (acao.contains(RANDOM_NAME) || acao.contains("null") 
-                || (secScheme && acao.contains("http:"))){
+                } else if (acao.contains(RANDOM_NAME)
+                        || acao.contains("null")
+                        || (secScheme && acao.contains("http:"))) {
                     vuln = true;
                     // If authenticated AJAX requests are allowed, the risk is higher
                     String acacKey = "Access-Control-Allow-Credentials";
                     String acac = msg.getResponseHeader().getHeader(acacKey);
-                    if(acac == null)
-                        risk = Alert.RISK_MEDIUM;
-                    else{
+                    if (acac == null) risk = Alert.RISK_MEDIUM;
+                    else {
                         risk = Alert.RISK_HIGH;
-                        evidence += "\n"+acacKey+": "+acac;
-                    }                       
+                        evidence += "\n" + acacKey + ": " + acac;
+                    }
                 }
-                if(vuln){
+                if (vuln) {
                     name = getConstantStr("vuln.name");
                     desc = getConstantStr("vuln.desc");
                 }
 
                 newAlert()
-                .setName(name)
-                .setMessage(msg)
-                .setRisk(risk)
-                .setConfidence(Alert.CONFIDENCE_HIGH)
-                .setParam("Header")
-                .setAttack("Origin: "+payload)
-                .setEvidence(evidence)
-                .setWascId(wasc)
-                .setCweId(cwe)
-                .setDescription(desc)
-                .raise();
+                        .setName(name)
+                        .setMessage(msg)
+                        .setRisk(risk)
+                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                        .setParam("Header")
+                        .setAttack("Origin: " + payload)
+                        .setEvidence(evidence)
+                        .setWascId(wasc)
+                        .setCweId(cwe)
+                        .setDescription(desc)
+                        .raise();
                 return;
             } catch (IOException e) {
                 LOG.error(e.getMessage(), e);
@@ -131,7 +131,7 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
         return 40039;
     }
 
-    public String getConstantStr(String suffix){
+    public String getConstantStr(String suffix) {
         return Constant.messages.getString("ascanalpha.cors." + suffix);
     }
 
@@ -139,7 +139,6 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
     public String getName() {
         return getConstantStr("info.name");
     }
-
 
     @Override
     public String getDescription() {
