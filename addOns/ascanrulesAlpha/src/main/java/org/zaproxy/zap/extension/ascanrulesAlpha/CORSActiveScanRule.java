@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2020 The ZAP Development Team
+ * Copyright 2021 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
@@ -29,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 
 /**
  * The CORS active scan rule identifies Cross-Origin Resource Sharing (CORS) support and overly
@@ -42,8 +45,7 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
 
     @Override
     public void scan() {
-        HttpMessage baseMsg = getBaseMsg();
-        URI uri = baseMsg.getRequestHeader().getURI();
+        URI uri = getBaseMsg().getRequestHeader().getURI();
         String authority = uri.getEscapedAuthority();
         String scheme = uri.getScheme();
         String handyScheme = scheme + "://";
@@ -72,52 +74,49 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
             msg.getRequestHeader().setHeader("Origin", payload);
             try {
                 sendAndReceive(msg);
-                String acaoKey = HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN;
-                String acao = msg.getResponseHeader().getHeader(acaoKey);
-                // If there is an ACAO header an alert will be triggered
-                if (acao == null) continue;
 
-                String name = getName();
+                String acaoKey = HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN;
+                HttpResponseHeader respHead = msg.getResponseHeader();
+                String acaoVal = respHead.getHeader(acaoKey);
+
+                // If there is an ACAO header an alert will be triggered
+                if (acaoVal == null) {
+                    continue;
+                }
+
                 int risk = Alert.RISK_INFO;
-                String evidence = acaoKey + ": " + acao;
-                int wasc = 14;
-                int cwe = 942;
-                String desc = getDescription();
                 boolean vuln = false;
+                String acacKey = "Access-Control-Allow-Credentials";
+                String acacVal = respHead.getHeader(acacKey);
+                acacVal = acacVal == null ? "" : acacVal;
 
                 // Evaluates the risk for this alert
-                if (acao.contains("*")) {
+                if (acaoVal.contains("*")) {
                     vuln = true;
                     risk = Alert.RISK_MEDIUM;
-                } else if (acao.contains(RANDOM_NAME)
-                        || acao.contains("null")
-                        || (secScheme && acao.contains("http:"))) {
+                } else if (acaoVal.contains(RANDOM_NAME)
+                        || acaoVal.contains("null")
+                        || (secScheme && acaoVal.contains("http:"))) {
                     vuln = true;
                     // If authenticated AJAX requests are allowed, the risk is higher
-                    String acacKey = "Access-Control-Allow-Credentials";
-                    String acac = msg.getResponseHeader().getHeader(acacKey);
-                    if (acac == null) risk = Alert.RISK_MEDIUM;
-                    else {
-                        risk = Alert.RISK_HIGH;
-                        evidence += "\n" + acacKey + ": " + acac;
-                    }
+                    if (acacVal == "") risk = Alert.RISK_MEDIUM;
+                    else risk = Alert.RISK_HIGH;
                 }
-                if (vuln) {
-                    name = getConstantStr("vuln.name");
-                    desc = getConstantStr("vuln.desc");
-                }
-
+                Matcher m =
+                        Pattern.compile(
+                                        String.format(
+                                                "^\\s*%s[:\\s]+%s(\\s+%s[:\\s]+%s)?",
+                                                acaoKey, Pattern.quote(acaoVal), acacKey, acacVal),
+                                        Pattern.MULTILINE)
+                                .matcher(respHead.toString());
                 newAlert()
-                        .setName(name)
+                        .setName(vuln ? getConstantStr("vuln.name") : getName())
                         .setMessage(msg)
                         .setRisk(risk)
                         .setConfidence(Alert.CONFIDENCE_HIGH)
-                        .setParam("Header")
                         .setAttack("Origin: " + payload)
-                        .setEvidence(evidence)
-                        .setWascId(wasc)
-                        .setCweId(cwe)
-                        .setDescription(desc)
+                        .setEvidence(m.find() ? m.group(0) : null)
+                        .setDescription(vuln ? getConstantStr("vuln.desc") : getDescription())
                         .raise();
                 return;
             } catch (IOException e) {
@@ -128,7 +127,7 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
 
     @Override
     public int getId() {
-        return 40039;
+        return 40040;
     }
 
     public String getConstantStr(String suffix) {
@@ -158,5 +157,15 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
     @Override
     public String getReference() {
         return getConstantStr("refs");
+    }
+
+    @Override
+    public int getCweId() {
+        return 942;
+    }
+
+    @Override
+    public int getWascId() {
+        return 14;
     }
 }
