@@ -48,10 +48,14 @@ public class WappalyzerJsonParserUnitTest {
         assertEquals(1, app.getUrl().size());
         assertEquals(2, app.getHtml().size());
         assertEquals(2, app.getScript().size());
-        assertEquals(0, app.getMetas().size());
+        assertEquals(2, app.getMetas().size());
         assertEquals(0, app.getImplies().size());
         assertEquals(2, app.getDom().size());
         assertTrue(app.getCpe().equals(""));
         // Ignore Icon
+
+        app = apps.get(2);
+        assertTrue(app.getName().equals("Apache"));
+        assertEquals(1, app.getMetas().size());
     }
 }

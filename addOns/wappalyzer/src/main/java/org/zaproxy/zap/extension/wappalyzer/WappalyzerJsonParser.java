@@ -258,20 +258,27 @@ public class WappalyzerJsonParser {
     @SuppressWarnings("unchecked")
     private List<Map<String, AppPattern>> jsonToAppPatternMapList(String type, Object json) {
         List<Map<String, AppPattern>> list = new ArrayList<Map<String, AppPattern>>();
-        AppPattern ap;
         if (json instanceof JSONObject) {
             for (Object obj : ((JSONObject) json).entrySet()) {
-                Map.Entry<String, String> entry = (Map.Entry<String, String>) obj;
+                Map.Entry<String, Object> entry = (Map.Entry<String, Object>) obj;
                 try {
-                    Map<String, AppPattern> map = new HashMap<String, AppPattern>();
-                    ap = this.strToAppPattern(type, entry.getValue());
-                    map.put(entry.getKey(), ap);
-                    list.add(map);
+                    Object value = entry.getValue();
+                    if (value instanceof String) {
+                        list.add(createMapAppPattern(type, entry.getKey(), (String) value));
+                    } else if (value instanceof JSONArray) {
+                        JSONArray values = (JSONArray) value;
+                        for (Object val : values) {
+                            list.add(createMapAppPattern(type, entry.getKey(), (String) val));
+                        }
+                    } else {
+                        parsingExceptionHandler.handleException(
+                                new Exception("Unsupported type: " + value.getClass()));
+                    }
                 } catch (NumberFormatException e) {
                     logger.error(
                             "Invalid field syntax {} : {}", entry.getKey(), entry.getValue(), e);
                 } catch (PatternSyntaxException e) {
-                    patternErrorHandler.handleError(entry.getValue(), e);
+                    patternErrorHandler.handleError(String.valueOf(entry.getValue()), e);
                 }
             }
         } else if (json != null) {
@@ -281,6 +288,12 @@ public class WappalyzerJsonParser {
                     json.getClass().getCanonicalName());
         }
         return list;
+    }
+
+    private Map<String, AppPattern> createMapAppPattern(String type, String key, String value) {
+        Map<String, AppPattern> map = new HashMap<>();
+        map.put(key, strToAppPattern(type, value));
+        return map;
     }
 
     private List<Map<String, Map<String, Map<String, AppPattern>>>> jsonToAppPatternNestedMapList(
