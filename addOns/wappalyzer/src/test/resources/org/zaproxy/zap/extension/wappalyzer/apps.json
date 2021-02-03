@@ -18,6 +18,12 @@
         "Test_Entry_": "",
         "__test_entry_urls": ""
       },
+      "meta": {
+        "generator": [
+          "Generator 1",
+          "Generator 2"
+        ]
+      },
       "dom": {
         "a[href='https://www.example.com'][title*='version']": {
           "attributes": {
@@ -69,6 +75,9 @@
        }
       },
       "icon": "Apache.svg",
+      "meta": {
+        "generator": "Apache"
+      },
       "website": "http://apache.org"
     },
     "Modernizr": {

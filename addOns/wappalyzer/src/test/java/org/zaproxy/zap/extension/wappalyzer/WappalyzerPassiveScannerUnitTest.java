@@ -251,6 +251,32 @@ public class WappalyzerPassiveScannerUnitTest
         assertNotFound("https://www.example.com");
     }
 
+    @Test
+    public void shouldMatchOnMetaTag() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><head><meta name=\"generator\" content=\"Apache\"></head></html>");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Apache");
+    }
+
+    @Test
+    public void shouldMatchOnMetaTagWithMultipleEntries() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                "<html><head><meta name=\"generator\" content=\"Generator 2\"></head></html>");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 1);
+        assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
     private void scan(HttpMessage msg) {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
     }
