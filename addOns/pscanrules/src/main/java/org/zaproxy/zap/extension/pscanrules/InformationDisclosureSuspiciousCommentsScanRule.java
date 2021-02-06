@@ -24,7 +24,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -44,6 +48,8 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
             "pscanrules.informationdisclosuresuspiciouscomments.";
     private static final int PLUGIN_ID = 10027;
 
+    private static final int MAX_ELEMENT_CHRS_TO_REPORT = 128;
+
     public static final String suspiciousCommentsListDir = "xml";
     public static final String suspiciousCommentsListFile = "suspicious-comments.txt";
     private static final Logger logger =
@@ -58,22 +64,24 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         List<Pattern> patterns = getPatterns();
-        int confidence = Alert.CONFIDENCE_MEDIUM;
+        Map<String, List<AlertSummary>> alertMap = new HashMap<>();
 
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
-            StringBuilder todoComments = new StringBuilder();
 
             if (msg.getResponseHeader().isJavaScript()) {
                 // Just treat as text
                 String[] lines = msg.getResponseBody().toString().split("\n");
                 for (String line : lines) {
                     for (Pattern pattern : patterns) {
-                        if (pattern.matcher(line).find()) {
-                            todoComments.append(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX + "otherinfo", pattern, line));
-                            todoComments.append("\n");
-                            confidence = Alert.CONFIDENCE_LOW;
+                        Matcher m = pattern.matcher(line);
+                        if (m.find()) {
+                            recordAlertSummary(
+                                    alertMap,
+                                    new AlertSummary(
+                                            pattern.toString(),
+                                            line,
+                                            Alert.CONFIDENCE_LOW,
+                                            m.group()));
                             break; // Only need to record this line once
                         }
                     }
@@ -86,11 +94,15 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 for (Tag tag : tags) {
                     String tagStr = tag.toString();
                     for (Pattern pattern : patterns) {
-                        if (pattern.matcher(tagStr).find()) {
-                            todoComments.append(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX + "otherinfo", pattern, tagStr));
-                            todoComments.append("\n");
+                        Matcher m = pattern.matcher(tagStr);
+                        if (m.find()) {
+                            recordAlertSummary(
+                                    alertMap,
+                                    new AlertSummary(
+                                            pattern.toString(),
+                                            tagStr,
+                                            Alert.CONFIDENCE_MEDIUM,
+                                            m.group()));
                             break; // Only need to record this comment once
                         }
                     }
@@ -99,27 +111,62 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 Element el;
                 int offset = 0;
                 while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
-                    String elStr = el.toString();
                     for (Pattern pattern : patterns) {
-                        if (pattern.matcher(elStr).find()) {
-                            todoComments.append(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX + "otherinfo", pattern, elStr));
-                            todoComments.append("\n");
-                            confidence = Alert.CONFIDENCE_LOW;
+                        String elStr = el.toString();
+                        Matcher m = pattern.matcher(elStr);
+                        if (m.find()) {
+                            recordAlertSummary(
+                                    alertMap,
+                                    new AlertSummary(
+                                            pattern.toString(),
+                                            elStr,
+                                            Alert.CONFIDENCE_LOW,
+                                            m.group()));
                             break; // Only need to record this script once
                         }
                     }
                     offset = el.getEnd();
                 }
             }
-            if (todoComments.length() > 0) {
-                this.raiseAlert(msg, id, todoComments.toString(), confidence);
+        }
+
+        // Only raise one alert for each pattern detected, giving a total count if > 1 instance
+        for (Entry<String, List<AlertSummary>> entry : alertMap.entrySet()) {
+            String other;
+            AlertSummary firstSummary = entry.getValue().get(0);
+            if (entry.getValue().size() == 1) {
+                other =
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "otherinfo",
+                                firstSummary.getPattern(),
+                                truncateString(firstSummary.getDetail()));
+            } else {
+                other =
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "otherinfo2",
+                                firstSummary.getPattern(),
+                                truncateString(firstSummary.getDetail()),
+                                entry.getValue().size());
             }
+            this.raiseAlert(
+                    msg, id, other, firstSummary.getConfidence(), firstSummary.getEvidence());
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String detail, int confidence) {
+    private static void recordAlertSummary(
+            Map<String, List<AlertSummary>> alertMap, AlertSummary summary) {
+        alertMap.computeIfAbsent(summary.getPattern(), k -> new ArrayList<>()).add(summary);
+    }
+
+    private String truncateString(String str) {
+        if (str.length() > MAX_ELEMENT_CHRS_TO_REPORT) {
+            return str.substring(0, MAX_ELEMENT_CHRS_TO_REPORT);
+        }
+        return str;
+    }
+
+    private void raiseAlert(
+            HttpMessage msg, int id, String detail, int confidence, String evidence) {
         newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(confidence)
@@ -128,6 +175,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 .setSolution(getSolution())
                 .setCweId(200) // CWE Id 200 - Information Exposure
                 .setWascId(13) // WASC Id 13 - Info leakage
+                .setEvidence(evidence)
                 .raise();
     }
 
@@ -192,5 +240,36 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
+    }
+
+    private static class AlertSummary {
+        private final String pattern;
+        private final String detail;
+        private final int confidence;
+        private final String evidence;
+
+        public AlertSummary(String pattern, String detail, int confidence, String evidence) {
+            super();
+            this.pattern = pattern;
+            this.detail = detail;
+            this.confidence = confidence;
+            this.evidence = evidence;
+        }
+
+        public String getPattern() {
+            return pattern;
+        }
+
+        public String getDetail() {
+            return detail;
+        }
+
+        public int getConfidence() {
+            return confidence;
+        }
+
+        public String getEvidence() {
+            return evidence;
+        }
     }
 }

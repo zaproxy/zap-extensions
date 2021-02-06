@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.alertFilters;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
@@ -48,7 +49,7 @@ public class AlertFilter extends Enableable {
     private String evidence;
     private boolean isEvidenceRegex;
 
-    private static final Logger log = Logger.getLogger(AlertFilter.class);
+    private static final Logger log = LogManager.getLogger(AlertFilter.class);
 
     public AlertFilter() {}
 
@@ -254,7 +255,7 @@ public class AlertFilter extends Enableable {
         }
         out.append(FIELD_SEPARATOR);
         out.append(alertFilter.isEvidenceRegex()).append(FIELD_SEPARATOR);
-        // log.debug("Encoded AlertFilter: " + out.toString());
+        // log.debug("Encoded AlertFilter: {}", out.toString());
         return out.toString();
     }
 
@@ -286,10 +287,10 @@ public class AlertFilter extends Enableable {
                 alertFilter.setEvidenceRegex(Boolean.parseBoolean(pieces[10]));
             }
         } catch (Exception ex) {
-            log.error("An error occured while decoding alertFilter from: " + encodedString, ex);
+            log.error("An error occured while decoding alertFilter from: {}", encodedString, ex);
             return null;
         }
-        // log.debug("Decoded alertFilter: " + alertFilter);
+        // log.debug("Decoded alertFilter: {}", alertFilter);
         return alertFilter;
     }
 
@@ -299,9 +300,7 @@ public class AlertFilter extends Enableable {
 
     public boolean appliesToAlert(Alert alert, boolean ignoreContext) {
         if (!isEnabled()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Filter disabled");
-            }
+            log.debug("Filter disabled");
             return false;
         }
         if (getRuleId() != alert.getPluginId()) {
@@ -343,27 +342,15 @@ public class AlertFilter extends Enableable {
         if (paramValue != null && paramValue.length() > 0) {
             if (isRegex) {
                 if (!targetValue.matches(paramValue)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                "Filter didnt match "
-                                        + paramName
-                                        + " regex: "
-                                        + paramValue
-                                        + " : "
-                                        + targetValue);
-                    }
+                    log.debug(
+                            "Filter didn't match {} regex: {} : {}",
+                            paramName,
+                            paramValue,
+                            targetValue);
                     return false;
                 }
             } else if (!paramValue.equals(targetValue)) {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Filter didnt match "
-                                    + paramName
-                                    + " : "
-                                    + paramValue
-                                    + " : "
-                                    + targetValue);
-                }
+                log.debug("Filter didn't match {} : {} : {}", paramName, paramValue, targetValue);
                 return false;
             }
         }

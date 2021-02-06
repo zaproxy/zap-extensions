@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [33] - 2021-01-29
+### Added
+- Added Express error string pattern (Issue 6412).
+
+### Changed
+- X-Frame-Options (XFO) scan rule no longer suggests the use of "ALLOW-FROM", and also includes CSP "frame-ancestors" as an alternative.
+  - XFO headers implementing "ALLOW-FROM" will now be considered malformed.
+- The Suspicious Comments scan rule will raise one alert per pattern per page and use more suitable evidence.
+
+## [32] - 2021-01-20
+### Changed
+- The Suspicious Comments scan rule will include the offending line as evidence.
+- The Suspicious Comments scan rule will raise one alert per finding, instead of one aggeregated alert per HTTP message.
+
 ## [31] - 2020-12-15
 ### Changed
 - Now targeting ZAP 2.10.
@@ -210,6 +224,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[33]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v33
+[32]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v29

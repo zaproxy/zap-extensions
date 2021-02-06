@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 import java.util.List;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -40,7 +41,7 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10036;
 
-    private static final Logger logger = Logger.getLogger(ServerHeaderInfoLeakScanRule.class);
+    private static final Logger logger = LogManager.getLogger(ServerHeaderInfoLeakScanRule.class);
 
     private static final Pattern VERSION_PATTERN = Pattern.compile(".*\\d.*");
 
@@ -93,14 +94,7 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
                 }
             }
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        logger.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

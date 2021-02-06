@@ -152,7 +152,7 @@ public class XFrameOptionsScanRuleUnitTest extends PassiveScannerTest<XFrameOpti
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised.size(), equalTo(1));
     }
 
     @Test

@@ -36,7 +36,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.AbstractHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
@@ -77,7 +78,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
     private static final long serialVersionUID = 3717381205061196129L;
 
     private static final String PANEL_NAME = "AccessControlStatusPanel";
-    private static final Logger log = Logger.getLogger(AccessControlStatusPanel.class);
+    private static final Logger log = LogManager.getLogger(AccessControlStatusPanel.class);
     private static final AccessControlResultsTableModel EMPTY_RESULTS_MODEL =
             new AccessControlResultsTableModel();
 
@@ -329,7 +330,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
 
     @Override
     protected void startScan(Context context) {
-        log.debug("Access Control start on Context: " + context);
+        log.debug("Access Control start on Context: {}", context);
         extension.showScanOptionsDialog(context);
     }
 

@@ -36,6 +36,7 @@ public class Application {
     private List<AppPattern> url = new ArrayList<AppPattern>();
     private List<AppPattern> html = new ArrayList<AppPattern>();
     private List<Map<String, AppPattern>> metas;
+    private List<Map<String, Map<String, Map<String, AppPattern>>>> dom;
     private List<AppPattern> css = new ArrayList<AppPattern>();
     private List<AppPattern> script = new ArrayList<AppPattern>();
 
@@ -101,6 +102,10 @@ public class Application {
         this.metas = metas;
     }
 
+    public void setDom(List<Map<String, Map<String, Map<String, AppPattern>>>> dom) {
+        this.dom = dom;
+    }
+
     public void setScript(List<AppPattern> script) {
         this.script = script;
     }
@@ -143,6 +148,10 @@ public class Application {
 
     public void addMetas(Map<String, AppPattern> meta) {
         this.metas.add(meta);
+    }
+
+    public List<Map<String, Map<String, Map<String, AppPattern>>>> getDom() {
+        return dom;
     }
 
     public List<AppPattern> getCss() {

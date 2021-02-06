@@ -48,7 +48,8 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.parosproxy.paros.Constant;
@@ -69,7 +70,7 @@ import org.zaproxy.zap.view.widgets.ContextPanelUsersSelectComboBox;
 /** The context configuration panel used for specifying the Access Control rules. */
 public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
-    private static final Logger log = Logger.getLogger(ContextAccessControlPanel.class);
+    private static final Logger log = LogManager.getLogger(ContextAccessControlPanel.class);
     private static final long serialVersionUID = -7569788230643264454L;
 
     private static final String PANEL_NAME =
@@ -152,7 +153,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
     }
 
     private ContextUserAccessRulesModel getUserAccessRulesModel(int userId) {
-        log.debug("Getting user model for: " + userId);
+        log.debug("Getting user model for: {}", userId);
         ContextUserAccessRulesModel model = userModels.get(userId);
         if (model == null) {
             model = new ContextUserAccessRulesModel(userId, internalRulesManager);
@@ -204,7 +205,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     @Override
     public void initContextData(Session session, Context uiSharedContext) {
-        log.debug("Initing panel for context: " + uiSharedContext.getId());
+        log.debug("Initing panel for context: {}", uiSharedContext.getId());
 
         // Clone the Access Rules Manager so we can support canceling any changes. If the internal
         // manager already existed, just copy the rules, otherwise create a cloned one.
@@ -287,10 +288,8 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     private static final Color COLOR_DENIED = Color.RED;
     private static final Color COLOR_ALLOWED = new Color(31, 131, 31);
-    private static final Color COLOR_UNKNOWN = new Color(76, 76, 76);
     private static final Color COLOR_DENIED_FOCUS = new Color(255, 195, 195);
     private static final Color COLOR_ALLOWED_FOCUS = new Color(195, 255, 195);
-    private static final Color COLOR_UNKNOWN_FOCUS = new Color(220, 220, 220);
 
     /**
      * A custom cell renderer used for the tree of access rules that sets custom colors and icons
@@ -360,13 +359,6 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
                             }
                             break;
                         default:
-                            // Text color
-                            if (selected) {
-                                this.setForeground(COLOR_UNKNOWN_FOCUS);
-                            } else {
-                                this.setForeground(COLOR_UNKNOWN);
-                            }
-
                             // Icon
                             if (isLeaf) {
                                 setIcon(LEAF_ICON);

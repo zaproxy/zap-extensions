@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -38,7 +39,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanbeta.retrievedfromcache.";
     private static final int PLUGIN_ID = 10050;
 
-    private static final Logger logger = Logger.getLogger(RetrievedFromCacheScanRule.class);
+    private static final Logger logger = LogManager.getLogger(RetrievedFromCacheScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -54,11 +55,9 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         try {
-            if (logger.isDebugEnabled())
-                logger.debug(
-                        "Checking URL "
-                                + msg.getRequestHeader().getURI().getURI()
-                                + " to see if was served from a shared cache");
+            logger.debug(
+                    "Checking URL {} to see if was served from a shared cache",
+                    msg.getRequestHeader().getURI().getURI());
 
             // X-Cache: HIT
             // X-Cache: HIT from cache.kolich.local					<-- was the data actually served from the
@@ -91,10 +90,9 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                             if (hitormiss.equals("HIT")) {
                                 // the response was served from cache, so raise it..
                                 String evidence = proxyServerDetails;
-                                if (logger.isDebugEnabled())
-                                    logger.debug(
-                                            msg.getRequestHeader().getURI().getURI()
-                                                    + " was served from a cache, due to presence of a 'HIT' in the 'X-Cache' response header");
+                                logger.debug(
+                                        "{} was served from a cache, due to presence of a 'HIT' in the 'X-Cache' response header",
+                                        msg.getRequestHeader().getURI().getURI());
                                 // could be from HTTP/1.0 or HTTP/1.1. We don't know which.
                                 newAlert()
                                         .setRisk(Alert.RISK_INFO)
@@ -131,10 +129,9 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                     Long ageAsLong = Long.parseLong(ageHeader);
                     if (ageAsLong != null && ageAsLong >= 0) {
                         String evidence = "Age: " + ageHeader;
-                        if (logger.isDebugEnabled())
-                            logger.debug(
-                                    msg.getRequestHeader().getURI().getURI()
-                                            + " was served from a HTTP/1.1 cache, due to presence of a valid (non-negative decimal integer) 'Age' response header value");
+                        logger.debug(
+                                "{} was served from a HTTP/1.1 cache, due to presence of a valid (non-negative decimal integer) 'Age' response header value",
+                                msg.getRequestHeader().getURI().getURI());
                         newAlert()
                                 .setRisk(Alert.RISK_INFO)
                                 .setConfidence(Alert.CONFIDENCE_MEDIUM)

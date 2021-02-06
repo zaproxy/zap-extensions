@@ -3,6 +3,13 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
+## [25] - 2021-01-27
+### Changed
+- Update ChromeDriver to 88.0.4324.96.
+
 ## [24] - 2021-01-14
 ### Changed
 - Update geckodriver to 0.29.0.
@@ -115,6 +122,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[25]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v24
 [23]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v22

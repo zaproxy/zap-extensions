@@ -26,7 +26,8 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -78,7 +79,8 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
         HSTS_MALFORMED_CONTENT
     }
 
-    private static final Logger logger = Logger.getLogger(StrictTransportSecurityScanRule.class);
+    private static final Logger logger =
+            LogManager.getLogger(StrictTransportSecurityScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -169,14 +171,7 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
             raiseAlert(VulnType.HSTS_META, metaHSTS, msg, id);
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        logger.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

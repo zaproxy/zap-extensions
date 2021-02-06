@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Don't set the font color for inherited entries (Issue 6397).
+- Upate minimum ZAP version to 2.10.0.
 
 ## [6] - 2020-10-06
 

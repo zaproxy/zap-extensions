@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.accessControl.widgets;
 
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
@@ -28,6 +30,8 @@ import org.zaproxy.zap.model.Context;
 
 public class ContextSiteTree extends SiteTree {
 
+    private static final Logger LOGGER = LogManager.getLogger(ContextSiteTree.class);
+
     public ContextSiteTree() {
         super(
                 new SiteTreeNode(
@@ -35,7 +39,7 @@ public class ContextSiteTree extends SiteTree {
     }
 
     public void reloadTree(Session session, Context context) {
-        log.debug("Reloading tree for context: " + context.getId());
+        LOGGER.debug("Reloading tree for context: {}", context.getId());
         this.getRoot().removeAllChildren();
         List<SiteNode> contextNodes = session.getNodesInContextFromSiteTree(context);
         for (SiteNode node : contextNodes) {

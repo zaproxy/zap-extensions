@@ -29,7 +29,8 @@ import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -131,7 +132,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
     private static final String IO_EX_LOG = "trying to send an http message";
     private static final String URI_EX_LOG = "trying to get the message's Uri";
     private static final String STOP_LOG = "Stopping the scan due to a user request";
-    private static final Logger LOG = Logger.getLogger(MongoDbInjectionScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(MongoDbInjectionScanRule.class);
     // Error messages that addressing to a well-known vulnerability
     private final Pattern[] errorPatterns = {
         Pattern.compile(
@@ -204,9 +205,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Initialising MongoDB penertration tests");
-        }
+        LOG.debug("Initialising MongoDB penertration tests");
         switch (this.getAttackStrength()) {
             case LOW:
                 SLEEP_SHORT_TIME = 1000;
@@ -245,35 +244,24 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
         HttpMessage counterProofMsg;
         String bodyBase = getBaseMsg().getResponseBody().toString();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(
-                    "Scanning URL ["
-                            + msg.getRequestHeader().getMethod()
-                            + "] ["
-                            + msg.getRequestHeader().getURI()
-                            + "] on param: ["
-                            + param
-                            + "] with value: ["
-                            + value
-                            + "] for MongoDB Injection");
-        }
+        LOG.debug(
+                "Scanning URL [{}] [{}] on param: [{}] with value: [{}] for MongoDB Injection",
+                msg.getRequestHeader().getMethod(),
+                msg.getRequestHeader().getURI(),
+                param,
+                value);
         // injection attack to url-encoded query parameters
         if (doAllDataScan && !isJsonPayload) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Starting with boolean based attack payloads:");
-            }
+            LOG.debug("Starting with boolean based attack payloads:");
             int index = 0;
             for (String valueInj : ALL_DATA_VALUE_INJECTION) {
                 String paramInj = param + ALL_DATA_PARAM_INJECTION[index++];
                 if (isStop()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(STOP_LOG);
-                    }
+                    LOG.debug(STOP_LOG);
                     return;
                 }
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying with the value: " + paramInj + valueInj);
-                }
+
+                LOG.debug("Trying with the value: {} {}", paramInj, valueInj);
                 try {
                     msgInjAttack = getNewMsg();
                     setParameter(msgInjAttack, paramInj, valueInj);
@@ -302,24 +290,18 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                         }
                     }
                 } catch (IOException ex) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when "
-                                        + URI_EX_LOG);
-                    }
+                    LOG.debug(
+                            "Caught {} {} when {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            URI_EX_LOG);
                     return;
                 }
             }
         }
         // search for not-handled errors
         if (!isBingo && doCrashScan) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Starting with the not-handled error injection payloads:");
-            }
+            LOG.debug("Starting with the not-handled error injection payloads:");
             Pattern[] filteredPattern = new Pattern[errorPatterns.length];
             int i = 0;
             for (Pattern pattern : errorPatterns) {
@@ -330,14 +312,10 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
             }
             for (String valueInj : CRASH_INJECTION) {
                 if (isStop()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(STOP_LOG);
-                    }
+                    LOG.debug(STOP_LOG);
                     return;
                 }
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying with the value: " + valueInj);
-                }
+                LOG.debug("Trying with the value: {}", valueInj);
                 try {
                     msgInjAttack = getNewMsg();
                     setParameter(msgInjAttack, param, valueInj);
@@ -359,15 +337,11 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                         }
                     }
                 } catch (IOException ex) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when "
-                                        + URI_EX_LOG);
-                    }
+                    LOG.debug(
+                            "Caught {} {} when {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            URI_EX_LOG);
                     return;
                 }
             }
@@ -377,14 +351,10 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
         // = interval * nTuples
         if (!isBingo && doTimedScan) {
             if (isStop()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(STOP_LOG);
-                }
+                LOG.debug(STOP_LOG);
                 return;
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Starting with the javascript code injection payloads:");
-            }
+            LOG.debug("Starting with the javascript code injection payloads:");
             int aveRtt = getAveRtts(rtt),
                     index = 0,
                     timeShort = SLEEP_SHORT_TIME,
@@ -394,14 +364,10 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
             String sleepValueToInj;
             while (index < SLEEP_INJECTION.length) {
                 if (isStop()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(STOP_LOG);
-                    }
+                    LOG.debug(STOP_LOG);
                     return;
                 }
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying  with the value: " + SLEEP_INJECTION[index][0]);
-                }
+                LOG.debug("Trying  with the value: {}", SLEEP_INJECTION[index][0]);
                 try {
                     msgInjAttack = getNewMsg();
                     sleepValueToInj =
@@ -410,11 +376,9 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                     phase = INSERT_SHORT_TIME;
                     setParameter(msgInjAttack, param, sleepValueToInj);
                     sendAndReceive(msgInjAttack, false);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Trying for a longer time with the value: "
-                                        + SLEEP_INJECTION[index][1]);
-                    }
+                    LOG.debug(
+                            "Trying for a longer time with the value: {}",
+                            SLEEP_INJECTION[index][1]);
                     if (msgInjAttack.getTimeElapsedMillis() >= aveRtt + SHORT_TRESHOLD) {
                         phase = INSERT_LONG_TIME;
                         sleepValueToInj =
@@ -458,48 +422,32 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                         timeShort /= 10;
                         timeLong /= 10;
                     }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when "
-                                        + IO_EX_LOG
-                                        + "due to a socket timeout, trying with the lowest interval("
-                                        + timeLong
-                                        + ")");
-                    }
+                    LOG.debug(
+                            "Caught {} {} when {} due to socket timeout, trying with the lowest interval({})",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            IO_EX_LOG,
+                            timeLong);
                 } catch (IOException ex) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when "
-                                        + IO_EX_LOG);
-                    }
+                    LOG.debug(
+                            "Caught {} {} when {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            IO_EX_LOG);
                     return;
                 }
             }
         }
         // json query injection
         if (!isBingo && doJsonScan && isJsonPayload) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Starting with the json injection payloads:");
-            }
+            LOG.debug("Starting with the json injection payloads:");
             for (String[] jpv : JSON_INJECTION) {
                 try {
                     if (isStop()) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(STOP_LOG);
-                        }
+                        LOG.debug(STOP_LOG);
                         return;
                     }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Trying with the value: " + jpv[0]);
-                    }
+                    LOG.debug("Trying with the value: {}", jpv[0]);
                     String valueInj = getParamJsonString(param, jpv);
                     msgInjAttack = getNewMsg();
                     setParameter(msgInjAttack, param, valueInj);
@@ -542,26 +490,18 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                         }
                     }
                 } catch (JSONException ex) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when "
-                                        + JSON_EX_LOG);
-                    }
+                    LOG.debug(
+                            "Caught {} {} when {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            JSON_EX_LOG);
                     return;
                 } catch (IOException ex) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when "
-                                        + URI_EX_LOG);
-                    }
+                    LOG.debug(
+                            "Caught {} {} when {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            URI_EX_LOG);
                     return;
                 }
             }
@@ -569,15 +509,11 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
         // check for the authentication page bypass
         if (doAuthBypass && isBingo) {
             if (isStop()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(STOP_LOG);
-                }
+                LOG.debug(STOP_LOG);
                 return;
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(
-                        "A vulnerability has been reported, check if it concerns an authentication page");
-            }
+            LOG.debug(
+                    "A vulnerability has been reported, check if it concerns an authentication page");
             ExtensionAuthentication extAuth =
                     (ExtensionAuthentication)
                             Control.getSingleton()
@@ -606,15 +542,11 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                         }
                     }
                 } catch (URIException ex) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when "
-                                        + URI_EX_LOG);
-                    }
+                    LOG.debug(
+                            "Caught {} {} when {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            URI_EX_LOG);
                 }
             }
         }

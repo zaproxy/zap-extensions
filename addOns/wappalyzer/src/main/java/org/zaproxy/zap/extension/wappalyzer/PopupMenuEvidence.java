@@ -75,6 +75,43 @@ public class PopupMenuEvidence extends ExtensionPopupMenu {
                         addMenuItem(p, ExtensionSearch.Type.Response);
                     }
                 }
+                for (Map<String, Map<String, Map<String, AppPattern>>> map : app.getDom()) {
+                    for (Map.Entry<String, Map<String, Map<String, AppPattern>>> domSelectorObject :
+                            map.entrySet()) {
+                        for (Map.Entry<String, Map<String, AppPattern>> nodeSelectorObject :
+                                domSelectorObject.getValue().entrySet()) {
+                            for (Map.Entry<String, AppPattern> objvalue :
+                                    nodeSelectorObject.getValue().entrySet()) {
+                                if (nodeSelectorObject.getKey() == "text") {
+                                    Pattern pat =
+                                            Pattern.compile(
+                                                    domSelectorObject.getKey()
+                                                            + ".*"
+                                                            + objvalue.getKey()
+                                                            + ".*"
+                                                            + objvalue.getValue()
+                                                                    .getJavaPattern()
+                                                                    .pattern());
+                                    addMenuItem(pat, ExtensionSearch.Type.Response);
+                                } else {
+                                    Pattern pat =
+                                            Pattern.compile(
+                                                    domSelectorObject.getKey()
+                                                            + ".*"
+                                                            + nodeSelectorObject.getKey()
+                                                            + ".*"
+                                                            + objvalue.getKey()
+                                                            + ".*"
+                                                            + objvalue.getValue()
+                                                                    .getJavaPattern()
+                                                                    .pattern());
+                                    addMenuItem(pat, ExtensionSearch.Type.Response);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 for (AppPattern p : app.getScript()) {
                     addMenuItem(p.getJavaPattern(), ExtensionSearch.Type.Response);
                 }

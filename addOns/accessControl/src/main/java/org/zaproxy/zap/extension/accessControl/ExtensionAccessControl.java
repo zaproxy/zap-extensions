@@ -35,7 +35,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -73,7 +74,7 @@ import org.zaproxy.zap.view.ContextPanelFactory;
 public class ExtensionAccessControl extends ExtensionAdaptor
         implements SessionChangedListener, ContextPanelFactory, ContextDataFactory {
 
-    private static Logger log = Logger.getLogger(ExtensionAccessControl.class);
+    private static Logger log = LogManager.getLogger(ExtensionAccessControl.class);
 
     public static final String CONTEXT_CONFIG_ACCESS_RULES =
             Context.CONTEXT_CONFIG + ".accessControl.rules";
@@ -233,7 +234,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         int contextId = startOptions.targetContext.getId();
         AccessControlScannerThread scannerThread = threadManager.getScannerThread(contextId);
         if (scannerThread.isRunning()) {
-            log.warn("Access control scan already running for context: " + contextId);
+            log.warn("Access control scan already running for context: {}", contextId);
             throw new IllegalStateException("A scan is already running for context: " + contextId);
         }
 
@@ -484,7 +485,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
      */
     public File generateAccessControlReport(int contextId, File outputFile)
             throws ParserConfigurationException {
-        log.debug("Generating report for context " + contextId + " to: " + outputFile);
+        log.debug("Generating report for context {} to: {}", contextId, outputFile);
 
         // The path for the XSL file
         File xslFile =
@@ -558,7 +559,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
                     session.getContextDataStrings(
                             context.getId(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
         } catch (Exception e) {
-            log.error("Unable to load access control rules for context: " + context.getId(), e);
+            log.error("Unable to load access control rules for context: {}", context.getId(), e);
             return;
         }
 
@@ -591,7 +592,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
             session.clearContextDataForType(
                     context.getId(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
         } catch (Exception e) {
-            log.error("Unable to persist access rules for context: " + context.getId(), e);
+            log.error("Unable to persist access rules for context: {}", context.getId(), e);
         }
     }
 
