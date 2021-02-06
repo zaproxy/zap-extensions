@@ -20,28 +20,33 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 
 /**
- * The CORS active scan rule identifies Cross-Origin Resource Sharing (CORS) support and overly
- * lenient or buggy implementations
+ * The CORS scan rule identifies Cross-Origin Resource Sharing (CORS) support and overly lenient or
+ * buggy implementations
  *
  * @author CravateRouge
  */
-public class CORSActiveScanRule extends AbstractAppPlugin {
-    private static Logger LOG = Logger.getLogger(CORSActiveScanRule.class);
+public class CorsScanRule extends AbstractAppPlugin {
+    private static final Logger LOG = LogManager.getLogger(CorsScanRule.class);
     private static final String RANDOM_NAME = RandomStringUtils.random(8, true, true);
+    private static final String ACAC = "Access-Control-Allow-Credentials";
 
     @Override
     public void scan() {
@@ -71,13 +76,12 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
 
         for (String payload : payloads) {
             HttpMessage msg = getNewMsg();
-            msg.getRequestHeader().setHeader("Origin", payload);
+            msg.getRequestHeader().setHeader(HttpRequestHeader.ORIGIN, payload);
             try {
                 sendAndReceive(msg);
 
-                String acaoKey = HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN;
                 HttpResponseHeader respHead = msg.getResponseHeader();
-                String acaoVal = respHead.getHeader(acaoKey);
+                String acaoVal = respHead.getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN);
 
                 // If there is an ACAO header an alert will be triggered
                 if (acaoVal == null) {
@@ -86,8 +90,7 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
 
                 int risk = Alert.RISK_INFO;
                 boolean vuln = false;
-                String acacKey = "Access-Control-Allow-Credentials";
-                String acacVal = respHead.getHeader(acacKey);
+                String acacVal = respHead.getHeader(ACAC);
                 acacVal = acacVal == null ? "" : acacVal;
 
                 // Evaluates the risk for this alert
@@ -106,17 +109,16 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
                         Pattern.compile(
                                         String.format(
                                                 "^\\s*%s[:\\s]+%s(\\s+%s[:\\s]+%s)?",
-                                                acaoKey, Pattern.quote(acaoVal), acacKey, acacVal),
+                                                HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
+                                                Pattern.quote(acaoVal),
+                                                ACAC,
+                                                acacVal),
                                         Pattern.MULTILINE)
                                 .matcher(respHead.toString());
-                newAlert()
-                        .setName(vuln ? getConstantStr("vuln.name") : getName())
+                buildAlert(risk)
                         .setMessage(msg)
-                        .setRisk(risk)
-                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                        .setAttack("Origin: " + payload)
+                        .setAttack(HttpRequestHeader.ORIGIN + ": " + payload)
                         .setEvidence(m.find() ? m.group(0) : null)
-                        .setDescription(vuln ? getConstantStr("vuln.desc") : getDescription())
                         .raise();
                 return;
             } catch (IOException e) {
@@ -125,13 +127,23 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
         }
     }
 
+    private AlertBuilder buildAlert(int risk) {
+
+        return newAlert()
+                .setName(risk == Alert.RISK_INFO ? getName() : getConstantStr("vuln.name"))
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(
+                        risk == Alert.RISK_INFO ? getDescription() : getConstantStr("vuln.desc"));
+    }
+
+    private static String getConstantStr(String suffix) {
+        return Constant.messages.getString("ascanalpha.cors." + suffix);
+    }
+
     @Override
     public int getId() {
         return 40040;
-    }
-
-    public String getConstantStr(String suffix) {
-        return Constant.messages.getString("ascanalpha.cors." + suffix);
     }
 
     @Override
@@ -167,5 +179,11 @@ public class CORSActiveScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 14;
+    }
+
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<Alert>();
+        for (int i = Alert.RISK_INFO; i < Alert.RISK_HIGH; i++) alerts.add(buildAlert(i).build());
+        return alerts;
     }
 }

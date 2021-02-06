@@ -32,18 +32,19 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link CORSActiveScanRule}. */
-public class CORSActiveScanRuleUnitTest extends ActiveScannerTest<CORSActiveScanRule> {
-
+/** Unit test for {@link CorsScanRule}. */
+public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
+    private static final String ACAC = "Access-Control-Allow-Credentials";
     private static final String GENERIC_RESPONSE =
             "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
                     + "<html><head></head><body></body></html>";
 
     @Override
-    protected CORSActiveScanRule createScanner() {
-        return new CORSActiveScanRule();
+    protected CorsScanRule createScanner() {
+        return new CorsScanRule();
     }
 
     @Test
@@ -129,11 +130,12 @@ public class CORSActiveScanRuleUnitTest extends ActiveScannerTest<CORSActiveScan
             Response resp = newFixedLengthResponse(GENERIC_RESPONSE);
             if (acaoBehavior == null) return resp;
             String acaoVal = null;
-            if (acaoBehavior.equals("REFLECT")) acaoVal = session.getHeaders().get("Origin");
+            if (acaoBehavior.equals("REFLECT"))
+                acaoVal = session.getHeaders().get(HttpRequestHeader.ORIGIN);
             else acaoVal = acaoBehavior;
             resp.addHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN, acaoVal);
 
-            if (isAcac) resp.addHeader("Access-Control-Allow-Credentials", "true");
+            if (isAcac) resp.addHeader(ACAC, "true");
 
             return resp;
         }
