@@ -25,9 +25,15 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
+import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -72,27 +78,8 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     @Test
     public void replaceMultipleElementsAndRemoveHeader() {
         // Given
-        String requestBody =
-                "\n"
-                        + "<?xml version=\"1.0\"?>\n"
-                        + "<comments>\n"
-                        + "    <comment>\n"
-                        + "    <text>test\n"
-                        + "    </text>\n"
-                        + "    </comment>\n"
-                        + "\n"
-                        + "    <comment>\n"
-                        + "    <text>   test   </text>\n"
-                        + "    </comment>\n"
-                        + "    <comment>\n"
-                        + "\n"
-                        + "<otherValue>A</otherValue>\n"
-                        + "<otherValue>B</otherValue>\n"
-                        + "<otherValue>C</otherValue>\n"
-                        + "\n"
-                        + "<otherValue>D</otherValue>\n"
-                        + "    </comment>\n"
-                        + "</comments>";
+        String sampleXmlMessage = getXmlResource("xxescanrule/SampleXml.txt");
+        String requestBody = "\n" + "<?xml version=\"1.0\"?>\n" + sampleXmlMessage;
         // When
         String payload = XxeScanRule.createLfrPayload(requestBody);
         // Then
@@ -115,6 +102,75 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
                         + "<otherValue>&zapxxe;</otherValue>\n"
                         + "\n"
                         + "<otherValue>&zapxxe;</otherValue>\n"
+                        + "    </comment>\n"
+                        + "</comments>";
+        assertThat(payload, is(expectedPayload));
+    }
+
+    @Test
+    public void replaceElementsNested() {
+        // Given
+        String sampleXmlMessage = getXmlResource("xxescanrule/SampleXml.txt");
+        String requestBody = "\n" + "\n" + sampleXmlMessage;
+        Matcher tagMatcher = XxeScanRule.tagPattern.matcher(requestBody);
+        tagMatcher.find();
+        // When
+        String payload = XxeScanRule.createTagSpecificLfrPayload(requestBody, tagMatcher);
+        // Then
+        String expectedPayload =
+                XxeScanRule.ATTACK_HEADER
+                        + "\n"
+                        + "\n"
+                        + "<comments>\n"
+                        + "    <comment>\n"
+                        + "    <text>&zapxxe;</text>\n"
+                        + "    </comment>\n"
+                        + "\n"
+                        + "    <comment>\n"
+                        + "    <text>  testTwo  </text>\n"
+                        + "    </comment>\n"
+                        + "    <comment>\n"
+                        + "\n"
+                        + "<otherValue>A</otherValue>\n"
+                        + "<otherValue>testThree</otherValue>\n"
+                        + "<otherValue>C</otherValue>\n"
+                        + "\n"
+                        + "<otherValue>D</otherValue>\n"
+                        + "    </comment>\n"
+                        + "</comments>";
+        assertThat(payload, is(expectedPayload));
+    }
+
+    @Test
+    public void replaceElementsBase() {
+        // Given
+        String sampleXmlMessage = getXmlResource("xxescanrule/SampleXml.txt");
+        String requestBody = "\n" + "\n" + sampleXmlMessage;
+        Matcher tagMatcher = XxeScanRule.tagPattern.matcher(requestBody);
+        for (int idx = 1; idx <= 4; idx++) tagMatcher.find();
+        // When
+        String payload = XxeScanRule.createTagSpecificLfrPayload(requestBody, tagMatcher);
+        // Then
+        String expectedPayload =
+                XxeScanRule.ATTACK_HEADER
+                        + "\n"
+                        + "\n"
+                        + "<comments>\n"
+                        + "    <comment>\n"
+                        + "    <text>testOne\n"
+                        + "    </text>\n"
+                        + "    </comment>\n"
+                        + "\n"
+                        + "    <comment>\n"
+                        + "    <text>  testTwo  </text>\n"
+                        + "    </comment>\n"
+                        + "    <comment>\n"
+                        + "\n"
+                        + "<otherValue>A</otherValue>\n"
+                        + "<otherValue>&zapxxe;</otherValue>\n"
+                        + "<otherValue>C</otherValue>\n"
+                        + "\n"
+                        + "<otherValue>D</otherValue>\n"
                         + "    </comment>\n"
                         + "</comments>";
         assertThat(payload, is(expectedPayload));
@@ -198,6 +254,53 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
+    @Test
+    public void shouldAlertOnlyIfCertainTagValuesArePresent()
+            throws HttpMalformedHeaderException, IOException {
+        String validatedXmlMessage = getXmlResource("xxescanrule/SampleXml.txt");
+        String sampleRequestBody = "\n" + "<?xml version=\"1.0\"?>\n" + validatedXmlMessage;
+
+        String test = "/test";
+        nano.addHandler(new ValidatedResponse(test));
+        HttpMessage msg = getXmlPostMessage(test);
+        msg.setRequestBody(sampleRequestBody);
+        rule.init(msg, parent);
+        // When
+        rule.setAttackStrength(Plugin.AttackStrength.MEDIUM);
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert alert = alertsRaised.get(0);
+        String specificElementsReplacedLocalFileInclusionAttackPayload =
+                MessageFormat.format(XxeScanRule.ATTACK_HEADER, "file:///etc/passwd")
+                        + "\n"
+                        + "\n"
+                        + "<comments>\n"
+                        + "    <comment>\n"
+                        + "    <text>testOne\n"
+                        + "    </text>\n"
+                        + "    </comment>\n"
+                        + "\n"
+                        + "    <comment>\n"
+                        + "    <text>  testTwo  </text>\n"
+                        + "    </comment>\n"
+                        + "    <comment>\n"
+                        + "\n"
+                        + "<otherValue>&zapxxe;</otherValue>\n"
+                        + "<otherValue>testThree</otherValue>\n"
+                        + "<otherValue>C</otherValue>\n"
+                        + "\n"
+                        + "<otherValue>D</otherValue>\n"
+                        + "    </comment>\n"
+                        + "</comments>";
+        assertThat(
+                alert.getAttack(),
+                equalTo(specificElementsReplacedLocalFileInclusionAttackPayload));
+        assertThat(alert.getEvidence(), equalTo("root:*:0:0"));
+        assertThat(alert.getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
     private NanoServerHandler createNanoHandler(
             String path, NanoHTTPD.Response.IStatus status, String responseBody) {
         return new NanoServerHandler(path) {
@@ -209,11 +312,48 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         };
     }
 
+    private static class ValidatedResponse extends NanoServerHandler {
+
+        public ValidatedResponse(String path) {
+            super(path);
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            String requestBody = getBody(session);
+            if ((requestBody.contains("    <text>testOne\n" + "    </text>\n"))
+                    && (requestBody.contains("    <text>  testTwo  </text>\n"))
+                    && (requestBody.contains("<otherValue>testThree</otherValue>\n"))) {
+                String validResponseBody =
+                        "<foo>root:*:0:0:System Administrator:/var/root:/bin/sh</foo>";
+                return newFixedLengthResponse(
+                        Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, validResponseBody);
+            } else {
+                String invalidResponseBody = "The XML received has incorrect tag values";
+                return newFixedLengthResponse(
+                        Response.Status.BAD_REQUEST, NanoHTTPD.MIME_PLAINTEXT, invalidResponseBody);
+            }
+        }
+    }
+
     private HttpMessage getXmlPostMessage(String path) throws HttpMalformedHeaderException {
         HttpMessage msg = this.getHttpMessage(path);
         msg.setRequestBody("<?xml version=\"1.0\"?><comment><text>test</text></comment>");
         msg.getRequestHeader().setMethod("POST");
         msg.getRequestHeader().setHeader("Content-Type", "application/xml");
         return msg;
+    }
+
+    private static String getXmlResource(String fileName) {
+        try {
+            String xmlString =
+                    FileUtils.readFileToString(
+                            new File(XxeScanRuleUnitTest.class.getResource(fileName).getFile()),
+                            "UTF-8");
+            return xmlString;
+        } catch (IOException e) {
+            System.err.println("Failed to read file " + fileName);
+            throw new RuntimeException(e);
+        }
     }
 }
