@@ -252,7 +252,9 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
     private void localFileReflectionAttack(HttpMessage msg) {
         String payload = null;
         try {
+            // First replace the values in all the Elements by the Attack Entity
             String requestBody = createLfrPayload(msg.getRequestBody().toString());
+            boolean alertRaised = false;
             for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
                 String localFile = LOCAL_FILE_TARGETS[idx];
                 payload = MessageFormat.format(requestBody, localFile);
@@ -267,11 +269,58 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                             .setEvidence(matcher.group())
                             .setMessage(msg)
                             .raise();
+                    alertRaised = true;
                 }
                 if (isStop()) {
                     return;
                 }
             }
+
+            // Now if no issue is found yet, then we replace the values one at a time. Do this for a
+            // fixed
+            // number
+            // of Elements, depending on the strength at which the rule is used.
+            if (!alertRaised) {
+                int totalTagCount = getTotalTagCount(msg.getRequestBody().toString());
+                int maxValuesChanged = 0;
+
+                if (this.getAttackStrength() == AttackStrength.LOW) {
+                    maxValuesChanged = 36 / LOCAL_FILE_TARGETS.length;
+                } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
+                    maxValuesChanged = 72 / LOCAL_FILE_TARGETS.length;
+                } else if (this.getAttackStrength() == AttackStrength.HIGH) {
+                    maxValuesChanged = 144 / LOCAL_FILE_TARGETS.length;
+                } else if (this.getAttackStrength() == AttackStrength.INSANE) {
+                    maxValuesChanged = totalTagCount;
+                }
+
+                for (int tagIdx = 1;
+                        ((tagIdx <= totalTagCount) && (tagIdx <= maxValuesChanged));
+                        tagIdx++) {
+                    requestBody =
+                            createTagSpecificLfrPayload(msg.getRequestBody().toString(), tagIdx);
+                    for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
+                        String localFile = LOCAL_FILE_TARGETS[idx];
+                        payload = MessageFormat.format(requestBody, localFile);
+                        msg.setRequestBody(payload);
+                        sendAndReceive(msg);
+                        String response = msg.getResponseBody().toString();
+                        Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
+                        if (matcher.find()) {
+                            newAlert()
+                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                    .setAttack(payload)
+                                    .setEvidence(matcher.group())
+                                    .setMessage(msg)
+                                    .raise();
+                        }
+                        if (isStop()) {
+                            return;
+                        }
+                    }
+                }
+            }
+
         } catch (IOException ex) {
             log.warn(
                     "XXE Injection vulnerability check failed for payload ["
@@ -405,6 +454,39 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
             endIdx = matcher.end(1);
         }
         sb.append(requestBody.substring(endIdx));
+        return sb.toString();
+    }
+
+    private int getTotalTagCount(String requestBody) {
+
+        // Remove original xml header
+        Matcher headerMatcher = xmlHeaderPattern.matcher(requestBody);
+        requestBody = headerMatcher.replaceAll("");
+
+        int count = 0;
+        Matcher matcher = tagPattern.matcher(requestBody);
+        while (matcher.find()) {
+            count++;
+        }
+        return count;
+    }
+
+    static String createTagSpecificLfrPayload(String requestBody, int tagIdx) {
+        StringBuilder sb = new StringBuilder(ATTACK_HEADER);
+
+        // Remove original xml header
+        Matcher headerMatcher = xmlHeaderPattern.matcher(requestBody);
+        requestBody = headerMatcher.replaceAll("");
+
+        Matcher matcher = tagPattern.matcher(requestBody);
+        for (int idx = 1; idx <= tagIdx; idx++) {
+            matcher.find();
+        }
+
+        sb.append(requestBody.substring(0, matcher.start(1)));
+        sb.append(ATTACK_ENTITY);
+        sb.append(requestBody.substring(matcher.end(1)));
+
         return sb.toString();
     }
 }
