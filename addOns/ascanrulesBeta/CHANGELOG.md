@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [34] - 2021-2-9
+### Changed
+- XML External Entity Attack scan rule changed to detect a possible XML File Reflection Attack when XML validation is present. (Issue 6204)
+- Limited the number of requests sent depending on the strength at which the rule is invoked.
+
 ## [33] - 2020-12-15
 ### Changed
 - Now targeting ZAP 2.10.

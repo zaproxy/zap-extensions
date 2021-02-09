@@ -121,6 +121,83 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
+    public void replaceSpecifcElementsAndRemoveHeader() {
+        // Given
+        String requestBody =
+                "\n"
+                        + "<?xml version=\"1.0\"?>\n"
+                        + "<comments>\n"
+                        + "    <comment>\n"
+                        + "    <text>test\n"
+                        + "    </text>\n"
+                        + "    </comment>\n"
+                        + "\n"
+                        + "    <comment>\n"
+                        + "    <text>  test  </text>\n"
+                        + "    </comment>\n"
+                        + "    <comment>\n"
+                        + "\n"
+                        + "<otherValue>A</otherValue>\n"
+                        + "<otherValue>B</otherValue>\n"
+                        + "<otherValue>C</otherValue>\n"
+                        + "\n"
+                        + "<otherValue>D</otherValue>\n"
+                        + "    </comment>\n"
+                        + "</comments>";
+        // When
+        String payload = XxeScanRule.createTagSpecificLfrPayload(requestBody, 1);
+        // Then
+        String expectedPayload =
+                XxeScanRule.ATTACK_HEADER
+                        + "\n"
+                        + "\n"
+                        + "<comments>\n"
+                        + "    <comment>\n"
+                        + "    <text>&zapxxe;</text>\n"
+                        + "    </comment>\n"
+                        + "\n"
+                        + "    <comment>\n"
+                        + "    <text>  test  </text>\n"
+                        + "    </comment>\n"
+                        + "    <comment>\n"
+                        + "\n"
+                        + "<otherValue>A</otherValue>\n"
+                        + "<otherValue>B</otherValue>\n"
+                        + "<otherValue>C</otherValue>\n"
+                        + "\n"
+                        + "<otherValue>D</otherValue>\n"
+                        + "    </comment>\n"
+                        + "</comments>";
+        assertThat(payload, is(expectedPayload));
+        // When
+        payload = XxeScanRule.createTagSpecificLfrPayload(requestBody, 4);
+        // Then
+        expectedPayload =
+                XxeScanRule.ATTACK_HEADER
+                        + "\n"
+                        + "\n"
+                        + "<comments>\n"
+                        + "    <comment>\n"
+                        + "    <text>test\n"
+                        + "    </text>\n"
+                        + "    </comment>\n"
+                        + "\n"
+                        + "    <comment>\n"
+                        + "    <text>  test  </text>\n"
+                        + "    </comment>\n"
+                        + "    <comment>\n"
+                        + "\n"
+                        + "<otherValue>A</otherValue>\n"
+                        + "<otherValue>&zapxxe;</otherValue>\n"
+                        + "<otherValue>C</otherValue>\n"
+                        + "\n"
+                        + "<otherValue>D</otherValue>\n"
+                        + "    </comment>\n"
+                        + "</comments>";
+        assertThat(payload, is(expectedPayload));
+    }
+
+    @Test
     public void shouldScanOnlyIfRequestContentTypeIsXml() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = this.getHttpMessage("/test");
