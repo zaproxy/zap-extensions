@@ -31,7 +31,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SortOrder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kohsuke.github.GHIssueBuilder;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
@@ -60,7 +61,7 @@ public class BugTrackerGithub extends BugTracker {
     private BugTrackerGithubTableModel githubModel = null;
     private RaiseSemiAutoIssueDialog dialog = null;
 
-    private static final Logger log = Logger.getLogger(BugTrackerGithub.class);
+    private static final Logger log = LogManager.getLogger(BugTrackerGithub.class);
 
     public BugTrackerGithub() {
         initializeConfigTable();
