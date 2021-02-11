@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.browserView;
 
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
@@ -37,7 +38,7 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionHttpPanelBrowserView";
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionHttpPanelBrowserView.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionHttpPanelBrowserView.class);
 
     /**
      * The name of the system property used to keep track of initialisation errors of JavaFX.
@@ -95,7 +96,7 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
             javafx.embed.swing.JFXPanel unused = new javafx.embed.swing.JFXPanel();
             return true;
         } catch (Throwable e) {
-            LOGGER.warn("Unable to use JavaFX: " + e.getMessage());
+            LOGGER.warn("Unable to use JavaFX: {}", e.getMessage());
             LOGGER.debug(e);
             System.setProperty(ZAP_JAVAFX_INIT_FAILED_SYSTEM_PROPERTY, "true");
         }
