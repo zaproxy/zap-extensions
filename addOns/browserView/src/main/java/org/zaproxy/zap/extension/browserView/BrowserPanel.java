@@ -36,12 +36,13 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BrowserPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(BrowserPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(BrowserPanel.class);
 
     private final JFXPanel jfxPanel = new JFXPanel();
     private WebEngine engine;
