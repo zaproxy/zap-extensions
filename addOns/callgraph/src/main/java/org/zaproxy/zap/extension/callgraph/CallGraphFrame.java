@@ -50,7 +50,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.paros.ParosDatabase;
@@ -67,7 +68,7 @@ public class CallGraphFrame extends AbstractFrame {
 
     private static final long serialVersionUID = 6666666666666666666L;
 
-    private static final Logger log = Logger.getLogger(CallGraphFrame.class);
+    private static final Logger log = LogManager.getLogger(CallGraphFrame.class);
     private FontMetrics fontmetrics = null;
     private mxGraph graph =
             new mxGraph() {
@@ -178,16 +179,13 @@ public class CallGraphFrame extends AbstractFrame {
                         }
                         addVertex(path, url, "fillColor=" + color);
                     } catch (Exception e) {
-                        log.error("Error graphing node for URL " + url, e);
+                        log.error("Error graphing node for URL {}", url, e);
                     }
                 } else {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "URL "
-                                        + url
-                                        + " does not match the specified pattern "
-                                        + urlPattern
-                                        + ", so not adding it as a vertex");
+                    log.debug(
+                            "URL {} does not match the specified pattern {}, so not adding it as a vertex",
+                            url,
+                            urlPattern);
                 }
             }
             // close the resultset and statement
@@ -218,24 +216,18 @@ public class CallGraphFrame extends AbstractFrame {
                 // remove urls that do not match the pattern specified (all sites / one site)
                 Matcher urlmatcher1 = urlPattern.matcher(predecessor);
                 if (!urlmatcher1.find()) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Predecessor URL "
-                                        + predecessor
-                                        + " does not match the specified pattern "
-                                        + urlPattern
-                                        + ", so not adding it as a vertex");
+                    log.debug(
+                            "Predecessor URL {} does not match the specified pattern {}, so not adding it as a vertex",
+                            predecessor,
+                            urlPattern);
                     continue; // to the next iteration
                 }
                 Matcher urlmatcher2 = urlPattern.matcher(url);
                 if (!urlmatcher2.find()) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "URL "
-                                        + url
-                                        + " does not match the specified pattern "
-                                        + urlPattern
-                                        + ", so not adding it as a vertex");
+                    log.debug(
+                            "URL {} does not match the specified pattern {}, so not adding it as a vertex",
+                            url,
+                            urlPattern);
                     continue; // to the next iteration
                 }
 
@@ -245,11 +237,9 @@ public class CallGraphFrame extends AbstractFrame {
                 mxCell postdecessorVertex = (mxCell) graphmodel.getCell(url);
                 if (predecessorVertex == null || postdecessorVertex == null) {
                     log.warn(
-                            "Could not find graph node for "
-                                    + predecessor
-                                    + " or for "
-                                    + url
-                                    + ". Ignoring it.");
+                            "Could not find graph node for {} or for {}. Ignoring it.",
+                            predecessor,
+                            url);
                     continue;
                 }
                 // add the edge (ie, add the dependency between 2 URLs)
