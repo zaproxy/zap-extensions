@@ -3,7 +3,7 @@ description = "Records logged in/out statistics for all contexts in scope."
 
 zapAddOn {
     addOnName.set("Authentication Statistics")
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
