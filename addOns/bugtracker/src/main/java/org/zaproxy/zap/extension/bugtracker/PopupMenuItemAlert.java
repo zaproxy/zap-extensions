@@ -30,7 +30,8 @@ import java.util.Set;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -52,7 +53,7 @@ public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
     private Method getAlertPanelMethod;
     private Method getTreeAlert;
 
-    private static final Logger log = Logger.getLogger(PopupMenuItemAlert.class);
+    private static final Logger log = LogManager.getLogger(PopupMenuItemAlert.class);
 
     /**
      * Constructs a {@code PopupMenuItemAlert} with the given label and with no support for multiple

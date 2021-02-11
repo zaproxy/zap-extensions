@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.bugtracker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -43,8 +42,6 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
 
     private List<BugTracker> bugTrackers = new ArrayList<BugTracker>();
     private PopupSemiAutoIssue popupMsgRaiseSemiAuto;
-
-    private static final Logger LOGGER = Logger.getLogger(ExtensionBugTracker.class);
 
     public ExtensionBugTracker() {
         super(NAME);

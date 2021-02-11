@@ -34,7 +34,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SortOrder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
@@ -60,7 +61,7 @@ public class BugTrackerBugzilla extends BugTracker {
     private BugTrackerBugzillaTableModel bugzillaModel = null;
     private RaiseSemiAutoIssueDialog dialog = null;
 
-    private static final Logger log = Logger.getLogger(BugTrackerBugzilla.class);
+    private static final Logger log = LogManager.getLogger(BugTrackerBugzilla.class);
 
     @Override
     public void setDetails(Set<Alert> alerts) {
