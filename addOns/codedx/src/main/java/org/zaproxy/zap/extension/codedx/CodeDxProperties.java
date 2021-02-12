@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 
 public class CodeDxProperties {	
@@ -41,7 +42,7 @@ public class CodeDxProperties {
 		loadProperties();
 	}
 	
-	private static final Logger LOGGER = Logger.getLogger(CodeDxProperties.class);
+	private static final Logger LOGGER = LogManager.getLogger(CodeDxProperties.class);
 	
 	private static final String PROP_FILE = "codedx.properties";
 	private static final String KEY_SERVER = "serverUrl";
