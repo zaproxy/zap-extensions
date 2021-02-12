@@ -48,7 +48,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -57,7 +58,7 @@ import org.parosproxy.paros.Constant;
 
 public class UploadPropertiesDialog {
 	
-	private static final Logger LOGGER = Logger.getLogger(UploadPropertiesDialog.class);
+	private static final Logger LOGGER = LogManager.getLogger(UploadPropertiesDialog.class);
 	
 	private static final String[] DIALOG_BUTTONS = { Constant.messages.getString("codedx.settings.upload"),
 			Constant.messages.getString("codedx.settings.cancel") };

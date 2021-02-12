@@ -2,9 +2,15 @@ package org.zaproxy.zap.extension.codedx;
 
 import net.sf.json.JSONObject;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.log4j.Logger;
-import org.zaproxy.zap.extension.api.*;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.zaproxy.zap.extension.api.ApiAction;
+import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
+import org.zaproxy.zap.extension.api.ApiImplementor;
+import org.zaproxy.zap.extension.api.ApiResponse;
+import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.api.ApiView;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +18,7 @@ import java.security.GeneralSecurityException;
 
 public class CodeDxAPI extends ApiImplementor {
 
-	private static final Logger LOGGER = Logger.getLogger(CodeDxExtension.class);
+	private static final Logger LOGGER = LogManager.getLogger(CodeDxExtension.class);
 
 	private static final String PREFIX = "codedx";
 

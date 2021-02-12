@@ -39,14 +39,15 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.report.ReportLastScan.ReportType;
 import org.parosproxy.paros.view.View;
 
 public class UploadActionListener implements ActionListener{
 
-	private static final Logger LOGGER = Logger.getLogger(UploadActionListener.class);
+	private static final Logger LOGGER = LogManager.getLogger(UploadActionListener.class);
 	
 	private static final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
 
