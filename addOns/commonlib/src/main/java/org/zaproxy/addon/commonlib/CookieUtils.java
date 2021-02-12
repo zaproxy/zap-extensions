@@ -27,7 +27,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
@@ -39,7 +40,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 public final class CookieUtils {
 
     private static final int NOT_FOUND = -1;
-    private static final Logger LOGGER = Logger.getLogger(CookieUtils.class);
+    private static final Logger LOGGER = LogManager.getLogger(CookieUtils.class);
 
     private CookieUtils() {
         // Utility class.
@@ -236,9 +237,7 @@ public final class CookieUtils {
             try {
                 dateTime = LocalDateTime.parse(expiry, dfHyphen);
             } catch (DateTimeParseException dtpEx) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Couldn't parse LocalDateTime from: " + headerValue, dtpEx);
-                }
+                LOGGER.debug("Couldn't parse LocalDateTime from: {}", headerValue, dtpEx);
             }
         }
         if (dateTime != null && dateTime.isBefore(LocalDateTime.now())) {

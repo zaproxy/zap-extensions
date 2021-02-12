@@ -28,7 +28,8 @@ import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The list of {@link BinRecord}s for credit card numbers.
@@ -37,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public final class BinList {
 
-    private static final Logger LOGGER = Logger.getLogger(BinList.class);
+    private static final Logger LOGGER = LogManager.getLogger(BinList.class);
     private static final String BINLIST = "binlist-data.csv";
 
     private static BinList singleton;
@@ -70,7 +71,7 @@ public final class BinList {
                         new InputStreamReader(bomStream, StandardCharsets.UTF_8)) {
             records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(inStream).getRecords();
         } catch (NullPointerException | IOException e) {
-            LOGGER.warn("Exception while loading: " + BINLIST, e);
+            LOGGER.warn("Exception while loading: {}", BINLIST, e);
             return trie;
         }
 
