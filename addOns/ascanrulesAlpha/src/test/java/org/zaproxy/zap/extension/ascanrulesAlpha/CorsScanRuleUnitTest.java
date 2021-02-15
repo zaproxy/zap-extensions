@@ -128,14 +128,20 @@ public class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
         @Override
         protected Response serve(IHTTPSession session) {
             Response resp = newFixedLengthResponse(GENERIC_RESPONSE);
-            if (acaoBehavior == null) return resp;
+            if (acaoBehavior == null) {
+                return resp;
+            }
             String acaoVal = null;
-            if (acaoBehavior.equals("REFLECT"))
+            if (acaoBehavior.equals("REFLECT")) {
                 acaoVal = session.getHeaders().get(HttpRequestHeader.ORIGIN);
-            else acaoVal = acaoBehavior;
+            } else {
+                acaoVal = acaoBehavior;
+            }
             resp.addHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN, acaoVal);
 
-            if (isAcac) resp.addHeader(ACAC, "true");
+            if (isAcac) {
+                resp.addHeader(ACAC, "true");
+            }
 
             return resp;
         }
