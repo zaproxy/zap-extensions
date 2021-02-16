@@ -19,7 +19,9 @@
  */
 package org.zaproxy.zap.extension.custompayloads;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CustomPayloadMultipleOptionsTableModel
         extends AbstractMultipleOptionsColumnTableModel<CustomPayload> {
@@ -60,6 +62,21 @@ public class CustomPayloadMultipleOptionsTableModel
             CustomPayload newPayload = defaultPayload.copy();
             setNextIdToPayload(newPayload);
             addModel(newPayload);
+        }
+    }
+
+    public void addToTable(ArrayList<CustomPayload> payloads) {
+        for (CustomPayload payload : payloads) {
+            payload.setId(nextPayloadId++);
+            addModel(payload);
+        }
+    }
+
+    public void getPayloadsOfACategory(Set<String> payloads, String category) {
+        for (CustomPayload existingPayload : getElements()) {
+            if (category.equalsIgnoreCase(existingPayload.getCategory())) {
+                payloads.add(existingPayload.getPayload());
+            }
         }
     }
 

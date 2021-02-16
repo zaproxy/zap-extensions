@@ -21,9 +21,17 @@ package org.zaproxy.zap.extension.custompayloads;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
@@ -51,9 +59,18 @@ public class CustomPayloadsMultipleOptionsTablePanel
 
     private static final String REMOVE_DIALOG_CHECKBOX_LABEL =
             Constant.messages.getString("custompayloads.options.dialog.remove.label");
+
+    private static final String ADD_MULTIPLE_PAYLOADS_BUTTON =
+            Constant.messages.getString(
+                    "custompayloads.options.dialog.addMultiplePayload.addPayload.button.name");
+
+    private static final Logger LOG =
+            Logger.getLogger(CustomPayloadsMultipleOptionsTablePanel.class);
+
     private JButton resetButton;
     private JButton resetButtonId;
     private JButton addMissingDefaultsButton;
+    private JButton fileButton;
     private CustomPayloadMultipleOptionsTableModel tableModel;
 
     public CustomPayloadsMultipleOptionsTablePanel(
@@ -64,6 +81,8 @@ public class CustomPayloadsMultipleOptionsTablePanel
         addMissingDefaultsButton();
         addResetButton();
         addResetIdButton();
+        addButtonSpacer();
+        addPayloadFileButton();
         getTable().setHorizontalScrollEnabled(true);
     }
 
@@ -101,6 +120,62 @@ public class CustomPayloadsMultipleOptionsTablePanel
                     }
                 });
         addButton(resetButton);
+    }
+
+    private void addPayloadFileButton() {
+        fileButton = new JButton(ADD_MULTIPLE_PAYLOADS_BUTTON);
+        fileButton.addActionListener(
+                e -> {
+                    CustomPayload multiplePayloads = new CustomPayload(-1, true, "", "");
+                    CustomMultiplePayloadDialog dialog =
+                            new CustomMultiplePayloadDialog(
+                                    View.getSingleton().getOptionsDialog(null), multiplePayloads);
+                    dialog.pack();
+                    dialog.setVisible(true);
+                    File file = null;
+                    boolean preventDuplicates = false;
+                    if (dialog.isSaved()) {
+                        file = dialog.getFile();
+                        preventDuplicates = dialog.isPreventDuplicates();
+                    }
+                    if (file == null) {
+                        return;
+                    }
+                    try (BufferedReader txtReader = Files.newBufferedReader(file.toPath())) {
+                        String line;
+                        ArrayList<CustomPayload> payloads = new ArrayList<>();
+                        Set<String> existingPayloads = new HashSet<>();
+                        if (preventDuplicates) {
+                            tableModel.getPayloadsOfACategory(
+                                    existingPayloads, multiplePayloads.getCategory());
+                        }
+                        while ((line = txtReader.readLine()) != null) {
+                            CustomPayload newPayload =
+                                    new CustomPayload(multiplePayloads.getCategory(), "");
+                            newPayload.setPayload(line);
+                            if (preventDuplicates) {
+                                if (existingPayloads.add(newPayload.getPayload())) {
+                                    payloads.add(newPayload);
+                                }
+                            } else {
+                                payloads.add(newPayload);
+                            }
+                        }
+                        tableModel.addToTable(payloads);
+
+                    } catch (IOException ex) {
+                        LOG.warn(ex.getMessage(), ex);
+                        JOptionPane.showMessageDialog(
+                                this,
+                                Constant.messages.getString(
+                                        "custompayloads.options.dialog.addMultiplePayload.error.text",
+                                        ex.getMessage()),
+                                Constant.messages.getString(
+                                        "custompayloads.options.dialog.addMultiplePayload.error.title"),
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                });
+        addButton(fileButton);
     }
 
     @Override
