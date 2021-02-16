@@ -38,7 +38,8 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ViewDelegate;
@@ -66,7 +67,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
 
     private JPanel jPanel = null;
 
-    private static final Logger log = Logger.getLogger(BeanShellConsoleFrame.class);
+    private static final Logger log = LogManager.getLogger(BeanShellConsoleFrame.class);
 
     /** @throws HeadlessException */
     public BeanShellConsoleFrame() throws HeadlessException {
@@ -155,9 +156,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     input.close();
                 }
             } catch (IOException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug(e.getMessage(), e);
-                }
+                log.debug(e.getMessage(), e);
             }
         }
 
@@ -176,9 +175,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     output.close();
                 }
             } catch (IOException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug(e.getMessage(), e);
-                }
+                log.debug(e.getMessage(), e);
             }
         }
     }
@@ -309,10 +306,6 @@ public class BeanShellConsoleFrame extends AbstractFrame {
 
     public void setExtension(Extension extension) {
         this.extension = extension;
-    }
-
-    private Extension getExtension() {
-        return extension;
     }
 
     @Override
