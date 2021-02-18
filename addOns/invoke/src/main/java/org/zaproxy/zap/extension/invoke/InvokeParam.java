@@ -24,13 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class InvokeParam extends AbstractParam {
 
-    private static final Logger logger = Logger.getLogger(InvokeParam.class);
+    private static final Logger logger = LogManager.getLogger(InvokeParam.class);
 
     private static final String INVOKE_BASE_KEY = "invoke";
     private static final String ALL_APPS_KEY = INVOKE_BASE_KEY + ".apps.app";
@@ -94,13 +95,13 @@ public class InvokeParam extends AbstractParam {
             enabledApps.trimToSize();
             this.listInvokeEnabled = enabledApps;
         } catch (ConversionException e) {
-            logger.error("Error while loading invoke applications: " + e.getMessage(), e);
+            logger.error("Error while loading invoke applications: {}", e.getMessage(), e);
         }
 
         try {
             this.confirmRemoveApp = getConfig().getBoolean(CONFIRM_REMOVE_APP_KEY, true);
         } catch (ConversionException e) {
-            logger.error("Error while loading the confirm remove option: " + e.getMessage(), e);
+            logger.error("Error while loading the confirm remove option: {}", e.getMessage(), e);
         }
     }
 

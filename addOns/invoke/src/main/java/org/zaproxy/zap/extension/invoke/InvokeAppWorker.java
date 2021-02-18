@@ -28,7 +28,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.SwingWorker;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpHeader;
@@ -44,7 +45,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
     private boolean outputNote = false;
     private HttpMessage msg = null;
 
-    private Logger logger = Logger.getLogger(InvokeAppWorker.class);
+    private Logger logger = LogManager.getLogger(InvokeAppWorker.class);
 
     public InvokeAppWorker(
             String command,
@@ -129,7 +130,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
             }
         }
 
-        logger.debug("Invoking: " + cmd.toString());
+        logger.debug("Invoking: {}", cmd.toString());
         View.getSingleton().getOutputPanel().append("\n" + cmd.toString() + "\n");
         ProcessBuilder pb = new ProcessBuilder(cmd);
         if (workingDir != null) {
@@ -146,7 +147,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
                             Constant.messages.getString("invoke.error")
                                     + e.getLocalizedMessage()
                                     + "\n");
-            logger.warn("Failed to start the process: " + e.getMessage(), e);
+            logger.warn("Failed to start the process: {}", e.getMessage(), e);
             return null;
         }
 
