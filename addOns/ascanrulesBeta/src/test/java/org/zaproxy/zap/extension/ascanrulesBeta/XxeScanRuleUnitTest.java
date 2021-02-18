@@ -121,11 +121,11 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    public void replaceSpecifcElementsAndRemoveHeader() {
+    public void replaceSpecificElements() {
         // Given
         String requestBody =
                 "\n"
-                        + "<?xml version=\"1.0\"?>\n"
+                        + "\n"
                         + "<comments>\n"
                         + "    <comment>\n"
                         + "    <text>test\n"
@@ -232,7 +232,8 @@ public class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         // Then
         String localFileInclusionAttackPayload =
                 MessageFormat.format(XxeScanRule.ATTACK_HEADER, "file:///etc/passwd")
-                        + "<comment><text>&zapxxe;</text></comment>";
+                        + "<comment><text>test</text></comment>\n"
+                        + "<text>&zapxxe;</text>";
         List<Alert> alertList =
                 alertsRaised.stream()
                         .filter(alert -> alert.getAttack().equals(localFileInclusionAttackPayload))

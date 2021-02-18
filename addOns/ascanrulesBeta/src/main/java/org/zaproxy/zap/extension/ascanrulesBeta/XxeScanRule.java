@@ -253,7 +253,8 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
         String payload = null;
         try {
             // First replace the values in all the Elements by the Attack Entity
-            String requestBody = createLfrPayload(msg.getRequestBody().toString());
+            String originalRequestBody = msg.getRequestBody().toString();
+            String requestBody = createLfrPayload(originalRequestBody);
             boolean alertRaised = false;
             for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
                 String localFile = LOCAL_FILE_TARGETS[idx];
@@ -281,7 +282,10 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
             // number
             // of Elements, depending on the strength at which the rule is used.
             if (!alertRaised) {
-                int totalTagCount = getTotalTagCount(msg.getRequestBody().toString());
+                // Remove original xml header
+                Matcher headerMatcher = xmlHeaderPattern.matcher(originalRequestBody);
+                String headerlessRequestBody = headerMatcher.replaceAll("");
+                int totalTagCount = getTotalTagCount(headerlessRequestBody);
                 int maxValuesChanged = 0;
 
                 if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -297,8 +301,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                 for (int tagIdx = 1;
                         ((tagIdx <= totalTagCount) && (tagIdx <= maxValuesChanged));
                         tagIdx++) {
-                    requestBody =
-                            createTagSpecificLfrPayload(msg.getRequestBody().toString(), tagIdx);
+                    requestBody = createTagSpecificLfrPayload(headerlessRequestBody, tagIdx);
                     for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
                         String localFile = LOCAL_FILE_TARGETS[idx];
                         payload = MessageFormat.format(requestBody, localFile);
@@ -459,10 +462,6 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
 
     private int getTotalTagCount(String requestBody) {
 
-        // Remove original xml header
-        Matcher headerMatcher = xmlHeaderPattern.matcher(requestBody);
-        requestBody = headerMatcher.replaceAll("");
-
         int count = 0;
         Matcher matcher = tagPattern.matcher(requestBody);
         while (matcher.find()) {
@@ -473,10 +472,6 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
 
     static String createTagSpecificLfrPayload(String requestBody, int tagIdx) {
         StringBuilder sb = new StringBuilder(ATTACK_HEADER);
-
-        // Remove original xml header
-        Matcher headerMatcher = xmlHeaderPattern.matcher(requestBody);
-        requestBody = headerMatcher.replaceAll("");
 
         Matcher matcher = tagPattern.matcher(requestBody);
         for (int idx = 1; idx <= tagIdx; idx++) {
