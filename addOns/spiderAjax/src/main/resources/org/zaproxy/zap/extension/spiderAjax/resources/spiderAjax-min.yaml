@@ -1,0 +1,9 @@
+  - type: spiderAjax                   # The ajax spider - slower than the standard spider but handles modern apps well
+    parameters:
+      context:                         # String: Name of the context to spider, default: first context
+      url:                             # String: Url to start spidering from, default: first context URL
+      failIfFoundUrlsLessThan:         # Int: Fail if spider finds less than the specified number of URLs, default: 0
+      warnIfFoundUrlsLessThan:         # Int: Warn if spider finds less than the specified number of URLs, default: 0
+      maxDuration:                     # Int: The max time in minutes the ajax spider will be allowed to run for, default: 0 unlimited
+      maxCrawlDepth:                   # Int: The max depth that the crawler can reach, default: 10, 0 is unlimited
+      numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: 1
