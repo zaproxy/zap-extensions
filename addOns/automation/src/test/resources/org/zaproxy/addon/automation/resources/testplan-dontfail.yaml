@@ -1,0 +1,18 @@
+env:
+  contexts:
+    - name: example
+      url: https://www.example.com/        # The top level url, and the only mandatory parameter in the file, everything under this url will be included
+  parameters:
+    failOnError: false                  
+    failOnWarning: false               
+    progressToStdout: true            
+
+jobs:
+  - type: job1
+    parameters:
+
+  - type: job2
+    parameters:
+
+  - type: job3
+    parameters:
