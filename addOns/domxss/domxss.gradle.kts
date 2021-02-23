@@ -6,12 +6,11 @@ description = "DOM XSS Active scanner rule"
 zapAddOn {
     addOnName.set("DOM XSS Active scanner rule")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("Aabha Biyani, ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/dom-xss-active-scan-rule/")
-        notBeforeVersion.set("2.10.0")
         // Don't search the add-on classes to prevent the inclusion
         // of the scanner, it's added/removed by the extension.
         classpath.setFrom(files())
