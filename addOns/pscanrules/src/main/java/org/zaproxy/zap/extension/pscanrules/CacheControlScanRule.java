@@ -79,15 +79,6 @@ public class CacheControlScanRule extends PluginPassiveScanner {
                     || cacheControlHeaders.indexOf("must-revalidate") < 0) {
                 this.raiseAlert(msg, id, HttpHeader.CACHE_CONTROL, cacheControlHeaders);
             }
-
-            List<String> pragma = msg.getResponseHeader().getHeaderValues(HttpHeader.PRAGMA);
-            if (!pragma.isEmpty()) {
-                for (String pragmaDirective : pragma) {
-                    if (pragmaDirective.toLowerCase().indexOf("no-cache") < 0) {
-                        this.raiseAlert(msg, id, HttpHeader.PRAGMA, pragmaDirective);
-                    }
-                }
-            }
         }
     }
 
