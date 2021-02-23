@@ -1,0 +1,5 @@
+  - type: activeScan                   # The active scanner - this actively attacks the target so should only be used with permission
+    parameters:
+      context:                         # String: Name of the context to attack, default: first context
+      maxRuleDurationInMins:           # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
+      maxScanDurationInMins:           # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited

@@ -45,6 +45,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.AddOnJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
@@ -96,11 +97,12 @@ public class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(4)));
+        assertThat(jobs.size(), is(equalTo(5)));
         assertThat(jobs.containsKey(AddOnJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanConfigJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanWaitJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(SpiderJob.JOB_NAME), is(equalTo(true)));
+        assertThat(jobs.containsKey(ActiveScanJob.JOB_NAME), is(equalTo(true)));
     }
 
     @Test
@@ -127,7 +129,7 @@ public class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(5)));
+        assertThat(jobs.size(), is(equalTo(6)));
         assertThat(jobs.containsKey(jobName), is(equalTo(true)));
     }
 
@@ -138,10 +140,11 @@ public class ExtentionAutomationUnitTest extends TestUtils {
 
         // When
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
+        int origSize = jobs.size();
         extAuto.unregisterAutomationJob(jobs.get(SpiderJob.JOB_NAME));
 
         // Then
-        assertThat(jobs.size(), is(equalTo(3)));
+        assertThat(jobs.size(), is(equalTo(origSize - 1)));
         assertThat(jobs.containsKey(SpiderJob.JOB_NAME), is(equalTo(false)));
     }
 
