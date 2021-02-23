@@ -23,7 +23,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.encoder.ExtensionEncoder;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessor;
@@ -33,7 +34,8 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
 
-    private static final Logger LOGGER = Logger.getLogger(ScriptBasedEncodeDecodeProcessor.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(ScriptBasedEncodeDecodeProcessor.class);
 
     private String scriptName;
 
@@ -60,19 +62,19 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
     public EncodeDecodeResult process(String value) throws Exception {
         ScriptWrapper scriptWrapper = findScriptByName(scriptName);
         if (scriptWrapper == null) {
-            LOGGER.debug("Script with name '" + scriptName + "' not found");
+            LOGGER.debug("Script with name '{}' not found", scriptName);
             return null;
         }
 
         if (!scriptWrapper.isEnabled()) {
-            LOGGER.debug("Script with name '" + scriptWrapper.getName() + "' not enabled");
+            LOGGER.debug("Script with name '{}' not enabled", scriptWrapper.getName());
             return null;
         }
 
         try {
             EncodeDecodeScript script = evaluateScript(scriptWrapper);
             if (script != null) {
-                LOGGER.debug("Calling encode/decode script " + scriptWrapper.getName());
+                LOGGER.debug("Calling encode/decode script {}", scriptWrapper.getName());
                 return script.process(value);
             } else {
                 String errorMsg =
