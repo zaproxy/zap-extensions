@@ -20,13 +20,14 @@
 package org.zaproxy.zap.extension.diff;
 
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
 
 public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
 
-    private static final Logger LOGGER = Logger.getLogger(PopupMenuDiff.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuDiff.class);
 
     private static final long serialVersionUID = 1L;
     private ExtensionDiff ext = null;
@@ -66,7 +67,7 @@ public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
                 this.ext.showDiffDialog(
                         hrefs.get(0).getHttpMessage(), hrefs.get(1).getHttpMessage(), this.request);
             } catch (Exception e) {
-                LOGGER.error("Failed to show diff dialogue: " + e.getMessage(), e);
+                LOGGER.error("Failed to show diff dialogue: {}", e.getMessage(), e);
             }
         }
     }

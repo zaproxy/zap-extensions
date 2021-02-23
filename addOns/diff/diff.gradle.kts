@@ -6,7 +6,7 @@ description = "Displays a dialog showing the differences between 2 requests or r
 zapAddOn {
     addOnName.set("Diff")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
