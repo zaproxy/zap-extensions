@@ -124,6 +124,9 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
         for (Entry<?, ?> param : params.entrySet()) {
             String key = param.getKey().toString();
+            if (param.getValue() == null) {
+                continue;
+            }
             if (applyCustomParameter(key, param.getValue().toString())) {
                 progress.info(
                         Constant.messages.getString(

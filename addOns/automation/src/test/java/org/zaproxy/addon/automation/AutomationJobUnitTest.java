@@ -182,6 +182,25 @@ public class AutomationJobUnitTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
+    public void shouldIgnoreNullParamValue() {
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl();
+        AutomationProgress progress = new AutomationProgress();
+
+        Map map = new HashMap();
+        map.put("stringParam", null);
+        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+        // When
+        job.applyParameters(tpc, "getTestParam", params, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
     public void shouldFailOnBadInt() {
         // Given
         TestParamContainer tpc = new TestParamContainer();

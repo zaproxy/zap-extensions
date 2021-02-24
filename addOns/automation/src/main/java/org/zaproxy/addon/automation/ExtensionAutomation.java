@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.CommandLineArgument;
@@ -57,6 +59,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     public static final String PREFIX = "automation";
 
     private static final String RESOURCES_DIR = "/org/zaproxy/addon/automation/resources/";
+
+    private static final Logger LOG = LogManager.getLogger(ExtensionAutomation.class);
 
     private Map<String, AutomationJob> jobs = new HashMap<>();
     private SortedSet<AutomationJob> sortedJobs = new TreeSet<>();
@@ -251,8 +255,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             return progress;
 
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             CommandLine.error(
-                    Constant.messages.getString("automation.error.nofile", f.getAbsolutePath()));
+                    Constant.messages.getString(
+                            "automation.error.unexpected", f.getAbsolutePath(), e.getMessage()));
             return null;
         }
     }
