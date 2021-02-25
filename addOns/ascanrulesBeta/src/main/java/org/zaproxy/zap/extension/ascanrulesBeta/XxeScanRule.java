@@ -288,9 +288,7 @@ public class XxeScanRule extends AbstractAppPlugin implements ChallengeCallbackP
                 int totalTagCount = getTotalTagCount(headerlessRequestBody);
                 int maxValuesChanged = 0;
 
-                if (this.getAttackStrength() == AttackStrength.LOW) {
-                    maxValuesChanged = 36 / LOCAL_FILE_TARGETS.length;
-                } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
+                if (this.getAttackStrength() == AttackStrength.MEDIUM) {
                     maxValuesChanged = 72 / LOCAL_FILE_TARGETS.length;
                 } else if (this.getAttackStrength() == AttackStrength.HIGH) {
                     maxValuesChanged = 144 / LOCAL_FILE_TARGETS.length;
