@@ -29,7 +29,8 @@ import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -49,7 +50,7 @@ public class ExtensionEncoder extends ExtensionAdaptor {
     public static final int EXTENSION_ORDER = 87;
     public static final ImageIcon ICON;
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionEncoder.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionEncoder.class);
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
     private static final String CORE_MENU_IDENTIFIER = "enc2.tools.menu.encdec";
     private static final String ENCODER_MENU_IDENTIFIER = "encoder.tools.menu.encdec";

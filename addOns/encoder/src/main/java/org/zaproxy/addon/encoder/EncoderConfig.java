@@ -28,13 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class EncoderConfig {
 
-    private static final Logger logger = Logger.getLogger(EncoderConfig.class);
+    private static final Logger logger = LogManager.getLogger(EncoderConfig.class);
 
     private static final String TABS_KEY = "tabs";
     private static final String TAB_KEY = "tab";
