@@ -31,7 +31,8 @@ import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchSessionException;
@@ -60,7 +61,7 @@ import org.zaproxy.zap.utils.Stats;
 
 public class DomXssScanRule extends AbstractAppParamPlugin {
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
-    private static Logger log = Logger.getLogger(DomXssScanRule.class);
+    private static Logger log = LogManager.getLogger(DomXssScanRule.class);
 
     protected static final String POLYGLOT_ALERT =
             "#jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert()//>\\x3e";
@@ -170,26 +171,22 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             }
         } catch (ConversionException e) {
             log.debug(
-                    "Invalid value for '"
-                            + RULE_BROWSER_ID
-                            + "': "
-                            + this.getConfig().getString(RULE_BROWSER_ID));
+                    "Invalid value for '{}': {}",
+                    RULE_BROWSER_ID,
+                    this.getConfig().getString(RULE_BROWSER_ID));
         }
 
         if (browser == null) {
             browser = DEFAULT_BROWSER;
         } else if (!isSupportedBrowser(browser)) {
             log.warn(
-                    "Specified browser "
-                            + browser
-                            + " is not supported, defaulting to: "
-                            + DEFAULT_BROWSER);
+                    "Specified browser {} is not supported, defaulting to: {}",
+                    browser,
+                    DEFAULT_BROWSER);
             browser = DEFAULT_BROWSER;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Using browser: " + browser);
-        }
+        log.debug("Using browser: {}", browser);
     }
 
     private static boolean isSupportedBrowser(Browser browser) {
@@ -298,21 +295,20 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                                                                         / 1000
                                                                 > 10) {
                                                             log.debug(
-                                                                    "Driver hung "
-                                                                            + wrapper.getDriver()
-                                                                                    .hashCode());
+                                                                    "Driver hung {}",
+                                                                    wrapper.getDriver().hashCode());
                                                             wrapper.getDriver().quit();
                                                             wrapper.setDriver(createWebDriver());
                                                             log.debug(
-                                                                    "New driver "
-                                                                            + wrapper.getDriver()
-                                                                                    .hashCode());
+                                                                    "New driver {}",
+                                                                    wrapper.getDriver().hashCode());
                                                         }
                                                     }
                                                 }
                                             } while (takenDrivers.size() > 0);
                                             log.info(
-                                                    "Reaper thread exiting " + takenDrivers.size());
+                                                    "Reaper thread exiting {}",
+                                                    takenDrivers.size());
 
                                             reaperThread = null;
                                         }
@@ -573,7 +569,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         try {
             driver = getWebDriver();
         } catch (Exception e) {
-            getLog().warn("Skipping scanner, failed to start browser: " + e.getMessage());
+            log.warn("Skipping scanner, failed to start browser: {}", e.getMessage());
             getParent()
                     .pluginSkipped(
                             this,
