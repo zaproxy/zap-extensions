@@ -23,7 +23,8 @@ import java.util.List;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.OutputDocument;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.network.HttpMessage;
@@ -31,7 +32,7 @@ import org.zaproxy.zap.extension.api.API;
 
 /** The {@link ProxyListener} the {@link ExtensionFrontEndScanner} relies on. */
 public class FrontEndScannerProxyListener implements ProxyListener {
-    private static final Logger LOGGER = Logger.getLogger(FrontEndScannerProxyListener.class);
+    private static final Logger LOGGER = LogManager.getLogger(FrontEndScannerProxyListener.class);
 
     private final FrontEndScannerAPI api;
     private final FrontEndScannerOptions options;
