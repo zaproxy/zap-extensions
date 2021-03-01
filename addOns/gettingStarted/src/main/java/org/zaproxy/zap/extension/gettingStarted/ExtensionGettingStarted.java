@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.gettingStarted;
 
 import java.awt.Desktop;
 import java.io.File;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -30,7 +31,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 /** A short Getting Started with ZAP Guide. */
 public class ExtensionGettingStarted extends ExtensionAdaptor {
 
-    private static Logger logger = Logger.getLogger(ExtensionGettingStarted.class);
+    private static Logger logger = LogManager.getLogger(ExtensionGettingStarted.class);
 
     private static final String DIR = "lang";
 
@@ -70,7 +71,7 @@ public class ExtensionGettingStarted extends ExtensionAdaptor {
                                                         + File.separator
                                                         + Constant.messages.getString(
                                                                 "gettingStarted.file"));
-                                logger.debug("Getting started guide: " + guide.getAbsolutePath());
+                                logger.debug("Getting started guide: {}", guide.getAbsolutePath());
                                 Desktop.getDesktop().open(guide);
                             } catch (Exception ex) {
                                 logger.error(
