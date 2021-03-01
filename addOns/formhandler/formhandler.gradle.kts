@@ -6,11 +6,10 @@ description = "This Form Handler Add-on allows a user to define field names and 
 zapAddOn {
     addOnName.set("Form Handler")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/form-handler/")
-        notBeforeVersion.set("2.10.0")
     }
 }
