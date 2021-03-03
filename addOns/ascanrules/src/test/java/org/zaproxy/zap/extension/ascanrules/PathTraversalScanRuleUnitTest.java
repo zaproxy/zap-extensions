@@ -31,9 +31,14 @@ import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -90,6 +95,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("c:/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 3")));
     }
 
     @Test
@@ -107,6 +113,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 3")));
     }
 
     @Test
@@ -166,6 +173,7 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 2")));
     }
 
     @Test
@@ -181,6 +189,72 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 1")));
+    }
+
+    @Test
+    public void shouldAlertOnCheckFiveAtLowThresholdUnderValidConditions()
+            throws HttpMalformedHeaderException {
+        // Given
+        String path = "/file.ext";
+        HttpMessage msg = getHttpMessage(path + "?p=a");
+        rule.init(msg, parent);
+        nano.addHandler(new Check5Handler(path, "p", Check5Handler.GENERIC_CONTENT, true));
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 5")));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"MEDIUM", "HIGH"})
+    public void shouldNotAlertOnCheckFiveAboveLowThresholdUnderValidConditions(
+            AlertThreshold alertThreshold) throws HttpMalformedHeaderException {
+        // Given
+        String path = "/file.ext";
+        HttpMessage msg = getHttpMessage(path + "?p=a");
+        rule.init(msg, parent);
+        nano.addHandler(new Check5Handler(path, "p", Check5Handler.GENERIC_CONTENT, true));
+        rule.setAlertThreshold(alertThreshold);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotAlertOnCheckFiveAtLowThresholdUnderInvalidInitialConditions()
+            throws HttpMalformedHeaderException {
+        // Given
+        String path = "/file.ext";
+        HttpMessage msg = getHttpMessage(path + "?p=a");
+        rule.init(msg, parent);
+        nano.addHandler(new Check5Handler(path, "p", Check5Handler.GENERIC_CONTENT, false));
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    public void shouldNotAlertOnCheckFiveAtLowThresholdUnderInvalidConditions()
+            throws HttpMalformedHeaderException {
+        // Given
+        String path = "/file.ext";
+        HttpMessage msg = getHttpMessage(path + "?p=a");
+        rule.init(msg, parent);
+        nano.addHandler(new Check5Handler(path, "p", "Error", true));
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     private abstract static class ListDirsOnAttack extends NanoServerHandler {
@@ -280,6 +354,30 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
             }
             return newFixedLengthResponse(
                     Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
+        }
+    }
+
+    private static class Check5Handler extends NanoServerHandler {
+        private static final String GENERIC_CONTENT = "<HTML>Some Generic Content</HTML>";
+
+        private final String param;
+        private final String content;
+        private final boolean passInitialCheck;
+
+        public Check5Handler(String path, String param, String content, boolean passInitialCheck) {
+            super(path);
+            this.param = param;
+            this.content = content;
+            this.passInitialCheck = passInitialCheck;
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            String value = getFirstParamValue(session, param);
+            if (value.equals("thishouldnotexistandhopefullyitwillnot") && passInitialCheck) {
+                return newFixedLengthResponse("Error");
+            }
+            return newFixedLengthResponse(content);
         }
     }
 }
