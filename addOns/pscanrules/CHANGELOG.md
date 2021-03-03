@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [33] - 2021-01-29
 ### Added
 - Added Express error string pattern (Issue 6412).
+- Added sort to form field names that are displayed in Anti-CSRF alert other info field, duplicate names (arrays) are combined and not repeated.
 
 ### Changed
 - X-Frame-Options (XFO) scan rule no longer suggests the use of "ALLOW-FROM", and also includes CSP "frame-ancestors" as an alternative.

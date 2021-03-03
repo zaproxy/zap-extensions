@@ -116,6 +116,7 @@ Post 2.5.0 you can specify a comma separated list of identifiers in the
 <code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
 Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
 Only use this feature to ignore FORMs that you know are safe, for example search forms.
+Form element names are sorted and de-duplicated when they are printed in the Zap Report.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/master/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CsrfCountermeasuresScanRule.java">CsrfCountermeasuresScanRule.java</a>
 
