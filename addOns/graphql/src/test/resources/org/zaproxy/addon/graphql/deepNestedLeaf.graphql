@@ -1,0 +1,15 @@
+type User {
+  follower: Follower
+}
+
+type Follower {
+  favouriteIceCream: Flavour
+}
+
+type Flavour {
+  flavour: String
+}
+
+type Query {
+  user(id: ID!): User
+}

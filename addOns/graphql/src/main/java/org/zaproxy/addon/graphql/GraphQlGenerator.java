@@ -37,9 +37,11 @@ import graphql.schema.GraphQLTypeUtil;
 import graphql.schema.GraphQLUnionType;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.UnExecutableSchemaGenerator;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.graphql.GraphQlParam.RequestMethodOption;
@@ -260,7 +262,20 @@ public class GraphQlGenerator {
             Requestor requestor,
             RequestType requestType)
             throws InterruptedException {
-        if (type instanceof GraphQLObjectType) {
+        if (depth >= param.getMaxQueryDepth()) {
+            if (param.getLenientMaxQueryDepthEnabled()) {
+                query.append(getFirstLeafQuery(type, variables, variableName));
+                if (requestor != null) {
+                    query.append(StringUtils.repeat("} ", depth));
+                    prefixRequestType(query, requestType);
+                    requestor.sendQuery(
+                            query.toString(), variables.toString(), param.getRequestMethod());
+                }
+            } else if (getFirstLeafField(type) == null) {
+                LOG.warn(
+                        "Potentially invalid query generated. Try enabling the Lenient Maximum Query Depth option.");
+            }
+        } else if (type instanceof GraphQLObjectType) {
             query.append("{ ");
             GraphQLObjectType object = (GraphQLObjectType) type;
             List<GraphQLFieldDefinition> fields = object.getFieldDefinitions();
@@ -291,7 +306,7 @@ public class GraphQlGenerator {
                         requestor.sendQuery(
                                 query.toString(), variables.toString(), param.getRequestMethod());
                     }
-                } else if (depth < param.getMaxQueryDepth()) {
+                } else {
                     query.append(field.getName()).append(' ');
                     variableName.append(field.getName()).append('_');
                     addArguments(query, variables, variableName, field);
@@ -329,6 +344,146 @@ public class GraphQlGenerator {
             }
             query.append("} ");
         }
+    }
+
+    /**
+     * Does a breadth-first search for a leaf type and generates a query that has the leaf type as
+     * its deepest node.
+     *
+     * @param type the root {@link GraphQLType} node.
+     * @param variables query variables passed on to {@link #addArguments}.
+     * @param variableName StringBuilder used for variable names.
+     * @return the generated query
+     */
+    private String getFirstLeafQuery(
+            GraphQLType type, StringBuilder variables, StringBuilder variableName) {
+
+        class Node {
+            final GraphQLType graphQLType;
+            final StringBuilder query;
+            final StringBuilder variableName;
+            final StringBuilder variables;
+
+            Node(
+                    GraphQLType graphQLType,
+                    StringBuilder query,
+                    StringBuilder variables,
+                    StringBuilder variableName) {
+                this.graphQLType = graphQLType;
+                this.query = query;
+                this.variables = variables;
+                this.variableName = variableName;
+            }
+
+            Node(GraphQLType graphQLType, Node parent) {
+                this.graphQLType = graphQLType;
+                query = new StringBuilder(parent.getQuery());
+                variables = new StringBuilder(parent.getVariables());
+                variableName = new StringBuilder(parent.getVariableName());
+            }
+
+            public GraphQLType getType() {
+                return graphQLType;
+            }
+
+            public StringBuilder getQuery() {
+                return query;
+            }
+
+            public StringBuilder getVariables() {
+                return variables;
+            }
+
+            public StringBuilder getVariableName() {
+                return variableName;
+            }
+        }
+
+        List<Node> parentList = new ArrayList<>();
+        parentList.add(
+                new Node(
+                        type,
+                        new StringBuilder("{ "),
+                        variables != null ? variables : new StringBuilder(),
+                        variableName != null ? variableName : new StringBuilder()));
+        for (int depth = 0; depth < param.getMaxAdditionalQueryDepth(); ++depth) {
+            List<Node> childrenList = new ArrayList<>();
+            for (Node parent : parentList) {
+                GraphQLFieldDefinition leafField = getFirstLeafField(parent.getType());
+                if (leafField != null) {
+                    Node leaf = new Node(leafField.getType(), parent);
+                    leaf.getQuery().append(leafField.getName()).append(' ');
+                    leaf.getVariableName().append(leafField.getName()).append('_');
+                    addArguments(
+                            leaf.getQuery(),
+                            leaf.getVariables(),
+                            leaf.getVariableName(),
+                            leafField);
+                    leaf.getQuery()
+                            .append(
+                                    StringUtils.repeat(
+                                            "} ",
+                                            StringUtils.countMatches(
+                                                    leaf.getQuery().toString(), '{')));
+                    if (variables != null) {
+                        variables.replace(0, variables.length(), leaf.getVariables().toString());
+                    }
+                    return leaf.getQuery().toString();
+                }
+
+                if (parent.getType() instanceof GraphQLObjectType) {
+                    GraphQLObjectType object = (GraphQLObjectType) parent.getType();
+                    List<GraphQLFieldDefinition> fieldList = object.getFieldDefinitions();
+
+                    for (GraphQLFieldDefinition field : fieldList) {
+                        Node child = new Node(field.getType(), parent);
+                        child.getQuery().append(field.getName()).append(' ');
+                        child.getVariableName().append(field.getName()).append('_');
+                        addArguments(
+                                child.getQuery(),
+                                child.getVariables(),
+                                child.getVariableName(),
+                                field);
+                        child.getQuery().append("{ ");
+                        childrenList.add(child);
+                    }
+                } else if (parent.getType() instanceof GraphQLInterfaceType) {
+                    List<GraphQLObjectType> implementations =
+                            schema.getImplementations((GraphQLInterfaceType) parent.getType());
+                    for (GraphQLObjectType imp : implementations) {
+                        Node child = new Node(imp, parent);
+                        child.getQuery().append("... on ").append(imp.getName()).append(" { ");
+                        child.getVariableName().append(imp.getName()).append('_');
+                        childrenList.add(child);
+                    }
+                } else if (parent.getType() instanceof GraphQLUnionType) {
+                    GraphQLUnionType union = (GraphQLUnionType) parent.getType();
+                    List<GraphQLNamedOutputType> membersList = union.getTypes();
+                    for (GraphQLNamedOutputType member : membersList) {
+                        Node child = new Node(member, parent);
+                        child.getQuery().append("... on ").append(member.getName()).append(" { ");
+                        child.getVariableName().append(member.getName()).append('_');
+                        childrenList.add(child);
+                    }
+                }
+            }
+            parentList = childrenList;
+        }
+        LOG.warn(
+                "Potentially invalid query generated. Try increasing the Additional Query Depth value.");
+        return "";
+    }
+
+    private GraphQLFieldDefinition getFirstLeafField(GraphQLType type) {
+        if (type instanceof GraphQLObjectType) {
+            GraphQLObjectType object = (GraphQLObjectType) type;
+            return object.getFieldDefinitions().stream()
+                    .filter(f -> GraphQLTypeUtil.isLeaf(f.getType()))
+                    .findFirst()
+                    .orElse(null);
+        }
+        // Union and Interface types cannot have leaf fields as members or implementors.
+        return null;
     }
 
     private void addArguments(
