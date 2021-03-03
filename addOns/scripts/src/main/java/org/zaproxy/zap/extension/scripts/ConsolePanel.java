@@ -93,10 +93,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
     public ConsolePanel(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
 
-    private void initialize() {
         this.setIcon(
                 new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png"))); // 'script' icon
         this.setDefaultAccelerator(

@@ -78,7 +78,7 @@ public class RevisitDialog extends AbstractDialog {
         super();
         this.extension = extension;
         this.setAlwaysOnTop(true);
-        initialize();
+        init();
     }
 
     /**
@@ -91,11 +91,11 @@ public class RevisitDialog extends AbstractDialog {
         super(arg0, arg1);
         this.extension = extension;
         this.setAlwaysOnTop(true);
-        initialize();
+        init();
     }
 
     /** This method initializes this */
-    private void initialize() {
+    private void init() {
         this.setContentPane(getJPanel());
         this.pack();
 

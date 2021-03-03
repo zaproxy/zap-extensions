@@ -73,11 +73,7 @@ public class OutputPanel extends AbstractPanel {
     public OutputPanel(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
 
-    /** This method initializes this */
-    private void initialize() {
         this.setLayout(new BorderLayout());
         this.setName("ConsoleOutputPanel");
         this.add(getMainPanel(), BorderLayout.CENTER);
