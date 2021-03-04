@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -42,7 +43,7 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
 
     private static final int PLUGIN_ID = 10047;
 
-    private static final Logger log = Logger.getLogger(HttpsAsHttpScanRule.class);
+    private static final Logger log = LogManager.getLogger(HttpsAsHttpScanRule.class);
 
     @Override
     public int getId() {
@@ -93,40 +94,30 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
     public void scan() {
 
         if (!getBaseMsg().getRequestHeader().isSecure()) { // Base request isn't HTTPS
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "The original request was not HTTPS, so there is not much point in looking further.");
-            }
+            log.debug(
+                    "The original request was not HTTPS, so there is not much point in looking further.");
             return;
         }
 
         int originalStatusCode = getBaseMsg().getResponseHeader().getStatusCode();
         boolean was404 = isPage404(getBaseMsg());
         if (was404) {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "The original request was not successfuly completed (status = "
-                                + originalStatusCode
-                                + "), so there is not much point in looking further.");
-                log.debug("isPage404 returned: " + was404);
-            }
+            log.debug(
+                    "The original request was not successfuly completed (status = {}), so there is not much point in looking further.",
+                    originalStatusCode);
+            log.debug("isPage404 returned: {}", was404);
             return;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "Checking if "
-                            + getBaseMsg().getRequestHeader().getURI()
-                            + " is available via HTTP.");
-        }
+        log.debug(
+                "Checking if {} is available via HTTP.",
+                getBaseMsg().getRequestHeader().getURI().toString());
 
         HttpMessage newRequest = getNewMsg();
 
         try {
             newRequest.getRequestHeader().setSecure(false); // https becomes http
-            if (log.isDebugEnabled()) {
-                log.debug("**" + newRequest.getRequestHeader().getURI());
-            }
+            log.debug("**{} ", newRequest.getRequestHeader().getURI());
         } catch (URIException e) {
             log.error("Error creating HTTP URL from HTTPS URL:", e);
             return;
@@ -134,9 +125,7 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
 
         // Check if the user stopped things. One request per URL so check before sending the request
         if (isStop()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Scan rule " + getName() + " Stopping.");
-            }
+            log.debug("Scan rule {} stopping.", getName());
             return;
         }
 

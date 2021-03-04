@@ -25,7 +25,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Predicate;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -103,7 +104,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
         }
     }
 
-    private static final Logger LOG = Logger.getLogger(XsltInjectionScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(XsltInjectionScanRule.class);
 
     // used to check against the attack strength
     private int requestsSent = 0;
@@ -142,9 +143,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
         for (String payload : checkType.getPayloads(getBaseMsg())) {
             try {
                 if (isStop() || requestsLimitReached()) { // stop before sending request
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Scan rule " + getName() + " Stopping.");
-                    }
+                    LOG.debug("Scan rule {} stopping.", getName());
                     return true;
                 }
 
@@ -160,16 +159,12 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                 }
             } catch (Exception e) {
                 LOG.warn(
-                        "An error occurred while checking ["
-                                + getBaseMsg().getRequestHeader().getMethod()
-                                + "] ["
-                                + getBaseMsg().getRequestHeader().getURI()
-                                + "] for "
-                                + getName()
-                                + " Caught "
-                                + e.getClass().getName()
-                                + " "
-                                + e.getMessage());
+                        "An error occurred while checking [{}] [{}] for {}. Caught {} {}",
+                        getBaseMsg().getRequestHeader().getMethod(),
+                        getBaseMsg().getRequestHeader().getURI().toString(),
+                        getName(),
+                        e.getClass().getName(),
+                        e.getMessage());
                 continue;
             }
         }
@@ -192,12 +187,10 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                     "http://" + msg.getRequestHeader().getURI().getHost() + ":22");
         } catch (URIException e) {
             LOG.warn(
-                    "An error occurred while getting Host for "
-                            + msg.getRequestHeader().getURI()
-                            + " Caught "
-                            + e.getClass().getName()
-                            + " "
-                            + e.getMessage());
+                    "An error occurred while getting Host for {}. Caught {} {}",
+                    msg.getRequestHeader().getURI().toString(),
+                    e.getClass().getName(),
+                    e.getMessage());
             return "";
         }
     }

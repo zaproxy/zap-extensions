@@ -27,7 +27,8 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -55,7 +56,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
     private static final String METADATA_PATH = "/latest/meta-data/";
     private static final String METADATA_HOST = "169.154.169.254";
 
-    private static final Logger LOG = Logger.getLogger(CloudMetadataScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(CloudMetadataScanRule.class);
 
     @Override
     public int getId() {
@@ -122,7 +123,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
                 this.raiseAlert(newRequest);
             }
         } catch (Exception e) {
-            LOG.error("Error sending URL " + newRequest.getRequestHeader().getURI(), e);
+            LOG.error("Error sending URL {}", newRequest.getRequestHeader().getURI().toString(), e);
             return;
         }
     }

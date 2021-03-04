@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -38,7 +39,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
  */
 public class GetForPostScanRule extends AbstractAppPlugin {
 
-    private static final Logger LOG = Logger.getLogger(GetForPostScanRule.class);
+    private static final Logger LOG = LogManager.getLogger(GetForPostScanRule.class);
     private static final String MESSAGE_PREFIX = "ascanbeta.getforpost.";
     private static final int PLUGIN_ID = 10058;
 
@@ -77,9 +78,7 @@ public class GetForPostScanRule extends AbstractAppPlugin {
         // Check if the user stopped things. One request per URL so check before
         // sending the request
         if (isStop()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Scan rule " + getName() + " Stopping.");
-            }
+            LOG.debug("Scan rule {} Stopping.", getName());
             return;
         }
 
@@ -102,16 +101,12 @@ public class GetForPostScanRule extends AbstractAppPlugin {
             sendAndReceive(newRequest);
         } catch (IOException e) {
             LOG.warn(
-                    "An error occurred while checking ["
-                            + newRequest.getRequestHeader().getMethod()
-                            + "] ["
-                            + newRequest.getRequestHeader().getURI().toString()
-                            + "] for "
-                            + getName()
-                            + " Caught "
-                            + e.getClass().getName()
-                            + " "
-                            + e.getMessage());
+                    "An error occurred while checking [{}] [{}] for {} Caught {} {}",
+                    newRequest.getRequestHeader().getMethod(),
+                    newRequest.getRequestHeader().getURI().toString(),
+                    getName(),
+                    e.getClass().getName(),
+                    e.getMessage());
             return;
         }
 

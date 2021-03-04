@@ -27,7 +27,8 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -46,7 +47,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
     private int timeoutMs = 0;
 
     /** the logger object */
-    private static Logger log = Logger.getLogger(HeartBleedActiveScanRule.class);
+    private static Logger log = LogManager.getLogger(HeartBleedActiveScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.heartbleed.";
@@ -913,14 +914,10 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
             // or if the URL was via HTTP, rather than via HTTPS (yes, we will still check it)
             if (portnumber == -1 || portnumber == 80) portnumber = 443;
 
-            if (log.isDebugEnabled())
-                log.debug("About to look for HeartBleed on " + hostname + ":" + portnumber);
+            log.debug("About to look for HeartBleed on {}:{}", hostname, portnumber);
             for (int tlsIndex = 0; tlsIndex < tlsBuffers.length; tlsIndex++) {
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "-------------------- Trying "
-                                    + tlsNames[tlsIndex]
-                                    + " --------------------");
+                log.debug(
+                        "-------------------- Trying {} --------------------", tlsNames[tlsIndex]);
 
                 OutputStream os = null;
                 InputStream is = null;
@@ -930,17 +927,15 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
 
                     try {
                         socket.connect(new InetSocketAddress(hostname, portnumber), this.timeoutMs);
-                        if (log.isDebugEnabled()) log.debug("Connected");
+                        log.debug("Connected");
                         // set a timeout on the socket for reads..
                         socket.setSoTimeout(this.timeoutMs);
                     } catch (Exception e) {
                         // we cannot connect at all.. no point in continuing.
                         log.debug(
-                                "Cannot establish a socket connection to "
-                                        + hostname
-                                        + ":"
-                                        + portnumber
-                                        + " for HeartBleed");
+                                "Cannot establish a socket connection to {}:{} for HeartBleed",
+                                hostname,
+                                portnumber);
                         return;
                     }
 
@@ -968,7 +963,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                     os.write(messageLenBytes);
                     os.write(tlsBuffers[tlsIndex]);
                     os.write(helloBuffer);
-                    if (log.isDebugEnabled()) log.debug("Wrote the Client Hello");
+                    log.debug("Wrote the Client Hello");
 
                     getParent().notifyNewMessage(this);
 
@@ -981,9 +976,8 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                                     && sslRecord.pay[0] == 0x0E) {
                                 break;
                             }
-                            if (log.isDebugEnabled())
-                                log.debug(
-                                        "Got a reponse from the server, but it was not a server hello 'Done' message");
+                            log.debug(
+                                    "Got a reponse from the server, but it was not a server hello 'Done' message");
                         }
                     } catch (SocketTimeoutException es) {
                         throw new IOException(
@@ -996,7 +990,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                                         + " is not supported by the server, or a common cipher suite could not be agreed");
                     }
 
-                    if (log.isDebugEnabled()) log.debug("Got the Server Hello");
+                    log.debug("Got the Server Hello");
 
                     // all the SSL initialisation is complete.  So is the SSL server vulnerable?
                     boolean vulnerable =
@@ -1007,7 +1001,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                                     tlsBuffers[tlsIndex]); // put a timeout on the check for each of
                     // the TLS variants
                     if (vulnerable) {
-                        if (log.isDebugEnabled()) log.debug("Vulnerable");
+                        log.debug("Vulnerable");
                         // bingo!
                         String extraInfo =
                                 Constant.messages.getString(
@@ -1022,14 +1016,12 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                     if (os != null) os.close();
                 } catch (Exception e) {
                     // this particular variant is not vulnerable. skip to the next one..
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "The SSL server does not appear to be vulnerable, using "
-                                        + tlsNames[tlsIndex]
-                                        + ": "
-                                        + e.getMessage());
+                    log.debug(
+                            "The SSL server does not appear to be vulnerable, using {}: {}",
+                            tlsNames[tlsIndex],
+                            e.getMessage());
                 } finally {
-                    if (log.isDebugEnabled()) log.debug("Tidying up");
+                    log.debug("Tidying up");
                     if (is != null) is.close();
                     if (os != null) os.close();
                 }
@@ -1074,7 +1066,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
 
         getParent().notifyNewMessage(this);
 
-        if (log.isDebugEnabled()) log.debug("Wrote the dodgy heartbeat message");
+        log.debug("Wrote the dodgy heartbeat message");
 
         long startTime = System.currentTimeMillis();
         long timeoutTime = startTime + timeoutMs;
@@ -1083,24 +1075,20 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
         while (true && currentTime <= timeoutTime) {
             SSLRecord sslRecord = recvmsg(is, timeoutMs);
 
-            if (log.isDebugEnabled())
-                log.debug(
-                        "Got a message of type 0x"
-                                + Integer.toHexString(sslRecord.typ)
-                                + " from the server: "
-                                + Hex.encodeHexString(sslRecord.pay));
+            log.debug(
+                    "Got a message of type 0x{} from the server: {}",
+                    Integer.toHexString(sslRecord.typ),
+                    Hex.encodeHexString(sslRecord.pay));
 
             if (sslRecord.typ == heartbeatRecordByte) {
                 // received the heartbeat response
                 if (sslRecord.len > 3) {
-                    if (log.isDebugEnabled())
-                        log.debug("VULNERABLE. Got more data back than what we sent in");
+                    log.debug("VULNERABLE. Got more data back than what we sent in");
                     // Got > 3 bytes back. Vulnerable.
                     return true;
                 } else {
                     // Got <=3 bytes back. NOT Vulnerable.
-                    if (log.isDebugEnabled())
-                        log.debug("NOT VULNERABLE. Got back <=3 bytes. Boo hoo.");
+                    log.debug("NOT VULNERABLE. Got back <=3 bytes. Boo hoo.");
                     return false;
                 }
             }
@@ -1110,102 +1098,97 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
             if (sslRecord.typ == alertRecordByte) {
                 if (sslRecord.pay[0] == 0x02) {
                     // Fatal alert
-                    if (log.isDebugEnabled()) {
-                        log.debug("NOT VULNERABLE. We got a fatal alert back from the server");
-                        log.debug("Alert Payload: 0x" + Hex.encodeHexString(sslRecord.pay));
-                        String msg = null;
-                        switch (sslRecord.pay[1]) {
-                            case 0:
-                                msg = "close_notify";
-                                break;
-                            case 10:
-                                msg = "unexpected_message";
-                                break;
-                            case 20:
-                                msg = "bad_record_mac";
-                                break;
-                            case 21:
-                                msg = "decryption_failed_RESERVED";
-                                break;
-                            case 22:
-                                msg = "record_overflow";
-                                break;
-                            case 30:
-                                msg = "decompression_failure";
-                                break;
-                            case 40:
-                                msg = "handshake_failure";
-                                break;
-                            case 41:
-                                msg = "no_certificate_RESERVED";
-                                break;
-                            case 42:
-                                msg = "bad_certificate";
-                                break;
-                            case 43:
-                                msg = "unsupported_certificate";
-                                break;
-                            case 44:
-                                msg = "certificate_revoked";
-                                break;
-                            case 45:
-                                msg = "certificate_expired";
-                                break;
-                            case 46:
-                                msg = "certificate_unknown";
-                                break;
-                            case 47:
-                                msg = "illegal_parameter";
-                                break;
-                            case 48:
-                                msg = "unknown_ca";
-                                break;
-                            case 49:
-                                msg = "access_denied";
-                                break;
-                            case 50:
-                                msg = "decode_error";
-                                break;
-                            case 51:
-                                msg = "decrypt_error";
-                                break;
-                            case 60:
-                                msg = "export_restriction_RESERVED";
-                                break;
-                            case 70:
-                                msg = "protocol_version";
-                                break;
-                            case 71:
-                                msg = "insufficient_security";
-                                break;
-                            case 80:
-                                msg = "internal_error";
-                                break;
-                            case 90:
-                                msg = "user_canceled";
-                                break;
-                            case 100:
-                                msg = "no_renegotiation";
-                                break;
-                            case 110:
-                                msg = "unsupported_extension";
-                                break;
-                        }
-                        log.debug("Alert reason: " + msg);
+                    log.debug("NOT VULNERABLE. We got a fatal alert back from the server");
+                    log.debug("Alert Payload: 0x{}", Hex.encodeHexString(sslRecord.pay));
+                    String msg = null;
+                    switch (sslRecord.pay[1]) {
+                        case 0:
+                            msg = "close_notify";
+                            break;
+                        case 10:
+                            msg = "unexpected_message";
+                            break;
+                        case 20:
+                            msg = "bad_record_mac";
+                            break;
+                        case 21:
+                            msg = "decryption_failed_RESERVED";
+                            break;
+                        case 22:
+                            msg = "record_overflow";
+                            break;
+                        case 30:
+                            msg = "decompression_failure";
+                            break;
+                        case 40:
+                            msg = "handshake_failure";
+                            break;
+                        case 41:
+                            msg = "no_certificate_RESERVED";
+                            break;
+                        case 42:
+                            msg = "bad_certificate";
+                            break;
+                        case 43:
+                            msg = "unsupported_certificate";
+                            break;
+                        case 44:
+                            msg = "certificate_revoked";
+                            break;
+                        case 45:
+                            msg = "certificate_expired";
+                            break;
+                        case 46:
+                            msg = "certificate_unknown";
+                            break;
+                        case 47:
+                            msg = "illegal_parameter";
+                            break;
+                        case 48:
+                            msg = "unknown_ca";
+                            break;
+                        case 49:
+                            msg = "access_denied";
+                            break;
+                        case 50:
+                            msg = "decode_error";
+                            break;
+                        case 51:
+                            msg = "decrypt_error";
+                            break;
+                        case 60:
+                            msg = "export_restriction_RESERVED";
+                            break;
+                        case 70:
+                            msg = "protocol_version";
+                            break;
+                        case 71:
+                            msg = "insufficient_security";
+                            break;
+                        case 80:
+                            msg = "internal_error";
+                            break;
+                        case 90:
+                            msg = "user_canceled";
+                            break;
+                        case 100:
+                            msg = "no_renegotiation";
+                            break;
+                        case 110:
+                            msg = "unsupported_extension";
+                            break;
                     }
+                    log.debug("Alert reason: {}", msg);
                     return false;
                 } else {
                     // warning alert
-                    if (log.isDebugEnabled()) {
-                        log.debug("Ignoring a warning alert from the server");
-                    }
+                    log.debug("Ignoring a warning alert from the server");
                 }
             }
             currentTime = System.currentTimeMillis();
         }
         // timed out.. and we haven't received a response to the heartbeat.. not vulnerable
-        if (log.isDebugEnabled())
-            log.debug("NOT VULNERABLE. No suitable heartbeat response within the timeout");
+        log.debug("NOT VULNERABLE. No suitable heartbeat response within the timeout");
         return false;
     }
     /**

@@ -24,7 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -188,10 +189,7 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
     };
 
     /** for logging. */
-    private static Logger log = Logger.getLogger(SqlInjectionMyqlScanRule.class);
-
-    /** determines if we should output Debug level logging */
-    private boolean debugEnabled = log.isDebugEnabled();
+    private static Logger log = LogManager.getLogger(SqlInjectionMyqlScanRule.class);
 
     @Override
     public int getId() {
@@ -230,7 +228,7 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        if (this.debugEnabled) log.debug("Initialising");
+        log.debug("Initialising");
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -252,12 +250,10 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
             this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15);
         } catch (ConversionException e) {
             log.debug(
-                    "Invalid value for 'rules.common.sleep': "
-                            + this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
+                    "Invalid value for 'rules.common.sleep': {}",
+                    this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        if (this.debugEnabled) {
-            log.debug("Sleep set to " + sleep + " seconds");
-        }
+        log.debug("Sleep set to {} seconds", sleep);
     }
 
     /**
@@ -276,22 +272,16 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
             } catch (java.net.SocketTimeoutException e) {
                 // to be expected occasionally, if the base query was one that contains some
                 // parameters exploiting time based SQL injection?
-                if (this.debugEnabled)
-                    log.debug(
-                            "The Base Time Check timed out on ["
-                                    + msgTimeBaseline.getRequestHeader().getMethod()
-                                    + "] URL ["
-                                    + msgTimeBaseline.getRequestHeader().getURI().getURI()
-                                    + "]");
+                log.debug(
+                        "The Base Time Check timed out on [{}] URL [{}]",
+                        msgTimeBaseline.getRequestHeader().getMethod(),
+                        msgTimeBaseline.getRequestHeader().getURI().toString());
             } catch (SocketException ex) {
-                if (this.debugEnabled)
-                    log.debug(
-                            "Caught "
-                                    + ex.getClass().getName()
-                                    + " "
-                                    + ex.getMessage()
-                                    + " when accessing: "
-                                    + msgTimeBaseline.getRequestHeader().getURI().toString());
+                log.debug(
+                        "Caught {} {} when accessing: {}",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        msgTimeBaseline.getRequestHeader().getURI().toString());
                 return; // No need to keep going
             }
             long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
@@ -309,34 +299,25 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // to be expected occasionally, if the base query was one that contains some
                     // parameters exploiting time based SQL injection?
-                    if (this.debugEnabled)
-                        log.debug(
-                                "Base Time Check 2 timed out on ["
-                                        + msgTimeBaseline.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msgTimeBaseline.getRequestHeader().getURI().getURI()
-                                        + "]");
+                    log.debug(
+                            "Base Time Check 2 timed out on [{}] URL [{}]",
+                            msgTimeBaseline.getRequestHeader().getMethod(),
+                            msgTimeBaseline.getRequestHeader().getURI().toString());
                 } catch (SocketException ex) {
-                    if (this.debugEnabled)
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msgTimeBaseline.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msgTimeBaseline.getRequestHeader().getURI().toString());
                     return; // No need to keep going
                 }
                 long originalTimeUsed2 = msgTimeBaseline.getTimeElapsedMillis();
                 if (originalTimeUsed2 > sleep * 1000) {
                     // no better the second time around.  we need to bale out.
-                    if (this.debugEnabled)
-                        log.debug(
-                                "Both base time checks 1 and 2 for ["
-                                        + msgTimeBaseline.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msgTimeBaseline.getRequestHeader().getURI().getURI()
-                                        + "] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.");
+                    log.debug(
+                            "Both base time checks 1 and 2 for [{}] URL [{}] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.",
+                            msgTimeBaseline.getRequestHeader().getMethod(),
+                            msgTimeBaseline.getRequestHeader().getURI().toString());
                     return;
                 } else {
                     // phew.  the second time came in within the limits. use the later timing
@@ -348,17 +329,12 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
 
             int countTimeBasedRequests = 0;
 
-            if (this.debugEnabled)
-                log.debug(
-                        "Scanning URL ["
-                                + getBaseMsg().getRequestHeader().getMethod()
-                                + "] ["
-                                + getBaseMsg().getRequestHeader().getURI()
-                                + "], ["
-                                + paramName
-                                + "] with value ["
-                                + originalParamValue
-                                + "] for SQL Injection");
+            log.debug(
+                    "Scanning URL [{}] [{}], [{}] with value [{}] for SQL Injection",
+                    getBaseMsg().getRequestHeader().getMethod(),
+                    getBaseMsg().getRequestHeader().getURI().toString(),
+                    paramName,
+                    originalParamValue);
 
             // MySQL specific time-based SQL injection checks
             for (int timeBasedSQLindex = 0;
@@ -380,41 +356,28 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // to be expected occasionally, if the contains some parameters exploiting time
                     // based SQL injection
-                    if (this.debugEnabled)
-                        log.debug(
-                                "The time check query timed out on ["
-                                        + msg3.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msg3.getRequestHeader().getURI().getURI()
-                                        + "] on field: ["
-                                        + paramName
-                                        + "]");
+                    log.debug(
+                            "The time check query timed out on [{}] URL [{}] on field: [{}]",
+                            msg3.getRequestHeader().getMethod(),
+                            msg3.getRequestHeader().getURI().toString(),
+                            paramName);
                 } catch (SocketException ex) {
-                    if (this.debugEnabled)
-                        log.debug(
-                                "Caught "
-                                        + ex.getClass().getName()
-                                        + " "
-                                        + ex.getMessage()
-                                        + " when accessing: "
-                                        + msg3.getRequestHeader().getURI().toString());
+                    log.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg3.getRequestHeader().getURI().toString());
                     return; // No need to keep going
                 }
                 long modifiedTimeUsed = msg3.getTimeElapsedMillis();
 
-                if (this.debugEnabled)
-                    log.debug(
-                            "Time Based SQL Injection test: ["
-                                    + newTimeBasedInjectionValue
-                                    + "] on field: ["
-                                    + paramName
-                                    + "] with value ["
-                                    + newTimeBasedInjectionValue
-                                    + "] took "
-                                    + modifiedTimeUsed
-                                    + "ms, where the original took "
-                                    + originalTimeUsed
-                                    + "ms");
+                log.debug(
+                        "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
+                        newTimeBasedInjectionValue,
+                        paramName,
+                        newTimeBasedInjectionValue,
+                        modifiedTimeUsed,
+                        originalTimeUsed);
 
                 // add some small leeway on the time, since adding a 5 (by default) second delay in
                 // the SQL query will not cause the request
@@ -455,21 +418,17 @@ public class SqlInjectionMyqlScanRule extends AbstractAppParamPlugin {
                             .setMessage(msg3)
                             .raise();
 
-                    if (this.debugEnabled)
-                        log.debug(
-                                "A likely Time Based SQL Injection Vulnerability has been found with ["
-                                        + msg3.getRequestHeader().getMethod()
-                                        + "] URL ["
-                                        + msg3.getRequestHeader().getURI().getURI()
-                                        + "] on field: ["
-                                        + paramName
-                                        + "]");
+                    log.debug(
+                            "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
+                            msg3.getRequestHeader().getMethod(),
+                            msg3.getRequestHeader().getURI().toString(),
+                            paramName);
 
                     return;
                 } // query took longer than the amount of time we attempted to retard it by
                 // bale out if we were asked nicely
                 if (isStop()) {
-                    if (this.debugEnabled) log.debug("Stopping the scan due to a user request");
+                    log.debug("Stopping the scan due to a user request");
                     return;
                 }
             } // for each time based SQL index

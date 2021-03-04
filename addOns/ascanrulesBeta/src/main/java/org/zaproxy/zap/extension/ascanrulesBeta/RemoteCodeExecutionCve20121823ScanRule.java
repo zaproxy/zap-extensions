@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -50,7 +51,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
 
     /** the logger object */
     private static final Logger log =
-            Logger.getLogger(RemoteCodeExecutionCve20121823ScanRule.class);
+            LogManager.getLogger(RemoteCodeExecutionCve20121823ScanRule.class);
 
     /** a random string (which remains constant across multiple runs, as long as Zap is not */
     static final String RANDOM_STRING =
@@ -164,9 +165,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
             if (isPage200(attackmsg)
                     && attackResponseBody.length >= RANDOM_STRING.length()
                     && responseBody.startsWith(RANDOM_STRING)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Remote Code Execution alert for: " + originalURI.getURI());
-                }
+                log.debug("Remote Code Execution alert for: {}", originalURI.getURI());
 
                 // bingo.
                 newAlert()
@@ -186,8 +185,8 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
             }
         } catch (Exception e) {
             log.error(
-                    "Error scanning a URL for Remote Code Execution via CVE-2012-1823: "
-                            + e.getMessage(),
+                    "Error scanning a URL for Remote Code Execution via CVE-2012-1823: {}",
+                    e.getMessage(),
                     e);
         }
         return false;
@@ -206,7 +205,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
         try {
             return new URI(uri, true);
         } catch (URIException e) {
-            log.warn("Failed to create attack URI [" + uri + "], cause: " + e.getMessage());
+            log.warn("Failed to create attack URI [{}], cause: {}", uri, e.getMessage());
         }
         return null;
     }

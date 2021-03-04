@@ -23,7 +23,8 @@ import java.util.Collections;
 import java.util.Map;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.HostProcess;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -42,10 +43,10 @@ public class MessageCache {
     private Map<URI, HttpMessage> messagecache =
             Collections.synchronizedMap(new LRUMap(100)); // a map of 100 objects, synchronized
 
-    private static Logger log = Logger.getLogger(MessageCache.class);
+    private static Logger log = LogManager.getLogger(MessageCache.class);
 
     private MessageCache(HostProcess hostprocess) {
-        if (log.isDebugEnabled()) log.debug("Initialising");
+        log.debug("Initialising");
         parent = hostprocess;
     }
 
@@ -82,16 +83,14 @@ public class MessageCache {
     public synchronized HttpMessage getMessage(
             URI uri, HttpMessage basemsg, boolean followRedirects) throws Exception {
         if (!isMessageCached(uri)) {
-            if (log.isDebugEnabled())
-                log.debug("URI '" + uri + "' is not in the message cache. Retrieving it.");
+            log.debug("URI '{}' is not in the message cache. Retrieving it.", uri);
             // request the file, then add the file to the cache
             // use the cookies from an original request, in case authorisation is required
             HttpMessage requestmsg = new HttpMessage(uri);
             try {
                 requestmsg.setCookieParams(basemsg.getCookieParams());
             } catch (Exception e) {
-                if (log.isDebugEnabled())
-                    log.debug("Could not set the cookies from the base request:" + e);
+                log.debug("Could not set the cookies from the base request: ", e);
             }
             requestmsg.getRequestHeader().setHeader(HttpHeader.IF_MODIFIED_SINCE, null);
             requestmsg.getRequestHeader().setHeader(HttpHeader.IF_NONE_MATCH, null);
@@ -100,10 +99,9 @@ public class MessageCache {
             parent.notifyNewMessage(requestmsg);
             // put the message in the cache
             messagecache.put(uri, requestmsg);
-            if (log.isDebugEnabled()) log.debug("Put URI '" + uri + "' in the message cache.");
+            log.debug("Put URI '{}' in the message cache.", uri);
         } else {
-            if (log.isDebugEnabled())
-                log.debug("URI '" + uri + "' is cached in the message cache.");
+            log.debug("URI '{}' is cached in the message cache.", uri);
         }
         // and return the cached message.
         return messagecache.get(uri);

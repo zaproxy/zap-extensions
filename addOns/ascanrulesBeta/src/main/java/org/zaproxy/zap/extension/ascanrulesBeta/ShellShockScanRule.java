@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.List;
 import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -38,7 +39,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 public class ShellShockScanRule extends AbstractAppParamPlugin {
 
     /** the logger object */
-    private static final Logger log = Logger.getLogger(ShellShockScanRule.class);
+    private static final Logger log = LogManager.getLogger(ShellShockScanRule.class);
 
     private final String attackHeader = "X-Powered-By";
 
@@ -85,12 +86,10 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
             this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 5);
         } catch (ConversionException e) {
             log.debug(
-                    "Invalid value for 'rules.common.sleep': "
-                            + this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
+                    "Invalid value for 'rules.common.sleep': {}",
+                    this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Sleep set to " + sleep + " seconds");
-        }
+        log.debug("Sleep set to {} seconds", sleep);
     }
 
     @Override
@@ -165,7 +164,7 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
             }
 
         } catch (Exception e) {
-            log.error("Error scanning a Host for ShellShock: " + e.getMessage(), e);
+            log.error("Error scanning a Host for ShellShock: {}", e.getMessage(), e);
         }
     }
 

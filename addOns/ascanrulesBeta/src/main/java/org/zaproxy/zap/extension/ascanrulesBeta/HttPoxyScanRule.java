@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyServer;
@@ -38,7 +39,7 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
 
     private static final int PLUGIN_ID = 10107;
 
-    private static final Logger log = Logger.getLogger(HttPoxyScanRule.class);
+    private static final Logger log = LogManager.getLogger(HttPoxyScanRule.class);
 
     @Override
     public int getCategory() {
@@ -152,7 +153,7 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
         public boolean onHttpRequestSend(HttpMessage msg) {
             this.msgReceived = true;
             this.msgUrl = msg.getRequestHeader().getURI().toString();
-            log.debug("Received request " + msgUrl);
+            log.debug("Received request {}", msgUrl);
             return true;
         }
 

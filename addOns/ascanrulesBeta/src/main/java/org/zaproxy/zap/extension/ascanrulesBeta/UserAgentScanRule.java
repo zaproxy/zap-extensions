@@ -25,7 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -37,7 +38,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 /** @author kniepdennis@gmail.com */
 public class UserAgentScanRule extends AbstractAppPlugin {
 
-    private static final Logger log = Logger.getLogger(UserAgentScanRule.class);
+    private static final Logger log = LogManager.getLogger(UserAgentScanRule.class);
 
     private static final int PLUGIN_ID = 10104;
     private static final String MESSAGE_PREFIX = "ascanbeta.useragent.";
@@ -144,9 +145,7 @@ public class UserAgentScanRule extends AbstractAppPlugin {
             sendAndReceive(newMsg);
             return newMsg;
         } catch (UnknownHostException | URIException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to send HTTP message, cause: " + e.getMessage());
-            }
+            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
         }

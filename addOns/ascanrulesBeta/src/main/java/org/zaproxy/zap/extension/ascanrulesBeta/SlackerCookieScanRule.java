@@ -25,7 +25,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -54,7 +55,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
     // #01, Authentication could be applicable.
     private static final String[] HIGH_RISK_COOKIE_NAMES = {"session", "userid"};
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_45");
-    private static Logger log = Logger.getLogger(SlackerCookieScanRule.class);
+    private static Logger log = LogManager.getLogger(SlackerCookieScanRule.class);
 
     @Override
     public void scan() {
@@ -113,7 +114,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
                         .raise();
             }
         } catch (IOException io) {
-            log.debug("Blew up trying to refresh session with all cookies: " + io.getMessage());
+            log.debug("Blew up trying to refresh session with all cookies: {}", io.getMessage());
         }
         return sessionNoLongerGood;
     }
@@ -165,25 +166,21 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
             sendAndReceive(msg, false);
             int responseLength = msg.getResponseBody().length();
 
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "trying to exclude cookie "
-                                + oneCookie.getName()
-                                + ", request header=>"
-                                + msg.getRequestHeader().getHeadersAsString());
-                log.debug(
-                        "response length was:"
-                                + responseLength
-                                + ", while baseResponseLength was: "
-                                + baseResponseLength);
-            }
+            log.debug(
+                    "trying to exclude cookie {}, request header=>{}",
+                    oneCookie.getName(),
+                    msg.getRequestHeader().getHeadersAsString());
+            log.debug(
+                    "response length was:{}, while baseResponseLength was: {}",
+                    responseLength,
+                    baseResponseLength);
 
             if (responseLength != baseResponseLength) {
                 doesThisCookieMatter = true;
             }
 
         } catch (IOException ex) {
-            log.debug("caught IOException in SlackerCookieScanRule: " + ex.getMessage());
+            log.debug("caught IOException in SlackerCookieScanRule: {}", ex.getMessage());
         }
         return doesThisCookieMatter;
     }
