@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -35,7 +36,7 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class RetireScanRule extends PluginPassiveScanner {
-    private static final Logger LOGGER = Logger.getLogger(RetireScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(RetireScanRule.class);
     private static final int PLUGIN_ID = 10003;
     private static final String COLLECTION_PATH =
             "/org/zaproxy/addon/retire/resources/jsrepository.json";
@@ -68,23 +69,15 @@ public class RetireScanRule extends PluginPassiveScanner {
                 && !msg.getResponseHeader().isCss()) {
             Result result = getRepo().scanJS(msg);
             if (result == null) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("\tNo vulnerabilities found in record " + id + " with URL " + uri);
-                }
+                LOGGER.debug("\tNo vulnerabilities found in record {} with URL {}", id, uri);
             } else {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "\tVulnerabilities found in record "
-                                    + id
-                                    + " with URL:"
-                                    + uri
-                                    + " ,name:"
-                                    + ((result.getFilename() == null) ? "" : result.getFilename())
-                                    + " and version:"
-                                    + result.getVersion()
-                                    + ", more info at:"
-                                    + result.getInfo());
-                }
+                LOGGER.debug(
+                        "\tVulnerabilities found in record {} with URL: {}, name: {} and version: {}, more info at: {}",
+                        id,
+                        uri,
+                        (result.getFilename() == null) ? "" : result.getFilename(),
+                        result.getVersion(),
+                        result.getInfo());
 
                 String otherInfo = getDetails(Result.CVE, result.getInfo());
 
