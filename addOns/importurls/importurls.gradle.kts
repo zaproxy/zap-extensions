@@ -6,7 +6,7 @@ description = "Adds an option to import a file of URLs. The file must be plain t
 zapAddOn {
     addOnName.set("Import files containing URLs")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")
