@@ -36,3 +36,8 @@ jobs:
     parameters:
       maxDuration: 0
 
+  - type: activeScan
+    name: activeScan
+    parameters:
+      context: 
+
