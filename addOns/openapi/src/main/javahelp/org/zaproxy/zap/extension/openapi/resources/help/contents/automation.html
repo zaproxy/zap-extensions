@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+OpenAPI Automation Framework Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>OpenAPI Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+<br><br>
+The add-on will add OpenAPI definitions if they are found while spidering but adding them explicitly via a URL or local file is recommended if they are available.
+<br><br>
+The targeturl parameter works in the same way per <a href="openapi.html">'Target URL Format'</a>.
+
+<H2>Job: openapi</H2>
+The openapi job allows you to import OpenAPI definitions via a URL or file.
+<pre>
+  - type: openapi                      # OpenAPI definition import
+    parameters:
+      apifile:                         # String: Local file containing the OpenAPI definition, default: null, no definition will be imported
+      apiurl:                          # String: URL containing the OpenAPI definition, default: null, no definition will be imported
+      targeturl:                       # String: URL which overrides the target defined in the definition, default: null, the target will not be overriden
+</pre>
+
+<H2>Statistics</H2>
+The add-on maintains the following statistics:
+<ul>
+<li>openapi.urls.added : The total number of URLs added when importing OpenAPI definitions</li>
+</ul>
+
+</BODY>
+</HTML>

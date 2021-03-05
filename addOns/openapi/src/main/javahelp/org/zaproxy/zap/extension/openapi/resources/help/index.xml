@@ -5,4 +5,5 @@
 
 <index version="2.0">
 	<indexitem text="openapi" target="openapi" />
+	<indexitem text="openapi.automation" target="openapi.automation" />
 </index>
