@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -43,7 +44,7 @@ public class Requestor {
     private List<RequesterListener> listeners = new ArrayList<RequesterListener>();
     private HttpSender sender;
     private final HttpRequestConfig requestConfig;
-    private static final Logger LOG = Logger.getLogger(Requestor.class);
+    private static final Logger LOG = LogManager.getLogger(Requestor.class);
     private static final String GRAPHQL_CONTENT_TYPE = "application/graphql";
 
     public Requestor(URI endpointUrl, int initiator) {

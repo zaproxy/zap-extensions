@@ -35,7 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
@@ -43,7 +44,7 @@ import org.parosproxy.paros.network.HttpSender;
 
 public class GraphQlParser {
 
-    private static final Logger LOG = Logger.getLogger(GraphQlParser.class);
+    private static final Logger LOG = LogManager.getLogger(GraphQlParser.class);
     private static final String THREAD_PREFIX = "ZAP-GraphQL-Parser";
     private static AtomicInteger threadId = new AtomicInteger();
 
