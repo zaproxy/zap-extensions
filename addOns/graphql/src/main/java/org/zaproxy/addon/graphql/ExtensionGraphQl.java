@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -53,7 +54,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         implements CommandLineListener, SessionChangedListener {
 
     public static final String NAME = "ExtensionGraphQl";
-    private static final Logger LOG = Logger.getLogger(ExtensionGraphQl.class);
+    private static final Logger LOG = LogManager.getLogger(ExtensionGraphQl.class);
 
     private ZapMenuItem menuImportLocalGraphQl = null;
     private ZapMenuItem menuImportUrlGraphQl = null;
@@ -173,7 +174,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         synchronized (parserThreads) {
             for (ParserThread thread : parserThreads) {
                 if (thread.isRunning()) {
-                    LOG.debug("Stopping Thread " + thread.getName());
+                    LOG.debug("Stopping Thread {}", thread.getName());
                     thread.stopParser();
                 }
             }

@@ -19,7 +19,8 @@
  */
 package org.zaproxy.addon.graphql;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -30,7 +31,7 @@ import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HistoryPersister implements RequesterListener {
 
-    private static final Logger LOG = Logger.getLogger(ExtensionGraphQl.class);
+    private static final Logger LOG = LogManager.getLogger(ExtensionGraphQl.class);
 
     @Override
     public void handleMessage(final HttpMessage message, int initiator) {

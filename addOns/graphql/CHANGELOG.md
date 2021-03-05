@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 - Update minimum ZAP version to 2.10.0.
 - Add two new options that allow enforcing maximum query depth leniently for fields with no leaf types.
+- Maintenance changes.
 
 ### Fixed
 - Fix invalid query generation when query depth was reached and the deepest fields had no leaf types (Issue 6316).

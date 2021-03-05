@@ -42,7 +42,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.graphql.GraphQlParam.RequestMethodOption;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
@@ -50,7 +51,7 @@ import org.zaproxy.zap.model.ValueGenerator;
 
 public class GraphQlGenerator {
 
-    private static final Logger LOG = Logger.getLogger(GraphQlGenerator.class);
+    private static final Logger LOG = LogManager.getLogger(GraphQlGenerator.class);
     private final Requestor requestor;
     private final GraphQlParam param;
     private GraphQLSchema schema;

@@ -20,7 +20,8 @@
 package org.zaproxy.addon.graphql;
 
 import java.util.Locale;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -47,7 +48,7 @@ public class GraphQlParam extends VersionedAbstractParam {
      */
     private static final int PARAM_CURRENT_VERSION = 2;
 
-    private static final Logger LOG = Logger.getLogger(GraphQlParam.class);
+    private static final Logger LOG = LogManager.getLogger(GraphQlParam.class);
 
     public GraphQlParam() {}
 
@@ -205,7 +206,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         try {
             setArgsType(ArgsTypeOption.valueOf(argsType.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            LOG.debug('"' + argsType + "\" is not a valid Arguments Specification Type.");
+            LOG.debug("'{}' is not a valid Arguments Specification Type.", argsType);
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
     }
@@ -224,7 +225,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         try {
             setQuerySplitType(QuerySplitOption.valueOf(querySplitType.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            LOG.debug('"' + querySplitType + "\" is not a valid Query Split Type.");
+            LOG.debug("'{}' is not a valid Query Split Type.", querySplitType);
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
     }
@@ -243,7 +244,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         try {
             setRequestMethod(RequestMethodOption.valueOf(requestMethod.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            LOG.debug('"' + requestMethod + "\" is not a valid Request Method Option.");
+            LOG.debug("'{}' is not a valid Request Method Option.", requestMethod);
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
     }
