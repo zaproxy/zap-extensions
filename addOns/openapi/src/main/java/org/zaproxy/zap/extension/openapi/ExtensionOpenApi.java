@@ -19,10 +19,14 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -47,7 +51,11 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public static final String NAME = "ExtensionOpenApi";
 
+    public static final String URL_ADDED_STATS = "openapi.urls.added";
+
     private static final String THREAD_PREFIX = "ZAP-Import-OpenAPI-";
+
+    private static final String RESOURCES_DIR = "/org/zaproxy/zap/extension/openapi/resources/";
 
     private ZapMenuItem menuImportLocalOpenApi = null;
     private ZapMenuItem menuImportUrlOpenApi = null;
@@ -163,18 +171,31 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
      */
     public List<String> importOpenApiDefinition(
             final URI uri, final String targetUrl, boolean initViaUi) {
+        OpenApiResults results = this.importOpenApiDefinitionV2(uri, targetUrl, initViaUi);
+        if (results != null) {
+            return results.getErrors();
+        }
+        return null;
+    }
+
+    public OpenApiResults importOpenApiDefinitionV2(
+            final URI uri, final String targetUrl, boolean initViaUi) {
+        OpenApiResults results = new OpenApiResults();
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
-        requestor.addListener(new HistoryPersister());
+        requestor.addListener(new HistoryPersister(results));
         try {
             String path = uri.getPath();
             if (path == null) {
                 path = "";
             }
-            return importOpenApiDefinition(
-                    requestor.getResponseBody(uri),
-                    targetUrl,
-                    uri.getScheme() + "://" + uri.getAuthority() + path,
-                    initViaUi);
+            results.setErrors(
+                    importOpenApiDefinition(
+                            requestor.getResponseBody(uri),
+                            targetUrl,
+                            uri.getScheme() + "://" + uri.getAuthority() + path,
+                            initViaUi,
+                            requestor));
+            return results;
         } catch (IOException e) {
             if (initViaUi) {
                 View.getSingleton()
@@ -206,9 +227,28 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
      */
     public List<String> importOpenApiDefinition(
             final File file, final String targetUrl, boolean initViaUi) {
+        OpenApiResults results = this.importOpenApiDefinitionV2(file, targetUrl, initViaUi);
+        if (results != null) {
+            return results.getErrors();
+        }
+        return null;
+    }
+
+    public OpenApiResults importOpenApiDefinitionV2(
+            final File file, final String targetUrl, boolean initViaUi) {
+
         try {
-            return importOpenApiDefinition(
-                    FileUtils.readFileToString(file, "UTF-8"), targetUrl, null, initViaUi);
+            OpenApiResults results = new OpenApiResults();
+            Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+            requestor.addListener(new HistoryPersister(results));
+            results.setErrors(
+                    importOpenApiDefinition(
+                            FileUtils.readFileToString(file, "UTF-8"),
+                            targetUrl,
+                            null,
+                            initViaUi,
+                            requestor));
+            return results;
         } catch (IOException e) {
             if (initViaUi) {
                 View.getSingleton()
@@ -220,7 +260,11 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     }
 
     private List<String> importOpenApiDefinition(
-            String defn, final String targetUrl, final String definitionUrl, boolean initViaUi) {
+            String defn,
+            final String targetUrl,
+            final String definitionUrl,
+            boolean initViaUi,
+            final Requestor requestor) {
         final List<String> errors = new ArrayList<>();
         SwaggerConverter converter =
                 new SwaggerConverter(targetUrl, definitionUrl, defn, getValueGenerator());
@@ -230,9 +274,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     @Override
                     public void run() {
                         try {
-                            Requestor requestor =
-                                    new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
-                            requestor.addListener(new HistoryPersister());
                             errors.addAll(requestor.run(converter.getRequestModels()));
                             // Needs to be called after converter.getRequestModels() to get loop
                             // errors
@@ -419,5 +460,19 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     public boolean handleFile(File file) {
         // Not supported
         return false;
+    }
+
+    public static String getResourceAsString(String name) {
+        try (InputStream in = ExtensionOpenApi.class.getResourceAsStream(RESOURCES_DIR + name)) {
+            return new BufferedReader(new InputStreamReader(in))
+                            .lines()
+                            .collect(Collectors.joining("\n"))
+                    + "\n";
+        } catch (Exception e) {
+            CommandLine.error(
+                    Constant.messages.getString(
+                            "openapi.automation.error.nofile", RESOURCES_DIR + name));
+        }
+        return "";
     }
 }

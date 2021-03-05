@@ -12,6 +12,20 @@ zapAddOn {
         author.set("ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak, Marcin Spiewak, and SDA SE Open Industry Solutions")
         url.set("https://www.zaproxy.org/docs/desktop/addons/openapi-support/")
         notBeforeVersion.set("2.10.0")
+        extensions {
+            register("org.zaproxy.zap.extension.openapi.automation.ExtensionOpenApiAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.openapi.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set("0.*")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -29,6 +43,7 @@ configurations {
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("automation")!!)
     implementation("io.swagger.parser.v3:swagger-parser:2.0.24")
     implementation("io.swagger:swagger-compat-spec-parser:1.0.54") {
         // Not needed:
