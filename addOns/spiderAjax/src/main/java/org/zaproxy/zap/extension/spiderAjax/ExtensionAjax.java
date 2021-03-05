@@ -177,7 +177,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return spiderPanel;
     }
 
-    AjaxSpiderParam getAjaxSpiderParam() {
+    public AjaxSpiderParam getAjaxSpiderParam() {
         if (ajaxSpiderParam == null) {
             ajaxSpiderParam = new AjaxSpiderParam();
         }
@@ -267,7 +267,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
      * @param target the target that will be spidered
      * @return a {@code String} containing the display name, never {@code null}
      */
-    String createDisplayName(AjaxSpiderTarget target) {
+    public String createDisplayName(AjaxSpiderTarget target) {
         if (target.isSubtreeOnly()) {
             return abbreviateDisplayName(
                     HttpPrefixUriValidator.getNormalisedPrefix(target.getStartUri().toString()));
@@ -397,7 +397,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return this.getMessages().getString("spiderajax.desc");
     }
 
-    SpiderThread createSpiderThread(
+    public SpiderThread createSpiderThread(
             String displayName, AjaxSpiderTarget target, SpiderListener spiderListener) {
         SpiderThread spiderThread = new SpiderThread(displayName, target, this, spiderListener);
         spiderThread.addSpiderListener(getSpiderListener());
