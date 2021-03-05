@@ -39,7 +39,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jwall.web.audit.AuditEvent;
 import org.jwall.web.audit.io.ModSecurity2AuditReader;
 import org.parosproxy.paros.Constant;
@@ -80,7 +81,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
 
     private ZapMenuItem menuExample = null;
 
-    private static Logger log = Logger.getLogger(ExtensionImportLogFiles.class);
+    private static Logger log = LogManager.getLogger(ExtensionImportLogFiles.class);
 
     private ImportLogAPI importLogAPI;
 

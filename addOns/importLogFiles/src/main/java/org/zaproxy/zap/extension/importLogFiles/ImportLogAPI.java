@@ -28,7 +28,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.ApiAction;
@@ -42,7 +43,7 @@ import org.zaproxy.zap.extension.importLogFiles.ExtensionImportLogFiles.LogType;
 /// This class extends the ImportLog functionality to the ZAP REST API
 public class ImportLogAPI extends ApiImplementor {
 
-    private static Logger log = Logger.getLogger(ImportLogAPI.class);
+    private static Logger log = LogManager.getLogger(ImportLogAPI.class);
 
     // API method names
     private static final String PREFIX = "importLogFiles";
