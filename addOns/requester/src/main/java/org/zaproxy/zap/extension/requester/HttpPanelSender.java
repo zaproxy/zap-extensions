@@ -30,7 +30,8 @@ import javax.net.ssl.SSLException;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
@@ -55,7 +56,7 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 /** Knows how to send {@link HttpMessage} objects. */
 public class HttpPanelSender implements MessageSender {
 
-    private static final Logger logger = Logger.getLogger(HttpPanelSender.class);
+    private static final Logger logger = LogManager.getLogger(HttpPanelSender.class);
 
     private final HttpPanelResponse responsePanel;
     private ExtensionHistory extension;
@@ -159,7 +160,7 @@ public class HttpPanelSender implements MessageSender {
             if (extHistory != null) {
                 extHistory.addHistory(ref);
             }
-            SessionStructure.addPath(Model.getSingleton().getSession(), ref, httpMessage);
+            SessionStructure.addPath(Model.getSingleton(), ref, httpMessage);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             logger.warn("Failed to persist message sent:", e);
         }

@@ -28,7 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -43,7 +44,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public abstract class ManualRequestEditorPanel extends JPanel implements Tab {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(ManualRequestEditorPanel.class);
+    private static final Logger logger = LogManager.getLogger(ManualRequestEditorPanel.class);
 
     private boolean isSendEnabled = true;
 
