@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -50,7 +51,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
     public static final String URL_SENSITIVE_INFORMATION_FILE =
             "URL-information-disclosure-messages.txt";
     private static final Logger logger =
-            Logger.getLogger(InformationDisclosureReferrerScanRule.class);
+            LogManager.getLogger(InformationDisclosureReferrerScanRule.class);
     private List<String> messages = null;
     static Pattern emailAddressPattern =
             Pattern.compile("\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\b");
@@ -110,7 +111,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
                     result = true;
                 }
             } catch (URIException e) {
-                logger.debug("Error: " + e.getMessage());
+                logger.debug("Error: {}", e.getMessage());
             }
         }
         return result;
@@ -173,7 +174,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
         List<String> strings = new ArrayList<String>();
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
-            logger.error("No such file: " + f.getAbsolutePath());
+            logger.error("No such file: {}", f.getAbsolutePath());
             return strings;
         }
 
@@ -185,7 +186,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
                 }
             }
         } catch (IOException e) {
-            logger.debug("Error on opening/reading debug error file. Error: " + e.getMessage(), e);
+            logger.debug("Error on opening/reading debug error file. Error: {}", e.getMessage(), e);
         }
 
         return strings;

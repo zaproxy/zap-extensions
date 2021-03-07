@@ -28,7 +28,8 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -59,7 +60,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
     private String csrfValIgnoreList;
 
     /** the logger */
-    private static Logger logger = Logger.getLogger(CsrfCountermeasuresScanRule.class);
+    private static Logger logger = LogManager.getLogger(CsrfCountermeasuresScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -111,14 +112,14 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
             boolean hasSecurityAnnotation = false;
 
             // Loop through all of the FORM tags
-            logger.debug("Found " + formElements.size() + " forms");
+            logger.debug("Found {} forms", formElements.size());
 
             int numberOfFormsPassed = 0;
 
             List<String> ignoreList = new ArrayList<String>();
             String ignoreConf = getCSRFIgnoreList();
             if (ignoreConf != null && ignoreConf.length() > 0) {
-                logger.debug("Using ignore list: " + ignoreConf);
+                logger.debug("Using ignore list: {}", ignoreConf);
                 for (String str : ignoreConf.split(",")) {
                     String strTrim = str.trim();
                     if (strTrim.length() > 0) {
@@ -131,11 +132,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
             for (Element formElement : formElements) {
                 logger.debug(
-                        "FORM ["
-                                + formElement
-                                + "] has parent ["
-                                + formElement.getParentElement()
-                                + "]");
+                        "FORM [{}] has parent [{}]", formElement, formElement.getParentElement());
                 StringBuilder sbForm = new StringBuilder();
                 SortedSet<String> elementNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
                 ++numberOfFormsPassed;
@@ -168,7 +165,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
                 if (inputElements != null && inputElements.size() > 0) {
                     // Loop through all of the INPUT elements
-                    logger.debug("Found " + inputElements.size() + " inputs");
+                    logger.debug("Found {} inputs", inputElements.size());
                     for (Element inputElement : inputElements) {
                         String attId = inputElement.getAttributeValue("ID");
                         if (attId != null) {
@@ -236,14 +233,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                         .raise();
             }
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        logger.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
     private boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
@@ -251,14 +241,10 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
         String name = formElement.getAttributeValue("name");
         for (String ignore : ignoreList) {
             if (ignore.equals(id)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Ignoring form with id = " + id);
-                }
+                logger.debug("Ignoring form with id = {}", id);
                 return true;
             } else if (ignore.equals(name)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Ignoring form with name = " + name);
-                }
+                logger.debug("Ignoring form with name = {}", name);
                 return true;
             }
         }

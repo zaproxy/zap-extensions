@@ -28,7 +28,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -44,7 +45,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
 
     private static final String debugErrorFile = "xml/debug-error-messages.txt";
     private static final Logger logger =
-            Logger.getLogger(InformationDisclosureDebugErrorsScanRule.class);
+            LogManager.getLogger(InformationDisclosureDebugErrorsScanRule.class);
     private List<String> errors = null;
 
     @Override
@@ -98,7 +99,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         BufferedReader reader = null;
         File f = path.toFile();
         if (!f.exists()) {
-            logger.error("No such file: " + f.getAbsolutePath());
+            logger.error("No such file: {}", f.getAbsolutePath());
             return strings;
         }
         try {
@@ -110,13 +111,13 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
                 }
             }
         } catch (IOException e) {
-            logger.debug("Error on opening/reading debug error file. Error: " + e.getMessage(), e);
+            logger.debug("Error on opening/reading debug error file. Error: {}", e.getMessage(), e);
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    logger.debug("Error on closing the file reader. Error: " + e.getMessage(), e);
+                    logger.debug("Error on closing the file reader. Error: {}", e.getMessage(), e);
                 }
             }
         }

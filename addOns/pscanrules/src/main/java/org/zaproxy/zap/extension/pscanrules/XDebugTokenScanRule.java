@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -41,7 +42,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.xdebugtoken.";
     private static final int PLUGIN_ID = 10056;
 
-    private static final Logger LOGGER = Logger.getLogger(XDebugTokenScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(XDebugTokenScanRule.class);
 
     private static final String X_DEBUG_TOKEN_HEADER = "X-Debug-Token";
     private static final String X_DEBUG_TOKEN_LINK_HEADER = "X-Debug-Token-Link";
@@ -71,14 +72,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
             return;
         }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(
-                    "\tScan of record "
-                            + id
-                            + " took "
-                            + (System.currentTimeMillis() - start)
-                            + " ms");
-        }
+        LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
     private void raiseAlert(HttpMessage msg, String evidence) {

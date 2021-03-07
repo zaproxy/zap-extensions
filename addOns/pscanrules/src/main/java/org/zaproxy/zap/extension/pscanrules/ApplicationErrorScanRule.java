@@ -29,7 +29,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -50,7 +51,7 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.applicationerrors.";
 
-    private static final Logger LOGGER = Logger.getLogger(ApplicationErrorScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ApplicationErrorScanRule.class);
 
     // Name of the file related to pattern's definition list
     private String APP_ERRORS_FILE =
@@ -76,11 +77,9 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
                 matcher = ContentMatcher.getInstance(is);
             } catch (IOException | IllegalArgumentException e) {
                 LOGGER.warn(
-                        "Unable to read "
-                                + getName()
-                                + " input file: "
-                                + APP_ERRORS_FILE
-                                + ". Falling back to ZAP archive.");
+                        "Unable to read {} input file: {}. Falling back to ZAP archive.",
+                        getName(),
+                        APP_ERRORS_FILE);
                 matcher =
                         ContentMatcher.getInstance(
                                 ApplicationErrorScanRule.class.getResourceAsStream(

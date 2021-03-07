@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -42,7 +43,8 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
     private static final String HEADER_NAME = "X-Powered-By";
     private static final int PLUGIN_ID = 10037;
 
-    private static final Logger logger = Logger.getLogger(XPoweredByHeaderInfoLeakScanRule.class);
+    private static final Logger logger =
+            LogManager.getLogger(XPoweredByHeaderInfoLeakScanRule.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -61,14 +63,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
         if (isXPoweredByHeaderExist(msg)) {
             List<String> xpbHeaders = getXPoweredByHeaders(msg);
             raiseAlert(msg, id, xpbHeaders);
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                        "\tScan of record "
-                                + id
-                                + " took "
-                                + (System.currentTimeMillis() - start)
-                                + " ms");
-            }
+            logger.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
         }
     }
 

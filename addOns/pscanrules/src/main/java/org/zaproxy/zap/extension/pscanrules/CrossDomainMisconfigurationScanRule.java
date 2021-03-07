@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.pscanrules;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -40,7 +41,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
 
     /** the logger. it logs stuff. */
-    private static Logger log = Logger.getLogger(CrossDomainMisconfigurationScanRule.class);
+    private static Logger log = LogManager.getLogger(CrossDomainMisconfigurationScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.crossdomain.";
@@ -75,11 +76,9 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         try {
-            if (log.isDebugEnabled())
-                log.debug(
-                        "Checking message "
-                                + msg.getRequestHeader().getURI().getURI()
-                                + " for Cross-Domain misconfigurations");
+            log.debug(
+                    "Checking message {} for Cross-Domain misconfigurations",
+                    msg.getRequestHeader().getURI().toString());
 
             String corsAllowOriginValue =
                     msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN);
@@ -91,12 +90,10 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
             // msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_EXPOSE_HEADERS);
 
             if (corsAllowOriginValue != null && corsAllowOriginValue.equals("*")) {
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "Raising a Medium risk Cross Domain alert on "
-                                    + HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN
-                                    + ": "
-                                    + corsAllowOriginValue);
+                log.debug(
+                        "Raising a Medium risk Cross Domain alert on {}: {}",
+                        HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
+                        corsAllowOriginValue);
                 // Its a Medium, rather than a High (as originally thought), for the following
                 // reasons:
                 // Assumption: if an API is accessible in an unauthenticated manner, it doesn't need
