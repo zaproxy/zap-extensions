@@ -23,7 +23,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JList;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 
@@ -32,7 +33,7 @@ public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
     private ExtensionPlugNHack extension = null;
     private JList<MonitoredPage> clientsList = null;
-    private static Logger log = Logger.getLogger(PopupMenuConfigureClient.class);
+    private static Logger log = LogManager.getLogger(PopupMenuConfigureClient.class);
 
     public PopupMenuConfigureClient(ExtensionPlugNHack extension) {
         super(Constant.messages.getString("plugnhack.clientconf.popup"));

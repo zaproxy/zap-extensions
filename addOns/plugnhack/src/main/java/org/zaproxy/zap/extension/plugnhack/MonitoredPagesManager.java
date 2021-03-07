@@ -28,7 +28,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import javax.swing.SwingWorker;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.model.HistoryReference;
@@ -63,7 +64,7 @@ public class MonitoredPagesManager {
     private ExtensionPlugNHack extension;
     private ClientBreakpointMessageHandler brkMessageHandler = null;
 
-    private static final Logger logger = Logger.getLogger(MonitoredPagesManager.class);
+    private static final Logger logger = LogManager.getLogger(MonitoredPagesManager.class);
 
     public MonitoredPagesManager(ExtensionPlugNHack ext) {
         this.extension = ext;
@@ -80,20 +81,20 @@ public class MonitoredPagesManager {
         } else if (mode.equals(Mode.protect)) {
             if (!msg.isInScope()) {
                 // In protected mode and not in scope
-                logger.debug("URL not in scope in protected mode " + uri);
+                logger.debug("URL not in scope in protected mode {}", uri);
                 return false;
             }
         }
 
         if (msg.getRequestHeader().isImage()) {
-            logger.debug("URL is an image " + uri);
+            logger.debug("URL is an image {}", uri);
             return false;
         }
 
         // Onetime urls take precedence over everything
         for (String otu : this.oneTimeURLs) {
             if (uri.equals(otu)) {
-                logger.debug("URL is a onetime URL " + uri);
+                logger.debug("URL is a onetime URL {}", uri);
                 // Note that this will be removed from the list when we receive the first client
                 // message from it
                 return true;
@@ -103,24 +104,24 @@ public class MonitoredPagesManager {
         // Then exclude regexes
         for (Pattern pattern : this.excludeRegexes) {
             if (pattern.matcher(uri).matches()) {
-                logger.debug("URL excluded " + uri);
+                logger.debug("URL excluded {}", uri);
                 return false;
             }
         }
 
         if (this.monitorAllInScope && msg.isInScope()) {
-            logger.debug("URL in scope, which is being monitored " + uri);
+            logger.debug("URL in scope, which is being monitored {}", uri);
             return true;
         }
 
         for (Pattern pattern : this.includeRegexes) {
             if (pattern.matcher(uri).matches()) {
-                logger.debug("URL included " + uri);
+                logger.debug("URL included {}", uri);
                 return true;
             }
         }
 
-        logger.debug("URL not being monitored " + uri);
+        logger.debug("URL not being monitored {}", uri);
         return false;
     }
 
@@ -336,7 +337,7 @@ public class MonitoredPagesManager {
             String uri = page.getMessage().getRequestHeader().getURI().toString();
             for (String otu : this.oneTimeURLs) {
                 if (uri.equals(otu)) {
-                    logger.debug("Removing onetime URL " + uri);
+                    logger.debug("Removing onetime URL {}", uri);
                     this.oneTimeURLs.remove(otu);
                     break;
                 }
@@ -355,7 +356,7 @@ public class MonitoredPagesManager {
             if (brkMessageHandler != null
                     && !brkMessageHandler.handleMessageReceivedFromClient(msg, false)) {
                 // Drop the message
-                logger.debug("Dropping message " + msg.getData());
+                logger.debug("Dropping message {}", msg.getData());
                 msg.setState(ClientMessage.State.dropped);
                 // Make sure the message table is updated immediatelly
                 this.extension.messageChanged(msg);
@@ -376,10 +377,9 @@ public class MonitoredPagesManager {
                     // Only return messages for this page - simple way to handle multiple browsers
                     // ;)
                     logger.debug(
-                            "Adding queued message for "
-                                    + qmsg.getClientId()
-                                    + " : "
-                                    + qmsg.getData());
+                            "Adding queued message for {} : {}",
+                            qmsg.getClientId(),
+                            qmsg.getData());
                     qmsg.setReceived(new Date());
                     responseSet.add(this.msgToResponse(qmsg, true));
                     qmsg.setState(ClientMessage.State.resent);
@@ -574,8 +574,7 @@ public class MonitoredPagesManager {
     public void send(ClientMessage msg) {
         msg.setState(ClientMessage.State.pending);
         synchronized (this.queuedMessages) {
-            logger.debug(
-                    "Adding message to queue for " + msg.getClientId() + " : " + msg.getData());
+            logger.debug("Adding message to queue for {} : {}", msg.getClientId(), msg.getData());
             this.queuedMessages.add(msg);
         }
     }

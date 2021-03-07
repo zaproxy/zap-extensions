@@ -35,7 +35,8 @@ import java.util.List;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hsqldb.jdbc.JDBCClob;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DbUtils;
@@ -46,7 +47,7 @@ import org.zaproxy.zap.extension.plugnhack.ClientMessage.State;
 public class MessageTable extends ParosAbstractTable {
 
     private static final String TABLE = "PLUGNHACK_MESSAGE";
-    private static final Logger logger = Logger.getLogger(MessageTable.class);
+    private static final Logger logger = LogManager.getLogger(MessageTable.class);
 
     private PreparedStatement psInsert;
     private PreparedStatement psUpdate;
