@@ -1,4 +1,16 @@
---- # OWASP ZAP automation configuration file, for more details see https://www.zaproxy.com/docs/(TBA)
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Automation Framework - Environment
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework - Environment</H1>
+
+This section of the YAML configuration file defines the applications which the rest of the jobs can act on.
+
+<pre>
 env:                                   # The environment, mandatory
   contexts :                           # List of 1 or more contexts, mandatory
     - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
@@ -10,34 +22,8 @@ env:                                   # The environment, mandatory
     failOnError: true                  # If set exit on an error         
     failOnWarning: false               # If set exit on a warning
     progressToStdout: true             # If set will write job progress to stdout
+</pre>
 
-jobs:
-  - type: addOns
-    name: addOns
-    parameters:
-      updateAddOns: true
-    install:                           # A list of non standard add-ons to install from the ZAP Marketplace
-    uninstall:                         # A list of standard add-ons to uninstall
-
-  - type: passiveScan-config
-    name: passiveScan-config
-    parameters:
-
-  - type: spider
-    name: spider
-    parameters:
-      context: 
-      failIfFoundUrlsLessThan: 0
-      url: 
-      warnIfFoundUrlsLessThan: 0
-
-  - type: passiveScan-wait
-    name: passiveScan-wait
-    parameters:
-      maxDuration: 0
-
-  - type: activeScan
-    name: activeScan
-    parameters:
-      context: 
+</BODY>
+</HTML>
 
