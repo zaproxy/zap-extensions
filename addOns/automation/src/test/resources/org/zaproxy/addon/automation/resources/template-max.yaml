@@ -15,7 +15,7 @@ jobs:
   - type: addOns                       # Add-on management
     parameters:
       updateAddOns: true               # Update any add-ons that have new versions
-    install:                           # A list on non standard add-ons to install from the ZAP Marketplace
+    install:                           # A list of non standard add-ons to install from the ZAP Marketplace
     uninstall:                         # A list of standard add-ons to uninstall
   - type: passiveScan-config           # Passive scan configuration
     parameters:

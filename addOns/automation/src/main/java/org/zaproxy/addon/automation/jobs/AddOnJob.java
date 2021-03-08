@@ -139,7 +139,7 @@ public class AddOnJob extends AutomationJob {
     }
 
     public String getExtraConfigFileData() {
-        return "    install:                           # A list on non standard add-ons to install from the ZAP Marketplace\n"
+        return "    install:                           # A list of non standard add-ons to install from the ZAP Marketplace\n"
                 + "    uninstall:                         # A list of standard add-ons to uninstall\n";
     }
 
