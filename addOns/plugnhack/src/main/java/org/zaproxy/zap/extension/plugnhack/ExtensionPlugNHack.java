@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -80,7 +81,7 @@ import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 public class ExtensionPlugNHack extends ExtensionAdaptor
         implements ProxyListener, SessionChangedListener {
 
-    private static final Logger logger = Logger.getLogger(ExtensionPlugNHack.class);
+    private static final Logger logger = LogManager.getLogger(ExtensionPlugNHack.class);
 
     private static final String REPLACE_ROOT_TOKEN = "__REPLACE_ROOT__";
     private static final String REPLACE_ID_TOKEN = "__REPLACE_ID__";
@@ -470,8 +471,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     if (endHeadTag > 0) {
                         endHeadTag++;
                         logger.debug(
-                                "Injecting PnH script into "
-                                        + msg.getRequestHeader().getURI().toString());
+                                "Injecting PnH script into {}",
+                                msg.getRequestHeader().getURI().toString());
                         // this assign the unique id
                         MonitoredPage page = mpm.monitorPage(msg);
                         try {
@@ -502,10 +503,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     }
                     if (!injected) {
                         logger.debug(
-                                "Cant inject PnH script into "
-                                        + msg.getRequestHeader().getURI().toString()
-                                        + " no head tag found "
-                                        + msg.getResponseHeader().getStatusCode());
+                                "Cant inject PnH script into {} no head tag found {}",
+                                msg.getRequestHeader().getURI().toString(),
+                                msg.getResponseHeader().getStatusCode());
                     }
                 }
             } catch (ApiException e) {
@@ -528,7 +528,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     public void setMonitored(MonitoredPage page, boolean monitored) {
     	SiteNode node = Model.getSingleton().getSession().getSiteTree().findNode(page.getMessage());
     	if (node != null) {
-    		logger.debug("setMonitored " + node.getNodeName() + " " + monitored);
+    		logger.debug("setMonitored {} {}", node.getNodeName(), monitored);
     		if (monitored) {
     			node.addCustomIcon(CLIENT_ACTIVE_ICON_RESOURCE, false);
     		} else {
@@ -583,21 +583,19 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     public boolean isSiteBeingMonitored(String site) {
         if (site == null || site.length() == 0) {
-            logger.debug("isSiteBeingMonitored " + site + " returning false (empty site)");
+            logger.debug("isSiteBeingMonitored {} returning false (empty site)", site);
             return false;
         }
         for (MonitoredPage page : this.mpm.getActiveClients()) {
             if (page.getURI().toString().startsWith(site)) {
-                logger.debug("isSiteBeingMonitored " + site + " returning true");
+                logger.debug("isSiteBeingMonitored {} returning true", site);
                 return true;
             }
         }
         logger.debug(
-                "isSiteBeingMonitored "
-                        + site
-                        + " returning false (did not match any of the "
-                        + this.mpm.getActiveClients().size()
-                        + " pages actively monitored)");
+                "isSiteBeingMonitored {} returning false (did not match any of the {} pages actively monitored)",
+                site,
+                this.mpm.getActiveClients().size());
         return false;
     }
 
@@ -671,7 +669,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
      * Called when the specified oracle is invoked in the client, e.g. as a result on an XSS
      */
     public void oracleInvoked(int id) {
-        logger.debug("Oracle invoked for " + id);
+        logger.debug("Oracle invoked for {}", id);
         this.oracleManager.oracleInvoked(id);
     }
 

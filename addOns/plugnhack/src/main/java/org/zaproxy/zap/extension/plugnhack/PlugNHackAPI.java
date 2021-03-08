@@ -25,7 +25,8 @@ import java.security.MessageDigest;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.API;
@@ -39,7 +40,7 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 
 public class PlugNHackAPI extends ApiImplementor {
 
-    private static Logger logger = Logger.getLogger(PlugNHackAPI.class);
+    private static Logger logger = LogManager.getLogger(PlugNHackAPI.class);
     private static final String PREFIX = "pnh";
     private static final String ACTION_MONITOR = "monitor";
     private static final String ACTION_ORACLE = "oracle";
@@ -104,7 +105,7 @@ public class PlugNHackAPI extends ApiImplementor {
 
             ApiResponse resp = this.extension.messageReceived(new ClientMessage(id, json));
             if (response != null) {
-                // logger.debug("Returning " + response.toString(0));
+                // logger.debug("Returning {}", response.toString(0));
                 response = resp;
             }
 
@@ -366,7 +367,7 @@ public class PlugNHackAPI extends ApiImplementor {
             if ((RequestType.action.equals(type)
                             && (ACTION_MONITOR.equals(name) || ACTION_ORACLE.equals(name)))
                     || (RequestType.other.equals(type) && OTHER_MANIFEST.equals(name))) {
-                logger.debug("Adding CORS header for " + origin);
+                logger.debug("Adding CORS header for {}", origin);
                 msg.getResponseHeader().addHeader("Access-Control-Allow-Origin", origin);
             }
         }

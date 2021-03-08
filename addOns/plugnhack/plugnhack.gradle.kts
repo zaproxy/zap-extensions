@@ -6,7 +6,7 @@ description = "Supports the Mozilla Plug-n-Hack standard: https://developer.mozi
 zapAddOn {
     addOnName.set("Plug-n-Hack Configuration")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team")

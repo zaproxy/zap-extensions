@@ -42,7 +42,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -64,7 +65,7 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
     public static final String CLIENTS_MESSAGE_TABLE_NAME = "pnhMessageTable";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ClientsPanel.class);
+    private static final Logger logger = LogManager.getLogger(ClientsPanel.class);
 
     private ExtensionPlugNHack extension;
     private JPanel panelCommand = null;
