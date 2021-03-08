@@ -37,7 +37,8 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -58,7 +59,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
 
     private static final long serialVersionUID = -5830450800029295419L;
-    private static final Logger logger = Logger.getLogger(ManualHttpRequestEditorPanel.class);
+    private static final Logger logger = LogManager.getLogger(ManualHttpRequestEditorPanel.class);
 
     private ZapMenuItem menuItem;
 
