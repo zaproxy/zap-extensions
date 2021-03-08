@@ -25,7 +25,8 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -42,7 +43,8 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10017;
 
-    private static final Logger logger = Logger.getLogger(CrossDomainScriptInclusionScanRule.class);
+    private static final Logger logger =
+            LogManager.getLogger(CrossDomainScriptInclusionScanRule.class);
     private Model model = null;
 
     @Override
@@ -155,7 +157,7 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
                 }
             }
         } catch (URIException e) {
-            logger.debug("Error: " + e.getMessage());
+            logger.debug("Error: {}", e.getMessage());
         }
         return otherDomain;
     }
