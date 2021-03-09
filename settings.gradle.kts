@@ -62,6 +62,7 @@ var addOns = listOf(
     "quickstart",
     "regextester",
     "replacer",
+    "reports",
     "requester",
     "retire",
     "reveal",
