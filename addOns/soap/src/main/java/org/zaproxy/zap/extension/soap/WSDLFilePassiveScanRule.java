@@ -57,9 +57,7 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
             HttpResponseHeader header = msg.getResponseHeader();
             String baseURL = msg.getRequestHeader().getURI().toString().trim();
             String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
-            return baseURL.endsWith(".wsdl")
-                    || contentType.equals("text/xml")
-                    || contentType.equals("application/wsdl+xml");
+            return baseURL.endsWith(".wsdl") || contentType.equals("application/wsdl+xml");
         }
         return false;
     }
