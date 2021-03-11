@@ -1,4 +1,4 @@
-version = "0.0.1"
+version = "0.1.0"
 description = "Automation Framework."
 
 zapAddOn {
@@ -7,6 +7,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/automation-framework/")
     }
 }
 
