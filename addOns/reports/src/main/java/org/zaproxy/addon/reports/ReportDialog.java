@@ -186,8 +186,10 @@ public class ReportDialog extends StandardFieldsDialog {
         String name =
                 ExtensionReports.getNameFromPattern(pattern, getSitesSelector().getSelectedValue());
         Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
-        ((ZapTextField) this.getField(FIELD_REPORT_NAME))
-                .setText(name + "." + template.getExtension());
+        if (template != null) {
+            ((ZapTextField) this.getField(FIELD_REPORT_NAME))
+                    .setText(name + "." + template.getExtension());
+        }
     }
 
     private JScrollPane getNewJScrollPane(Component view, int width, int height) {
