@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.tree.DefaultTreeModel;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -268,6 +269,31 @@ public class ExtensionReports extends ExtensionAdaptor {
                 reportFilename = reportFilename.substring(0, reportFilename.length() - 4);
             }
             reportFilename += ".html";
+        }
+
+        // Handle any resources
+        File resourcesDir = template.getResourcesDir();
+        if (resourcesDir.exists()) {
+            String subDirName;
+            int dotIndex = reportFilename.lastIndexOf(".");
+            if (dotIndex > 0) {
+                subDirName = reportFilename.substring(0, dotIndex);
+            } else {
+                subDirName = reportFilename + "_d";
+            }
+            File subDir = new File(subDirName);
+            int i = 1;
+            while (subDir.exists()) {
+                i += 1;
+                subDir = new File(subDirName + i);
+            }
+            LOGGER.debug(
+                    "Copying resources from "
+                            + resourcesDir.getAbsolutePath()
+                            + " to "
+                            + subDir.getAbsolutePath());
+            FileUtils.copyDirectory(resourcesDir, subDir);
+            context.setVariable("resources", subDir.getName());
         }
 
         File file = new File(reportFilename);

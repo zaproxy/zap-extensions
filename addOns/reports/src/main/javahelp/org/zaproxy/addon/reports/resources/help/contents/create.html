@@ -32,6 +32,18 @@ The Thymeleaf report template.
 <br>
 This should have the same extension that is specified in the template.yaml file (e.g. 'report.md') except if it is a PDF report, in which case "html" should be used (see below).
 
+<H3>Resources</H3>
+The report subdirectory may also include a "resources" directory. 
+If this is present then when a report is generated a subdirectory will be created based on the report name and all of the files in the resources directory will be copied into it.
+<br>
+You should reference the files in the "resources" subdirectory in the following way so that they can be accessed both via the template and by the report when the subdirectory is created:
+<pre>
+   &lt;script th:src="${resources + '/script.js'}" src="resources/script.js"&gt;&lt;/script&gt;
+   &lt;link rel="stylesheet" th:href="${resources + '/style.css'}" href="resources/style.css"&gt;
+   &lt;img th:src="${resources + '/image.png'}" src="resources/image.png"&gt;
+</pre>
+The 'traditional-html-plus' template includes examples of JavaScript, CSS and image resources.
+
 <H2>Data Available</H2>
 The following data items are available to all reports. These can be accessed via the Thymeleaf Standard Dialect, e.g. <code>${reportTitle}</code>  
 

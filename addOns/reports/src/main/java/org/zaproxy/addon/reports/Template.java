@@ -115,4 +115,11 @@ public class Template {
     public void setMode(TemplateMode mode) {
         this.mode = mode;
     }
+
+    public File getResourcesDir() {
+        if (reportTemplateFile == null) {
+            return null;
+        }
+        return new File(this.reportTemplateFile.getParentFile(), "resources");
+    }
 }
