@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Maintenance changes.
 
+### Removed
+- Groovy default template moved to Groovy add-on.
+
 ## [0.5.0] - 2021-02-08
 ### Changed
 - Remove "Advanced" in help page.
