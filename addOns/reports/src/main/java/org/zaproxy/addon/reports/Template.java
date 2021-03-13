@@ -22,7 +22,12 @@ package org.zaproxy.addon.reports;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.text.MessageFormat;
 import java.util.LinkedHashMap;
+import java.util.ResourceBundle;
+import org.parosproxy.paros.Constant;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.yaml.snakeyaml.Yaml;
 
@@ -34,6 +39,9 @@ public class Template {
     private String extension;
     private String format;
     private TemplateMode mode;
+    private ResourceBundle msgs = null;
+    private Boolean hasMsgs = null;
+    private URLClassLoader classloader = null;
 
     public Template(File templateYaml) throws IOException {
         Yaml yaml = new Yaml();
@@ -121,5 +129,48 @@ public class Template {
             return null;
         }
         return new File(this.reportTemplateFile.getParentFile(), "resources");
+    }
+
+    /**
+     * Returns the i18n translation for the given key if present in a local properties file. Will
+     * return null otherwise.
+     *
+     * @param key the i18n key
+     * @param messageParameters any parameters for the associated translation
+     * @return the i18n translation for the given key if present in a local properties file. Will
+     *     return null otherwise.
+     */
+    public String getI18nString(String key, Object[] messageParameters) {
+        if (hasMsgs == null) {
+            try {
+                File dir = this.reportTemplateFile.getParentFile();
+                URL[] urls = {dir.toURI().toURL()};
+                classloader = new URLClassLoader(urls);
+                msgs = ResourceBundle.getBundle("Messages", Constant.getLocale(), classloader);
+                hasMsgs = Boolean.TRUE;
+            } catch (Exception e) {
+                hasMsgs = Boolean.FALSE;
+                return null;
+            }
+        }
+        if (hasMsgs && msgs.containsKey(key)) {
+            String str = msgs.getString(key);
+            if (messageParameters != null && messageParameters.length > 0) {
+                return MessageFormat.format(str, messageParameters);
+            }
+            return str;
+        }
+        return null;
+    }
+
+    void unload() {
+        if (classloader != null) {
+            ResourceBundle.clearCache(classloader);
+            try {
+                classloader.close();
+            } catch (IOException e) {
+                // Ignore
+            }
+        }
     }
 }
