@@ -32,6 +32,13 @@ The Thymeleaf report template.
 <br>
 This should have the same extension that is specified in the template.yaml file (e.g. 'report.md') except if it is a PDF report, in which case "html" should be used (see below).
 
+<H3>Messages.properties</H3>
+The report subdirectory may also include a "Messages.properties" language file for template specific strings localised to English as well as 
+"Message_<i>locale</i>.property" files for localising the strings into other languages.<br>
+The template specific strings should all start with '<code>report.template.</code>'<br>
+The language files may also override the default translations built into the reports add-on.
+
+
 <H3>Resources</H3>
 The report subdirectory may also include a "resources" directory. 
 If this is present then when a report is generated a subdirectory will be created based on the report name and all of the files in the resources directory will be copied into it.

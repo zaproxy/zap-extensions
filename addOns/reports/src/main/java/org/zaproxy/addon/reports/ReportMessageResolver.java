@@ -25,15 +25,29 @@ import org.thymeleaf.messageresolver.AbstractMessageResolver;
 
 public class ReportMessageResolver extends AbstractMessageResolver {
 
+    private Template template;
+
+    public ReportMessageResolver(Template template) {
+        this.template = template;
+    }
+
     @Override
     public String resolveMessage(
             ITemplateContext context, Class<?> origin, String key, Object[] messageParameters) {
+        String str = template.getI18nString(key, messageParameters);
+        if (str != null) {
+            return str;
+        }
         return Constant.messages.getString(ExtensionReports.PREFIX + "." + key, messageParameters);
     }
 
     @Override
     public String createAbsentMessageRepresentation(
             ITemplateContext context, Class<?> origin, String key, Object[] messageParameters) {
+        String str = template.getI18nString(key, messageParameters);
+        if (str != null) {
+            return str;
+        }
         return Constant.messages.getString(ExtensionReports.PREFIX + "." + key, messageParameters);
     }
 }

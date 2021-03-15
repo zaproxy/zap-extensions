@@ -108,6 +108,11 @@ public class ExtensionReports extends ExtensionAdaptor {
     }
 
     @Override
+    public void unload() {
+        this.getTemplateMap().values().forEach(Template::unload);
+    }
+
+    @Override
     public boolean canUnload() {
         return true;
     }
@@ -254,7 +259,7 @@ public class ExtensionReports extends ExtensionAdaptor {
         templateResolver.setTemplateMode(template.getMode());
         templateEngine.setTemplateResolver(templateResolver);
 
-        templateEngine.setMessageResolver(new ReportMessageResolver());
+        templateEngine.setMessageResolver(new ReportMessageResolver(template));
 
         Context context = new Context();
         context.setVariable("alertTree", reportData.getAlertTreeRootNode());
