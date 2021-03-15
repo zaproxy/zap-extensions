@@ -4,6 +4,13 @@ plugins {
     id("org.sonarqube") version "3.0"
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 apply(from = "$rootDir/gradle/ci.gradle.kts")
 apply(from = "$rootDir/gradle/lgtm.gradle.kts")
 
