@@ -89,12 +89,13 @@ public class AutomationJobUnitTest {
         Map<String, String> params = job.getConfigParameters(tpc, "getTestParam");
 
         // Then
-        assertThat(params.size(), is(equalTo(5)));
+        assertThat(params.size(), is(equalTo(6)));
         assertThat(params.containsKey("stringParam"), is(equalTo(true)));
         assertThat(params.containsKey("integerParam"), is(equalTo(true)));
         assertThat(params.containsKey("intParam"), is(equalTo(true)));
         assertThat(params.containsKey("booleanParam"), is(equalTo(true)));
         assertThat(params.containsKey("boolParam"), is(equalTo(true)));
+        assertThat(params.containsKey("enumParam"), is(equalTo(true)));
     }
 
     @Test
@@ -119,10 +120,11 @@ public class AutomationJobUnitTest {
         Map<String, String> params = job.getConfigParameters(tpc, "getTestParam");
 
         // Then
-        assertThat(params.size(), is(equalTo(3)));
+        assertThat(params.size(), is(equalTo(4)));
         assertThat(params.containsKey("stringParam"), is(equalTo(true)));
         assertThat(params.containsKey("intParam"), is(equalTo(true)));
         assertThat(params.containsKey("booleanParam"), is(equalTo(true)));
+        assertThat(params.containsKey("enumParam"), is(equalTo(true)));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -137,6 +139,7 @@ public class AutomationJobUnitTest {
         Integer integerParamValue = Integer.valueOf(7);
         boolean boolParamValue = true;
         Boolean booleanParamValue = Boolean.FALSE;
+        TestParam.Option enumParamValue = TestParam.Option.FIRST_OPTION;
 
         Map map = new HashMap();
         map.put("stringParam", stringParamValue);
@@ -144,6 +147,7 @@ public class AutomationJobUnitTest {
         map.put("integerParam", integerParamValue.toString());
         map.put("boolParam", Boolean.toString(boolParamValue));
         map.put("booleanParam", booleanParamValue.toString());
+        map.put("enumParam", enumParamValue.toString());
         LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         // When
         job.applyParameters(tpc, "getTestParam", params, progress);
@@ -156,6 +160,28 @@ public class AutomationJobUnitTest {
         assertThat(tpc.getTestParam().getIntegerParam(), is(equalTo(integerParamValue)));
         assertThat(tpc.getTestParam().isBoolParam(), is(equalTo(boolParamValue)));
         assertThat(tpc.getTestParam().getBooleanParam(), is(equalTo(booleanParamValue)));
+        assertThat(tpc.getTestParam().getEnumParam(), is(equalTo(enumParamValue)));
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Test
+    public void shouldSetCaseInsensitiveEnum() {
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl();
+        AutomationProgress progress = new AutomationProgress();
+        TestParam.Option enumParamValue = TestParam.Option.SECOND_OPTION;
+        Map map = new HashMap();
+        map.put("enumParam", enumParamValue.toString().toLowerCase(Locale.ROOT));
+        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+
+        // When
+        job.applyParameters(tpc, "getTestParam", params, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(tpc.getTestParam().getEnumParam(), is(equalTo(enumParamValue)));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -262,6 +288,27 @@ public class AutomationJobUnitTest {
         assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.options.badbool!")));
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    public void shouldFailOnBadEnum() {
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl();
+        AutomationProgress progress = new AutomationProgress();
+        Map map = new HashMap();
+        map.put("enumParam", "Invalid enum value");
+        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
+
+        // When
+        job.applyParameters(tpc, "getTestParam", params, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.options.badenum!")));
+    }
+
     @Test
     public void shouldIgnoreNullParams() {
         // Given
@@ -306,6 +353,7 @@ public class AutomationJobUnitTest {
                         + "    parameters:\n"
                         + "      boolParam: false\n"
                         + "      booleanParam: \n"
+                        + "      enumParam: \n"
                         + "      intParam: 0\n"
                         + "      integerParam: \n"
                         + "      stringParam: \n";
@@ -330,6 +378,7 @@ public class AutomationJobUnitTest {
                         + "    parameters:\n"
                         + "      boolParam: true\n"
                         + "      booleanParam: false\n"
+                        + "      enumParam: SECOND_OPTION\n"
                         + "      intParam: 8\n"
                         + "      integerParam: 9\n"
                         + "      stringParam: testStr\n";
@@ -342,6 +391,7 @@ public class AutomationJobUnitTest {
         tpc.getTestParam().setIntParam(8);
         tpc.getTestParam().setIntegerParam(9);
         tpc.getTestParam().setStringParam("testStr");
+        tpc.getTestParam().setEnumParam(TestParam.Option.SECOND_OPTION);
 
         // When
         String data = job.getConfigFileData();
@@ -432,12 +482,19 @@ public class AutomationJobUnitTest {
     @SuppressWarnings("unused")
     private static class TestParam {
 
+        private enum Option {
+            FIRST_OPTION,
+            SECOND_OPTION,
+            THIRD_OPTION
+        }
+
         private String stringParam;
         private Integer integerParam;
         private int intParam;
         private Boolean booleanParam;
         private boolean boolParam;
         private List<String> listStringPram;
+        private Option enumParam;
 
         public String getStringParam() {
             return stringParam;
@@ -485,6 +542,14 @@ public class AutomationJobUnitTest {
 
         public void setListStringPram(List<String> listStringPram) {
             this.listStringPram = listStringPram;
+        }
+
+        public Option getEnumParam() {
+            return enumParam;
+        }
+
+        public void setEnumParam(Option enumParam) {
+            this.enumParam = enumParam;
         }
 
         public boolean getWithOneParam(String test) {
