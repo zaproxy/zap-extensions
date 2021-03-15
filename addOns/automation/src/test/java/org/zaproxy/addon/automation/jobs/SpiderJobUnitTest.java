@@ -146,12 +146,13 @@ public class SpiderJobUnitTest {
                 job.getConfigParameters(new SpiderParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(17)));
+        assertThat(params.size(), is(equalTo(18)));
         assertThat(params.containsKey("maxDuration"), is(equalTo(true)));
         assertThat(params.containsKey("maxDepth"), is(equalTo(true)));
         assertThat(params.containsKey("maxChildren"), is(equalTo(true)));
         assertThat(params.containsKey("acceptCookies"), is(equalTo(true)));
         assertThat(params.containsKey("handleODataParametersVisited"), is(equalTo(true)));
+        assertThat(params.containsKey("handleParameters"), is(equalTo(true)));
         assertThat(params.containsKey("maxParseSizeBytes"), is(equalTo(true)));
         assertThat(params.containsKey("parseComments"), is(equalTo(true)));
         assertThat(params.containsKey("parseGit"), is(equalTo(true)));

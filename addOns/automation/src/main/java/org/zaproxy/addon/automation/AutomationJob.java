@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import org.apache.commons.lang3.EnumUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 
@@ -91,6 +92,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         applyParameters(this.getParamMethodObject(), this.getParamMethodName(), params, progress);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected void applyParameters(
             Object obj,
             String optionsGetterName,
@@ -142,11 +144,9 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                 if (optMethod != null) {
                     if (optMethod.getParameterCount() > 0) {
                         Object value = null;
+                        Class<?> paramType = optMethod.getParameterTypes()[0];
                         try {
-                            value =
-                                    stringToType(
-                                            param.getValue().toString(),
-                                            optMethod.getParameterTypes()[0]);
+                            value = stringToType(param.getValue().toString(), paramType);
                         } catch (NumberFormatException e1) {
                             progress.error(
                                     Constant.messages.getString(
@@ -156,12 +156,21 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                                             param.getValue()));
                             continue;
                         } catch (IllegalArgumentException e1) {
-                            progress.error(
-                                    Constant.messages.getString(
-                                            "automation.error.options.badbool",
-                                            this.getType(),
-                                            key,
-                                            param.getValue()));
+                            if (Enum.class.isAssignableFrom(paramType)) {
+                                progress.error(
+                                        Constant.messages.getString(
+                                                "automation.error.options.badenum",
+                                                this.getType(),
+                                                key,
+                                                EnumUtils.getEnumList((Class<Enum>) paramType)));
+                            } else {
+                                progress.error(
+                                        Constant.messages.getString(
+                                                "automation.error.options.badbool",
+                                                this.getType(),
+                                                key,
+                                                param.getValue()));
+                            }
                             continue;
                         }
                         if (value != null) {
@@ -206,7 +215,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private <T> T stringToType(String str, T t) {
         if (String.class.equals(t)) {
             return (T) str;
@@ -221,6 +230,13 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                 return (T) Boolean.FALSE;
             }
             throw new IllegalArgumentException("Invalid boolean value: " + str);
+        } else if (Enum.class.isAssignableFrom((Class<T>) t)) {
+            T enumType = (T) EnumUtils.getEnumIgnoreCase((Class<Enum>) t, str);
+            if (enumType != null) {
+                return enumType;
+            }
+            throw new IllegalArgumentException(
+                    "Enum value must be one of " + EnumUtils.getEnumList((Class<Enum>) t));
         }
 
         return null;
@@ -239,6 +255,8 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             return val.toString();
         } else if (boolean.class.isInstance(val)) {
             return val.toString();
+        } else if (Enum.class.isAssignableFrom(val.getClass())) {
+            return val.toString();
         }
         return null;
     }
@@ -250,7 +268,8 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                     || Integer.class.equals(c)
                     || int.class.equals(c)
                     || Boolean.class.equals(c)
-                    || boolean.class.equals(c)) {
+                    || boolean.class.equals(c)
+                    || Enum.class.isAssignableFrom(c)) {
                 return true;
             }
         }
