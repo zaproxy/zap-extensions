@@ -49,6 +49,7 @@ public class ReportParam extends AbstractParam {
 
     private static final String DEFAULT_TEMPLATE = "traditional-html";
     public static final String DEFAULT_NAME_PATTERN = "{{yyyy-MM-dd}}-ZAP-Report-[[site]]";
+    public static final String DEFAULT_TEMPLATES_DIR = Constant.getZapHome() + "/reports/";
 
     private String title;
     private String description;
@@ -90,9 +91,7 @@ public class ReportParam extends AbstractParam {
         }
         try {
             templateDirectory =
-                    getConfig()
-                            .getString(
-                                    PARAM_TEMPLATE_DIRECTORY, Constant.getZapHome() + "/reports/");
+                    getConfig().getString(PARAM_TEMPLATE_DIRECTORY, DEFAULT_TEMPLATES_DIR);
             File dir = new File(templateDirectory);
             if (!dir.exists() || !dir.isDirectory()) {
                 LOGGER.error(

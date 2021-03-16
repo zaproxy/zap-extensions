@@ -68,6 +68,8 @@ public class ExtensionReports extends ExtensionAdaptor {
     // The i18n prefix
     public static final String PREFIX = "reports";
 
+    public static final String TEMPLATE_DEFN_FILENAME = "template.yaml";
+
     private static final String RESOURCES_DIR = "/org/zaproxy/addon/reports/resources/";
 
     private static final ImageIcon REPORT_ICON =
@@ -107,9 +109,13 @@ public class ExtensionReports extends ExtensionAdaptor {
         return reportParam;
     }
 
+    private void unloadTemplates() {
+        this.getTemplateMap().values().forEach(Template::unload);
+    }
+
     @Override
     public void unload() {
-        this.getTemplateMap().values().forEach(Template::unload);
+        this.unloadTemplates();
     }
 
     @Override
@@ -347,27 +353,52 @@ public class ExtensionReports extends ExtensionAdaptor {
         return alertCounts;
     }
 
-    private Map<String, Template> getTemplateMap() {
-        if (templateMap == null) {
-            templateMap = new HashMap<>();
-            File dir = new File(this.getReportParam().getTemplateDirectory());
-            File templateYaml;
-            Template template;
-            for (File file : dir.listFiles()) {
-                if (file.isDirectory()) {
-                    templateYaml = new File(file, "template.yaml");
-                    if (templateYaml.exists() && templateYaml.canRead()) {
-                        try {
-                            template = new Template(templateYaml);
-                            templateMap.put(template.getDisplayName(), template);
-                        } catch (IOException e) {
-                            LOGGER.error(
-                                    "Failed to access template definition "
-                                            + templateYaml.getAbsolutePath());
-                        }
+    public static boolean isTemplateDir(File dir) {
+        if (!dir.isDirectory()) {
+            return false;
+        }
+        File templateYaml;
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                templateYaml = new File(file, TEMPLATE_DEFN_FILENAME);
+                if (templateYaml.exists() && templateYaml.canRead()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public int reloadTemplates(File templateDir) {
+        this.unloadTemplates();
+        return loadTemplateDir(templateDir);
+    }
+
+    private int loadTemplateDir(File dir) {
+        templateMap = new HashMap<>();
+        File templateYaml;
+        Template template;
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                templateYaml = new File(file, TEMPLATE_DEFN_FILENAME);
+                if (templateYaml.exists() && templateYaml.canRead()) {
+                    try {
+                        template = new Template(templateYaml);
+                        templateMap.put(template.getDisplayName(), template);
+                    } catch (IOException e) {
+                        LOGGER.error(
+                                "Failed to access template definition "
+                                        + templateYaml.getAbsolutePath());
                     }
                 }
             }
+        }
+        return templateMap.size();
+    }
+
+    private Map<String, Template> getTemplateMap() {
+        if (templateMap == null) {
+            loadTemplateDir(new File(this.getReportParam().getTemplateDirectory()));
         }
         return templateMap;
     }

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for resources such as JavaScript and images
 - Support for template specific i18n property files
+- Reload templates on dir change and handle no reports
 
 ## [0.0.1] - 2021-03-09
 
