@@ -194,7 +194,7 @@ public class WSDLCustomParser {
                 }
             }
             /* Sends a request to retrieve remote WSDL file's content. */
-            HttpMessage httpRequest = new HttpMessage(new URI(url, false));
+            HttpMessage httpRequest = new HttpMessage(new URI(url, true));
             HttpSender sender =
                     new HttpSender(
                             Model.getSingleton().getOptionsParam().getConnectionParam(),
@@ -529,7 +529,7 @@ public class WSDLCustomParser {
             // LOG.info("[ExtensionImportWSDL] "+writerSOAPReq);
             /* HTTP Request. */
             String endpointLocation = port.getAddress().getLocation();
-            HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, false));
+            HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, true));
             /* Body. */
             HttpRequestBody httpReqBody = httpRequest.getRequestBody();
             /* [MARK] Not sure if all servers would handle this encoding type. */
