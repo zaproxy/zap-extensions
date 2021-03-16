@@ -1,0 +1,13 @@
+env:
+  contexts:
+    - name: example
+      url: https://www.example.com/
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  - type: job
+    parameters:
+      boolParam: invalid                   # We want an error when setting this boolean variable, which is why this is not "true" or "false".

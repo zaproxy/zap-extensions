@@ -208,6 +208,11 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 }
                 job.applyParameters((LinkedHashMap<?, ?>) paramsObj, progress);
 
+                // In case errors or warnings are encountered in the applyParameters() call above
+                if (env.isTimeToQuit()) {
+                    break;
+                }
+
                 progress.info(
                         Constant.messages.getString("automation.info.jobstart", job.getType()));
                 job.runJob(env, jobData, progress);
