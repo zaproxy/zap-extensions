@@ -47,6 +47,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ExtensionImportWSDL extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionImportWSDL";
+    public static final String STATS_ADDED_URLS = "soap.urls.added";
 
     private static final Logger LOG = Logger.getLogger(ExtensionImportWSDL.class);
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";

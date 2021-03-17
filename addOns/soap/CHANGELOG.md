@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Accept only encoded URLs.
 - Add support for the Automation Framework.
+- Add support for statistics for the number of added URLs (or SOAP Actions).
 
 ### Fixed
 - Fix detection of WSDL files (Issue 6440).

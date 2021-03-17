@@ -69,6 +69,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.zap.utils.Stats;
 
 public class WSDLCustomParser {
 
@@ -618,6 +619,7 @@ public class WSDLCustomParser {
                                 .getSession()
                                 .getSiteTree()
                                 .addPath(historyRef, message);
+                        Stats.incCounter(ExtensionImportWSDL.STATS_ADDED_URLS);
                     });
         }
     }
