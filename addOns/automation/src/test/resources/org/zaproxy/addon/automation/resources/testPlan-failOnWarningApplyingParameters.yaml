@@ -1,0 +1,13 @@
+env:
+  contexts:
+    - name: example
+      url: https://www.example.com/
+  parameters:
+    failOnError: false
+    failOnWarning: true
+    progressToStdout: true
+
+jobs:
+  - type: job
+    parameters:
+      invalidParam: true                   # Supply an invalid parameter to trigger a warning in the call to AutomationJob#applyParameters.

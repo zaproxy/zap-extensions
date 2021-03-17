@@ -408,6 +408,111 @@ public class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(job3.wasRun(), is(equalTo(true)));
     }
 
+    @Test
+    public void shouldFailPlanOnErrorApplyingParameters() {
+        // Given
+        AutomationJobImpl job =
+                new AutomationJobImpl() {
+                    @Override
+                    public String getType() {
+                        return "job";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.EXPLORE;
+                    }
+
+                    @Override
+                    public Object getParamMethodObject() {
+                        return new TestParamContainer();
+                    }
+
+                    @Override
+                    public String getParamMethodName() {
+                        return "getTestParam";
+                    }
+                };
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        Path filePath = getResourcePath("resources/testPlan-failOnErrorApplyingParameters.yaml");
+
+        // When
+        extAuto.registerAutomationJob(job);
+        AutomationProgress progress =
+                extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.options.badbool!")));
+        assertThat(job.wasRun(), is(equalTo(false)));
+    }
+
+    @Test
+    public void shouldFailPlanOnWarningApplyingParameters() {
+        // Given
+        AutomationJobImpl job =
+                new AutomationJobImpl() {
+                    @Override
+                    public String getType() {
+                        return "job";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.EXPLORE;
+                    }
+
+                    @Override
+                    public Object getParamMethodObject() {
+                        return new TestParamContainer();
+                    }
+
+                    @Override
+                    public String getParamMethodName() {
+                        return "getTestParam";
+                    }
+                };
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        Path filePath = getResourcePath("resources/testPlan-failOnWarningApplyingParameters.yaml");
+
+        // When
+        extAuto.registerAutomationJob(job);
+        AutomationProgress progress =
+                extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
+        assertThat(job.wasRun(), is(equalTo(false)));
+    }
+
+    // Methods are accessed via reflection
+    @SuppressWarnings("unused")
+    private static class TestParamContainer {
+
+        private TestParam testParam = new TestParam();
+
+        public TestParam getTestParam() {
+            return testParam;
+        }
+    }
+
+    // Methods are accessed via reflection
+    @SuppressWarnings("unused")
+    private static class TestParam {
+
+        private boolean boolParam;
+
+        public void setBoolParam(boolean boolParam) {
+            this.boolParam = boolParam;
+        }
+    }
+
     private static class AutomationJobImpl extends AutomationJob {
 
         private boolean wasRun = false;
