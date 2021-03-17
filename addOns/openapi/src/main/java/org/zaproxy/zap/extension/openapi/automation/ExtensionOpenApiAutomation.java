@@ -41,6 +41,7 @@ public class ExtensionOpenApiAutomation extends ExtensionAdaptor {
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
         dependencies.add(ExtensionOpenApi.class);
+        dependencies.add(ExtensionAutomation.class);
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }
 

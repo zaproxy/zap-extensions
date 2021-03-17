@@ -20,10 +20,14 @@
 package org.zaproxy.zap.extension.openapi.automation;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.io.IOUtils;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -35,10 +39,11 @@ import org.zaproxy.zap.extension.openapi.OpenApiResults;
 public class OpenApiJob extends AutomationJob {
 
     private static final String JOB_NAME = "openapi";
+    private static final String RESOURCES_DIR = "/org/zaproxy/zap/extension/openapi/resources/";
 
-    private static final String PARAM_API_URL = "apiurl";
-    private static final String PARAM_API_FILE = "apifile";
-    private static final String PARAM_TARGET_URL = "targeturl";
+    private static final String PARAM_API_URL = "apiUrl";
+    private static final String PARAM_API_FILE = "apiFile";
+    private static final String PARAM_TARGET_URL = "targetUrl";
 
     private ExtensionOpenApi extOpenApi;
 
@@ -140,11 +145,39 @@ public class OpenApiJob extends AutomationJob {
     }
 
     public String getTemplateDataMin() {
-        return ExtensionOpenApi.getResourceAsString(this.getType() + "-min.yaml");
+        return getResourceAsString(this.getType() + "-min.yaml");
     }
 
     public String getTemplateDataMax() {
-        return ExtensionOpenApi.getResourceAsString(this.getType() + "-max.yaml");
+        return getResourceAsString(this.getType() + "-max.yaml");
+    }
+
+    private static String getResourceAsString(String name) {
+        try {
+            return IOUtils.toString(
+                    OpenApiJob.class.getResourceAsStream(RESOURCES_DIR + name),
+                    StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            CommandLine.error(
+                    Constant.messages.getString(
+                            "openapi.automation.error.nofile", RESOURCES_DIR + name));
+        }
+        return "";
+    }
+
+    // For Unit Tests
+    protected String getApiFile() {
+        return apiFile;
+    }
+
+    // For Unit Tests
+    protected String getApiUrl() {
+        return apiUrl;
+    }
+
+    // For Unit Tests
+    protected String getTargetUrl() {
+        return targetUrl;
     }
 
     @Override
