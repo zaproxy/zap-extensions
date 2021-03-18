@@ -505,8 +505,10 @@ public class OpenApiUnitTest extends AbstractServerTest {
         assertEquals(null, accessedUrls.get("DELETE http://" + host + "/PetStore/pet/10"));
         assertTrue(
                 accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/10/uploadImage"));
-        assertEquals(
-                null, accessedUrls.get("POST http://" + host + "/PetStore/pet/10/uploadImage"));
+        assertTrue(
+                accessedUrls
+                        .get("POST http://" + host + "/PetStore/pet/10/uploadImage")
+                        .contains("multipart/form-data; boundary="));
         assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
         assertEquals(null, accessedUrls.get("GET http://" + host + "/PetStore/store/inventory"));
         assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/store/order"));
@@ -663,7 +665,11 @@ public class OpenApiUnitTest extends AbstractServerTest {
         assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/pet/32"));
         assertTrue(
                 accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/32/uploadImage"));
-        assertEquals("", accessedUrls.get("POST http://" + host + "/PetStore/pet/32/uploadImage"));
+        assertTrue(
+                accessedUrls
+                        .get("POST http://" + host + "/PetStore/pet/32/uploadImage")
+                        .contains(
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tortor efficitur,ultricies augue ut, gravida mauris. Orci varius natoque penatibus et magnis dis parturient montes,nascetur ridiculus mus. Fusce vitae odio pellentesque, molestie enim a, aliquam ligula. Suspendissecongue cursus tortor, porttitor semper nisl auctor vel. Duis non est nec leo pharetra ultricies.In hac habitasse platea dictumst. Maecenas nunc odio, mollis non magna quis, congue maximus ex. Aliquam erat volutpat."));
         assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
         assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/store/inventory"));
         assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/store/order"));

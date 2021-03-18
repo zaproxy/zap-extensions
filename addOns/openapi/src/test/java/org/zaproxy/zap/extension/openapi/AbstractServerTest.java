@@ -77,7 +77,11 @@ public abstract class AbstractServerTest extends AbstractOpenApiTest {
         assertTrue(accessedUrls.containsKey("DELETE " + baseUrl + "/pet/10"));
         assertEquals("", accessedUrls.get("DELETE " + baseUrl + "/pet/10"));
         assertTrue(accessedUrls.containsKey("POST " + baseUrl + "/pet/10/uploadImage"));
-        assertEquals("", accessedUrls.get("POST " + baseUrl + "/pet/10/uploadImage"));
+        assertTrue(
+                accessedUrls
+                        .get("POST " + baseUrl + "/pet/10/uploadImage")
+                        .contains(
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tortor efficitur,ultricies augue ut, gravida mauris. Orci varius natoque penatibus et magnis dis parturient montes,nascetur ridiculus mus. Fusce vitae odio pellentesque, molestie enim a, aliquam ligula. Suspendissecongue cursus tortor, porttitor semper nisl auctor vel. Duis non est nec leo pharetra ultricies.In hac habitasse platea dictumst. Maecenas nunc odio, mollis non magna quis, congue maximus ex. Aliquam erat volutpat."));
         assertTrue(accessedUrls.containsKey("GET " + baseUrl + "/store/inventory"));
         assertEquals("", accessedUrls.get("GET " + baseUrl + "/store/inventory"));
         assertTrue(accessedUrls.containsKey("POST " + baseUrl + "/store/order"));

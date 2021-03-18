@@ -101,7 +101,9 @@ public class HeadersGenerator {
 
         for (String type : operation.getRequestBody().getContent().keySet()) {
             String typeLc = type.toLowerCase(Locale.ROOT);
-            if (typeLc.contains("json") || typeLc.contains("x-www-form-urlencoded")) {
+            if (typeLc.contains("json")
+                    || typeLc.contains("x-www-form-urlencoded")
+                    || typeLc.contains("multipart")) {
                 headers.add(new HttpHeaderField(HttpHeader.CONTENT_TYPE, type));
                 break;
             }

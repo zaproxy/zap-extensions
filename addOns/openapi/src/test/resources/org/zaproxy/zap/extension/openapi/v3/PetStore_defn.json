@@ -409,14 +409,23 @@
             ],
             "requestBody": {
                "content": {
-                  "application/octet-stream": {
-                     "schema": {
-                        "type": "string",
-                        "format": "binary"
+                 "multipart/form-data": {
+                   "schema": {
+                     "properties": {
+                       "additionalMetadata": {
+                         "type": "string",
+                         "description": "Additional data to pass to server"
+                       },
+                       "file": {
+                         "type": "string",
+                         "description": "file to upload",
+                         "format": "binary"
+                       }
                      }
-                  }
+                   }
+                 }
                }
-            }
+             }
          }
       },
       "/store/inventory": {

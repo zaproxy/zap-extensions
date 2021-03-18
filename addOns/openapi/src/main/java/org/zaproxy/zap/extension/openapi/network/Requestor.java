@@ -59,7 +59,16 @@ public class Requestor {
                 HttpMessage httpRequest = new HttpMessage(new URI(url, false));
                 httpRequest.getRequestHeader().setMethod(requestModel.getMethod().name());
                 for (HttpHeaderField hhf : requestModel.getHeaders()) {
-                    httpRequest.getRequestHeader().setHeader(hhf.getName(), hhf.getValue());
+                    if (hhf.getValue().contains("multipart/form-data")) {
+                        String requestBody = requestModel.getBody();
+                        String boundary = requestBody.substring(2, 38);
+                        httpRequest
+                                .getRequestHeader()
+                                .setHeader(
+                                        hhf.getName(), hhf.getValue() + "; boundary=" + boundary);
+                    } else {
+                        httpRequest.getRequestHeader().setHeader(hhf.getName(), hhf.getValue());
+                    }
                 }
                 httpRequest.getRequestBody().setBody(requestModel.getBody());
                 httpRequest
