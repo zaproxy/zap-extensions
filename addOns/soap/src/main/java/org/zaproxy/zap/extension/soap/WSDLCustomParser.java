@@ -69,6 +69,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.zap.utils.Stats;
 
 public class WSDLCustomParser {
 
@@ -194,7 +195,7 @@ public class WSDLCustomParser {
                 }
             }
             /* Sends a request to retrieve remote WSDL file's content. */
-            HttpMessage httpRequest = new HttpMessage(new URI(url, false));
+            HttpMessage httpRequest = new HttpMessage(new URI(url, true));
             HttpSender sender =
                     new HttpSender(
                             Model.getSingleton().getOptionsParam().getConnectionParam(),
@@ -529,7 +530,7 @@ public class WSDLCustomParser {
             // LOG.info("[ExtensionImportWSDL] "+writerSOAPReq);
             /* HTTP Request. */
             String endpointLocation = port.getAddress().getLocation();
-            HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, false));
+            HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, true));
             /* Body. */
             HttpRequestBody httpReqBody = httpRequest.getRequestBody();
             /* [MARK] Not sure if all servers would handle this encoding type. */
@@ -618,6 +619,7 @@ public class WSDLCustomParser {
                                 .getSession()
                                 .getSiteTree()
                                 .addPath(historyRef, message);
+                        Stats.incCounter(ExtensionImportWSDL.STATS_ADDED_URLS);
                     });
         }
     }

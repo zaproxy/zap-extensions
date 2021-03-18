@@ -1,0 +1,4 @@
+  - type: soap                         # SOAP WSDL import
+    parameters:
+      wsdlFile:                        # String: Local file path of the WSDL, default: null, no definition will be imported
+      wsdlUrl:                         # String: URL pointing to the WSDL, default: null, no definition will be imported

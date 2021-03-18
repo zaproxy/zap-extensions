@@ -68,7 +68,7 @@ public class SoapAPI extends ApiImplementor {
         } else if (ACTION_IMPORT_URL.equals(name)) {
             String url = params.getString(PARAM_URL);
             try {
-                new URI(url, false);
+                new URI(url, true);
             } catch (Exception e) {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
             }
