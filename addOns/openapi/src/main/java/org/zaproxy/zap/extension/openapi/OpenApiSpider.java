@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.openapi;
 import java.util.Locale;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -36,7 +37,7 @@ import org.zaproxy.zap.spider.parser.SpiderParser;
 
 public class OpenApiSpider extends SpiderParser {
 
-    private static final Logger log = Logger.getLogger(OpenApiSpider.class);
+    private static final Logger log = LogManager.getLogger(OpenApiSpider.class);
     private Requestor requestor;
     private ValueGenerator valGen = null;
 
@@ -83,7 +84,7 @@ public class OpenApiSpider extends SpiderParser {
         } catch (Exception e) {
             return false;
         }
-        log.debug("Cant parse " + message.getRequestHeader().getURI());
+        log.debug("Can't parse {}", message.getRequestHeader().getURI());
         return false;
     }
 

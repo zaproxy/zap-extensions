@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -67,7 +68,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_IMPORT_URL_IDX = 1;
     private static final int ARG_TARGET_URL_IDX = 2;
 
-    private static final Logger LOG = Logger.getLogger(ExtensionOpenApi.class);
+    private static final Logger LOG = LogManager.getLogger(ExtensionOpenApi.class);
 
     public ExtensionOpenApi() {
         super(NAME);

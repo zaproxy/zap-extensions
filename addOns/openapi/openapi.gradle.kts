@@ -6,12 +6,11 @@ description = "Imports and spiders OpenAPI definitions."
 zapAddOn {
     addOnName.set("OpenAPI Support")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.9.0")
+    zapVersion.set("2.10.0")
 
     manifest {
         author.set("ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak, Marcin Spiewak, and SDA SE Open Industry Solutions")
         url.set("https://www.zaproxy.org/docs/desktop/addons/openapi-support/")
-        notBeforeVersion.set("2.10.0")
         extensions {
             register("org.zaproxy.zap.extension.openapi.automation.ExtensionOpenApiAutomation") {
                 classnames {
@@ -50,10 +49,11 @@ dependencies {
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
-    implementation("org.slf4j:slf4j-log4j12:1.7.30") {
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.0") {
         // Provided by ZAP.
-        exclude(group = "log4j")
+        exclude(group = "org.apache.logging.log4j")
     }
 
+    testImplementation("org.apache.logging.log4j:log4j-core:2.14.0")
     testImplementation(project(":testutils"))
 }
