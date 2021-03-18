@@ -20,6 +20,7 @@
 package org.zaproxy.addon.reports;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +35,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.ConfigurationException;
@@ -94,6 +97,7 @@ public class ReportDialog extends StandardFieldsDialog {
 
     private JList<Context> contextsSelector;
     private JList<String> sitesSelector;
+    private String currentTemplateDir;
 
     public ReportDialog(ExtensionReports ext, Frame owner) {
         super(owner, "reports.dialog.title", DisplayUtils.getScaledDimension(600, 500), TAB_LABELS);
@@ -116,12 +120,96 @@ public class ReportDialog extends StandardFieldsDialog {
         // All these first as they are used by other fields
         this.addTextField(
                 TAB_OPTIONS, FIELD_REPORT_NAME_PATTERN, reportParam.getReportNamePattern());
+
+        currentTemplateDir = reportParam.getTemplateDirectory();
         this.addFileSelectField(
                 TAB_OPTIONS,
                 FIELD_TEMPLATE_DIR,
-                new File(reportParam.getTemplateDirectory()),
+                new File(currentTemplateDir),
                 JFileChooser.DIRECTORIES_ONLY,
                 null);
+        ZapTextField templateDirField = (ZapTextField) this.getField(FIELD_TEMPLATE_DIR);
+        templateDirField
+                .getDocument()
+                .addDocumentListener(
+                        new DocumentListener() {
+
+                            boolean ignoreEvents = false;
+
+                            @Override
+                            public void insertUpdate(DocumentEvent e) {
+                                if (ignoreEvents) {
+                                    // Will reenter if we reset an invalid directory
+                                    return;
+                                }
+                                String selectedTemplateDir = templateDirField.getText();
+                                if (selectedTemplateDir.contentEquals(currentTemplateDir)) {
+                                    return;
+                                }
+
+                                File file = new File(selectedTemplateDir);
+
+                                EventQueue.invokeLater(
+                                        new Runnable() {
+
+                                            @Override
+                                            public void run() {
+                                                if (ExtensionReports.isTemplateDir(file)) {
+                                                    int templateCount =
+                                                            extension.reloadTemplates(file);
+                                                    currentTemplateDir = file.getAbsolutePath();
+                                                    reportParam.setTemplateDirectory(
+                                                            currentTemplateDir);
+                                                    reset();
+                                                    View.getSingleton()
+                                                            .showMessageDialog(
+                                                                    ReportDialog.this,
+                                                                    Constant.messages.getString(
+                                                                            "reports.dialog.info.reloadtemplates",
+                                                                            templateCount,
+                                                                            currentTemplateDir));
+                                                } else if (ExtensionReports.isTemplateDir(
+                                                        new File(currentTemplateDir))) {
+                                                    // Existing one ok, go back to it
+                                                    View.getSingleton()
+                                                            .showWarningDialog(
+                                                                    ReportDialog.this,
+                                                                    Constant.messages.getString(
+                                                                            "reports.dialog.error.notemplates"));
+                                                    ignoreEvents = true;
+                                                    templateDirField.setText(currentTemplateDir);
+                                                    ignoreEvents = false;
+                                                } else {
+                                                    // Existing one bad, use default
+                                                    currentTemplateDir =
+                                                            ReportParam.DEFAULT_TEMPLATES_DIR;
+                                                    extension.reloadTemplates(
+                                                            new File(currentTemplateDir));
+                                                    reportParam.setTemplateDirectory(
+                                                            currentTemplateDir);
+                                                    reset();
+                                                    View.getSingleton()
+                                                            .showWarningDialog(
+                                                                    ReportDialog.this,
+                                                                    Constant.messages.getString(
+                                                                            "reports.dialog.error.badtemplates",
+                                                                            currentTemplateDir));
+                                                }
+                                            }
+                                        });
+                            }
+
+                            @Override
+                            public void removeUpdate(DocumentEvent e) {
+                                // Ignore
+                            }
+
+                            @Override
+                            public void changedUpdate(DocumentEvent e) {
+                                // Ignore
+                            }
+                        });
+
         this.addPadding(TAB_OPTIONS);
 
         this.addTextField(TAB_SCOPE, FIELD_TITLE, reportParam.getTitle());
@@ -383,6 +471,11 @@ public class ReportDialog extends StandardFieldsDialog {
 
     @Override
     public String validateFields() {
+        Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
+        if (template == null) {
+            return Constant.messages.getString("reports.dialog.error.notemplate");
+        }
+
         File f = getReportFile();
         if (!f.exists()) {
             if (!f.getParentFile().canWrite()) {
