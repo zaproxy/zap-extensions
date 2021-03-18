@@ -430,7 +430,8 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                 }
             }
 
-            if (getAlertThreshold().equals(AlertThreshold.LOW)) {
+            if (getAlertThreshold().equals(AlertThreshold.LOW)
+                    || getAlertThreshold().equals(AlertThreshold.MEDIUM)) {
                 // Check 5: try a local file Path Traversal on the file name of the URL (which
                 // obviously will not be in the target list above).
                 // first send a query for a random parameter value, and see if we get a 200 back

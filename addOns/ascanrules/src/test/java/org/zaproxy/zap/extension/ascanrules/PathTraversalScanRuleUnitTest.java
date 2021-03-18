@@ -192,15 +192,18 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
         assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 1")));
     }
 
-    @Test
-    public void shouldAlertOnCheckFiveAtLowThresholdUnderValidConditions()
-            throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW", "MEDIUM"})
+    public void shouldAlertOnCheckFiveBelowHighThresholdUnderValidConditions(
+            AlertThreshold alertThreshold) throws HttpMalformedHeaderException {
         // Given
         String path = "/file.ext";
         HttpMessage msg = getHttpMessage(path + "?p=a");
         rule.init(msg, parent);
         nano.addHandler(new Check5Handler(path, "p", Check5Handler.GENERIC_CONTENT, true));
-        rule.setAlertThreshold(AlertThreshold.LOW);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -209,18 +212,15 @@ public class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTravers
         assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 5")));
     }
 
-    @ParameterizedTest
-    @EnumSource(
-            value = Plugin.AlertThreshold.class,
-            names = {"MEDIUM", "HIGH"})
-    public void shouldNotAlertOnCheckFiveAboveLowThresholdUnderValidConditions(
-            AlertThreshold alertThreshold) throws HttpMalformedHeaderException {
+    @Test
+    public void shouldNotAlertOnCheckFiveAtHighThresholdUnderValidConditions()
+            throws HttpMalformedHeaderException {
         // Given
         String path = "/file.ext";
         HttpMessage msg = getHttpMessage(path + "?p=a");
         rule.init(msg, parent);
         nano.addHandler(new Check5Handler(path, "p", Check5Handler.GENERIC_CONTENT, true));
-        rule.setAlertThreshold(alertThreshold);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
         rule.scan();
         // Then
