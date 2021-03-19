@@ -60,6 +60,10 @@
          background-color: blue;
          color: #FFF;
          }
+         .risk--1{
+         background-color: green;
+         color: #FFF;
+         }
          .summary {
          width: 45%;
          }
@@ -135,7 +139,7 @@
         	 /*[[${helper.getRiskString(3)}]]*/ "High",
         	 /*[[${helper.getRiskString(2)}]]*/ "Medium",
         	 /*[[${helper.getRiskString(1)}]]*/ "Low",
-        	 /*[[${helper.getRiskString(0)}]]*/ "Infox"
+        	 /*[[${helper.getRiskString(0)}]]*/ "Info"
         	 ];
          var data = [
         	/*[[${alertCounts.get(3)}]]*/ 3,
@@ -171,7 +175,7 @@
             <th th:text="#{report.alerts.summary.risklevel}" width="45%" height="24">Risk Level</th>
             <th th:text="#{report.alerts.summary.numalerts}" width="55%" align="center">Number of Alerts</th>
          </tr>
-         <tr th:each="i : ${#numbers.sequence(3, 0, -1)}" th:if="${reportData.isIncludeRisk(i)}">
+         <tr th:each="i : ${#numbers.sequence(3, -1, -1)}" th:if="${reportData.isIncludeRisk(i)}">
             <td th:class="${'risk-' + i}">
                <div th:text="${helper.getRiskString(i)}">Risk</div>
             </td>

@@ -124,6 +124,10 @@ public class ReportData {
         if (risk >= 0 && risk < this.risks.length) {
             return this.risks[risk];
         }
+        if (risk == -1) {
+            // A false positive can be a risk and a confidence, a bit like a particle and a wave ;)
+            return this.confidences[0];
+        }
         return false;
     }
 }
